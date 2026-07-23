@@ -3,6 +3,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import { Instrument_Serif } from "next/font/google";
 import { ConsoleEgg } from "@/components/console-egg";
+import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
@@ -53,8 +54,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="font-sans">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <ConsoleEgg />
-        {children}
+          <PostHogProvider>
+            <ConsoleEgg />
+            {children}
+          </PostHogProvider>
         </ThemeProvider>
       </body>
     </html>
