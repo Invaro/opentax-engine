@@ -6,9 +6,8 @@ import Link from "next/link";
 const ITEMS = [
   { key: "B", label: "Benchmark", href: "#benchmark" },
   { key: "F", label: "Features", href: "#features" },
+  { key: "U", label: "Use cases", href: "#usecases" },
   { key: "I", label: "Install", href: "#install" },
-  { key: "C", label: "Connect", href: "#connect" },
-  { key: "S", label: "Source", href: "https://github.com/Invaro/opentax-engine", external: true },
 ] as const;
 
 export function KeysNav() {

@@ -17,6 +17,51 @@ const benchmark = [
   { label: "Claude Sonnet, unaided", pct: 6 },
 ];
 
+const useCases = [
+  {
+    tag: "tax & accounting firms",
+    title: "Review every return with a second engine",
+    body: "Connect OpenTax to Claude and drop in the client file: W-2 and 1099 boxes compile deterministically into facts, the full 1040 line set recomputes to the cent, and every line your software disagrees with gets flagged — with the statute attached.",
+    prompt:
+      "Here's the Hendersons' W-2 and the draft 1040 from our software. Recompute every line and flag anything that doesn't match — citation for each flag.",
+  },
+  {
+    tag: "freelancer & S-corp clients",
+    title: "Quarterly estimates that survive lumpy income",
+    body: "Safe-harbor prongs (100% / 110% of prior year) and the § 6654 annualized-installment worksheets are encoded rules, not vibes. Windfall in Q3? The engine computes the installment that actually avoids the penalty.",
+    prompt:
+      "Client draws a $60k salary and just booked a $180k Q3 licensing windfall. Compute the annualized Q3 estimate and show the safe-harbor comparison.",
+  },
+  {
+    tag: "advisory engagements",
+    title: "Entity elections, modeled to the cent",
+    body: "S-corp election letters stop being hand-waves: run sole-prop vs S-corp at a reasonable salary — SE tax versus payroll taxes, the QBI wage limit doing its thing, entity and personal pass in one call.",
+    prompt:
+      "Sole prop, $220k net. Model an S-corp election at a $110k salary: SE vs payroll tax, QBI under the wage limit, total federal delta — cited.",
+  },
+  {
+    tag: "financial planners",
+    title: "Find the cliffs before your client does",
+    body: "The solver sweeps any input across a range and reports every cliff and kink on the way: Social Security taxability ramps, the senior-deduction phase-out, the 2026 premium-credit cliff, EITC's investment-income kill switch.",
+    prompt:
+      "Sweep an IRA withdrawal from $0 to $80k for this 67-year-old couple. Chart the true marginal rate, flag every cliff, then find the sweet spot.",
+  },
+  {
+    tag: "every client meeting in 2026",
+    title: "The OBBBA answer, ready before they ask",
+    body: "The corpus is dated law: the same facts derive under 2025 or 2026 rules — tips and overtime deductions, the senior deduction, car-loan interest, charity for non-itemizers, the SALT phase-down — so the “what changes for me” letter writes itself.",
+    prompt:
+      "Run the Alvarez file under 2025 law, then 2026 law. Draft the client letter: what changes, by how much, and which OBBBA section did it.",
+  },
+  {
+    tag: "review & audit trail",
+    title: "Numbers you can staple to the workpapers",
+    body: "Every computation ships a Merkle-rooted proof — facts, rules, arithmetic, citations — verifiable offline months later, byte for byte. And outside the corpus the engine refuses loudly instead of guessing: the failure mode that matters in this profession.",
+    prompt:
+      "Recompute Schedule 8812 for the review file and attach the proof artifact — I want every step re-derivable at audit time.",
+  },
+];
+
 function Arrow() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={10} height={10} viewBox="0 0 12 12" fill="none">
@@ -321,6 +366,44 @@ export default function Page() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* use cases */}
+      <section id="usecases" className="container mt-24 md:mt-32 scroll-mt-20">
+        <div className="flex flex-col items-center text-center mb-10">
+          <h2 className="text-[32px] md:text-[56px] font-serif leading-tight mb-4">
+            What your agent <span className="italic">does with it</span>
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground max-w-[620px]">
+            OpenTax is the computation layer under whatever AI you already use — Claude, ChatGPT,
+            Cursor, or your own agent. The model does the reading and the writing; the engine does
+            the math. In practice:
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 border-t border-l border-border">
+          {useCases.map((u) => (
+            <div key={u.title} className="border-b border-r border-border p-6 md:p-8 flex flex-col">
+              <div className="font-mono text-[10px] text-muted-foreground mb-4">{u.tag}</div>
+              <h3 className="text-lg font-medium mb-2">{u.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">{u.body}</p>
+              <div className="mt-auto">
+                <div className="font-mono text-[9px] text-muted-foreground mb-1.5">
+                  → to your agent, verbatim
+                </div>
+                <blockquote className="bg-accent px-4 py-3 font-mono text-[11px] leading-relaxed">
+                  &ldquo;{u.prompt}&rdquo;
+                </blockquote>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-6 text-center font-mono text-[10px] text-muted-foreground">
+          same engine as a CLI for the terminal and CI — <code>opentax check --expect 5640</code>{" "}
+          returns verified / refuted — and as a TypeScript library that runs entirely in a browser
+          tab
+        </p>
       </section>
 
       {/* install */}
