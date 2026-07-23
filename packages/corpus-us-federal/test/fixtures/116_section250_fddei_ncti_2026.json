@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: the OBBBA SS 250 regime — 33.34% of FDDEI (300,000 -> 100,020) + 40% of NCTI (200,000 -> 80,000) = 180,020 deduction (QBAI abolished; effective rates 14% / 12.6%). Tax = 21% x (1,000,000 - 180,020) = $172,195.80.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 1000000,
+    "corpFDDEI": 300000,
+    "corpNCTI": 200000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "17219580",
+    "intermediates": {
+      "us.federal.corp.section250_deduction": "18002000"
+    }
+  }
+}

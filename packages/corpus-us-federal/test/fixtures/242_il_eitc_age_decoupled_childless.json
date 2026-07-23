@@ -1,0 +1,10 @@
+{
+  "description": "IL EIC age decoupling (35 ILCS 5/212(b-5), P.A. 102-700): single filer, no qualifying children, wages $8,000 (earned = AGI = $8,000, under the $10,620 childless threshold). us.federal.eitc_no_age_gate (age gate removed) table lookup: bracket midpoint = floor(8000/50)*50+25 = $8,025; phase-in = min(7.65% x 8,025, $649) = min($613.9125, $649) = $613.91 (mulRate cent-rounding of 61391.25 cents -> 61391); no phase-out (AGI $8,000 < threshold $10,620) -> statutory amount $613.91 -> roundToDollar -> $614.00 (61400 cents). us.il.eitc = 20% x $614.00 = $122.80 (12280 cents) -> roundToDollar half-up -> $123.00 (12300 cents). (The ordinary federal EITC would be $0 here if the filer is 18-24 or 65+, since the childless age gate excludes them federally; Illinois decouples from that gate.)",
+  "facts": { "filingStatus": "single", "wages": 8000, "qualifyingChildren": 0 },
+  "asOf": "2025-12-31",
+  "target": "us.il.eitc",
+  "expect": {
+    "valueCents": "12300",
+    "intermediates": { "us.federal.eitc_no_age_gate": "61400" }
+  }
+}

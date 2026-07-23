@@ -1,0 +1,17 @@
+{
+  "description": "TY2025: high-earning sole proprietor, $300,000 Schedule C, non-SSTB, NO W-2 wages paid (owner draws are not wages) - past the SS 199A band the deduction is min(20% QBI, wage limit) and the wage limit is $0: deduction $0 (the former refusal, now computed exactly). Schedule SE per-line: OASDI 21,836 + Medicare 8,034 = SE tax $29,870.00 (wage-base capped); TI = 269,315.00; income tax 63,807.50 + Additional Medicare (Form 8959 Part II, whole dollars) 693.45 -> $693. Net $94,370.50.",
+  "facts": {
+    "filingStatus": "single",
+    "selfEmploymentNetProfit": 300000,
+    "wages": 0,
+    "businessIsSSTB": false
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "9437050",
+    "intermediates": {
+      "us.federal.qbi_deduction": "0",
+      "us.federal.taxable_income": "26931500"
+    }
+  }
+}

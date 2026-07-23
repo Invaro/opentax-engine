@@ -1,0 +1,6 @@
+{
+  "description": "SS 223(f): HSA distribution 8,300 with 5,000 qualified medical -> 3,300 gross income + 20% additional tax 660 (no exception). Single, wages 40,000: gross 43,300, taxable 43,300 - 15,750 = 27,550 -> Table midpoint 27,575: 1,192.50 + 12% x (27,575 - 11,925) = 1,192.50 + 1,878 = 3,070.50 -> 3,071 (half-up); + other taxes 660 -> net 3,731.00. Hand-computed.",
+  "facts": { "filingStatus": "single", "wages": 40000, "hsaDistributions": 8300, "hsaQualifiedMedicalExpenses": 5000 },
+  "asOf": "2025-12-31",
+  "expect": { "valueCents": "373100" }
+}

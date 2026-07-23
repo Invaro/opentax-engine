@@ -1,0 +1,7 @@
+{
+  "description": "California nonrefundable renter's credit, MFJ, AGI 90,000 (wages only) is under the $107,987 MFJ/HOH/QSS ceiling -> flat $120.",
+  "facts": { "filingStatus": "mfj", "wages": 90000, "caRentedPrincipalResidence": true },
+  "asOf": "2025-12-31",
+  "target": "us.ca.renters_credit",
+  "expect": { "valueCents": "12000" }
+}

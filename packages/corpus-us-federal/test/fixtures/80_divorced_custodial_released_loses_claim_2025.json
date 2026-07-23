@@ -1,0 +1,19 @@
+{
+  "description": "TY2025: the other side of the SS 152(e) release — the CUSTODIAL parent who signed Form 8332 cannot claim the child, even though every ordinary SS 152(c) test passes (child lived with them all year). Qualifying child: NO.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 80000,
+    "depDivorcedParentsRule": true,
+    "taxpayerIsCustodialParent": true,
+    "custodialParentReleasedClaim": true,
+    "depRelationshipChild": true,
+    "depAge": 10,
+    "depLivedWithTaxpayerOverHalfYear": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.dependent.qualifying_child",
+  "expect": {
+    "valueBool": false,
+    "overrideApplied": "us.federal.dependent.qualifying_child.divorced_release"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "NYS tax table convention check at a published row: taxable 20 sits in the printed row '13-25 -> 1' (2025 IT-201-I tax table); mid-50 convention gives 4% x 25 = 1.00 -> 1. (Bottom rows under $50 are narrower than $50; divergence bounded at $1 and zero here.) Hand-computed.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 20 },
+  "asOf": "2025-12-31",
+  "target": "us.ny.income_tax",
+  "expect": { "valueCents": "100" }
+}

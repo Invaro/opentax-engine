@@ -1,0 +1,7 @@
+{
+  "description": "California nonrefundable renter's credit, single, AGI 40,000 (wages only, no other income/adjustments so AGI = wages) is under the $53,994 single/MFS ceiling -> flat $60.",
+  "facts": { "filingStatus": "single", "wages": 40000, "caRentedPrincipalResidence": true },
+  "asOf": "2025-12-31",
+  "target": "us.ca.renters_credit",
+  "expect": { "valueCents": "6000" }
+}

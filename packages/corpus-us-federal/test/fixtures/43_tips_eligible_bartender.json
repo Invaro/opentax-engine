@@ -1,0 +1,12 @@
+{
+  "description": "DETERMINATION: 'Does a bartender qualify for the tips deduction?' -> TRUE. Bartenders are TTC 101 on the Treasury Tipped Occupation list (Treas. Reg. 1.224-1, final Apr 2026). Proof shows each condition: listed occupation, voluntary tips (assumed), no SSTB (assumed), not MFS. No income facts needed for the determination.",
+  "facts": {
+    "filingStatus": "single",
+    "occupation": "bartenders"
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.eligible.tips_deduction",
+  "expect": {
+    "valueBool": true
+  }
+}

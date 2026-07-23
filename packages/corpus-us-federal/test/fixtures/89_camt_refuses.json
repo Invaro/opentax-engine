@@ -1,0 +1,13 @@
+{
+  "description": "C corporation with 3-year-average adjusted financial statement income of $1.5 billion — the SSSS 55-56A corporate alternative minimum tax (15% of AFSI; NOT repealed by the OBBBA, interim guidance through Notice 2026-7) would apply, and it is not modeled. The engine REFUSES rather than hand back a plausible 21% number.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 2000000000,
+    "corpAvgAdjustedFinancialStatementIncome": 1500000000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

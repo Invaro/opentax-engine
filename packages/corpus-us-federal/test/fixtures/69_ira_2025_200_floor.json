@@ -1,0 +1,17 @@
+{
+  "description": "TY2025: the SS 219(g)(2)(B) $200 floor. Single, covered, $88,900 wages ($100 from the phase-out end), $7,000 contributed. Excess 9,900 of 10,000 -> reduction floor10(7,000 x 0.99 = 6,930) = 6,930 -> reduced limit $70, which is below $200 but not zero -> the statute floors it at $200. Deduction $200. TI = 88,900 - 200 - 15,750 = 72,950 -> Table midpoint 72,975: 1,192.50+4,386+22%x24,500=5,390 -> 10,968.50 -> $10,969 (half-up). Net $10,969.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 88900,
+    "iraContribution": 7000,
+    "isActivePlanParticipant": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1096900",
+    "intermediates": {
+      "us.federal.ira_deduction": "20000",
+      "us.federal.taxable_income": "7295000"
+    }
+  }
+}

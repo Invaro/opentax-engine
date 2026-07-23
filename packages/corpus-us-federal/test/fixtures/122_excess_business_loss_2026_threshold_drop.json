@@ -1,0 +1,12 @@
+{
+  "description": "TY2026: the OBBBA re-based SS 461(l) indexing and the threshold WENT DOWN — Rev. Proc. 2025-32 SS 3.31 verbatim: '$256,000 ($512,000 for joint returns)'. An MFJ $600,000 loss is fully allowed in 2025 (under $626,000) but has $88,000 disallowed in 2026. Thresholds that fall year-over-year are exactly what recalled knowledge gets wrong.",
+  "facts": {
+    "filingStatus": "mfj",
+    "aggregateBusinessLoss": 600000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.excess_business_loss_disallowed",
+  "expect": {
+    "valueCents": "8800000"
+  }
+}

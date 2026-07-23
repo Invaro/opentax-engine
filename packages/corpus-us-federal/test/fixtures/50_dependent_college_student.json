@@ -1,0 +1,14 @@
+{
+  "description": "DETERMINATION: 20-year-old full-time college student, taxpayer's child, lived at home over half the year -> QUALIFYING CHILD (SS 152(c): under-24 student prong). Own-support/joint-return/younger-than assumed and recorded.",
+  "facts": {
+    "depRelationshipChild": true,
+    "depAge": 20,
+    "depIsFullTimeStudent": true,
+    "depLivedWithTaxpayerOverHalfYear": true
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.dependent.qualifying_child",
+  "expect": {
+    "valueBool": true
+  }
+}

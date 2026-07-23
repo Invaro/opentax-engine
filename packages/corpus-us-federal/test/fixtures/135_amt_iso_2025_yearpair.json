@@ -1,0 +1,16 @@
+{
+  "description": "TY2025: the SAME ISO exercise a year earlier — the pre-OBBBA 25%/$626,350 phase-out leaves the FULL $88,100 exemption intact: base 461,900 -> TMT 124,550 -> AMT $72,527.00 (vs $79,578 in 2026: the OBBBA's $500k/50% reset RAISES AMT despite the bigger exemption). Net = 52,023 + 72,527 + 450 = $125,000.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "amtIsoExerciseSpread": 300000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "12500000",
+    "intermediates": {
+      "us.federal.amt": "7252700",
+      "us.federal.income_tax_before_credits": "5202300"
+    }
+  }
+}

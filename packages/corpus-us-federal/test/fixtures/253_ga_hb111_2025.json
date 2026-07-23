@@ -1,0 +1,7 @@
+{
+  "description": "Georgia TY2025: 5.19% flat per 2025 HB 111 (retroactive to 1/1/2025; pre-HB 111 schedule printed 5.39%): 60,000 x 5.19% = 3,114.00.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 60000 },
+  "asOf": "2025-12-31",
+  "target": "us.ga.income_tax",
+  "expect": { "valueCents": "311400" }
+}

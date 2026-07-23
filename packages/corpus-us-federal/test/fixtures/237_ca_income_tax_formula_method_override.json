@@ -1,0 +1,7 @@
+{
+  "description": "CA useFormulaMethod=true bypasses the Tax Table (v5 default below $100,000) and returns the raw Schedule Z computation unrounded, matching the pre-v5 behavior: stateTaxableIncome 75,963, HOH, Schedule Z = 221.73 + 607.14 + 607.44 + 6% x (75,963 - 67,716) = 221.73 + 607.14 + 607.44 + 494.82 = 1,931.13 (not rounded to the whole dollar, unlike the table method's 1,933).",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 75963, "useFormulaMethod": true },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": { "valueCents": "193113" }
+}

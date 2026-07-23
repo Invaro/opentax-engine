@@ -1,0 +1,13 @@
+{
+  "description": "TY2025: the adoption carryforward target for the same return as fixture 152 — nonrefundable tentative 12,280 minus the 5,075 allowed by the liability limit carries forward $7,205.00 (SS 23(c), 5-year FIFO; the refundable $5,000 never carries).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "qualifiedAdoptionExpenses": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "720500"
+  },
+  "target": "us.federal.adoption.carryforward"
+}

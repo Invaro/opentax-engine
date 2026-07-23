@@ -1,0 +1,13 @@
+{
+  "description": "Wages only, no filing status: the engine must refuse with a structured list of missing facts, never guess.",
+  "facts": {
+    "wages": 50000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "filingStatus"
+    ]
+  }
+}

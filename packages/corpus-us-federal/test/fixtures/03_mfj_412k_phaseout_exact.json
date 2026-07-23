@@ -1,0 +1,18 @@
+{
+  "description": "MFJ, $412,000 wages, 2 kids. AGI exceeds $400k by exactly $12,000 -> 12 steps -> $600 reduction. Tax $77,014.00; CTC $4,400-$600=$3,800 -> $73,214.00 Now includes 0.9% Additional Medicare Tax on wages over $250k: $1,458.00.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 412000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "7467200",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "7701400",
+      "us.federal.ctc.reduction": "60000",
+      "us.federal.ctc": "380000",
+      "us.federal.additional_medicare_tax": "145800"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Virginia standard deduction, single, TY2027 (2026 Appropriation Act HB30 Sp.S.I c.1 enacted increase, asOf mid-2027): $8,750 -> $9,200.",
+  "facts": { "filingStatus": "single" },
+  "asOf": "2027-06-01",
+  "target": "us.va.standard_deduction",
+  "expect": { "valueCents": "920000" }
+}

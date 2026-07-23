@@ -1,0 +1,12 @@
+{
+  "description": "TY2025: SS 461(l) — a single filer's $500,000 aggregate business loss exceeds the $313,000 threshold by $187,000; that excess is disallowed and becomes an NOL carryforward.",
+  "facts": {
+    "filingStatus": "single",
+    "aggregateBusinessLoss": 500000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss_disallowed",
+  "expect": {
+    "valueCents": "18700000"
+  }
+}

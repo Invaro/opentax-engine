@@ -1,0 +1,11 @@
+{
+  "description": "EIC Table method with an EIC-only qualifying child (SS 32(c)(3): permanently disabled at ANY age, missing the CTC's under-17 cut): QSS, $12,000 wages, eitcAdditionalQualifyingChildren = 1. Table lookup at the $50-bracket midpoint 12,025: min(34% x 12,025 = 4,088.50, max 4,328) = 4,088.50; AGI 12,000 is under the 23,350 phase-out threshold so no AGI lookup -> table value $4,089 (whole dollars). Hand-computed; independently matches the TaxCalcBench ty25-us-003-series reference return ty25-us-010 (EIC 4,089).",
+  "facts": {
+    "filingStatus": "qss",
+    "wages": 12000,
+    "eitcAdditionalQualifyingChildren": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": { "valueCents": "408900" }
+}

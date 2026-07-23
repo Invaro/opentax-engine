@@ -1,0 +1,6 @@
+{
+  "description": "SS 223(f)(4)(C): same 3,300 nonqualified HSA distribution but penalty-exempt (65+) -> income inclusion stands, 20% tax waived. Net = 3,071.00 (fixture 226 minus the 660). Hand-computed.",
+  "facts": { "filingStatus": "single", "wages": 40000, "hsaDistributions": 8300, "hsaQualifiedMedicalExpenses": 5000, "hsaDistributionPenaltyExempt": true },
+  "asOf": "2025-12-31",
+  "expect": { "valueCents": "307100" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "New Hampshire TY2025: the 3% interest-and-dividends tax was fully repealed for periods beginning on/after 1/1/2025 (2021 N.H. Laws ch. 91) — $0 for any income.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 80000 },
+  "asOf": "2025-12-31",
+  "target": "us.nh.income_tax",
+  "expect": { "valueCents": "0" }
+}

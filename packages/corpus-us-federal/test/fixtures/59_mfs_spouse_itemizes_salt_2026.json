@@ -1,0 +1,21 @@
+{
+  "description": "TY2026: MFS whose spouse itemizes — standard deduction zeroed (SS 63(c)(6)(A)), so itemizing wins with the HALVED MFS SALT cap: $30,000 paid, capped at $20,200 (half of $40,400; MAGI 150,000 below the halved $252,500 threshold). TI = 150,000 - 20,200 = 129,800. Tax: 1,240+4,560+12,166+24%x(129,800-105,700)=5,784 -> 23,750. Additional Medicare 0.9%x(150,000-125,000 MFS threshold)=225. Net $23,975.00.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": true,
+    "wages": 150000,
+    "stateAndLocalTaxesPaid": 30000
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "2397500",
+    "intermediates": {
+      "us.federal.salt_deduction": "2020000",
+      "us.federal.standard_deduction": "0",
+      "us.federal.itemized_deductions": "2020000",
+      "us.federal.deduction_election": "2020000",
+      "us.federal.taxable_income": "12980000"
+    },
+    "overrideApplied": "us.federal.standard_deduction.mfs_spouse_itemizes"
+  }
+}

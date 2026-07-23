@@ -1,0 +1,22 @@
+{
+  "description": "TY2025: the Form 8812 ordering — education credits reduce tax BEFORE the CTC limit, pushing displaced CTC into the refundable ACTC. MFJ, $36,000 wages + $12,000 interest (kills EITC: investment income over the $11,950 limit), 2 kids, $4,000 AOTC. TI = 16,500 -> Table midpoint 16,525 -> 10% -> 1,653. Education nonrefundable = min(1,500, 1,653) = 1,500 -> CTC limit = 153 -> CTC 153; unused 4,400-153 = 4,247 -> ACTC = min(4,247, 2x1,700, 15%x33,500) = 3,400. Refundable = ACTC 3,400 + AOTC 1,000. Net = 0 - 4,400 = -$4,400.00 refund.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 36000,
+    "taxableInterest": 12000,
+    "qualifyingChildren": 2,
+    "aotcExpensesStudent1": 4000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-440000",
+    "intermediates": {
+      "us.federal.education.nonrefundable": "150000",
+      "us.federal.ctc": "15300",
+      "us.federal.actc": "340000",
+      "us.federal.education.aotc_refundable": "100000",
+      "us.federal.eitc": "0",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

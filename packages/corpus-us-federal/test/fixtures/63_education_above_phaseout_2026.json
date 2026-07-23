@@ -1,0 +1,18 @@
+{
+  "description": "TY2026: single, $95,000 wages — MAGI exceeds $80,000 by 15,000, past the whole $10,000 range (NOT indexed, so the same in 2026 as 2021) -> AOTC and LLC both fully phased to $0. TI = 95,000-16,100 = 78,900 -> Tax Table band midpoint 78,925: 1,240+4,560+22%x28,525=6,275.50 -> 12,075.50 -> half-up $12,076. Net $12,076.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 95000,
+    "aotcExpensesStudent1": 4000,
+    "llcQualifiedExpenses": 8000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "1207600",
+    "intermediates": {
+      "us.federal.education.aotc": "0",
+      "us.federal.education.llc": "0",
+      "us.federal.education.nonrefundable": "0"
+    }
+  }
+}

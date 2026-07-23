@@ -1,0 +1,13 @@
+{
+  "description": "A trust retaining capital gains REFUSES — the SS 1(h) estate/trust breakpoints ($3,300/$16,250 for 2026) and the Schedule D Tax Worksheet stacking are not modeled; taxing gains at 37% ordinary rates would be silently wrong in the other direction.",
+  "facts": {
+    "fiduciaryType": "simple-trust",
+    "fiduciaryIncomeBeforeExemption": 5000,
+    "fiduciaryLongTermGains": 1000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "error": "NOT_MODELED"
+  },
+  "target": "us.federal.fiduciary.income_tax"
+}

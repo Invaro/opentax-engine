@@ -1,0 +1,19 @@
+{
+  "description": "TY2026: the SS 904 two-basket FTC. TI 1,000,000 with 200,000 NCTI -> SS 250 deduction 80,000 -> tax 193,200. General basket: 50,000 foreign taxes vs limit 193,200 x 300,000/920,000 = 63,000 -> credit 50,000. CFC basket: 10,000 taxes x the OBBBA 90% allowance = 9,000, under the limit on the basket's net-of-250 income (120,000 -> 25,200) -> 9,000. FTC 59,000; tax after credits $134,200.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 1000000,
+    "corpNCTI": 200000,
+    "corpForeignTaxesGeneral": 50000,
+    "corpForeignSourceIncomeGeneral": 300000,
+    "corpForeignTaxesNCTI": 10000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.income_tax_after_credits",
+  "expect": {
+    "valueCents": "13420000",
+    "intermediates": {
+      "us.federal.corp.ftc": "5900000"
+    }
+  }
+}

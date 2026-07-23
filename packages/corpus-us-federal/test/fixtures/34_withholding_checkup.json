@@ -1,0 +1,17 @@
+{
+  "description": "Mid-year checkup: MFJ, $120,000 wages, 2 kids, $7,000 withheld so far (TY2026). Liability $5,640 - withheld $7,000 = refund of $1,360 expected in April 2027 (SS 31 withholding credit). [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 120000,
+    "qualifyingChildren": 2,
+    "federalTaxWithheld": 7000
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.balance_due",
+  "expect": {
+    "valueCents": "-135700",
+    "intermediates": {
+      "us.federal.net_tax": "564300"
+    }
+  }
+}

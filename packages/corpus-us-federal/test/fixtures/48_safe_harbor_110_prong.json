@@ -1,0 +1,20 @@
+{
+  "description": "High earner: single, $300,000 wages, prior AGI $200,000 (> $150k -> 110% prong via OVERRIDE), prior tax $50,000, withheld $40,000. Net tax $69,934.75 (incl. $900 Add'l Medicare); RAP = min(90% = $62,941.28, 110% x 50,000 = $55,000) = $55,000 -> quarterly 25% x (55,000-40,000) = $3,750.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 300000,
+    "priorYearTax": 50000,
+    "priorYearAGI": 200000,
+    "federalTaxWithheld": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.estimated.quarterly_payment",
+  "expect": {
+    "valueCents": "375000",
+    "intermediates": {
+      "us.federal.estimated.required_annual_payment": "5500000",
+      "us.federal.net_tax": "6993475"
+    },
+    "overrideApplied": "us.federal.estimated.required_annual_payment.high_agi"
+  }
+}

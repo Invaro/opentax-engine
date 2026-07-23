@@ -1,0 +1,7 @@
+{
+  "description": "California 2025 Tax Table convention (now encoded, v5): stateTaxableIncome 75,963 falls in the $100-wide bracket 75,951-76,050, midpoint $76,000.50. Schedule Z (HOH): 221.73 (1% x 22,173) + 607.14 (2% x 30,357) + 607.44 (4% x 15,186) + 497.07 (6% x 8,284.50) = 1,933.38 -> nearest dollar 1,933. Matches ty25-ca-002's reference exactly (previously pinned to the raw-schedule value 1,931.13 as a placeholder before the table was encoded).",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 75963 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": { "valueCents": "193300" }
+}

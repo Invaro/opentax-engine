@@ -1,0 +1,16 @@
+{
+  "description": "TY2026 (Rev. Proc. 2025-32): single, $50,000 wages. Std $16,100 -> taxable $33,900 -> 10%*12,400 + 12%*21,500 = $3,820.00. Same facts as fixture 01 \u2014 only the as-of date differs, exercising temporal rule versioning. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "382300",
+    "intermediates": {
+      "us.federal.standard_deduction": "1610000",
+      "us.federal.taxable_income": "3390000",
+      "us.federal.income_tax_before_credits": "382300"
+    }
+  }
+}

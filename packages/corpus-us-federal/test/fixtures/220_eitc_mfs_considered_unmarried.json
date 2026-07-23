@@ -1,0 +1,7 @@
+{
+  "description": "SS 32(d)(2) considered-unmarried MFS: separation tests met -> EITC computes normally. MFS, wages 15,000, 3 kids, table method: mid 15,025 x 45% = 6,761.25 (under the 8,046 max); AGI 15,000 below the 23,350 with-kids threshold -> earned-only lookup -> 6,761 (half-up). Hand-computed.",
+  "facts": { "filingStatus": "mfs", "mfsConsideredUnmarried": true, "wages": 15000, "qualifyingChildren": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": { "valueCents": "676100" }
+}

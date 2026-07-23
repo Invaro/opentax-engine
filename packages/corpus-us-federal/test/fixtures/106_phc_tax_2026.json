@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: the SS 541 personal holding company tax — 20% of $50,000 undistributed PHC income = $10,000.00 (in addition to the SS 11 tax; the AET never stacks, SS 532(b)(1)).",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpPHCIncome": 70000,
+    "corpAdjustedOrdinaryGrossIncome": 100000,
+    "corpOwnedByFiveOrFewer": true,
+    "corpUndistributedPHCIncome": 50000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.phc_tax",
+  "expect": {
+    "valueCents": "1000000"
+  }
+}

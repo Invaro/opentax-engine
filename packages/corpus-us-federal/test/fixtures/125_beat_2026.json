@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: SS 59A BEAT at the OBBBA-fixed 10.5% (permanent — the scheduled 12.5% was repealed; 10.1% was only the House draft). Applicable taxpayer: $600M receipts, 3%+ base-erosion test attested. MTI = 10,000,000 TI + 12,000,000 base-erosion benefits = 22,000,000 -> 10.5% = 2,310,000; regular tax 2,100,000 -> BEAT $210,000.00 (GBCs stay protected per the OBBBA).",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 10000000,
+    "corpAvgGrossReceipts3yr": 600000000,
+    "corpBaseErosionTestMet": true,
+    "corpBaseErosionTaxBenefits": 12000000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.beat",
+  "expect": {
+    "valueCents": "21000000"
+  }
+}

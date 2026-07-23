@@ -1,0 +1,17 @@
+{
+  "description": "Single, $60,000 wages, $5,000 HSA contribution, self-only coverage (2025). Deduction capped at $4,300 (Rev. Proc. 2024-25; under-55 assumption denies catch-up). AGI $55,700 -> taxable $39,950 -> tax $4,555.50. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "hsaContribution": 5000,
+    "hsaCoverage": "self"
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "455900",
+    "intermediates": {
+      "us.federal.hsa_deduction": "430000",
+      "us.federal.agi": "5570000"
+    }
+  }
+}

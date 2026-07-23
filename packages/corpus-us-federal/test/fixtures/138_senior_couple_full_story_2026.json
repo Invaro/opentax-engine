@@ -1,0 +1,20 @@
+{
+  "description": "TY2026: the complete senior story in one return — SS 86 inclusion + age-65 additional standard deductions + the OBBBA senior deduction. MFJ, both 65+, $40,000 pensions + $30,000 social security. Provisional 55,000: 50%-tier min(15,000, 11,500) capped at 6,000; 85%-tier 85% x 11,000 = 9,350 -> taxable SS $15,350. AGI 55,350; std 32,200 + 2 x 1,650 = 35,500; senior deduction 2 x 6,000 (MAGI under $150k). TI = 7,850 -> Table midpoint 7,875 -> $788. Net $788.00.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "taxablePensionsAndAnnuities": 40000,
+    "socialSecurityBenefits": 30000,
+    "isAge65OrOlder": true,
+    "spouseIsAge65OrOlder": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "78800",
+    "intermediates": {
+      "us.federal.taxable_social_security": "1535000",
+      "us.federal.senior_deduction": "1200000",
+      "us.federal.agi": "5535000"
+    }
+  }
+}

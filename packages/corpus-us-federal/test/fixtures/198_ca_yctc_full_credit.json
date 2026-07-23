@@ -1,0 +1,7 @@
+{
+  "description": "CA Young Child Tax Credit 2025 (R&TC 17052.1): earned income 2,248 (under the 27,425 phase-out threshold) with a child under 6 -> full 1,189 (FTB 3514 booklet verbatim maximum). Matches ty25-ca-001's reference YCTC. Hand-computed.",
+  "facts": { "filingStatus": "hoh", "wages": 2248, "qualifyingChildren": 3, "hasChildUnderSix": true },
+  "asOf": "2025-12-31",
+  "target": "us.ca.yctc",
+  "expect": { "valueCents": "118900" }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "TY2026 MFS uses the all-other tiers (Notice 2025-67: 50% to $24,250, 20% to $26,250, 10% to $40,250). AGI 27,000 lands in the 10% tier -> 10% x min(2,000 cap) = $200.",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 27000,
+    "spouseItemizes": false,
+    "saversContributions": 2000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "20000",
+    "intermediates": {
+      "us.federal.savers.tentative": "20000"
+    }
+  },
+  "target": "us.federal.savers_credit"
+}

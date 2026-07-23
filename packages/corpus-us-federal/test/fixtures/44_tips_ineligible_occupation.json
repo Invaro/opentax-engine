@@ -1,0 +1,17 @@
+{
+  "description": "Single, $60,000 wages incl. $8,000 tips \u2014 but occupation 'other' (not on the Treasury list) -> tips deduction $0, tax on full income: taxable 44,250 -> $5,071.50. Same money as fixture 19 EXCEPT the occupation, isolating the list's effect. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "qualifiedTips": 8000,
+    "occupation": "other"
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "507500",
+    "intermediates": {
+      "us.federal.tips_deduction": "0",
+      "us.federal.taxable_income": "4425000"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "SS 219(g)(4): MFS lived apart at ALL times -> not treated as married; the single phase-out range (79,000-89,000) applies. Covered participant, wages 50,000 (MAGI below 79,000), 7,000 contributed -> FULL 7,000 deduction (vs 0 under the 0-10,000 MFS range). Hand-computed.",
+  "facts": { "filingStatus": "mfs", "mfsLivedApartAllYear": true, "isActivePlanParticipant": true, "wages": 50000, "iraContribution": 7000 },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ira_deduction",
+  "expect": { "valueCents": "700000" }
+}

@@ -1,0 +1,23 @@
+{
+  "description": "TY2026: single kiddie-tax child (SS 1(g)), $25,000 wages, $4,000 AOTC expenses. SS 25A(i) last sentence: the 40% refundable treatment 'shall not apply... if such taxpayer is a child to whom subsection (g) of section 1 applies' -> refundable portion $0; the whole 2,500 is nonrefundable but limited to tax. The SS 1(g) override also fires (all wages, no unearned income -> NUI 0 -> Form 8615 tax = regular tax): TI = 8,900 -> Table midpoint 8,925 -> 10% -> $893. Education nonrefundable = min(2,500, 893) = 893 -> tax after credits $0. Childless EITC: $25,000 is past the completed 2026 phase-out -> $0. Net $0.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 25000,
+    "aotcExpensesStudent1": 4000,
+    "isSubjectToKiddieTax": true,
+    "parentTaxableIncome": 100000,
+    "parentFilingStatus": "mfj",
+    "parentHasPreferentialIncome": false,
+    "isAtLeastAge25": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.education.aotc": "250000",
+      "us.federal.education.aotc_refundable": "0",
+      "us.federal.education.nonrefundable": "89300",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

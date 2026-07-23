@@ -1,0 +1,19 @@
+{
+  "description": "Qualifying surviving spouse, $212,000 wages, 2 kids. QSS uses the MFJ std deduction ($31,500) and MFJ brackets, BUT the $400k CTC threshold is joint-return-only -> QSS threshold $200k -> excess $12,000 -> $600 reduction. Taxable $180,500 -> tax 2,385 + 8,772 + 22%*83,550 = $29,538.00; CTC $4,400-$600=$3,800 -> $25,738.00. QSS Additional-Medicare threshold is $200k (not a joint return): +$108.00.",
+  "facts": {
+    "filingStatus": "qss",
+    "wages": 212000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "2584600",
+    "intermediates": {
+      "us.federal.standard_deduction": "3150000",
+      "us.federal.income_tax_before_credits": "2953800",
+      "us.federal.ctc.reduction": "60000",
+      "us.federal.ctc": "380000",
+      "us.federal.additional_medicare_tax": "10800"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "TY2026: single, $800,000 wages — the new SS 68 (OBBBA) 2/37 haircut. SALT phased to the $10,000 floor (40,400 - 30%x295,000 < 10,000). Charity: 50,000 - 0.5%x800,000=4,000 -> 46,000. Itemized before limitation 56,000; TI-increased-by-itemized 800,000 exceeds the 37% bracket start 640,600 by 159,400, so reduce by 2/37 x min(56,000, 159,400) = 112,000/37 = 3,027.03 (half-up). Itemized 52,972.97 > std 16,100. TI = 747,027.03. Tax: 1,240+4,560+12,166+23,058+17,424+134,531.25+37%x106,427.03=39,378.00 -> 232,357.25. Additional Medicare 0.9%x600,000=5,400. Net $237,757.25.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 800000,
+    "stateAndLocalTaxesPaid": 45000,
+    "charitableCashContributions": 50000
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "23775725",
+    "intermediates": {
+      "us.federal.salt_deduction": "1000000",
+      "us.federal.charitable_deduction_itemizer": "4600000",
+      "us.federal.itemized_deductions_before_limitation": "5600000",
+      "us.federal.itemized_deductions": "5297297",
+      "us.federal.taxable_income": "74702703"
+    }
+  }
+}

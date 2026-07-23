@@ -1,0 +1,16 @@
+{
+  "description": "TY2026: the classic AMT trigger — a $300,000 ISO bargain element held past year-end. Regular tax on TI 233,900 = 51,304. AMTI = 233,900 + 16,100 standard-deduction addback + 300,000 ISO = 550,000; the OBBBA-reset phase-out bites: exemption 90,100 - 50% x 50,000 = 65,100 -> base 484,900 -> TMT 26% x 244,500 + 28% x 240,400 = 130,882 -> AMT $79,578.00. Net = 51,304 + 79,578 + 450 Additional Medicare = $131,332.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "amtIsoExerciseSpread": 300000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "13133200",
+    "intermediates": {
+      "us.federal.amt": "7957800",
+      "us.federal.income_tax_before_credits": "5130400"
+    }
+  }
+}

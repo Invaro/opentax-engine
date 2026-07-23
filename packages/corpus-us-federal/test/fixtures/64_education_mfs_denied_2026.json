@@ -1,0 +1,18 @@
+{
+  "description": "TY2026: married filing separately, $60,000 wages, $4,000 AOTC expenses — SS 25A(g)(6): a married taxpayer gets the education credits 'only if the taxpayer and the taxpayer's spouse file a joint return' -> $0 on an MFS return. TI = 60,000-16,100 = 43,900 -> Tax Table midpoint 43,925: 1,240+12%x31,525=3,783 -> $5,023. Net $5,023.00.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 60000,
+    "aotcExpensesStudent1": 4000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "502300",
+    "intermediates": {
+      "us.federal.education.aotc": "0",
+      "us.federal.education.aotc_refundable": "0",
+      "us.federal.education.nonrefundable": "0"
+    }
+  }
+}

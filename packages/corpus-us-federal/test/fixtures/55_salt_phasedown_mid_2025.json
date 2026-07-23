@@ -1,0 +1,18 @@
+{
+  "description": "TY2025: single, $550,000 wages, $45,000 SALT paid. SS 164(b)(7) phase-down: cap 40,000 - 30%x(550,000-500,000)=15,000 -> 25,000 (above the $10,000 floor). Itemized 25,000 > std 15,750. TI=525,000. Tax: 1,192.50+4,386+12,072.50+22,548+17,032+35%x(525,000-250,525)=96,066.25 -> 153,297.25. Additional Medicare 0.9%x(550,000-200,000)=3,150. Net $156,447.25.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 550000,
+    "stateAndLocalTaxesPaid": 45000
+  },
+  "asOf": "2025-07-01",
+  "expect": {
+    "valueCents": "15644725",
+    "intermediates": {
+      "us.federal.salt_deduction": "2500000",
+      "us.federal.itemized_deductions": "2500000",
+      "us.federal.taxable_income": "52500000",
+      "us.federal.additional_medicare_tax": "315000"
+    }
+  }
+}

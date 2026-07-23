@@ -1,0 +1,16 @@
+{
+  "description": "Single, $100,500 wages, $5,000 car loan interest: MAGI excess is $500 \u2014 'or PORTION thereof' (SS 163(h)(4)) CEILS to one step -> $200 cut -> $4,800. Contrast fixture 21: the SAME $500 excess costs NOTHING under the tips deduction's floor. Taxable 79,950 -> tax $12,503.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100500,
+    "carLoanInterest": 5000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1250900",
+    "intermediates": {
+      "us.federal.car_loan_interest_deduction": "480000",
+      "us.federal.taxable_income": "7995000"
+    }
+  }
+}

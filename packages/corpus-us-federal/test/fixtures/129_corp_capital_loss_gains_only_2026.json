@@ -1,0 +1,14 @@
+{
+  "description": "TY2026: SS 1211(a) — a corporation's capital losses offset ONLY capital gains (no $3,000 ordinary offset like individuals). Gains 50,000 vs losses 80,000 -> nothing enters income, nothing deducts. TI = 500,000 -> $105,000.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 500000,
+    "corpCapitalGains": 50000,
+    "corpCapitalLosses": 80000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "10500000"
+  }
+}

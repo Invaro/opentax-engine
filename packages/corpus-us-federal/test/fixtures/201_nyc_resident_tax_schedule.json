@@ -1,0 +1,7 @@
+{
+  "description": "NYC resident tax (IT-201-I p.40 schedule, >= $65,000): HOH, NYC taxable 70,000 -> 2,176 + 3.876% x (70,000 - 60,000) = 2,176 + 387.60 = 2,563.60 -> 2,564. Fixed-dollar anchors cross-check: 443 at 14,400 (3.078% x 14,400 = 443.23), 1,030 at 30,000. Hand-computed.",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 70000 },
+  "asOf": "2025-12-31",
+  "target": "us.ny.nyc_income_tax",
+  "expect": { "valueCents": "256400" }
+}

@@ -1,0 +1,19 @@
+{
+  "description": "TY2026: SS 246A — 40% of the portfolio stock is debt-financed, so the 50% DRD applies to only 60% of the 100,000 dividends: DRD 30,000 (well under the SS 246(b) cap). TI = 500,000 - 100,000 - 30,000 = 370,000 -> $77,700.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 500000,
+    "corpOrdinaryDeductions": 100000,
+    "corpDividendsReceived": 100000,
+    "corpDrdOwnershipTier": "under-20",
+    "corpPortfolioDebtFinancedPercent": 40
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "7770000",
+    "intermediates": {
+      "us.federal.corp.dividends_received_deduction": "3000000"
+    }
+  }
+}

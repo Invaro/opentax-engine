@@ -1,0 +1,7 @@
+{
+  "description": "Utah TY2025 rate is 4.50% per 2025 HB 106 (retroactive to 1/1/2025), NOT the pre-HB 106 4.55%: 100,000 x 4.50% = 4,500.00.",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 100000 },
+  "asOf": "2025-12-31",
+  "target": "us.ut.income_tax",
+  "expect": { "valueCents": "450000" }
+}

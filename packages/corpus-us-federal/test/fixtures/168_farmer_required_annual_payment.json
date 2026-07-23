@@ -1,0 +1,17 @@
+{
+  "description": "TY2026 farmer (SS 6654(i)): SE profit 80,000 -> Schedule SE per-line 9,161 + 2,143 = SE tax $11,304, half $5,652, AGI 74,348.00, QBI limited by TI: 20% x 58,248 = 11,649.60 -> TI 46,598.40 -> Tax Table mid 46,575 -> 1,240 + 12% x 34,175 = $5,341 -> net tax 16,645.00. Farmer RAP = min(66-2/3% x 16,645.00 = 11,096.67, 100% x 20,000) = $11,096.67 - and the prior-year AGI of 200,000 does NOT trigger the 110% prong (SS 6654(i)(1)(C) disregards (d)(1)(C)); the farmer override outranks the high-AGI override.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 80000,
+    "isFarmerOrFisherman": true,
+    "priorYearTax": 20000,
+    "priorYearAGI": 200000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "1109667",
+    "overrideApplied": "us.federal.estimated.required_annual_payment.farmer"
+  },
+  "target": "us.federal.estimated.required_annual_payment"
+}

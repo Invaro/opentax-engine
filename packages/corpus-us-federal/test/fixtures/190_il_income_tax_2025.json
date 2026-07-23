@@ -1,0 +1,7 @@
+{
+  "description": "Illinois flat 4.95% (IL-1040 line 12): net income 30,485 x 4.95% = 1,509.01 -> the engine returns 1,509.00 at whole-cent? 30,485 x 0.0495 = 1,509.0075 -> half-up 1,509.01. Reference-validated: ty25-il-003's TaxOnNetIncome = 1,509 (whole dollars).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 30485 },
+  "asOf": "2025-12-31",
+  "target": "us.il.income_tax",
+  "expect": { "valueCents": "150901" }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "TY2026 mfj savers credit at the 50% tier (Notice 2025-67: joint 50% to $48,500). AGI 45,000; contributions 3,000 (capped 2,000) + spouse 1,000 -> base 3,000 -> tentative 1,500. TI 12,800 -> mid 12,825 -> 10% = 1,282.50 -> $1,283. Allowed min(1,500, 1,283) = 1,283 -> after credits $0; nothing refundable -> net $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 45000,
+    "saversContributions": 3000,
+    "saversContributionsSpouse": 1000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.savers.tentative": "150000",
+      "us.federal.savers_credit": "128300",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

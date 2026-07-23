@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: SS 6655(e) corporate annualization, installment 1. First-3-months TI 100,000 x4 = 400,000 -> 21% = 84,000 -> 25% = 21,000, under the regular 31,500 (25% of the 126,000 RAP; prior-year 130,000 doesn't bind) -> $21,000.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 600000,
+    "corpPriorYearTax": 130000,
+    "corpIsLargeCorporation": false,
+    "corpTIThrough3Months": 100000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.annualized_installment_q1",
+  "expect": {
+    "valueCents": "2100000"
+  }
+}

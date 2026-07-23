@@ -1,0 +1,19 @@
+{
+  "description": "TY2026: past the OBBBA-widened band. Single, $50,000 wages + $250,000 K-1, business paid $60,000 W-2 wages, non-SSTB. TI before QBI 283,900; excess 82,150 exceeds the NEW $75,000 band (OBBBA SS 70105 — was $50,000 in 2025) -> hard limit: min(20% x 250,000 = 50,000, max(50% x 60,000 = 30,000, 25% x 60,000 = 15,000)) = $30,000. TI = 253,900 -> $57,704.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "k1OrdinaryBusinessIncome": 250000,
+    "qbiW2Wages": 60000,
+    "businessIsSSTB": false
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "valueCents": "5770400",
+    "intermediates": {
+      "us.federal.qbi_deduction": "3000000",
+      "us.federal.taxable_income": "25390000"
+    }
+  }
+}

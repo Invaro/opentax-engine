@@ -1,0 +1,7 @@
+{
+  "description": "Pre-TCJA alimony (pre-2019 instrument): received 666 is gross income (old SS 71), paid 555 deducts above the line (old SS 215 / SS 62(a)(10)). Single, wages 40,000 -> gross 40,666, adjustments 555, AGI 40,111. Hand-computed.",
+  "facts": { "filingStatus": "single", "wages": 40000, "alimonyReceivedPre2019": 666, "alimonyPaidPre2019": 555 },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": { "valueCents": "4011100" }
+}

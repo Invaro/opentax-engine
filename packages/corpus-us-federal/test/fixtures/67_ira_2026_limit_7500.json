@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: the NEW $7,500 IRA limit (Notice 2025-67 — up from $7,000; stale-knowledge trap). Single, $60,000 wages, NOT covered by an employer plan, contributes $8,000 -> deduction capped at the $7,500 limit (no phase-out for non-participants; excess-contribution excise not modeled, disclosed). TI = 60,000 - 7,500 - 16,100 = 36,400 -> Tax Table midpoint 36,425: 1,240 + 12%x24,025 = 2,883 -> $4,123. Net $4,123.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "iraContribution": 8000,
+    "isActivePlanParticipant": false
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "412300",
+    "intermediates": {
+      "us.federal.ira_deduction": "750000",
+      "us.federal.taxable_income": "3640000"
+    }
+  }
+}

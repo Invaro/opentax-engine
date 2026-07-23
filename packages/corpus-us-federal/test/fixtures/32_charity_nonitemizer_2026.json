@@ -1,0 +1,16 @@
+{
+  "description": "TY2026: MFJ, $90,000 wages, $3,000 cash to charity. SS 170(p) (effective 2026): capped at $2,000 joint. Taxable 90,000-32,200-2,000=55,800 -> tax $6,200.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 90000,
+    "charitableCashContributions": 3000
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "620300",
+    "intermediates": {
+      "us.federal.charitable_deduction_nonitemizer": "200000",
+      "us.federal.taxable_income": "5580000"
+    }
+  }
+}

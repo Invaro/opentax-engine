@@ -1,0 +1,16 @@
+{
+  "description": "TY2025: an SSTB past the band gets NOTHING. Single, $300,000 K-1 from a law practice. TI before QBI 284,250; excess 86,950 exceeds the $50,000 band -> deduction $0 regardless of W-2 wages. TI = 284,250 -> tax 69,034.75 (no SE/Medicare on K-1). Net $69,034.75.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 300000,
+    "businessIsSSTB": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "6903475",
+    "intermediates": {
+      "us.federal.qbi_deduction": "0"
+    }
+  }
+}

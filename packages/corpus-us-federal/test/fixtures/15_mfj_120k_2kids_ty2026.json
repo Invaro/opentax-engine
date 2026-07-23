@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: MFJ, $120,000 wages, 2 kids. Std $32,200 -> taxable $87,800 -> 10%*24,800 + 12%*63,000 = $10,040.00; CTC 2 x $2,200 -> $5,640.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 120000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "564300",
+    "intermediates": {
+      "us.federal.taxable_income": "8780000",
+      "us.federal.income_tax_before_credits": "1004300",
+      "us.federal.ctc": "440000"
+    }
+  }
+}

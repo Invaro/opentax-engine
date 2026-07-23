@@ -1,0 +1,17 @@
+{
+  "description": "Single, $50,000 wages + $30,000 LTCG (2025). Taxable $64,250: ordinary $34,250 -> $3,871.50; gains: $14,100 fills the 0% bracket (up to $48,350), $15,900 at 15% = $2,385 -> total $6,256.50. NIIT $0 (MAGI under $200k). [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "longTermCapitalGains": 30000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "626000",
+    "intermediates": {
+      "us.federal.ordinary_taxable_income": "3425000",
+      "us.federal.income_tax_before_credits": "626000",
+      "us.federal.niit": "0"
+    }
+  }
+}

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>opentax playground — a tax calculator that shows its work</title>
+<style>
+:root {
+  --paper: #FAF9F4;
+  --ink: #17251E;
+  --engrave: #1E5B40;
+  --engrave-deep: #143D2B;
+  --rule: #D6D9CB;
+  --annot: #66705F;
+  --refusal: #8C3B2A;
+  --card: #FFFFFE;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--paper); }
+body {
+  font-family: var(--serif);
+  color: var(--ink);
+  line-height: 1.45;
+  padding: 0 20px 80px;
+}
+.sheet { max-width: 1120px; margin: 0 auto; }
+
+/* ── masthead ─────────────────────────────────────────────── */
+header { padding: 44px 0 18px; }
+.masthead { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+h1 { font-size: 2rem; font-weight: 600; letter-spacing: -0.01em; }
+h1 .tld { color: var(--engrave); }
+.tagline { font-size: 1.02rem; color: var(--annot); font-style: italic; }
+.seal {
+  margin-top: 16px;
+  border-top: 3px double var(--engrave);
+  border-bottom: 3px double var(--engrave);
+  padding: 5px 2px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--engrave-deep);
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  letter-spacing: 0.02em;
+}
+.seal b { font-weight: 600; }
+
+/* ── mode tabs ────────────────────────────────────────────── */
+nav { margin: 26px 0 30px; display: flex; gap: 26px; border-bottom: 1px solid var(--rule); }
+nav button {
+  appearance: none; background: none; border: none; cursor: pointer;
+  font-family: var(--serif); font-size: 1.05rem; color: var(--annot);
+  padding: 6px 2px 10px; border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+nav button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--engrave); font-weight: 600; }
+nav button:focus-visible { outline: 2px solid var(--engrave); outline-offset: 3px; }
+
+/* ── layout ───────────────────────────────────────────────── */
+.compute { display: grid; grid-template-columns: 420px 1fr; gap: 44px; align-items: start; }
+@media (max-width: 900px) { .compute { grid-template-columns: 1fr; } }
+
+/* ── the filing form ──────────────────────────────────────── */
+form { font-size: 0.95rem; }
+fieldset { border: none; padding: 0; margin: 0 0 26px; }
+legend {
+  font-variant-caps: all-small-caps; letter-spacing: 0.14em; font-weight: 600;
+  color: var(--engrave-deep); font-size: 0.98rem;
+  border-bottom: 1px solid var(--rule); width: 100%; padding-bottom: 4px; margin-bottom: 12px;
+}
+.field { display: flex; align-items: baseline; gap: 10px; margin: 7px 0; }
+.field label { flex: 0 0 auto; color: var(--ink); }
+.field .lead { flex: 1; border-bottom: 1px dotted var(--rule); transform: translateY(-3px); min-width: 12px; }
+.field input[type="text"], .field input[type="number"], .field select {
+  font-family: var(--mono); font-size: 0.88rem; color: var(--ink);
+  background: transparent; border: none; border-bottom: 1px solid var(--annot);
+  padding: 2px 4px; width: 128px; text-align: right; border-radius: 0;
+}
+.field select { text-align: left; width: 172px; font-family: var(--serif); }
+.field input:focus-visible, .field select:focus-visible { outline: 2px solid var(--engrave); outline-offset: 1px; }
+.checks { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.checks label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; }
+.checks input { accent-color: var(--engrave); width: 15px; height: 15px; }
+.conditional { display: none; }
+.conditional.on { display: flex; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 24px; }
+.presets button {
+  appearance: none; cursor: pointer; font-family: var(--serif); font-size: 0.84rem;
+  color: var(--engrave-deep); background: none;
+  border: 1px solid var(--engrave); border-radius: 999px; padding: 3px 12px;
+}
+.presets button:hover { background: var(--engrave); color: var(--paper); }
+.presets button:focus-visible { outline: 2px solid var(--engrave); outline-offset: 2px; }
+.compute-btn {
+  appearance: none; cursor: pointer; width: 100%;
+  font-family: var(--serif); font-size: 1.08rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--paper); background: var(--engrave); border: 1px solid var(--engrave-deep);
+  padding: 11px 0; border-radius: 3px;
+}
+.compute-btn:hover { background: var(--engrave-deep); }
+.compute-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* ── the answer ───────────────────────────────────────────── */
+.result { min-height: 200px; }
+.placeholder { color: var(--annot); font-style: italic; padding-top: 8px; }
+.ledger {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 26px 28px 20px; box-shadow: 0 1px 3px rgba(23,37,30,0.06);
+}
+.ledger h2 { font-size: 1.05rem; font-weight: 600; margin-bottom: 2px; }
+.ledger .asof { color: var(--annot); font-size: 0.85rem; margin-bottom: 16px; }
+.lrow { display: flex; align-items: baseline; gap: 8px; padding: 3.5px 0; }
+.lrow .llabel { flex: 0 0 auto; }
+.lrow .lnote { color: var(--annot); font-size: 0.8rem; font-style: italic; }
+.lrow .leader { flex: 1; border-bottom: 2px dotted var(--rule); transform: translateY(-4px); min-width: 20px; }
+.lrow .amt { font-family: var(--mono); font-size: 0.94rem; font-variant-numeric: tabular-nums; }
+.lrow.total { border-top: 1px solid var(--ink); margin-top: 10px; padding-top: 10px; }
+.lrow.total .llabel { font-weight: 700; }
+.lrow.total .amt { font-weight: 700; font-size: 1.15rem; color: var(--engrave-deep); }
+.lrow.total.refund .amt { color: var(--engrave); }
+.effective { color: var(--annot); font-size: 0.82rem; text-align: right; margin-top: 2px; }
+.actions { display: flex; gap: 10px; margin: 16px 0 0; flex-wrap: wrap; }
+.actions button, .actions a {
+  appearance: none; cursor: pointer; font-family: var(--serif); font-size: 0.86rem;
+  color: var(--engrave-deep); background: none; border: 1px solid var(--rule);
+  border-radius: 3px; padding: 5px 12px; text-decoration: none;
+}
+.actions button:hover, .actions a:hover { border-color: var(--engrave); }
+
+/* ── proof tree & assumptions ─────────────────────────────── */
+.proofbox, .assumebox { margin-top: 22px; }
+.boxtitle {
+  font-variant-caps: all-small-caps; letter-spacing: 0.14em; font-weight: 600;
+  color: var(--engrave-deep); border-bottom: 1px solid var(--rule);
+  padding-bottom: 4px; margin-bottom: 10px; font-size: 0.98rem;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.boxtitle .hint { font-variant-caps: normal; letter-spacing: 0; font-weight: 400; font-style: italic; color: var(--annot); font-size: 0.8rem; }
+.tree { font-size: 0.9rem; }
+.tree details { margin: 0; padding-left: 0; }
+.tree details > *:not(summary) { margin-left: 22px; border-left: 1px solid var(--rule); padding-left: 14px; }
+.tree summary { cursor: pointer; padding: 3px 0; list-style-position: outside; }
+.tree summary::marker { color: var(--engrave); }
+.tree summary:focus-visible { outline: 2px solid var(--engrave); outline-offset: 1px; }
+.tree .leaf { padding: 3px 0 3px 18px; }
+.nodeline { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.nodeline .ntitle { }
+.nodeline .nval { font-family: var(--mono); font-size: 0.84rem; color: var(--engrave-deep); font-variant-numeric: tabular-nums; }
+.nodeline .ncite { color: var(--annot); font-size: 0.76rem; letter-spacing: 0.02em; }
+.nodeline .nkind { font-size: 0.74rem; color: var(--annot); font-style: italic; }
+.assumebox ul { list-style: none; padding: 0; font-size: 0.88rem; }
+.assumebox li { padding: 2px 0; color: var(--annot); }
+.assumebox li code { font-family: var(--mono); font-size: 0.82rem; color: var(--ink); }
+
+/* ── refusals & errors ────────────────────────────────────── */
+.refusal {
+  border: 1px solid var(--refusal); border-left: 5px solid var(--refusal);
+  background: #FDF6F3; border-radius: 3px; padding: 16px 20px; font-size: 0.94rem;
+}
+.refusal h3 { color: var(--refusal); font-size: 1rem; margin-bottom: 6px; }
+.refusal ul { margin: 8px 0 0 18px; }
+.refusal code { font-family: var(--mono); font-size: 0.85rem; }
+.refusal .why { margin-top: 10px; font-style: italic; color: var(--annot); font-size: 0.85rem; }
+
+/* ── verify pane ──────────────────────────────────────────── */
+.verify { max-width: 760px; }
+.verify p.lede { margin-bottom: 14px; }
+.verify textarea {
+  width: 100%; height: 220px; font-family: var(--mono); font-size: 0.78rem;
+  border: 1px solid var(--rule); border-radius: 3px; background: var(--card);
+  padding: 12px; color: var(--ink); resize: vertical;
+}
+.verify textarea:focus-visible { outline: 2px solid var(--engrave); }
+.verifyrow { display: flex; gap: 10px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+.verdict { margin-top: 20px; padding: 18px 22px; border-radius: 3px; font-size: 0.95rem; }
+.verdict.pass { border: 1px solid var(--engrave); border-left: 5px solid var(--engrave); background: #F3F8F4; }
+.verdict.fail { border: 1px solid var(--refusal); border-left: 5px solid var(--refusal); background: #FDF6F3; }
+.verdict h3 { font-size: 1.05rem; margin-bottom: 4px; }
+.verdict.pass h3 { color: var(--engrave-deep); }
+.verdict.fail h3 { color: var(--refusal); }
+.verdict .mono { font-family: var(--mono); font-size: 0.8rem; word-break: break-all; }
+
+footer { margin-top: 60px; border-top: 1px solid var(--rule); padding-top: 14px;
+  color: var(--annot); font-size: 0.82rem; font-style: italic; }
+footer code { font-family: var(--mono); font-style: normal; font-size: 0.78rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { animation: rise 240ms ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <div class="masthead">
+      <h1>opentax<span class="tld"> playground</span></h1>
+      <p class="tagline">a tax calculator that shows its work — running entirely in your tab</p>
+    </div>
+    <div class="seal" id="seal"></div>
+  </header>
+
+  <nav role="tablist" aria-label="Mode">
+    <button id="tab-compute" role="tab" aria-selected="true">Compute &amp; prove</button>
+    <button id="tab-verify" role="tab" aria-selected="false">Verify a proof</button>
+  </nav>
+
+  <section id="pane-compute" class="compute" role="tabpanel">
+    <form id="facts-form">
+      <div class="presets" id="presets" aria-label="Example scenarios"></div>
+
+      <fieldset>
+        <legend>Filing</legend>
+        <div class="field"><label for="f-status">Filing status</label><span class="lead"></span>
+          <select id="f-status">
+            <option value="mfj">Married filing jointly</option>
+            <option value="single">Single</option>
+            <option value="hoh">Head of household</option>
+            <option value="mfs">Married filing separately</option>
+            <option value="qss">Qualifying surviving spouse</option>
+          </select></div>
+        <div class="field"><label for="f-year">Tax year</label><span class="lead"></span>
+          <select id="f-year">
+            <option value="2026-07-06">2026 (current law)</option>
+            <option value="2025-12-31">2025</option>
+          </select></div>
+        <div class="field"><label for="f-kids">Qualifying children under 17</label><span class="lead"></span>
+          <input type="number" id="f-kids" min="0" step="1" placeholder="0"></div>
+        <div class="checks" style="margin-top:8px">
+          <label><input type="checkbox" id="f-age65"> 65 or older</label>
+          <label><input type="checkbox" id="f-blind"> blind</label>
+          <label><input type="checkbox" id="f-age25" checked> at least 25</label>
+          <label><input type="checkbox" id="f-dependent"> claimable as a dependent</label>
+        </div>
+        <div class="checks conditional" id="cond-spouse">
+          <label><input type="checkbox" id="f-spouse65"> spouse 65 or older</label>
+          <label><input type="checkbox" id="f-spouseBlind"> spouse blind</label>
+        </div>
+        <div class="checks conditional" id="cond-mfs">
+          <label><input type="checkbox" id="f-spouseItemizes"> spouse itemizes on their return</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Income</legend>
+        <div class="field"><label for="f-wages">Wages (W-2 box 1)</label><span class="lead"></span><input type="text" id="f-wages" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-interest">Taxable interest</label><span class="lead"></span><input type="text" id="f-interest" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-gains">LT capital gains + qualified dividends</label><span class="lead"></span><input type="text" id="f-gains" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-seProfit">Self-employment net profit</label><span class="lead"></span><input type="text" id="f-seProfit" placeholder="$0" inputmode="decimal"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Deductions &amp; adjustments</legend>
+        <div class="field"><label for="f-salt">State &amp; local taxes paid</label><span class="lead"></span><input type="text" id="f-salt" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-mortgageInterest">Home mortgage interest</label><span class="lead"></span><input type="text" id="f-mortgageInterest" placeholder="$0" inputmode="decimal"></div>
+        <div class="field conditional" id="cond-mortgage"><label for="f-mortgageBalance">— average mortgage balance</label><span class="lead"></span><input type="text" id="f-mortgageBalance" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-medical">Unreimbursed medical expenses</label><span class="lead"></span><input type="text" id="f-medical" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-charity">Cash charitable contributions</label><span class="lead"></span><input type="text" id="f-charity" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-tips">Qualified tips</label><span class="lead"></span><input type="text" id="f-tips" placeholder="$0" inputmode="decimal"></div>
+        <div class="field conditional" id="cond-tips"><label for="f-occupation">— tipped occupation</label><span class="lead"></span>
+          <select id="f-occupation"></select></div>
+        <div class="field"><label for="f-overtime">Qualified overtime premium</label><span class="lead"></span><input type="text" id="f-overtime" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-carLoan">Car loan interest</label><span class="lead"></span><input type="text" id="f-carLoan" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-studentLoan">Student loan interest</label><span class="lead"></span><input type="text" id="f-studentLoan" placeholder="$0" inputmode="decimal"></div>
+        <div class="field"><label for="f-hsa">HSA contribution (personal)</label><span class="lead"></span><input type="text" id="f-hsa" placeholder="$0" inputmode="decimal"></div>
+        <div class="field conditional" id="cond-hsa"><label for="f-hsaCoverage">— HDHP coverage</label><span class="lead"></span>
+          <select id="f-hsaCoverage"><option value="self">self-only</option><option value="family">family</option></select></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Payments</legend>
+        <div class="field"><label for="f-withheld">Federal tax withheld so far</label><span class="lead"></span><input type="text" id="f-withheld" placeholder="$0" inputmode="decimal"></div>
+      </fieldset>
+
+      <button type="submit" class="compute-btn">Compute — and show the proof</button>
+    </form>
+
+    <div class="result" id="result">
+      <p class="placeholder">Fill in the facts (or pick an example) and compute. The answer arrives
+      with its full derivation — every rule cited to the statute or Rev. Proc. it came from — and a
+      proof file you can verify offline. If the encoded law can't answer, it refuses; it never guesses.</p>
+    </div>
+  </section>
+
+  <section id="pane-verify" class="verify" role="tabpanel" hidden>
+    <p class="lede">Paste a proof artifact (the JSON from “Download proof” here, or
+    <code style="font-family:var(--mono);font-size:.85em">opentax eval … --proof out.json</code> on the CLI).
+    Your browser re-derives every step against its own copy of the rule corpus and compares — no server involved.</p>
+    <textarea id="proof-input" spellcheck="false" aria-label="Proof artifact JSON"></textarea>
+    <div class="verifyrow">
+      <button class="compute-btn" style="width:auto;padding:9px 26px" id="verify-btn" type="button">Verify</button>
+      <input type="file" id="proof-file" accept=".json,application/json" aria-label="or choose a proof file">
+    </div>
+    <div id="verdict"></div>
+  </section>
+
+  <footer>
+    Computation and citation, not tax advice. The same corpus, hashes and all, runs the CLI:
+    <code>pnpm opentax eval --status mfj --wages 120000 --kids 2</code> · Apache-2.0
+  </footer>
+</div>
+<script type="module" src="./main.ts"></script>
+</body>
+</html>

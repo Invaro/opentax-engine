@@ -1,0 +1,17 @@
+{
+  "description": "TY2025: the SS 172 80% limitation. Gross income $1,000,000, NOL carryforward $900,000 -> deduction capped at 80% x 1,000,000 = $800,000. TI = $200,000 -> 21% = $42,000.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 1000000,
+    "corpNOLCarryforward": 900000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "4200000",
+    "intermediates": {
+      "us.federal.corp.nol_deduction": "80000000",
+      "us.federal.corp.taxable_income": "20000000"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "MFJ, $120,000 wages, 2 qualifying children. Std $31,500 (OBBBA) -> taxable $88,500 -> tax $10,143.00; CTC 2 x $2,200 (OBBBA) = $4,400 (no phase-out) -> $5,743.00 [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 120000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "574600",
+    "intermediates": {
+      "us.federal.taxable_income": "8850000",
+      "us.federal.income_tax_before_credits": "1014600",
+      "us.federal.ctc": "440000",
+      "us.federal.ctc.reduction": "0"
+    }
+  }
+}

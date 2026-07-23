@@ -1,0 +1,13 @@
+{
+  "description": "SS 4501 stock-repurchase excise: covered corporation repurchases $10,000,000 FMV, issues $4,000,000 -> 1% x (10,000,000 - 4,000,000) = $60,000.00. A chapter-37 excise (Forms 720/7208), separate from the SS 11 income tax.",
+  "facts": {
+    "corpIsCoveredCorporation": true,
+    "corpStockRepurchasedFMV": 10000000,
+    "corpStockIssuedFMV": 4000000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.stock_buyback_excise",
+  "expect": {
+    "valueCents": "6000000"
+  }
+}

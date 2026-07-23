@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC 2025 v2 GENTLE phase-out segment (0 kids, past the $5,450/$5,451 kink): earned $17,000 falls in bracket 16,951-17,000 (true midpoint $16,975.50). credit = round($216 + (-43/4680) x ($16,975.50 - $9,475.50 anchor midpoint)) = round($216 - (43/4680) x $7,500) = round($216 - $68.91) = round($147.09) = $147 exactly. Matches the printed FTB 3514 row 16,951-17,000 -> 147 (0 kids column) exactly.",
+  "facts": { "filingStatus": "single", "wages": 17000, "qualifyingChildren": 0 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "14700" }
+}

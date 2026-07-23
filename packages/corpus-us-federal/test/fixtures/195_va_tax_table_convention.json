@@ -1,0 +1,7 @@
+{
+  "description": "VA Tax Table odd-dollar-grid convention: schedule(44,060) = 720 + 5.75% x 27,060 = 2,275.95, but the published table row 44,026-44,061 reads 2,275 (2024 Form 760 instructions p.35; rows back-solved from clean $2 increments = nearest odd dollar, ties up). Reference-validated: ty25-va-002's AmtOfTax = 2,275. Hand-computed.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 44060 },
+  "asOf": "2025-12-31",
+  "target": "us.va.income_tax",
+  "expect": { "valueCents": "227500" }
+}

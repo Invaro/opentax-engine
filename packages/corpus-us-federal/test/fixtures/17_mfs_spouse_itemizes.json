@@ -1,0 +1,17 @@
+{
+  "description": "MFS, $50,000 wages, spouse ITEMIZES: SS 63(c)(6)(A) zeroes the entire standard deduction -> taxable $50,000 -> tax 1,192.50 + 12%*36,550 + 22%*1,525 = $5,914.00. Pins the override. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 50000,
+    "spouseItemizes": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "592000",
+    "intermediates": {
+      "us.federal.standard_deduction": "0",
+      "us.federal.taxable_income": "5000000"
+    },
+    "overrideApplied": "us.federal.standard_deduction.mfs_spouse_itemizes"
+  }
+}

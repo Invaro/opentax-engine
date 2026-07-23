@@ -1,0 +1,16 @@
+{
+  "description": "Single, $90,000 wages, $3,000 student loan interest (2025). Capped at $2,500; SS 221(b)(2) ratio: 2,500 x (90,000-85,000)/15,000 = $833.33 reduction -> $1,666.67 deducted. AGI $88,333.33 -> tax $10,882.33. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "studentLoanInterest": 3000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1088100",
+    "intermediates": {
+      "us.federal.student_loan_interest_deduction": "166667",
+      "us.federal.agi": "8833333"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "TY2025 mfj: 100,000 of qualified foreign earnings (under the $130,000 limit — fully excluded) + 40,000 US wages. TI = 40,000 - 31,500 = 8,500. Stacking: tax(108,500) - tax(100,000) = 13,698 - 11,828 = $1,870.00 (the 8,500 is taxed at 12/22%, not 10%). EITC denied by SS 32(c)(1)(C).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 140000,
+    "foreignEarnedIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "187000",
+    "intermediates": {
+      "us.federal.feie.exclusion": "10000000",
+      "us.federal.eitc": "0"
+    }
+  }
+}

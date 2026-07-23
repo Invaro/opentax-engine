@@ -1,0 +1,13 @@
+{
+  "description": "Single, $15,000 wages, no kids, 65 or older: fails the SS 32(c)(1)(A)(ii)(II) age test -> EITC $0. Note isAtLeastAge25 is NOT demanded (the age-65 test short-circuits first).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 15000,
+    "isAge65OrOlder": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

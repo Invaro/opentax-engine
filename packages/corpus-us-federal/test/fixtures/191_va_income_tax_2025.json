@@ -1,0 +1,7 @@
+{
+  "description": "Virginia TAX TABLE convention (Va. Code 58.1-320 schedule at the table's odd-dollar grid): schedule(34,030) = 60 + 60 + 600 + 979.23 = 1,699.23 -> nearest odd dollar 1,699 exactly. Reference-validated: ty25-va-001's AmtOfTax = 1,699. Hand-computed.",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 34030 },
+  "asOf": "2025-12-31",
+  "target": "us.va.income_tax",
+  "expect": { "valueCents": "169900" }
+}

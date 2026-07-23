@@ -1,0 +1,7 @@
+{
+  "description": "SS 62(a)(2)(D) per-educator cap: MFJ, both spouses eligible educators, 1,000 spent each -> min(1000,300) + min(1000,300) = 600 total (was 300 under the flat-cap bug). Target above_the_line_adjustments; no other adjustments present. Hand-computed.",
+  "facts": { "filingStatus": "mfj", "wages": 50000, "educatorExpenses": 1000, "spouseEducatorExpenses": 1000 },
+  "asOf": "2025-12-31",
+  "target": "us.federal.above_the_line_adjustments",
+  "expect": { "valueCents": "60000" }
+}

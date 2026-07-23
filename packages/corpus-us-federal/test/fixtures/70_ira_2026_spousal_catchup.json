@@ -1,0 +1,19 @@
+{
+  "description": "TY2026: the SS 219(g)(7) spousal phase-out + the NEW $1,100 catch-up (first indexed increase). MFJ $245,000 wages; taxpayer age 52, NOT covered, spouse IS covered; $7,000 contributed. Limit 7,500+1,100 = 8,600. Spousal threshold 242,000 (2026), excess 3,000 of 10,000 -> reduction floor10(8,600 x 0.3 = 2,580) = 2,580 -> limit 6,020. Deduction min(7,000, 6,020) = 6,020. TI = 245,000 - 6,020 - 32,200 = 206,780 -> formula: 2,480+9,120+22%x105,980=23,315.60 -> 34,915.60. No Additional Medicare (wages < 250k MFJ). Net $34,915.60.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 245000,
+    "iraContribution": 7000,
+    "isActivePlanParticipant": false,
+    "spouseIsActivePlanParticipant": true,
+    "isAge50OrOlder": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "3491560",
+    "intermediates": {
+      "us.federal.ira_deduction": "602000",
+      "us.federal.taxable_income": "20678000"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "State-law corporation, no S election -> C CORPORATION; SS 11(b): 'The amount of the tax... shall be 21 percent of taxable income' — flat, confirmed unchanged by the OBBBA. Taxable income $1,000,000 (Form 1120 line 30) -> $210,000.00 exactly. AFSI assumed under the $1B CAMT threshold (recorded as an assumption).",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 1000000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "21000000",
+    "intermediates": {
+      "us.federal.corp.income_tax": "21000000"
+    },
+    "assumedFacts": ["corpAvgAdjustedFinancialStatementIncome"]
+  }
+}

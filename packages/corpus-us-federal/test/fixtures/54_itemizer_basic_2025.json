@@ -1,0 +1,25 @@
+{
+  "description": "TY2025: MFJ, $200,000 wages, itemizing beats the standard deduction. SALT $25,000 (under the $40,000 cap, MAGI below $500k), mortgage interest $18,000 (balance $600k <= $750k, full), charity cash $5,000 (under 60% AGI, no floor in 2025), medical $20,000 - 7.5%x200,000=15,000 -> $5,000. Itemized 25,000+18,000+5,000+5,000=53,000 > std 31,500. TI=147,000. Tax: 2,385 + 8,772 + 22%x(147,000-96,950)=11,011 -> $22,168.00. No Additional Medicare (wages <= $250k MFJ).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "stateAndLocalTaxesPaid": 25000,
+    "mortgageInterestPaid": 18000,
+    "mortgageAverageBalance": 600000,
+    "charitableCashContributions": 5000,
+    "medicalExpenses": 20000
+  },
+  "asOf": "2025-07-01",
+  "expect": {
+    "valueCents": "2216800",
+    "intermediates": {
+      "us.federal.salt_deduction": "2500000",
+      "us.federal.mortgage_interest_deduction": "1800000",
+      "us.federal.charitable_deduction_itemizer": "500000",
+      "us.federal.medical_expense_deduction": "500000",
+      "us.federal.itemized_deductions": "5300000",
+      "us.federal.deduction_election": "5300000",
+      "us.federal.taxable_income": "14700000"
+    }
+  }
+}

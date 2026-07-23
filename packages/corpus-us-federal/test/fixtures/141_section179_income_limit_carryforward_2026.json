@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: SS 179(b)(3) income limit binds. Elected cost $300,000 (under the dollar caps); active-conduct base = 250,000 - 100,000 = $150,000 -> deduction limited to $150,000; the income-limited excess $150,000 carries forward (SS 179(b)(3)(B)) — its own target.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 250000,
+    "corpOrdinaryDeductions": 100000,
+    "corpSection179Cost": 300000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.section179_carryforward",
+  "expect": {
+    "valueCents": "15000000",
+    "intermediates": {
+      "us.federal.corp.section179_deduction": "15000000"
+    }
+  }
+}

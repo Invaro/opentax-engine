@@ -1,0 +1,17 @@
+{
+  "description": "MFJ, $340,500 wages of which $20,000 qualified overtime premium. Mirrors the IRS Schedule 1-A worked example: MAGI $40,500 over $300k -> floor(40.5)=40 steps -> $4,000 reduction -> $16,000 deduction. Taxable 340,500-31,500-16,000=293,000 -> tax $56,014.00. Includes Additional Medicare Tax 0.9% x $90,500 = $814.50. [Form 8959 Part I whole-dollar: 0.9% x 90,500 = 814.50 -> $815.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 340500,
+    "qualifiedOvertimePremium": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "5682900",
+    "intermediates": {
+      "us.federal.overtime_deduction": "1600000",
+      "us.federal.taxable_income": "29300000",
+      "us.federal.additional_medicare_tax": "81500"
+    }
+  }
+}

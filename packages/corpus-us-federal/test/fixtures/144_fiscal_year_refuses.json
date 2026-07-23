@@ -1,0 +1,14 @@
+{
+  "description": "A fiscal-year corporation REFUSES: the OBBBA parameters (SS 250 rates, SS 59A 10.5%, SS 960(d) 90%, SS 448(c) $32M, the 1% charitable floor, SS 179 amounts) apply by the taxable year's BEGINNING date while this corpus selects rules by calendar date, and SS 443(b) annualization / SS 15 proration are not encoded. A fiscal filer straddling 12/31/2025 would otherwise silently get the wrong year's parameters.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 500000,
+    "corpOrdinaryDeductions": 300000,
+    "corpFiscalYearFiler": true
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

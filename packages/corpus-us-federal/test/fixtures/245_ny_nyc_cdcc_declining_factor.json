@@ -1,0 +1,15 @@
+{
+  "description": "NYC child and dependent care credit (IT-216-I Worksheet 2, 2025), declining-factor region: single, wages $26,500 -> FAGI $26,500. Factor row index = ceil((26,500 - 25,000) / 200) = ceil(7.5) = 8 -> line 6 factor = 0.765 - 0.030 x 8 = 0.525 (printed table row $26,400-26,600 -> 0.525). NYS credit $1,000; under-4 expenses $3,000 of $6,000 total -> ratio 0.5000. Line 5 = mulDiv(100000 x 300000 / 600000) = 50,000c ($500.00). Line 7 = mulDiv(50,000 x 525 / 1000) = 26,250c ($262.50) -> roundToDollar half-up -> $263.00 (26300c).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 26500,
+    "nyIt216StateCredit": 1000,
+    "nyIt216Under4Expenses": 3000,
+    "nyIt216TotalExpenses": 6000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.nyc_cdcc",
+  "expect": {
+    "valueCents": "26300"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "SS 4501(e)(3) de minimis: gross repurchases of exactly $1,000,000 do not exceed the threshold -> no excise (the test is on GROSS repurchases before the SS 4501(c)(3) issuance netting).",
+  "facts": {
+    "corpIsCoveredCorporation": true,
+    "corpStockRepurchasedFMV": 1000000,
+    "corpStockIssuedFMV": 0
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.stock_buyback_excise",
+  "expect": {
+    "valueCents": "0"
+  }
+}

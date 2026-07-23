@@ -1,0 +1,17 @@
+{
+  "description": "TY2026 single: the OBBBA second phase-down. AGI 90,000: 50 - ceil(75,000/2,000)=38 -> floor 35; further - ceil(15,000/2,000)=8 -> 27%. Expenses min(3,000, 3,000 cap) -> credit 27% x 3,000 = $810. TI 73,900 -> mid 73,925 -> 1,240 + 4,560 + 22% x 23,525 = 10,975.50 -> $10,976. Net 10,976 - 810 = $10,166.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "careQualifyingIndividuals": 1,
+    "dependentCareExpenses": 3000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "1016600",
+    "intermediates": {
+      "us.federal.cdcc.tentative": "81000",
+      "us.federal.cdcc": "81000"
+    }
+  }
+}

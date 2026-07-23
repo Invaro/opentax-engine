@@ -1,0 +1,13 @@
+{
+  "description": "TY2026: HoH, $13,500 wages, 1 kid. EIA $13,020 -> tentative capped at max $4,427; income below $23,890 threshold -> full $4,427 (Rev. Proc. 2025-32 SS 4.06).",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 13500,
+    "qualifyingChildren": 1
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "442700"
+  }
+}

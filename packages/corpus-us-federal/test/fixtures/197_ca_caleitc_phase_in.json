@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC 2025 phase-in (R&TC 17052 / FTB 3514 table): earned 2,248 with 3 kids -> $50-bracket midpoint 2,225.50 x 45% x 85% = 851.25 -> 851. Matches the printed FTB 3514 row '2,201-2,250 ... 851' and ty25-ca-001's reference CalEITC. Hand-computed.",
+  "facts": { "filingStatus": "hoh", "wages": 2248, "qualifyingChildren": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "85100" }
+}

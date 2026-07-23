@@ -1,0 +1,14 @@
+{
+  "description": "A REIT REFUSES: SS 857(b) taxes 'real estate investment trust taxable income' computed WITH the dividends-paid deduction (SS 857(b)(2)(B)) under a 90% distribution regime — ordinary 1120 logic would silently overstate the tax of a compliant REIT by roughly the entire 21%.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 1000000,
+    "corpOrdinaryDeductions": 200000,
+    "corpIsREITorRIC": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "error": "NOT_MODELED"
+  },
+  "target": "us.federal.corp.entity_level_income_tax"
+}

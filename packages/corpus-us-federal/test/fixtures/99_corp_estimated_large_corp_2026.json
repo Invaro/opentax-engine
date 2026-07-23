@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: same corporation but a SS 6655(g)(2) LARGE corporation ($1M+ TI in one of the 3 prior years) — the prior-year prong is unavailable, so the required annual payment is 100% of the current year's 42,000 -> quarterly $10,500.00. (The first-installment exception is not modeled — conservative.)",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 500000,
+    "corpOrdinaryDeductions": 300000,
+    "corpPriorYearTax": 30000,
+    "corpIsLargeCorporation": true
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.estimated.quarterly_payment",
+  "expect": {
+    "valueCents": "1050000"
+  }
+}

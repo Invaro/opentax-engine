@@ -1,0 +1,18 @@
+{
+  "description": "SS 245A participation exemption: gross income $2,000,000 includes $500,000 of foreign-source dividends from a specified 10%-owned foreign corporation (attested: non-hybrid, 365-day holding). 100% DRD, never SS 246(b)-limited -> TI = 2,000,000 - 800,000 - 500,000 = 700,000 -> 21% = $147,000.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 2000000,
+    "corpOrdinaryDeductions": 800000,
+    "corpSection245ADividends": 500000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "14700000",
+    "intermediates": {
+      "us.federal.corp.section245a_drd": "50000000",
+      "us.federal.corp.taxable_income": "70000000"
+    }
+  }
+}

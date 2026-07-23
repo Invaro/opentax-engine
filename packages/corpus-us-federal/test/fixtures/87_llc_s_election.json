@@ -1,0 +1,15 @@
+{
+  "description": "LLC with a timely Form 2553 S election, 4 shareholders (families aggregated), all eligible, one class of stock -> deemed association + S CORPORATION (Reg. 301.7701-3(c)(1)(v)(C); SS 1361(b)); SS 1363(a): no entity-level income tax -> $0.",
+  "facts": {
+    "entityLegalForm": "llc",
+    "filedForm2553SElection": true,
+    "sCorpShareholderCount": 4,
+    "sCorpHasIneligibleShareholder": false,
+    "sCorpHasMultipleStockClasses": false
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

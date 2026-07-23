@@ -1,0 +1,13 @@
+{
+  "description": "Single, $15,000 wages, no kids, age 25-64 (2025). EIC Table: mid 15,025 -> min(7.65% x 15,025, $649) = $649; reduction 7.65% x (15,025-10,620=4,405) = 337.0 (336.98) -> 312.02 -> table $312.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 15000,
+    "isAtLeastAge25": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "31200"
+  }
+}

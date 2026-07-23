@@ -1,0 +1,7 @@
+{
+  "description": "CA 2025 Tax Table convention (v5, default method, under $100,000): stateTaxableIncome 40,100 falls in the $100-wide bracket 40,051-40,150, midpoint $40,100.50. Schedule X (single): 414.49 (4% bracket base at $26,264) + 4% x (40,100.50 - 26,264) = 414.49 + 553.46 = 967.95 -> nearest dollar 968. Matches the FTB 2025 tax table row 40,051-40,150 -> Single $968 exactly.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 40100 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": { "valueCents": "96800" }
+}

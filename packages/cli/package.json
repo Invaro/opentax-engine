@@ -1,0 +1,51 @@
+{
+  "name": "@invaro/opentax-cli",
+  "version": "0.1.1",
+  "description": "opentax \u2014 evaluate US tax questions and print machine-checkable proof trees",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "bin": {
+    "opentax": "./bundle/bin.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "bundle",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && esbuild dist/bin.js --bundle --platform=node --format=esm --outdir=bundle --banner:js=\"import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\" --log-level=warning"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^5.8.3",
+    "@invaro/opentax-compose": "workspace:*",
+    "@invaro/opentax-core": "workspace:*",
+    "@invaro/opentax-corpus-us-federal": "workspace:*",
+    "@invaro/opentax-solve": "workspace:^",
+    "commander": "^13.1.0",
+    "picocolors": "^1.1.1",
+    "zod": "^3.24.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Invaro/opentax-engine.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/Invaro/opentax-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Invaro/opentax-engine/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "tax",
+    "cli",
+    "us-tax",
+    "tax-calculator"
+  ]
+}

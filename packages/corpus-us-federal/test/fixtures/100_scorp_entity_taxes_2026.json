@@ -1,0 +1,24 @@
+{
+  "description": "TY2026: S corporation (LLC + valid S election) with C-year accumulated E&P — BOTH entity-level taxes. SS 1375: passive investment income 40,000 > 25% of 100,000 gross receipts -> excess net passive income = 30,000 x (40,000-25,000)/40,000 = 11,250 -> 21% = 2,362.50. SS 1374: built-in gain 10,000 (within the recognition period), capped at as-if-C TI 50,000 -> 21% = 2,100.00. Entity-level total $4,462.50.",
+  "facts": {
+    "entityLegalForm": "llc",
+    "filedForm2553SElection": true,
+    "sCorpShareholderCount": 4,
+    "sCorpHasIneligibleShareholder": false,
+    "sCorpHasMultipleStockClasses": false,
+    "sCorpHasAccumulatedEandP": true,
+    "sCorpPassiveInvestmentIncome": 40000,
+    "sCorpGrossReceipts": 100000,
+    "sCorpNetPassiveIncome": 30000,
+    "sCorpTaxableIncomeAsC": 50000,
+    "sCorpRecognizedBuiltInGain": 10000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "446250",
+    "intermediates": {
+      "us.federal.corp.s_corp_entity_taxes": "446250"
+    }
+  }
+}

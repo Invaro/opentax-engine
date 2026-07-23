@@ -1,0 +1,18 @@
+{
+  "description": "TY2025: MFS with plan coverage — the SS 219(g)(3)(B)(iii) $0 threshold. $8,000 wages, covered, $3,000 contributed. Excess 8,000 of 10,000 -> reduction floor10(7,000 x 0.8 = 5,600) = 5,600 -> limit 1,400. Deduction min(3,000, 1,400, compensation 8,000) = 1,400. TI = 8,000 - 1,400 - 15,750 -> 0. EITC: MFS modeled conservatively as $0. Net $0.00. (Living-apart-all-year exception SS 219(g)(4) not modeled — conservative, disclosed.)",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 8000,
+    "iraContribution": 3000,
+    "isActivePlanParticipant": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.ira_deduction": "140000",
+      "us.federal.taxable_income": "0"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "HoH, $30,000 wages, 2 kids, $12,000 LTCG (2025). Gains exceed the SS 32(i) investment limit -> EITC $0. Gains land in the 0% bracket; tax $637.50 fully absorbed by CTC; ACTC = min(unused $3,762.50, cap 2 x $1,700 = $3,400, 15% x 27,500 = $4,125) = $3,400 (pins the per-child refundable cap). Net = -$3,400. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 30000,
+    "qualifyingChildren": 2,
+    "longTermCapitalGains": 12000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-340000",
+    "intermediates": {
+      "us.federal.eitc": "0",
+      "us.federal.income_tax_before_credits": "63800",
+      "us.federal.actc": "340000"
+    }
+  }
+}

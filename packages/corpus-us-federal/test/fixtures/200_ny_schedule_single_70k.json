@@ -1,0 +1,7 @@
+{
+  "description": "NYS rate schedule (>= $65,000 uses the schedule per IT-201-I line 39): single, taxable 70,000 -> 600 + 5.5% x (70,000 - 13,900) = 600 + 3,085.50 = 3,685.50 -> 3,686 (whole dollar, half-up). Schedule fixed-dollar anchors cross-check: 340 at 8,500, 484 at 11,700, 600 at 13,900 (IT-201-I p.33). Hand-computed.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 70000 },
+  "asOf": "2025-12-31",
+  "target": "us.ny.income_tax",
+  "expect": { "valueCents": "368600" }
+}

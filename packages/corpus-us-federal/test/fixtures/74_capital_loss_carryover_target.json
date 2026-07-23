@@ -1,0 +1,13 @@
+{
+  "description": "TY2025: the carryover as its own question — SS 1212(b): $8,000 net loss minus the $3,000 allowed -> $5,000 carries to the following year. (SS 1212(b)(2) low-income preservation and character split not modeled — disclosed.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "netCapitalLoss": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.capital_loss_carryover",
+  "expect": {
+    "valueCents": "500000"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "description": "TY2025: the fixture-54 homeowner itemizer, now with the AMT computed rather than ignored — SALT addback of 25,000 puts AMTI at 172,000, far under the exemption phase-out; TMT (26% x 35,000 = 9,100 on the post-exemption base) is well below the 22,168 regular tax -> AMT $0 and the net is UNCHANGED. Pins that implementing AMT did not disturb ordinary returns.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "stateAndLocalTaxesPaid": 25000,
+    "mortgageInterestPaid": 18000,
+    "mortgageAverageBalance": 600000,
+    "charitableCashContributions": 5000,
+    "medicalExpenses": 20000
+  },
+  "asOf": "2025-07-01",
+  "expect": {
+    "valueCents": "2216800",
+    "intermediates": {
+      "us.federal.amt": "0"
+    }
+  }
+}

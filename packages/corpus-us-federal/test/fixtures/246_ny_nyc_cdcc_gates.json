@@ -1,0 +1,15 @@
+{
+  "description": "NYC child and dependent care credit (IT-216-I Worksheet 2, 2025), stop-condition gates: single, wages $31,000 -> FAGI $31,000 over the $30,000 cutoff ('If your FAGI is over $30,000 ... stop') -> $0 despite a $1,000 NYS credit and a 100% under-4 expense share. (The under-4 = $0 and total-expenses = $0 stops are the same or-gate; the ratio cap and factor never evaluate.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 31000,
+    "nyIt216StateCredit": 1000,
+    "nyIt216Under4Expenses": 4000,
+    "nyIt216TotalExpenses": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.nyc_cdcc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

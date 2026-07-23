@@ -1,0 +1,13 @@
+{
+  "description": "HoH, $13,000 wages, 1 kid (2025). Earned above the $12,730 EIA -> tentative capped at max $4,328; income below the $23,350 threshold -> full EITC $4,328.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 13000,
+    "qualifyingChildren": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "432800"
+  }
+}

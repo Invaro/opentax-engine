@@ -1,0 +1,13 @@
+{
+  "description": "SS 1411(c)(1)(B) properly-allocable deductions reduce net investment income (Form 8960 lines 9-10): single, wages 300,000, interest 5,000, LTCG 20,000, allocable investment expenses 1,500. NII = 25,000 - 1,500 = 23,500; MAGI excess over 200,000 = 125,000; lesser = 23,500 -> 3.8% = 893.00. Hand-computed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 300000,
+    "taxableInterest": 5000,
+    "longTermCapitalGains": 20000,
+    "niitInvestmentExpenses": 1500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": { "valueCents": "89300" }
+}

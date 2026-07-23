@@ -1,0 +1,37 @@
+{
+  "description": "Triaged disagreements where opentax intentionally differs from PolicyEngine US. Each entry cites the authority for our reading.",
+  "differences": [
+    {
+      "match": {
+        "status": "qss",
+        "kids": ">=1",
+        "wagesOver": 200000
+      },
+      "component": "CTC phase-out threshold",
+      "opentax": "$200,000 for qualifying surviving spouse",
+      "policyengine": "$400,000 (treats surviving spouse as a joint return)",
+      "authority": "PRIMARY SOURCE VERIFIED (2026-07-07): IRS 2025 Instructions for Schedule 8812 (irs.gov/instructions/i1040s8), 'Limits on the CTC and ODC': 'Married filing jointly - $400,000; All other filing statuses - $200,000.' QSS is a distinct filing status -> $200,000. Statutorily: 26 U.S.C. 24(h)(3) applies $400,000 'in the case of a joint return'; a surviving-spouse return is not a joint return (6013); 2(a) grants surviving spouses joint RATES only. Note: popular secondary sources (and PolicyEngine) group QSS with MFJ here \u2014 a paraphrase error the primary text contradicts.",
+      "verdict": "policyengine-bug"
+    },
+    {
+      "match": {
+        "tipsRegion": true
+      },
+      "component": "\u00a7 224 tips deduction modeling",
+      "opentax": "capped deduction ($25,000), $100-per-$1,000 MAGI phase-out over $150k/$300k (floor per Schedule 1-A), tips remain earned income for EITC",
+      "policyengine": "tip_income modeled as an uncapped, un-phased exclusion from gross income; tips also drop out of EITC earned income",
+      "authority": "PRIMARY SOURCE (26 U.S.C. \u00a7 224, read from the U.S. Code): 'There shall be allowed as a DEDUCTION... shall not exceed $25,000... reduced (but not below zero) by $100 for each $1,000 by which MAGI exceeds $150,000 ($300,000 joint).' Instrumented PE (2026-07-07): tips 26,000 on 40,000 wages -> PE AGI 14,000 (full exclusion, no cap) and childless EITC $390.43 granted on tip-free 'earned income' \u2014 \u00a7 32 earned income includes tips (wages). Where representations coincide (tips under cap, MAGI under threshold, no EITC) both engines agree to the cent.",
+      "verdict": "policyengine-divergence-from-statute"
+    },
+    {
+      "match": {
+        "overtimeFractionalPhaseout": true
+      },
+      "component": "\u00a7\u00a7 224/225 phase-out step rounding",
+      "opentax": "$100 per WHOLE $1,000 of excess MAGI (floor) \u2014 IRS Schedule 1-A instructions: 'divide by $1,000 and round down'",
+      "policyengine": "continuous 10% of excess MAGI (no step rounding)",
+      "authority": "IRS Schedule 1-A instructions worked example (mirrored exactly by our fixture 20): MAGI $40,500 over the joint threshold -> 40 whole steps -> $4,000 reduction; continuous would give $4,050. Differences appear only when the excess is a fractional multiple of $1,000; magnitude <= $100 x marginal rate.",
+      "verdict": "policyengine-divergence-from-IRS-worksheet"
+    }
+  ]
+}

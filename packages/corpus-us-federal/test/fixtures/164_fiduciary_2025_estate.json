@@ -1,0 +1,12 @@
+{
+  "description": "TY2025 estate (SS 642(b)(1): $600 exemption): income 10,000 -> TI 9,400 -> 315 + 24% x 6,250 = $1,815.00 (Rev. Proc. 2024-40 SS 2.01 Table 5: $315 plus 24% of the excess over $3,150).",
+  "facts": {
+    "fiduciaryType": "estate",
+    "fiduciaryIncomeBeforeExemption": 10000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "181500"
+  },
+  "target": "us.federal.fiduciary.income_tax"
+}

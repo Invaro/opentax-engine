@@ -1,0 +1,13 @@
+{
+  "description": "TY2026 OBBBA SS 70105: tiny side hustle, $2,000 profit. QBI $1,858.70 >= $1,000 -> the new $400 MINIMUM deduction applies even though 20% formulas give less (base would be $0 via the taxable-income limit). Not applicable in 2025.",
+  "facts": {
+    "filingStatus": "single",
+    "selfEmploymentNetProfit": 2000,
+    "wages": 0
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "40000"
+  }
+}

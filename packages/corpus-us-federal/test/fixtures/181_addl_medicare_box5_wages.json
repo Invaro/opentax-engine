@@ -1,0 +1,14 @@
+{
+  "description": "Form 8959 per-line whole-dollar rounding with W-2 BOX 5 (mirrors TaxCalcBench ty25-us-007/008): Part I = 0.9% x (164,772 - 125,000) = 357.95 -> $358; Part II = 0.9% x SE net earnings 2,361.39 (threshold fully absorbed by wages) = 21.25 -> $21; total $379 - the reference return's number. useFormulaMethod gives the combined exact-cents 379.20. Hand-computed.",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 160368,
+    "medicareWages": 164772,
+    "selfEmploymentNetProfit": 2557
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.additional_medicare_tax",
+  "expect": {
+    "valueCents": "37900"
+  }
+}

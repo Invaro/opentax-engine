@@ -1,0 +1,7 @@
+{
+  "description": "VA useFormulaMethod=true gives the raw rate schedule with half-up rounding, per the 2025 Form 760 instructions' own example at $90,000: 720 + 5.75% x 73,000 = 4,917.50 -> 4,918. Hand-computed.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 90000, "useFormulaMethod": true },
+  "asOf": "2025-12-31",
+  "target": "us.va.income_tax",
+  "expect": { "valueCents": "491800" }
+}

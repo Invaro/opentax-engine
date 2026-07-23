@@ -1,0 +1,14 @@
+{
+  "description": "NY IT-214 Real Property Tax Credit (2025 Form IT-214, printed line-12 percentage menu): FAGI $12,368; rent $6,000 including heat+gas+electricity+furnishings (no board) -> 75% menu row -> line 12 adjusted rent = $4,500.00; line 13 average monthly = 4,500/12 = $375 <= $450 cap; line 14 = 25% x 4,500 = $1,125 = line 18; line 19 = FAGI x Table 1 rate 0.060 ($11,001-14,000 bracket) = $742.08 < line 18 -> qualifies. Household member 65+ (line 7) routes to Table A; FAGI $12,368 in the $11,001-$14,000 bracket -> $200 flat.",
+  "facts": {
+    "isAge65OrOlder": true,
+    "nyIt214Fagi": 12368,
+    "nyIt214Eligible": true,
+    "nyIt214TotalRent": 6000,
+    "nyIt214RentPercent": "75",
+    "nyIt214MonthsPaid": "12"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.it214",
+  "expect": { "valueCents": "20000" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "CA 2025 Tax Table convention (v5, default method): stateTaxableIncome 40,100, MFJ, falls in bracket 40,051-40,150, midpoint $40,100.50. Schedule Y (2% bracket $22,158-$52,528): 221.58 (1% x 22,158) + 2% x (40,100.50 - 22,158) = 221.58 + 358.85 = 580.43 -> nearest dollar 580. Matches the FTB 2025 tax table row 40,051-40,150 -> MFJ $580 exactly.",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 40100 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": { "valueCents": "58000" }
+}

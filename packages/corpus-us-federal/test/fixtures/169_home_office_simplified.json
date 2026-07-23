@@ -1,0 +1,12 @@
+{
+  "description": "Rev. Proc. 2013-13 simplified home office: 400 sq ft capped at 300 x $5 = $1,500, under the SS 280A(c)(5) income limit (SE profit 50,000). A STANDALONE target — net it into --se-profit yourself (it changes SE tax and QBI).",
+  "facts": {
+    "homeOfficeSquareFeet": 400,
+    "selfEmploymentNetProfit": 50000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "150000"
+  },
+  "target": "us.federal.home_office_simplified"
+}

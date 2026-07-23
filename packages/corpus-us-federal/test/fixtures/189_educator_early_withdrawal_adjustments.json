@@ -1,0 +1,13 @@
+{
+  "description": "SS 62(a)(2)(D) educator expenses (400 spent, capped at the 2025 $300) + SS 62(a)(9) early-withdrawal penalty (1,212, uncapped, 1099-INT box 2) as above-the-line adjustments (mirrors TaxCalcBench ty25-ca-002's federal substrate): single, wages 50,000, interest 2,000 -> AGI = 52,000 - 300 - 1,212 = 50,488. Hand-computed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "taxableInterest": 2000,
+    "educatorExpenses": 400,
+    "earlyWithdrawalPenaltyPaid": 1212
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": { "valueCents": "5048800" }
+}

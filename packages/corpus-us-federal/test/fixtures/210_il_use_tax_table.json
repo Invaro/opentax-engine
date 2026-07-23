@@ -1,0 +1,7 @@
+{
+  "description": "Illinois Use Tax (UT) Table, no-receipts estimate: AGI 45,000 (wages only) falls in the $40,001-$50,000 row -> $23 flat (2025 IL-1040 instructions, verbatim table).",
+  "facts": { "filingStatus": "single", "wages": 45000 },
+  "asOf": "2025-12-31",
+  "target": "us.il.use_tax",
+  "expect": { "valueCents": "2300" }
+}

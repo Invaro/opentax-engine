@@ -1,0 +1,18 @@
+{
+  "description": "Casualty losses, both regimes at once (mirrors TaxCalcBench ty25-us-002): HoH, AGI 33,650 (wages 32,000 + other income 1,650). Itemized side: SALT 950 + mortgage 6,800 + medical (6,000 - 7.5% x 33,650 = 3,476.25) + charitable 4,500 + casualty [federal-disaster 9,900 - 10% AGI 3,365 = 6,535, plus qualified 2,500] = 24,761.25. Standard side: 23,625 HoH + 2,500 qualified-disaster ADD (4684 instructions: deductible without itemizing) = 26,125. Election takes 26,125 - matches the reference return's TotalItemizedOrStandardDedAmt exactly.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 32000,
+    "otherOrdinaryIncome": 1650,
+    "stateAndLocalTaxesPaid": 950,
+    "mortgageInterestPaid": 6800,
+    "mortgageAverageBalance": 100000,
+    "medicalExpenses": 6000,
+    "charitableCashContributions": 4500,
+    "casualtyFederalDisasterLosses": 9900,
+    "casualtyQualifiedDisasterLosses": 2500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.deduction_election",
+  "expect": { "valueCents": "2612500" }
+}

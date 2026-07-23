@@ -1,0 +1,7 @@
+{
+  "description": "NYS tax table bottom row: taxable income 0 -> tax 0 (printed row $0-$13 -> $0; the generic $50-midpoint would wrongly charge $1). Reference-validated: ty25-ny-001 line 39 = 0 on zero taxable income. Hand-computed.",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 0 },
+  "asOf": "2025-12-31",
+  "target": "us.ny.income_tax",
+  "expect": { "valueCents": "0" }
+}

@@ -1,0 +1,11 @@
+{
+  "description": "TY2026: what one $200,000 employee costs the employer in federal payroll tax — 6.2% of the $184,500 SSA base (11,439) + 1.45% Medicare on all wages (2,900; the employer does NOT match the 0.9% additional tax) + net-0.6% FUTA on the first $7,000 ($42, unchanged since 1983). Total $14,381.00.",
+  "facts": {
+    "employeeAnnualWages": 200000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.employer.payroll_tax",
+  "expect": {
+    "valueCents": "1438100"
+  }
+}

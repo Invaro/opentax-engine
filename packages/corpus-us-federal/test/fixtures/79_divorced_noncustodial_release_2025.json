@@ -1,0 +1,18 @@
+{
+  "description": "TY2025: divorced parents, the NONCUSTODIAL parent holds a Form 8332 release (SS 152(e)(2)). The residency test is replaced by the release — depLivedWithTaxpayerOverHalfYear (a no-default fact the base rule always demands) is never asked. Child age 10. Qualifying child: YES.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 80000,
+    "depDivorcedParentsRule": true,
+    "taxpayerIsCustodialParent": false,
+    "custodialParentReleasedClaim": true,
+    "depRelationshipChild": true,
+    "depAge": 10
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.dependent.qualifying_child",
+  "expect": {
+    "valueBool": true,
+    "overrideApplied": "us.federal.dependent.qualifying_child.divorced_release"
+  }
+}

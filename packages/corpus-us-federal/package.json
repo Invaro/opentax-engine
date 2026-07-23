@@ -1,0 +1,51 @@
+{
+  "name": "@invaro/opentax-corpus-us-federal",
+  "version": "0.35.1",
+  "description": "US federal individual income tax rules as cited, content-addressed data (TY2025)",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "gen:lock": "pnpm build && node scripts/gen-lock.mjs"
+  },
+  "dependencies": {
+    "@invaro/opentax-core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Invaro/opentax-engine.git",
+    "directory": "packages/corpus-us-federal"
+  },
+  "homepage": "https://github.com/Invaro/opentax-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Invaro/opentax-engine/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "tax",
+    "us-tax",
+    "irs",
+    "tax-law",
+    "corpus"
+  ],
+  "private": true
+}

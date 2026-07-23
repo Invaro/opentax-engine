@@ -1,0 +1,18 @@
+{
+  "description": "shortTermCapitalGains is taxed at ORDINARY rates, not folded into the SS 1(h) preferential bucket. Single, wages 30,000, shortTermCapitalGains 5,000 (useFormulaMethod for exact-cent arithmetic). Hand-computed (TY2025): gross income = AGI = 35,000; taxable income = 35,000 - std ded 15,750 = 19,250. ordinary_taxable_income = max0(19,250 - (longTermCapitalGains 0 + qualifiedDividends 0)) = 19,250 -- the FULL taxable income, proving the $5,000 short-term gain was NOT excluded as preferential. Tax at the 2025 single brackets: 11,925*10% + (19,250-11,925)*12% = 1,192.50 + 879.00 = $2,071.50 = 207,150 cents. No credits/other taxes apply (AGI/wages far below every threshold) -> net_tax = 207,150 cents, equal to income_tax_before_credits -- confirming none of the $5,000 got the 0/15/20% preferential treatment.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "shortTermCapitalGains": 5000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "207150",
+    "intermediates": {
+      "us.federal.taxable_income": "1925000",
+      "us.federal.ordinary_taxable_income": "1925000",
+      "us.federal.income_tax_before_credits": "207150"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Pennsylvania flat 3.07% (72 P.S. § 7302): 50,000 x 3.07% = 1,535.00.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2025-12-31",
+  "target": "us.pa.income_tax",
+  "expect": { "valueCents": "153500" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC FAGI gate (R&TC 17052 / FTB 3514: BOTH earned income AND federal AGI must be under $32,901): earned income 20,000 is under the ceiling but AGI = 20,000 wages + 230,000 LTCG = 250,000 is not -> credit $0 (v2 wrongly granted 389 here). Hand-computed.",
+  "facts": { "filingStatus": "qss", "wages": 20000, "longTermCapitalGains": 230000, "qualifyingChildren": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "0" }
+}

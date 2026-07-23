@@ -1,0 +1,16 @@
+{
+  "description": "QBI base netted by an external QBI-eligible loss (Reg. 1.199A-1(d)(2)(iii); mirrors TaxCalcBench ty25-us-005): MFJ wages 420,000 (box 3 = 168,600), Schedule C 50,000, allowed nonpassive SS 469(c)(7) rental loss 29,000 flagged QBI. QBI pool = (50,000 - half-SE 1,135) - 29,000 = 19,865 -> 20% = $3,973.00 - the reference return's QBI deduction. The wage limit (200,000 W-2 wages paid) does not bind.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 420000,
+    "socialSecurityWages": 168600,
+    "selfEmploymentNetProfit": 50000,
+    "qbiW2Wages": 200000,
+    "businessIsSSTB": false,
+    "nonpassiveScheduleELoss": 29000,
+    "qbiLossOffset": 29000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": { "valueCents": "397300" }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "TY2025 single adoption: expenses 20,000 capped at $17,280 (Rev. Proc. 2024-40 SS 2.04), no phase-out at AGI 60,000. OBBBA SS 23(a)(4) refundable portion (effective TY2025): $5,000. Nonrefundable tentative 12,280 limited to tax: TI 44,250 -> mid 44,275 -> 1,192.50 + 12% x 32,350 = 5,074.50 -> $5,075 -> carryforward 12,280 - 5,075 = $7,205. Net = 0 - 5,000 refundable = -$5,000.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "qualifiedAdoptionExpenses": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-500000",
+    "intermediates": {
+      "us.federal.adoption.allowed": "1728000",
+      "us.federal.adoption.refundable": "500000",
+      "us.federal.adoption.nonrefundable": "507500"
+    }
+  }
+}

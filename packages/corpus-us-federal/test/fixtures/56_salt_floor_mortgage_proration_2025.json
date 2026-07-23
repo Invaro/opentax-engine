@@ -1,0 +1,22 @@
+{
+  "description": "TY2025: MFJ, $600,000 wages — the SALT floor exactly: cap 40,000 - 30%x100,000=30,000 -> exactly the $10,000 floor. Mortgage interest $20,000 on a $1,000,000 average balance prorates: 20,000 x 750,000/1,000,000 = 15,000. Charity cash 10,000 (no floor in 2025). Itemized 10,000+15,000+10,000=35,000 > std 31,500. TI=565,000. Tax: 2,385+8,772+24,145+45,096+34,064+35%x(565,000-501,050)=22,382.50 -> 136,844.50. Additional Medicare 0.9%x350,000=3,150. Net $139,994.50.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 600000,
+    "stateAndLocalTaxesPaid": 30000,
+    "mortgageInterestPaid": 20000,
+    "mortgageAverageBalance": 1000000,
+    "charitableCashContributions": 10000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "13999450",
+    "intermediates": {
+      "us.federal.salt_deduction": "1000000",
+      "us.federal.mortgage_interest_deduction": "1500000",
+      "us.federal.charitable_deduction_itemizer": "1000000",
+      "us.federal.itemized_deductions": "3500000",
+      "us.federal.taxable_income": "56500000"
+    }
+  }
+}

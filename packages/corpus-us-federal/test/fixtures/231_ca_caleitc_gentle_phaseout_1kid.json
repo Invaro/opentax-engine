@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC 2025 v2 GENTLE phase-out segment (1 kid, past the $11,800/$11,801 kink): earned $12,000 falls in bracket 11,951-12,000, which IS the gentle segment's anchor row (true midpoint $11,975.50, printed credit $629) — credit = $629 + (-541/18000) x 0 = $629 exactly. Matches the printed FTB 3514 row 11,951-12,000 -> 629 (1 kid column) exactly, confirming the segment-routing (steep vs. gentle) picks the gentle branch correctly past the kink.",
+  "facts": { "filingStatus": "single", "wages": 12000, "qualifyingChildren": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "62900" }
+}

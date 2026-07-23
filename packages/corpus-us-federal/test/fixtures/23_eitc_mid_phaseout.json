@@ -1,0 +1,13 @@
+{
+  "description": "HoH, $30,000 wages, 2 kids (2025). EIC Table method (SS 32(f), $50 brackets at midpoints): earned lookup at 30,025 -> max $7,152 minus 21.06% x (30,025-23,350=6,675) = 1,405.76 -> 5,746.24 -> table value $5,746 (whole dollars). AGI = earned so the AGI lookup is identical.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 30000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "574600"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NY IT-214 (2025), Table B renter: FAGI $4,000; rent $4,800 with no services included -> 100% menu row -> adjusted rent $4,800; average monthly = $400 <= $450; line 14 = $1,200 = line 18; line 19 = 4,000 x 0.040 ($3,001-5,000 Table 1 bracket) = $160 < $1,200 -> qualifies. No household member 65+ -> Table B, FAGI $0-5,000 bracket -> $75 flat.",
+  "facts": {
+    "nyIt214Fagi": 4000,
+    "nyIt214Eligible": true,
+    "nyIt214TotalRent": 4800,
+    "nyIt214RentPercent": "100",
+    "nyIt214MonthsPaid": "12"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.it214",
+  "expect": { "valueCents": "7500" }
+}

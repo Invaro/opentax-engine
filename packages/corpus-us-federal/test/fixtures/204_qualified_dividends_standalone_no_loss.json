@@ -1,0 +1,13 @@
+{
+  "description": "Equivalence check (1 of 2): qualifiedDividends entered STANDALONE with no capital loss. Single, wages 50,000, qualifiedDividends 5,000, no netCapitalLoss. Hand-computed (useFormulaMethod, TY2025): gross income = AGI = 55,000; taxable income = 55,000 - std ded 15,750 = 39,250; ordinary_taxable_income = 39,250 - 5,000 = 34,250. Taxable income (39,250) is under the single zero-rate breakpoint ($48,350), so the entire $5,000 preferential amount lands at 0%: gain0 = min(48350,39250) - 34250 = 5,000. Ordinary tax on 34,250 (2025 single 10%/12%): 11,925*10% + (34,250-11,925)*12% = 1,192.50 + 2,679.00 = 3,871.50 = 387,150 cents = net_tax. This must equal fixture 205's result, which puts the same $5,000 in longTermCapitalGains instead — proving the two facts are equivalent absent a capital loss.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "qualifiedDividends": 5000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "387150"
+  }
+}

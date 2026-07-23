@@ -1,0 +1,17 @@
+{
+  "description": "SS 32(i) denial driven by the NEW standalone shortTermCapitalGains/ordinaryDividends facts. MFJ, wages 28,921, taxableInterest 0, shortTermCapitalGains 14,000, longTermCapitalGains 4,800, ordinaryDividends 301, 1 qualifying child. Investment income = 0 + 4,800 + 0 (qualifiedDividends) + 14,000 + 301 = 19,101, which exceeds the TY2025 MFJ SS 32(i) limit of $11,950 -> EIC = $0 even though earned income (28,921) and AGI are well inside the credit's phase-in/phase-out range. Before this fix, shortTermCapitalGains/ordinaryDividends were invisible to the SS 32(i) test and this return would have wrongly received a credit.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 28921,
+    "taxableInterest": 0,
+    "shortTermCapitalGains": 14000,
+    "longTermCapitalGains": 4800,
+    "ordinaryDividends": 301,
+    "qualifyingChildren": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

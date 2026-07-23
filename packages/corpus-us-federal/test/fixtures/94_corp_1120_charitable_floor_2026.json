@@ -1,0 +1,21 @@
+{
+  "description": "TY2026: the OBBBA 1% corporate charitable floor. Gross income $2,000,000, ordinary deductions $1,000,000 -> base $1,000,000. Charity $100,000: capped at 10% (100,000) minus the NEW 1% floor (10,000) -> $90,000 deductible. Dividends $100,000 (20-80% owned): 65% DRD = 65,000, under the SS 246(b) cap (65% x 910,000). TI = 1,000,000 - 90,000 - 65,000 = 845,000 -> 21% = $177,450.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 2000000,
+    "corpOrdinaryDeductions": 1000000,
+    "corpCharitableContributions": 100000,
+    "corpDividendsReceived": 100000,
+    "corpDrdOwnershipTier": "20-to-80"
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "17745000",
+    "intermediates": {
+      "us.federal.corp.charitable_deduction": "9000000",
+      "us.federal.corp.dividends_received_deduction": "6500000",
+      "us.federal.corp.taxable_income": "84500000"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "description": "DETERMINATION: MFS filer asks about the tips deduction -> FALSE immediately (SS 224: married must file jointly). The guard order means the engine does NOT even ask their occupation \u2014 a definitive no with the minimum facts.",
+  "facts": {
+    "filingStatus": "mfs"
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.eligible.tips_deduction",
+  "expect": {
+    "valueBool": false
+  }
+}

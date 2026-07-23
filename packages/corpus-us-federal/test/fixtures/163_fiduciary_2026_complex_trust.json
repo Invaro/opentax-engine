@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 complex trust (SS 642(b): $100 exemption): income 20,000 -> TI 19,900 -> SS 1(e) compressed brackets (Rev. Proc. 2025-32 SS 4.01 Table 5): 330 + 24% x 8,400 + 35% x 4,300 + 37% x 3,900 = $5,294.00 — cross-checked against the printed cumulative ($3,851 + 37% of the excess over $16,000).",
+  "facts": {
+    "fiduciaryType": "complex-trust",
+    "fiduciaryIncomeBeforeExemption": 20000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "529400"
+  },
+  "target": "us.federal.fiduciary.income_tax"
+}

@@ -1,0 +1,23 @@
+{
+  "description": "TY2026: a SS 1(g) child whose unearned income ($2,000) is under the $2,700 threshold -> net unearned income $0, and the Form 8615 greater-of collapses to the child's regular tax. Wages $6,000 + interest $2,000, dependent std = 6,450 -> TI 1,550 -> Table midpoint 1,562.50 -> 10% -> $156. Parent facts still demanded (never guessed): MFJ TI 100,000, no preferential income; allocable parental tax = 0. Net $156.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 6000,
+    "taxableInterest": 2000,
+    "isClaimedAsDependent": true,
+    "isSubjectToKiddieTax": true,
+    "parentTaxableIncome": 100000,
+    "parentFilingStatus": "mfj",
+    "parentHasPreferentialIncome": false,
+    "isAtLeastAge25": false
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "15600",
+    "intermediates": {
+      "us.federal.kiddie.net_unearned_income": "0",
+      "us.federal.kiddie_tax": "15600",
+      "us.federal.taxable_income": "155000"
+    }
+  }
+}

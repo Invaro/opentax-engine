@@ -1,0 +1,17 @@
+{
+  "description": "Single, $190,000 wages + $50,000 LTCG (2025). Ordinary tax $34,667 + 15% x 50,000 = $42,167. NIIT: 3.8% x min(50,000, MAGI 240,000-200,000) = $1,520. Total $43,687.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 190000,
+    "longTermCapitalGains": 50000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "4368700",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "4216700",
+      "us.federal.niit": "152000",
+      "us.federal.additional_medicare_tax": "0"
+    }
+  }
+}

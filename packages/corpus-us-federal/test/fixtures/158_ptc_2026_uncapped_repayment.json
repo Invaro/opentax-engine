@@ -1,0 +1,19 @@
+{
+  "description": "TY2026 mfj family of 4 (FPL 15,650 + 3 x 5,500 = 32,150): income 60,000 -> 186.62% FPL (floor). Tier 150-200%: 4.19 + (6.60-4.19) x 3,662/5,000 = 4.19 + 1.77 = 5.96% -> contribution 3,576; PTC = min(15,000, 14,000 - 3,576) = 10,424. APTC 12,000 -> excess 1,576 repaid IN FULL: OBBBA SS 71305 struck the SS 36B(f)(2)(B) cap for 2026 (under prior law this household would have repaid at most $1,950).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 60000,
+    "ptcHouseholdSize": 4,
+    "slcspAnnualPremium": 14000,
+    "marketplacePremiumsPaid": 15000,
+    "advancePTC": 12000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "157600",
+    "intermediates": {
+      "us.federal.ptc": "1042400"
+    }
+  },
+  "target": "us.federal.ptc.excess_aptc_repayment"
+}

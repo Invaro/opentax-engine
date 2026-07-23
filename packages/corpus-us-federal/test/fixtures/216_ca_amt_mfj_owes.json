@@ -1,0 +1,7 @@
+{
+  "description": "CA AMT (Schedule P (540)), MFJ, same as fixture 215 but caRegularTax 15,000: TMT 19,343.31 - regular tax 15,000 = AMT 4,343.31.",
+  "facts": { "filingStatus": "mfj", "caAmti": 400000, "caRegularTax": 15000 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.amt",
+  "expect": { "valueCents": "434331" }
+}

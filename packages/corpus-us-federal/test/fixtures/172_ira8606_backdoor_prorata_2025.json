@@ -1,0 +1,12 @@
+{
+  "description": "Form 8606 Part I pro-rata with a backdoor Roth: basis 5,444; year-end value 58,999; non-conversion distributions 1,000; conversions 7,000. Line 9 = 66,999; ratio = 5,444/66,999 (full precision). Line 12 = round$(1,000 x r) = 81; line 11 = round$(7,000 x r) = 569. Taxable = (1,000-81) + (7,000-569) = 919 + 6,431 = 7,350. Hand-computed; independently matches the TaxCalcBench ty25-us-003 reference return's NondedIRA block to the dollar.",
+  "facts": {
+    "ira8606Basis": 5444,
+    "ira8606YearEndValue": 58999,
+    "ira8606Distributions": 1000,
+    "ira8606Conversions": 7000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ira8606.taxable_amount",
+  "expect": { "valueCents": "735000" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "CA AMT (Schedule P (540)), MFS, caAmti 500,000 exceeds the $479,188 MFS AMTI stacking add-back threshold (Schedule P (540) Line 21 worksheet) -> refuses rather than silently omitting the add-back.",
+  "facts": { "filingStatus": "mfs", "caAmti": 500000, "caRegularTax": 10000 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.amt",
+  "expect": { "error": "NOT_MODELED" }
+}

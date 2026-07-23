@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC phase-in row alignment: earned 5,500 with 1 kid sits in the printed row 5,451-5,500 (TRUE mid 5,475.50), not 5,501-5,550 -> 5,475.50 x 34% x 85% (28.90%) = 1,582.42 -> 1,582 (the floor-aligned v3 midpoint wrongly produced 1,597). FTB-table-verified. Hand-computed.",
+  "facts": { "filingStatus": "mfj", "wages": 5500, "qualifyingChildren": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "158200" }
+}

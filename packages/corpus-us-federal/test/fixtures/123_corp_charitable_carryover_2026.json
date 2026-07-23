@@ -1,0 +1,14 @@
+{
+  "description": "TY2026: charitable carryover under the OBBBA floor rule. Base 1,000,000; contributions 150,000 exceed the 100,000 ceiling -> deduction 90,000 (ceiling minus the 1% floor), and because the CEILING binds, everything not deducted carries: $60,000.00 (the 50,000 over-ceiling AND the 10,000 floored amount). Had the ceiling not bound, the floored amount would be permanently lost.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 2000000,
+    "corpOrdinaryDeductions": 1000000,
+    "corpCharitableContributions": 150000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.charitable_carryover",
+  "expect": {
+    "valueCents": "6000000"
+  }
+}

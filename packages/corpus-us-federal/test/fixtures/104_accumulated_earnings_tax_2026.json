@@ -1,0 +1,14 @@
+{
+  "description": "TY2026: accumulated earnings tax, SS 531/535. Taxable income 600,000 (line 30 given) -> federal income tax 126,000 subtracted (SS 535(b)(1)); dividends paid 100,000; accumulated earnings credit = max(reasonable needs 0, 250,000 - 50,000 prior E&P) = 200,000. Accumulated taxable income = 474,000 - 100,000 - 200,000 = 174,000 -> 20% = $34,800.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 600000,
+    "corpDividendsPaid": 100000,
+    "corpAccumulatedEandPStart": 50000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.accumulated_earnings_tax",
+  "expect": {
+    "valueCents": "3480000"
+  }
+}

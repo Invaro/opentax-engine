@@ -1,0 +1,17 @@
+{
+  "description": "TY2025: the SS 199A(b)(3)(B) phase-in, PE-parity case. Single, $150,000 wages + $100,000 K-1, non-SSTB, no business W-2 wages. TI before QBI 234,250; excess over the $197,300 threshold = 36,950 of the $50,000 band; tentative 20,000 reduced by 20,000 x 36,950/50,000 = 14,780 -> deduction $5,220. TI = 229,030 -> tax $50,352.60 — PolicyEngine's independently computed answer to the cent (probe 2026-07-07).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 150000,
+    "k1OrdinaryBusinessIncome": 100000,
+    "businessIsSSTB": false
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "5035260",
+    "intermediates": {
+      "us.federal.qbi_deduction": "522000",
+      "us.federal.taxable_income": "22903000"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "SS 63(e) forced-itemize election honored even though it is not tax-minimizing: single, SALT $426 + cash charitable $8,000 = itemized $8,426, far below the $15,750 standard deduction - with forceItemized the election yields $8,426 (mirrors TaxCalcBench ty25-us-010's deduction_override: force_itemized, expected deduction 8,426).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "stateAndLocalTaxesPaid": 426,
+    "charitableCashContributions": 8000,
+    "forceItemized": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.deduction_election",
+  "expect": { "valueCents": "842600" }
+}

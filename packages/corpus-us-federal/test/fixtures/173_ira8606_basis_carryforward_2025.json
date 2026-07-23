@@ -1,0 +1,12 @@
+{
+  "description": "Form 8606 line 14 basis carryforward for the same backdoor-Roth facts as fixture 172: line 3 = 5,444; line 13 = 569 + 81 = 650; line 14 = 5,444 - 650 = 4,794 (hand-computed; matches the ty25-us-003 reference NondedIRATotalIRABasisAmt).",
+  "facts": {
+    "ira8606Basis": 5444,
+    "ira8606YearEndValue": 58999,
+    "ira8606Distributions": 1000,
+    "ira8606Conversions": 7000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ira8606.basis_carryforward",
+  "expect": { "valueCents": "479400" }
+}

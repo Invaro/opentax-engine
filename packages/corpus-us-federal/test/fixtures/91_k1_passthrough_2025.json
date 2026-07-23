@@ -1,0 +1,18 @@
+{
+  "description": "TY2025: $50,000 wages + $100,000 S-corp K-1 ordinary business income (SS 1366(a) pass-through, materially participating). No SE tax, no payroll tax on the K-1 share; QBI = min(20% x 100,000, 20% x (150,000-15,750)) = 20,000. TI = 114,250 -> formula: 1,192.50+4,386+12,072.50+24%x10,900=2,616 -> $20,267.00. Independently reproduced by PolicyEngine (partnership_s_corp_income probe, 2026-07-07) to the cent.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "k1OrdinaryBusinessIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "2026700",
+    "intermediates": {
+      "us.federal.agi": "15000000",
+      "us.federal.qbi_deduction": "2000000",
+      "us.federal.se_tax": "0",
+      "us.federal.taxable_income": "11425000"
+    }
+  }
+}

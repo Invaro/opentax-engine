@@ -1,0 +1,12 @@
+{
+  "description": "Schedule SE line 8a uses W-2 BOX 3 (mirrors TaxCalcBench ty25-us-005): box-1 wages 420,000 but box-3 social security wages 168,600 (under the 176,100 base by 7,500), SE profit 50,000 -> net earnings 46,175. OASDI = 12.4% x min(46,175, 7,500) = 930 (line 10, whole dollars); Medicare = 2.9% x 46,175 = 1,339.075 -> 1,339 (line 11). SE tax = 2,269 - matches the reference return; box-1 approximation would have wrongly zeroed the OASDI room.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 420000,
+    "socialSecurityWages": 168600,
+    "selfEmploymentNetProfit": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": { "valueCents": "226900" }
+}

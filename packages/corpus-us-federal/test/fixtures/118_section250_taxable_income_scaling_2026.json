@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: the SS 250(a)(2) limitation — FDDEI 300,000 + NCTI 200,000 = 500,000 exceeds the 400,000 taxable income, so each scales by 400/500: FDDEI' 240,000 (x33.34% = 80,016) + NCTI' 160,000 (x40% = 64,000) -> 144,016. Tax = 21% x 255,984 = $53,756.64.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 400000,
+    "corpFDDEI": 300000,
+    "corpNCTI": 200000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "5375664",
+    "intermediates": {
+      "us.federal.corp.section250_deduction": "14401600"
+    }
+  }
+}

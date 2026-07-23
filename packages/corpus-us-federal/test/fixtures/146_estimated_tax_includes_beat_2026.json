@@ -1,0 +1,21 @@
+{
+  "description": "SS 6655(g)(1): the estimated-tax base includes SS 59A BEAT. TY2026 large corporation: TI = 800M - 700M = 100M -> SS 11 tax 21,000,000; BEAT (test met, receipts 800M >= 500M): MTI = 100M + 150M benefits = 250M x 10.5% = 26,250,000 - 21,000,000 regular = 5,250,000. RAP = 21,000,000 + 5,250,000 = 26,250,000 -> quarterly 25% = $6,562,500.00. (v1 used the SS 11 tax alone and understated by $1,312,500/quarter.)",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 800000000,
+    "corpOrdinaryDeductions": 700000000,
+    "corpIsLargeCorporation": true,
+    "corpBaseErosionTestMet": true,
+    "corpAvgGrossReceipts3yr": 800000000,
+    "corpBaseErosionTaxBenefits": 150000000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.estimated.quarterly_payment",
+  "expect": {
+    "valueCents": "656250000",
+    "intermediates": {
+      "us.federal.corp.beat": "525000000",
+      "us.federal.corp.estimated.required_annual_payment": "2625000000"
+    }
+  }
+}

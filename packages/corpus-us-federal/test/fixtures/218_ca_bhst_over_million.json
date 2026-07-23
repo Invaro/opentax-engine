@@ -1,0 +1,7 @@
+{
+  "description": "CA Behavioral Health Services Tax (R&TC § 17043, Form 540 line 62), stateTaxableIncome 1,250,000: 1% x (1,250,000 - 1,000,000) = 1% x 250,000 = 2,500.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 1250000 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.bhst",
+  "expect": { "valueCents": "250000" }
+}

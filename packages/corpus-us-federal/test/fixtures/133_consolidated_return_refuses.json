@@ -1,0 +1,13 @@
+{
+  "description": "A member of a consolidated group (SSSS 1501-1504): intercompany eliminations, SRLY limits, and investment adjustments are not modeled — the engine REFUSES rather than compute a single-entity answer that pretends to be consolidated.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 1000000,
+    "corpFilesConsolidatedReturn": true
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

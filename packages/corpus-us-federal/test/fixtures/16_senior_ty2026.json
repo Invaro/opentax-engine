@@ -1,0 +1,18 @@
+{
+  "description": "TY2026: single, 65+, $30,000 wages. Std $16,100 + $2,050 aged (2026 amount) = $18,150; senior deduction $6,000 -> taxable $5,850 -> tax $585.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "isAge65OrOlder": true
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "58800",
+    "intermediates": {
+      "us.federal.standard_deduction.additional": "205000",
+      "us.federal.standard_deduction": "1815000",
+      "us.federal.senior_deduction": "600000",
+      "us.federal.taxable_income": "585000"
+    }
+  }
+}

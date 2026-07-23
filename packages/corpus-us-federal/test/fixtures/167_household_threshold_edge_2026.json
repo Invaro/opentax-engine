@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 Schedule H threshold edge: $2,900 cash wages is BELOW the $3,000 threshold -> NO FICA at all (SS 3121(a)(7)(B) excludes the whole amount, not just the excess); FUTA still applies if the quarter test was met: 0.6% x 2,900 = $17.40.",
+  "facts": {
+    "householdEmployeeCashWages": 2900,
+    "householdFutaTestMet": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "1740"
+  },
+  "target": "us.federal.household_employment_taxes"
+}

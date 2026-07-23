@@ -1,0 +1,13 @@
+{
+  "description": "shortTermCapitalGains and netCapitalLoss entered together REFUSES -- the fact model takes Schedule D's single NET result (a gain, long and/or short term, OR a loss), never both; the capital_loss_ordinary_offset guard now also catches shortTermCapitalGains (previously only longTermCapitalGains triggered the refusal).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "shortTermCapitalGains": 5000,
+    "netCapitalLoss": 2000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

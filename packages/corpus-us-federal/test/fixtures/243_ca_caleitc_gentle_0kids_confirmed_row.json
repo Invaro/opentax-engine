@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC 2025 v5 recalibrated 0-kid GENTLE phase-out anchor: earned $13,000 falls in bracket 12,951-13,000 (true midpoint = ceil(13000/50)*50-24.50 = $12,975.50), which IS the new anchor point itself (mid $12,975.50, value $183) -> credit = $183 + (-9/1000) x 0 = $183.00 exactly. Matches the printed 2025 FTB 3514 booklet row 12,951-13,000 -> $183 (0 kids column) exactly; the prior v4 anchor produced $184 for this row.",
+  "facts": { "filingStatus": "single", "wages": 13000, "qualifyingChildren": 0 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "18300" }
+}

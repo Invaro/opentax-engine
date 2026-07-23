@@ -1,0 +1,16 @@
+{
+  "description": "TY2025: single, $60,000 wages, $8,000 net capital loss — SS 1211(b) allows only $3,000 against ordinary income. Gross = 57,000; TI = 57,000-15,750 = 41,250 -> Tax Table midpoint 41,275: 1,192.50 + 12%x29,350 = 3,522 -> 4,714.50 -> $4,715 (half-up). Net $4,715.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "netCapitalLoss": 8000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "471500",
+    "intermediates": {
+      "us.federal.capital_loss_ordinary_offset": "300000",
+      "us.federal.taxable_income": "4125000"
+    }
+  }
+}

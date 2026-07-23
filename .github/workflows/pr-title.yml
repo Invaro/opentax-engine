@@ -1,0 +1,25 @@
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  check:
+    name: pr title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Title must be "type(scope): brief description"
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "PR title: $TITLE"
+          pat='^(feat|fix|chore|docs|style|refactor|test|perf)(\([a-zA-Z0-9._/ -]+\))?!?: .+'
+          if [[ "$TITLE" =~ $pat ]]; then
+            echo "Title OK."
+          else
+            echo "::error::PR title must follow 'type(scope): brief description' — types: feat, fix, chore, docs, style, refactor, test, perf. Examples: 'feat(corpus): encode § 25B saver's credit', 'fix(compose): VA line 19b odd-dollar split'. Scope is optional but encouraged. See CONTRIBUTING.md."
+            exit 1
+          fi

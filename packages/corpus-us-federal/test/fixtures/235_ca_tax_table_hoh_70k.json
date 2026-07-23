@@ -1,0 +1,7 @@
+{
+  "description": "CA 2025 Tax Table convention (v5, default method): stateTaxableIncome 70,100, HOH, falls in bracket 70,051-70,150, midpoint $70,100.50. Schedule Z (6% bracket $67,716-$83,805): 1,436.31 (fixed at $67,716) + 6% x (70,100.50 - 67,716) = 1,436.31 + 143.07 = 1,579.38 -> nearest dollar 1,579. Matches the FTB 2025 tax table row 70,051-70,150 -> HOH $1,579 exactly.",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 70100 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": { "valueCents": "157900" }
+}

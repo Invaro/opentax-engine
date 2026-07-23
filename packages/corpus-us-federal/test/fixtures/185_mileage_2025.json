@@ -1,0 +1,7 @@
+{
+  "description": "Standard mileage 2025 (Notice 2025-5, 70 cents/mile; mirrors TaxCalcBench ty25-us-008): 280 business miles x $0.70 = $196.00 - the reference return's Schedule C vehicle expense. Standalone target: subtract from --se-profit yourself.",
+  "facts": { "businessMilesDriven": 280 },
+  "asOf": "2025-12-31",
+  "target": "us.federal.vehicle_standard_mileage",
+  "expect": { "valueCents": "19600" }
+}

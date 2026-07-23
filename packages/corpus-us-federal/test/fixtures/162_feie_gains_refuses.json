@@ -1,0 +1,13 @@
+{
+  "description": "SS 911 with preferential-rate income REFUSES — the SS 911(f)(2) capital-gains coordination is not modeled (its text was not verified from a primary source), so the engine refuses rather than stack the worksheets wrong.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "foreignEarnedIncome": 50000,
+    "longTermCapitalGains": 10000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

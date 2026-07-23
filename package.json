@@ -1,0 +1,25 @@
+{
+  "name": "opentax-engine",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Open-source verifiable US tax engine \u2014 every answer ships with a machine-checkable proof",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "opentax": "node packages/cli/dist/index.js",
+    "demo": "node packages/cli/dist/index.js eval --status mfj --wages 120000 --kids 2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "esbuild": "0.28.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "SS 22 credit for an under-65 individual retired on total disability (mirrors TaxCalcBench ty25-us-010): QSS, AGI 16,000 (wages 12,000 incl. an 11,000 code-3 disability pension reported as wages + 4,000 interest). Initial = min($5,000, disability income 11,000) = 5,000; minus 1/2 x (16,000 - 7,500) = 4,250 -> SS 22 amount 750 x 15% = 112.50 -> $113 (Schedule R whole dollars) - the reference return's credit. Hand-computed from SS 22(a)-(d) verbatim.",
+  "facts": {
+    "filingStatus": "qss",
+    "wages": 12000,
+    "taxableInterest": 4000,
+    "isRetiredOnTotalDisability": true,
+    "scheduleRDisabilityIncome": 11000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_r.tentative",
+  "expect": { "valueCents": "11300" }
+}

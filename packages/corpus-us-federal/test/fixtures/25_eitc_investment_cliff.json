@@ -1,0 +1,14 @@
+{
+  "description": "ONE MORE DOLLAR of interest ($11,951) crosses the SS 32(i) limit -> the entire credit vanishes. The classic benefits cliff: $1 of income destroys $3,234.84 of credit.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 30000,
+    "qualifyingChildren": 2,
+    "taxableInterest": 11951
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

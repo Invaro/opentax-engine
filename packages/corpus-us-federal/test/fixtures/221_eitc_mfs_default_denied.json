@@ -1,0 +1,7 @@
+{
+  "description": "SS 32(d) baseline: MFS WITHOUT the considered-unmarried tests -> EITC $0 (same facts as fixture 220 minus the flag). Hand-computed.",
+  "facts": { "filingStatus": "mfs", "wages": 15000, "qualifyingChildren": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": { "valueCents": "0" }
+}

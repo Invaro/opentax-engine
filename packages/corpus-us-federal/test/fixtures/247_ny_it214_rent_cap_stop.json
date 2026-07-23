@@ -1,0 +1,14 @@
+{
+  "description": "NY IT-214 (2025), line 13 stop: FAGI $12,368; rent $6,000 with NO services included -> 100% -> adjusted rent $6,000; average monthly = $500 > $450 -> 'stop; you do not qualify' -> $0 despite Step 2 attestation and a Table A household member. (Same facts as fixture 240 except the percentage menu row — shows the 75% haircut is what makes ny-001-style facts eligible.)",
+  "facts": {
+    "isAge65OrOlder": true,
+    "nyIt214Fagi": 12368,
+    "nyIt214Eligible": true,
+    "nyIt214TotalRent": 6000,
+    "nyIt214RentPercent": "100",
+    "nyIt214MonthsPaid": "12"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.it214",
+  "expect": { "valueCents": "0" }
+}

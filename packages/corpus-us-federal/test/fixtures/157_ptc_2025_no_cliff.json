@@ -1,0 +1,15 @@
+{
+  "description": "TY2025 (ARPA/IRA still in force): the SAME income has NO cliff — 62,600 / 15,060 (2024 guidelines) = 415.67% FPL -> 8.5% cap applies (SS 36B(c)(1)(E)). Contribution 62,600 x 8.5% = 5,321; PTC = min(9,600, 9,000 - 5,321) = $3,679.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 62600,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 9000,
+    "marketplacePremiumsPaid": 9600
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "367900"
+  },
+  "target": "us.federal.ptc"
+}

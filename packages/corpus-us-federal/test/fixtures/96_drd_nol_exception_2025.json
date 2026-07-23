@@ -1,0 +1,19 @@
+{
+  "description": "TY2025: the SS 246(b)(2) escape hatch. All-dividend income $100,000 (under-20% owned), deductions $60,000 -> base $40,000. Tentative 50% DRD = $50,000 EXCEEDS the base, so the full deduction would create an NOL — and then the taxable-income cap 'shall not apply': full $50,000 allowed, TI = $0, tax $0. (The NOL generated is not tracked — disclosed.)",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 100000,
+    "corpOrdinaryDeductions": 60000,
+    "corpDividendsReceived": 100000,
+    "corpDrdOwnershipTier": "under-20"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.corp.dividends_received_deduction": "5000000",
+      "us.federal.corp.taxable_income": "0"
+    }
+  }
+}

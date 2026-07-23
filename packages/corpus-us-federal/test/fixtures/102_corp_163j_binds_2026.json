@@ -1,0 +1,19 @@
+{
+  "description": "TY2026: SS 163(j) binds. Gross 2,000,000, ordinary 500,000, interest 600,000; avg gross receipts 40M exceeds the $32M 2026 SS 448(c) threshold. EBITDA-based ATI (OBBBA-permanent) = 1,500,000 -> 30% = 450,000 allowed (150,000 disallowed carries forward, untracked). TI = 1,050,000 -> $220,500.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 2000000,
+    "corpOrdinaryDeductions": 500000,
+    "corpBusinessInterestExpense": 600000,
+    "corpAvgGrossReceipts3yr": 40000000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "22050000",
+    "intermediates": {
+      "us.federal.corp.interest_deduction": "45000000",
+      "us.federal.corp.taxable_income": "105000000"
+    }
+  }
+}

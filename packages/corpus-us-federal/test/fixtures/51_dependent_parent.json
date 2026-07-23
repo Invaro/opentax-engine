@@ -1,0 +1,16 @@
+{
+  "description": "DETERMINATION: taxpayer supports their mother (SS 152(d)(2) relative), her gross income $4,000 < the $5,200 TY2025 limit, taxpayer provides over half her support -> QUALIFYING RELATIVE -> dependent.",
+  "facts": {
+    "depRelationshipChild": false,
+    "depRelationshipRelative": true,
+    "depGrossIncome": 4000,
+    "taxpayerProvidedOverHalfSupport": true,
+    "depAge": 68,
+    "depLivedWithTaxpayerOverHalfYear": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.dependent.is_dependent",
+  "expect": {
+    "valueBool": true
+  }
+}

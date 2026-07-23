@@ -1,0 +1,16 @@
+{
+  "description": "TY2025 single (pre-OBBBA mechanics): AGI 40,000 -> 35 - ceil(25,000/2,000)=13 -> 22%. Expenses min(4,000, 3,000 cap) -> credit $660. TI 24,250 -> mid 24,275 -> 1,192.50 + 12% x 12,350 = 2,674.50 -> $2,675. Net 2,675 - 660 = $2,015.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "careQualifyingIndividuals": 1,
+    "dependentCareExpenses": 4000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "201500",
+    "intermediates": {
+      "us.federal.cdcc": "66000"
+    }
+  }
+}

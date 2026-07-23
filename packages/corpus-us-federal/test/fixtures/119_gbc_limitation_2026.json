@@ -1,0 +1,16 @@
+{
+  "description": "TY2026: the SS 38(c) limitation. Corporate tax 105,000 (21% of 500,000); $90,000 of general business credits. Limit = 105,000 - 25% x (105,000 - 25,000) = 85,000 -> allowed 85,000; tax after credits $20,000.00. TMT is zero for a non-applicable corporation (SS 38(c)(6)(E)); CAMT corps already refuse upstream.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 500000,
+    "generalBusinessCredits": 90000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.income_tax_after_credits",
+  "expect": {
+    "valueCents": "2000000",
+    "intermediates": {
+      "us.federal.corp.gbc_allowed": "8500000"
+    }
+  }
+}

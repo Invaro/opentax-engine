@@ -1,0 +1,15 @@
+{
+  "description": "TY2025: the same corporation under the pre-OBBBA 10% BEAT rate — 10% x 22,000,000 = 2,200,000 minus regular tax 2,100,000 -> $100,000.00. The 125/126 pair pins the 10% -> 10.5% boundary.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 10000000,
+    "corpAvgGrossReceipts3yr": 600000000,
+    "corpBaseErosionTestMet": true,
+    "corpBaseErosionTaxBenefits": 12000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.corp.beat",
+  "expect": {
+    "valueCents": "10000000"
+  }
+}

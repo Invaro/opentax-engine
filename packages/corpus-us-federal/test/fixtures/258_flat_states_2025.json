@@ -1,0 +1,7 @@
+{
+  "description": "Indiana TY2025 3.00% flat (IC 6-3-2-1): 40,000 x 3.00% = 1,200.00.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 40000 },
+  "asOf": "2025-12-31",
+  "target": "us.in.income_tax",
+  "expect": { "valueCents": "120000" }
+}

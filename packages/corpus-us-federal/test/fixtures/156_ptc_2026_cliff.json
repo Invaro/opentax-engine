@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: the subsidy cliff is BACK (ARPA/IRA sunset; SS 36B(c)(1)(A)). Same taxpayer with $100 more wages: 62,700 / 15,650 = 400.63% FPL -> NOT an applicable taxpayer -> PTC $0. One hundred dollars of wages destroys $2,765.04 of credit (fixture 155).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 62700,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 9000,
+    "marketplacePremiumsPaid": 9600
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "0"
+  },
+  "target": "us.federal.ptc"
+}

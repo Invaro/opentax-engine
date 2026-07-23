@@ -1,0 +1,12 @@
+{
+  "description": "SS 41(c)(4)(B): a first-time filer with no QREs in any of the 3 preceding years uses the 6% startup rate — 6% x $500,000 = $30,000.00.",
+  "facts": {
+    "qreCurrentYear": 500000,
+    "qreAvgPrior3Years": 0
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.credit.research_asc",
+  "expect": {
+    "valueCents": "3000000"
+  }
+}

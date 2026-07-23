@@ -1,0 +1,13 @@
+{
+  "description": "Three-member LLC, no elections -> PARTNERSHIP by default (Reg. 301.7701-3(b)(1)(i)); SS 701: 'A partnership as such shall not be subject to the income tax' -> entity-level tax $0 (the members are taxed in their separate capacities).",
+  "facts": {
+    "entityLegalForm": "llc",
+    "llcMemberCount": 3
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {}
+  }
+}

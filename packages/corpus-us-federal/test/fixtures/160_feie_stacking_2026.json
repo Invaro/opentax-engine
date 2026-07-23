@@ -1,0 +1,17 @@
+{
+  "description": "TY2026 single expat: 150,000 foreign wages, exclusion capped at $132,900 (Rev. Proc. 2025-32 SS 4.39). AGI 17,100, TI 1,000. SS 911(f) STACKING: tax = tax(1,000 + 132,900) - tax(132,900) = 24,734 - 24,494 = $240.00 — the remaining $1,000 is taxed at 24%, not 10%. (Naive brackets on 1,000 would give $100 — the stacking rule doubles it and change.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 150000,
+    "foreignEarnedIncome": 150000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "24000",
+    "intermediates": {
+      "us.federal.feie.exclusion": "13290000",
+      "us.federal.taxable_income": "100000",
+      "us.federal.income_tax_before_credits": "24000"
+    }
+  }
+}

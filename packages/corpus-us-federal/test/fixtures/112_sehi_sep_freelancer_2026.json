@@ -1,0 +1,20 @@
+{
+  "description": "TY2026: the full freelancer stack. $200,000 SE profit; Schedule SE per-line: OASDI 22,878 (capped at the $184,500 base) + Medicare 5,356 = SE tax $28,234 -> half $14,117 (line 13). SEP $30,000 (under 20% x 185,883 = 37,176.60 and the NEW $72,000 SS 415(c) limit, Notice 2025-67); SS 162(l) health premiums $12,000 (under the earned-income cap). AGI = 143,883.00; QBI base correctly reduced by ALL THREE (Reg. 1.199A-3(b)(1)(vi)) -> QBI ded = 20% x TI-before limit = 25,556.60. TI = 102,226.40 -> income tax 17,201.81 + SE tax 28,234.00. Net $45,435.81.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 200000,
+    "sepContribution": 30000,
+    "selfEmployedHealthPremiums": 12000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "4543581",
+    "intermediates": {
+      "us.federal.sep_deduction": "3000000",
+      "us.federal.sehi_deduction": "1200000",
+      "us.federal.agi": "14388300",
+      "us.federal.qbi_deduction": "2555660"
+    }
+  }
+}

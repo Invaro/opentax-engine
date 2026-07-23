@@ -1,0 +1,20 @@
+{
+  "description": "HoH, $20,000 wages, 2 kids (2025). Std $23,625 wipes out taxable income -> tax $0, nonrefundable CTC used $0. ACTC = min(unused $4,400, 2 x $1,700 = $3,400, 15% x (20,000-2,500) = $2,625) = $2,625. EITC: full $7,152 (income below $23,350 threshold). Net = -$9,777 refund.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 20000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-977700",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "0",
+      "us.federal.ctc": "0",
+      "us.federal.ctc.after_phaseout": "440000",
+      "us.federal.actc": "262500",
+      "us.federal.eitc": "715200",
+      "us.federal.refundable_credits": "977700"
+    }
+  }
+}

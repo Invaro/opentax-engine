@@ -1,0 +1,50 @@
+{
+  "name": "@invaro/opentax-solve",
+  "version": "0.1.0",
+  "description": "Reasoning layer over the opentax engine: what-if sweeps, marginal rates, cliff detection, inverse queries \u2014 every point proof-backed",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@invaro/opentax-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@invaro/opentax-corpus-us-federal": "workspace:^",
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Invaro/opentax-engine.git",
+    "directory": "packages/solve"
+  },
+  "homepage": "https://github.com/Invaro/opentax-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Invaro/opentax-engine/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "tax",
+    "solver",
+    "marginal-rate",
+    "tax-cliffs"
+  ],
+  "private": true
+}

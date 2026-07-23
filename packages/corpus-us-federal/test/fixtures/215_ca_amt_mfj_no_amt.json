@@ -1,0 +1,7 @@
+{
+  "description": "CA AMT (Schedule P (540)), MFJ, caAmti 400,000 < threshold 463,745 so no phaseout: exemption 123,667; TMT = 7% x (400,000 - 123,667) = 7% x 276,333 = 19,343.31; regular tax 20,000 exceeds TMT -> AMT = 0.",
+  "facts": { "filingStatus": "mfj", "caAmti": 400000, "caRegularTax": 20000 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.amt",
+  "expect": { "valueCents": "0" }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: the classic S-corp owner split — $60,000 reasonable-compensation W-2 wages (payroll-taxed, QBI-excluded) + $120,000 K-1 ordinary income (no SE/payroll tax, QBI-eligible). AGI 180,000; TI before QBI 163,900 under the $201,750 threshold; QBI = min(24,000, 32,780) = 24,000; TI = 139,900 -> 1,240+4,560+12,166+24%x34,200=8,208 -> $26,174.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "k1OrdinaryBusinessIncome": 120000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "2617400",
+    "intermediates": {
+      "us.federal.qbi_deduction": "2400000",
+      "us.federal.taxable_income": "13990000",
+      "us.federal.additional_medicare_tax": "0"
+    }
+  }
+}

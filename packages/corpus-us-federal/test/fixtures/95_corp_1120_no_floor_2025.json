@@ -1,0 +1,20 @@
+{
+  "description": "TY2025: same corporation as fixture 94 but a year earlier — NO charitable floor yet (the OBBBA 1% floor starts in 2026). Charity fully deductible at $100,000 (= the 10% ceiling exactly). TI = 1,000,000 - 100,000 - 65,000 = 835,000 -> 21% = $175,350.00. The 94/95 pair pins the year boundary.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 2000000,
+    "corpOrdinaryDeductions": 1000000,
+    "corpCharitableContributions": 100000,
+    "corpDividendsReceived": 100000,
+    "corpDrdOwnershipTier": "20-to-80"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "17535000",
+    "intermediates": {
+      "us.federal.corp.charitable_deduction": "10000000",
+      "us.federal.corp.taxable_income": "83500000"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "@invaro/opentax",
+  "version": "0.3.2",
+  "description": "The verifiable US tax oracle: MCP server for AI agents + full CLI in one self-contained package \u2014 every answer cited to statute and machine-checkable",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "bin": {
+    "opentax": "./bundle/main.js",
+    "opentax-mcp": "./bundle/index.js",
+    "opentax-mcp-http": "./bundle/http.js"
+  },
+  "main": "./bundle/main.js",
+  "files": [
+    "bundle",
+    "README.md",
+    "LICENSE",
+    "COMMERCIAL-LICENSE.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && esbuild dist/main.js dist/index.js dist/http.js --bundle --platform=node --format=esm --outdir=bundle --banner:js=\"import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\" --log-level=warning",
+    "build:hosted": "esbuild dist/hosted-bundle.js --bundle --platform=node --format=esm --outfile=../../site/src/lib/opentax-mcp.bundle.mjs --log-level=warning"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^5.8.3",
+    "@invaro/opentax-compose": "workspace:*",
+    "@invaro/opentax-core": "workspace:*",
+    "@invaro/opentax-corpus-us-federal": "workspace:*",
+    "@invaro/opentax-solve": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.24.0",
+    "@invaro/opentax-cli": "workspace:*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Invaro/opentax-engine.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/Invaro/opentax-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Invaro/opentax-engine/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "tax",
+    "ai-agents",
+    "tax-oracle",
+    "claude"
+  ],
+  "mcpName": "io.github.Invaro/opentax"
+}

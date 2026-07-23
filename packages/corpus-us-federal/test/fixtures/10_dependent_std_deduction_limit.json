@@ -1,0 +1,17 @@
+{
+  "description": "Single dependent with $3,000 wages: SS 63(c)(5) override limits the basic standard deduction to max($1,350, wages + $450) = $3,450 -> taxable $0 -> tax $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 3000,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.standard_deduction": "345000",
+      "us.federal.taxable_income": "0"
+    },
+    "overrideApplied": "us.federal.standard_deduction.dependent_limit"
+  }
+}

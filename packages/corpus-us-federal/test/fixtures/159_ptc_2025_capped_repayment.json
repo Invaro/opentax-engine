@@ -1,0 +1,19 @@
+{
+  "description": "TY2025 single: income 30,000 / 15,060 = 199.20% FPL -> tier 150-200%: 0 + 2.00 x 4,920/5,000 = 1.97% -> contribution 591; PTC = min(6,000, 6,000 - 591) = 5,409. APTC 6,000 -> excess 591, but the SS 36B(f)(2)(B) cap for unmarried under 200% FPL is $375 (Rev. Proc. 2024-40 SS 2.07) -> repayment $375.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 6000,
+    "marketplacePremiumsPaid": 6000,
+    "advancePTC": 6000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "37500",
+    "intermediates": {
+      "us.federal.ptc": "540900"
+    }
+  },
+  "target": "us.federal.ptc.excess_aptc_repayment"
+}

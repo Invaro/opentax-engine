@@ -1,0 +1,12 @@
+{
+  "description": "SS 469(i) special allowance with the AGI phase-out: single, AGI 120,000 (wages), no passive income, 30,000 of active-participation rental losses. Allowance cap = 25,000 - 50% x (120,000 - 100,000) = 15,000; allowed = min(30,000, 15,000) = 15,000; suspended = 15,000. Hand-computed from SS 469(i)(2)-(3) verbatim.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 120000,
+    "passiveActivityLosses": 30000,
+    "rentalActiveParticipationLosses": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive_loss_allowed",
+  "expect": { "valueCents": "1500000" }
+}

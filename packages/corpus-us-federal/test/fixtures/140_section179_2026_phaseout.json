@@ -1,0 +1,18 @@
+{
+  "description": "TY2026: SS 179 with the phase-out binding (Rev. Proc. 2025-32 SS 3.24). Elected cost $4,200,000 exceeds the $4,090,000 threshold by $110,000 -> cap 2,560,000 - 110,000 = 2,450,000; income base (6,000,000 - 1,000,000 = 5,000,000) does not bind -> deduction $2,450,000. TI = 5,000,000 - 2,450,000 = 2,550,000 -> 21% = $535,500.00. No income-limit carryforward (the phase-out excess does not carry).",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 6000000,
+    "corpOrdinaryDeductions": 1000000,
+    "corpSection179Cost": 4200000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "53550000",
+    "intermediates": {
+      "us.federal.corp.section179_deduction": "245000000",
+      "us.federal.corp.taxable_income": "255000000"
+    }
+  }
+}

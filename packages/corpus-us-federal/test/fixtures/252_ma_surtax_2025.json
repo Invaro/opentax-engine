@@ -1,0 +1,7 @@
+{
+  "description": "Massachusetts TY2025: 5% Part B rate plus the 4% surtax over the indexed $1,083,150 threshold (combined 9% marginal): 1,200,000 -> 5% x 1,083,150 + 9% x 116,850 = 54,157.50 + 10,516.50 = 64,674.00.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 1200000 },
+  "asOf": "2025-12-31",
+  "target": "us.ma.income_tax",
+  "expect": { "valueCents": "6467400" }
+}

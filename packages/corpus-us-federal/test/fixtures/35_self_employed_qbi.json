@@ -1,0 +1,20 @@
+{
+  "description": "Freelancer: single, $80,000 Schedule C profit (2025). Schedule SE per-line: OASDI 12.4% x 73,880 = 9,161.12 -> $9,161; Medicare 2.9% = 2,142.52 -> $2,143; SE tax $11,304 (line 12); half deduction $5,652 (line 13) -> AGI $74,348.00. QBI ded = min(20% x 74,348, 20% x 58,598) = $11,719.60 -> taxable $46,878.40 -> Tax Table (mid 46,875) $5,387. Total = $16,691.00. [Printed-form methods throughout.]",
+  "facts": {
+    "filingStatus": "single",
+    "selfEmploymentNetProfit": 80000,
+    "wages": 0
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1669100",
+    "intermediates": {
+      "us.federal.se_tax": "1130400",
+      "us.federal.se_tax_half_deduction": "565200",
+      "us.federal.agi": "7434800",
+      "us.federal.qbi_deduction": "1171960",
+      "us.federal.taxable_income": "4687840",
+      "us.federal.income_tax_before_credits": "538700"
+    }
+  }
+}

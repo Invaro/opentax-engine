@@ -1,0 +1,14 @@
+{
+  "description": "DETERMINATION: MFJ family, $120k wages, 2 kids, $7,000 withheld (TY2026): balance due is NEGATIVE (refund) \u2014 under the $1,000 de minimis (SS 6654(e)(1)) -> safe harbor MET, and the or() ordering means NO prior-year facts are demanded.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 120000,
+    "qualifyingChildren": 2,
+    "federalTaxWithheld": 7000
+  },
+  "asOf": "2026-07-06",
+  "target": "us.federal.estimated.safe_harbor_met",
+  "expect": {
+    "valueBool": true
+  }
+}

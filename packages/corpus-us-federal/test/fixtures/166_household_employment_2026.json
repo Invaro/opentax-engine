@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 Schedule H: $20,000 cash wages to one household employee (>= the $3,000 SSA threshold, 90 FR 49047) -> FICA 15.3% x 20,000 = 3,060; FUTA quarter test met -> 0.6% x 7,000 cap = 42. Total $3,102.00.",
+  "facts": {
+    "householdEmployeeCashWages": 20000,
+    "householdFutaTestMet": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "310200"
+  },
+  "target": "us.federal.household_employment_taxes"
+}

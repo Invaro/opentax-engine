@@ -1,0 +1,18 @@
+{
+  "description": "TY2025 Schedule AI column (b): $20,000 SE by May 31, factor 2.4. Annualized SE tax 18,470 x (0.2976+0.0696) = 6,782.18; half-SE x5/24 = 1,412.95; AGI 18,587.05 x2.4 = 44,608.92; QBI 5,771.78 -> TI 23,087.14 -> Table $2,531; line 17 = 9,313.18 x45% = 4,190.93; minus installment #1 (1,680.48) -> $2,510.45 (the 2x25%RAP-minus-prior cap of 5,830.32 does not bind).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 80000,
+    "seProfitThroughMar31": 10000,
+    "seProfitThroughMay31": 20000,
+    "seProfitThroughAug31": 40000,
+    "priorYearTax": 20000,
+    "priorYearAGI": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.estimated.annualized_installment_q2",
+  "expect": {
+    "valueCents": "251045"
+  }
+}

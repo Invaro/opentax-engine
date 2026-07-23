@@ -1,0 +1,7 @@
+{
+  "description": "Texas levies no individual income tax (Tex. Const. art. VIII § 24-a): any state taxable income -> $0.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 250000 },
+  "asOf": "2025-12-31",
+  "target": "us.tx.income_tax",
+  "expect": { "valueCents": "0" }
+}

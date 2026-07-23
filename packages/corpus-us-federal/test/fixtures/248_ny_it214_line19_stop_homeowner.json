@@ -1,0 +1,11 @@
+{
+  "description": "NY IT-214 (2025), homeowner path with line 19 stop: FAGI $17,000 -> Table 1 rate 0.065 ($14,001-18,000 bracket) -> line 19 = $1,105.00; line 18 = homeowner taxes + special assessments = $900; line 19 >= line 18 -> 'stop; you do not qualify' -> $0. (Also exercises the homeowner bucket: no rent facts, line 18 comes entirely from nyIt214HomeownerTaxes.)",
+  "facts": {
+    "nyIt214Fagi": 17000,
+    "nyIt214Eligible": true,
+    "nyIt214HomeownerTaxes": 900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.it214",
+  "expect": { "valueCents": "0" }
+}

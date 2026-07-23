@@ -1,0 +1,15 @@
+{
+  "description": "TY2026 single at EXACTLY 400% FPL (income 62,600 / FPL 15,650 = 400.00%): still an applicable taxpayer ('does not exceed 400 percent'). Applicable pct 9.96% -> contribution 62,600 x 9.96% = 6,234.96; PTC = min(9,600, 9,000 - 6,234.96) = $2,765.04.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 62600,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 9000,
+    "marketplacePremiumsPaid": 9600
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "276504"
+  },
+  "target": "us.federal.ptc"
+}

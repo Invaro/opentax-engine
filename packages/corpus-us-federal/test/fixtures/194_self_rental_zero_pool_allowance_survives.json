@@ -1,0 +1,14 @@
+{
+  "description": "Self-rental income fully recharacterized leaves a ZERO absorption pool, but the SS 469(i) allowance still applies to active-participation rental losses: single filer, passive income 10,000 all self-rental -> pool 0, absorbed 0; remaining rental-active losses 30,000; AGI 90,000 < 100,000 so the full 25,000 cap survives -> allowed 25,000, suspended 5,000. Hand-computed: min(30000, 30000-0)=30000 capped at 25000; 43,636-analog check: 30,000-25,000=5,000 suspended.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "passiveActivityIncome": 10000,
+    "selfRentalNetIncome": 10000,
+    "passiveActivityLosses": 30000,
+    "rentalActiveParticipationLosses": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive_loss_allowed",
+  "expect": { "valueCents": "2500000" }
+}

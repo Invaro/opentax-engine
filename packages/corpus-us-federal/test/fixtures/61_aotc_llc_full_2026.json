@@ -1,0 +1,20 @@
+{
+  "description": "TY2026: MFJ, $150,000 wages, one AOTC student at $4,000 + $5,000 LLC expenses; MAGI below $160,000 so no phase-out. AOTC = 100%x2,000 + 25%x2,000 = 2,500; refundable 40% = 1,000; nonrefundable 1,500 + LLC 20%x5,000=1,000 -> 2,500. TI = 150,000-32,200 = 117,800 -> formula tax 2,480+9,120+22%x17,000=3,740 -> 15,340. After credits 15,340-2,500 = 12,840; minus refundable 1,000 -> net $11,840.00.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 150000,
+    "aotcExpensesStudent1": 4000,
+    "llcQualifiedExpenses": 5000
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "1184000",
+    "intermediates": {
+      "us.federal.education.aotc": "250000",
+      "us.federal.education.aotc_refundable": "100000",
+      "us.federal.education.llc": "100000",
+      "us.federal.education.nonrefundable": "250000",
+      "us.federal.income_tax_after_credits": "1284000"
+    }
+  }
+}

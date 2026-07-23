@@ -1,0 +1,16 @@
+{
+  "description": "NYC child and dependent care credit (IT-216-I Worksheet 2, 2025), flat-factor region: HOH, wages $13,018, Schedule C net loss $650 -> FAGI $12,368 (<= $25,000 -> line 6 factor 0.750). NYS IT-216 line 14 credit $1,386 (nyIt216StateCredit); under-4 expenses $2,450 (line 23); total qualified expenses $4,000 (line 3a). Worksheet lines 4-5 as one exact product: mulDiv(138600 x 245000 / 400000) = 84,892.5c -> half-up 84,893c ($848.93; printed 4-decimal ratio 0.6125 gives the same figure). Line 7 = mulDiv(84,893 x 750 / 1000) = 63,669.75c -> 63,670c -> roundToDollar half-up -> $637.00 (63700c). Matches the printed worksheet: $1,386 x 0.6125 = $848.93 (rounded), x 0.750 = $636.69 -> $637.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 13018,
+    "scheduleCNetLoss": 650,
+    "nyIt216StateCredit": 1386,
+    "nyIt216Under4Expenses": 2450,
+    "nyIt216TotalExpenses": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ny.nyc_cdcc",
+  "expect": {
+    "valueCents": "63700"
+  }
+}

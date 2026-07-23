@@ -1,0 +1,47 @@
+{
+  "name": "@invaro/opentax-core",
+  "version": "0.1.0",
+  "description": "Domain-general verifiable rules engine: typed rule IR, exact arithmetic, derivation proofs, content-addressed corpora",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Invaro/opentax-engine.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/Invaro/opentax-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Invaro/opentax-engine/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "rules-engine",
+    "provenance",
+    "proofs",
+    "verifiable-computation"
+  ],
+  "private": true
+}

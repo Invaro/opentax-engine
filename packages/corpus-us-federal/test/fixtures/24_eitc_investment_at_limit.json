@@ -1,0 +1,14 @@
+{
+  "description": "Same household + $11,950 taxable interest - EXACTLY at the SS 32(i) limit, still allowed; interest raises AGI so the worksheet takes the SMALLER of the earned lookup ($5,746) and the AGI lookup: mid 41,975 -> 7,152 - 21.06% x 18,625 = 3,229.57 -> table $3,230.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 30000,
+    "qualifyingChildren": 2,
+    "taxableInterest": 11950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "323000"
+  }
+}

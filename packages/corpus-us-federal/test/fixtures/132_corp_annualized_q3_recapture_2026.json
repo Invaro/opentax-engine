@@ -1,0 +1,16 @@
+{
+  "description": "TY2026: SS 6655(e) installment 3 with the recapture cap binding. Installments 1-2 were 21,000 each (annualized 3-month income). Six-month TI 350,000 x2 = 700,000 -> 21% = 147,000 -> 75% = 110,250 minus 42,000 prior = 68,250 — but the telescoped cap (3 x 31,500 - 42,000 = 52,500) binds -> $52,500.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpTaxableIncome": 600000,
+    "corpPriorYearTax": 130000,
+    "corpIsLargeCorporation": false,
+    "corpTIThrough3Months": 100000,
+    "corpTIThrough6Months": 350000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.annualized_installment_q3",
+  "expect": {
+    "valueCents": "5250000"
+  }
+}

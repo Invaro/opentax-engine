@@ -1,0 +1,7 @@
+{
+  "description": "Washington: no tax on wages, but the RCW 82.87 capital-gains excise is NOT modeled — a filer with long-term gains must get an explicit refusal, never a silent $0.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 90000, "longTermCapitalGains": 300000 },
+  "asOf": "2025-12-31",
+  "target": "us.wa.income_tax",
+  "expect": { "error": "NOT_MODELED" }
+}

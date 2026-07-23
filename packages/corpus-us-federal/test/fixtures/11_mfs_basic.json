@@ -1,0 +1,16 @@
+{
+  "description": "MFS, $50,000 wages, spouse does not itemize. Std $15,750 (2025, same as single) -> taxable $34,250 -> MFS table (single-like below the 37% bracket) -> $3,871.50. EITC/senior/tips/overtime all statutorily unavailable to MFS. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 50000,
+    "spouseItemizes": false
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "387500",
+    "intermediates": {
+      "us.federal.standard_deduction": "1575000",
+      "us.federal.taxable_income": "3425000"
+    }
+  }
+}

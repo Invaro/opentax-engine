@@ -1,0 +1,12 @@
+{
+  "description": "A negative number of qualifying children is rejected at the door (fact minimum), never producing a nonsensical negative credit in a proof.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "qualifyingChildren": -2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "FACT_INVALID"
+  }
+}

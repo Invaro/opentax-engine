@@ -1,0 +1,18 @@
+{
+  "description": "TY2026: an SSTB inside the widened band. MFJ, $450,000 K-1 (consulting), business W-2 wages $60,000. TI before QBI 417,800; excess over the $403,500 threshold = 14,300 of the $150,000 joint band -> applicable % = 135,700/150,000. Scaled QBI 407,100 (tentative 81,420), scaled W-2 54,280 (limit 27,140); reduction (81,420-27,140) x 14,300/150,000 = 5,174.69 -> deduction $76,245.31. TI = 341,554.69 -> tax $67,169.13 (no SE/Medicare on the K-1).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 450000,
+    "qbiW2Wages": 60000,
+    "businessIsSSTB": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "6716913",
+    "intermediates": {
+      "us.federal.qbi_deduction": "7624531",
+      "us.federal.taxable_income": "34155469"
+    }
+  }
+}

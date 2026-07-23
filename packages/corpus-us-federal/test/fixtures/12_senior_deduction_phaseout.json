@@ -1,0 +1,17 @@
+{
+  "description": "Single, 65+, $100,000 wages. Senior deduction phases out 6% of MAGI over $75,000: $6,000 - $1,500 = $4,500. Std $17,750 -> taxable $77,750 -> tax $12,019.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "isAge65OrOlder": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1202500",
+    "intermediates": {
+      "us.federal.senior_deduction": "450000",
+      "us.federal.taxable_income": "7775000",
+      "us.federal.income_tax_before_credits": "1202500"
+    }
+  }
+}

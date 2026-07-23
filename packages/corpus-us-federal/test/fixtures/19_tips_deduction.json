@@ -1,0 +1,17 @@
+{
+  "description": "Single, $60,000 wages of which $8,000 qualified tips (2025). SS 224: min(8,000, 25,000), MAGI under $150k so no phase-out -> $8,000 deducted. Taxable 60,000-15,750-8,000=36,250 -> tax $4,111.50. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "qualifiedTips": 8000,
+    "occupation": "wait-staff"
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "411500",
+    "intermediates": {
+      "us.federal.tips_deduction": "800000",
+      "us.federal.taxable_income": "3625000"
+    }
+  }
+}

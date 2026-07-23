@@ -1,0 +1,17 @@
+{
+  "description": "TY2025: a $20,000 early IRA distribution at 45 — includible in income AND subject to the SS 72(t) 10% additional tax ($2,000; no exception applies, attested). Wages 50,000 -> AGI 70,000, TI 54,250 -> Table midpoint 54,275: 1,192.50 + 4,386 + 22% x 5,800 = 6,854.50 -> $6,855. Net = 6,855 + 2,000 = $8,855.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "taxableIraDistributions": 20000,
+    "earlyDistributionSubjectToPenalty": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "885500",
+    "intermediates": {
+      "us.federal.other_taxes": "200000",
+      "us.federal.taxable_income": "5425000"
+    }
+  }
+}

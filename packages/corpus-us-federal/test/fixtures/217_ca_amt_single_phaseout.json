@@ -1,0 +1,7 @@
+{
+  "description": "CA AMT (Schedule P (540)), single, caAmti 500,000 exceeds the $347,808 phase-out threshold: excess 152,192 x 25% = 38,048 reduction; exemption 92,749 - 38,048 = 54,701; TMT = 7% x (500,000 - 54,701) = 7% x 445,299 = 31,170.93; regular tax 25,000 -> AMT = 6,170.93.",
+  "facts": { "filingStatus": "single", "caAmti": 500000, "caRegularTax": 25000 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.amt",
+  "expect": { "valueCents": "617093" }
+}

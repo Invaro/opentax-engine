@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC 2025 v2 STEEP phase-out segment (2 kids), a second table-verified point away from the anchor row and near the kink: earned $17,500 falls in bracket 17,451-17,500 (true midpoint $17,475.50). credit = round($3,288 - 34% x ($17,475.50 - $9,975.50 anchor midpoint)) = round($3,288 - 34% x $7,500) = round($3,288 - $2,550) = $738 exactly. Matches the printed FTB 3514 row 17,451-17,500 -> 738 (2 kids column) exactly; this bracket is just below the $17,800/$17,801 kink where the slope shifts to the gentle segment.",
+  "facts": { "filingStatus": "single", "wages": 17500, "qualifyingChildren": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "73800" }
+}

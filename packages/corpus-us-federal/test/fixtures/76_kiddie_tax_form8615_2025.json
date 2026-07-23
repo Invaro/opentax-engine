@@ -1,0 +1,24 @@
+{
+  "description": "TY2025: the SS 1(g) kiddie tax, full Form 8615 path. Child (single, claimed as dependent): $3,000 wages + $5,000 interest. Dependent std deduction = max(1,350, 3,000+450) = 3,450 -> TI 4,550. NUI = min(5,000 - 2,700, TI) = 2,300. Child regular tax (Table mid 4,575) = 458; tax on TI-NUI = 2,250 (mid 2,262.50) = 226. Parent (MFJ, TI 250,000, no preferential income): T(252,300) = 46,246 minus T(250,000) = 45,694 -> allocable parental tax 552. Greater of 458 vs 226+552 = 778 -> the override replaces the child's income tax. Net $778.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 3000,
+    "taxableInterest": 5000,
+    "isClaimedAsDependent": true,
+    "isSubjectToKiddieTax": true,
+    "parentTaxableIncome": 250000,
+    "parentFilingStatus": "mfj",
+    "parentHasPreferentialIncome": false,
+    "isAtLeastAge25": false
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "77800",
+    "intermediates": {
+      "us.federal.kiddie.net_unearned_income": "230000",
+      "us.federal.kiddie_tax": "77800",
+      "us.federal.taxable_income": "455000"
+    },
+    "overrideApplied": "us.federal.income_tax_before_credits.kiddie"
+  }
+}

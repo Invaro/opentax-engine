@@ -1,0 +1,18 @@
+{
+  "description": "TY2026 hoh: the SS 24(h)(4) $500 credit for other dependents (previously missing entirely). Wages 60,000, 1 CTC child + 1 other dependent (a parent). Tentative 2,200 + 500 = 2,700, no phase-out (AGI < 200k). TI 35,850 -> mid 35,875 -> 1,770 + 12% x 18,175 = 2,181 -> $3,951. CTC+ODC limited: min(2,700, 3,951) = 2,700 -> after credits $1,251.00; ODC never refundable (ACTC cap is 1,700 x QC and the unused part is 0).",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 60000,
+    "qualifyingChildren": 1,
+    "otherDependents": 1
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "125100",
+    "intermediates": {
+      "us.federal.ctc.tentative": "270000",
+      "us.federal.ctc": "270000",
+      "us.federal.actc": "0"
+    }
+  }
+}

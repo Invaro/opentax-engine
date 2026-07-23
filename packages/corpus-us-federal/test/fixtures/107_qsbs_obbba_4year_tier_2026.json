@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: the OBBBA QSBS tiers — stock acquired after July 4, 2025 and held 4 whole years excludes 75% of the gain (SS 1202(a), $15M cap not binding): 75% x 2,000,000 = $1,500,000 excluded. The taxed remainder is SS 1(h)(4) 28%-rate gain — deliberately NOT representable in the individual chain (disclosed).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "qsbsGain": 2000000,
+    "qsbsAcquiredAfterJuly2025": true,
+    "qsbsHoldingPeriodYears": 4
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.qsbs_exclusion",
+  "expect": {
+    "valueCents": "150000000"
+  }
+}

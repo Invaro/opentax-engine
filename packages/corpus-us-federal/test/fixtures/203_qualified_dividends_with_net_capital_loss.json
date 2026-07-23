@@ -1,0 +1,20 @@
+{
+  "description": "Qualified dividends coexisting with a net capital loss (§ 1211(b) loss offset never touches dividends; § 1(h) keeps the preferential rate): single, wages 50,000, qualifiedDividends 1,324, netCapitalLoss 792. Hand-computed (useFormulaMethod for exact cents, TY2025): capital_loss_ordinary_offset = min(792, 3000) = 792 -> gross income = 50,000 + 1,324 - 792 = 50,532 = AGI (no adjustments) -> taxable income = 50,532 - std ded 15,750 = 34,782. ordinary_taxable_income = 34,782 - 1,324 (qualifiedDividends; longTermCapitalGains is 0) = 33,458. Since taxable income (34,782) is under the single zero-rate breakpoint ($48,350), all $1,324 of preferential income lands in the 0% bracket: gain0 = min(48350,34782) - 33458 = 1,324; gain15 = gain20 = 0. Ordinary tax on 33,458 (2025 single brackets 10%/12%): 11,925*10% + (33,458-11,925)*12% = 1,192.50 + 2,583.96 = 3,776.46. No credits/other taxes apply -> net_tax = $3,776.46 = 377,646 cents.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "qualifiedDividends": 1324,
+    "netCapitalLoss": 792,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "377646",
+    "intermediates": {
+      "us.federal.gross_income": "5053200",
+      "us.federal.taxable_income": "3478200",
+      "us.federal.ordinary_taxable_income": "3345800",
+      "us.federal.income_tax_before_credits": "377646"
+    }
+  }
+}

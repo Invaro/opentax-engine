@@ -1,0 +1,24 @@
+{
+  "description": "TY2025: the OBBBA deduction stack, small business. Gross 1,000,000; ordinary 200,000; equipment 300,000 fully expensed (SS 168(k) 100%, permanent); domestic R&E 100,000 expensed (SS 174A) + foreign R&E 30,000 at the 15-year midpoint first year (1/30 = 1,000) -> research 101,000; interest 50,000 fully allowed (avg gross receipts 5M under the $31M SS 448(c) test). TI = 349,000 -> 21% = $73,290.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 1000000,
+    "corpOrdinaryDeductions": 200000,
+    "corpEquipmentPurchases": 300000,
+    "corpDomesticResearch": 100000,
+    "corpForeignResearch": 30000,
+    "corpBusinessInterestExpense": 50000,
+    "corpAvgGrossReceipts3yr": 5000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "valueCents": "7329000",
+    "intermediates": {
+      "us.federal.corp.depreciation_deduction": "30000000",
+      "us.federal.corp.research_deduction": "10100000",
+      "us.federal.corp.interest_deduction": "5000000",
+      "us.federal.corp.taxable_income": "34900000"
+    }
+  }
+}

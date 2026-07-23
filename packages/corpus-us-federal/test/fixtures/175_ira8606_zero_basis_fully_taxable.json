@@ -1,0 +1,11 @@
+{
+  "description": "Form 8606 with zero basis: 6,000 distributed, year-end value 40,000, basis 0 -> ratio 0, nothing nontaxable, taxable = 6,000 (the degenerate case where box 2a would have been right all along).",
+  "facts": {
+    "ira8606Basis": 0,
+    "ira8606YearEndValue": 40000,
+    "ira8606Distributions": 6000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.ira8606.taxable_amount",
+  "expect": { "valueCents": "600000" }
+}

@@ -1,0 +1,19 @@
+{
+  "description": "TY2026: MFJ, $90,000 wages, $8,000 SALT and $3,000 cash charity — but itemized (8,000 + (3,000-450 floor) = 10,550) loses to standard 32,200 + 2,000 SS 170(p), so the election keeps the NON-itemizer side and the SS 170(p) charity deduction stays ON. TI = 90,000-32,200-2,000 = 55,800 -> Tax Table $6,203 (same result as fixture 32, which has no SALT).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 90000,
+    "stateAndLocalTaxesPaid": 8000,
+    "charitableCashContributions": 3000
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "620300",
+    "intermediates": {
+      "us.federal.charitable_deduction_nonitemizer": "200000",
+      "us.federal.itemized_deductions": "1055000",
+      "us.federal.deduction_election": "3420000",
+      "us.federal.taxable_income": "5580000"
+    }
+  }
+}

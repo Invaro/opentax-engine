@@ -1,0 +1,24 @@
+{
+  "description": "Single, 65+, $30,000 wages. Std $15,750 + $2,000 aged = $17,750; OBBBA senior deduction $6,000 (MAGI under $75k) -> taxable $6,250 -> tax $625.00. isBlind must appear as an assumption; isAge65OrOlder must NOT (it was given). [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "isAge65OrOlder": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "62800",
+    "intermediates": {
+      "us.federal.standard_deduction.additional": "200000",
+      "us.federal.standard_deduction": "1775000",
+      "us.federal.senior_deduction": "600000",
+      "us.federal.taxable_income": "625000"
+    },
+    "assumedFacts": [
+      "isBlind"
+    ],
+    "notAssumedFacts": [
+      "isAge65OrOlder"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "TY2025: SS 86 lower tier. $20,000 wages + $20,000 social security: provisional income 30,000 exceeds the $25,000 base by 5,000 -> taxable = min(85% x 20,000, min(50% x SS, 50% x 5,000 = 2,500) capped at 4,500) = $2,500 (12.5% of benefits). AGI 22,500; TI 6,750 -> Table midpoint 6,775 -> $678. Independently matched by PolicyEngine (probe: taxable SS 2,500, AGI 22,500). Net $678.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 20000,
+    "socialSecurityBenefits": 20000,
+    "isAtLeastAge25": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "67800",
+    "intermediates": {
+      "us.federal.taxable_social_security": "250000",
+      "us.federal.agi": "2250000"
+    }
+  }
+}

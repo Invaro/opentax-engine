@@ -1,0 +1,17 @@
+{
+  "description": "TY2026: multiple-support agreement (SS 152(d)(3), Form 2120) — an adult child claiming a parent supported jointly with siblings. Nobody provided over half, but the taxpayer provided over 10% and the other >10% contributors waived. The over-half support test is REPLACED by the over-10% test; gross income $3,000 under the $5,300 limit. The base rule's taxpayerProvidedOverHalfSupport fact (no default) is never demanded — the override supersedes it. Qualifying relative: YES.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "depRelationshipRelative": true,
+    "depGrossIncome": 3000,
+    "hasMultipleSupportAgreement": true,
+    "taxpayerProvidedOver10PercentSupport": true
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.dependent.qualifying_relative",
+  "expect": {
+    "valueBool": true,
+    "overrideApplied": "us.federal.dependent.qualifying_relative.multiple_support"
+  }
+}

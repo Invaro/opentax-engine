@@ -1,0 +1,17 @@
+{
+  "description": "The 2026 poster child: digital content creator (TTC 209 \u2014 yes, on the list), single, $45,000 wages incl. $10,000 qualified tips (TY2026). Std $16,100 + tips deduction $10,000 -> taxable $18,900 -> tax $2,020.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 45000,
+    "qualifiedTips": 10000,
+    "occupation": "digital-content-creators"
+  },
+  "asOf": "2026-07-06",
+  "expect": {
+    "valueCents": "202300",
+    "intermediates": {
+      "us.federal.tips_deduction": "1000000",
+      "us.federal.taxable_income": "1890000"
+    }
+  }
+}

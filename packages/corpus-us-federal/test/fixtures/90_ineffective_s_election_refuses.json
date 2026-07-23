@@ -1,0 +1,15 @@
+{
+  "description": "LLC with an S election but TWO classes of stock — SS 1361(b)(1)(D) makes the election ineffective, and SS 1362(f) inadvertent-election relief is not modeled. The engine refuses rather than silently reclassifying the entity.",
+  "facts": {
+    "entityLegalForm": "llc",
+    "filedForm2553SElection": true,
+    "sCorpShareholderCount": 2,
+    "sCorpHasIneligibleShareholder": false,
+    "sCorpHasMultipleStockClasses": true
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_classification",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

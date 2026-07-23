@@ -1,0 +1,18 @@
+{
+  "description": "MFJ, $412,001 wages, 2 kids. One dollar over 12 exact steps -> 'or fraction thereof' CEILS to 13 steps -> $650 reduction (floor would give $600 - a silent error). Tax $77,014.24; CTC $3,750 -> $73,264.24 Now includes Additional Medicare Tax $1,458.01. [Form 8959 Part I whole-dollar: 0.9% x 162,001 = 1,458.009 -> $1,458.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 412001,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "7472224",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "7701424",
+      "us.federal.ctc.reduction": "65000",
+      "us.federal.ctc": "375000",
+      "us.federal.additional_medicare_tax": "145800"
+    }
+  }
+}

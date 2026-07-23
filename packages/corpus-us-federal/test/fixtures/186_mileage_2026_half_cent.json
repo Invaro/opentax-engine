@@ -1,0 +1,7 @@
+{
+  "description": "Standard mileage 2026 (Notice 2026-10, 72.5 cents/mile - web-verified July 2026; the half-cent rate exercises the rational-rate path): 1,001 miles x $0.725 = $725.725 -> half-up $725.73.",
+  "facts": { "businessMilesDriven": 1001 },
+  "asOf": "2026-07-07",
+  "target": "us.federal.vehicle_standard_mileage",
+  "expect": { "valueCents": "72573" }
+}

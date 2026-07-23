@@ -1,0 +1,11 @@
+{
+  "description": "Corpus v0.1 encodes TY2025 only; evaluating as of mid-2024 must fail with NoApplicableRule, listing the known validity windows.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000
+  },
+  "asOf": "2024-06-30",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

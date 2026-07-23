@@ -1,0 +1,18 @@
+{
+  "description": "SENIOR PHASE-OUT, JOINT (bug found by the differential harness): MFJ, both 65+, $190,000 wages. EACH spouse's $6,000 is reduced by 6% x $40,000 excess = $2,400 -> $3,600 each -> $7,200 total (SS 151(d)(5)(C): the couple phases out at 12%/dollar, gone at $250k). Std $31,500 + 2 x $1,600 = $34,700 -> taxable $148,100 -> tax $22,410.00 \u2014 independently matched by PolicyEngine US.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 190000,
+    "isAge65OrOlder": true,
+    "spouseIsAge65OrOlder": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "2241000",
+    "intermediates": {
+      "us.federal.senior_deduction": "720000",
+      "us.federal.standard_deduction": "3470000",
+      "us.federal.taxable_income": "14810000"
+    }
+  }
+}

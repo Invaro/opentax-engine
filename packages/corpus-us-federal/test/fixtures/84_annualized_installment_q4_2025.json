@@ -1,0 +1,18 @@
+{
+  "description": "TY2025 Schedule AI column (d): the full year, factor 1, 90%. Line 17 = 5,387 + 11,303.64 = 16,690.64 x90% = 15,021.58; minus prior installments (8,155.84) -> 6,865.74; the 4x25%RAP-minus-prior cap is 6,865.76 (2 cents of separate rounding) and does not bind. Installment #4 = $6,865.74 — and the four installments sum to exactly the required annual payment: 1,680.48 + 2,510.45 + 3,964.91 + 6,865.74 = 15,021.58, the method's own consistency check.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 80000,
+    "seProfitThroughMar31": 10000,
+    "seProfitThroughMay31": 20000,
+    "seProfitThroughAug31": 40000,
+    "priorYearTax": 20000,
+    "priorYearAGI": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.estimated.annualized_installment_q4",
+  "expect": {
+    "valueCents": "686574"
+  }
+}

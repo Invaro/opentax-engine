@@ -1,0 +1,17 @@
+{
+  "description": "Single, $150,500 wages with $5,000 tips: MAGI excess is $500 \u2014 LESS than one whole $1,000, so the SS 224 phase-out is $0 (floor semantics per IRS Schedule 1-A; a CTC-style ceiling would wrongly cut $100). Deduction stays $5,000. Taxable 129,750 -> tax $23,987.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 150500,
+    "qualifiedTips": 5000,
+    "occupation": "bartenders"
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "2398700",
+    "intermediates": {
+      "us.federal.tips_deduction": "500000",
+      "us.federal.taxable_income": "12975000"
+    }
+  }
+}

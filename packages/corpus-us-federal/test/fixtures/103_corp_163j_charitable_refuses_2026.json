@@ -1,0 +1,16 @@
+{
+  "description": "TY2026: a SS 163(j)-limited corporation WITH charitable contributions — the SS 170(b)(2) base and ATI interact circularly, so the engine refuses rather than pick an ordering.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 2000000,
+    "corpOrdinaryDeductions": 500000,
+    "corpBusinessInterestExpense": 600000,
+    "corpAvgGrossReceipts3yr": 40000000,
+    "corpCharitableContributions": 10000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_level_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

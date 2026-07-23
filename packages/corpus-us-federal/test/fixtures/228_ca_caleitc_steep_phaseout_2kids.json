@@ -1,0 +1,7 @@
+{
+  "description": "CalEITC 2025 v2 STEEP phase-out segment (2 kids, peak-mirror formula): earned $16,500 falls in bracket 16,451-16,500 (true midpoint $16,475.50, ceil-aligned). credit = round($3,339 peak - 34% x ($16,475.50 - $9,825.50 peak midpoint)) = round($3,339 - 34% x $6,650) = round($3,339 - $2,261) = $1,078 exactly. Matches the printed FTB 3514 row 16,451-16,500 -> 1,078 (2 kids column) exactly.",
+  "facts": { "filingStatus": "single", "wages": 16500, "qualifyingChildren": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": { "valueCents": "107800" }
+}

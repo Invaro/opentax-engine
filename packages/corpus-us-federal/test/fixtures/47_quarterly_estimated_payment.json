@@ -1,0 +1,18 @@
+{
+  "description": "THE SEPT-15 NUMBER: freelancer (single, $80k Schedule C, no withholding), prior-year tax $12,000, prior AGI $60,000. RAP = min(90% x $16,690.56 = $15,021.50, 100% x $12,000) = $12,000 -> quarterly installment $3,000 (SS 6654(d)(1)(A)).",
+  "facts": {
+    "filingStatus": "single",
+    "selfEmploymentNetProfit": 80000,
+    "wages": 0,
+    "priorYearTax": 12000,
+    "priorYearAGI": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.estimated.quarterly_payment",
+  "expect": {
+    "valueCents": "300000",
+    "intermediates": {
+      "us.federal.estimated.required_annual_payment": "1200000"
+    }
+  }
+}

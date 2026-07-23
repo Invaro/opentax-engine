@@ -1,0 +1,12 @@
+{
+  "description": "SS 41(c)(4) alternative simplified credit: QREs $500,000 against a $300,000 prior-3-year average -> 14% x (500,000 - 150,000) = $49,000.00 gross credit (SS 38 limitation and SS 280C(c) interplay disclosed-unmodeled).",
+  "facts": {
+    "qreCurrentYear": 500000,
+    "qreAvgPrior3Years": 300000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.credit.research_asc",
+  "expect": {
+    "valueCents": "4900000"
+  }
+}

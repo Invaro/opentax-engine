@@ -1,0 +1,13 @@
+{
+  "description": "Entering BOTH a net capital gain and a net capital loss is contradictory (they are the single net result of Schedule D netting) — the engine refuses rather than guess which one to believe.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "longTermCapitalGains": 5000,
+    "netCapitalLoss": 2000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "Prior-law QSBS (acquired after Sept 27, 2010, on/before July 4, 2025), held 6 years: 100% exclusion capped at the $10,000,000 per-issuer limit — a $12,000,000 gain excludes $10,000,000 (the 10x-basis alternative is not modeled; conservative).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "qsbsGain": 12000000,
+    "qsbsAcquiredAfterJuly2025": false,
+    "qsbsAcquiredAfterSept2010": true,
+    "qsbsHoldingPeriodYears": 6
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.qsbs_exclusion",
+  "expect": {
+    "valueCents": "1000000000"
+  }
+}

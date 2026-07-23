@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: build & test (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+
+  drift:
+    name: generated artifacts in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Regenerate corpus lock
+        run: node packages/corpus-us-federal/scripts/gen-lock.mjs
+      - name: Rebuild hosted MCP bundle
+        run: pnpm -F @invaro/opentax build:hosted
+      - name: Committed artifacts must match regenerated ones
+        run: |
+          if ! git diff --exit-code -- \
+            packages/corpus-us-federal/corpus.lock.json \
+            packages/cli/bundle \
+            packages/mcp/bundle \
+            site/src/lib/opentax-mcp.bundle.mjs; then
+            echo "::error::Generated artifacts are stale. Run: pnpm build && pnpm -F @invaro/opentax-corpus-us-federal gen:lock && pnpm -F @invaro/opentax build:hosted — then commit the diff."
+            exit 1
+          fi
+
+  site:
+    name: site build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - run: npm run build
+        working-directory: site

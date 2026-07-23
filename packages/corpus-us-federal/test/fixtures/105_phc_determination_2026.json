@@ -1,0 +1,14 @@
+{
+  "description": "TY2026: SS 542 personal-holding-company determination — PHC income 70,000 is 70% of the 100,000 adjusted ordinary gross income (over the 60% test), and 5 or fewer individuals owned more than half the stock in the last half of the year. PHC: YES.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpPHCIncome": 70000,
+    "corpAdjustedOrdinaryGrossIncome": 100000,
+    "corpOwnedByFiveOrFewer": true
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.is_personal_holding_company",
+  "expect": {
+    "valueBool": true
+  }
+}

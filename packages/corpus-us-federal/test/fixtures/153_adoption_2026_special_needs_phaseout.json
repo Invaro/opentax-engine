@@ -1,0 +1,16 @@
+{
+  "description": "TY2026 mfj special-needs adoption (deemed max $17,670, Rev. Proc. 2025-32 SS 3.04) at MAGI 285,080: excess 20,000 over the 265,080 threshold -> 50% of the $40,000 band -> allowed 17,670 - 8,835 = 8,835. Refundable portion min(8,835, $5,120 indexed) = $5,120.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 285080,
+    "adoptionIsSpecialNeeds": true
+  },
+  "asOf": "2026-07-07",
+  "expect": {
+    "valueCents": "512000",
+    "intermediates": {
+      "us.federal.adoption.allowed": "883500"
+    }
+  },
+  "target": "us.federal.adoption.refundable"
+}

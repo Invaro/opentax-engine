@@ -1,0 +1,12 @@
+{
+  "description": "Single-member LLC, no elections -> DISREGARDED ENTITY (Treas. Reg. 301.7701-3(b)(1)(ii)): its activity belongs on the owner's own return (this corpus's individual chain, e.g. selfEmploymentNetProfit). Entity-level federal income tax: $0.",
+  "facts": {
+    "entityLegalForm": "llc",
+    "llcMemberCount": 1
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.entity_classification",
+  "expect": {
+    "valueEnum": "disregarded-entity"
+  }
+}

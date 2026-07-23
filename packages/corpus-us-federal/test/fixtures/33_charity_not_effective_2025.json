@@ -1,0 +1,15 @@
+{
+  "description": "Same donor in TY2025: SS 170(p) is not effective until taxable years beginning after Dec 31, 2025 -> $0 deduction (temporal versioning, not an error). Taxable 58,500 -> tax $6,543.00. [Tax Table method under $100k \u2014 matches the printed IRS table.]",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 90000,
+    "charitableCashContributions": 3000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "654600",
+    "intermediates": {
+      "us.federal.charitable_deduction_nonitemizer": "0"
+    }
+  }
+}

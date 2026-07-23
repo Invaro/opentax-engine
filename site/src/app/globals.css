@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Space-separated HSL only: Tailwind's opacity modifier compiles to
+   hsl(var(--x) / a), and comma-separated components make that invalid CSS. */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 7%;
+  --card: 45 18% 96%;
+  --card-foreground: 240 10% 3.9%;
+  --accent: 40 10% 94%;
+  --accent-foreground: 240 5.9% 10%;
+  --muted: 40 11% 89%;
+  --muted-foreground: 0 0% 38%;
+  --border: 45 5% 85%;
+}
+
+.dark {
+  --background: 0 0% 7%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 98%;
+  --accent: 0 0% 11%;
+  --accent-foreground: 0 0% 98%;
+  --muted: 0 0% 11%;
+  --muted-foreground: 0 0% 38%;
+  --border: 0 0% 17%;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}

@@ -1,0 +1,15 @@
+{
+  "description": "TY2026: corporate estimated tax, SS 6655(d). Current-year tax: gross 500,000 - deductions 300,000 -> TI 200,000 -> 42,000. Prior-year tax $30,000, NOT a large corporation -> required annual payment = min(42,000, 30,000) = 30,000 -> quarterly installment $7,500.00.",
+  "facts": {
+    "entityLegalForm": "corporation",
+    "corpGrossIncome": 500000,
+    "corpOrdinaryDeductions": 300000,
+    "corpPriorYearTax": 30000,
+    "corpIsLargeCorporation": false
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.corp.estimated.quarterly_payment",
+  "expect": {
+    "valueCents": "750000"
+  }
+}

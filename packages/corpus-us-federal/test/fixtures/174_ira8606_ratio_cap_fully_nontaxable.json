@@ -1,0 +1,11 @@
+{
+  "description": "Form 8606 line 10 cap: basis 20,000 against a 5,000 distribution with zero year-end value -> ratio 4.0 caps at 1.000 ('If the result is 1.000 or more, enter 1.000'), so the entire distribution is nontaxable return of basis. Taxable = 0.",
+  "facts": {
+    "ira8606Basis": 20000,
+    "ira8606YearEndValue": 0,
+    "ira8606Distributions": 5000
+  },
+  "asOf": "2026-07-07",
+  "target": "us.federal.ira8606.taxable_amount",
+  "expect": { "valueCents": "0" }
+}
