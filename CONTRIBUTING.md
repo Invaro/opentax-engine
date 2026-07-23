@@ -124,7 +124,7 @@ Examples: `feat(corpus): encode § 25B saver's credit` · `fix(compose): VA line
 
 ## What CI checks on every PR
 
-- **build & test** on Node 20 and 22 — `pnpm build && pnpm test`: the full suite, golden fixtures, and the corpus-lock drift test
+- **build & test** on Node 22 and 24 — `pnpm build && pnpm test`: the full suite, golden fixtures, and the corpus-lock drift test
 - **generated artifacts in sync** — CI regenerates `corpus.lock.json` and the distributed bundles and fails if the committed copies differ (run `pnpm -F @invaro/opentax-corpus-us-federal gen:lock` and `pnpm -F @invaro/opentax build:hosted` after source changes)
 - **site build** — the Next.js site compiles
 - **pr title** — matches the `type(scope): description` format above
