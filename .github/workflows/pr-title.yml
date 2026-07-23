@@ -11,7 +11,7 @@ jobs:
     name: pr title
     runs-on: ubuntu-latest
     steps:
-      - name: Title must be "type(scope): brief description"
+      - name: 'Title must be "type(scope): brief description"'
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
