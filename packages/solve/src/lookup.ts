@@ -213,17 +213,23 @@ export function searchRules(
     let raw = 0;
     let score = 0;
     let matched = 0;
+    let sawStrong = false;
     for (const t of tokens) {
       let s = 0;
       if (has(id, t)) s += 2;
       if (has(title, t)) s += 2;
       if (has(meta, t)) s += 1;
-      if (s === 0 && has(weak, t)) s = 1;
+      if (s > 0) sawStrong = true;
+      else if (has(weak, t)) s = 1;
       if (s > 0) matched += 1;
       raw += s;
       score += s * (boost.get(t) ?? 1);
     }
+    // Multi-word queries must land somewhere a rule is NAMED (id/title/meta),
+    // not only inside statutory excerpts — two stray excerpt words must not
+    // make a foreign topic look covered.
     if (raw < minScore || matched < Math.ceil(tokens.length / 2)) continue;
+    if (tokens.length >= 2 && !sawStrong) continue;
 
     hits.push({
       ruleId: rule.id,

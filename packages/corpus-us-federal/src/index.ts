@@ -45,6 +45,9 @@ import { itemizedRules } from "./rules/itemized.js";
 import { kiddieRules } from "./rules/kiddie.js";
 import { netTaxRules } from "./rules/net-tax.js";
 import { passiveLossRules, mileageRules } from "./rules/passive-losses.js";
+import { pensionRules } from "./rules/pension.js";
+import { rentalRules } from "./rules/rental.js";
+import { scheduleDRules } from "./rules/schedule-d.js";
 import { scheduleRRules } from "./rules/schedule-r.js";
 import { stateParameterRules } from "./rules/state-parameters.js";
 import { qbiRules } from "./rules/qbi.js";
@@ -57,7 +60,7 @@ import { tipsOvertimeRules } from "./rules/tips-overtime.js";
 
 export const corpusInput: CorpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.35.1",
+  version: "0.36.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -71,6 +74,9 @@ export const corpusInput: CorpusInput = {
     ...educationCreditRules,
     ...iraRules,
     ...ira8606Rules,
+    ...scheduleDRules,
+    ...rentalRules,
+    ...pensionRules,
     ...capitalLossRules,
     ...kiddieRules,
     ...incomeRules,

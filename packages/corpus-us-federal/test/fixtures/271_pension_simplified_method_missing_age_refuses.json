@@ -1,0 +1,13 @@
+{
+  "description": "Simplified Method with a cost basis but NO pensionAgeAtStart REFUSES: the anticipated-payments band depends on the age at the annuity starting date, and the engine never assumes an age band.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "pensionGrossPayments": 10000,
+    "pensionCostBasis": 5000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

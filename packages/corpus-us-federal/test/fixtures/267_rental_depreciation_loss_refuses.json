@@ -1,0 +1,13 @@
+{
+  "description": "Depreciation ($10,908 on a $300,000 basis) exceeds the $5,000 pre-depreciation rental result: the year is a rental LOSS governed by § 469 -> the engine refuses and points at rentalActiveParticipationLosses (the $25,000 active-participation allowance machinery) instead of routing a loss around the passive-activity limits.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "rentalIncomeBeforeDepreciation": 5000,
+    "rentalDepreciableBasis": 300000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "The legacy OVERALL netCapitalLoss combined with a per-bucket loss fact REFUSES (double counting): enter either the single overall net result, or the per-bucket results, never both.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "netCapitalLoss": 2000,
+    "longTermCapitalLoss": 1000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -49,7 +49,7 @@ const amThreshold: Expr = {
 export const investmentTaxRules: Rule[] = [
   {
     id: "us.federal.niit",
-    version: 5, // v4 predated the standalone shortTermCapitalGains/ordinaryDividends facts
+    version: 6, // v5 read the raw gain facts; § 1411 net investment income now takes the schedule_d netted results (losses reduce gains before NIIT)
     jurisdiction: "us.federal",
     title:
       "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) − allocable deductions; MAGI ≈ AGI)",
@@ -76,9 +76,9 @@ export const investmentTaxRules: Rule[] = [
                   kind: "add",
                   args: [
                     fact("taxableInterest"),
-                    fact("longTermCapitalGains"),
+                    ruleRef("us.federal.schedule_d.preferential_lt_gain"),
                     fact("qualifiedDividends"),
-                    fact("shortTermCapitalGains"),
+                    ruleRef("us.federal.schedule_d.ordinary_st_gain"),
                     fact("ordinaryDividends"),
                   ],
                 },

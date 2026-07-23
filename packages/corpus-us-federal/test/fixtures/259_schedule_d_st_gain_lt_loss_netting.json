@@ -1,0 +1,18 @@
+{
+  "description": "Schedule D cross-netting, mixed buckets: $5,000 net ST gain + $2,000 net LT loss (single, $40,000 wages, 2025). Line 16 = 5,000 - 2,000 = $3,000, all short-term character (§ 1222(9): the LT loss reduces the ST gain), taxed at ordinary rates. Identical to the cent with entering shortTermCapitalGains=3000 directly.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "shortTermCapitalGains": 5000,
+    "longTermCapitalLoss": 2000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "303500",
+    "intermediates": {
+      "us.federal.schedule_d.ordinary_st_gain": "300000",
+      "us.federal.schedule_d.preferential_lt_gain": "0",
+      "us.federal.schedule_d.net_loss": "0"
+    }
+  }
+}

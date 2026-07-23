@@ -1,0 +1,17 @@
+{
+  "description": "Per-bucket losses net to an overall $4,000 loss ($2,500 ST + $1,500 LT; single, $60,000 wages, 2025): \u00a7 1211(b) allows $3,000 against ordinary income, \u00a7 1212(b) carries $1,000 forward. Identical to the cent with the legacy netCapitalLoss=4000 input.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "shortTermCapitalLoss": 2500,
+    "longTermCapitalLoss": 1500
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "471500",
+    "intermediates": {
+      "us.federal.schedule_d.net_loss": "400000",
+      "us.federal.capital_loss_ordinary_offset": "300000"
+    }
+  }
+}

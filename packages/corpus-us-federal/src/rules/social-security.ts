@@ -44,17 +44,19 @@ const magiBase: Expr = {
         fact("wages"),
         fact("taxableInterest"),
         fact("taxExemptInterest"), // § 86(b)(2)(B): "increased by the amount of interest… exempt from tax"
-        fact("longTermCapitalGains"),
+        ruleRef("us.federal.schedule_d.preferential_lt_gain"),
         fact("qualifiedDividends"),
-        fact("shortTermCapitalGains"),
+        ruleRef("us.federal.schedule_d.ordinary_st_gain"),
         fact("ordinaryDividends"),
         fact("selfEmploymentNetProfit"),
         fact("k1OrdinaryBusinessIncome"),
         fact("taxableIraDistributions"),
         fact("taxablePensionsAndAnnuities"),
+        ruleRef("us.federal.pension.simplified_method_taxable"),
         fact("unemploymentCompensation"),
         fact("otherOrdinaryIncome"),
         fact("scheduleENetIncome"),
+        ruleRef("us.federal.rental.net_income"),
       ],
     },
     right: {
@@ -99,7 +101,7 @@ const byJoint = (joint: string, other: string): Expr => ({
 export const socialSecurityRules: Rule[] = [
   {
     id: "us.federal.taxable_social_security",
-    version: 7, // v4 predated the nonpassive Schedule E loss fact; v5 predated the standalone qualifiedDividends fact; v6 predated shortTermCapitalGains/ordinaryDividends
+    version: 8, // v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
     jurisdiction: "us.federal",
     title: "Taxable Social Security benefits (§ 86: the 0/50/85% worksheet)",
     citation: {

@@ -1,0 +1,17 @@
+{
+  "description": "Residential rental, steady-state year (single, $90,000 wages, 2025): $24,000 pre-depreciation rental result, $300,000 building basis in service all year -> Pub 946 Table A-6 full-year rate 3.636% = $10,908.00 depreciation, net rental $13,092.00. Identical to the cent with entering scheduleENetIncome=13092 directly.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "rentalIncomeBeforeDepreciation": 24000,
+    "rentalDepreciableBasis": 300000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1412600",
+    "intermediates": {
+      "us.federal.rental.depreciation": "1090800",
+      "us.federal.rental.net_income": "1309200"
+    }
+  }
+}

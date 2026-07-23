@@ -417,10 +417,32 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Net capital LOSS for the year from Schedule D netting, entered as a positive number (26 U.S.C. § 1211(b): up to $3,000/$1,500 MFS against ordinary income; remainder carries over). Mutually exclusive with longTermCapitalGains. In dollars.",
+      "Net capital LOSS for the year from Schedule D netting, entered as a positive number (26 U.S.C. § 1211(b): up to $3,000/$1,500 MFS against ordinary income; remainder carries over). Mutually exclusive with the gain facts AND with the per-bucket loss facts (shortTermCapitalLoss/longTermCapitalLoss) — this is the single OVERALL net result; for mixed years (gain in one bucket, loss in the other) use the per-bucket facts and the engine performs the § 1222 netting. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no net capital loss absent contrary input",
+    },
+  },
+  {
+    id: "shortTermCapitalLoss",
+    type: "money",
+    min: "0",
+    description:
+      "Net short-term capital LOSS for the year (Schedule D line 7 when negative, entered positive). The ST bucket's single NET result — mutually exclusive with shortTermCapitalGains and with netCapitalLoss. Combine with longTermCapitalGains for mixed years: the engine performs the § 1222 cross-netting (a net ST loss first reduces net LT gain per § 1222(11); any overall loss is capped by § 1211(b)). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no net short-term capital loss absent contrary input",
+    },
+  },
+  {
+    id: "longTermCapitalLoss",
+    type: "money",
+    min: "0",
+    description:
+      "Net long-term capital LOSS for the year (Schedule D line 15 when negative, entered positive). The LT bucket's single NET result — mutually exclusive with longTermCapitalGains and with netCapitalLoss. Combine with shortTermCapitalGains for mixed years: the engine performs the § 1222 cross-netting (a net LT loss reduces the ordinary-rate net ST gain per § 1222(9); any overall loss is capped by § 1211(b)). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no net long-term capital loss absent contrary input",
     },
   },
   {
@@ -808,6 +830,119 @@ export const facts: FactSpec[] = [
     default: {
       value: "0",
       rationale: "Assumed no non-QBI Schedule E income absent contrary input",
+    },
+  },
+  {
+    id: "pensionGrossPayments",
+    type: "money",
+    min: "0",
+    description:
+      "TOTAL pension/annuity payments received this year from a qualified-plan annuity with after-tax cost basis (1099-R box 1) — the § 72(d) Simplified Method computes the taxable part. Use taxablePensionsAndAnnuities instead (or additionally, for other pensions) when the taxable amount is already known. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no simplified-method annuity absent contrary input",
+    },
+  },
+  {
+    id: "pensionCostBasis",
+    type: "money",
+    min: "0",
+    description:
+      "Investment in the contract as of the annuity starting date — employee after-tax contributions (1099-R box 9b). The § 72(d)(1)(B) monthly exclusion is this divided by the anticipated-payments table number; lifetime recovery is capped at this amount. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed zero after-tax basis (fully taxable pension) absent contrary input",
+    },
+  },
+  {
+    id: "pensionAgeAtStart",
+    type: "int",
+    min: "0",
+    max: "120",
+    description:
+      "Primary annuitant's age at the ANNUITY STARTING DATE (not current age) — picks the § 72(d)(1)(B)(iii) single-life anticipated-payments band (≤55: 360, 56-60: 310, 61-65: 260, 66-70: 210, 71+: 160). Required when pensionCostBasis is set and the annuity is single-life.",
+    default: {
+      value: "0",
+      rationale: "Unset; the simplified-method rule refuses rather than assume an age band",
+    },
+  },
+  {
+    id: "pensionIsJointAndSurvivor",
+    type: "bool",
+    description:
+      "True for an annuity payable over more than one life with a starting date after 1997 — the § 72(d)(1)(B)(iv) COMBINED-ages table applies (set pensionCombinedAgesAtStart).",
+    default: {
+      value: false,
+      rationale: "Assumed a single-life annuity absent contrary input",
+    },
+  },
+  {
+    id: "pensionCombinedAgesAtStart",
+    type: "int",
+    min: "0",
+    max: "240",
+    description:
+      "Combined ages of both annuitants at the annuity starting date, for joint-and-survivor annuities (§ 72(d)(1)(B)(iv): ≤110: 410, 111-120: 360, 121-130: 310, 131-140: 260, 141+: 210).",
+    default: {
+      value: "0",
+      rationale: "Unset; the simplified-method rule refuses rather than assume a band",
+    },
+  },
+  {
+    id: "pensionMonthsThisYear",
+    type: "int",
+    min: "1",
+    max: "12",
+    description:
+      "Number of monthly annuity payments received this tax year (Simplified Method Worksheet line 4 multiplier). 12 for a full year.",
+    default: {
+      value: "12",
+      rationale: "Assumed a full year of monthly payments absent contrary input",
+    },
+  },
+  {
+    id: "pensionBasisPreviouslyRecovered",
+    type: "money",
+    min: "0",
+    description:
+      "Cost basis already recovered tax-free in prior years (Simplified Method Worksheet line 6) — lifetime recovery cannot exceed pensionCostBasis for post-1986 starting dates. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed the first year of the annuity absent contrary input",
+    },
+  },
+  {
+    id: "rentalDepreciableBasis",
+    type: "money",
+    min: "0",
+    description:
+      "Depreciable basis of residential rental BUILDING(S) — cost basis excluding land (land never depreciates, § 167; Pub 527 ch. 2). Drives the § 168 GDS 27.5-year straight-line mid-month depreciation (Pub 946 Table A-6). Set rentalPlacedInServiceMonth for a first-year property; leave it 0 for property in service the whole year. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no depreciable rental property absent contrary input",
+    },
+  },
+  {
+    id: "rentalPlacedInServiceMonth",
+    type: "int",
+    min: "0",
+    max: "12",
+    description:
+      "Month (1-12) the residential rental property was placed in service THIS tax year — first-year depreciation uses the § 168(d)(2) mid-month convention (Pub 946 Table A-6 row 1). 0 (the default) = placed in service in a PRIOR year: the steady-state 3.636% year applies.",
+    default: {
+      value: "0",
+      rationale: "Assumed the property was in service before this year (steady-state 3.636% year) absent contrary input",
+    },
+  },
+  {
+    id: "rentalIncomeBeforeDepreciation",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule E rental result BEFORE depreciation: rents received minus cash operating expenses (management, repairs, insurance, taxes, mortgage interest…). The engine subtracts the computed § 168 depreciation to reach net rental income. Use scheduleENetIncome instead when you already have the after-depreciation net; the two inputs add (separate properties). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no rental activity reported through the depreciation path absent contrary input",
     },
   },
   {

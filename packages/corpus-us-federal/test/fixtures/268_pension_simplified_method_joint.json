@@ -1,0 +1,19 @@
+{
+  "description": "Simplified Method, joint-and-survivor (mfj, $40,000 wages, 2025): $12,000 cost basis, combined ages 118 at start -> § 72(d)(1)(B)(iv) band ≤120 = 360 payments; monthly exclusion $12,000/360 = $33.33 (cents kept, per the Pub 575 worked example), x12 = $399.96; $20,000 gross -> $19,600.04 taxable. Identical to the cent with taxablePensionsAndAnnuities=\"19600.04\".",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 40000,
+    "pensionGrossPayments": 20000,
+    "pensionCostBasis": 12000,
+    "pensionIsJointAndSurvivor": true,
+    "pensionCombinedAgesAtStart": 118
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "289800",
+    "intermediates": {
+      "us.federal.pension.simplified_method_exclusion": "39996",
+      "us.federal.pension.simplified_method_taxable": "1960004"
+    }
+  }
+}

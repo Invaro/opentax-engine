@@ -49,6 +49,8 @@ const OUT_OF_SCOPE: Expr = {
     gt0(fact("taxableInterest")),
     gt0(fact("longTermCapitalGains")),
     gt0(fact("netCapitalLoss")),
+    gt0(fact("shortTermCapitalLoss")),
+    gt0(fact("longTermCapitalLoss")),
     gt0(fact("qualifiedTips")),
     gt0(fact("qualifiedOvertimePremium")),
     gt0(fact("carLoanInterest")),
@@ -229,7 +231,7 @@ function quarterRule(
 
   return {
     id: `us.federal.estimated.annualized_installment_q${q.n}`,
-    version: year === "2025" ? 1 : 2,
+    version: year === "2025" ? 3 : 4, // v1/v2 predated the per-bucket capital-loss facts in the scope guard
     jurisdiction: J,
     title: `Annualized-income required installment #${q.n} (§ 6654(d)(2), TY${year})`,
     citation: {

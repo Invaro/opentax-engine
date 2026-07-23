@@ -34,14 +34,14 @@ const CITE = {
 export const capitalLossRules: Rule[] = [
   {
     id: "us.federal.capital_loss_ordinary_offset",
-    version: 2, // v1 predated the standalone shortTermCapitalGains fact (the "both entered" guard now also catches it)
+    version: 3, // v2 predated schedule_d netting: the loss is now the § 1222(10) netted result (legacy netCapitalLoss passes through; mixed-bucket years compute), and the contradiction refusal lives in the schedule_d rules
     jurisdiction: J,
     title: "Capital loss allowed against ordinary income ($3,000 / $1,500 MFS limit)",
     citation: {
       ...CITE,
       section: "§ 1211(b)",
       excerpt:
-        "…losses from sales or exchanges of capital assets shall be allowed only to the extent of the gains from such sales or exchanges, plus (if such losses exceed such gains) the lower of $3,000 ($1,500 in the case of a married individual filing a separate return), or the excess of such losses over such gains. [The fact model takes Schedule D's NET result — a net gain (long and/or short term) or a net loss, not both; both at once refuses rather than guess the netting.]",
+        "…losses from sales or exchanges of capital assets shall be allowed only to the extent of the gains from such sales or exchanges, plus (if such losses exceed such gains) the lower of $3,000 ($1,500 in the case of a married individual filing a separate return), or the excess of such losses over such gains. [The loss here is the § 1222(10) net capital loss after Schedule D netting — computed by us.federal.schedule_d.net_loss from the per-bucket facts, or passed through from the legacy overall netCapitalLoss fact; contradictory fact combinations refuse there.]",
     },
     ...FROM,
     output: { type: "money" },
@@ -50,46 +50,26 @@ export const capitalLossRules: Rule[] = [
       limitMfs: { value: "150000", type: "money" }, // $1,500
     },
     formula: {
-      kind: "if",
-      cond: { kind: "cmp", op: "gt", left: fact("netCapitalLoss"), right: zero },
-      then: {
-        kind: "if",
-        cond: {
-          kind: "or",
-          args: [
-            { kind: "cmp", op: "gt", left: fact("longTermCapitalGains"), right: zero },
-            { kind: "cmp", op: "gt", left: fact("shortTermCapitalGains"), right: zero },
-          ],
+      kind: "min",
+      args: [
+        ruleRef("us.federal.schedule_d.net_loss"),
+        {
+          kind: "if",
+          cond: {
+            kind: "cmp",
+            op: "eq",
+            left: fact("filingStatus"),
+            right: { kind: "enum", value: "mfs" },
+          },
+          then: param("limitMfs"),
+          else: param("limit"),
         },
-        then: {
-          kind: "unsupported",
-          reason:
-            "both a net capital gain and a net capital loss were entered — provide the single NET result of Schedule D netting",
-        },
-        else: {
-          kind: "min",
-          args: [
-            fact("netCapitalLoss"),
-            {
-              kind: "if",
-              cond: {
-                kind: "cmp",
-                op: "eq",
-                left: fact("filingStatus"),
-                right: { kind: "enum", value: "mfs" },
-              },
-              then: param("limitMfs"),
-              else: param("limit"),
-            },
-          ],
-        },
-      },
-      else: zero,
+      ],
     },
   },
   {
     id: "us.federal.capital_loss_carryover",
-    version: 1,
+    version: 2, // v1 read the legacy netCapitalLoss fact directly; the netted schedule_d result also covers mixed-bucket years
     jurisdiction: J,
     title: "Capital loss carryover to the following year (simplified)",
     citation: {
@@ -104,7 +84,7 @@ export const capitalLossRules: Rule[] = [
       kind: "max0",
       arg: {
         kind: "sub",
-        left: fact("netCapitalLoss"),
+        left: ruleRef("us.federal.schedule_d.net_loss"),
         right: ruleRef("us.federal.capital_loss_ordinary_offset"),
       },
     },

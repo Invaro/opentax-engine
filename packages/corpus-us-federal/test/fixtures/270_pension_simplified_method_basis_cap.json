@@ -1,0 +1,20 @@
+{
+  "description": "Simplified Method lifetime cap (Pub 575: total exclusions cannot exceed total cost): $31,100 of the $31,200 basis already recovered -> this year's exclusion is the $100 remainder, not the $1,440 table amount; $14,400 gross -> $14,300 taxable.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 20000,
+    "isAge65OrOlder": true,
+    "pensionGrossPayments": 14400,
+    "pensionCostBasis": 31200,
+    "pensionAgeAtStart": 65,
+    "pensionBasisPreviouslyRecovered": 31100
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "105800",
+    "intermediates": {
+      "us.federal.pension.simplified_method_exclusion": "10000",
+      "us.federal.pension.simplified_method_taxable": "1430000"
+    }
+  }
+}

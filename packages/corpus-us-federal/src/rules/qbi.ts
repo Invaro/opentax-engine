@@ -187,7 +187,10 @@ function qbiRule(
     arg: {
       kind: "sub",
       left: taxableBeforeQbi,
-      right: { kind: "add", args: [fact("longTermCapitalGains"), fact("qualifiedDividends")] },
+      right: {
+        kind: "add",
+        args: [ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends")],
+      },
     },
   });
   const limited: Expr = { kind: "min", args: [businessPart, overall] };
@@ -237,7 +240,7 @@ function qbiRule(
 
 export const qbiRules: Rule[] = [
   qbiRule(
-    7, // v3 refused above the threshold; v5 added the W-2/UBIA + SSTB mechanics; v7 counts qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit
+    9, // v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
     "2025-01-01", "2026-01-01", "2025",
     {
       kind: "if",
@@ -250,7 +253,7 @@ export const qbiRules: Rule[] = [
     false,
   ),
   qbiRule(
-    8, // v4 refused above the threshold; v6 added the mechanics + OBBBA band; v8 counts qualifiedDividends in the overall limit
+    10, // v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
     "2026-01-01", "2027-01-01", "2026",
     {
       kind: "match",

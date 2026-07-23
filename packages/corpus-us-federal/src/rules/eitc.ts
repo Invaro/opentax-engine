@@ -268,9 +268,9 @@ function eitcRule(
       kind: "add",
       args: [
         fact("taxableInterest"),
-        fact("longTermCapitalGains"),
+        ruleRef("us.federal.schedule_d.preferential_lt_gain"),
         fact("qualifiedDividends"),
-        fact("shortTermCapitalGains"),
+        ruleRef("us.federal.schedule_d.ordinary_st_gain"),
         fact("ordinaryDividends"),
       ],
     },
@@ -386,19 +386,21 @@ export const eitcRules: Rule[] = [
   // v5/v6: table method default (§ 32(f)) + eitcAdditionalQualifyingChildren
   // v8/v9: § 32(i) investment-income limit also counts the standalone qualifiedDividends fact
   // v10/v11: § 32(i) investment-income limit also counts shortTermCapitalGains/ordinaryDividends
-  eitcRule(12, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06"),
-  eitcRule(13, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06"),
+  // v12/v13 read the raw gain facts; the § 32(i) test now takes the schedule_d
+  // netted results ("capital gain net income", § 32(i)(1)(C))
+  eitcRule(14, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06"),
+  eitcRule(15, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06"),
   // us.federal.eitc_no_age_gate (new): the same § 32(a)-(b),(f),(i) formula with
   // the childless § 32(c)(1)(A)(ii) age gate removed, for state EITC statutes
   // that decouple from it (35 ILCS 5/212(b-5)/(b-10), IL P.A. 102-700) — see
   // us.il.eitc, which is 20% of THIS rule's answer, not us.federal.eitc's.
-  eitcRule(1, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06", {
+  eitcRule(3, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06", {
     ruleId: "us.federal.eitc_no_age_gate",
     ageGate: false,
     titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2025; for state decoupling statutes only)",
     extraExcerpt: NO_AGE_GATE_EXCERPT,
   }),
-  eitcRule(2, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06", {
+  eitcRule(4, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06", {
     ruleId: "us.federal.eitc_no_age_gate",
     ageGate: false,
     titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2026; for state decoupling statutes only)",

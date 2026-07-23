@@ -318,7 +318,7 @@ export function ordinaryRateTaxExpr(
 export const incomeTaxRules: Rule[] = [
   {
     id: "us.federal.ordinary_taxable_income",
-    version: 2, // v1 predated the standalone qualifiedDividends fact (dividends had to be folded into longTermCapitalGains)
+    version: 3, // v2 read the raw longTermCapitalGains fact; the § 1(h) amount is now the § 1222(11) netted result from schedule_d
     jurisdiction: "us.federal",
     title: "Taxable income taxed at ordinary rates (excludes preferential gains and qualified dividends)",
     citation: {
@@ -335,7 +335,10 @@ export const incomeTaxRules: Rule[] = [
       arg: {
         kind: "sub",
         left: taxable,
-        right: { kind: "add", args: [fact("longTermCapitalGains"), fact("qualifiedDividends")] },
+        right: {
+          kind: "add",
+          args: [ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends")],
+        },
       },
     },
   },

@@ -1,0 +1,13 @@
+{
+  "description": "shortTermCapitalGains AND shortTermCapitalLoss together REFUSE: each bucket fact is that bucket's single NET result, so both signs at once cannot describe any real Schedule D.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "shortTermCapitalGains": 1000,
+    "shortTermCapitalLoss": 500
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -642,12 +642,12 @@ var init_util = __esm({
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub of error2.issues) {
-    if (sub.path.length > 0) {
-      fieldErrors[sub.path[0]] = fieldErrors[sub.path[0]] || [];
-      fieldErrors[sub.path[0]].push(mapper(sub));
+  for (const sub2 of error2.issues) {
+    if (sub2.path.length > 0) {
+      fieldErrors[sub2.path[0]] = fieldErrors[sub2.path[0]] || [];
+      fieldErrors[sub2.path[0]].push(mapper(sub2));
     } else {
-      formErrors.push(mapper(sub));
+      formErrors.push(mapper(sub2));
     }
   }
   return { formErrors, fieldErrors };
@@ -7335,18 +7335,18 @@ var require_suggestSimilar = __commonJS({
       }
       for (let j = 1; j <= b.length; j++) {
         for (let i = 1; i <= a.length; i++) {
-          let cost = 1;
+          let cost2 = 1;
           if (a[i - 1] === b[j - 1]) {
-            cost = 0;
+            cost2 = 0;
           } else {
-            cost = 1;
+            cost2 = 1;
           }
           d3[i][j] = Math.min(
             d3[i - 1][j] + 1,
             // deletion
             d3[i][j - 1] + 1,
             // insertion
-            d3[i - 1][j - 1] + cost
+            d3[i - 1][j - 1] + cost2
             // substitution
           );
           if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
@@ -10172,12 +10172,12 @@ function loadCorpus(input) {
   const byId = /* @__PURE__ */ new Map();
   const factById2 = /* @__PURE__ */ new Map();
   const overriders = /* @__PURE__ */ new Map();
-  for (const fact41 of input.facts) {
-    if (factById2.has(fact41.id))
-      issues.push(`duplicate fact id "${fact41.id}"`);
-    factById2.set(fact41.id, fact41);
-    if (fact41.type === "enum" && !fact41.enumValues?.length) {
-      issues.push(`enum fact "${fact41.id}" must declare enumValues`);
+  for (const fact44 of input.facts) {
+    if (factById2.has(fact44.id))
+      issues.push(`duplicate fact id "${fact44.id}"`);
+    factById2.set(fact44.id, fact44);
+    if (fact44.type === "enum" && !fact44.enumValues?.length) {
+      issues.push(`enum fact "${fact44.id}" must declare enumValues`);
     }
   }
   const seenVersions = /* @__PURE__ */ new Set();
@@ -11575,10 +11575,30 @@ var init_facts = __esm({
         id: "netCapitalLoss",
         type: "money",
         min: "0",
-        description: "Net capital LOSS for the year from Schedule D netting, entered as a positive number (26 U.S.C. \xA7 1211(b): up to $3,000/$1,500 MFS against ordinary income; remainder carries over). Mutually exclusive with longTermCapitalGains. In dollars.",
+        description: "Net capital LOSS for the year from Schedule D netting, entered as a positive number (26 U.S.C. \xA7 1211(b): up to $3,000/$1,500 MFS against ordinary income; remainder carries over). Mutually exclusive with the gain facts AND with the per-bucket loss facts (shortTermCapitalLoss/longTermCapitalLoss) \u2014 this is the single OVERALL net result; for mixed years (gain in one bucket, loss in the other) use the per-bucket facts and the engine performs the \xA7 1222 netting. In dollars.",
         default: {
           value: "0",
           rationale: "Assumed no net capital loss absent contrary input"
+        }
+      },
+      {
+        id: "shortTermCapitalLoss",
+        type: "money",
+        min: "0",
+        description: "Net short-term capital LOSS for the year (Schedule D line 7 when negative, entered positive). The ST bucket's single NET result \u2014 mutually exclusive with shortTermCapitalGains and with netCapitalLoss. Combine with longTermCapitalGains for mixed years: the engine performs the \xA7 1222 cross-netting (a net ST loss first reduces net LT gain per \xA7 1222(11); any overall loss is capped by \xA7 1211(b)). In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed no net short-term capital loss absent contrary input"
+        }
+      },
+      {
+        id: "longTermCapitalLoss",
+        type: "money",
+        min: "0",
+        description: "Net long-term capital LOSS for the year (Schedule D line 15 when negative, entered positive). The LT bucket's single NET result \u2014 mutually exclusive with longTermCapitalGains and with netCapitalLoss. Combine with shortTermCapitalGains for mixed years: the engine performs the \xA7 1222 cross-netting (a net LT loss reduces the ordinary-rate net ST gain per \xA7 1222(9); any overall loss is capped by \xA7 1211(b)). In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed no net long-term capital loss absent contrary input"
         }
       },
       {
@@ -11927,6 +11947,109 @@ var init_facts = __esm({
         default: {
           value: "0",
           rationale: "Assumed no non-QBI Schedule E income absent contrary input"
+        }
+      },
+      {
+        id: "pensionGrossPayments",
+        type: "money",
+        min: "0",
+        description: "TOTAL pension/annuity payments received this year from a qualified-plan annuity with after-tax cost basis (1099-R box 1) \u2014 the \xA7 72(d) Simplified Method computes the taxable part. Use taxablePensionsAndAnnuities instead (or additionally, for other pensions) when the taxable amount is already known. In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed no simplified-method annuity absent contrary input"
+        }
+      },
+      {
+        id: "pensionCostBasis",
+        type: "money",
+        min: "0",
+        description: "Investment in the contract as of the annuity starting date \u2014 employee after-tax contributions (1099-R box 9b). The \xA7 72(d)(1)(B) monthly exclusion is this divided by the anticipated-payments table number; lifetime recovery is capped at this amount. In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed zero after-tax basis (fully taxable pension) absent contrary input"
+        }
+      },
+      {
+        id: "pensionAgeAtStart",
+        type: "int",
+        min: "0",
+        max: "120",
+        description: "Primary annuitant's age at the ANNUITY STARTING DATE (not current age) \u2014 picks the \xA7 72(d)(1)(B)(iii) single-life anticipated-payments band (\u226455: 360, 56-60: 310, 61-65: 260, 66-70: 210, 71+: 160). Required when pensionCostBasis is set and the annuity is single-life.",
+        default: {
+          value: "0",
+          rationale: "Unset; the simplified-method rule refuses rather than assume an age band"
+        }
+      },
+      {
+        id: "pensionIsJointAndSurvivor",
+        type: "bool",
+        description: "True for an annuity payable over more than one life with a starting date after 1997 \u2014 the \xA7 72(d)(1)(B)(iv) COMBINED-ages table applies (set pensionCombinedAgesAtStart).",
+        default: {
+          value: false,
+          rationale: "Assumed a single-life annuity absent contrary input"
+        }
+      },
+      {
+        id: "pensionCombinedAgesAtStart",
+        type: "int",
+        min: "0",
+        max: "240",
+        description: "Combined ages of both annuitants at the annuity starting date, for joint-and-survivor annuities (\xA7 72(d)(1)(B)(iv): \u2264110: 410, 111-120: 360, 121-130: 310, 131-140: 260, 141+: 210).",
+        default: {
+          value: "0",
+          rationale: "Unset; the simplified-method rule refuses rather than assume a band"
+        }
+      },
+      {
+        id: "pensionMonthsThisYear",
+        type: "int",
+        min: "1",
+        max: "12",
+        description: "Number of monthly annuity payments received this tax year (Simplified Method Worksheet line 4 multiplier). 12 for a full year.",
+        default: {
+          value: "12",
+          rationale: "Assumed a full year of monthly payments absent contrary input"
+        }
+      },
+      {
+        id: "pensionBasisPreviouslyRecovered",
+        type: "money",
+        min: "0",
+        description: "Cost basis already recovered tax-free in prior years (Simplified Method Worksheet line 6) \u2014 lifetime recovery cannot exceed pensionCostBasis for post-1986 starting dates. In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed the first year of the annuity absent contrary input"
+        }
+      },
+      {
+        id: "rentalDepreciableBasis",
+        type: "money",
+        min: "0",
+        description: "Depreciable basis of residential rental BUILDING(S) \u2014 cost basis excluding land (land never depreciates, \xA7 167; Pub 527 ch. 2). Drives the \xA7 168 GDS 27.5-year straight-line mid-month depreciation (Pub 946 Table A-6). Set rentalPlacedInServiceMonth for a first-year property; leave it 0 for property in service the whole year. In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed no depreciable rental property absent contrary input"
+        }
+      },
+      {
+        id: "rentalPlacedInServiceMonth",
+        type: "int",
+        min: "0",
+        max: "12",
+        description: "Month (1-12) the residential rental property was placed in service THIS tax year \u2014 first-year depreciation uses the \xA7 168(d)(2) mid-month convention (Pub 946 Table A-6 row 1). 0 (the default) = placed in service in a PRIOR year: the steady-state 3.636% year applies.",
+        default: {
+          value: "0",
+          rationale: "Assumed the property was in service before this year (steady-state 3.636% year) absent contrary input"
+        }
+      },
+      {
+        id: "rentalIncomeBeforeDepreciation",
+        type: "money",
+        min: "0",
+        description: "Schedule E rental result BEFORE depreciation: rents received minus cash operating expenses (management, repairs, insurance, taxes, mortgage interest\u2026). The engine subtracts the computed \xA7 168 depreciation to reach net rental income. Use scheduleENetIncome instead when you already have the after-depreciation net; the two inputs add (separate properties). In dollars.",
+        default: {
+          value: "0",
+          rationale: "Assumed no rental activity reported through the depreciation path absent contrary input"
         }
       },
       {
@@ -13761,8 +13884,8 @@ var init_income_tax = __esm({
     incomeTaxRules = [
       {
         id: "us.federal.ordinary_taxable_income",
-        version: 2,
-        // v1 predated the standalone qualifiedDividends fact (dividends had to be folded into longTermCapitalGains)
+        version: 3,
+        // v2 read the raw longTermCapitalGains fact; the § 1(h) amount is now the § 1222(11) netted result from schedule_d
         jurisdiction: "us.federal",
         title: "Taxable income taxed at ordinary rates (excludes preferential gains and qualified dividends)",
         citation: {
@@ -13779,7 +13902,10 @@ var init_income_tax = __esm({
           arg: {
             kind: "sub",
             left: taxable,
-            right: { kind: "add", args: [fact2("longTermCapitalGains"), fact2("qualifiedDividends")] }
+            right: {
+              kind: "add",
+              args: [ruleRef2("us.federal.schedule_d.preferential_lt_gain"), fact2("qualifiedDividends")]
+            }
           }
         }
       },
@@ -14144,7 +14270,8 @@ function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, withQ
   };
   return {
     id: `us.federal.estimated.annualized_installment_q${q.n}`,
-    version: year === "2025" ? 1 : 2,
+    version: year === "2025" ? 3 : 4,
+    // v1/v2 predated the per-bucket capital-loss facts in the scope guard
     jurisdiction: J2,
     title: `Annualized-income required installment #${q.n} (\xA7 6654(d)(2), TY${year})`,
     citation: {
@@ -14184,6 +14311,8 @@ var init_annualized_installments = __esm({
         gt0(fact4("taxableInterest")),
         gt0(fact4("longTermCapitalGains")),
         gt0(fact4("netCapitalLoss")),
+        gt0(fact4("shortTermCapitalLoss")),
+        gt0(fact4("longTermCapitalLoss")),
         gt0(fact4("qualifiedTips")),
         gt0(fact4("qualifiedOvertimePremium")),
         gt0(fact4("carLoanInterest")),
@@ -14246,14 +14375,14 @@ var init_capital_losses = __esm({
     capitalLossRules = [
       {
         id: "us.federal.capital_loss_ordinary_offset",
-        version: 2,
-        // v1 predated the standalone shortTermCapitalGains fact (the "both entered" guard now also catches it)
+        version: 3,
+        // v2 predated schedule_d netting: the loss is now the § 1222(10) netted result (legacy netCapitalLoss passes through; mixed-bucket years compute), and the contradiction refusal lives in the schedule_d rules
         jurisdiction: J3,
         title: "Capital loss allowed against ordinary income ($3,000 / $1,500 MFS limit)",
         citation: {
           ...CITE,
           section: "\xA7 1211(b)",
-          excerpt: "\u2026losses from sales or exchanges of capital assets shall be allowed only to the extent of the gains from such sales or exchanges, plus (if such losses exceed such gains) the lower of $3,000 ($1,500 in the case of a married individual filing a separate return), or the excess of such losses over such gains. [The fact model takes Schedule D's NET result \u2014 a net gain (long and/or short term) or a net loss, not both; both at once refuses rather than guess the netting.]"
+          excerpt: "\u2026losses from sales or exchanges of capital assets shall be allowed only to the extent of the gains from such sales or exchanges, plus (if such losses exceed such gains) the lower of $3,000 ($1,500 in the case of a married individual filing a separate return), or the excess of such losses over such gains. [The loss here is the \xA7 1222(10) net capital loss after Schedule D netting \u2014 computed by us.federal.schedule_d.net_loss from the per-bucket facts, or passed through from the legacy overall netCapitalLoss fact; contradictory fact combinations refuse there.]"
         },
         ...FROM,
         output: { type: "money" },
@@ -14264,45 +14393,27 @@ var init_capital_losses = __esm({
           // $1,500
         },
         formula: {
-          kind: "if",
-          cond: { kind: "cmp", op: "gt", left: fact5("netCapitalLoss"), right: zero3 },
-          then: {
-            kind: "if",
-            cond: {
-              kind: "or",
-              args: [
-                { kind: "cmp", op: "gt", left: fact5("longTermCapitalGains"), right: zero3 },
-                { kind: "cmp", op: "gt", left: fact5("shortTermCapitalGains"), right: zero3 }
-              ]
-            },
-            then: {
-              kind: "unsupported",
-              reason: "both a net capital gain and a net capital loss were entered \u2014 provide the single NET result of Schedule D netting"
-            },
-            else: {
-              kind: "min",
-              args: [
-                fact5("netCapitalLoss"),
-                {
-                  kind: "if",
-                  cond: {
-                    kind: "cmp",
-                    op: "eq",
-                    left: fact5("filingStatus"),
-                    right: { kind: "enum", value: "mfs" }
-                  },
-                  then: param3("limitMfs"),
-                  else: param3("limit")
-                }
-              ]
+          kind: "min",
+          args: [
+            ruleRef5("us.federal.schedule_d.net_loss"),
+            {
+              kind: "if",
+              cond: {
+                kind: "cmp",
+                op: "eq",
+                left: fact5("filingStatus"),
+                right: { kind: "enum", value: "mfs" }
+              },
+              then: param3("limitMfs"),
+              else: param3("limit")
             }
-          },
-          else: zero3
+          ]
         }
       },
       {
         id: "us.federal.capital_loss_carryover",
-        version: 1,
+        version: 2,
+        // v1 read the legacy netCapitalLoss fact directly; the netted schedule_d result also covers mixed-bucket years
         jurisdiction: J3,
         title: "Capital loss carryover to the following year (simplified)",
         citation: {
@@ -14316,7 +14427,7 @@ var init_capital_losses = __esm({
           kind: "max0",
           arg: {
             kind: "sub",
-            left: fact5("netCapitalLoss"),
+            left: ruleRef5("us.federal.schedule_d.net_loss"),
             right: ruleRef5("us.federal.capital_loss_ordinary_offset")
           }
         }
@@ -16980,9 +17091,9 @@ function eitcRule(version2, effectiveFrom, effectiveTo, p, yearLabel, revProc, o
       kind: "add",
       args: [
         fact17("taxableInterest"),
-        fact17("longTermCapitalGains"),
+        ruleRef14("us.federal.schedule_d.preferential_lt_gain"),
         fact17("qualifiedDividends"),
-        fact17("shortTermCapitalGains"),
+        ruleRef14("us.federal.schedule_d.ordinary_st_gain"),
         fact17("ordinaryDividends")
       ]
     },
@@ -17168,19 +17279,21 @@ var init_eitc = __esm({
       // v5/v6: table method default (§ 32(f)) + eitcAdditionalQualifyingChildren
       // v8/v9: § 32(i) investment-income limit also counts the standalone qualifiedDividends fact
       // v10/v11: § 32(i) investment-income limit also counts shortTermCapitalGains/ordinaryDividends
-      eitcRule(12, "2025-01-01", "2026-01-01", TY20252, "2025", "Rev. Proc. 2024-40 \xA7 2.06"),
-      eitcRule(13, "2026-01-01", "2027-01-01", TY20262, "2026", "Rev. Proc. 2025-32 \xA7 4.06"),
+      // v12/v13 read the raw gain facts; the § 32(i) test now takes the schedule_d
+      // netted results ("capital gain net income", § 32(i)(1)(C))
+      eitcRule(14, "2025-01-01", "2026-01-01", TY20252, "2025", "Rev. Proc. 2024-40 \xA7 2.06"),
+      eitcRule(15, "2026-01-01", "2027-01-01", TY20262, "2026", "Rev. Proc. 2025-32 \xA7 4.06"),
       // us.federal.eitc_no_age_gate (new): the same § 32(a)-(b),(f),(i) formula with
       // the childless § 32(c)(1)(A)(ii) age gate removed, for state EITC statutes
       // that decouple from it (35 ILCS 5/212(b-5)/(b-10), IL P.A. 102-700) — see
       // us.il.eitc, which is 20% of THIS rule's answer, not us.federal.eitc's.
-      eitcRule(1, "2025-01-01", "2026-01-01", TY20252, "2025", "Rev. Proc. 2024-40 \xA7 2.06", {
+      eitcRule(3, "2025-01-01", "2026-01-01", TY20252, "2025", "Rev. Proc. 2024-40 \xA7 2.06", {
         ruleId: "us.federal.eitc_no_age_gate",
         ageGate: false,
         titleSuffix: "Earned income credit, \xA7 32(c)(1)(A)(ii) childless age gate REMOVED (TY2025; for state decoupling statutes only)",
         extraExcerpt: NO_AGE_GATE_EXCERPT
       }),
-      eitcRule(2, "2026-01-01", "2027-01-01", TY20262, "2026", "Rev. Proc. 2025-32 \xA7 4.06", {
+      eitcRule(4, "2026-01-01", "2027-01-01", TY20262, "2026", "Rev. Proc. 2025-32 \xA7 4.06", {
         ruleId: "us.federal.eitc_no_age_gate",
         ageGate: false,
         titleSuffix: "Earned income credit, \xA7 32(c)(1)(A)(ii) childless age gate REMOVED (TY2026; for state decoupling statutes only)",
@@ -18148,8 +18261,8 @@ var init_income = __esm({
     incomeRules = [
       {
         id: "us.federal.gross_income",
-        version: 14,
-        // v13 lacked taxable HSA distributions; // v11 predated the standalone shortTermCapitalGains/ordinaryDividends facts
+        version: 15,
+        // v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
         jurisdiction: J16,
         title: "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income \u2212 allowed capital loss \u2212 \xA7 911 exclusion)",
         citation: {
@@ -18167,14 +18280,15 @@ var init_income = __esm({
             args: [
               fact24("wages"),
               fact24("taxableInterest"),
-              fact24("longTermCapitalGains"),
+              ruleRef19("us.federal.schedule_d.preferential_lt_gain"),
               fact24("qualifiedDividends"),
-              fact24("shortTermCapitalGains"),
+              ruleRef19("us.federal.schedule_d.ordinary_st_gain"),
               fact24("ordinaryDividends"),
               fact24("selfEmploymentNetProfit"),
               fact24("k1OrdinaryBusinessIncome"),
               fact24("taxableIraDistributions"),
               fact24("taxablePensionsAndAnnuities"),
+              ruleRef19("us.federal.pension.simplified_method_taxable"),
               fact24("unemploymentCompensation"),
               fact24("otherOrdinaryIncome"),
               fact24("alimonyReceivedPre2019"),
@@ -18188,6 +18302,7 @@ var init_income = __esm({
                 }
               },
               fact24("scheduleENetIncome"),
+              ruleRef19("us.federal.rental.net_income"),
               ruleRef19("us.federal.taxable_social_security")
             ]
           },
@@ -18792,8 +18907,8 @@ var init_investment_taxes = __esm({
     investmentTaxRules = [
       {
         id: "us.federal.niit",
-        version: 5,
-        // v4 predated the standalone shortTermCapitalGains/ordinaryDividends facts
+        version: 6,
+        // v5 read the raw gain facts; § 1411 net investment income now takes the schedule_d netted results (losses reduce gains before NIIT)
         jurisdiction: "us.federal",
         title: "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) \u2212 allocable deductions; MAGI \u2248 AGI)",
         citation: {
@@ -18818,9 +18933,9 @@ var init_investment_taxes = __esm({
                       kind: "add",
                       args: [
                         fact26("taxableInterest"),
-                        fact26("longTermCapitalGains"),
+                        ruleRef21("us.federal.schedule_d.preferential_lt_gain"),
                         fact26("qualifiedDividends"),
-                        fact26("shortTermCapitalGains"),
+                        ruleRef21("us.federal.schedule_d.ordinary_st_gain"),
                         fact26("ordinaryDividends")
                       ]
                     },
@@ -19702,12 +19817,15 @@ function kiddieTaxRule(version2, from, to, year) {
             { kind: "cmp", op: "gt", left: fact30("longTermCapitalGains"), right: zero18 },
             { kind: "cmp", op: "gt", left: fact30("qualifiedDividends"), right: zero18 },
             { kind: "cmp", op: "gt", left: fact30("shortTermCapitalGains"), right: zero18 },
-            { kind: "cmp", op: "gt", left: fact30("ordinaryDividends"), right: zero18 }
+            { kind: "cmp", op: "gt", left: fact30("ordinaryDividends"), right: zero18 },
+            { kind: "cmp", op: "gt", left: fact30("shortTermCapitalLoss"), right: zero18 },
+            { kind: "cmp", op: "gt", left: fact30("longTermCapitalLoss"), right: zero18 },
+            { kind: "cmp", op: "gt", left: fact30("netCapitalLoss"), right: zero18 }
           ]
         },
         then: {
           kind: "unsupported",
-          reason: "a \xA7 1(g) child with capital gains, qualified dividends, or ordinary dividends needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income \u2248 taxable interest' approximation would silently drop \u2014 not modeled"
+          reason: "a \xA7 1(g) child with capital gains/losses, qualified dividends, or ordinary dividends needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income \u2248 taxable interest' approximation would silently drop \u2014 not modeled"
         },
         else: {
           kind: "if",
@@ -19783,8 +19901,9 @@ var init_kiddie = __esm({
       // v3/v4: the § 1(g) capital-gains refusal guard also catches the standalone qualifiedDividends fact
       // v5/v6: the refusal guard also catches shortTermCapitalGains/ordinaryDividends (unearned income
       // the "unearned income ≈ taxable interest" approximation in net_unearned_income would otherwise drop)
-      kiddieTaxRule(5, "2025-01-01", "2026-01-01", "2025"),
-      kiddieTaxRule(6, "2026-01-01", "2027-01-01", "2026"),
+      // v5/v6: the refusal guard predated the per-bucket capital-loss facts and netCapitalLoss
+      kiddieTaxRule(7, "2025-01-01", "2026-01-01", "2025"),
+      kiddieTaxRule(8, "2026-01-01", "2027-01-01", "2026"),
       {
         id: "us.federal.income_tax_before_credits.kiddie",
         version: 1,
@@ -20034,61 +20153,398 @@ var init_passive_losses = __esm({
   }
 });
 
+// ../corpus-us-federal/dist/rules/pension.js
+var J23, FROM13, fact32, money29, int2, ruleRef27, zero20, cost, months, annualAt, ladder, needsAge, pensionRules;
+var init_pension = __esm({
+  "../corpus-us-federal/dist/rules/pension.js"() {
+    "use strict";
+    J23 = "us.federal";
+    FROM13 = { effectiveFrom: "2025-01-01" };
+    fact32 = (factId) => ({ kind: "fact", factId });
+    money29 = (cents2) => ({ kind: "money", cents: cents2 });
+    int2 = (value) => ({ kind: "int", value });
+    ruleRef27 = (ruleId) => ({ kind: "rule", ruleId });
+    zero20 = money29("0");
+    cost = fact32("pensionCostBasis");
+    months = fact32("pensionMonthsThisYear");
+    annualAt = (n) => ({
+      kind: "mulInt",
+      base: { kind: "mulRate", base: cost, rate: { num: "1", den: n }, round: "half-up" },
+      count: months
+    });
+    ladder = (on, bands, last) => {
+      let expr = annualAt(last);
+      for (let i = bands.length - 1; i >= 0; i--) {
+        const [limit, n] = bands[i];
+        expr = {
+          kind: "if",
+          cond: { kind: "cmp", op: "le", left: on, right: int2(limit) },
+          then: annualAt(n),
+          else: expr
+        };
+      }
+      return expr;
+    };
+    needsAge = (ageFact) => ({
+      kind: "cmp",
+      op: "eq",
+      left: fact32(ageFact),
+      right: int2("0")
+    });
+    pensionRules = [
+      {
+        id: "us.federal.pension.simplified_method_exclusion",
+        version: 1,
+        jurisdiction: J23,
+        title: "Simplified Method tax-free portion (\xA7 72(d): cost \xF7 anticipated payments \xD7 months, capped at unrecovered cost)",
+        citation: {
+          source: "26 U.S.C. \xA7 72(d); IRS Pub 575 (Simplified Method Worksheet, Tables 1-2)",
+          section: "\xA7 72(d)(1)(B)(iii)-(iv)",
+          url: "https://www.law.cornell.edu/uscode/text/26/72",
+          excerpt: "Gross income shall not include so much of any monthly annuity payment\u2026 as does not exceed the amount obtained by dividing (I) the investment in the contract (as of the annuity starting date), by (II) the number of anticipated payments\u2026 Age at annuity starting date: not more than 55 \u2192 360; more than 55 but not more than 60 \u2192 310; more than 60 but not more than 65 \u2192 260; more than 65 but not more than 70 \u2192 210; more than 70 \u2192 160. Combined ages (more than one life): not more than 110 \u2192 410; \u2026120 \u2192 360; \u2026130 \u2192 310; \u2026140 \u2192 260; more than 140 \u2192 210. [Lifetime recovery capped at total cost (Pub 575); monthly division keeps cents per the Pub 575 worked example. The rule refuses when the basis is set but the required age fact is not.]"
+        },
+        ...FROM13,
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: { kind: "cmp", op: "eq", left: cost, right: zero20 },
+          then: zero20,
+          else: {
+            kind: "if",
+            cond: fact32("pensionIsJointAndSurvivor"),
+            then: {
+              kind: "if",
+              cond: needsAge("pensionCombinedAgesAtStart"),
+              then: {
+                kind: "unsupported",
+                reason: "a joint-and-survivor simplified-method annuity needs pensionCombinedAgesAtStart (combined ages at the annuity starting date) \u2014 refusing rather than assume a \xA7 72(d)(1)(B)(iv) band"
+              },
+              else: {
+                kind: "min",
+                args: [
+                  ladder(fact32("pensionCombinedAgesAtStart"), [
+                    ["110", "410"],
+                    ["120", "360"],
+                    ["130", "310"],
+                    ["140", "260"]
+                  ], "210"),
+                  { kind: "max0", arg: { kind: "sub", left: cost, right: fact32("pensionBasisPreviouslyRecovered") } }
+                ]
+              }
+            },
+            else: {
+              kind: "if",
+              cond: needsAge("pensionAgeAtStart"),
+              then: {
+                kind: "unsupported",
+                reason: "a simplified-method annuity needs pensionAgeAtStart (age at the annuity starting date, NOT current age) \u2014 refusing rather than assume a \xA7 72(d)(1)(B)(iii) band"
+              },
+              else: {
+                kind: "min",
+                args: [
+                  ladder(fact32("pensionAgeAtStart"), [
+                    ["55", "360"],
+                    ["60", "310"],
+                    ["65", "260"],
+                    ["70", "210"]
+                  ], "160"),
+                  { kind: "max0", arg: { kind: "sub", left: cost, right: fact32("pensionBasisPreviouslyRecovered") } }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        id: "us.federal.pension.simplified_method_taxable",
+        version: 1,
+        jurisdiction: J23,
+        title: "Taxable pension under the Simplified Method (gross payments minus the \xA7 72(d) exclusion)",
+        citation: {
+          source: "26 U.S.C. \xA7 72(a), (d); IRS Pub 575",
+          section: "\xA7 72(a), (d)(1)(B)(i)",
+          url: "https://www.law.cornell.edu/uscode/text/26/72",
+          excerpt: "Except as otherwise provided in this chapter, gross income includes any amount received as an annuity\u2026 gross income shall not include so much of any monthly annuity payment\u2026 as does not exceed [the \xA7 72(d) exclusion]. [Feeds gross income alongside the already-taxable taxablePensionsAndAnnuities fact \u2014 the two inputs are additive for separate pensions.]"
+        },
+        ...FROM13,
+        output: { type: "money" },
+        formula: {
+          kind: "max0",
+          arg: {
+            kind: "sub",
+            left: fact32("pensionGrossPayments"),
+            right: ruleRef27("us.federal.pension.simplified_method_exclusion")
+          }
+        }
+      }
+    ];
+  }
+});
+
+// ../corpus-us-federal/dist/rules/rental.js
+var J24, FROM14, fact33, money30, int3, ruleRef28, zero21, YEAR1_RATE_PER_100K, STEADY_RATE_PER_100K, rateOf, monthTable, CITE_BASE, rentalRules;
+var init_rental = __esm({
+  "../corpus-us-federal/dist/rules/rental.js"() {
+    "use strict";
+    J24 = "us.federal";
+    FROM14 = { effectiveFrom: "2025-01-01" };
+    fact33 = (factId) => ({ kind: "fact", factId });
+    money30 = (cents2) => ({ kind: "money", cents: cents2 });
+    int3 = (value) => ({ kind: "int", value });
+    ruleRef28 = (ruleId) => ({ kind: "rule", ruleId });
+    zero21 = money30("0");
+    YEAR1_RATE_PER_100K = [
+      "3485",
+      // Jan
+      "3182",
+      // Feb
+      "2879",
+      // Mar
+      "2576",
+      // Apr
+      "2273",
+      // May
+      "1970",
+      // Jun
+      "1667",
+      // Jul
+      "1364",
+      // Aug
+      "1061",
+      // Sep
+      "758",
+      // Oct
+      "455",
+      // Nov
+      "152"
+      // Dec
+    ];
+    STEADY_RATE_PER_100K = "3636";
+    rateOf = (per100k) => ({
+      kind: "mulRate",
+      base: fact33("rentalDepreciableBasis"),
+      rate: { num: per100k, den: "100000" },
+      round: "half-up"
+    });
+    monthTable = () => {
+      let expr = rateOf(STEADY_RATE_PER_100K);
+      for (let m = 12; m >= 1; m--) {
+        expr = {
+          kind: "if",
+          cond: {
+            kind: "cmp",
+            op: "eq",
+            left: fact33("rentalPlacedInServiceMonth"),
+            right: int3(String(m))
+          },
+          then: rateOf(YEAR1_RATE_PER_100K[m - 1]),
+          else: expr
+        };
+      }
+      return expr;
+    };
+    CITE_BASE = {
+      source: "26 U.S.C. \xA7 168; IRS Pub 946 Table A-6; IRS Pub 527 ch. 2",
+      url: "https://www.irs.gov/publications/p946"
+    };
+    rentalRules = [
+      {
+        id: "us.federal.rental.depreciation",
+        version: 1,
+        jurisdiction: J24,
+        title: "Residential rental depreciation (\xA7 168 GDS: 27.5-yr straight line, mid-month)",
+        citation: {
+          ...CITE_BASE,
+          section: "\xA7 168(b)(3)(B), (c), (d)(2)",
+          excerpt: "In the case of residential rental property\u2026 the applicable depreciation method is the straight line method\u2026 the applicable recovery period is 27.5 years\u2026 the applicable convention is the mid-month convention. [Pub 946 Table A-6 year-1 percentages by placed-in-service month: 3.485, 3.182, 2.879, 2.576, 2.273, 1.970, 1.667, 1.364, 1.061, 0.758, 0.455, 0.152; full years thereafter 3.636 \u2014 the printed three-decimal table, which is what filed returns use. Basis is the BUILDING only (land never depreciates, \xA7 167). Not modeled, disclosed: ADS elections, separately-dated improvements, the final recovery year's stub, and mid-year dispositions.]"
+        },
+        ...FROM14,
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: { kind: "cmp", op: "eq", left: fact33("rentalDepreciableBasis"), right: zero21 },
+          then: zero21,
+          else: monthTable()
+        }
+      },
+      {
+        id: "us.federal.rental.net_income",
+        version: 1,
+        jurisdiction: J24,
+        title: "Net rental income: Schedule E result before depreciation minus \xA7 168 depreciation",
+        citation: {
+          ...CITE_BASE,
+          section: "\xA7 62(a)(4); Schedule E (Form 1040) line 18",
+          excerpt: "Deductions attributable to rents\u2026 are allowed in arriving at adjusted gross income (\xA7 62(a)(4)); Schedule E line 18: 'Depreciation expense or depletion.' [When the computed depreciation EXCEEDS the pre-depreciation rental result, the year is a rental LOSS governed by the \xA7 469 passive-activity rules \u2014 enter it through rentalActiveParticipationLosses (the $25,000 allowance machinery) instead; this rule refuses rather than route a loss around \xA7 469.]"
+        },
+        ...FROM14,
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: {
+            kind: "cmp",
+            op: "gt",
+            left: ruleRef28("us.federal.rental.depreciation"),
+            right: fact33("rentalIncomeBeforeDepreciation")
+          },
+          then: {
+            kind: "if",
+            cond: { kind: "cmp", op: "eq", left: fact33("rentalIncomeBeforeDepreciation"), right: zero21 },
+            then: zero21,
+            // depreciation facts present but no income routed through this path: nothing to net
+            else: {
+              kind: "unsupported",
+              reason: "depreciation exceeds the pre-depreciation rental result \u2014 this year is a rental LOSS subject to the \xA7 469 passive-activity limits: enter it via rentalActiveParticipationLosses (the $25,000 active-participation allowance applies) rather than through this income path"
+            }
+          },
+          else: {
+            kind: "sub",
+            left: fact33("rentalIncomeBeforeDepreciation"),
+            right: ruleRef28("us.federal.rental.depreciation")
+          }
+        }
+      }
+    ];
+  }
+});
+
+// ../corpus-us-federal/dist/rules/schedule-d.js
+var J25, FROM15, fact34, money31, zero22, gt09, max02, sub, add, and, or, stG, stL, ltG, ltL, legacyLoss, CONTRADICTORY, refuse, CITE5, scheduleDRules;
+var init_schedule_d = __esm({
+  "../corpus-us-federal/dist/rules/schedule-d.js"() {
+    "use strict";
+    J25 = "us.federal";
+    FROM15 = { effectiveFrom: "2025-01-01" };
+    fact34 = (factId) => ({ kind: "fact", factId });
+    money31 = (cents2) => ({ kind: "money", cents: cents2 });
+    zero22 = money31("0");
+    gt09 = (e) => ({ kind: "cmp", op: "gt", left: e, right: zero22 });
+    max02 = (arg2) => ({ kind: "max0", arg: arg2 });
+    sub = (left, right) => ({ kind: "sub", left, right });
+    add = (...args) => ({ kind: "add", args });
+    and = (...args) => ({ kind: "and", args });
+    or = (...args) => ({ kind: "or", args });
+    stG = fact34("shortTermCapitalGains");
+    stL = fact34("shortTermCapitalLoss");
+    ltG = fact34("longTermCapitalGains");
+    ltL = fact34("longTermCapitalLoss");
+    legacyLoss = fact34("netCapitalLoss");
+    CONTRADICTORY = or(and(gt09(stG), gt09(stL)), and(gt09(ltG), gt09(ltL)), and(gt09(legacyLoss), or(gt09(stG), gt09(ltG), gt09(stL), gt09(ltL))));
+    refuse = (computation) => ({
+      kind: "if",
+      cond: CONTRADICTORY,
+      then: {
+        kind: "unsupported",
+        reason: "contradictory Schedule D facts \u2014 each capital fact is a NET result: a bucket takes a gain OR a loss (never both), and the overall netCapitalLoss cannot be combined with per-bucket facts"
+      },
+      else: computation
+    });
+    CITE5 = {
+      source: "26 U.S.C. \xA7 1222; 2025 Schedule D (Form 1040)",
+      url: "https://www.law.cornell.edu/uscode/text/26/1222"
+    };
+    scheduleDRules = [
+      {
+        id: "us.federal.schedule_d.preferential_lt_gain",
+        version: 1,
+        jurisdiction: J25,
+        title: "Net capital gain (\xA7 1222(11)): net LT gain reduced by any net ST loss",
+        citation: {
+          ...CITE5,
+          section: "\xA7 1222(11)",
+          excerpt: "The term 'net capital gain' means the excess of the net long-term capital gain for the taxable year over the net short-term capital loss for such year. [Schedule D: line 16 combines line 7 (net short-term) and line 15 (net long-term); when line 7 is a loss and line 15 a gain, the remainder keeps long-term character and prices through the \xA7 1(h) stack. Inputs are per-bucket NET results; contradictory combinations refuse.]"
+        },
+        ...FROM15,
+        output: { type: "money" },
+        formula: refuse(max02(sub(sub(ltG, ltL), max02(sub(stL, stG)))))
+      },
+      {
+        id: "us.federal.schedule_d.ordinary_st_gain",
+        version: 1,
+        jurisdiction: J25,
+        title: "Net short-term capital gain surviving netting (\xA7 1222(5), (9)): ordinary-rate",
+        citation: {
+          ...CITE5,
+          section: "\xA7 1222(5), (9)",
+          excerpt: "'Net short-term capital gain' means the excess of short-term capital gains for the taxable year over the short-term capital losses for such year\u2026 'net long-term capital loss' means the excess of long-term capital losses\u2026 over the long-term capital gains. [Schedule D line 16: a net LT loss reduces the net ST gain; whatever short-term gain survives is ordinary income \u2014 \xA7 1(h) prices only the \xA7 1222(11) net capital gain.]"
+        },
+        ...FROM15,
+        output: { type: "money" },
+        formula: refuse(max02(sub(sub(stG, stL), max02(sub(ltL, ltG)))))
+      },
+      {
+        id: "us.federal.schedule_d.net_loss",
+        version: 1,
+        jurisdiction: J25,
+        title: "Net capital loss after netting (\xA7 1222(10)), feeding the \xA7 1211(b) offset",
+        citation: {
+          ...CITE5,
+          section: "\xA7 1222(10)",
+          excerpt: "The term 'net capital loss' means the excess of the losses from sales or exchanges of capital assets over the sum allowed under section 1211. [Computed as the overall negative of Schedule D line 16, entered here positive: the legacy netCapitalLoss fact passes through unchanged, or the per-bucket facts net to a loss when bucket losses exceed bucket gains. \xA7 1211(b) caps the ordinary-income offset; \xA7 1212(b) carries the rest forward.]"
+        },
+        ...FROM15,
+        output: { type: "money" },
+        formula: refuse(add(legacyLoss, max02(sub(add(stL, ltL), add(stG, ltG)))))
+      }
+    ];
+  }
+});
+
 // ../corpus-us-federal/dist/rules/schedule-r.js
-var J23, fact32, money29, ruleRef27, zero20, isStatus9, qualified, initialByStatus, initial, agiThreshold, section22Amount, CITATION2, scheduleRRules;
+var J26, fact35, money32, ruleRef29, zero23, isStatus9, qualified, initialByStatus, initial, agiThreshold, section22Amount, CITATION2, scheduleRRules;
 var init_schedule_r = __esm({
   "../corpus-us-federal/dist/rules/schedule-r.js"() {
     "use strict";
-    J23 = "us.federal";
-    fact32 = (factId) => ({ kind: "fact", factId });
-    money29 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef27 = (ruleId) => ({ kind: "rule", ruleId });
-    zero20 = money29("0");
+    J26 = "us.federal";
+    fact35 = (factId) => ({ kind: "fact", factId });
+    money32 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef29 = (ruleId) => ({ kind: "rule", ruleId });
+    zero23 = money32("0");
     isStatus9 = (v) => ({
       kind: "cmp",
       op: "eq",
-      left: fact32("filingStatus"),
+      left: fact35("filingStatus"),
       right: { kind: "enum", value: v }
     });
     qualified = {
       kind: "or",
-      args: [fact32("isAge65OrOlder"), fact32("isRetiredOnTotalDisability")]
+      args: [fact35("isAge65OrOlder"), fact35("isRetiredOnTotalDisability")]
     };
     initialByStatus = {
       kind: "if",
       cond: isStatus9("mfs"),
-      then: money29("375000"),
+      then: money32("375000"),
       else: {
         kind: "if",
         cond: {
           kind: "and",
           args: [
             isStatus9("mfj"),
-            fact32("spouseIsAge65OrOlder")
+            fact35("spouseIsAge65OrOlder")
             // spouse-disabled qualification not modeled — disclosed
           ]
         },
-        then: money29("750000"),
-        else: money29("500000")
+        then: money32("750000"),
+        else: money32("500000")
       }
     };
     initial = {
       kind: "if",
-      cond: fact32("isAge65OrOlder"),
+      cond: fact35("isAge65OrOlder"),
       then: initialByStatus,
-      else: { kind: "min", args: [initialByStatus, fact32("scheduleRDisabilityIncome")] }
+      else: { kind: "min", args: [initialByStatus, fact35("scheduleRDisabilityIncome")] }
     };
     agiThreshold = {
       kind: "if",
       cond: isStatus9("mfj"),
-      then: money29("1000000"),
+      then: money32("1000000"),
       // $10,000
       else: {
         kind: "if",
         cond: isStatus9("mfs"),
-        then: money29("500000"),
+        then: money32("500000"),
         // $5,000
-        else: money29("750000")
+        else: money32("750000")
         // $7,500
       }
     };
@@ -20100,12 +20556,12 @@ var init_schedule_r = __esm({
         right: {
           kind: "add",
           args: [
-            fact32("nontaxableBenefitsForScheduleR"),
+            fact35("nontaxableBenefitsForScheduleR"),
             {
               kind: "mulRate",
               base: {
                 kind: "max0",
-                arg: { kind: "sub", left: ruleRef27("us.federal.agi"), right: agiThreshold }
+                arg: { kind: "sub", left: ruleRef29("us.federal.agi"), right: agiThreshold }
               },
               rate: { num: "50", den: "100" },
               round: "half-up"
@@ -20124,7 +20580,7 @@ var init_schedule_r = __esm({
       {
         id: "us.federal.schedule_r.tentative",
         version: 1,
-        jurisdiction: J23,
+        jurisdiction: J26,
         title: "Credit for the elderly or the disabled \u2014 tentative (\xA7 22, Schedule R)",
         citation: CITATION2,
         effectiveFrom: "2025-01-01",
@@ -20138,7 +20594,7 @@ var init_schedule_r = __esm({
               qualified,
               {
                 kind: "or",
-                args: [{ kind: "not", arg: isStatus9("mfs") }, fact32("mfsLivedApartAllYear")]
+                args: [{ kind: "not", arg: isStatus9("mfs") }, fact35("mfsLivedApartAllYear")]
               }
             ]
           },
@@ -20152,13 +20608,13 @@ var init_schedule_r = __esm({
             },
             mode: "half-up"
           },
-          else: zero20
+          else: zero23
         }
       },
       {
         id: "us.federal.schedule_r_credit",
         version: 1,
-        jurisdiction: J23,
+        jurisdiction: J26,
         title: "Schedule R credit, limited to remaining tax (\xA7 26(a) after CDCC + education + saver's + adoption)",
         citation: CITATION2,
         effectiveFrom: "2025-01-01",
@@ -20166,7 +20622,7 @@ var init_schedule_r = __esm({
         formula: {
           kind: "min",
           args: [
-            ruleRef27("us.federal.schedule_r.tentative"),
+            ruleRef29("us.federal.schedule_r.tentative"),
             {
               kind: "max0",
               arg: {
@@ -20174,17 +20630,17 @@ var init_schedule_r = __esm({
                 left: {
                   kind: "add",
                   args: [
-                    ruleRef27("us.federal.income_tax_before_credits"),
-                    ruleRef27("us.federal.amt")
+                    ruleRef29("us.federal.income_tax_before_credits"),
+                    ruleRef29("us.federal.amt")
                   ]
                 },
                 right: {
                   kind: "add",
                   args: [
-                    ruleRef27("us.federal.cdcc"),
-                    ruleRef27("us.federal.education.nonrefundable"),
-                    ruleRef27("us.federal.savers_credit"),
-                    ruleRef27("us.federal.adoption.nonrefundable")
+                    ruleRef29("us.federal.cdcc"),
+                    ruleRef29("us.federal.education.nonrefundable"),
+                    ruleRef29("us.federal.savers_credit"),
+                    ruleRef29("us.federal.adoption.nonrefundable")
                   ]
                 }
               }
@@ -20197,27 +20653,27 @@ var init_schedule_r = __esm({
 });
 
 // ../corpus-us-federal/dist/rules/state-helpers.js
-var fact33, money30, ruleRef28, isStatus10, printedSchedule;
+var fact36, money33, ruleRef30, isStatus10, printedSchedule;
 var init_state_helpers = __esm({
   "../corpus-us-federal/dist/rules/state-helpers.js"() {
     "use strict";
-    fact33 = (factId) => ({ kind: "fact", factId });
-    money30 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef28 = (ruleId) => ({ kind: "rule", ruleId });
+    fact36 = (factId) => ({ kind: "fact", factId });
+    money33 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef30 = (ruleId) => ({ kind: "rule", ruleId });
     isStatus10 = (v) => ({
       kind: "cmp",
       op: "eq",
-      left: fact33("filingStatus"),
+      left: fact36("filingStatus"),
       right: { kind: "enum", value: v }
     });
     printedSchedule = (base, rows) => {
       const rowExpr = (r) => ({
         kind: "add",
         args: [
-          money30(r.fixedCents),
+          money33(r.fixedCents),
           {
             kind: "mulRate",
-            base: { kind: "sub", left: base, right: money30(r.thresholdCents) },
+            base: { kind: "sub", left: base, right: money33(r.thresholdCents) },
             rate: r.rate,
             round: "half-up"
           }
@@ -20227,7 +20683,7 @@ var init_state_helpers = __esm({
       for (let i = rows.length - 2; i >= 0; i--) {
         expr = {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: base, right: money30(rows[i + 1].thresholdCents) },
+          cond: { kind: "cmp", op: "le", left: base, right: money33(rows[i + 1].thresholdCents) },
           then: rowExpr(rows[i]),
           else: expr
         };
@@ -20285,7 +20741,7 @@ var init_state_il = __esm({
         },
         formula: {
           kind: "mulRate",
-          base: { kind: "max0", arg: fact33("stateTaxableIncome") },
+          base: { kind: "max0", arg: fact36("stateTaxableIncome") },
           rate: { num: "495", den: "10000" },
           round: "half-up"
         }
@@ -20311,7 +20767,7 @@ var init_state_il = __esm({
           kind: "roundToDollar",
           value: {
             kind: "mulRate",
-            base: ruleRef28("us.federal.eitc_no_age_gate"),
+            base: ruleRef30("us.federal.eitc_no_age_gate"),
             rate: { num: "20", den: "100" },
             round: "half-up"
           },
@@ -20383,35 +20839,35 @@ var init_state_il = __esm({
         },
         formula: {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier1Max" } },
+          cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier1Max" } },
           then: { kind: "param", name: "tier1Tax" },
           else: {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier2Max" } },
+            cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier2Max" } },
             then: { kind: "param", name: "tier2Tax" },
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier3Max" } },
+              cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier3Max" } },
               then: { kind: "param", name: "tier3Tax" },
               else: {
                 kind: "if",
-                cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier4Max" } },
+                cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier4Max" } },
                 then: { kind: "param", name: "tier4Tax" },
                 else: {
                   kind: "if",
-                  cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier5Max" } },
+                  cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier5Max" } },
                   then: { kind: "param", name: "tier5Tax" },
                   else: {
                     kind: "if",
-                    cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier6Max" } },
+                    cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier6Max" } },
                     then: { kind: "param", name: "tier6Tax" },
                     else: {
                       kind: "if",
-                      cond: { kind: "cmp", op: "le", left: ruleRef28("us.federal.agi"), right: { kind: "param", name: "tier7Max" } },
+                      cond: { kind: "cmp", op: "le", left: ruleRef30("us.federal.agi"), right: { kind: "param", name: "tier7Max" } },
                       then: { kind: "param", name: "tier7Tax" },
                       else: {
                         kind: "roundToDollar",
-                        value: { kind: "mulRate", base: ruleRef28("us.federal.agi"), rate: { num: "5", den: "10000" }, round: "half-up" },
+                        value: { kind: "mulRate", base: ruleRef30("us.federal.agi"), rate: { num: "5", den: "10000" }, round: "half-up" },
                         mode: "half-up"
                       }
                     }
@@ -20475,12 +20931,12 @@ var init_state_va = __esm({
         },
         formula: {
           kind: "if",
-          cond: fact33("useFormulaMethod"),
+          cond: fact36("useFormulaMethod"),
           then: {
             kind: "roundToDollar",
             value: {
               kind: "brackets",
-              base: { kind: "max0", arg: fact33("stateTaxableIncome") },
+              base: { kind: "max0", arg: fact36("stateTaxableIncome") },
               table: [
                 { threshold: "0", rate: { num: "2", den: "100" } },
                 { threshold: "300000", rate: { num: "3", den: "100" } },
@@ -20496,14 +20952,14 @@ var init_state_va = __esm({
             cond: {
               kind: "cmp",
               op: "le",
-              left: { kind: "max0", arg: fact33("stateTaxableIncome") },
+              left: { kind: "max0", arg: fact36("stateTaxableIncome") },
               right: { kind: "money", cents: "500000" }
             },
             then: {
               kind: "roundToDollar",
               value: {
                 kind: "brackets",
-                base: { kind: "max0", arg: fact33("stateTaxableIncome") },
+                base: { kind: "max0", arg: fact36("stateTaxableIncome") },
                 table: [
                   { threshold: "0", rate: { num: "2", den: "100" } },
                   { threshold: "300000", rate: { num: "3", den: "100" } }
@@ -20520,7 +20976,7 @@ var init_state_va = __esm({
               cond: {
                 kind: "cmp",
                 op: "ge",
-                left: { kind: "max0", arg: fact33("stateTaxableIncome") },
+                left: { kind: "max0", arg: fact36("stateTaxableIncome") },
                 right: { kind: "money", cents: "10000000" }
                 // $100,000
               },
@@ -20528,7 +20984,7 @@ var init_state_va = __esm({
                 kind: "roundToDollar",
                 value: {
                   kind: "brackets",
-                  base: { kind: "max0", arg: fact33("stateTaxableIncome") },
+                  base: { kind: "max0", arg: fact36("stateTaxableIncome") },
                   table: [
                     { threshold: "0", rate: { num: "2", den: "100" } },
                     { threshold: "300000", rate: { num: "3", den: "100" } },
@@ -20550,7 +21006,7 @@ var init_state_va = __esm({
                       kind: "stepUnits",
                       value: {
                         kind: "brackets",
-                        base: { kind: "max0", arg: fact33("stateTaxableIncome") },
+                        base: { kind: "max0", arg: fact36("stateTaxableIncome") },
                         table: [
                           { threshold: "0", rate: { num: "2", den: "100" } },
                           { threshold: "300000", rate: { num: "3", den: "100" } },
@@ -20653,8 +21109,8 @@ var init_state_va = __esm({
           cond: {
             kind: "or",
             args: [
-              { kind: "cmp", op: "eq", left: fact33("filingStatus"), right: { kind: "enum", value: "mfj" } },
-              { kind: "cmp", op: "eq", left: fact33("filingStatus"), right: { kind: "enum", value: "qss" } }
+              { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } },
+              { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "qss" } }
             ]
           },
           then: { kind: "money", cents: "1750000" },
@@ -20682,8 +21138,8 @@ var init_state_va = __esm({
           cond: {
             kind: "or",
             args: [
-              { kind: "cmp", op: "eq", left: fact33("filingStatus"), right: { kind: "enum", value: "mfj" } },
-              { kind: "cmp", op: "eq", left: fact33("filingStatus"), right: { kind: "enum", value: "qss" } }
+              { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } },
+              { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "qss" } }
             ]
           },
           then: { kind: "money", cents: "1840000" },
@@ -20711,8 +21167,8 @@ var init_state_va = __esm({
           cond: {
             kind: "or",
             args: [
-              { kind: "cmp", op: "eq", left: fact33("filingStatus"), right: { kind: "enum", value: "mfj" } },
-              { kind: "cmp", op: "eq", left: fact33("filingStatus"), right: { kind: "enum", value: "qss" } }
+              { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } },
+              { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "qss" } }
             ]
           },
           then: { kind: "money", cents: "1860000" },
@@ -20787,7 +21243,7 @@ var init_state_ca = __esm({
                 kind: "cmp",
                 op: "gt",
                 left: base2,
-                right: money30("74295800")
+                right: money33("74295800")
                 // $742,958 — Schedule Y's 9.3% band ends here
               },
               then: {
@@ -20814,7 +21270,7 @@ var init_state_ca = __esm({
                 kind: "cmp",
                 op: "gt",
                 left: base2,
-                right: money30("50520800")
+                right: money33("50520800")
                 // $505,208 — encoded bands end here
               },
               then: {
@@ -20858,26 +21314,26 @@ var init_state_ca = __esm({
               }
             }
           });
-          const base = { kind: "max0", arg: fact33("stateTaxableIncome") };
+          const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
           const lower = {
             kind: "add",
             args: [
-              money30("5100"),
+              money33("5100"),
               // $51
               {
                 kind: "mulInt",
-                base: money30("10000"),
+                base: money33("10000"),
                 // $100
                 count: {
                   kind: "stepUnits",
-                  value: { kind: "sub", left: base, right: money30("5100") },
+                  value: { kind: "sub", left: base, right: money33("5100") },
                   unitCents: "10000",
                   mode: "floor"
                 }
               }
             ]
           };
-          const generalMidpoint = { kind: "add", args: [lower, money30("4950")] };
+          const generalMidpoint = { kind: "add", args: [lower, money33("4950")] };
           const midpoint = {
             kind: "if",
             cond: {
@@ -20896,7 +21352,7 @@ var init_state_ca = __esm({
             cond: {
               kind: "or",
               args: [
-                fact33("useFormulaMethod"),
+                fact36("useFormulaMethod"),
                 {
                   kind: "cmp",
                   op: "ge",
@@ -20916,7 +21372,7 @@ var init_state_ca = __esm({
                 right: { kind: "param", name: "tableFirstRowCeiling" }
                 // <= $50
               },
-              then: money30("0"),
+              then: money33("0"),
               else: { kind: "roundToDollar", value: scheduleFor(midpoint), mode: "half-up" }
             }
           };
@@ -21017,33 +21473,33 @@ var init_state_ca = __esm({
               left: {
                 kind: "add",
                 args: [
-                  fact33("wages"),
+                  fact36("wages"),
                   {
                     kind: "max0",
                     arg: {
                       kind: "sub",
-                      left: fact33("selfEmploymentNetProfit"),
+                      left: fact36("selfEmploymentNetProfit"),
                       right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" }
                     }
                   }
                 ]
               },
-              right: fact33("scheduleCNetLoss")
+              right: fact36("scheduleCNetLoss")
             }
           };
           const midCeil = {
             kind: "sub",
             left: {
               kind: "mulInt",
-              base: money30("5000"),
+              base: money33("5000"),
               count: { kind: "stepUnits", value: earned2, unitCents: "5000", mode: "ceil" }
             },
-            right: money30("2450")
+            right: money33("2450")
             // $24.50
           };
           const kids = {
             kind: "add",
-            args: [fact33("qualifyingChildren"), fact33("eitcAdditionalQualifyingChildren")]
+            args: [fact36("qualifyingChildren"), fact36("eitcAdditionalQualifyingChildren")]
           };
           const kidsEq = (n) => ({
             kind: "cmp",
@@ -21145,12 +21601,12 @@ var init_state_ca = __esm({
                 {
                   kind: "cmp",
                   op: "ge",
-                  left: ruleRef28("us.federal.agi"),
+                  left: ruleRef30("us.federal.agi"),
                   right: { kind: "param", name: "ceiling" }
                 }
               ]
             },
-            then: money30("0"),
+            then: money33("0"),
             else: {
               kind: "if",
               cond: kidsEq("0"),
@@ -21200,28 +21656,28 @@ var init_state_ca = __esm({
               left: {
                 kind: "add",
                 args: [
-                  fact33("wages"),
+                  fact36("wages"),
                   {
                     kind: "max0",
                     arg: {
                       kind: "sub",
-                      left: fact33("selfEmploymentNetProfit"),
+                      left: fact36("selfEmploymentNetProfit"),
                       right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" }
                     }
                   }
                 ]
               },
-              right: fact33("scheduleCNetLoss")
+              right: fact36("scheduleCNetLoss")
             }
           };
           return {
             kind: "if",
-            cond: { kind: "not", arg: fact33("hasChildUnderSix") },
-            then: money30("0"),
+            cond: { kind: "not", arg: fact36("hasChildUnderSix") },
+            then: money33("0"),
             else: {
               kind: "if",
               cond: { kind: "cmp", op: "ge", left: earned2, right: { kind: "param", name: "phaseOutComplete" } },
-              then: money30("0"),
+              then: money33("0"),
               else: {
                 kind: "if",
                 cond: { kind: "cmp", op: "le", left: earned2, right: { kind: "param", name: "phaseOutStart" } },
@@ -21261,8 +21717,8 @@ var init_state_ca = __esm({
         },
         formula: {
           kind: "if",
-          cond: { kind: "not", arg: fact33("caRentedPrincipalResidence") },
-          then: money30("0"),
+          cond: { kind: "not", arg: fact36("caRentedPrincipalResidence") },
+          then: money33("0"),
           else: {
             kind: "if",
             cond: {
@@ -21274,22 +21730,22 @@ var init_state_ca = __esm({
               cond: {
                 kind: "cmp",
                 op: "le",
-                left: ruleRef28("us.federal.agi"),
+                left: ruleRef30("us.federal.agi"),
                 right: { kind: "param", name: "agiCeilingJointHohQss" }
               },
               then: { kind: "param", name: "creditJointHohQss" },
-              else: money30("0")
+              else: money33("0")
             },
             else: {
               kind: "if",
               cond: {
                 kind: "cmp",
                 op: "le",
-                left: ruleRef28("us.federal.agi"),
+                left: ruleRef30("us.federal.agi"),
                 right: { kind: "param", name: "agiCeilingSingleMfs" }
               },
               then: { kind: "param", name: "creditSingleMfs" },
-              else: money30("0")
+              else: money33("0")
             }
           }
         }
@@ -21357,7 +21813,7 @@ var init_state_ca = __esm({
         formula: (() => {
           const byStatus = (single, joint, mfs) => ({
             kind: "match",
-            on: fact33("filingStatus"),
+            on: fact36("filingStatus"),
             cases: [
               { when: "single", value: { kind: "param", name: single } },
               { when: "hoh", value: { kind: "param", name: single } },
@@ -21375,7 +21831,7 @@ var init_state_ca = __esm({
               left: exemption2,
               right: {
                 kind: "mulRate",
-                base: { kind: "max0", arg: { kind: "sub", left: fact33("caAmti"), right: threshold2 } },
+                base: { kind: "max0", arg: { kind: "sub", left: fact36("caAmti"), right: threshold2 } },
                 rate: { num: "25", den: "100" },
                 round: "half-up"
               }
@@ -21383,11 +21839,11 @@ var init_state_ca = __esm({
           };
           const tmt = {
             kind: "mulRate",
-            base: { kind: "max0", arg: { kind: "sub", left: fact33("caAmti"), right: exemptionPhased } },
+            base: { kind: "max0", arg: { kind: "sub", left: fact36("caAmti"), right: exemptionPhased } },
             rate: { num: "7", den: "100" },
             round: "half-up"
           };
-          const amt = { kind: "max0", arg: { kind: "sub", left: tmt, right: fact33("caRegularTax") } };
+          const amt = { kind: "max0", arg: { kind: "sub", left: tmt, right: fact36("caRegularTax") } };
           return {
             kind: "if",
             cond: {
@@ -21397,7 +21853,7 @@ var init_state_ca = __esm({
                 {
                   kind: "cmp",
                   op: "gt",
-                  left: fact33("caAmti"),
+                  left: fact36("caAmti"),
                   right: { kind: "param", name: "mfsStackingThreshold" }
                 }
               ]
@@ -21432,7 +21888,7 @@ var init_state_ca = __esm({
           kind: "mulRate",
           base: {
             kind: "max0",
-            arg: { kind: "sub", left: fact33("stateTaxableIncome"), right: { kind: "param", name: "threshold" } }
+            arg: { kind: "sub", left: fact36("stateTaxableIncome"), right: { kind: "param", name: "threshold" } }
           },
           rate: { num: "1", den: "100" },
           round: "half-up"
@@ -21615,19 +22071,19 @@ var init_state_ny = __esm({
         },
         formula: (() => {
           const param22 = (name) => ({ kind: "param", name });
-          const fagi = fact33("nyIt214Fagi");
+          const fagi = fact36("nyIt214Fagi");
           const adjustedRent = {
             kind: "mulDiv",
-            a: { kind: "max0", arg: fact33("nyIt214TotalRent") },
-            b: { kind: "mulInt", base: money30("1"), count: fact33("nyIt214RentPercent") },
-            c: money30("100"),
+            a: { kind: "max0", arg: fact36("nyIt214TotalRent") },
+            b: { kind: "mulInt", base: money33("1"), count: fact36("nyIt214RentPercent") },
+            c: money33("100"),
             round: "half-up"
           };
           const avgMonthlyRent = {
             kind: "mulDiv",
             a: adjustedRent,
-            b: money30("1"),
-            c: { kind: "max", args: [money30("1"), { kind: "mulInt", base: money30("1"), count: fact33("nyIt214MonthsPaid") }] },
+            b: money33("1"),
+            c: { kind: "max", args: [money33("1"), { kind: "mulInt", base: money33("1"), count: fact36("nyIt214MonthsPaid") }] },
             round: "half-up"
           };
           const line14 = {
@@ -21638,15 +22094,15 @@ var init_state_ny = __esm({
           };
           const line18 = {
             kind: "add",
-            args: [line14, { kind: "max0", arg: fact33("nyIt214HomeownerTaxes") }]
+            args: [line14, { kind: "max0", arg: fact36("nyIt214HomeownerTaxes") }]
           };
           const table1Rate = (perMille, threshold2, next) => ({
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: money30(threshold2) },
-            then: { kind: "mulDiv", a: fagi, b: money30(perMille), c: money30("1000"), round: "half-up" },
+            cond: { kind: "cmp", op: "le", left: fagi, right: money33(threshold2) },
+            then: { kind: "mulDiv", a: fagi, b: money33(perMille), c: money33("1000"), round: "half-up" },
             else: next
           });
-          const line19 = table1Rate("35", "300000", table1Rate("40", "500000", table1Rate("45", "700000", table1Rate("50", "900000", table1Rate("55", "1100000", table1Rate("60", "1400000", { kind: "mulDiv", a: fagi, b: money30("65"), c: money30("1000"), round: "half-up" }))))));
+          const line19 = table1Rate("35", "300000", table1Rate("40", "500000", table1Rate("45", "700000", table1Rate("50", "900000", table1Rate("55", "1100000", table1Rate("60", "1400000", { kind: "mulDiv", a: fagi, b: money33("65"), c: money33("1000"), round: "half-up" }))))));
           const tableA = {
             kind: "if",
             cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold1") },
@@ -21675,7 +22131,7 @@ var init_state_ny = __esm({
                         kind: "if",
                         cond: { kind: "cmp", op: "le", left: fagi, right: param22("fagiLimit") },
                         then: param22("tableAValue7"),
-                        else: money30("0")
+                        else: money33("0")
                       }
                     }
                   }
@@ -21699,7 +22155,7 @@ var init_state_ny = __esm({
                   kind: "if",
                   cond: { kind: "cmp", op: "le", left: fagi, right: param22("fagiLimit") },
                   then: param22("tableBValue4"),
-                  else: money30("0")
+                  else: money33("0")
                 }
               }
             }
@@ -21709,21 +22165,21 @@ var init_state_ny = __esm({
             cond: {
               kind: "or",
               args: [
-                { kind: "not", arg: fact33("nyIt214Eligible") },
+                { kind: "not", arg: fact36("nyIt214Eligible") },
                 { kind: "cmp", op: "gt", left: fagi, right: param22("fagiLimit") },
                 // line 8 stop
                 { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param22("monthlyRentCap") },
                 // line 13 stop
-                { kind: "cmp", op: "le", left: line18, right: money30("0") },
+                { kind: "cmp", op: "le", left: line18, right: money33("0") },
                 // line 18 stop
                 { kind: "cmp", op: "ge", left: line19, right: line18 }
                 // line 19 stop
               ]
             },
-            then: money30("0"),
+            then: money33("0"),
             else: {
               kind: "if",
-              cond: fact33("isAge65OrOlder"),
+              cond: fact36("isAge65OrOlder"),
               then: tableA,
               else: tableB
             }
@@ -21759,10 +22215,10 @@ var init_state_ny = __esm({
           // 0.030 per $200 row
         },
         formula: (() => {
-          const stateCredit = { kind: "max0", arg: fact33("nyIt216StateCredit") };
-          const under4 = { kind: "max0", arg: fact33("nyIt216Under4Expenses") };
-          const total = { kind: "max0", arg: fact33("nyIt216TotalExpenses") };
-          const fagi = ruleRef28("us.federal.agi");
+          const stateCredit = { kind: "max0", arg: fact36("nyIt216StateCredit") };
+          const under4 = { kind: "max0", arg: fact36("nyIt216Under4Expenses") };
+          const total = { kind: "max0", arg: fact36("nyIt216TotalExpenses") };
+          const fagi = ruleRef30("us.federal.agi");
           const line5 = {
             kind: "min",
             args: [
@@ -21780,15 +22236,15 @@ var init_state_ny = __esm({
             kind: "max0",
             arg: {
               kind: "sub",
-              left: money30("765"),
-              right: { kind: "mulInt", base: money30("30"), count: rowIndex }
+              left: money33("765"),
+              right: { kind: "mulInt", base: money33("30"), count: rowIndex }
             }
           };
           const line7 = (factor) => ({
             kind: "mulDiv",
             a: line5,
             b: factor,
-            c: money30("1000"),
+            c: money33("1000"),
             round: "half-up"
           });
           return {
@@ -21797,18 +22253,18 @@ var init_state_ny = __esm({
               kind: "or",
               args: [
                 { kind: "cmp", op: "gt", left: fagi, right: { kind: "param", name: "fagiCutoff" } },
-                { kind: "cmp", op: "le", left: under4, right: money30("0") },
-                { kind: "cmp", op: "le", left: total, right: money30("0") }
+                { kind: "cmp", op: "le", left: under4, right: money33("0") },
+                { kind: "cmp", op: "le", left: total, right: money33("0") }
               ]
             },
-            then: money30("0"),
+            then: money33("0"),
             else: {
               kind: "roundToDollar",
               mode: "half-up",
               value: {
                 kind: "if",
                 cond: { kind: "cmp", op: "le", left: fagi, right: { kind: "param", name: "fagiFlatCeiling" } },
-                then: line7(money30("750")),
+                then: line7(money33("750")),
                 else: line7(factorDeclining)
               }
             }
@@ -21837,7 +22293,7 @@ var init_state_ny = __esm({
           // $107,650 (NYAGI-keyed)
         },
         formula: (() => {
-          const base = { kind: "max0", arg: fact33("stateTaxableIncome") };
+          const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
           const scheduleFor = (b, status) => {
             const rows = {
               single: [
@@ -21867,10 +22323,10 @@ var init_state_ny = __esm({
             args: [
               {
                 kind: "mulInt",
-                base: money30("5000"),
+                base: money33("5000"),
                 count: { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }
               },
-              money30("2500")
+              money33("2500")
             ]
           };
           const byStatus = (b) => ({
@@ -21900,15 +22356,15 @@ var init_state_ny = __esm({
                 kind: "and",
                 args: [
                   { kind: "cmp", op: "lt", left: base, right: { kind: "param", name: "tableThreshold" } },
-                  { kind: "not", arg: fact33("useFormulaMethod") }
+                  { kind: "not", arg: fact36("useFormulaMethod") }
                 ]
               },
               then: {
                 // printed tax-table bottom row: $0-$13 -> $0 (the generic $50-midpoint
                 // fiction would otherwise charge $1 on zero income)
                 kind: "if",
-                cond: { kind: "cmp", op: "lt", left: base, right: money30("1300") },
-                then: money30("0"),
+                cond: { kind: "cmp", op: "lt", left: base, right: money33("1300") },
+                then: money33("0"),
                 else: { kind: "roundToDollar", value: byStatus(mid50), mode: "half-up" }
               },
               else: { kind: "roundToDollar", value: byStatus(base), mode: "half-up" }
@@ -21935,7 +22391,7 @@ var init_state_ny = __esm({
           // $65,000
         },
         formula: (() => {
-          const base = { kind: "max0", arg: fact33("stateTaxableIncome") };
+          const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
           const bracketsFor = (b, status) => {
             const rows = {
               single: [
@@ -21964,10 +22420,10 @@ var init_state_ny = __esm({
             args: [
               {
                 kind: "mulInt",
-                base: money30("5000"),
+                base: money33("5000"),
                 count: { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }
               },
-              money30("2500")
+              money33("2500")
             ]
           };
           const byStatus = (b) => ({
@@ -22010,7 +22466,7 @@ var init_state_ny = __esm({
         },
         formula: {
           kind: "mulRate",
-          base: { kind: "max0", arg: fact33("nyYonkersBase") },
+          base: { kind: "max0", arg: fact36("nyYonkersBase") },
           rate: { num: "1675", den: "10000" },
           round: "half-up"
         }
@@ -22065,7 +22521,7 @@ var init_state_other = __esm({
   "../corpus-us-federal/dist/rules/state-other.js"() {
     "use strict";
     init_state_helpers();
-    flatBase = { kind: "max0", arg: fact33("stateTaxableIncome") };
+    flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
     otherStateRules = [
       // ---- no-individual-income-tax states (TY2025) --------------------------
       noIncomeTax("ak", "Alaska", "Alaska levies no individual income tax (repealed 1980). No state return exists for wage earners.", "https://tax.alaska.gov/"),
@@ -22106,7 +22562,7 @@ var init_state_other = __esm({
         output: { type: "money" },
         formula: {
           kind: "if",
-          cond: { kind: "cmp", op: "gt", left: fact33("longTermCapitalGains"), right: { kind: "money", cents: "0" } },
+          cond: { kind: "cmp", op: "gt", left: fact36("longTermCapitalGains"), right: { kind: "money", cents: "0" } },
           then: {
             kind: "unsupported",
             reason: "Washington taxes no wages, but long-term capital gains are present \u2014 the RCW 82.87 7% capital-gains excise (indexed ~$270k deduction, real-estate/retirement exemptions) is not modeled; compute it separately and disclose"
@@ -22355,8 +22811,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
   };
   const excessCapped = { kind: "min", args: [excess, band] };
   const tentative = pctOf2("20", "100", qbi);
-  const w2 = fact34("qbiW2Wages");
-  const ubia = fact34("qbiUBIA");
+  const w2 = fact37("qbiW2Wages");
+  const ubia = fact37("qbiUBIA");
   const nonSstb = {
     kind: "if",
     cond: { kind: "cmp", op: "ge", left: excess, right: band },
@@ -22374,22 +22830,25 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
   const sstb = {
     kind: "if",
     cond: { kind: "cmp", op: "ge", left: excess, right: band },
-    then: zero21,
+    then: zero24,
     else: phasedReduction(pctOf2("20", "100", scale(qbi)), wageLimitOf(scale(w2), scale(ubia)), excessCapped, band)
   };
   const businessPart = {
     kind: "if",
-    cond: { kind: "cmp", op: "eq", left: excess, right: zero21 },
+    cond: { kind: "cmp", op: "eq", left: excess, right: zero24 },
     then: tentative,
     // at or below the threshold: no SSTB question, no limits
-    else: { kind: "if", cond: fact34("businessIsSSTB"), then: sstb, else: nonSstb }
+    else: { kind: "if", cond: fact37("businessIsSSTB"), then: sstb, else: nonSstb }
   };
   const overall = pctOf2("20", "100", {
     kind: "max0",
     arg: {
       kind: "sub",
       left: taxableBeforeQbi,
-      right: { kind: "add", args: [fact34("longTermCapitalGains"), fact34("qualifiedDividends")] }
+      right: {
+        kind: "add",
+        args: [ruleRef31("us.federal.schedule_d.preferential_lt_gain"), fact37("qualifiedDividends")]
+      }
     }
   });
   const limited = { kind: "min", args: [businessPart, overall] };
@@ -22428,23 +22887,23 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
       kind: "if",
       cond: hasBusinessIncome,
       then: withFloor,
-      else: zero21
+      else: zero24
     }
   };
 }
-var fact34, money31, ruleRef29, param17, zero21, isStatus11, pctOf2, qbi, hasBusinessIncome, taxableBeforeQbi, wageLimitOf, qbiRules;
+var fact37, money34, ruleRef31, param17, zero24, isStatus11, pctOf2, qbi, hasBusinessIncome, taxableBeforeQbi, wageLimitOf, qbiRules;
 var init_qbi = __esm({
   "../corpus-us-federal/dist/rules/qbi.js"() {
     "use strict";
-    fact34 = (factId) => ({ kind: "fact", factId });
-    money31 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef29 = (ruleId) => ({ kind: "rule", ruleId });
+    fact37 = (factId) => ({ kind: "fact", factId });
+    money34 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
     param17 = (name) => ({ kind: "param", name });
-    zero21 = money31("0");
+    zero24 = money34("0");
     isStatus11 = (status) => ({
       kind: "cmp",
       op: "eq",
-      left: fact34("filingStatus"),
+      left: fact37("filingStatus"),
       right: { kind: "enum", value: status }
     });
     pctOf2 = (num, den, base) => ({
@@ -22464,31 +22923,31 @@ var init_qbi = __esm({
               kind: "max0",
               arg: {
                 kind: "sub",
-                left: fact34("selfEmploymentNetProfit"),
+                left: fact37("selfEmploymentNetProfit"),
                 right: {
                   kind: "add",
                   args: [
-                    ruleRef29("us.federal.se_tax_half_deduction"),
-                    ruleRef29("us.federal.sep_deduction"),
-                    ruleRef29("us.federal.sehi_deduction")
+                    ruleRef31("us.federal.se_tax_half_deduction"),
+                    ruleRef31("us.federal.sep_deduction"),
+                    ruleRef31("us.federal.sehi_deduction")
                   ]
                 }
               }
             },
-            fact34("k1OrdinaryBusinessIncome")
+            fact37("k1OrdinaryBusinessIncome")
           ]
         },
-        right: fact34("qbiLossOffset")
+        right: fact37("qbiLossOffset")
       }
     };
     hasBusinessIncome = {
       kind: "or",
       args: [
-        { kind: "cmp", op: "gt", left: fact34("selfEmploymentNetProfit"), right: zero21 },
-        { kind: "cmp", op: "gt", left: fact34("k1OrdinaryBusinessIncome"), right: zero21 }
+        { kind: "cmp", op: "gt", left: fact37("selfEmploymentNetProfit"), right: zero24 },
+        { kind: "cmp", op: "gt", left: fact37("k1OrdinaryBusinessIncome"), right: zero24 }
       ]
     };
-    taxableBeforeQbi = ruleRef29("us.federal.taxable_income_before_qbi");
+    taxableBeforeQbi = ruleRef31("us.federal.taxable_income_before_qbi");
     wageLimitOf = (w2, ubia) => ({
       kind: "max",
       args: [
@@ -22499,17 +22958,17 @@ var init_qbi = __esm({
     });
     qbiRules = [
       qbiRule(
-        7,
-        // v3 refused above the threshold; v5 added the W-2/UBIA + SSTB mechanics; v7 counts qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit
+        9,
+        // v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
         "2025-01-01",
         "2026-01-01",
         "2025",
         {
           kind: "if",
           cond: isStatus11("mfj"),
-          then: money31("39460000"),
+          then: money34("39460000"),
           // $394,600
-          else: money31("19730000")
+          else: money34("19730000")
           // $197,300 (incl. MFS)
         },
         "5000000",
@@ -22519,23 +22978,23 @@ var init_qbi = __esm({
         false
       ),
       qbiRule(
-        8,
-        // v4 refused above the threshold; v6 added the mechanics + OBBBA band; v8 counts qualifiedDividends in the overall limit
+        10,
+        // v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
         "2026-01-01",
         "2027-01-01",
         "2026",
         {
           kind: "match",
-          on: fact34("filingStatus"),
+          on: fact37("filingStatus"),
           cases: [
-            { when: "mfj", value: money31("40350000") },
+            { when: "mfj", value: money34("40350000") },
             // $403,500
-            { when: "mfs", value: money31("20177500") },
+            { when: "mfs", value: money34("20177500") },
             // $201,775
-            { when: "single", value: money31("20175000") },
+            { when: "single", value: money34("20175000") },
             // $201,750
-            { when: "hoh", value: money31("20175000") },
-            { when: "qss", value: money31("20175000") }
+            { when: "hoh", value: money34("20175000") },
+            { when: "qss", value: money34("20175000") }
           ]
         },
         "7500000",
@@ -22572,10 +23031,10 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
     formula: {
       kind: "if",
       cond: { kind: "cmp", op: "lt", left: seNetEarnings, right: param18("seFloor") },
-      then: zero22,
+      then: zero25,
       else: {
         kind: "if",
-        cond: fact35("useFormulaMethod"),
+        cond: fact38("useFormulaMethod"),
         then: { kind: "add", args: [oasdiComponent, medicareComponent] },
         else: {
           // printed Schedule SE: lines 10 and 11 each entered in whole dollars
@@ -22589,21 +23048,21 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
     }
   };
 }
-var fact35, money32, ruleRef30, param18, zero22, seNetEarnings, wagesForBase, oasdiComponent, medicareComponent, selfEmploymentRules;
+var fact38, money35, ruleRef32, param18, zero25, seNetEarnings, wagesForBase, oasdiComponent, medicareComponent, selfEmploymentRules;
 var init_self_employment = __esm({
   "../corpus-us-federal/dist/rules/self-employment.js"() {
     "use strict";
-    fact35 = (factId) => ({ kind: "fact", factId });
-    money32 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef30 = (ruleId) => ({ kind: "rule", ruleId });
+    fact38 = (factId) => ({ kind: "fact", factId });
+    money35 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef32 = (ruleId) => ({ kind: "rule", ruleId });
     param18 = (name) => ({ kind: "param", name });
-    zero22 = money32("0");
-    seNetEarnings = ruleRef30("us.federal.se_net_earnings");
+    zero25 = money35("0");
+    seNetEarnings = ruleRef32("us.federal.se_net_earnings");
     wagesForBase = {
       kind: "if",
-      cond: { kind: "cmp", op: "gt", left: fact35("socialSecurityWages"), right: zero22 },
-      then: fact35("socialSecurityWages"),
-      else: fact35("wages")
+      cond: { kind: "cmp", op: "gt", left: fact38("socialSecurityWages"), right: zero25 },
+      then: fact38("socialSecurityWages"),
+      else: fact38("wages")
     };
     oasdiComponent = {
       kind: "mulRate",
@@ -22647,7 +23106,7 @@ var init_self_employment = __esm({
         output: { type: "money" },
         formula: {
           kind: "mulRate",
-          base: fact35("selfEmploymentNetProfit"),
+          base: fact38("selfEmploymentNetProfit"),
           rate: { num: "9235", den: "10000" },
           round: "half-up"
         }
@@ -22674,10 +23133,10 @@ var init_self_employment = __esm({
         output: { type: "money" },
         formula: {
           kind: "if",
-          cond: fact35("useFormulaMethod"),
+          cond: fact38("useFormulaMethod"),
           then: {
             kind: "mulRate",
-            base: ruleRef30("us.federal.se_tax"),
+            base: ruleRef32("us.federal.se_tax"),
             rate: { num: "50", den: "100" },
             round: "half-up"
           },
@@ -22685,7 +23144,7 @@ var init_self_employment = __esm({
             kind: "roundToDollar",
             value: {
               kind: "mulRate",
-              base: ruleRef30("us.federal.se_tax"),
+              base: ruleRef32("us.federal.se_tax"),
               rate: { num: "50", den: "100" },
               round: "half-up"
             },
@@ -22710,8 +23169,8 @@ function perSeniorNet() {
           kind: "max0",
           arg: {
             kind: "sub",
-            left: ruleRef31("us.federal.agi"),
-            right: ruleRef31("us.federal.senior_deduction.magi_threshold")
+            left: ruleRef33("us.federal.agi"),
+            right: ruleRef33("us.federal.senior_deduction.magi_threshold")
           }
         },
         rate: { num: "6", den: "100" },
@@ -22720,21 +23179,21 @@ function perSeniorNet() {
     }
   };
 }
-var fact36, money33, ruleRef31, param19, isStatus12, zero23, seniorDeductionRules;
+var fact39, money36, ruleRef33, param19, isStatus12, zero26, seniorDeductionRules;
 var init_senior_deduction = __esm({
   "../corpus-us-federal/dist/rules/senior-deduction.js"() {
     "use strict";
-    fact36 = (factId) => ({ kind: "fact", factId });
-    money33 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
+    fact39 = (factId) => ({ kind: "fact", factId });
+    money36 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
     param19 = (name) => ({ kind: "param", name });
     isStatus12 = (status) => ({
       kind: "cmp",
       op: "eq",
-      left: fact36("filingStatus"),
+      left: fact39("filingStatus"),
       right: { kind: "enum", value: status }
     });
-    zero23 = money33("0");
+    zero26 = money36("0");
     seniorDeductionRules = [
       {
         id: "us.federal.senior_deduction",
@@ -22763,17 +23222,17 @@ var init_senior_deduction = __esm({
           // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
           kind: "if",
           cond: isStatus12("mfs"),
-          then: zero23,
+          then: zero26,
           else: {
             // Only compute (and only demand the threshold) when a senior exists.
             kind: "if",
             cond: {
               kind: "or",
               args: [
-                fact36("isAge65OrOlder"),
+                fact39("isAge65OrOlder"),
                 {
                   kind: "and",
-                  args: [isStatus12("mfj"), fact36("spouseIsAge65OrOlder")]
+                  args: [isStatus12("mfj"), fact39("spouseIsAge65OrOlder")]
                 }
               ]
             },
@@ -22785,22 +23244,22 @@ var init_senior_deduction = __esm({
               args: [
                 {
                   kind: "if",
-                  cond: fact36("isAge65OrOlder"),
+                  cond: fact39("isAge65OrOlder"),
                   then: perSeniorNet(),
-                  else: zero23
+                  else: zero26
                 },
                 {
                   kind: "if",
                   cond: {
                     kind: "and",
-                    args: [isStatus12("mfj"), fact36("spouseIsAge65OrOlder")]
+                    args: [isStatus12("mfj"), fact39("spouseIsAge65OrOlder")]
                   },
                   then: perSeniorNet(),
-                  else: zero23
+                  else: zero26
                 }
               ]
             },
-            else: zero23
+            else: zero26
           }
         }
       },
@@ -22820,17 +23279,17 @@ var init_senior_deduction = __esm({
         output: { type: "money" },
         formula: {
           kind: "match",
-          on: fact36("filingStatus"),
+          on: fact39("filingStatus"),
           cases: [
             // $150,000 only "in the case of a joint return"; QSS is not a joint
             // return. MFS is excluded from the deduction entirely (never reached).
-            { when: "mfj", value: money33("15000000") },
+            { when: "mfj", value: money36("15000000") },
             // $150,000
-            { when: "single", value: money33("7500000") },
+            { when: "single", value: money36("7500000") },
             // $75,000
-            { when: "hoh", value: money33("7500000") },
+            { when: "hoh", value: money36("7500000") },
             // $75,000
-            { when: "qss", value: money33("7500000") }
+            { when: "qss", value: money36("7500000") }
             // $75,000
           ]
         }
@@ -22840,13 +23299,13 @@ var init_senior_deduction = __esm({
 });
 
 // ../corpus-us-federal/dist/rules/social-security.js
-var fact37, money34, ruleRef32, param20, pct2, magiBase, ss, provisional, isMfs2, isMfj, byJoint, socialSecurityRules;
+var fact40, money37, ruleRef34, param20, pct2, magiBase, ss, provisional, isMfs2, isMfj, byJoint, socialSecurityRules;
 var init_social_security = __esm({
   "../corpus-us-federal/dist/rules/social-security.js"() {
     "use strict";
-    fact37 = (factId) => ({ kind: "fact", factId });
-    money34 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef32 = (ruleId) => ({ kind: "rule", ruleId });
+    fact40 = (factId) => ({ kind: "fact", factId });
+    money37 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
     param20 = (name) => ({ kind: "param", name });
     pct2 = (num, base) => ({
       kind: "mulRate",
@@ -22861,51 +23320,53 @@ var init_social_security = __esm({
         left: {
           kind: "add",
           args: [
-            fact37("wages"),
-            fact37("taxableInterest"),
-            fact37("taxExemptInterest"),
+            fact40("wages"),
+            fact40("taxableInterest"),
+            fact40("taxExemptInterest"),
             // § 86(b)(2)(B): "increased by the amount of interest… exempt from tax"
-            fact37("longTermCapitalGains"),
-            fact37("qualifiedDividends"),
-            fact37("shortTermCapitalGains"),
-            fact37("ordinaryDividends"),
-            fact37("selfEmploymentNetProfit"),
-            fact37("k1OrdinaryBusinessIncome"),
-            fact37("taxableIraDistributions"),
-            fact37("taxablePensionsAndAnnuities"),
-            fact37("unemploymentCompensation"),
-            fact37("otherOrdinaryIncome"),
-            fact37("scheduleENetIncome")
+            ruleRef34("us.federal.schedule_d.preferential_lt_gain"),
+            fact40("qualifiedDividends"),
+            ruleRef34("us.federal.schedule_d.ordinary_st_gain"),
+            fact40("ordinaryDividends"),
+            fact40("selfEmploymentNetProfit"),
+            fact40("k1OrdinaryBusinessIncome"),
+            fact40("taxableIraDistributions"),
+            fact40("taxablePensionsAndAnnuities"),
+            ruleRef34("us.federal.pension.simplified_method_taxable"),
+            fact40("unemploymentCompensation"),
+            fact40("otherOrdinaryIncome"),
+            fact40("scheduleENetIncome"),
+            ruleRef34("us.federal.rental.net_income")
           ]
         },
         right: {
           kind: "add",
           args: [
-            ruleRef32("us.federal.capital_loss_ordinary_offset"),
-            fact37("nonpassiveScheduleELoss")
+            ruleRef34("us.federal.capital_loss_ordinary_offset"),
+            fact40("nonpassiveScheduleELoss")
           ]
         }
       },
       right: {
         kind: "add",
         args: [
-          ruleRef32("us.federal.above_the_line_adjustments"),
-          ruleRef32("us.federal.ira_deduction")
+          ruleRef34("us.federal.above_the_line_adjustments"),
+          ruleRef34("us.federal.ira_deduction")
         ]
       }
     };
-    ss = fact37("socialSecurityBenefits");
+    ss = fact40("socialSecurityBenefits");
     provisional = { kind: "add", args: [magiBase, pct2("50", ss)] };
     isMfs2 = {
       kind: "cmp",
       op: "eq",
-      left: fact37("filingStatus"),
+      left: fact40("filingStatus"),
       right: { kind: "enum", value: "mfs" }
     };
     isMfj = {
       kind: "cmp",
       op: "eq",
-      left: fact37("filingStatus"),
+      left: fact40("filingStatus"),
       right: { kind: "enum", value: "mfj" }
     };
     byJoint = (joint, other) => ({
@@ -22917,8 +23378,8 @@ var init_social_security = __esm({
     socialSecurityRules = [
       {
         id: "us.federal.taxable_social_security",
-        version: 7,
-        // v4 predated the nonpassive Schedule E loss fact; v5 predated the standalone qualifiedDividends fact; v6 predated shortTermCapitalGains/ordinaryDividends
+        version: 8,
+        // v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
         jurisdiction: "us.federal",
         title: "Taxable Social Security benefits (\xA7 86: the 0/50/85% worksheet)",
         citation: {
@@ -22946,8 +23407,8 @@ var init_social_security = __esm({
         },
         formula: {
           kind: "if",
-          cond: { kind: "cmp", op: "eq", left: ss, right: money34("0") },
-          then: money34("0"),
+          cond: { kind: "cmp", op: "eq", left: ss, right: money37("0") },
+          then: money37("0"),
           else: {
             kind: "if",
             cond: isMfs2,
@@ -23005,7 +23466,7 @@ var init_social_security = __esm({
 function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unmarriedCents, label) {
   const perStatusAmount = {
     kind: "match",
-    on: fact38("filingStatus"),
+    on: fact41("filingStatus"),
     cases: [
       // the higher amount is for "unmarried AND not a surviving spouse" —
       // MFS and QSS get the married amount (read from both Rev. Procs.)
@@ -23020,12 +23481,12 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
     kind: "if",
     cond,
     then: perStatusAmount,
-    else: money35("0")
+    else: money38("0")
   });
   return {
     id: "us.federal.standard_deduction.additional",
     version: version2,
-    jurisdiction: J24,
+    jurisdiction: J27,
     title: `Additional standard deduction for the aged and blind (TY${label.year})`,
     citation: {
       source: `26 U.S.C. \xA7 63(f); ${label.sourceRevProc}`,
@@ -23043,32 +23504,32 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
     formula: {
       kind: "add",
       args: [
-        addIf(fact38("isAge65OrOlder")),
-        addIf(fact38("isBlind")),
+        addIf(fact41("isAge65OrOlder")),
+        addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus13("mfj"), fact38("spouseIsAge65OrOlder")]
+          args: [isStatus13("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus13("mfj"), fact38("spouseIsBlind")]
+          args: [isStatus13("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
   };
 }
-var J24, fact38, money35, ruleRef33, isStatus13, standardDeductionRules;
+var J27, fact41, money38, ruleRef35, isStatus13, standardDeductionRules;
 var init_standard_deduction = __esm({
   "../corpus-us-federal/dist/rules/standard-deduction.js"() {
     "use strict";
-    J24 = "us.federal";
-    fact38 = (factId) => ({ kind: "fact", factId });
-    money35 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
+    J27 = "us.federal";
+    fact41 = (factId) => ({ kind: "fact", factId });
+    money38 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
     isStatus13 = (status) => ({
       kind: "cmp",
       op: "eq",
-      left: fact38("filingStatus"),
+      left: fact41("filingStatus"),
       right: { kind: "enum", value: status }
     });
     standardDeductionRules = [
@@ -23076,7 +23537,7 @@ var init_standard_deduction = __esm({
         id: "us.federal.standard_deduction.base_amount",
         version: 2,
         // v1 held pre-OBBBA Rev. Proc. 2024-40 amounts ($15,000/$30,000/$22,500)
-        jurisdiction: J24,
+        jurisdiction: J27,
         title: "Basic standard deduction amount by filing status (TY2025, as amended by OBBBA)",
         citation: {
           source: "26 U.S.C. \xA7 63(c), as amended by Pub. L. 119-21 (OBBBA) \xA7 70102",
@@ -23089,17 +23550,17 @@ var init_standard_deduction = __esm({
         output: { type: "money" },
         formula: {
           kind: "match",
-          on: fact38("filingStatus"),
+          on: fact41("filingStatus"),
           cases: [
-            { when: "single", value: money35("1575000") },
+            { when: "single", value: money38("1575000") },
             // $15,750
-            { when: "mfs", value: money35("1575000") },
+            { when: "mfs", value: money38("1575000") },
             // $15,750 (same as single)
-            { when: "mfj", value: money35("3150000") },
+            { when: "mfj", value: money38("3150000") },
             // $31,500
-            { when: "qss", value: money35("3150000") },
+            { when: "qss", value: money38("3150000") },
             // $31,500 (§ 1(j)(2)(A): "…and Surviving Spouses")
-            { when: "hoh", value: money35("2362500") }
+            { when: "hoh", value: money38("2362500") }
             // $23,625
           ]
         }
@@ -23107,7 +23568,7 @@ var init_standard_deduction = __esm({
       {
         id: "us.federal.standard_deduction.base_amount",
         version: 3,
-        jurisdiction: J24,
+        jurisdiction: J27,
         title: "Basic standard deduction amount by filing status (TY2026)",
         citation: {
           source: "26 U.S.C. \xA7 63(c); Rev. Proc. 2025-32",
@@ -23120,17 +23581,17 @@ var init_standard_deduction = __esm({
         output: { type: "money" },
         formula: {
           kind: "match",
-          on: fact38("filingStatus"),
+          on: fact41("filingStatus"),
           cases: [
-            { when: "single", value: money35("1610000") },
+            { when: "single", value: money38("1610000") },
             // $16,100
-            { when: "mfs", value: money35("1610000") },
+            { when: "mfs", value: money38("1610000") },
             // $16,100 ("single or married filing separately")
-            { when: "mfj", value: money35("3220000") },
+            { when: "mfj", value: money38("3220000") },
             // $32,200
-            { when: "qss", value: money35("3220000") },
+            { when: "qss", value: money38("3220000") },
             // $32,200 (surviving spouse)
-            { when: "hoh", value: money35("2415000") }
+            { when: "hoh", value: money38("2415000") }
             // $24,150
           ]
         }
@@ -23138,7 +23599,7 @@ var init_standard_deduction = __esm({
       {
         id: "us.federal.standard_deduction.base",
         version: 1,
-        jurisdiction: J24,
+        jurisdiction: J27,
         title: "Basic standard deduction",
         citation: {
           source: "26 U.S.C. \xA7 63(c)(2)",
@@ -23149,12 +23610,12 @@ var init_standard_deduction = __esm({
         effectiveFrom: "2025-01-01",
         // structural: open-ended
         output: { type: "money" },
-        formula: ruleRef33("us.federal.standard_deduction.base_amount")
+        formula: ruleRef35("us.federal.standard_deduction.base_amount")
       },
       {
         id: "us.federal.standard_deduction.dependent_limit",
         version: 1,
-        jurisdiction: J24,
+        jurisdiction: J27,
         title: "Limitation on basic standard deduction of a dependent",
         citation: {
           source: "26 U.S.C. \xA7 63(c)(5); Rev. Proc. 2024-40 \xA7 2.15(2); Rev. Proc. 2025-32 \xA7 4.14(2)",
@@ -23166,19 +23627,19 @@ var init_standard_deduction = __esm({
         effectiveTo: "2027-01-01",
         // same dollar amounts apply in 2025 and 2026
         output: { type: "money" },
-        applicability: fact38("isClaimedAsDependent"),
+        applicability: fact41("isClaimedAsDependent"),
         // min(normal base amount, max($1,350, earned income + $450))
         // simplified: earned income approximated as wages
         formula: {
           kind: "min",
           args: [
-            ruleRef33("us.federal.standard_deduction.base_amount"),
+            ruleRef35("us.federal.standard_deduction.base_amount"),
             {
               kind: "max",
               args: [
-                money35("135000"),
+                money38("135000"),
                 // $1,350
-                { kind: "add", args: [fact38("wages"), money35("45000")] }
+                { kind: "add", args: [fact41("wages"), money38("45000")] }
                 // + $450
               ]
             }
@@ -23189,7 +23650,7 @@ var init_standard_deduction = __esm({
       {
         id: "us.federal.standard_deduction.mfs_spouse_itemizes",
         version: 1,
-        jurisdiction: J24,
+        jurisdiction: J27,
         title: "MFS standard deduction is zero when the spouse itemizes",
         citation: {
           source: "26 U.S.C. \xA7 63(c)(6)(A)",
@@ -23205,10 +23666,10 @@ var init_standard_deduction = __esm({
         applicability: {
           kind: "if",
           cond: isStatus13("mfs"),
-          then: fact38("spouseItemizes"),
+          then: fact41("spouseItemizes"),
           else: { kind: "bool", value: false }
         },
-        formula: money35("0"),
+        formula: money38("0"),
         // § 63(c)(6) zeroes the ENTIRE standard deduction (basic + additional),
         // so this overrides the sum rule, not just the basic component.
         overrides: { ruleId: "us.federal.standard_deduction", priority: 10 }
@@ -23228,7 +23689,7 @@ var init_standard_deduction = __esm({
       {
         id: "us.federal.standard_deduction",
         version: 1,
-        jurisdiction: J24,
+        jurisdiction: J27,
         title: "Standard deduction",
         citation: {
           source: "26 U.S.C. \xA7 63(c)(1)",
@@ -23242,8 +23703,8 @@ var init_standard_deduction = __esm({
         formula: {
           kind: "add",
           args: [
-            ruleRef33("us.federal.standard_deduction.base"),
-            ruleRef33("us.federal.standard_deduction.additional")
+            ruleRef35("us.federal.standard_deduction.base"),
+            ruleRef35("us.federal.standard_deduction.additional")
           ]
         }
       }
@@ -23252,17 +23713,17 @@ var init_standard_deduction = __esm({
 });
 
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
-var fact39, boolLit, isStatus14, WINDOW, tipsEligibilityRules;
+var fact42, boolLit, isStatus14, WINDOW, tipsEligibilityRules;
 var init_tips_eligibility = __esm({
   "../corpus-us-federal/dist/rules/tips-eligibility.js"() {
     "use strict";
     init_occupations();
-    fact39 = (factId) => ({ kind: "fact", factId });
+    fact42 = (factId) => ({ kind: "fact", factId });
     boolLit = (value) => ({ kind: "bool", value });
     isStatus14 = (status) => ({
       kind: "cmp",
       op: "eq",
-      left: fact39("filingStatus"),
+      left: fact42("filingStatus"),
       right: { kind: "enum", value: status }
     });
     WINDOW = { effectiveFrom: "2025-01-01", effectiveTo: "2029-01-01" };
@@ -23282,7 +23743,7 @@ var init_tips_eligibility = __esm({
         output: { type: "bool" },
         formula: {
           kind: "match",
-          on: fact39("occupation"),
+          on: fact42("occupation"),
           cases: [
             ...TIPPED_OCCUPATIONS.map((o) => ({ when: o.slug, value: boolLit(true) })),
             { when: "other", value: boolLit(false) }
@@ -23309,8 +23770,8 @@ var init_tips_eligibility = __esm({
           args: [
             { kind: "not", arg: isStatus14("mfs") },
             { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
-            fact39("tipsWereVoluntary"),
-            { kind: "not", arg: fact39("employerIsSSTB") }
+            fact42("tipsWereVoluntary"),
+            { kind: "not", arg: fact42("employerIsSSTB") }
           ]
         }
       }
@@ -23324,22 +23785,22 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
     // demanded — a taxpayer without tips is never asked their occupation
-    cond: { kind: "cmp", op: "gt", left: fact40(qualifiedFactId), right: zero24 },
+    cond: { kind: "cmp", op: "gt", left: fact43(qualifiedFactId), right: zero27 },
     then: {
       kind: "if",
       cond: ineligible,
-      then: zero24,
+      then: zero27,
       else: {
         kind: "max0",
         arg: {
           kind: "sub",
           left: {
             kind: "min",
-            args: [fact40(qualifiedFactId), cap]
+            args: [fact43(qualifiedFactId), cap]
           },
           right: {
             kind: "mulInt",
-            base: money36("10000"),
+            base: money39("10000"),
             // $100 per step
             count: {
               kind: "stepUnits",
@@ -23347,7 +23808,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
                 kind: "max0",
                 arg: {
                   kind: "sub",
-                  left: ruleRef34("us.federal.agi"),
+                  left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
                     cond: isStatus15("mfj"),
@@ -23365,22 +23826,22 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
         }
       }
     },
-    else: zero24
+    else: zero27
   };
 }
-var fact40, money36, ruleRef34, param21, zero24, isStatus15, WINDOW2, THRESHOLD_PARAMS, tipsOvertimeRules;
+var fact43, money39, ruleRef36, param21, zero27, isStatus15, WINDOW2, THRESHOLD_PARAMS, tipsOvertimeRules;
 var init_tips_overtime = __esm({
   "../corpus-us-federal/dist/rules/tips-overtime.js"() {
     "use strict";
-    fact40 = (factId) => ({ kind: "fact", factId });
-    money36 = (cents2) => ({ kind: "money", cents: cents2 });
-    ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
+    fact43 = (factId) => ({ kind: "fact", factId });
+    money39 = (cents2) => ({ kind: "money", cents: cents2 });
+    ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
     param21 = (name) => ({ kind: "param", name });
-    zero24 = money36("0");
+    zero27 = money39("0");
     isStatus15 = (status) => ({
       kind: "cmp",
       op: "eq",
-      left: fact40("filingStatus"),
+      left: fact43("filingStatus"),
       right: { kind: "enum", value: status }
     });
     WINDOW2 = { effectiveFrom: "2025-01-01", effectiveTo: "2029-01-01" };
@@ -23490,6 +23951,9 @@ var init_dist2 = __esm({
     init_kiddie();
     init_net_tax();
     init_passive_losses();
+    init_pension();
+    init_rental();
+    init_schedule_d();
     init_schedule_r();
     init_state_parameters();
     init_qbi();
@@ -23503,7 +23967,7 @@ var init_dist2 = __esm({
     init_occupations();
     corpusInput = {
       name: "@invaro/opentax-corpus-us-federal",
-      version: "0.35.1",
+      version: "0.36.0",
       rules: [
         ...corporateRules,
         ...corporate1120Rules,
@@ -23517,6 +23981,9 @@ var init_dist2 = __esm({
         ...educationCreditRules,
         ...iraRules,
         ...ira8606Rules,
+        ...scheduleDRules,
+        ...rentalRules,
+        ...pensionRules,
         ...capitalLossRules,
         ...kiddieRules,
         ...incomeRules,
@@ -23827,6 +24294,7 @@ function searchRules(corpus2, query, asOf, limit = 8) {
     let raw = 0;
     let score = 0;
     let matched = 0;
+    let sawStrong = false;
     for (const t of tokens) {
       let s = 0;
       if (has(id, t))
@@ -23835,7 +24303,9 @@ function searchRules(corpus2, query, asOf, limit = 8) {
         s += 2;
       if (has(meta, t))
         s += 1;
-      if (s === 0 && has(weak, t))
+      if (s > 0)
+        sawStrong = true;
+      else if (has(weak, t))
         s = 1;
       if (s > 0)
         matched += 1;
@@ -23843,6 +24313,8 @@ function searchRules(corpus2, query, asOf, limit = 8) {
       score += s * (boost.get(t) ?? 1);
     }
     if (raw < minScore || matched < Math.ceil(tokens.length / 2))
+      continue;
+    if (tokens.length >= 2 && !sawStrong)
       continue;
     hits.push({
       ruleId: rule.id,
@@ -24114,8 +24586,8 @@ var init_ZodError = __esm({
       constructor(issues) {
         super();
         this.issues = [];
-        this.addIssue = (sub) => {
-          this.issues = [...this.issues, sub];
+        this.addIssue = (sub2) => {
+          this.issues = [...this.issues, sub2];
         };
         this.addIssues = (subs = []) => {
           this.issues = [...this.issues, ...subs];
@@ -24182,13 +24654,13 @@ var init_ZodError = __esm({
       flatten(mapper = (issue2) => issue2.message) {
         const fieldErrors = {};
         const formErrors = [];
-        for (const sub of this.issues) {
-          if (sub.path.length > 0) {
-            const firstEl = sub.path[0];
+        for (const sub2 of this.issues) {
+          if (sub2.path.length > 0) {
+            const firstEl = sub2.path[0];
             fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-            fieldErrors[firstEl].push(mapper(sub));
+            fieldErrors[firstEl].push(mapper(sub2));
           } else {
-            formErrors.push(mapper(sub));
+            formErrors.push(mapper(sub2));
           }
         }
         return { formErrors, fieldErrors };
@@ -28050,7 +28522,7 @@ var init_zod = __esm({
 });
 
 // ../compose/dist/money.js
-var c, rd, max02, min2, fmtD;
+var c, rd, max03, min2, fmtD;
 var init_money2 = __esm({
   "../compose/dist/money.js"() {
     "use strict";
@@ -28061,7 +28533,7 @@ var init_money2 = __esm({
       const r = (a + 50n) / 100n * 100n;
       return neg ? -r : r;
     };
-    max02 = (x) => x > 0n ? x : 0n;
+    max03 = (x) => x > 0n ? x : 0n;
     min2 = (a, b) => a < b ? a : b;
     fmtD = (x) => {
       const neg = x < 0n;
@@ -28124,12 +28596,12 @@ function composeCA(input, evalStateTax, notes) {
   const l18 = itemized > standard ? itemized : standard;
   if (itemized > standard)
     notes.push(`CA itemized deduction ${fmtD(itemized)} exceeds the standard deduction ${fmtD(standard)} \u2014 line 18 itemizes (Schedule CA Part II, agent-computed and disclosed)`);
-  const l19 = max02(l17 - l18);
+  const l19 = max03(l17 - l18);
   const l31 = rd(evalStateTax("us.ca.income_tax", l19));
   const persons = joint || input.filingStatus === "qss" ? 2n : 1n;
   const l32 = rd(persons * PERSONAL_EXEMPTION_CREDIT + BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION_CREDIT + BigInt(input.ageOrBlindBoxes ?? 0) * PERSONAL_EXEMPTION_CREDIT);
   const renters = rd(c(input.caRentersCredit));
-  const l48 = max02(l31 - l32 - renters);
+  const l48 = max03(l31 - l32 - renters);
   if (l31 < l32 + renters && l31 > 0n)
     notes.push("CA exemption credits and/or renter's credit exceed tax \u2014 line 48 floors at $0 (both are nonrefundable)");
   let amt = rd(c(input.caAmt));
@@ -28151,8 +28623,8 @@ function composeCA(input, evalStateTax, notes) {
   const l76 = rd(c(input.caYCTC));
   const l78 = l71 + l72 + l75 + l76 + rd(c(input.refundableCredits));
   const due = l64 + c(input.useTax);
-  const l97 = max02(l78 - due);
-  const l111 = max02(due - l78);
+  const l97 = max03(l78 - due);
+  const l111 = max03(due - l78);
   return {
     "13_federal_agi": fmtD(l13),
     "17_ca_agi": fmtD(l17),
@@ -28197,14 +28669,14 @@ function composeIL(input, evalStateTax, notes) {
   const est = c(input.estimatedPayments);
   const l1 = rd(fagi);
   const l4 = rd(l1 + c(input.additions));
-  const l9 = max02(rd(l4 - c(input.subtractions)));
+  const l9 = max03(rd(l4 - c(input.subtractions)));
   const nExemptions = input.exemptions ?? 1;
   let l10 = rd(BigInt(nExemptions) * EXEMPTION + BigInt(input.ageOrBlindBoxes ?? 0) * AGE_BLIND_BOX);
   if (input.claimedAsDependent === true && l9 > EXEMPTION) {
     l10 = 0n;
     notes.push("IL exemption allowance $0: taxpayer is claimable as a dependent on another return and base income exceeds $2,850");
   }
-  const l11 = max02(l9 - l10);
+  const l11 = max03(l9 - l10);
   const l12 = rd(evalStateTax("us.il.income_tax", l11));
   const l14 = l12;
   const l18 = ilNonrefundableCredits(input, l14, notes);
@@ -28215,8 +28687,8 @@ function composeIL(input, evalStateTax, notes) {
   if (!input.ilChildUnder12 && l29 > 0n)
     notes.push("IL CTC $0: no dependent child under 12 indicated");
   const l31 = wh + est + l29 + l30;
-  const l32 = max02(l31 - l23);
-  const l41 = max02(l23 - l31);
+  const l32 = max03(l31 - l23);
+  const l41 = max03(l23 - l31);
   return {
     "1_federal_agi": fmtD(l1),
     "4_total_income": fmtD(l4),
@@ -28239,7 +28711,7 @@ function composeIL(input, evalStateTax, notes) {
 function ilNonrefundableCredits(input, taxDue, notes) {
   const propertyTax = rd(c(input.ilPropertyTaxPaid) * 5n / 100n);
   const k12 = (() => {
-    const over = max02(c(input.ilK12Expenses) - 25000n);
+    const over = max03(c(input.ilK12Expenses) - 25000n);
     const credit = rd(over * 25n / 100n);
     return credit > 75000n ? 75000n : credit;
   })();
@@ -28276,14 +28748,14 @@ function composeNY(input, evalStateTax, notes) {
   const l32 = rd(c(input.subtractions)) + ssSub;
   const l33 = l24 - l32;
   const l34 = isJoint(input) ? STD_DEDUCTION_JOINT : isHoh(input) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE2;
-  const l37 = max02(l33 - l34 - BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION);
+  const l37 = max03(l33 - l34 - BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION);
   const l39 = rd(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
   const l43 = rd(c(input.nyHouseholdCredit));
-  const l44 = max02(l39 - l43);
+  const l44 = max03(l39 - l43);
   let nycNet = 0n;
   if (input.nycTaxableIncome !== void 0 && c(input.nycTaxableIncome) > 0n) {
     const nycTax = rd(evalStateTax("us.ny.nyc_income_tax", rd(c(input.nycTaxableIncome)), { useFormulaMethod: true }));
-    nycNet = max02(nycTax - rd(c(input.nycHouseholdCredit)));
+    nycNet = max03(nycTax - rd(c(input.nycHouseholdCredit)));
   }
   const yonkers = rd(c(input.yonkersSurcharge));
   const l62 = l44 + nycNet + yonkers + c(input.useTax);
@@ -28292,8 +28764,8 @@ function composeNY(input, evalStateTax, notes) {
   const l74 = c(input.yonkersWithholding);
   const l75 = c(input.estimatedPayments) + rd(c(input.extensionPayment));
   const l76 = l72 + l73 + l74 + l75 + rd(c(input.refundableCredits));
-  const l77 = max02(l76 - l62);
-  const owed = max02(l62 - l76);
+  const l77 = max03(l76 - l62);
+  const owed = max03(l62 - l76);
   if (owed > 0n)
     notes.push(`balance due ${fmtD(owed)} (IT-201 line 80)`);
   return {
@@ -28337,15 +28809,15 @@ function vaAgeDeduction(args, notes) {
   const testedMax = BigInt(args.testedCount) * AGE_DEDUCTION_EACH;
   const afagi = args.fagi - args.taxableSS;
   const threshold2 = args.joint ? 7500000n : 5000000n;
-  const reduction = max02(afagi - threshold2);
-  const deduction = rd(full + max02(testedMax - reduction));
+  const reduction = max03(afagi - threshold2);
+  const deduction = rd(full + max03(testedMax - reduction));
   if (deduction > 0n || args.testedCount > 0) {
     notes.push(`VA age deduction ${fmtD(deduction)} (AFAGI ${fmtD(afagi)} = FAGI minus taxable social security; reduction ${fmtD(min2(reduction, testedMax))} against ${fmtD(testedMax)} income-tested)`);
   }
   return deduction;
 }
 function vaScheduleA(a, notes) {
-  const med = max02(a.medical - rd(a.fagi * 10n / 100n));
+  const med = max03(a.medical - rd(a.fagi * 10n / 100n));
   const vaSaltCap = a.mfs ? 2000000n : 4000000n;
   const salesElected = a.salesTaxes > 0n;
   const line5a = salesElected ? min2(a.salesTaxes, vaSaltCap) : a.incomeTaxes;
@@ -28371,7 +28843,7 @@ function vaScheduleA(a, notes) {
       line18Reduction = capped5a;
     }
   }
-  return max02(limited - line18Reduction);
+  return max03(limited - line18Reduction);
 }
 function vaSpouseTaxAdjustment(w, evalStateTax, notes) {
   const exFor = (boxes) => BigInt(boxes) * VA_AGE_BLIND_EXEMPTION + VA_PERSONAL_EXEMPTION;
@@ -28387,7 +28859,7 @@ function vaSpouseTaxAdjustment(w, evalStateTax, notes) {
     notes.push("STA = $259 (worksheet line 5 shortcut: smaller income > $17,000 and taxable income > $34,000)");
     return STA_CAP;
   }
-  const line6 = max02(line4 - line5);
+  const line6 = max03(line4 - line5);
   const line7 = line4 / 2n;
   const t8 = rd(evalStateTax("us.va.income_tax", min2(line5, line7)));
   const t9 = rd(evalStateTax("us.va.income_tax", line6 > line7 ? line6 : line7));
@@ -28485,7 +28957,7 @@ function composeVA(input, evalStateTax, notes) {
   const l14 = l10 + l11 + l12 + l13;
   const l15 = l9 - l14;
   const filingThreshold = joint ? 2390000n : 1195000n;
-  let l16 = rd(evalStateTax("us.va.income_tax", max02(l15)));
+  let l16 = rd(evalStateTax("us.va.income_tax", max03(l15)));
   if (l9 < filingThreshold && l16 > 0n) {
     notes.push(`VA tax $0: VAGI ${fmtD(l9)} is below the \xA7 58.1-321 filing threshold ${fmtD(filingThreshold)}`);
     l16 = 0n;
@@ -28497,11 +28969,11 @@ function composeVA(input, evalStateTax, notes) {
       spouseVagi: rd(c(input.vaSpouseVagi)),
       yourAgeBlindBoxes: input.vaYourAgeBlindBoxes ?? 0,
       spouseAgeBlindBoxes: input.vaSpouseAgeBlindBoxes ?? 0,
-      taxableIncome: max02(l15),
+      taxableIncome: max03(l15),
       jointTax: l16
     }, evalStateTax, notes);
   }
-  const l18 = max02(l16 - l17);
+  const l18 = max03(l16 - l17);
   const l19a = c(input.stateWithholding);
   const l19b = c(input.spouseStateWithholding);
   const l20 = c(input.estimatedPayments);
@@ -28524,8 +28996,8 @@ function composeVA(input, evalStateTax, notes) {
   const l26 = l19a + l19b + l20 + l21 + l22 + l23 + rd(c(input.refundableCredits));
   const l33 = c(input.useTax);
   const totalDue = l18 + l33;
-  const l36 = max02(l26 - totalDue);
-  const l35 = max02(totalDue - l26);
+  const l36 = max03(l26 - totalDue);
+  const l35 = max03(totalDue - l26);
   return {
     "1_federal_agi": fmtD(l1),
     "9_vagi": fmtD(l9),
@@ -32561,15 +33033,15 @@ var require_codegen = __commonJS({
     }
     exports.not = not;
     var andCode = mappend(exports.operators.AND);
-    function and(...args) {
+    function and2(...args) {
       return args.reduce(andCode);
     }
-    exports.and = and;
+    exports.and = and2;
     var orCode = mappend(exports.operators.OR);
-    function or(...args) {
+    function or2(...args) {
       return args.reduce(orCode);
     }
-    exports.or = or;
+    exports.or = or2;
     function mappend(op) {
       return (x, y) => x === code_1.nil ? y : y === code_1.nil ? x : (0, code_1._)`${par(x)} ${op} ${par(y)}`;
     }
@@ -40071,7 +40543,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add = (id, c2) => {
+  const add2 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -40093,20 +40565,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add("wages", toCents(w.box1));
+    add2("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add("federalTaxWithheld", toCents(w.box2));
+      add2("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add("socialSecurityWages", toCents(w.box3));
+      add2("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add("medicareWages", b5);
+      add2("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add("federalTaxWithheld", excess);
+          add2("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars2(excess)}; added to withholding`);
         }
       }
@@ -40118,46 +40590,133 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add("federalTaxWithheld", toCents(r.box4));
+      add2("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add("wages", taxable3);
-      add("scheduleRDisabilityIncome", taxable3);
+      add2("wages", taxable3);
+      add2("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars2(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add("taxableIraDistributions", taxable3);
+      add2("taxableIraDistributions", taxable3);
     else
-      add("taxablePensionsAndAnnuities", taxable3);
+      add2("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add("earlyDistributionSubjectToPenalty", taxable3);
+        add2("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars2(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add("socialSecurityBenefits", toCents(s.box5));
+    add2("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add("federalTaxWithheld", toCents(s.box6));
+      add2("federalTaxWithheld", toCents(s.box6));
+  }
+  let seGross = 0n;
+  for (const n of docs.f1099necs ?? []) {
+    seGross += toCents(n.box1);
+    if (n.box4 !== void 0)
+      add2("federalTaxWithheld", toCents(n.box4));
+  }
+  for (const k of docs.f1099ks ?? []) {
+    seGross += toCents(k.box1a);
+    if (k.box4 !== void 0)
+      add2("federalTaxWithheld", toCents(k.box4));
+  }
+  if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
+    const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
+    const net = seGross - expenses;
+    if (net >= 0n) {
+      if (net > 0n)
+        add2("selfEmploymentNetProfit", net);
+      notes.push(`Schedule C: $${dollars2(seGross)} gross (1099-NEC/K) \u2212 $${dollars2(expenses)} expenses = $${dollars2(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
+    } else {
+      add2("scheduleCNetLoss", -net);
+      notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars2(-net)} \u2014 recorded as scheduleCNetLoss`);
+    }
+  }
+  for (const [i, t] of (docs.f1099ints ?? []).entries()) {
+    if (t.box1 !== void 0)
+      add2("taxableInterest", toCents(t.box1));
+    if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
+      add2("taxableInterest", toCents(t.box3));
+      notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars2(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
+    }
+    if (t.box8 !== void 0)
+      add2("taxExemptInterest", toCents(t.box8));
+    if (t.box4 !== void 0)
+      add2("federalTaxWithheld", toCents(t.box4));
+  }
+  for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
+    const total = toCents(d3.box1a);
+    const qualified2 = d3.box1b !== void 0 ? toCents(d3.box1b) : 0n;
+    if (qualified2 > total) {
+      throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars2(qualified2)}) exceeds box 1a (total, $${dollars2(total)}) \u2014 transcription error`);
+    }
+    if (qualified2 > 0n)
+      add2("qualifiedDividends", qualified2);
+    if (total - qualified2 > 0n)
+      add2("ordinaryDividends", total - qualified2);
+    if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
+      add2("__ltProceeds", toCents(d3.box2a));
+      notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars2(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
+    }
+    if (d3.box4 !== void 0)
+      add2("federalTaxWithheld", toCents(d3.box4));
+  }
+  let stNet = 0n;
+  let ltNet = sums.__ltProceeds ?? 0n;
+  delete sums.__ltProceeds;
+  let sawB = (docs.f1099bs ?? []).length > 0 || ltNet !== 0n;
+  for (const b of docs.f1099bs ?? []) {
+    let lot = toCents(b.proceeds) - toCents(b.basis);
+    if (b.washSaleLossDisallowed !== void 0)
+      lot += toCents(b.washSaleLossDisallowed);
+    if (b.term === "short")
+      stNet += lot;
+    else
+      ltNet += lot;
+    if (b.box4 !== void 0)
+      add2("federalTaxWithheld", toCents(b.box4));
+  }
+  if (sawB) {
+    if (stNet > 0n)
+      add2("shortTermCapitalGains", stNet);
+    else if (stNet < 0n)
+      add2("shortTermCapitalLoss", -stNet);
+    if (ltNet > 0n)
+      add2("longTermCapitalGains", ltNet);
+    else if (ltNet < 0n)
+      add2("longTermCapitalLoss", -ltNet);
+    notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars2(stNet)}, long-term net $${dollars2(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
+  }
+  for (const [i, g] of (docs.f1099gs ?? []).entries()) {
+    if (g.box1 !== void 0)
+      add2("unemploymentCompensation", toCents(g.box1));
+    if (g.box4 !== void 0)
+      add2("federalTaxWithheld", toCents(g.box4));
+    if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
+      notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars2(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
+    }
   }
   for (const dep of docs.dependents ?? []) {
     const age = ageAtYearEnd(dep.dateOfBirth, taxYear);
     const disabled = dep.isPermanentlyDisabled === true;
     const student = dep.isFullTimeStudent === true;
     const ssn = dep.hasRequiredSSN !== false;
-    const months = dep.monthsLivedWithTaxpayer ?? 12;
+    const months2 = dep.monthsLivedWithTaxpayer ?? 12;
     const childLineage = (dep.relationship ?? "child_or_descendant") !== "parent_or_other_relative";
-    if (months <= 6 && !disabled) {
+    if (months2 <= 6 && !disabled) {
       notes.push(`dependent (b. ${dep.dateOfBirth}): lived \u22646 months \u2014 residency test not met, excluded (divorced-parents release etc. via determine_dependent)`);
       continue;
     }
@@ -40221,6 +40780,39 @@ var init_documents = __esm({
         box5: usd2.describe("net benefits (box 5) \u2014 includible amount computed by the \xA7 86 0/50/85% formula, not judged here"),
         box6: usd2.optional().describe("voluntary federal income tax withheld")
       }).strict()).optional().describe("one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"),
+      f1099necs: external_exports.array(external_exports.object({
+        box1: usd2.describe("nonemployee compensation (gross)"),
+        box4: usd2.optional().describe("federal income tax withheld")
+      }).strict()).optional().describe("one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"),
+      f1099ks: external_exports.array(external_exports.object({
+        box1a: usd2.describe("gross amount of payment card / third-party network transactions"),
+        box4: usd2.optional().describe("federal income tax withheld")
+      }).strict()).optional().describe("one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"),
+      scheduleCExpensesTotal: usd2.optional().describe("TOTAL Schedule C expenses to net against the 1099-NEC/1099-K gross receipts (one business; the taxpayer's own expense total, transcribed not judged)"),
+      f1099ints: external_exports.array(external_exports.object({
+        box1: usd2.optional().describe("interest income"),
+        box3: usd2.optional().describe("U.S. Treasury/savings-bond interest \u2014 federally taxable (state-exempt; noted)"),
+        box4: usd2.optional().describe("federal income tax withheld"),
+        box8: usd2.optional().describe("tax-exempt interest (municipal) \u2014 feeds \xA7 86 provisional income, not taxable income")
+      }).strict()).optional().describe("one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"),
+      f1099divs: external_exports.array(external_exports.object({
+        box1a: usd2.describe("total ordinary dividends (INCLUDES box 1b)"),
+        box1b: usd2.optional().describe("qualified dividends (subset of 1a)"),
+        box2a: usd2.optional().describe("total capital gain distributions \u2014 long-term by statute (\xA7 852(b)(3)(B)), summed into the LT bucket"),
+        box4: usd2.optional().describe("federal income tax withheld")
+      }).strict()).optional().describe("one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"),
+      f1099bs: external_exports.array(external_exports.object({
+        proceeds: usd2.describe("box 1d proceeds"),
+        basis: usd2.describe("box 1e cost or other basis"),
+        term: external_exports.enum(["short", "long"]).describe("holding period per the form's Part I/II section"),
+        washSaleLossDisallowed: usd2.optional().describe("box 1g \u2014 disallowed loss added back to this lot's result"),
+        box4: usd2.optional().describe("federal income tax withheld")
+      }).strict()).optional().describe("one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's \xA7 1222 Schedule D netting rules do the cross-bucket math"),
+      f1099gs: external_exports.array(external_exports.object({
+        box1: usd2.optional().describe("unemployment compensation"),
+        box2: usd2.optional().describe("state/local income tax refund \u2014 NOT auto-included (taxable only if it produced a benefit when itemizing the prior year, \xA7 111); surfaced as a note"),
+        box4: usd2.optional().describe("federal income tax withheld")
+      }).strict()).optional().describe("one entry per 1099-G; box 1 sums into unemploymentCompensation"),
       dependents: external_exports.array(external_exports.object({
         dateOfBirth: dob,
         relationship: external_exports.enum(["child_or_descendant", "sibling_or_descendant", "parent_or_other_relative"]).optional().describe("\xA7 152(c)(2) lineage: children/grandchildren and siblings/nieces/nephews can be QUALIFYING CHILDREN; a parent or other relative can only be a qualifying RELATIVE (ODC, never CTC/EIC-child). TRANSCRIBE the document's own label: son/daughter/grandchild/foster/sibling/niece \u2192 child_or_descendant or sibling_or_descendant; an explicit 'other' relationship on a source form \u2192 parent_or_other_relative (never default it back to child lineage). The child_or_descendant default is ONLY for documents that state a child relationship or say nothing at all."),
@@ -40249,7 +40841,7 @@ function zodForFact(f) {
   }
   switch (f.type) {
     case "money":
-      return money37.describe(f.description);
+      return money40.describe(f.description);
     case "bool":
       return external_exports.boolean().describe(f.description);
     case "int":
@@ -40370,7 +40962,7 @@ function buildFactsValidated(factsArg, defaultTarget) {
     ...w2Box1Cents !== void 0 ? { w2Box1Cents } : {}
   };
 }
-var corpus, money37, targetParam, asOfParam, BUSINESS_EXTRAS, DEPENDENT_EXTRAS, INDIVIDUAL_GROUPS, GROUP_NAMES, factById, GROUP_DESCRIPTIONS, individualNestedShape, businessShape, fiduciaryShape, dependentShape, FACT_SHAPE, STRICT_FLAT, factsObjectParam, INT_FACTS;
+var corpus, money40, targetParam, asOfParam, BUSINESS_EXTRAS, DEPENDENT_EXTRAS, INDIVIDUAL_GROUPS, GROUP_NAMES, factById, GROUP_DESCRIPTIONS, individualNestedShape, businessShape, fiduciaryShape, dependentShape, FACT_SHAPE, STRICT_FLAT, factsObjectParam, INT_FACTS;
 var init_schema = __esm({
   "dist/schema.js"() {
     "use strict";
@@ -40379,7 +40971,7 @@ var init_schema = __esm({
     init_dist2();
     init_documents();
     corpus = getCorpus();
-    money37 = external_exports.union([external_exports.number(), external_exports.string()]).describe('dollars, e.g. 50000 or "1234.56"');
+    money40 = external_exports.union([external_exports.number(), external_exports.string()]).describe('dollars, e.g. 50000 or "1234.56"');
     targetParam = (defaultLabel, determinations) => external_exports.string().optional().describe(`rule to derive (default: ${defaultLabel}).${determinations ? ` ${determinations}` : ""}`);
     asOfParam = external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe(`REQUIRED for computation: the law-in-force date \u2014 use the intended tax year's year-end (e.g. "2025-12-31" for TY2025). Omitting it is an error, never a default.`);
     BUSINESS_EXTRAS = /* @__PURE__ */ new Set([
@@ -40425,6 +41017,11 @@ var init_schema = __esm({
         "shortTermCapitalGains",
         "ordinaryDividends",
         "netCapitalLoss",
+        "shortTermCapitalLoss",
+        "longTermCapitalLoss",
+        "rentalDepreciableBasis",
+        "rentalPlacedInServiceMonth",
+        "rentalIncomeBeforeDepreciation",
         "unemploymentCompensation",
         "otherOrdinaryIncome",
         "socialSecurityWages",
@@ -40446,6 +41043,14 @@ var init_schema = __esm({
         "taxableIraDistributions",
         "taxablePensionsAndAnnuities",
         "earlyDistributionSubjectToPenalty",
+        // § 72(d) Simplified Method — the engine computes the taxable portion
+        "pensionGrossPayments",
+        "pensionCostBasis",
+        "pensionAgeAtStart",
+        "pensionIsJointAndSurvivor",
+        "pensionCombinedAgesAtStart",
+        "pensionMonthsThisYear",
+        "pensionBasisPreviouslyRecovered",
         // Form 8606 basis pro-rata — standalone target us.federal.ira8606.*
         "ira8606Basis",
         "ira8606NondeductibleContributions",
@@ -40847,7 +41452,7 @@ function createServer() {
     description: `Verify a claimed tax amount (yours, a user's, or another tool's) against the law. Returns verdict 'verified' or 'refuted' with the correct value. Use this as a self-check before presenting any tax number. Put asOf (and target, if any) INSIDE the facts object \u2014 e.g. facts: {..., "asOf": "2025-12-31"} \u2014 otherwise the claim is checked under today's law.`,
     inputSchema: external_exports.object({
       facts: factsObjectParam,
-      claimedAmount: money37.describe("the amount to verify (negative = refund)"),
+      claimedAmount: money40.describe("the amount to verify (negative = refund)"),
       toleranceDollars: external_exports.number().min(0).optional().describe("default 1")
     }).strict()
   }, async (args) => {
@@ -41019,7 +41624,7 @@ function createServer() {
     description: "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Never states a verdict it cannot ground.",
     inputSchema: external_exports.object({
       query: external_exports.string().describe("what the amount is, e.g. 'standard deduction'"),
-      claimedAmount: money37,
+      claimedAmount: money40,
       filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional(),
       asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
     }).strict()
@@ -43042,7 +43647,103 @@ var FACT_FLAGS = [
     option: "--capital-loss <dollars>",
     key: "capitalLoss",
     group: "Income:",
-    help: "net capital loss from Schedule D, as a positive number (\xA7 1211(b))",
+    help: "OVERALL net capital loss from Schedule D, positive (\xA7 1211(b)); for mixed years use the per-bucket loss flags instead",
+    boolean: false
+  },
+  {
+    factId: "shortTermCapitalLoss",
+    option: "--short-term-loss <dollars>",
+    key: "shortTermLoss",
+    group: "Income:",
+    help: "net short-term capital LOSS (Schedule D line 7 as a loss, positive); nets against --long-term-gains per \xA7 1222(11)",
+    boolean: false
+  },
+  {
+    factId: "longTermCapitalLoss",
+    option: "--long-term-loss <dollars>",
+    key: "longTermLoss",
+    group: "Income:",
+    help: "net long-term capital LOSS (Schedule D line 15 as a loss, positive); nets against --short-term-gains per \xA7 1222(9)",
+    boolean: false
+  },
+  {
+    factId: "pensionGrossPayments",
+    option: "--pension-gross <dollars>",
+    key: "pensionGross",
+    group: "Retirement:",
+    help: "gross annuity payments this year (1099-R box 1); the \xA7 72(d) Simplified Method computes the taxable part",
+    boolean: false
+  },
+  {
+    factId: "pensionCostBasis",
+    option: "--pension-basis <dollars>",
+    key: "pensionBasis",
+    group: "Retirement:",
+    help: "after-tax investment in the contract at the annuity starting date (1099-R box 9b)",
+    boolean: false
+  },
+  {
+    factId: "pensionAgeAtStart",
+    option: "--pension-age-at-start <age>",
+    key: "pensionAgeAtStart",
+    group: "Retirement:",
+    help: "age at the ANNUITY STARTING DATE (single-life \xA7 72(d) table: \u226455:360 \u226460:310 \u226465:260 \u226470:210 71+:160)",
+    boolean: false
+  },
+  {
+    factId: "pensionIsJointAndSurvivor",
+    option: "--pension-joint",
+    key: "pensionJoint",
+    group: "Retirement:",
+    help: "joint-and-survivor annuity (post-1997 start): the combined-ages table applies",
+    boolean: true
+  },
+  {
+    factId: "pensionCombinedAgesAtStart",
+    option: "--pension-combined-ages <n>",
+    key: "pensionCombinedAges",
+    group: "Retirement:",
+    help: "combined ages at the starting date for --pension-joint (\u2264110:410 \u2264120:360 \u2264130:310 \u2264140:260 141+:210)",
+    boolean: false
+  },
+  {
+    factId: "pensionMonthsThisYear",
+    option: "--pension-months <1-12>",
+    key: "pensionMonths",
+    group: "Retirement:",
+    help: "monthly payments received this year (default 12)",
+    boolean: false
+  },
+  {
+    factId: "pensionBasisPreviouslyRecovered",
+    option: "--pension-basis-recovered <dollars>",
+    key: "pensionBasisRecovered",
+    group: "Retirement:",
+    help: "basis recovered tax-free in prior years (lifetime recovery caps at the cost basis)",
+    boolean: false
+  },
+  {
+    factId: "rentalIncomeBeforeDepreciation",
+    option: "--rental-income-pre-depreciation <dollars>",
+    key: "rentalIncomePreDepreciation",
+    group: "Income:",
+    help: "Schedule E rental result BEFORE depreciation (rents minus cash expenses); the engine subtracts \xA7 168 depreciation",
+    boolean: false
+  },
+  {
+    factId: "rentalDepreciableBasis",
+    option: "--rental-basis <dollars>",
+    key: "rentalBasis",
+    group: "Income:",
+    help: "depreciable basis of the rental BUILDING (excluding land) \u2014 \xA7 168 GDS 27.5-yr straight line, mid-month",
+    boolean: false
+  },
+  {
+    factId: "rentalPlacedInServiceMonth",
+    option: "--rental-in-service-month <1-12>",
+    key: "rentalInServiceMonth",
+    group: "Income:",
+    help: "month placed in service THIS year (Pub 946 Table A-6 first-year row); omit for property in service all year (3.636%)",
     boolean: false
   },
   {
@@ -44625,22 +45326,22 @@ function renderSummary(proof) {
   const statusNode = findNode(root, "us.federal.income_tax_before_credits");
   const statusTag = statusNode?.inputs?.filingStatus?.value !== void 0 ? STATUS_LABEL[String(statusNode.inputs.filingStatus.value)] : null;
   const year = proof.asOf.slice(0, 4);
-  const money38 = (c2) => formatMoney(c2).padStart(14);
+  const money41 = (c2) => formatMoney(c2).padStart(14);
   const lines = [];
   lines.push(import_picocolors4.default.bold(`${statusTag ?? "Taxpayer"} \xB7 tax year ${year}`));
   lines.push("");
-  lines.push(`  Income               ${money38(agi2)}`);
-  lines.push(`  \u2212 Deductions         ${money38(deductions)}${dedParts.length ? import_picocolors4.default.dim(`   (${dedParts.join(" + ")})`) : ""}`);
-  lines.push(`  = Taxable income     ${money38(taxable3)}`);
-  lines.push(`  Tax before credits   ${money38(before)}`);
+  lines.push(`  Income               ${money41(agi2)}`);
+  lines.push(`  \u2212 Deductions         ${money41(deductions)}${dedParts.length ? import_picocolors4.default.dim(`   (${dedParts.join(" + ")})`) : ""}`);
+  lines.push(`  = Taxable income     ${money41(taxable3)}`);
+  lines.push(`  Tax before credits   ${money41(before)}`);
   if (amt > 0n) {
-    lines.push(`  + Alternative min tax${money38(amt)}${import_picocolors4.default.dim("   (Form 6251)")}`);
+    lines.push(`  + Alternative min tax${money41(amt)}${import_picocolors4.default.dim("   (Form 6251)")}`);
   }
-  lines.push(`  \u2212 Credits            ${money38(education + ctc + refundable)}${creditParts.length ? import_picocolors4.default.dim(`   (${creditParts.join(" + ")})`) : ""}`);
+  lines.push(`  \u2212 Credits            ${money41(education + ctc + refundable)}${creditParts.length ? import_picocolors4.default.dim(`   (${creditParts.join(" + ")})`) : ""}`);
   if (otherTaxes > 0n) {
-    lines.push(`  + Other taxes        ${money38(otherTaxes)}${import_picocolors4.default.dim("   (SE tax / Add'l Medicare / NIIT)")}`);
+    lines.push(`  + Other taxes        ${money41(otherTaxes)}${import_picocolors4.default.dim("   (SE tax / Add'l Medicare / NIIT)")}`);
   }
-  const row = (label, amount, paint = (s) => s) => `  ${paint(label.padEnd(21))}${paint(money38(amount))}`;
+  const row = (label, amount, paint = (s) => s) => `  ${paint(label.padEnd(21))}${paint(money41(amount))}`;
   lines.push(import_picocolors4.default.dim("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"));
   if (net < 0n) {
     lines.push(row("Your refund", -net, (s) => import_picocolors4.default.bold(import_picocolors4.default.green(s))));

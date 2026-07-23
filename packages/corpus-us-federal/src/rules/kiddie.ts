@@ -104,12 +104,15 @@ function kiddieTaxRule(version: number, from: string, to: string, year: "2025" |
             { kind: "cmp", op: "gt", left: fact("qualifiedDividends"), right: zero },
             { kind: "cmp", op: "gt", left: fact("shortTermCapitalGains"), right: zero },
             { kind: "cmp", op: "gt", left: fact("ordinaryDividends"), right: zero },
+            { kind: "cmp", op: "gt", left: fact("shortTermCapitalLoss"), right: zero },
+            { kind: "cmp", op: "gt", left: fact("longTermCapitalLoss"), right: zero },
+            { kind: "cmp", op: "gt", left: fact("netCapitalLoss"), right: zero },
           ],
         },
         then: {
           kind: "unsupported",
           reason:
-            "a § 1(g) child with capital gains, qualified dividends, or ordinary dividends needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income ≈ taxable interest' approximation would silently drop — not modeled",
+            "a § 1(g) child with capital gains/losses, qualified dividends, or ordinary dividends needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income ≈ taxable interest' approximation would silently drop — not modeled",
         },
         else: {
           kind: "if",
@@ -170,8 +173,9 @@ export const kiddieRules: Rule[] = [
   // v3/v4: the § 1(g) capital-gains refusal guard also catches the standalone qualifiedDividends fact
   // v5/v6: the refusal guard also catches shortTermCapitalGains/ordinaryDividends (unearned income
   // the "unearned income ≈ taxable interest" approximation in net_unearned_income would otherwise drop)
-  kiddieTaxRule(5, "2025-01-01", "2026-01-01", "2025"),
-  kiddieTaxRule(6, "2026-01-01", "2027-01-01", "2026"),
+  // v5/v6: the refusal guard predated the per-bucket capital-loss facts and netCapitalLoss
+  kiddieTaxRule(7, "2025-01-01", "2026-01-01", "2025"),
+  kiddieTaxRule(8, "2026-01-01", "2027-01-01", "2026"),
   {
     id: "us.federal.income_tax_before_credits.kiddie",
     version: 1,

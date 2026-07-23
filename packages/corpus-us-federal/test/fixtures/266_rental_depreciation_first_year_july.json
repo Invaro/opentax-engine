@@ -1,0 +1,18 @@
+{
+  "description": "First-year residential rental placed in service in JULY (mfj, $150,000 wages, 2025): mid-month convention (§ 168(d)(2)) -> Table A-6 July rate 1.667% on $300,000 = $5,001.00; $10,000 pre-depreciation result nets to $4,999.00. Identical to the cent with scheduleENetIncome=4999.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 150000,
+    "rentalIncomeBeforeDepreciation": 10000,
+    "rentalDepreciableBasis": 300000,
+    "rentalPlacedInServiceMonth": 7
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "1699778",
+    "intermediates": {
+      "us.federal.rental.depreciation": "500100",
+      "us.federal.rental.net_income": "499900"
+    }
+  }
+}

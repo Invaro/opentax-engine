@@ -20,7 +20,7 @@ const FROM = { effectiveFrom: "2025-01-01" }; // structural rules: open-ended
 export const incomeRules: Rule[] = [
   {
     id: "us.federal.gross_income",
-    version: 14, // v13 lacked taxable HSA distributions; // v11 predated the standalone shortTermCapitalGains/ordinaryDividends facts
+    version: 15, // v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
     jurisdiction: J,
     title:
       "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income − allowed capital loss − § 911 exclusion)",
@@ -40,14 +40,15 @@ export const incomeRules: Rule[] = [
         args: [
           fact("wages"),
           fact("taxableInterest"),
-          fact("longTermCapitalGains"),
+          ruleRef("us.federal.schedule_d.preferential_lt_gain"),
           fact("qualifiedDividends"),
-          fact("shortTermCapitalGains"),
+          ruleRef("us.federal.schedule_d.ordinary_st_gain"),
           fact("ordinaryDividends"),
           fact("selfEmploymentNetProfit"),
           fact("k1OrdinaryBusinessIncome"),
           fact("taxableIraDistributions"),
           fact("taxablePensionsAndAnnuities"),
+          ruleRef("us.federal.pension.simplified_method_taxable"),
           fact("unemploymentCompensation"),
           fact("otherOrdinaryIncome"),
           fact("alimonyReceivedPre2019"),
@@ -61,6 +62,7 @@ export const incomeRules: Rule[] = [
             },
           },
           fact("scheduleENetIncome"),
+          ruleRef("us.federal.rental.net_income"),
           ruleRef("us.federal.taxable_social_security"),
         ],
       },

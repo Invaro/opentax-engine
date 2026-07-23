@@ -1,0 +1,19 @@
+{
+  "description": "Simplified Method, single-life (single, 65+, $20,000 wages, 2025): age 65 at the annuity starting date -> § 72(d)(1)(B)(iii) band ≤65 = 260 payments; $31,200 basis -> monthly $120.00, x12 = $1,440 exclusion; $14,400 gross -> $12,960 taxable. Identical to the cent with taxablePensionsAndAnnuities=12960.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 20000,
+    "isAge65OrOlder": true,
+    "pensionGrossPayments": 14400,
+    "pensionCostBasis": 31200,
+    "pensionAgeAtStart": 65
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "92300",
+    "intermediates": {
+      "us.federal.pension.simplified_method_exclusion": "144000",
+      "us.federal.pension.simplified_method_taxable": "1296000"
+    }
+  }
+}

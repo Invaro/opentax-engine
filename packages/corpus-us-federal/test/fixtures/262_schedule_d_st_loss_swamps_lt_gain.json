@@ -1,0 +1,17 @@
+{
+  "description": "A $10,000 net ST loss swallows a $4,000 net LT gain (single, $80,000 wages, 2025): no preferential income survives (\u00a7 1222(11) floors at zero), overall $6,000 net loss -> $3,000 \u00a7 1211(b) offset + $3,000 carryover. Identical to the cent with the legacy netCapitalLoss=6000 input.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 80000,
+    "longTermCapitalGains": 4000,
+    "shortTermCapitalLoss": 10000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "839500",
+    "intermediates": {
+      "us.federal.schedule_d.preferential_lt_gain": "0",
+      "us.federal.schedule_d.net_loss": "600000"
+    }
+  }
+}

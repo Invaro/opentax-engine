@@ -68,6 +68,83 @@ export const documentsShape = z
       )
       .optional()
       .describe("one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"),
+    f1099necs: z
+      .array(
+        z
+          .object({
+            box1: usd.describe("nonemployee compensation (gross)"),
+            box4: usd.optional().describe("federal income tax withheld"),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe("one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"),
+    f1099ks: z
+      .array(
+        z
+          .object({
+            box1a: usd.describe("gross amount of payment card / third-party network transactions"),
+            box4: usd.optional().describe("federal income tax withheld"),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe("one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"),
+    scheduleCExpensesTotal: usd
+      .optional()
+      .describe("TOTAL Schedule C expenses to net against the 1099-NEC/1099-K gross receipts (one business; the taxpayer's own expense total, transcribed not judged)"),
+    f1099ints: z
+      .array(
+        z
+          .object({
+            box1: usd.optional().describe("interest income"),
+            box3: usd.optional().describe("U.S. Treasury/savings-bond interest — federally taxable (state-exempt; noted)"),
+            box4: usd.optional().describe("federal income tax withheld"),
+            box8: usd.optional().describe("tax-exempt interest (municipal) — feeds § 86 provisional income, not taxable income"),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe("one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"),
+    f1099divs: z
+      .array(
+        z
+          .object({
+            box1a: usd.describe("total ordinary dividends (INCLUDES box 1b)"),
+            box1b: usd.optional().describe("qualified dividends (subset of 1a)"),
+            box2a: usd.optional().describe("total capital gain distributions — long-term by statute (§ 852(b)(3)(B)), summed into the LT bucket"),
+            box4: usd.optional().describe("federal income tax withheld"),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe("one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"),
+    f1099bs: z
+      .array(
+        z
+          .object({
+            proceeds: usd.describe("box 1d proceeds"),
+            basis: usd.describe("box 1e cost or other basis"),
+            term: z.enum(["short", "long"]).describe("holding period per the form's Part I/II section"),
+            washSaleLossDisallowed: usd.optional().describe("box 1g — disallowed loss added back to this lot's result"),
+            box4: usd.optional().describe("federal income tax withheld"),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe("one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's § 1222 Schedule D netting rules do the cross-bucket math"),
+    f1099gs: z
+      .array(
+        z
+          .object({
+            box1: usd.optional().describe("unemployment compensation"),
+            box2: usd.optional().describe("state/local income tax refund — NOT auto-included (taxable only if it produced a benefit when itemizing the prior year, § 111); surfaced as a note"),
+            box4: usd.optional().describe("federal income tax withheld"),
+          })
+          .strict(),
+      )
+      .optional()
+      .describe("one entry per 1099-G; box 1 sums into unemploymentCompensation"),
     dependents: z
       .array(
         z
@@ -224,6 +301,90 @@ export function compileDocuments(docs: Docs, asOf: string): CompiledDocs {
   for (const s of docs.ssa1099s ?? []) {
     add("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== undefined) add("federalTaxWithheld", toCents(s.box6));
+  }
+
+  // --- 1099-NEC / 1099-K → Schedule C ------------------------------------------
+  let seGross = 0n;
+  for (const n of docs.f1099necs ?? []) {
+    seGross += toCents(n.box1);
+    if (n.box4 !== undefined) add("federalTaxWithheld", toCents(n.box4));
+  }
+  for (const k of docs.f1099ks ?? []) {
+    seGross += toCents(k.box1a);
+    if (k.box4 !== undefined) add("federalTaxWithheld", toCents(k.box4));
+  }
+  if (seGross > 0n || docs.scheduleCExpensesTotal !== undefined) {
+    const expenses = docs.scheduleCExpensesTotal !== undefined ? toCents(docs.scheduleCExpensesTotal) : 0n;
+    const net = seGross - expenses;
+    if (net >= 0n) {
+      if (net > 0n) add("selfEmploymentNetProfit", net);
+      notes.push(
+        `Schedule C: $${dollars(seGross)} gross (1099-NEC/K) − $${dollars(expenses)} expenses = $${dollars(net)} net profit → SE tax + QBI machinery engage on it`,
+      );
+    } else {
+      add("scheduleCNetLoss", -net);
+      notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars(-net)} — recorded as scheduleCNetLoss`);
+    }
+  }
+
+  // --- 1099-INTs ----------------------------------------------------------------
+  for (const [i, t] of (docs.f1099ints ?? []).entries()) {
+    if (t.box1 !== undefined) add("taxableInterest", toCents(t.box1));
+    if (t.box3 !== undefined && toCents(t.box3) > 0n) {
+      add("taxableInterest", toCents(t.box3));
+      notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars(toCents(t.box3))} is federally taxable (state returns exempt it — the state composers handle that subtraction)`);
+    }
+    if (t.box8 !== undefined) add("taxExemptInterest", toCents(t.box8));
+    if (t.box4 !== undefined) add("federalTaxWithheld", toCents(t.box4));
+  }
+
+  // --- 1099-DIVs (the 1a-minus-1b split the fact model expects) ------------------
+  for (const [i, d] of (docs.f1099divs ?? []).entries()) {
+    const total = toCents(d.box1a);
+    const qualified = d.box1b !== undefined ? toCents(d.box1b) : 0n;
+    if (qualified > total) {
+      throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars(qualified)}) exceeds box 1a (total, $${dollars(total)}) — transcription error`);
+    }
+    if (qualified > 0n) add("qualifiedDividends", qualified);
+    if (total - qualified > 0n) add("ordinaryDividends", total - qualified);
+    if (d.box2a !== undefined && toCents(d.box2a) > 0n) {
+      add("__ltProceeds", toCents(d.box2a)); // capital gain distributions: LT by statute, join the 1099-B LT bucket
+      notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars(toCents(d.box2a))} — long-term by statute (§ 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
+    }
+    if (d.box4 !== undefined) add("federalTaxWithheld", toCents(d.box4));
+  }
+
+  // --- 1099-Bs → per-bucket net results; the § 1222 corpus rules cross-net -------
+  let stNet = 0n;
+  let ltNet = sums.__ltProceeds ?? 0n;
+  delete sums.__ltProceeds;
+  let sawB = (docs.f1099bs ?? []).length > 0 || ltNet !== 0n;
+  for (const b of docs.f1099bs ?? []) {
+    let lot = toCents(b.proceeds) - toCents(b.basis);
+    if (b.washSaleLossDisallowed !== undefined) lot += toCents(b.washSaleLossDisallowed);
+    if (b.term === "short") stNet += lot;
+    else ltNet += lot;
+    if (b.box4 !== undefined) add("federalTaxWithheld", toCents(b.box4));
+  }
+  if (sawB) {
+    if (stNet > 0n) add("shortTermCapitalGains", stNet);
+    else if (stNet < 0n) add("shortTermCapitalLoss", -stNet);
+    if (ltNet > 0n) add("longTermCapitalGains", ltNet);
+    else if (ltNet < 0n) add("longTermCapitalLoss", -ltNet);
+    notes.push(
+      `Schedule D buckets from 1099-B/DIV: short-term net $${dollars(stNet)}, long-term net $${dollars(ltNet)} — the § 1222 netting rules combine them (character preserved, § 1211(b) caps any overall loss)`,
+    );
+  }
+
+  // --- 1099-Gs ----------------------------------------------------------------
+  for (const [i, g] of (docs.f1099gs ?? []).entries()) {
+    if (g.box1 !== undefined) add("unemploymentCompensation", toCents(g.box1));
+    if (g.box4 !== undefined) add("federalTaxWithheld", toCents(g.box4));
+    if (g.box2 !== undefined && toCents(g.box2) > 0n) {
+      notes.push(
+        `1099-G #${i + 1}: box 2 state refund $${dollars(toCents(g.box2))} NOT auto-included — taxable only to the extent the prior-year SALT deduction produced a benefit (§ 111); add it to otherOrdinaryIncome yourself if it did`,
+      );
+    }
   }
 
   // --- dependents: statute tests, not checkbox labels --------------------------
