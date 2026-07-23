@@ -233,10 +233,9 @@ export default function Page() {
             </Link>
             , the industry benchmark for AI tax work, asks a model to prepare 50 complete US
             tax returns. A return only counts if every line is exact. Claude Sonnet on its own
-            gets 6% of returns right. The same Sonnet, using OpenTax, gets{" "}
-            <span className="text-foreground">96%</span>.{" "}
+            gets 6% of returns right.{" "}
             <span className="text-foreground font-semibold">
-              The highest score ever recorded
+              The same Sonnet, using OpenTax, gets 96%. The highest score ever recorded
             </span>
             , above every top model, with or without web search. The engine amplifies whatever
             model you point at it.
@@ -244,26 +243,55 @@ export default function Page() {
         </div>
 
         <div className="max-w-[780px] mx-auto">
-          {/* the transformation */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center border border-border">
-            <div className="p-6 md:p-10 text-center">
-              <div className="font-serif text-[44px] md:text-[88px] leading-none text-muted-foreground/60">
-                6%
+          {/* the transformation: before → connect → after */}
+          <div className="border border-border p-6 md:p-10">
+            <div>
+              <div className="flex items-end justify-between gap-4 mb-2.5">
+                <div>
+                  <div className="font-mono text-[9px] md:text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                    before
+                  </div>
+                  <div className="text-sm md:text-base text-muted-foreground">
+                    Claude Sonnet, on its own
+                  </div>
+                </div>
+                <div className="font-serif text-[40px] md:text-[64px] leading-none text-muted-foreground/60">
+                  6%
+                </div>
               </div>
-              <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground mt-3">
-                Claude Sonnet, on its own
+              <div className="h-[6px] bg-muted">
+                <div className="h-full bg-muted-foreground/70" style={{ width: "6%" }} />
               </div>
             </div>
-            <div className="flex flex-col items-center px-3 md:px-6">
-              <span className="font-mono text-[9px] md:text-[10px] text-muted-foreground whitespace-nowrap mb-2">
-                + OpenTax MCP
-              </span>
-              <Arrow />
+
+            <div className="flex flex-col items-center my-7 md:my-9">
+              <div className="w-full flex items-center gap-3 md:gap-4">
+                <span className="flex-1 border-t border-dashed border-border" />
+                <span className="border border-foreground px-4 md:px-5 py-2 font-mono text-[10px] md:text-xs whitespace-nowrap">
+                  + connect the OpenTax MCP
+                </span>
+                <span className="flex-1 border-t border-dashed border-border" />
+              </div>
+              <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground mt-2">
+                one URL, two minutes — nothing else changes
+              </div>
             </div>
-            <div className="p-6 md:p-10 text-center">
-              <div className="font-serif text-[44px] md:text-[88px] leading-none">96%</div>
-              <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground mt-3">
-                the same model, same prompts
+
+            <div>
+              <div className="flex items-end justify-between gap-4 mb-2.5">
+                <div>
+                  <div className="font-mono text-[9px] md:text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                    after
+                  </div>
+                  <div className="text-sm md:text-base">
+                    the <span className="font-semibold">same</span> Sonnet, same prompts — with the
+                    engine
+                  </div>
+                </div>
+                <div className="font-serif text-[40px] md:text-[64px] leading-none">96%</div>
+              </div>
+              <div className="h-[6px] bg-muted">
+                <div className="h-full bg-foreground" style={{ width: "96%" }} />
               </div>
             </div>
           </div>
