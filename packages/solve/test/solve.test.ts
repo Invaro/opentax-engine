@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { coerceFacts } from "@invaro/opentax-core";
 import { DEFAULT_TARGET, getCorpus } from "@invaro/opentax-corpus-us-federal";
-import { compareAcross, findCliffs, invert, marginal, sweep } from "@invaro/opentax-solve";
+import { compareAcross, findCliffs, invert, marginal, searchRules, sweep } from "@invaro/opentax-solve";
 
 const corpus = getCorpus();
 const ASOF = "2025-12-31";
@@ -147,5 +147,40 @@ describe("compareAcross", () => {
     expect(byStatus.mfj.valueCents).toBe(185300n); // table row 18,500-18,550
     expect(byStatus.qss.valueCents).toBe(185300n); // joint table
     expect(byStatus.hoh.valueCents).toBe(282500n);
+  });
+});
+
+describe("searchRules", () => {
+  it("finds the kiddie-tax rule by keyword with citation and snippet", () => {
+    const hits = searchRules(corpus, "kiddie tax", ASOF);
+    expect(hits.length).toBeGreaterThan(0);
+    const top = hits[0];
+    expect(top.ruleId.toLowerCase()).toContain("kiddie");
+    expect(top.citation.source.length).toBeGreaterThan(0);
+    expect(top.snippet.length).toBeGreaterThan(0);
+    expect(top.snippet.length).toBeLessThanOrEqual(282); // 280 + ellipses
+  });
+
+  it("reaches state rules through jurisdiction-name expansion", () => {
+    const hits = searchRules(corpus, "california renters credit", ASOF);
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits[0].jurisdiction).toBe("us.ca");
+  });
+
+  it("returns nothing for out-of-corpus topics instead of guessing", () => {
+    expect(searchRules(corpus, "zzz cryptozoology levy", ASOF)).toHaveLength(0);
+    // one real corpus word ("allowance") must not make a foreign topic "covered"
+    expect(searchRules(corpus, "crypto mining depletion allowance", ASOF)).toHaveLength(0);
+  });
+
+  it("respects the asOf window — every hit's effective range contains the date", () => {
+    for (const when of ["2025-12-31", "2026-12-31"]) {
+      const hits = searchRules(corpus, "standard deduction", when);
+      expect(hits.length).toBeGreaterThan(0);
+      for (const h of hits) {
+        expect(h.effectiveFrom <= when).toBe(true);
+        if (h.effectiveTo !== undefined) expect(when < h.effectiveTo).toBe(true);
+      }
+    }
   });
 });

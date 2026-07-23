@@ -53,6 +53,7 @@ One package: run with no arguments from an MCP client and it's the stdio server;
 | `verify_tax_claim` | Gate a claimed number before presenting it: verified / refuted, with the difference |
 | `find_tax_cliffs` | Exact-cent benefit cliffs over an income range |
 | `compare_filing_statuses` | The same facts across all five filing statuses |
+| `search_tax_rules` | Full-text search over the encoded law: rules with citations, excerpts, and effective windows — coverage answers for research, zero hits means "outside the corpus" |
 | `list_input_facts`, `explain_rule`, `lookup_tax_parameter` | Discover inputs; read any rule's citation, formula, and validity window |
 | `calculate_business_tax`, `calculate_fiduciary_tax`, `determine_dependent`, `verify_fact`, `is_tipped_occupation` | Form 1120, Form 1041, § 152 dependency, proofs, § 224 tips |
 

@@ -117,6 +117,132 @@ export function lookupParameters(
   return hits.slice(0, 5);
 }
 
+export interface RuleSearchHit {
+  ruleId: string;
+  version: number;
+  title: string;
+  jurisdiction: string;
+  citation: Citation;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  /** Verbatim law-text excerpt, trimmed around the first query match. */
+  snippet: string;
+  /** Whether the rule carries dollar parameters (lookupParameters territory). */
+  hasParameters: boolean;
+  score: number;
+}
+
+const SNIPPET_LEN = 280;
+
+function makeSnippet(excerpt: string, tokens: string[]): string {
+  if (excerpt.length <= SNIPPET_LEN) return excerpt;
+  const lower = excerpt.toLowerCase();
+  let at = -1;
+  for (const t of tokens) {
+    const i = lower.indexOf(t);
+    if (i !== -1 && (at === -1 || i < at)) at = i;
+  }
+  const start = Math.max(0, Math.min(at === -1 ? 0 : at - 60, excerpt.length - SNIPPET_LEN));
+  const cut = excerpt.slice(start, start + SNIPPET_LEN);
+  return `${start > 0 ? "…" : ""}${cut}${start + SNIPPET_LEN < excerpt.length ? "…" : ""}`;
+}
+
+/**
+ * Full-text search over the corpus — rule ids, titles, parameter names,
+ * jurisdictions, and the statutory citations/excerpts themselves. Coverage
+ * answers, not values: a hit means the engine computes this; use
+ * `lookupParameters` for the dollar amounts and `explain_rule` for formulas.
+ */
+export function searchRules(
+  corpus: LoadedCorpus,
+  query: string,
+  asOf?: string,
+  limit = 8,
+): RuleSearchHit[] {
+  const allTokens = tokenize(query);
+  if (allTokens.length === 0) return [];
+
+  const haystacks = corpus.rules.map((rule) => {
+    const paramWords = Object.keys(rule.parameters ?? {})
+      .map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase())
+      .join(" ");
+    return {
+      rule,
+      // "_" is a regex word character — split snake_case so \b-anchored
+      // tokens ("tax") still reach id segments ("kiddie_tax").
+      id: rule.id.toLowerCase().replace(/[._]/g, " "),
+      title: rule.title.toLowerCase(),
+      meta: `${paramWords} ${JURISDICTION_NAMES[rule.jurisdiction] ?? ""}`.toLowerCase(),
+      weak: `${rule.citation.source} ${rule.citation.section} ${rule.citation.excerpt ?? ""}`.toLowerCase(),
+    };
+  });
+
+  // Word-start matching: "mining" must not match "determining", while
+  // "credit" still finds "credits". Tokens are [a-z0-9]+ so no escaping.
+  const matchers = new Map(allTokens.map((t) => [t, new RegExp(`\\b${t}`)]));
+  const has = (hay: string, t: string): boolean => (matchers.get(t) as RegExp).test(hay);
+
+  // Document frequency per token: ubiquitous words ("tax", "income") carry no
+  // signal and are dropped (unless the whole query is made of them); very
+  // rare words ("niit", "kiddie") are the query's real subject and count
+  // double, so they outvote moderately common ones like "threshold".
+  const df = (t: string): number =>
+    haystacks.filter((h) => has(h.id, t) || has(h.title, t) || has(h.meta, t) || has(h.weak, t))
+      .length;
+  const rare = allTokens.filter((t) => df(t) <= haystacks.length * 0.35);
+  const tokens = rare.length > 0 ? rare : allTokens;
+  const boost = new Map(tokens.map((t) => [t, df(t) <= haystacks.length * 0.05 ? 2 : 1]));
+  // A multi-word query must earn more than a single stray excerpt match —
+  // that is what keeps "no hits" meaning "outside the corpus".
+  const minScore = tokens.length >= 2 ? 2 : 1;
+
+  const hits: RuleSearchHit[] = [];
+  for (const { rule, id, title, meta, weak } of haystacks) {
+    if (
+      asOf &&
+      !(rule.effectiveFrom <= asOf && (rule.effectiveTo === undefined || asOf < rule.effectiveTo))
+    ) {
+      continue;
+    }
+    // Where a token lands matters: a rule NAMED for the query outranks a rule
+    // that merely mentions it in its statutory excerpt.
+    // raw decides admission (a lone excerpt match must not pass a multi-word
+    // query's bar, however rare the word); the boosted score decides rank.
+    // A rule must also match at least half the query's meaningful words —
+    // "covered" has to mean the corpus knows this topic, not one stray noun.
+    let raw = 0;
+    let score = 0;
+    let matched = 0;
+    for (const t of tokens) {
+      let s = 0;
+      if (has(id, t)) s += 2;
+      if (has(title, t)) s += 2;
+      if (has(meta, t)) s += 1;
+      if (s === 0 && has(weak, t)) s = 1;
+      if (s > 0) matched += 1;
+      raw += s;
+      score += s * (boost.get(t) ?? 1);
+    }
+    if (raw < minScore || matched < Math.ceil(tokens.length / 2)) continue;
+
+    hits.push({
+      ruleId: rule.id,
+      version: rule.version,
+      title: rule.title,
+      jurisdiction: rule.jurisdiction,
+      citation: rule.citation,
+      effectiveFrom: rule.effectiveFrom,
+      effectiveTo: rule.effectiveTo,
+      snippet: makeSnippet(rule.citation.excerpt ?? "", tokens),
+      hasParameters: Object.keys(rule.parameters ?? {}).length > 0,
+      score,
+    });
+  }
+
+  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  return hits.slice(0, Math.max(1, Math.min(limit, 20)));
+}
+
 export type FactCheckResult =
   | {
       verdict: "verified" | "refuted";

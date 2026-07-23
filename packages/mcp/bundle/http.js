@@ -23686,6 +23686,85 @@ function lookupParameters(corpus2, query, asOf) {
   hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
   return hits.slice(0, 5);
 }
+var SNIPPET_LEN = 280;
+function makeSnippet(excerpt, tokens) {
+  if (excerpt.length <= SNIPPET_LEN)
+    return excerpt;
+  const lower = excerpt.toLowerCase();
+  let at = -1;
+  for (const t of tokens) {
+    const i = lower.indexOf(t);
+    if (i !== -1 && (at === -1 || i < at))
+      at = i;
+  }
+  const start = Math.max(0, Math.min(at === -1 ? 0 : at - 60, excerpt.length - SNIPPET_LEN));
+  const cut = excerpt.slice(start, start + SNIPPET_LEN);
+  return `${start > 0 ? "\u2026" : ""}${cut}${start + SNIPPET_LEN < excerpt.length ? "\u2026" : ""}`;
+}
+function searchRules(corpus2, query, asOf, limit = 8) {
+  const allTokens = tokenize(query);
+  if (allTokens.length === 0)
+    return [];
+  const haystacks = corpus2.rules.map((rule) => {
+    const paramWords = Object.keys(rule.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
+    return {
+      rule,
+      // "_" is a regex word character — split snake_case so \b-anchored
+      // tokens ("tax") still reach id segments ("kiddie_tax").
+      id: rule.id.toLowerCase().replace(/[._]/g, " "),
+      title: rule.title.toLowerCase(),
+      meta: `${paramWords} ${JURISDICTION_NAMES[rule.jurisdiction] ?? ""}`.toLowerCase(),
+      weak: `${rule.citation.source} ${rule.citation.section} ${rule.citation.excerpt ?? ""}`.toLowerCase()
+    };
+  });
+  const matchers = new Map(allTokens.map((t) => [t, new RegExp(`\\b${t}`)]));
+  const has = (hay, t) => matchers.get(t).test(hay);
+  const df = (t) => haystacks.filter((h) => has(h.id, t) || has(h.title, t) || has(h.meta, t) || has(h.weak, t)).length;
+  const rare = allTokens.filter((t) => df(t) <= haystacks.length * 0.35);
+  const tokens = rare.length > 0 ? rare : allTokens;
+  const boost = new Map(tokens.map((t) => [t, df(t) <= haystacks.length * 0.05 ? 2 : 1]));
+  const minScore = tokens.length >= 2 ? 2 : 1;
+  const hits = [];
+  for (const { rule, id, title, meta, weak } of haystacks) {
+    if (asOf && !(rule.effectiveFrom <= asOf && (rule.effectiveTo === void 0 || asOf < rule.effectiveTo))) {
+      continue;
+    }
+    let raw = 0;
+    let score = 0;
+    let matched = 0;
+    for (const t of tokens) {
+      let s = 0;
+      if (has(id, t))
+        s += 2;
+      if (has(title, t))
+        s += 2;
+      if (has(meta, t))
+        s += 1;
+      if (s === 0 && has(weak, t))
+        s = 1;
+      if (s > 0)
+        matched += 1;
+      raw += s;
+      score += s * (boost.get(t) ?? 1);
+    }
+    if (raw < minScore || matched < Math.ceil(tokens.length / 2))
+      continue;
+    hits.push({
+      ruleId: rule.id,
+      version: rule.version,
+      title: rule.title,
+      jurisdiction: rule.jurisdiction,
+      citation: rule.citation,
+      effectiveFrom: rule.effectiveFrom,
+      effectiveTo: rule.effectiveTo,
+      snippet: makeSnippet(rule.citation.excerpt ?? "", tokens),
+      hasParameters: Object.keys(rule.parameters ?? {}).length > 0,
+      score
+    });
+  }
+  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  return hits.slice(0, Math.max(1, Math.min(limit, 20)));
+}
 function factCheck(corpus2, query, claimedCents, asOf, filingStatus) {
   const hits = lookupParameters(corpus2, query, asOf);
   if (hits.length === 0) {
@@ -37425,6 +37504,32 @@ function createServer() {
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
         byFilingStatus: Object.fromEntries(Object.entries(h.byFilingStatus).map(([k, v]) => [k, fmt2(BigInt(v))])),
         parameters: Object.fromEntries(Object.entries(h.parameters).map(([k, v]) => [k, fmt2(BigInt(v))]))
+      })),
+      corpusMerkleRoot: corpus.merkleRoot
+    });
+  });
+  server.registerTool("search_tax_rules", {
+    description: "Full-text search over the encoded tax-law corpus ('kiddie tax', 'NIIT threshold', 'california renters credit'). Returns matching rules: id, title, statutory citation, effective window, and a verbatim excerpt of the law text. A hit means the engine computes this; zero hits means it is outside the corpus \u2014 say so rather than guessing. Follow up with explain_rule for a hit's full formula, or lookup_tax_parameter for its dollar amounts.",
+    inputSchema: external_exports.object({
+      query: external_exports.string().describe("plain-English search, e.g. 'kiddie tax'"),
+      asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+      limit: external_exports.number().int().min(1).max(20).optional()
+    }).strict()
+  }, async ({ query, asOf, limit }) => {
+    const hits = searchRules(corpus, query, asOf, limit ?? 8);
+    return ok({
+      ok: true,
+      query,
+      ...asOf ? { asOf } : {},
+      covered: hits.length > 0,
+      hits: hits.map((h) => ({
+        ruleId: h.ruleId,
+        title: h.title,
+        jurisdiction: h.jurisdiction,
+        citation: `${h.citation.source} ${h.citation.section}`,
+        effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
+        excerpt: h.snippet,
+        hasDollarParameters: h.hasParameters
       })),
       corpusMerkleRoot: corpus.merkleRoot
     });

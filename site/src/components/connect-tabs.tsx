@@ -88,7 +88,7 @@ const TABS: Tab[] = [
       },
       {
         title: "Use it in Agent mode",
-        desc: "The agent picks up calculate_tax and verify_proof automatically. Try:",
+        desc: "The agent picks up calculate_tax, search_tax_rules, and the rest automatically. Try:",
         code: TRY_PROMPT,
       },
     ],

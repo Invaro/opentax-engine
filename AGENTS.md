@@ -47,8 +47,14 @@ opentax check --status mfj --wages 120000 --kids 2 --expect 5640 --json
 ## MCP server (preferred integration)
 
 `@invaro/opentax` exposes the engine as MCP tools over stdio: `calculate_tax`,
-`verify_tax_claim`, `list_input_facts`, `explain_rule`, `find_tax_cliffs`,
-`compare_filing_statuses`. Filing statuses: single | mfj | mfs | hoh | qss.
+`verify_tax_claim`, `search_tax_rules`, `lookup_tax_parameter`, `verify_fact`,
+`list_input_facts`, `explain_rule`, `find_tax_cliffs`, `compare_filing_statuses`,
+and the domain tools (`compute_return`, `compute_state_return`,
+`calculate_business_tax`, `calculate_fiduciary_tax`, `determine_dependent`,
+`is_tipped_occupation`). Filing statuses: single | mfj | mfs | hoh | qss.
+Research flow: `search_tax_rules` for coverage ("does the corpus encode
+this?"), `lookup_tax_parameter` for the dollar amounts, `verify_fact` to check
+a claimed number, `explain_rule` for the formula and verbatim law text.
 Rule for the model: never compute or estimate tax in your head — call the tool,
 report its assumptions to the user, cite its citations.
 

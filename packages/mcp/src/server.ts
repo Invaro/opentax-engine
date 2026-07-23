@@ -12,7 +12,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { evaluate, OpenTaxError, parseDollars } from "@invaro/opentax-core";
-import { compareAcross, factCheck, findCliffs, lookupParameters } from "@invaro/opentax-solve";
+import { compareAcross, factCheck, findCliffs, lookupParameters, searchRules } from "@invaro/opentax-solve";
 import { composeStateReturn, makeStateTaxEvaluator, stateReturnShape } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
 import {
@@ -502,6 +502,40 @@ server.registerTool(
         parameters: Object.fromEntries(
           Object.entries(h.parameters).map(([k, v]) => [k, fmt(BigInt(v))]),
         ),
+      })),
+      corpusMerkleRoot: corpus.merkleRoot,
+    });
+  },
+);
+
+server.registerTool(
+  "search_tax_rules",
+  {
+    description:
+      "Full-text search over the encoded tax-law corpus ('kiddie tax', 'NIIT threshold', 'california renters credit'). Returns matching rules: id, title, statutory citation, effective window, and a verbatim excerpt of the law text. A hit means the engine computes this; zero hits means it is outside the corpus — say so rather than guessing. Follow up with explain_rule for a hit's full formula, or lookup_tax_parameter for its dollar amounts.",
+    inputSchema: z
+      .object({
+        query: z.string().describe("plain-English search, e.g. 'kiddie tax'"),
+        asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+        limit: z.number().int().min(1).max(20).optional(),
+      })
+      .strict(),
+  },
+  async ({ query, asOf, limit }) => {
+    const hits = searchRules(corpus, query, asOf, limit ?? 8);
+    return ok({
+      ok: true,
+      query,
+      ...(asOf ? { asOf } : {}),
+      covered: hits.length > 0,
+      hits: hits.map((h) => ({
+        ruleId: h.ruleId,
+        title: h.title,
+        jurisdiction: h.jurisdiction,
+        citation: `${h.citation.source} ${h.citation.section}`,
+        effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
+        excerpt: h.snippet,
+        hasDollarParameters: h.hasParameters,
       })),
       corpusMerkleRoot: corpus.merkleRoot,
     });

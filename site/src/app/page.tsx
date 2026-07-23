@@ -399,10 +399,12 @@ export default function Page() {
           ))}
         </div>
 
-        <p className="mt-6 text-center font-mono text-[10px] text-muted-foreground">
-          same engine as a CLI for the terminal and CI — <code>opentax check --expect 5640</code>{" "}
-          returns verified / refuted — and as a TypeScript library that runs entirely in a browser
-          tab
+        <p className="mt-6 text-center font-mono text-[10px] text-muted-foreground max-w-[720px] mx-auto">
+          research is built in too: <code>search_tax_rules</code> finds the encoded law by keyword,{" "}
+          <code>lookup_tax_parameter</code> returns the dollar amounts with citations, and{" "}
+          <code>verify_fact</code> answers verified / refuted — zero hits means &ldquo;outside the
+          corpus&rdquo;, never a guess · same engine as a CLI (<code>opentax check --expect</code>{" "}
+          for CI) and a TypeScript library that runs entirely in a browser tab
         </p>
       </section>
 

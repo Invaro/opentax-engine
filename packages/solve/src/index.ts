@@ -21,5 +21,5 @@ export type { InvertOptions, InvertResult } from "./invert.js";
 export { invert } from "./invert.js";
 export type { CompareOptions, CompareResult } from "./compare.js";
 export { compareAcross } from "./compare.js";
-export type { FactCheckResult, LookupHit } from "./lookup.js";
-export { factCheck, lookupParameters } from "./lookup.js";
+export type { FactCheckResult, LookupHit, RuleSearchHit } from "./lookup.js";
+export { factCheck, lookupParameters, searchRules } from "./lookup.js";
