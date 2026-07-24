@@ -1,6 +1,7 @@
 {
   "name": "@invaro/opentax-cli",
   "version": "0.1.2",
+  "private": true,
   "description": "opentax \u2014 evaluate US tax questions and print machine-checkable proof trees",
   "license": "AGPL-3.0-only",
   "type": "module",
