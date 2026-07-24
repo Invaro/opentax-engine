@@ -47548,7 +47548,7 @@ function runCli(argv) {
 import { mkdirSync, readFileSync as readFileSync6, writeFileSync as writeFileSync3 } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-var VERSION = "0.3.2";
+var VERSION = "0.4.0";
 var ENDPOINT = "https://opentax.invaro.ai/api/t";
 function optedOut() {
   return process.env.OPENTAX_TELEMETRY === "0" || process.env.OPENTAX_TELEMETRY === "false" || process.env.DO_NOT_TRACK === "1";

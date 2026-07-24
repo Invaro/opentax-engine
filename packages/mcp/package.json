@@ -1,6 +1,6 @@
 {
   "name": "@invaro/opentax",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "The verifiable US tax oracle: MCP server for AI agents + full CLI in one self-contained package \u2014 every answer cited to statute and machine-checkable",
   "license": "AGPL-3.0-only",
   "type": "module",

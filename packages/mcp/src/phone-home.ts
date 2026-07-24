@@ -13,7 +13,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-const VERSION = "0.3.2";
+const VERSION = "0.4.0";
 const ENDPOINT = "https://opentax.invaro.ai/api/t";
 
 function optedOut(): boolean {
