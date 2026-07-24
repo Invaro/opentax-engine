@@ -1,7 +1,7 @@
 {
-  "description": "Pennsylvania flat 3.07% (72 P.S. § 7302): 50,000 x 3.07% = 1,535.00.",
+  "description": "PA migration contract: the thin v1 rule took an agent-composed stateTaxableIncome; the deep pack (v2+) computes the class-netted base itself and IGNORES stateTaxableIncome, so the legacy input alone must REFUSE demanding wages — never silently answer $0. (Deep-path equivalents: fixtures 272-279.)",
   "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
   "asOf": "2025-12-31",
   "target": "us.pa.income_tax",
-  "expect": { "valueCents": "153500" }
+  "expect": { "error": "NEEDS_FACTS", "missingFacts": ["wages"] }
 }

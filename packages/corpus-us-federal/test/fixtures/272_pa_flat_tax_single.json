@@ -1,0 +1,13 @@
+{
+  "description": "PA single, $50,000 wages (TY2025). Line 9 = 50,000 (compensation only, Box 16 assumed = Box 1); no line-10 deductions; line 11 = 50,000; line 12 = 50,000 x 3.07% = $1,535.00 exactly (72 P.S. SS 7302).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.income_tax",
+  "expect": {
+    "valueCents": "153500",
+    "intermediates": { "us.pa.taxable_income": "5000000" }
+  }
+}

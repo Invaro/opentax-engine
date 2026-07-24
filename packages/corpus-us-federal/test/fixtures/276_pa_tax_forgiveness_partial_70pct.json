@@ -1,0 +1,14 @@
+{
+  "description": "PA Tax Forgiveness partial: MFJ, $32,600 wages, 2 SP dependent children. t100 = $32,000; columns 90% <= 32,250, 80% <= 32,500, 70% <= 32,750 -> EI 32,600 lands in the 70% column. Line 12 tax = 32,600 x 3.07% = 1,000.82 -> whole-dollar $1,001.00; forgiveness = 70% x 1,001.00 = 700.70 -> whole-dollar $701.00.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 32600,
+    "paSpDependentChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.tax_forgiveness",
+  "expect": {
+    "valueCents": "70100",
+    "intermediates": { "us.pa.income_tax": "100100" }
+  }
+}

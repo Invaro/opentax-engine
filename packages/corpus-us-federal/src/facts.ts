@@ -2410,4 +2410,150 @@ export const facts: FactSpec[] = [
       "Spouse itemizes deductions on a separate return (26 U.S.C. § 63(c)(6)(A)) — if so, an MFS filer's standard deduction is zero.",
     // no default — only demanded for married-filing-separately evaluations
   },
+
+  // ---- Pennsylvania deep pack (state-pa.ts) -------------------------------
+  // PA classes are TRANSCRIBED separately from the federal facts: PA
+  // classification diverges (capital-gain distributions are dividends,
+  // 401(k) deferrals are taxable compensation, eligible retirement income is
+  // exempt), so nothing here is auto-mapped from taxableInterest etc.
+  {
+    id: "paCompensationAdjustment",
+    type: "money",
+    description:
+      "PA compensation adjustment: W-2 Box 16 total MINUS Box 1 total (PA taxes 401(k)/elective deferrals as compensation; active-duty pay outside PA and other exempt items reduce it). May be negative. Default 0 assumes Box 16 = Box 1. Taxable early retirement-plan/IRA distributions under PA's cost-recovery method also go here. In dollars.",
+    default: { value: "0", rationale: "PA W-2 Box 16 assumed equal to federal Box 1 wages absent contrary input" },
+  },
+  {
+    id: "paUnreimbursedBusinessExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "PA Schedule UE unreimbursed employee business expenses (PA-40 line 1b) — a compensation-class expense, not a line-10 deduction. In dollars.",
+    default: { value: "0", rationale: "No unreimbursed employee business expenses claimed absent contrary input" },
+  },
+  {
+    id: "paInterestIncome",
+    type: "money",
+    min: "0",
+    description:
+      "PA-taxable interest income (PA-40 line 2, gross class — no expenses; forfeited-interest penalties may offset within the class before entry). Includes commercial-annuity income taxable as PA interest. In dollars.",
+    default: { value: "0", rationale: "No PA interest income absent contrary input" },
+  },
+  {
+    id: "paDividendIncome",
+    type: "money",
+    min: "0",
+    description:
+      "PA-taxable dividend income (PA-40 line 3, gross class) INCLUDING mutual-fund capital gains distributions, which PA classifies as dividends. In dollars.",
+    default: { value: "0", rationale: "No PA dividend income absent contrary input" },
+  },
+  {
+    id: "paBusinessNetIncome",
+    type: "money",
+    description:
+      "Taxpayer's own net income or LOSS from business/profession/farm (PA-40 line 4 class, after within-class netting of the taxpayer's own activities). Negative allowed; a loss never offsets other classes or the spouse. In dollars.",
+    default: { value: "0", rationale: "No business income or loss absent contrary input" },
+  },
+  {
+    id: "paSpouseBusinessNetIncome",
+    type: "money",
+    description:
+      "Spouse's own net income or LOSS from business/profession/farm (PA-40 line 4 class). Negative allowed; never netted against the taxpayer's. In dollars.",
+    default: { value: "0", rationale: "No spouse business income or loss absent contrary input" },
+  },
+  {
+    id: "paPropertyGainNet",
+    type: "money",
+    description:
+      "Taxpayer's own net gain or LOSS from sale/exchange/disposition of property (PA-40 line 5 class). Negative allowed; no carryover, no cross-class or spousal offset. In dollars.",
+    default: { value: "0", rationale: "No property gain or loss absent contrary input" },
+  },
+  {
+    id: "paSpousePropertyGainNet",
+    type: "money",
+    description:
+      "Spouse's own net gain or LOSS from disposition of property (PA-40 line 5 class). Negative allowed; never netted against the taxpayer's. In dollars.",
+    default: { value: "0", rationale: "No spouse property gain or loss absent contrary input" },
+  },
+  {
+    id: "paRentRoyaltyNet",
+    type: "money",
+    description:
+      "Taxpayer's own net income or LOSS from rents/royalties/patents/copyrights (PA-40 line 6 class). Negative allowed; short-term rentals (<30 days) belong in the business class instead. In dollars.",
+    default: { value: "0", rationale: "No rent/royalty income or loss absent contrary input" },
+  },
+  {
+    id: "paSpouseRentRoyaltyNet",
+    type: "money",
+    description:
+      "Spouse's own net income or LOSS from rents/royalties/patents/copyrights (PA-40 line 6 class). Negative allowed; never netted against the taxpayer's. In dollars.",
+    default: { value: "0", rationale: "No spouse rent/royalty income or loss absent contrary input" },
+  },
+  {
+    id: "paEstateTrustIncome",
+    type: "money",
+    min: "0",
+    description:
+      "PA-taxable income from estates or trusts (PA-40 line 7, Schedule J) — an estate or trust cannot distribute a loss, so this is never negative. In dollars.",
+    default: { value: "0", rationale: "No estate/trust income absent contrary input" },
+  },
+  {
+    id: "paGamblingWinnings",
+    type: "money",
+    min: "0",
+    description:
+      "PA-taxable gambling and lottery winnings (PA-40 line 8, Schedule T) net of wager costs (PA Lottery ticket costs deductible only for tickets bought on/after 1/1/2016); noncash PA Lottery prizes are exempt. In dollars.",
+    default: { value: "0", rationale: "No gambling winnings absent contrary input" },
+  },
+  {
+    id: "pa529Contributions",
+    type: "money",
+    min: "0",
+    description:
+      "PA Schedule O § 529 tuition-program contribution deduction, ALREADY capped by the caller at $19,000 per beneficiary per taxpayer-spouse (2025) — the corpus cannot see per-beneficiary detail. No deduction for 529-to-529 rollovers or beneficiary changes. In dollars.",
+    default: { value: "0", rationale: "No 529 contributions claimed absent contrary input" },
+  },
+  {
+    id: "paAbleContributions",
+    type: "money",
+    min: "0",
+    description:
+      "PA Schedule O § 529A ABLE contribution deduction, capped by the caller at the annual federal gift-tax exclusion ($19,000 for 2025). In dollars.",
+    default: { value: "0", rationale: "No ABLE contributions claimed absent contrary input" },
+  },
+  {
+    id: "paMsaHsaContributions",
+    type: "money",
+    min: "0",
+    description:
+      "PA Schedule O Medical Savings Account + Health Savings Account contribution deductions — limited to the amounts allowed for FEDERAL income tax purposes (supply the federal-allowed total). In dollars.",
+    default: { value: "0", rationale: "No MSA/HSA deduction claimed absent contrary input" },
+  },
+  {
+    id: "paSpDependentChildren",
+    type: "int",
+    min: "0",
+    description:
+      "PA Schedule SP dependent CHILDREN count (natural/adopted/step; grandchild of a grandparent; foster child of a foster parent — never aunts/uncles/unrelated persons) claimable as federal dependents; adult qualifying children count. Raises the Tax Forgiveness eligibility-income threshold $9,500 each.",
+    default: {
+      value: "0",
+      rationale: "Conservative: no SP dependent children assumed — understates the forgiveness threshold, never overstates the credit",
+    },
+  },
+  {
+    id: "paEligibilityIncomeAddbacks",
+    type: "money",
+    min: "0",
+    description:
+      "PA Schedule SP Section III nontaxable add-backs to eligibility income: nontaxable interest/dividends/gains, alimony received, insurance proceeds and inheritances (incl. 1099-R code-4 box 1), gifts/awards/prizes (incl. noncash PA Lottery), non-PA income, nontaxable military pay (not combat), excluded home-sale gain, nontaxable educational assistance, outside cash support. Do NOT add Social Security/RRB, eligible retirement benefits, child support, military pensions, workers' comp, personal-injury damages, or sick/disability pay. In dollars.",
+    default: { value: "0", rationale: "No nontaxable eligibility-income add-backs absent contrary input" },
+  },
+  {
+    id: "paResidentCredit",
+    type: "money",
+    min: "0",
+    description:
+      "PA resident credit for income tax paid to other states (PA-40 line 22, Schedule G-L; not allowed for reciprocal-state compensation: IN, MD, NJ, OH, VA, WV). Subtracts from tax BEFORE Tax Forgiveness per Schedule SP Section IV. In dollars.",
+    default: { value: "0", rationale: "No other-state tax credit claimed absent contrary input" },
+  },
 ];

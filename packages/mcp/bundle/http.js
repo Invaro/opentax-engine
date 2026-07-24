@@ -8637,12 +8637,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub2 of error2.issues) {
-    if (sub2.path.length > 0) {
-      fieldErrors[sub2.path[0]] = fieldErrors[sub2.path[0]] || [];
-      fieldErrors[sub2.path[0]].push(mapper(sub2));
+  for (const sub3 of error2.issues) {
+    if (sub3.path.length > 0) {
+      fieldErrors[sub3.path[0]] = fieldErrors[sub3.path[0]] || [];
+      fieldErrors[sub3.path[0]].push(mapper(sub3));
     } else {
-      formErrors.push(mapper(sub2));
+      formErrors.push(mapper(sub3));
     }
   }
   return { formErrors, fieldErrors };
@@ -15040,8 +15040,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub2) => {
-      this.issues = [...this.issues, sub2];
+    this.addIssue = (sub3) => {
+      this.issues = [...this.issues, sub3];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -15108,13 +15108,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub2 of this.issues) {
-      if (sub2.path.length > 0) {
-        const firstEl = sub2.path[0];
+    for (const sub3 of this.issues) {
+      if (sub3.path.length > 0) {
+        const firstEl = sub3.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub2));
+        fieldErrors[firstEl].push(mapper(sub3));
       } else {
-        formErrors.push(mapper(sub2));
+        formErrors.push(mapper(sub3));
       }
     }
     return { formErrors, fieldErrors };
@@ -27262,6 +27262,133 @@ var facts = [
     type: "bool",
     description: "Spouse itemizes deductions on a separate return (26 U.S.C. \xA7 63(c)(6)(A)) \u2014 if so, an MFS filer's standard deduction is zero."
     // no default — only demanded for married-filing-separately evaluations
+  },
+  // ---- Pennsylvania deep pack (state-pa.ts) -------------------------------
+  // PA classes are TRANSCRIBED separately from the federal facts: PA
+  // classification diverges (capital-gain distributions are dividends,
+  // 401(k) deferrals are taxable compensation, eligible retirement income is
+  // exempt), so nothing here is auto-mapped from taxableInterest etc.
+  {
+    id: "paCompensationAdjustment",
+    type: "money",
+    description: "PA compensation adjustment: W-2 Box 16 total MINUS Box 1 total (PA taxes 401(k)/elective deferrals as compensation; active-duty pay outside PA and other exempt items reduce it). May be negative. Default 0 assumes Box 16 = Box 1. Taxable early retirement-plan/IRA distributions under PA's cost-recovery method also go here. In dollars.",
+    default: { value: "0", rationale: "PA W-2 Box 16 assumed equal to federal Box 1 wages absent contrary input" }
+  },
+  {
+    id: "paUnreimbursedBusinessExpenses",
+    type: "money",
+    min: "0",
+    description: "PA Schedule UE unreimbursed employee business expenses (PA-40 line 1b) \u2014 a compensation-class expense, not a line-10 deduction. In dollars.",
+    default: { value: "0", rationale: "No unreimbursed employee business expenses claimed absent contrary input" }
+  },
+  {
+    id: "paInterestIncome",
+    type: "money",
+    min: "0",
+    description: "PA-taxable interest income (PA-40 line 2, gross class \u2014 no expenses; forfeited-interest penalties may offset within the class before entry). Includes commercial-annuity income taxable as PA interest. In dollars.",
+    default: { value: "0", rationale: "No PA interest income absent contrary input" }
+  },
+  {
+    id: "paDividendIncome",
+    type: "money",
+    min: "0",
+    description: "PA-taxable dividend income (PA-40 line 3, gross class) INCLUDING mutual-fund capital gains distributions, which PA classifies as dividends. In dollars.",
+    default: { value: "0", rationale: "No PA dividend income absent contrary input" }
+  },
+  {
+    id: "paBusinessNetIncome",
+    type: "money",
+    description: "Taxpayer's own net income or LOSS from business/profession/farm (PA-40 line 4 class, after within-class netting of the taxpayer's own activities). Negative allowed; a loss never offsets other classes or the spouse. In dollars.",
+    default: { value: "0", rationale: "No business income or loss absent contrary input" }
+  },
+  {
+    id: "paSpouseBusinessNetIncome",
+    type: "money",
+    description: "Spouse's own net income or LOSS from business/profession/farm (PA-40 line 4 class). Negative allowed; never netted against the taxpayer's. In dollars.",
+    default: { value: "0", rationale: "No spouse business income or loss absent contrary input" }
+  },
+  {
+    id: "paPropertyGainNet",
+    type: "money",
+    description: "Taxpayer's own net gain or LOSS from sale/exchange/disposition of property (PA-40 line 5 class). Negative allowed; no carryover, no cross-class or spousal offset. In dollars.",
+    default: { value: "0", rationale: "No property gain or loss absent contrary input" }
+  },
+  {
+    id: "paSpousePropertyGainNet",
+    type: "money",
+    description: "Spouse's own net gain or LOSS from disposition of property (PA-40 line 5 class). Negative allowed; never netted against the taxpayer's. In dollars.",
+    default: { value: "0", rationale: "No spouse property gain or loss absent contrary input" }
+  },
+  {
+    id: "paRentRoyaltyNet",
+    type: "money",
+    description: "Taxpayer's own net income or LOSS from rents/royalties/patents/copyrights (PA-40 line 6 class). Negative allowed; short-term rentals (<30 days) belong in the business class instead. In dollars.",
+    default: { value: "0", rationale: "No rent/royalty income or loss absent contrary input" }
+  },
+  {
+    id: "paSpouseRentRoyaltyNet",
+    type: "money",
+    description: "Spouse's own net income or LOSS from rents/royalties/patents/copyrights (PA-40 line 6 class). Negative allowed; never netted against the taxpayer's. In dollars.",
+    default: { value: "0", rationale: "No spouse rent/royalty income or loss absent contrary input" }
+  },
+  {
+    id: "paEstateTrustIncome",
+    type: "money",
+    min: "0",
+    description: "PA-taxable income from estates or trusts (PA-40 line 7, Schedule J) \u2014 an estate or trust cannot distribute a loss, so this is never negative. In dollars.",
+    default: { value: "0", rationale: "No estate/trust income absent contrary input" }
+  },
+  {
+    id: "paGamblingWinnings",
+    type: "money",
+    min: "0",
+    description: "PA-taxable gambling and lottery winnings (PA-40 line 8, Schedule T) net of wager costs (PA Lottery ticket costs deductible only for tickets bought on/after 1/1/2016); noncash PA Lottery prizes are exempt. In dollars.",
+    default: { value: "0", rationale: "No gambling winnings absent contrary input" }
+  },
+  {
+    id: "pa529Contributions",
+    type: "money",
+    min: "0",
+    description: "PA Schedule O \xA7 529 tuition-program contribution deduction, ALREADY capped by the caller at $19,000 per beneficiary per taxpayer-spouse (2025) \u2014 the corpus cannot see per-beneficiary detail. No deduction for 529-to-529 rollovers or beneficiary changes. In dollars.",
+    default: { value: "0", rationale: "No 529 contributions claimed absent contrary input" }
+  },
+  {
+    id: "paAbleContributions",
+    type: "money",
+    min: "0",
+    description: "PA Schedule O \xA7 529A ABLE contribution deduction, capped by the caller at the annual federal gift-tax exclusion ($19,000 for 2025). In dollars.",
+    default: { value: "0", rationale: "No ABLE contributions claimed absent contrary input" }
+  },
+  {
+    id: "paMsaHsaContributions",
+    type: "money",
+    min: "0",
+    description: "PA Schedule O Medical Savings Account + Health Savings Account contribution deductions \u2014 limited to the amounts allowed for FEDERAL income tax purposes (supply the federal-allowed total). In dollars.",
+    default: { value: "0", rationale: "No MSA/HSA deduction claimed absent contrary input" }
+  },
+  {
+    id: "paSpDependentChildren",
+    type: "int",
+    min: "0",
+    description: "PA Schedule SP dependent CHILDREN count (natural/adopted/step; grandchild of a grandparent; foster child of a foster parent \u2014 never aunts/uncles/unrelated persons) claimable as federal dependents; adult qualifying children count. Raises the Tax Forgiveness eligibility-income threshold $9,500 each.",
+    default: {
+      value: "0",
+      rationale: "Conservative: no SP dependent children assumed \u2014 understates the forgiveness threshold, never overstates the credit"
+    }
+  },
+  {
+    id: "paEligibilityIncomeAddbacks",
+    type: "money",
+    min: "0",
+    description: "PA Schedule SP Section III nontaxable add-backs to eligibility income: nontaxable interest/dividends/gains, alimony received, insurance proceeds and inheritances (incl. 1099-R code-4 box 1), gifts/awards/prizes (incl. noncash PA Lottery), non-PA income, nontaxable military pay (not combat), excluded home-sale gain, nontaxable educational assistance, outside cash support. Do NOT add Social Security/RRB, eligible retirement benefits, child support, military pensions, workers' comp, personal-injury damages, or sick/disability pay. In dollars.",
+    default: { value: "0", rationale: "No nontaxable eligibility-income add-backs absent contrary input" }
+  },
+  {
+    id: "paResidentCredit",
+    type: "money",
+    min: "0",
+    description: "PA resident credit for income tax paid to other states (PA-40 line 22, Schedule G-L; not allowed for reciprocal-state compensation: IN, MD, NJ, OH, VA, WV). Subtracts from tax BEFORE Tax Forgiveness per Schedule SP Section IV. In dollars.",
+    default: { value: "0", rationale: "No other-state tax credit claimed absent contrary input" }
   }
 ];
 
@@ -36115,6 +36242,216 @@ var nyRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-pa.js
+var max04 = (arg) => ({ kind: "max0", arg });
+var add2 = (...args) => ({ kind: "add", args });
+var sub2 = (left, right) => ({ kind: "sub", left, right });
+var rd2 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var isMarried = {
+  kind: "or",
+  args: [
+    { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } },
+    { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfs" } }
+  ]
+};
+var spForgiveness = (netTax, ei, t100) => {
+  let expr = money33("0");
+  for (let k = 9; k >= 0; k--) {
+    expr = {
+      kind: "if",
+      cond: {
+        kind: "cmp",
+        op: "le",
+        left: ei,
+        right: k === 0 ? t100 : add2(t100, money33(String(k * 25e3)))
+      },
+      then: {
+        kind: "mulRate",
+        base: netTax,
+        rate: { num: String(100 - 10 * k), den: "100" },
+        round: "half-up"
+      },
+      else: expr
+    };
+  }
+  return expr;
+};
+var taxableIncomeRule = (version2, from, to) => ({
+  id: "us.pa.taxable_income",
+  version: version2,
+  jurisdiction: "us.pa",
+  title: "Pennsylvania total taxable income (PA-40 line 9) \u2014 positive class amounts only",
+  citation: {
+    source: "72 P.S. \xA7 7303(a)(1)-(8); 2025 PA-40 Instructions (rev 04-25) pp. 8-20",
+    section: "72 P.S. \xA7 7303; PA-40 lines 1a-9",
+    url: "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40in.pdf",
+    excerpt: "Line 9 (2025 PA-40, verbatim): 'Add only the positive income amounts from Lines 1c, 2, 3, 4, 5, 6, 7 and 8. DO NOT ADD any losses.' Eight classes per \xA7 7303(a): compensation; interest; dividends (mutual-fund capital gains DISTRIBUTIONS are dividends, Line 3); net business/profession/farm; net gains from disposition of property; net rents/royalties/patents/copyrights; estate or trust income (cannot be negative); gambling and lottery winnings (noncash PA Lottery prizes exempt; cash prizes taxable, ticket costs for tickets bought on/after 1/1/2016 deductible from winnings). NO cross-class offset, NO carryforward/carryback, and NO spousal sharing: on a joint return, per class, one spouse's loss NEVER offsets the other's income (both-positive add; one-income-one-loss counts ONLY the income) \u2014 encoded as max0(taxpayer net) + max0(spouse net) for each loss-capable class (lines 4/5/6; PA-40 IN p.15, Mary & Ben examples). COMPENSATION: PA compensation is W-2 BOX 16, not Box 1 \u2014 401(k)/elective deferrals ARE taxable compensation; IRA contributions are NOT deductible; supply the Box16-Box1 difference via paCompensationAdjustment (default 0 assumes Box 16 = Box 1). Retirement income is NOT compensation when paid by an eligible employer plan after meeting the plan's age/years-of-service conditions AND retiring (code 7), and Social Security / RR / military pensions / Civil Service annuities / SERS / PSERS are always exempt; early distributions (codes 1-2) and pre-59\xBD IRA distributions are taxable compensation under the COST RECOVERY method (distribution minus previously-taxed contributions; PA has NO federal-style early-withdrawal exceptions) \u2014 cost-recovery basis math is agent-composed into the class facts, disclosed. Unemployment compensation, workers' comp, third-party sick pay, child support, alimony, and W-2 box-10 dependent care up to $5,000 are not taxable. APPROXIMATIONS (disclosed): compensation and its unreimbursed-expense offset (Sch UE, line 1b) are modeled at the return level, not per spouse \u2014 a spouse whose UE exceeds own compensation on a joint return would be overstated (rare; compose per-spouse and supply via paCompensationAdjustment if it matters). Reciprocal compensation states (IN, MD, NJ, OH, VA, WV) and part-year/nonresident apportionment are out of scope for this resident-return target."
+  },
+  effectiveFrom: from,
+  effectiveTo: to,
+  output: { type: "money" },
+  formula: add2(
+    // line 1c: net compensation (never negative on the printed form)
+    max04(sub2(add2(fact36("wages"), fact36("paCompensationAdjustment")), fact36("paUnreimbursedBusinessExpenses"))),
+    fact36("paInterestIncome"),
+    // line 2 (gross class)
+    fact36("paDividendIncome"),
+    // line 3 (gross class)
+    max04(fact36("paBusinessNetIncome")),
+    // line 4, taxpayer
+    max04(fact36("paSpouseBusinessNetIncome")),
+    // line 4, spouse
+    max04(fact36("paPropertyGainNet")),
+    // line 5, taxpayer
+    max04(fact36("paSpousePropertyGainNet")),
+    // line 5, spouse
+    max04(fact36("paRentRoyaltyNet")),
+    // line 6, taxpayer
+    max04(fact36("paSpouseRentRoyaltyNet")),
+    // line 6, spouse
+    fact36("paEstateTrustIncome"),
+    // line 7 (cannot be negative)
+    fact36("paGamblingWinnings")
+  )
+});
+var otherDeductionsRule = (version2, from, to) => ({
+  id: "us.pa.other_deductions",
+  version: version2,
+  jurisdiction: "us.pa",
+  title: "Pennsylvania other deductions (PA-40 line 10, Schedule O) \u2014 the exhaustive five",
+  citation: {
+    source: "2025 PA-40 Instructions (rev 04-25) pp. 9, 20-21; 2025 PA Schedule O + instructions",
+    section: "PA-40 line 10; Schedule O",
+    url: "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40o.pdf",
+    excerpt: "'PA law does not allow standard deductions, deductions for personal exemptions, itemized deductions, or deductions for personal expenses' (PA-40 IN p.9). Exactly FIVE line-10 deductions exist for 2025: (M) Medical Savings Account contributions and (H) Health Savings Account contributions, each limited to the amount 'allowed for federal income tax purposes'; (S) STUDENT LOAN INTEREST \u2014 NEW for 2025 \u2014 up to $2,500 per taxable year (no PA income phase-out; the federal studentLoanInterest fact is reused as the interest-paid input and capped here); (T) IRC \xA7 529 qualified tuition program contributions \u2014 maximum $19,000 PER BENEFICIARY, PER TAXPAYER-SPOUSE (2025; no deduction for 529-to-529 rollovers or beneficiary changes); (A) \xA7 529A PA ABLE contributions capped at the annual federal gift-tax exclusion ($19,000 for 2025). The per-beneficiary 529 cap and the ABLE cap CANNOT be enforced without per-beneficiary detail \u2014 the caller must supply already-capped totals (disclosed). Line 10 cannot exceed line 9; the Schedule O Section III PER-SPOUSE cap (each spouse limited to own line-9 income) is approximated at the return level (disclosed). Unreimbursed employee business expenses are a line-1b class expense (Schedule UE), never a line-10 deduction. The 2026 federal gift-exclusion amount for the ABLE cap must be re-verified at 2026 encoding."
+  },
+  effectiveFrom: from,
+  effectiveTo: to,
+  output: { type: "money" },
+  parameters: {
+    studentLoanInterestCap: { value: "250000", type: "money" },
+    // $2,500 (2025 PA cap)
+    per529BeneficiaryCap: { value: "1900000", type: "money" },
+    // $19,000 (disclosure)
+    ableGiftExclusionCap: { value: "1900000", type: "money" }
+    // $19,000 (2025)
+  },
+  formula: {
+    kind: "min",
+    args: [
+      add2({ kind: "min", args: [fact36("studentLoanInterest"), { kind: "param", name: "studentLoanInterestCap" }] }, fact36("pa529Contributions"), fact36("paAbleContributions"), fact36("paMsaHsaContributions")),
+      ruleRef30("us.pa.taxable_income")
+    ]
+  }
+});
+var incomeTaxRule2 = (version2, from, to, yearLabel) => ({
+  id: "us.pa.income_tax",
+  version: version2,
+  jurisdiction: "us.pa",
+  title: `Pennsylvania income tax \u2014 3.07% flat on adjusted PA taxable income (PA-40 line 12, ${yearLabel})`,
+  citation: {
+    source: "72 P.S. \xA7 7302 (current as of Jan 1, 2026); 2025 PA-40 line 12",
+    section: "72 P.S. \xA7 7302",
+    url: "https://codes.findlaw.com/pa/title-72-ps-taxation-and-fiscal-affairs/pa-st-sect-72-7302/",
+    excerpt: "\xA7 7302 imposes 'three and seven hundredths per cent' (3.07%) on residents' taxable income; PA-40 line 12: 'Multiply Line 11 by 3.07 percent (0.0307)', where line 11 = line 9 total PA taxable income minus line 10 other deductions. Rate verified unchanged for TY2026 (statute text current as of Jan 1, 2026; the Senate's proposed 2.8% cut was NOT enacted). This target computes GROSS tax (line 12); Tax Forgiveness (Schedule SP) is the separate us.pa.tax_forgiveness target, and the resident credit / WPTC / PA CDCC net against tax in the return composition. Local earned income tax (Act 32) is filed separately with local collectors and is out of scope. Rounding: PA-40 uses whole dollars (drop <$0.50, round up \u2265$0.50 = half-up). Filing threshold: PA gross taxable income over $33 (or any loss transaction) requires a return."
+  },
+  effectiveFrom: from,
+  effectiveTo: to,
+  output: { type: "money" },
+  parameters: {
+    filingThreshold: { value: "3300", type: "money" }
+    // $33 gross-income filing trigger
+  },
+  formula: rd2({
+    kind: "mulRate",
+    base: max04(sub2(ruleRef30("us.pa.taxable_income"), ruleRef30("us.pa.other_deductions"))),
+    rate: { num: "307", den: "10000" },
+    round: "half-up"
+  })
+});
+var paRules = [
+  taxableIncomeRule(1, "2025-01-01", "2027-01-01"),
+  otherDeductionsRule(1, "2025-01-01", "2027-01-01"),
+  incomeTaxRule2(2, "2025-01-01", "2026-01-01", "TY2025"),
+  incomeTaxRule2(3, "2026-01-01", "2027-01-01", "TY2026 \u2014 rate unchanged"),
+  {
+    id: "us.pa.tax_forgiveness",
+    version: 1,
+    jurisdiction: "us.pa",
+    title: "Pennsylvania Tax Forgiveness credit (Schedule SP, 72 P.S. \xA7 7304) \u2014 PA-40 line 21",
+    citation: {
+      source: "72 P.S. \xA7 7304; 2025 PA Schedule SP + instructions (PA-40 SP IN 04-25); 2025 PA-40 Instructions p. 36-39 (eligibility income tables)",
+      section: "Schedule SP Sections III-IV; PA-40 lines 19a-21",
+      url: "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40sp.pdf",
+      excerpt: "Printed 2025 eligibility-income tables (statutory, NOT indexed \u2014 structure verified against every printed cell): unmarried/separated/deceased base $6,500 at 100% forgiveness; MARRIED (even filing separately, using JOINT eligibility income) base $13,000; PLUS $9,500 per dependent child on every column; each additional $250 of eligibility income drops the forgiveness percentage 10 points (100/90/.../10%), so income beyond base+dependents+$2,250 gets nothing. Forgiveness applies to line 12 tax MINUS the line 22 resident credit (SP Section IV: the resident credit subtracts BEFORE forgiveness), never below zero. ELIGIBILITY INCOME = PA-40 line 9 taxable income PLUS nontaxable add-backs supplied via paEligibilityIncomeAddbacks: nontaxable interest/dividends/gains, alimony received, insurance proceeds and inheritances (incl. 1099-R code-4 box 1), gifts/awards/prizes (incl. noncash PA Lottery), non-PA income, nontaxable military pay (not combat), excluded home-sale gain, nontaxable educational assistance, and outside cash support (foster payments, spousal support from outside the household, cafeteria-plan benefits). NOT added back: Social Security/RRB, eligible retirement benefits, child support, military pensions, workers' comp, personal-injury damages, sick/disability pay. DEPENDENT = a CHILD (natural/adopted/step; grandchild of a grandparent; foster child of a foster parent \u2014 never aunts/uncles/unrelated persons) claimable as a federal dependent; adult qualifying children count. A claimant who is someone else's federal dependent is ineligible unless that person also qualifies (not modeled \u2014 disclose). 'Separated' (apart the last six months of the year or under written separation agreement) uses the unmarried table \u2014 supply via filingStatus; QSS/widowed is NOT married (Table 1); MFS IS married (Table 2, joint eligibility income \u2014 return-level approximation disclosed). Deceased-claimant annualization not modeled (refuse-by-disclosure). Defaults are CONSERVATIVE: paSpDependentChildren defaults to 0 (understates the threshold, never overstates the credit)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      baseUnmarried: { value: "650000", type: "money" },
+      // $6,500
+      baseMarried: { value: "1300000", type: "money" },
+      // $13,000
+      perDependentChild: { value: "950000", type: "money" },
+      // $9,500
+      stepWidth: { value: "25000", type: "money" }
+      // $250 per 10-point drop
+    },
+    formula: rd2(spForgiveness(
+      // net tax: line 12 minus resident credit, floored at zero
+      max04(sub2(ruleRef30("us.pa.income_tax"), fact36("paResidentCredit"))),
+      // eligibility income: line 9 + add-backs
+      add2(ruleRef30("us.pa.taxable_income"), fact36("paEligibilityIncomeAddbacks")),
+      // 100% threshold: base + $9,500 x dependent children
+      add2({ kind: "if", cond: isMarried, then: { kind: "param", name: "baseMarried" }, else: { kind: "param", name: "baseUnmarried" } }, { kind: "mulInt", base: { kind: "param", name: "perDependentChild" }, count: fact36("paSpDependentChildren") })
+    ))
+  },
+  {
+    id: "us.pa.cdcc",
+    version: 1,
+    jurisdiction: "us.pa",
+    title: "Pennsylvania Child and Dependent Care Enhancement Tax Credit (Schedule DC) \u2014 100% of the federal \xA7 21 credit, refundable (TY2025)",
+    citation: {
+      source: "2025 PA Schedule DC + instructions (PA-40 DC IN 04-25); 2025 PA-40 Instructions pp. 22-23",
+      section: "Schedule DC; PA-40 line 23",
+      url: "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2025/2025_pa-40dc.pdf",
+      excerpt: "2025 Schedule DC: for PA residents receiving the federal IRC \xA7 21 credit, 'the credit is 100 percent of that amount' \u2014 the federal Form 2441 LINE 9a tentative credit (expenses capped $3,000 one / $6,000 two-or-more qualifying persons at the 35%\u219220% AGI slide), i.e. the PRE-liability-limit federal amount, because the PA credit is REFUNDABLE. Encoded as 100% of us.federal.cdcc.tentative (which already carries the \xA7 21 expense caps, earned-income limits, AGI percentage slide, and the MFS disallowance). The DC chart's printed caps ($1,050/$600 one dependent, $2,100/$1,200 two-plus at the $43,000 household-income break) are the federal formula's own outputs, not separate limits. Federal Form 2441 + Schedule 3 must be attached or DOR removes the credit (procedural, not modeled). TY2025 window only: the TY2026 federal \xA7 21 percentages change under OBBBA \xA7 70405 and PA's 100%-match treatment for 2026 was not yet verified at encoding \u2014 extend only after re-verification (refuses loudly for 2026 rather than guessing)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    formula: rd2(ruleRef30("us.federal.cdcc.tentative"))
+  },
+  {
+    id: "us.pa.wptc",
+    version: 1,
+    jurisdiction: "us.pa",
+    title: "Working Pennsylvanians Tax Credit \u2014 10% of the federal EITC, max $805, refundable (first PA state EITC, TY2025+)",
+    citation: {
+      source: "2025-26 Pennsylvania budget (signed Nov 12, 2025); PA DOR Working Pennsylvanians Tax Credit page; PA DOR press release Jan 27, 2026 (web-verified 2026-07-24)",
+      section: "PA DOR WPTC guidance",
+      url: "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax/working-pennsylvanians-tax-credit",
+      excerpt: "DOR: 'If you receive the federal EITC, you automatically qualify' \u2014 the credit is 10 percent of the federal Earned Income Tax Credit, maximum $805, REFUNDABLE, and 'the Department of Revenue will automatically calculate your WPTC' from the attached federal 1040. Effective beginning with the 2026 filing season (TY2025 returns, per the DOR's Jan 27, 2026 press release promoting the credit for the then-current season). NOTE: the printed 2025 PA-40 (rev 04-25, which predates the November 2025 budget) has NO WPTC line \u2014 DOR applies it in processing; composers should report it as a DOR-applied credit note. CAVEAT (disclosed): the statutory text's effective-tax-year language should be re-verified against the enrolled act when published; this encoding follows the agency's own filing-season guidance. The $805 cap can bind only via rounding in TY2025 (max federal EITC $8,046 \u2192 10% = $804.60)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      pctOfFederal: { value: "10", type: "int" },
+      cap: { value: "80500", type: "money" }
+      // $805
+    },
+    formula: rd2({
+      kind: "min",
+      args: [
+        { kind: "mulRate", base: ruleRef30("us.federal.eitc"), rate: { num: "10", den: "100" }, round: "half-up" },
+        { kind: "param", name: "cap" }
+      ]
+    })
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -36206,15 +36543,8 @@ var otherStateRules = [
     }
   },
   // ---- flat-rate states (TY2025, web-verified) ---------------------------
-  flatTax({
-    st: "pa",
-    name: "Pennsylvania",
-    ratePctTimes100: "307",
-    source: "72 Pa. Stat. \xA7 7302; Tax Foundation 2025 state rate survey (web-verified July 2026)",
-    section: "72 P.S. \xA7 7302",
-    url: "https://www.pa.gov/agencies/revenue.html",
-    excerpt: "Pennsylvania: 3.07% flat on PA taxable income. NO standard deduction and NO personal exemption. CAUTION: PA taxes EIGHT SEPARATE INCOME CLASSES (compensation, interest, dividends, net profits, gains, rents, estates, gambling) with NO netting of a loss in one class against income in another, and retirement income (401(k)/IRA distributions after retirement age, Social Security) is fully EXEMPT. PA Tax Forgiveness (Schedule SP) can eliminate tax at low incomes \u2014 not modeled, disclose. Compose stateTaxableIncome per the class rules before calling."
-  }),
+  // (PA graduated to the deep pack: see state-pa.ts — us.pa.income_tax v2+
+  //  computes the class-netted base itself; the thin v1 is superseded.)
   flatTax({
     st: "in",
     name: "Indiana",
@@ -36403,6 +36733,7 @@ var stateParameterRules = [
   ...vaRules,
   ...caRules,
   ...nyRules,
+  ...paRules,
   ...otherStateRules
 ];
 
@@ -37489,7 +37820,7 @@ var tipsOvertimeRules = [
 // ../corpus-us-federal/dist/index.js
 var corpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.36.0",
+  version: "0.37.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -37645,7 +37976,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add2 = (id, c2) => {
+  const add3 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -37667,20 +37998,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add2("wages", toCents(w.box1));
+    add3("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add2("federalTaxWithheld", toCents(w.box2));
+      add3("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add2("socialSecurityWages", toCents(w.box3));
+      add3("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add2("medicareWages", b5);
+      add3("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add2("federalTaxWithheld", excess);
+          add3("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars2(excess)}; added to withholding`);
         }
       }
@@ -37692,72 +38023,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(r.box4));
+      add3("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add2("wages", taxable3);
-      add2("scheduleRDisabilityIncome", taxable3);
+      add3("wages", taxable3);
+      add3("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars2(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add2("taxableIraDistributions", taxable3);
+      add3("taxableIraDistributions", taxable3);
     else
-      add2("taxablePensionsAndAnnuities", taxable3);
+      add3("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add2("earlyDistributionSubjectToPenalty", taxable3);
+        add3("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars2(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add2("socialSecurityBenefits", toCents(s.box5));
+    add3("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add2("federalTaxWithheld", toCents(s.box6));
+      add3("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(n.box4));
+      add3("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(k.box4));
+      add3("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add2("selfEmploymentNetProfit", net);
+        add3("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars2(seGross)} gross (1099-NEC/K) \u2212 $${dollars2(expenses)} expenses = $${dollars2(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add2("scheduleCNetLoss", -net);
+      add3("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars2(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add2("taxableInterest", toCents(t.box1));
+      add3("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add2("taxableInterest", toCents(t.box3));
+      add3("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars2(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add2("taxExemptInterest", toCents(t.box8));
+      add3("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(t.box4));
+      add3("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -37766,15 +38097,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars2(qualified2)}) exceeds box 1a (total, $${dollars2(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add2("qualifiedDividends", qualified2);
+      add3("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add2("ordinaryDividends", total - qualified2);
+      add3("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add2("__ltProceeds", toCents(d3.box2a));
+      add3("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars2(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(d3.box4));
+      add3("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -37789,24 +38120,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(b.box4));
+      add3("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add2("shortTermCapitalGains", stNet);
+      add3("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add2("shortTermCapitalLoss", -stNet);
+      add3("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add2("longTermCapitalGains", ltNet);
+      add3("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add2("longTermCapitalLoss", -ltNet);
+      add3("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars2(stNet)}, long-term net $${dollars2(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add2("unemploymentCompensation", toCents(g.box1));
+      add3("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add2("federalTaxWithheld", toCents(g.box4));
+      add3("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars2(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -38074,7 +38405,25 @@ var INDIVIDUAL_GROUPS = {
     "nyIt214HomeownerTaxes",
     "nyIt216StateCredit",
     "nyIt216Under4Expenses",
-    "nyIt216TotalExpenses"
+    "nyIt216TotalExpenses",
+    "paCompensationAdjustment",
+    "paUnreimbursedBusinessExpenses",
+    "paInterestIncome",
+    "paDividendIncome",
+    "paBusinessNetIncome",
+    "paSpouseBusinessNetIncome",
+    "paPropertyGainNet",
+    "paSpousePropertyGainNet",
+    "paRentRoyaltyNet",
+    "paSpouseRentRoyaltyNet",
+    "paEstateTrustIncome",
+    "paGamblingWinnings",
+    "pa529Contributions",
+    "paAbleContributions",
+    "paMsaHsaContributions",
+    "paSpDependentChildren",
+    "paEligibilityIncomeAddbacks",
+    "paResidentCredit"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -38391,7 +38740,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd2 = (c2) => {
+      const rd3 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -38418,11 +38767,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd2(after) + rd2(other);
-      const payments = rd2(withheld) + rd2(refundable) + rd2(extension) + rd2(estimated);
+      const total24 = rd3(after) + rd3(other);
+      const payments = rd3(withheld) + rd3(refundable) + rd3(extension) + rd3(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd2(c2));
+      const d3 = (c2) => fmt2(rd3(c2));
       return ok({
         ok: true,
         asOf,
@@ -38449,7 +38798,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd2(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd3(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

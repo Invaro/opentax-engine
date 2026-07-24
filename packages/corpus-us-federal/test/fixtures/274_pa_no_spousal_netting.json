@@ -1,0 +1,15 @@
+{
+  "description": "PA no-spousal-netting (Mary & Ben pattern, PA-40 IN p.15): MFJ, taxpayer business income $20,000, spouse business LOSS $5,000, no wages. Per class: one income + one loss -> count ONLY the income. Line 9 = 20,000 -> tax = 20,000 x 3.07% = $614.00.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "paBusinessNetIncome": 20000,
+    "paSpouseBusinessNetIncome": -5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.income_tax",
+  "expect": {
+    "valueCents": "61400",
+    "intermediates": { "us.pa.taxable_income": "2000000" }
+  }
+}
