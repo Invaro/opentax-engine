@@ -1,0 +1,15 @@
+{
+  "description": "PA line 10 deductions: single, $40,000 wages, $3,000 student loan interest (PA cap $2,500, new for 2025), $5,000 529 contributions. Line 10 = 2,500 + 5,000 = 7,500; line 11 = 32,500; tax = 32,500 x 3.07% = 997.75 -> whole-dollar $998.00 (Schedule O).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "studentLoanInterest": 3000,
+    "pa529Contributions": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.income_tax",
+  "expect": {
+    "valueCents": "99800",
+    "intermediates": { "us.pa.other_deductions": "750000" }
+  }
+}

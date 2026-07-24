@@ -1,0 +1,12 @@
+{
+  "description": "PA TY2026: single, $50,000 wages, asOf mid-2026 -> the v3 rule fires with the identical 3.07% rate (72 P.S. SS 7302 verified unchanged as of Jan 1, 2026; the proposed 2.8% cut was not enacted) -> $1,535.00.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.pa.income_tax",
+  "expect": {
+    "valueCents": "153500"
+  }
+}

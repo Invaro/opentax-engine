@@ -1,19 +1,21 @@
 import type { Cents } from "./money.js";
 
 export type StateReturnInput = {
-  jurisdiction: "il" | "va" | "ca" | "ny";
+  jurisdiction: "il" | "va" | "ca" | "ny" | "pa";
   [k: string]: unknown;
 };
 
 /**
  * Evaluate a state oracle target with the given stateTaxableIncome (cents).
- * extraFacts (cents/bool values keyed by fact id) merge into the evaluation —
- * used for Schedule P AMT (caAmti/caRegularTax) and method toggles.
+ * extraFacts (values keyed by fact id) merge into the evaluation — used for
+ * Schedule P AMT (caAmti/caRegularTax), method toggles, and the PA class
+ * facts. Value typing: bigint = money cents, boolean = bool fact, plain JS
+ * number = INT fact (counts, e.g. paSpDependentChildren).
  */
 export type StateTaxEvaluator = (
   target: string,
   stateTaxableIncomeCents: Cents,
-  extraFacts?: Record<string, Cents | boolean>,
+  extraFacts?: Record<string, Cents | boolean | number>,
 ) => Cents;
 
 /** Legacy filing-status flags derived from filingStatus by the dispatcher. */

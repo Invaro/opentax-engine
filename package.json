@@ -9,8 +9,8 @@
     "build": "pnpm -r build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "opentax": "node packages/cli/dist/index.js",
-    "demo": "node packages/cli/dist/index.js eval --status mfj --wages 120000 --kids 2"
+    "opentax": "node packages/cli/dist/bin.js",
+    "demo": "node packages/cli/dist/bin.js eval --status mfj --wages 120000 --kids 2"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",

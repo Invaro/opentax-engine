@@ -8,11 +8,11 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.describe("federal Form 1040 line 11 (from compute_return, verbatim)"),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -102,4 +102,36 @@ const ny = {
     ),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny };
+const pa = {
+  // PA is CLASS-BASED (eight classes, 72 P.S. § 7303) — federalAGI is NOT the
+  // PA base. Transcribe the class amounts below; the composer runs the corpus
+  // targets (class netting, Schedule O, 3.07% tax, Schedule SP) itself.
+  paGrossCompensation: usd.optional().describe("PA-40 line 1a: W-2 BOX 16 total (NOT Box 1 — 401(k)/elective deferrals are PA-taxable; eligible retirement distributions are exempt and excluded). Falls back to the shared wages input when omitted (composer discloses). Include taxable early-distribution amounts under the cost-recovery method."),
+  paUnreimbursedExpenses: usd.optional().describe("PA-40 line 1b: Schedule UE unreimbursed employee business expenses (a compensation-class expense, never a line-10 deduction)"),
+  paInterest: usd.optional().describe("PA-40 line 2: PA-taxable interest (gross class — no expenses; includes commercial-annuity interest taxable as PA interest)"),
+  paDividends: usd.optional().describe("PA-40 line 3: PA-taxable dividends INCLUDING mutual-fund capital-gain distributions (PA classifies them as dividends, not gains)"),
+  paBusinessNet: usd.optional().describe("PA-40 line 4, TAXPAYER's own net business/profession/farm income or LOSS (negative allowed; within-class netting of the taxpayer's own activities only — a loss never crosses classes or spouses)"),
+  paSpouseBusinessNet: usd.optional().describe("PA-40 line 4, SPOUSE's own net business income or loss (kept separate: PA never nets one spouse's loss against the other's income)"),
+  paPropertyNet: usd.optional().describe("PA-40 line 5, taxpayer's own net gain/loss from sale/exchange/disposition of property (negative allowed; no carryover)"),
+  paSpousePropertyNet: usd.optional().describe("PA-40 line 5, spouse's own net property gain/loss"),
+  paRentRoyaltyNet: usd.optional().describe("PA-40 line 6, taxpayer's own net rents/royalties/patents/copyrights (short-term rentals under 30 days are BUSINESS income, line 4)"),
+  paSpouseRentRoyaltyNet: usd.optional().describe("PA-40 line 6, spouse's own net rent/royalty amount"),
+  paEstateTrust: usd.optional().describe("PA-40 line 7: estate/trust income (PA Schedule J; an estate or trust cannot distribute a loss — never negative)"),
+  paGambling: usd.optional().describe("PA-40 line 8: gambling and lottery winnings net of wager costs (noncash PA Lottery prizes exempt; cash prizes taxable)"),
+  paStudentLoanInterest: usd.optional().describe("Schedule O code S: student loan interest PAID (new deduction for 2025; the composer caps at $2,500 — pass the uncapped amount)"),
+  pa529Contributions: usd.optional().describe("Schedule O code T: § 529 contributions, ALREADY capped at $19,000 per beneficiary per taxpayer-spouse (2025); no deduction for rollovers/beneficiary changes"),
+  paAbleContributions: usd.optional().describe("Schedule O code A: PA ABLE contributions, capped at the federal gift-tax exclusion ($19,000 for 2025)"),
+  paMsaHsaContributions: usd.optional().describe("Schedule O codes M/H: MSA + HSA contributions at the federally-allowed amounts"),
+  paSpDependentChildren: z.number().int().optional().describe("Schedule SP dependent CHILDREN count (child/stepchild/adopted; grandchild of a grandparent; foster child of a foster parent — never other relatives) claimable as federal dependents; each adds $9,500 to the Tax Forgiveness eligibility-income threshold"),
+  paEligibilityAddbacks: usd.optional().describe("Schedule SP Section III nontaxable add-backs (gifts, inheritances, insurance proceeds, non-PA income, nontaxable military pay, excluded home-sale gain, educational assistance, outside cash support). NOT Social Security, eligible retirement benefits, child support, or workers' comp."),
+  paResidentCredit: usd.optional().describe("PA-40 line 22: resident credit for tax paid other states (Schedule G-L; not for reciprocal-state compensation: IN/MD/NJ/OH/VA/WV). Subtracts BEFORE Tax Forgiveness — the composer handles the ordering."),
+  paScheduleDcCredit: usd.optional().describe("PA-40 line 23 component: the Child and Dependent Care Enhancement credit — pass us.pa.cdcc's computed answer (= 100% of the federal Form 2441 line 9a tentative credit; refundable)"),
+  paScheduleOcCredits: usd.optional().describe("PA-40 line 23 component: Schedule OC restricted credits total (transcribed; no oracle target)"),
+  paNrk1Withholding: usd.optional().describe("PA-40 line 17: nonresident tax withheld from PA Schedule(s) NRK-1"),
+  paPenaltiesInterest: usd.optional().describe("PA-40 line 27: penalties and interest incl. estimated-underpayment penalty (REV-1630)"),
+  // PA line 13 withholding uses the shared stateWithholding input: sum state
+  // tax withheld from EVERY document type (W-2 box 17, W-2G box 15, 1099-R
+  // box 14, 1099-MISC box 15, 1099-NEC box 5).
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa };

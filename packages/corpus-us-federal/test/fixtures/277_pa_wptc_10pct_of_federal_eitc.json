@@ -1,0 +1,14 @@
+{
+  "description": "PA Working Pennsylvanians Tax Credit: HoH, $13,000 wages, 1 kid (same facts as fixture 22 -> federal EITC $4,328 corpus-pinned). WPTC = 10% x 4,328.00 = 432.80, under the $805 cap -> whole-dollar $433.00 (PA DOR WPTC guidance, 2025-26 budget).",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 13000,
+    "qualifyingChildren": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.wptc",
+  "expect": {
+    "valueCents": "43300",
+    "intermediates": { "us.federal.eitc": "432800" }
+  }
+}

@@ -104,7 +104,7 @@ Plus the general contract: add `--json` to **any** command — single JSON objec
 - **OBBBA, both years** — tips & overtime deductions (with the 71-occupation eligibility list), senior deduction, car-loan interest, non-itemizer charitable, § 68 haircut, and the 2026 parameter shifts throughout.
 - **Business & corporate (Form 1120)** — QBI § 199A full mechanics, SEP/solo-401(k), § 179 + bonus + R&D expensing + § 163(j), K-1 pass-through, entity classification, flat 21% with charitable/DRD/NOL mechanics, BEAT, corporate FTC, § 250, penalty taxes, QSBS, buyback excise, corporate estimates.
 - **Estates & trusts (Form 1041)**, household employment (Schedule H), farmers & fishermen, estimated-tax safe harbors + annualized installments, withholding checkup.
-- **Out of scope refuses loudly** — consolidated returns, REIT/RIC, fiscal-year returns, CAMT: a named refusal, never a silent wrong answer. (State returns for IL/VA/CA/NY live in the composer, via the MCP server and `opentax state`.)
+- **Out of scope refuses loudly** — consolidated returns, REIT/RIC, fiscal-year returns, CAMT: a named refusal, never a silent wrong answer. (State returns for IL/VA/CA/NY/PA live in the composer, via the MCP server and `opentax state` — PA includes the eight-class netting rules, Schedule SP Tax Forgiveness, and the new Working Pennsylvanians Tax Credit.)
 
 <details>
 <summary><b>Full line-by-line coverage table</b> — every item with its statute, both tax years</summary>
@@ -254,7 +254,7 @@ All take `--json`. In this repo, prefix with `pnpm`: `pnpm opentax …`
 
 ## Repo layout
 
-`packages/core` — the engine (domain-general, zero deps, browser-safe) · `packages/corpus-us-federal` — the tax rules as cited data + golden tests · `packages/solve` — the reasoning layer (also domain-general) · `packages/cli` — the `opentax` command · `packages/playground` — the browser playground (one self-contained HTML file).
+`packages/core` — the engine (domain-general, zero deps, browser-safe) · `packages/corpus-us-federal` — the tax rules as cited data + golden tests · `packages/solve` — the reasoning layer (also domain-general) · `packages/compose` — printed-form state-return composers · `packages/cli` — the `opentax` command · `packages/playground` — the browser playground (one self-contained HTML file).
 
 ## Roadmap
 

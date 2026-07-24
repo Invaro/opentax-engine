@@ -15,6 +15,7 @@
 import { composeCA } from "./ca.js";
 import { composeIL } from "./il.js";
 import { composeNY } from "./ny.js";
+import { composePA } from "./pa.js";
 import { composeVA } from "./va.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
@@ -45,7 +46,11 @@ export function makeStateTaxEvaluator(
     };
     for (const [k, v] of Object.entries(extraFacts ?? {})) {
       facts[k] =
-        typeof v === "boolean" ? { type: "bool", value: v } : { type: "money", value: String(v) };
+        typeof v === "boolean"
+          ? { type: "bool", value: v }
+          : typeof v === "number"
+            ? { type: "int", value: String(v) } // plain JS number = int fact (counts)
+            : { type: "money", value: String(v) };
     }
     return runTarget(facts, target);
   };
@@ -64,8 +69,14 @@ export function composeStateReturn(
     (input as Record<string, unknown>).filingHohOrQss = fs === "hoh" || fs === "qss" || fs === "mfj";
   }
   const j = input.jurisdiction;
+  // The four AGI-based states start from federal line 11; refuse loudly rather
+  // than compose on a silent $0 AGI. PA is class-based and never uses it.
+  if (j !== "pa" && typeof input.federalAGI !== "number") {
+    throw new Error("federalAGI is required for il/va/ca/ny state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+  }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
   if (j === "ca") return { lines: composeCA(input, evalStateTax, notes), notes };
+  if (j === "pa") return { lines: composePA(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

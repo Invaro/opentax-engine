@@ -1,0 +1,14 @@
+{
+  "description": "PA no-cross-class-netting: single, $50,000 wages, $10,000 business LOSS. The loss stays in its class (max0) and never offsets compensation -> line 9 still 50,000 -> tax $1,535.00 (72 P.S. SS 7303; PA-40 line 9 adds only positive amounts).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "paBusinessNetIncome": -10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.income_tax",
+  "expect": {
+    "valueCents": "153500",
+    "intermediates": { "us.pa.taxable_income": "5000000" }
+  }
+}

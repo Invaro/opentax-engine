@@ -1,0 +1,14 @@
+{
+  "description": "PA Tax Forgiveness 100%: MFJ, $30,000 wages, 2 SP dependent children. Married base $13,000 + 2 x $9,500 = $32,000 threshold at 100%; eligibility income 30,000 <= 32,000 -> forgiveness = 100% of net tax. Tax = 30,000 x 3.07% = $921.00 -> forgiveness $921.00 (Schedule SP Section IV).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 30000,
+    "paSpDependentChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.pa.tax_forgiveness",
+  "expect": {
+    "valueCents": "92100",
+    "intermediates": { "us.pa.income_tax": "92100" }
+  }
+}

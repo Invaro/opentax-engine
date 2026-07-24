@@ -17,6 +17,7 @@ import { ilRules } from "./state-il.js";
 import { vaRules } from "./state-va.js";
 import { caRules } from "./state-ca.js";
 import { nyRules } from "./state-ny.js";
+import { paRules } from "./state-pa.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -24,5 +25,6 @@ export const stateParameterRules: Rule[] = [
   ...vaRules,
   ...caRules,
   ...nyRules,
+  ...paRules,
   ...otherStateRules,
 ];

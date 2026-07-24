@@ -126,14 +126,8 @@ export const otherStateRules: Rule[] = [
   },
 
   // ---- flat-rate states (TY2025, web-verified) ---------------------------
-  flatTax({
-    st: "pa", name: "Pennsylvania", ratePctTimes100: "307",
-    source: "72 Pa. Stat. § 7302; Tax Foundation 2025 state rate survey (web-verified July 2026)",
-    section: "72 P.S. § 7302",
-    url: "https://www.pa.gov/agencies/revenue.html",
-    excerpt:
-      "Pennsylvania: 3.07% flat on PA taxable income. NO standard deduction and NO personal exemption. CAUTION: PA taxes EIGHT SEPARATE INCOME CLASSES (compensation, interest, dividends, net profits, gains, rents, estates, gambling) with NO netting of a loss in one class against income in another, and retirement income (401(k)/IRA distributions after retirement age, Social Security) is fully EXEMPT. PA Tax Forgiveness (Schedule SP) can eliminate tax at low incomes — not modeled, disclose. Compose stateTaxableIncome per the class rules before calling.",
-  }),
+  // (PA graduated to the deep pack: see state-pa.ts — us.pa.income_tax v2+
+  //  computes the class-netted base itself; the thin v1 is superseded.)
   flatTax({
     st: "in", name: "Indiana", ratePctTimes100: "300",
     source: "Ind. Code § 6-3-2-1 (2025 rate 3.00%); Tax Foundation 2025 survey (web-verified July 2026)",
