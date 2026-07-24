@@ -21,5 +21,11 @@
   "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "fast-uri": ">=3.1.4",
+      "@hono/node-server": ">=2.0.5"
+    }
   }
 }
