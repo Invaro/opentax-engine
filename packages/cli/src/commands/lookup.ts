@@ -4,18 +4,66 @@
  */
 
 import pc from "picocolors";
-import { lookupParameters } from "@invaro/opentax-solve";
+import { factCheck, lookupParameters } from "@invaro/opentax-solve";
+import { parseDollars } from "@invaro/opentax-core";
 import { getCorpus } from "@invaro/opentax-corpus-us-federal";
 import { formatMoney } from "../render/format.js";
 import { EXIT, print } from "../render/output.js";
 
 export function runLookup(
   queryWords: string[],
-  flags: { asOf?: string; json?: boolean },
+  flags: { asOf?: string; json?: boolean; expect?: string; filingStatus?: string },
 ): number {
   const corpus = getCorpus();
   const query = queryWords.join(" ");
   const asOf = flags.asOf ?? new Date().toISOString().slice(0, 10);
+
+  // --expect: fact-check a claimed amount (the MCP verify_fact behavior)
+  if (flags.expect !== undefined) {
+    const claimed = parseDollars(flags.expect);
+    const result = factCheck(corpus, query, claimed, asOf, flags.filingStatus);
+    if (result.verdict === "unknown") {
+      if (flags.json) {
+        print({ ok: true, query, asOf, claimed: claimed.toString(), verdict: "unknown", message: result.message });
+        return EXIT.NOT_COVERED;
+      }
+      console.log();
+      console.log(`${pc.yellow("unknown")} — ${result.message}`);
+      console.log();
+      return EXIT.NOT_COVERED;
+    }
+    if (flags.json) {
+      print({
+        ok: true,
+        query,
+        asOf,
+        claimed: claimed.toString(),
+        verdict: result.verdict,
+        rule: result.matchedRuleId,
+        field: result.matchedField,
+        actual: result.actualCents,
+        citation: result.citation,
+        corpusMerkleRoot: corpus.merkleRoot,
+      });
+      return result.verdict === "verified" ? EXIT.OK : EXIT.ERROR;
+    }
+    console.log();
+    if (result.verdict === "verified") {
+      console.log(
+        `${pc.green("✓ VERIFIED")} — ${formatMoney(result.actualCents)} is ${pc.bold(result.matchedField)} of ${result.matchedRuleId}`,
+      );
+      console.log(pc.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+      console.log();
+      return EXIT.OK;
+    }
+    console.log(
+      `${pc.red("✗ REFUTED")} — claimed ${formatMoney(claimed.toString())}, but ${result.matchedRuleId}.${result.matchedField} is ${pc.bold(formatMoney(result.actualCents))}`,
+    );
+    console.log(pc.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+    console.log();
+    return EXIT.ERROR;
+  }
+
   const hits = lookupParameters(corpus, query, asOf);
 
   if (flags.json) {

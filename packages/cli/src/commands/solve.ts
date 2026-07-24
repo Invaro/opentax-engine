@@ -185,6 +185,52 @@ export function runCliffs(
   }
 }
 
+export function runInvert(
+  flags: CommonFlags & { goal: string; lo: string; hi: string },
+): number {
+  try {
+    const { corpus, base, vary, asOf, target } = setup(flags);
+    const result = invert(corpus, base, {
+      vary,
+      goalCents: cents(flags.goal),
+      loCents: cents(flags.lo),
+      hiCents: cents(flags.hi),
+      asOf,
+      target,
+    });
+    if (flags.json) {
+      print(
+        result.ok
+          ? {
+              ok: true,
+              vary,
+              target,
+              asOf,
+              input: result.inputCents.toString(),
+              value: result.valueCents.toString(),
+              corpusMerkleRoot: result.corpusMerkleRoot,
+            }
+          : { ok: false, reason: result.reason, message: result.message },
+      );
+      return result.ok ? EXIT.OK : EXIT.NOT_COVERED;
+    }
+    console.log();
+    if (!result.ok) {
+      console.log(`${pc.yellow(result.reason)} — ${result.message}`);
+      console.log();
+      return EXIT.NOT_COVERED;
+    }
+    console.log(
+      `${pc.bold(formatMoney(result.inputCents))} is the smallest ${pc.bold(flags.vary as string)} where ${target} first reaches ${formatMoney(cents(flags.goal))}`,
+    );
+    console.log(pc.dim(`  exact value there: ${formatMoney(result.valueCents)} · corpus ${result.corpusMerkleRoot.slice(0, 23)}…`));
+    console.log();
+    return EXIT.OK;
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+}
+
 export function runCompare(flags: CommonFlags): number {
   try {
     const { corpus, base, asOf, target } = setup(flags);

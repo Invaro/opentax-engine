@@ -69,6 +69,12 @@ opentax cliffs --status hoh --wages 30000 --kids 2 --vary taxableInterest --from
 #    -> { ok, cliffs: [{at: "1195000", jump: "323484"}] }  # exact cent, exact cost
 opentax compare --wages 50000 --json
 #    -> { ok, scenarios: [{value: "single", ok, result}, ...] }  # per filing status
+opentax invert --status single --goal 3875 --lo 30000 --hi 100000 --json
+#    -> { ok, input: "5045000", value: "387700" }  # smallest input reaching the goal
+opentax search kiddie tax --json
+#    -> { ok, covered, hits: [{ruleId, citation, excerpt, ...}] }  # full-text law search
+opentax lookup standard deduction --expect 32200 --filing-status mfj --json
+#    -> { ok, verdict: "verified" | "refuted" | "unknown", citation }  # exits 0 / 1 / 3
 ```
 
 ## Things worth knowing

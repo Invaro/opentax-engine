@@ -19,9 +19,13 @@ opentax eval --status mfj --wages 120000 --kids 2 --json --proof proof.json
 opentax check --status mfj --wages 120000 --kids 2 --expect 5640   # verified / refuted
 opentax verify proof.json          # re-execute any proof artifact
 opentax lookup standard deduction  # dollar amounts + citations behind a question
+opentax lookup standard deduction --expect 32200 --filing-status mfj  # fact-check a claim: exits 0 verified / 1 refuted
+opentax search kiddie tax          # full-text search over the encoded law; zero hits = outside the corpus
 opentax explain us.federal.eitc    # a rule's citation, formula, validity window
+opentax occupation bartenders      # § 224 tipped-occupation determination from the Treasury list
 opentax marginal --status single --at 50000
 opentax cliffs --status hoh --wages 30000 --kids 2 --vary taxableInterest --from 10000 --to 14000
+opentax invert --status single --goal 3875 --lo 30000 --hi 100000  # smallest wages reaching a target tax
 opentax compare --wages 50000      # all five filing statuses
 opentax state --facts va.json --as-of 2025-12-31   # IL/VA/CA/NY printed-form line sets
 opentax facts                      # every input the engine understands

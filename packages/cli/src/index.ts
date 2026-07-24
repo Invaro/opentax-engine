@@ -14,9 +14,12 @@ import { runEval } from "./commands/eval.js";
 import { runExplain } from "./commands/explain.js";
 import { runFacts } from "./commands/facts.js";
 import { runLookup } from "./commands/lookup.js";
+import { runOccupation } from "./commands/occupation.js";
+import { runSearch } from "./commands/search.js";
 import {
   runCliffs,
   runCompare,
+  runInvert,
   runMarginal,
   runSweep,
 } from "./commands/solve.js";
@@ -129,9 +132,36 @@ program
   )
   .argument("<query...>", "plain-English search terms")
   .option("--as-of <date>", "law in force on this ISO date (default: today)")
+  .option("--expect <dollars>", "fact-check a claimed amount: exits 0 verified, 1 refuted, 3 unknown")
+  .option("--filing-status <status>", "single | mfj | mfs | hoh | qss (narrows --expect to one status)")
   .option("--json", "machine-readable output")
   .action((queryWords: string[], flags) => {
-    process.exitCode = runLookup(queryWords, { asOf: flags.asOf, json: flags.json });
+    process.exitCode = runLookup(queryWords, {
+      asOf: flags.asOf,
+      json: flags.json,
+      expect: flags.expect,
+      filingStatus: flags.filingStatus,
+    });
+  });
+
+program
+  .command("search")
+  .description('full-text search over the encoded law, e.g. `opentax search kiddie tax` — zero hits means "outside the corpus"')
+  .argument("<query...>", "plain-English search terms")
+  .option("--as-of <date>", "law in force on this ISO date (default: today)")
+  .option("--limit <n>", "max results (default 8)")
+  .option("--json", "machine-readable output")
+  .action((queryWords: string[], flags) => {
+    process.exitCode = runSearch(queryWords, { asOf: flags.asOf, limit: flags.limit, json: flags.json });
+  });
+
+program
+  .command("occupation")
+  .description("is this a § 224 tipped occupation? matches the Treasury list, never guesses")
+  .argument("<title...>", "job title, e.g. `opentax occupation bartender`")
+  .option("--json", "machine-readable output")
+  .action((words: string[], flags) => {
+    process.exitCode = runOccupation(words, { json: flags.json });
   });
 
 program
@@ -210,6 +240,14 @@ solverCommand(
   .option("--step <dollars>", "coarse scan step", "1000")
   .action((flags) => {
     process.exitCode = runCliffs(flags);
+  });
+
+solverCommand("invert", "smallest input where the target first reaches a goal (e.g. wages that produce a given tax)")
+  .requiredOption("--goal <dollars>", "target value to reach")
+  .requiredOption("--lo <dollars>", "search range start")
+  .requiredOption("--hi <dollars>", "search range end")
+  .action((flags) => {
+    process.exitCode = runInvert(flags);
   });
 
 solverCommand("compare", "compare the answer across an enum fact's values")

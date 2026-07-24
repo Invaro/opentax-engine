@@ -19729,6 +19729,56 @@ function collectCliffs(at, lo, loV, hi, hiV, out) {
   }
 }
 
+// ../solve/dist/invert.js
+function invert(corpus, baseFacts, options) {
+  const at = (x) => evaluateAt(corpus, baseFacts, options, x);
+  const { loCents, hiCents, goalCents } = options;
+  if (hiCents <= loCents) {
+    return { ok: false, reason: "goal-out-of-range", message: "empty range" };
+  }
+  const n = BigInt(Math.max(2, options.samples ?? 8));
+  let prev = at(loCents);
+  for (let i = 1n; i <= n; i++) {
+    const x = loCents + (hiCents - loCents) * i / n;
+    const v = at(x);
+    if (v < prev) {
+      return {
+        ok: false,
+        reason: "not-monotone",
+        message: `target decreases between samples near input ${x} \u2014 bisection would be unsound here (try a narrower range)`
+      };
+    }
+    prev = v;
+  }
+  const loV = at(loCents);
+  const hiV = at(hiCents);
+  if (loV >= goalCents) {
+    return { ok: true, inputCents: loCents, valueCents: loV, corpusMerkleRoot: corpus.merkleRoot };
+  }
+  if (hiV < goalCents) {
+    return {
+      ok: false,
+      reason: "goal-out-of-range",
+      message: `target only reaches ${hiV} at the top of the range (goal ${goalCents})`
+    };
+  }
+  let lo = loCents;
+  let hi = hiCents;
+  while (hi - lo > 1n) {
+    const mid = (lo + hi) / 2n;
+    if (at(mid) >= goalCents)
+      hi = mid;
+    else
+      lo = mid;
+  }
+  return {
+    ok: true,
+    inputCents: hi,
+    valueCents: at(hi),
+    corpusMerkleRoot: corpus.merkleRoot
+  };
+}
+
 // ../solve/dist/compare.js
 function compareAcross(corpus, baseFacts, options) {
   const spec = corpus.factById.get(options.vary);
@@ -19827,12 +19877,190 @@ function lookupParameters(corpus, query, asOf) {
   hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
   return hits.slice(0, 5);
 }
+var SNIPPET_LEN = 280;
+function makeSnippet(excerpt, tokens) {
+  if (excerpt.length <= SNIPPET_LEN)
+    return excerpt;
+  const lower = excerpt.toLowerCase();
+  let at = -1;
+  for (const t of tokens) {
+    const i = lower.indexOf(t);
+    if (i !== -1 && (at === -1 || i < at))
+      at = i;
+  }
+  const start = Math.max(0, Math.min(at === -1 ? 0 : at - 60, excerpt.length - SNIPPET_LEN));
+  const cut = excerpt.slice(start, start + SNIPPET_LEN);
+  return `${start > 0 ? "\u2026" : ""}${cut}${start + SNIPPET_LEN < excerpt.length ? "\u2026" : ""}`;
+}
+function searchRules(corpus, query, asOf, limit = 8) {
+  const allTokens = tokenize(query);
+  if (allTokens.length === 0)
+    return [];
+  const haystacks = corpus.rules.map((rule) => {
+    const paramWords = Object.keys(rule.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
+    return {
+      rule,
+      // "_" is a regex word character — split snake_case so \b-anchored
+      // tokens ("tax") still reach id segments ("kiddie_tax").
+      id: rule.id.toLowerCase().replace(/[._]/g, " "),
+      title: rule.title.toLowerCase(),
+      meta: `${paramWords} ${JURISDICTION_NAMES[rule.jurisdiction] ?? ""}`.toLowerCase(),
+      weak: `${rule.citation.source} ${rule.citation.section} ${rule.citation.excerpt ?? ""}`.toLowerCase()
+    };
+  });
+  const matchers = new Map(allTokens.map((t) => [t, new RegExp(`\\b${t}`)]));
+  const has = (hay, t) => matchers.get(t).test(hay);
+  const df = (t) => haystacks.filter((h) => has(h.id, t) || has(h.title, t) || has(h.meta, t) || has(h.weak, t)).length;
+  const rare = allTokens.filter((t) => df(t) <= haystacks.length * 0.35);
+  const tokens = rare.length > 0 ? rare : allTokens;
+  const boost = new Map(tokens.map((t) => [t, df(t) <= haystacks.length * 0.05 ? 2 : 1]));
+  const minScore = tokens.length >= 2 ? 2 : 1;
+  const hits = [];
+  for (const { rule, id, title, meta, weak } of haystacks) {
+    if (asOf && !(rule.effectiveFrom <= asOf && (rule.effectiveTo === void 0 || asOf < rule.effectiveTo))) {
+      continue;
+    }
+    let raw = 0;
+    let score = 0;
+    let matched = 0;
+    let sawStrong = false;
+    for (const t of tokens) {
+      let s = 0;
+      if (has(id, t))
+        s += 2;
+      if (has(title, t))
+        s += 2;
+      if (has(meta, t))
+        s += 1;
+      if (s > 0)
+        sawStrong = true;
+      else if (has(weak, t))
+        s = 1;
+      if (s > 0)
+        matched += 1;
+      raw += s;
+      score += s * (boost.get(t) ?? 1);
+    }
+    if (raw < minScore || matched < Math.ceil(tokens.length / 2))
+      continue;
+    if (tokens.length >= 2 && !sawStrong)
+      continue;
+    hits.push({
+      ruleId: rule.id,
+      version: rule.version,
+      title: rule.title,
+      jurisdiction: rule.jurisdiction,
+      citation: rule.citation,
+      effectiveFrom: rule.effectiveFrom,
+      effectiveTo: rule.effectiveTo,
+      snippet: makeSnippet(rule.citation.excerpt ?? "", tokens),
+      hasParameters: Object.keys(rule.parameters ?? {}).length > 0,
+      score
+    });
+  }
+  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  return hits.slice(0, Math.max(1, Math.min(limit, 20)));
+}
+function factCheck(corpus, query, claimedCents, asOf, filingStatus) {
+  const hits = lookupParameters(corpus, query, asOf);
+  if (hits.length === 0) {
+    return {
+      verdict: "unknown",
+      message: `no corpus rule matches "${query}" \u2014 the claim cannot be checked against this corpus`,
+      alternatives: []
+    };
+  }
+  const claimed = claimedCents.toString();
+  const candidatesOf = (hit) => {
+    const out = [];
+    if (filingStatus && hit.byFilingStatus[filingStatus] !== void 0) {
+      out.push([`byFilingStatus.${filingStatus}`, hit.byFilingStatus[filingStatus]]);
+    } else {
+      out.push(...Object.entries(hit.byFilingStatus).map(([k, v]) => [`byFilingStatus.${k}`, v]));
+    }
+    out.push(...Object.entries(hit.parameters));
+    return out;
+  };
+  for (const hit of hits) {
+    const exact = candidatesOf(hit).find(([, v]) => v === claimed);
+    if (exact) {
+      return {
+        verdict: "verified",
+        matchedRuleId: hit.ruleId,
+        matchedField: exact[0],
+        actualCents: exact[1],
+        claimedCents: claimed,
+        citation: hit.citation,
+        alternatives: hits.filter((h) => h !== hit)
+      };
+    }
+  }
+  const best = hits[0];
+  const bestCandidates = candidatesOf(best);
+  if (bestCandidates.length === 0) {
+    return {
+      verdict: "unknown",
+      message: `best match "${best.ruleId}" carries no dollar parameters to compare`,
+      alternatives: hits
+    };
+  }
+  const [field, actual] = bestCandidates[0];
+  return {
+    verdict: "refuted",
+    matchedRuleId: best.ruleId,
+    matchedField: field,
+    actualCents: actual,
+    claimedCents: claimed,
+    citation: best.citation,
+    alternatives: hits.slice(1)
+  };
+}
 
 // dist/commands/lookup.js
 function runLookup(queryWords, flags) {
   const corpus = getCorpus();
   const query = queryWords.join(" ");
   const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  if (flags.expect !== void 0) {
+    const claimed = parseDollars(flags.expect);
+    const result = factCheck(corpus, query, claimed, asOf, flags.filingStatus);
+    if (result.verdict === "unknown") {
+      if (flags.json) {
+        print({ ok: true, query, asOf, claimed: claimed.toString(), verdict: "unknown", message: result.message });
+        return EXIT.NOT_COVERED;
+      }
+      console.log();
+      console.log(`${import_picocolors9.default.yellow("unknown")} \u2014 ${result.message}`);
+      console.log();
+      return EXIT.NOT_COVERED;
+    }
+    if (flags.json) {
+      print({
+        ok: true,
+        query,
+        asOf,
+        claimed: claimed.toString(),
+        verdict: result.verdict,
+        rule: result.matchedRuleId,
+        field: result.matchedField,
+        actual: result.actualCents,
+        citation: result.citation,
+        corpusMerkleRoot: corpus.merkleRoot
+      });
+      return result.verdict === "verified" ? EXIT.OK : EXIT.ERROR;
+    }
+    console.log();
+    if (result.verdict === "verified") {
+      console.log(`${import_picocolors9.default.green("\u2713 VERIFIED")} \u2014 ${formatMoney(result.actualCents)} is ${import_picocolors9.default.bold(result.matchedField)} of ${result.matchedRuleId}`);
+      console.log(import_picocolors9.default.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+      console.log();
+      return EXIT.OK;
+    }
+    console.log(`${import_picocolors9.default.red("\u2717 REFUTED")} \u2014 claimed ${formatMoney(claimed.toString())}, but ${result.matchedRuleId}.${result.matchedField} is ${import_picocolors9.default.bold(formatMoney(result.actualCents))}`);
+    console.log(import_picocolors9.default.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+    console.log();
+    return EXIT.ERROR;
+  }
   const hits = lookupParameters(corpus, query, asOf);
   if (flags.json) {
     print({
@@ -19873,8 +20101,93 @@ function runLookup(queryWords, flags) {
   return EXIT.OK;
 }
 
-// dist/commands/solve.js
+// dist/commands/occupation.js
 var import_picocolors10 = __toESM(require_picocolors(), 1);
+function runOccupation(words, flags) {
+  const input = words.join(" ");
+  const result = matchOccupation(input);
+  if ("slug" in result) {
+    const listed = result.slug !== "other";
+    const entry = TIPPED_OCCUPATIONS.find((o) => o.slug === result.slug);
+    if (flags.json) {
+      print({
+        ok: true,
+        input,
+        tipped: listed,
+        occupation: listed ? result.slug : null,
+        label: entry?.name ?? null
+      });
+      return EXIT.OK;
+    }
+    console.log();
+    if (listed) {
+      console.log(`${import_picocolors10.default.green("tipped occupation")} \u2014 "${input}" matches ${import_picocolors10.default.bold(entry?.name ?? result.slug)} (\xA7 224 deduction eligible; pass --occupation ${result.slug})`);
+    } else {
+      console.log(`${import_picocolors10.default.yellow("not a listed occupation")} \u2014 "${input}" is not on the Treasury \xA7 224 tipped-occupation list; tips are still income but the deduction does not apply`);
+    }
+    console.log();
+    return EXIT.OK;
+  }
+  if (flags.json) {
+    print({ ok: false, input, ambiguous: true, candidates: result.candidates });
+    return EXIT.NEEDS_FACTS;
+  }
+  console.log();
+  console.log(`${import_picocolors10.default.yellow("ambiguous")} \u2014 "${input}" could be any of:`);
+  for (const c2 of result.candidates)
+    console.log(`  ${c2}`);
+  console.log();
+  return EXIT.NEEDS_FACTS;
+}
+
+// dist/commands/search.js
+var import_picocolors11 = __toESM(require_picocolors(), 1);
+function runSearch(queryWords, flags) {
+  const corpus = getCorpus();
+  const query = queryWords.join(" ");
+  const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  const limit = flags.limit ? Number(flags.limit) : 8;
+  const hits = searchRules(corpus, query, asOf, limit);
+  if (flags.json) {
+    print({
+      ok: true,
+      query,
+      asOf,
+      covered: hits.length > 0,
+      corpusMerkleRoot: corpus.merkleRoot,
+      hits: hits.map((h) => ({
+        ruleId: h.ruleId,
+        title: h.title,
+        jurisdiction: h.jurisdiction,
+        citation: `${h.citation.source} ${h.citation.section ?? ""}`.trim(),
+        effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
+        excerpt: h.snippet,
+        hasDollarParameters: h.hasParameters
+      }))
+    });
+    return EXIT.OK;
+  }
+  console.log();
+  if (hits.length === 0) {
+    console.log(`${import_picocolors11.default.yellow("not covered")} \u2014 no corpus rule matches "${query}" (the engine would refuse rather than guess here)`);
+    console.log();
+    return EXIT.NOT_COVERED;
+  }
+  console.log(import_picocolors11.default.bold(`"${query}" \u2014 ${hits.length} rule${hits.length === 1 ? "" : "s"}, as of ${asOf}:`));
+  for (const h of hits) {
+    console.log();
+    console.log(`  ${import_picocolors11.default.bold(h.title)}`);
+    console.log(import_picocolors11.default.dim(`  ${h.citation.source} \xB7 [${h.effectiveFrom}, ${h.effectiveTo ?? "open"}) \xB7 ${h.ruleId}`));
+    console.log(`  ${import_picocolors11.default.dim("\u201C")}${h.snippet}${import_picocolors11.default.dim("\u201D")}`);
+  }
+  console.log(import_picocolors11.default.dim(`
+next: \`opentax explain <ruleId>\` for a formula \xB7 \`opentax lookup ${query}\` for dollar amounts
+`));
+  return EXIT.OK;
+}
+
+// dist/commands/solve.js
+var import_picocolors12 = __toESM(require_picocolors(), 1);
 import { readFileSync as readFileSync3 } from "node:fs";
 function setup(flags) {
   const corpus = getCorpus();
@@ -19925,11 +20238,11 @@ function runSweep(flags) {
       return EXIT.OK;
     }
     console.log();
-    console.log(import_picocolors10.default.bold(`${target} as ${vary} varies (as of ${asOf})`));
+    console.log(import_picocolors12.default.bold(`${target} as ${vary} varies (as of ${asOf})`));
     for (const p of result.points) {
       console.log(`  ${formatMoney(p.inputCents).padStart(14)}  \u2192  ${formatMoney(p.valueCents)}`);
     }
-    console.log(import_picocolors10.default.dim(`
+    console.log(import_picocolors12.default.dim(`
 ${result.points.length} exact evaluations \xB7 corpus ${result.corpusMerkleRoot.slice(0, 23)}\u2026
 `));
     return EXIT.OK;
@@ -19965,8 +20278,8 @@ function runMarginal(flags) {
     }
     const pct3 = (Number(m.rateBps) / 100).toFixed(2);
     console.log();
-    console.log(`${import_picocolors10.default.bold("marginal rate")} at ${vary} = ${formatMoney(m.atCents)}: ${import_picocolors10.default.bold(import_picocolors10.default.green(`${pct3}%`))}`);
-    console.log(import_picocolors10.default.dim(`  next ${formatMoney(m.deltaCents)} of ${vary} \u2192 ${formatMoney(m.marginalCents)} more ${m.marginalCents < 0n ? "refund" : "tax"} (${formatMoney(m.valueAtCents)} \u2192 ${formatMoney(m.valueAfterCents)})`));
+    console.log(`${import_picocolors12.default.bold("marginal rate")} at ${vary} = ${formatMoney(m.atCents)}: ${import_picocolors12.default.bold(import_picocolors12.default.green(`${pct3}%`))}`);
+    console.log(import_picocolors12.default.dim(`  next ${formatMoney(m.deltaCents)} of ${vary} \u2192 ${formatMoney(m.marginalCents)} more ${m.marginalCents < 0n ? "refund" : "tax"} (${formatMoney(m.valueAtCents)} \u2192 ${formatMoney(m.valueAfterCents)})`));
     console.log();
     return EXIT.OK;
   } catch (err) {
@@ -20000,16 +20313,53 @@ function runCliffs(flags) {
     }
     console.log();
     if (result.cliffs.length === 0) {
-      console.log(`${import_picocolors10.default.green("no cliffs")} in ${vary} \u2208 [${formatMoney(result.scanned.fromCents)}, ${formatMoney(result.scanned.toCents)}] \u2014 every marginal rate \u2264 100%`);
+      console.log(`${import_picocolors12.default.green("no cliffs")} in ${vary} \u2208 [${formatMoney(result.scanned.fromCents)}, ${formatMoney(result.scanned.toCents)}] \u2014 every marginal rate \u2264 100%`);
     } else {
-      console.log(import_picocolors10.default.bold(`${result.cliffs.length} cliff(s) found:`));
+      console.log(import_picocolors12.default.bold(`${result.cliffs.length} cliff(s) found:`));
       for (const c2 of result.cliffs) {
-        console.log(`  ${import_picocolors10.default.red("\u25AE")} at ${import_picocolors10.default.bold(formatMoney(c2.atCents))}: one more cent of ${vary} costs ${import_picocolors10.default.red(formatMoney(c2.jumpCents))}`);
+        console.log(`  ${import_picocolors12.default.red("\u25AE")} at ${import_picocolors12.default.bold(formatMoney(c2.atCents))}: one more cent of ${vary} costs ${import_picocolors12.default.red(formatMoney(c2.jumpCents))}`);
       }
     }
-    console.log(import_picocolors10.default.dim(`
+    console.log(import_picocolors12.default.dim(`
 every probe is a real corpus evaluation \xB7 ${result.corpusMerkleRoot.slice(0, 23)}\u2026
 `));
+    return EXIT.OK;
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+}
+function runInvert(flags) {
+  try {
+    const { corpus, base, vary, asOf, target } = setup(flags);
+    const result = invert(corpus, base, {
+      vary,
+      goalCents: cents(flags.goal),
+      loCents: cents(flags.lo),
+      hiCents: cents(flags.hi),
+      asOf,
+      target
+    });
+    if (flags.json) {
+      print(result.ok ? {
+        ok: true,
+        vary,
+        target,
+        asOf,
+        input: result.inputCents.toString(),
+        value: result.valueCents.toString(),
+        corpusMerkleRoot: result.corpusMerkleRoot
+      } : { ok: false, reason: result.reason, message: result.message });
+      return result.ok ? EXIT.OK : EXIT.NOT_COVERED;
+    }
+    console.log();
+    if (!result.ok) {
+      console.log(`${import_picocolors12.default.yellow(result.reason)} \u2014 ${result.message}`);
+      console.log();
+      return EXIT.NOT_COVERED;
+    }
+    console.log(`${import_picocolors12.default.bold(formatMoney(result.inputCents))} is the smallest ${import_picocolors12.default.bold(flags.vary)} where ${target} first reaches ${formatMoney(cents(flags.goal))}`);
+    console.log(import_picocolors12.default.dim(`  exact value there: ${formatMoney(result.valueCents)} \xB7 corpus ${result.corpusMerkleRoot.slice(0, 23)}\u2026`));
+    console.log();
     return EXIT.OK;
   } catch (err) {
     return emitError(err, flags.json);
@@ -20041,19 +20391,19 @@ function runCompare(flags) {
       return EXIT.OK;
     }
     console.log();
-    console.log(import_picocolors10.default.bold(`${target} by ${vary} (as of ${asOf})`));
+    console.log(import_picocolors12.default.bold(`${target} by ${vary} (as of ${asOf})`));
     const best = result.scenarios.filter((s) => s.ok).reduce((min, s) => min === null || s.valueCents < min ? s.valueCents : min, null);
     for (const s of result.scenarios) {
       if (s.ok) {
-        const mark = s.valueCents === best ? import_picocolors10.default.green(" \u2190 lowest") : "";
+        const mark = s.valueCents === best ? import_picocolors12.default.green(" \u2190 lowest") : "";
         console.log(`  ${s.value.padEnd(8)} ${formatMoney(s.valueCents)}${mark}`);
       } else {
-        console.log(`  ${s.value.padEnd(8)} ${import_picocolors10.default.dim(`${s.errorCode}: ${s.errorMessage?.slice(0, 60)}`)}`);
+        console.log(`  ${s.value.padEnd(8)} ${import_picocolors12.default.dim(`${s.errorCode}: ${s.errorMessage?.slice(0, 60)}`)}`);
       }
     }
     console.log();
     if (mfsAssumed) {
-      console.log(import_picocolors10.default.dim("  (mfs column assumes the spouse does not itemize \u2014 pass --spouse-itemizes if they do)"));
+      console.log(import_picocolors12.default.dim("  (mfs column assumes the spouse does not itemize \u2014 pass --spouse-itemizes if they do)"));
     }
     return EXIT.OK;
   } catch (err) {
@@ -20062,7 +20412,7 @@ function runCompare(flags) {
 }
 
 // dist/commands/signup.js
-var import_picocolors11 = __toESM(require_picocolors(), 1);
+var import_picocolors13 = __toESM(require_picocolors(), 1);
 async function runSignup(email, flags) {
   try {
     const res = await fetch("https://opentax.invaro.ai/api/waitlist", {
@@ -20076,22 +20426,22 @@ async function runSignup(email, flags) {
       return body.ok ? EXIT.OK : EXIT.ERROR;
     }
     if (body.ok) {
-      console.log(import_picocolors11.default.bold("Check your inbox \u2014 one click on the confirmation link and you're in."));
+      console.log(import_picocolors13.default.bold("Check your inbox \u2014 one click on the confirmation link and you're in."));
       return EXIT.OK;
     }
-    console.error(import_picocolors11.default.red(`signup failed: ${body.error ?? "unknown error"}`));
+    console.error(import_picocolors13.default.red(`signup failed: ${body.error ?? "unknown error"}`));
     return EXIT.ERROR;
   } catch {
     if (flags.json)
       print({ ok: false, error: "network" });
     else
-      console.error(import_picocolors11.default.red("could not reach opentax.invaro.ai \u2014 check your connection"));
+      console.error(import_picocolors13.default.red("could not reach opentax.invaro.ai \u2014 check your connection"));
     return EXIT.ERROR;
   }
 }
 
 // dist/commands/state.js
-var import_picocolors12 = __toESM(require_picocolors(), 1);
+var import_picocolors14 = __toESM(require_picocolors(), 1);
 import { readFileSync as readFileSync4 } from "node:fs";
 
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
@@ -24738,7 +25088,7 @@ function runState(flags) {
     if (flags.json) {
       print({ ok: false, error: { code: "BAD_INPUT", message } });
     } else {
-      console.error(import_picocolors12.default.red(`bad facts file: ${message}`));
+      console.error(import_picocolors14.default.red(`bad facts file: ${message}`));
     }
     return EXIT.ERROR;
   }
@@ -24760,7 +25110,7 @@ function runState(flags) {
       return EXIT.OK;
     }
     console.log();
-    console.log(import_picocolors12.default.bold(`${String(args.jurisdiction).toUpperCase()} return \u2014 as of ${asOf}:`));
+    console.log(import_picocolors14.default.bold(`${String(args.jurisdiction).toUpperCase()} return \u2014 as of ${asOf}:`));
     const width = Math.max(...Object.keys(lines).map((k) => k.length)) + 2;
     for (const [line, amount] of Object.entries(lines)) {
       console.log(`  ${line.padEnd(width)}${amount}`);
@@ -24768,7 +25118,7 @@ function runState(flags) {
     if (notes.length) {
       console.log();
       for (const n of notes)
-        console.log(import_picocolors12.default.dim(`  ${n}`));
+        console.log(import_picocolors14.default.dim(`  ${n}`));
     }
     console.log();
     return EXIT.OK;
@@ -24776,14 +25126,14 @@ function runState(flags) {
     if (flags.json) {
       print(err instanceof OpenTaxError ? { ok: false, error: err.toJSON() } : { ok: false, error: { code: "ERROR", message: String(err?.message ?? err) } });
     } else {
-      console.error(import_picocolors12.default.red(String(err?.message ?? err)));
+      console.error(import_picocolors14.default.red(String(err?.message ?? err)));
     }
     return EXIT.ERROR;
   }
 }
 
 // dist/commands/verify.js
-var import_picocolors13 = __toESM(require_picocolors(), 1);
+var import_picocolors15 = __toESM(require_picocolors(), 1);
 import { readFileSync as readFileSync5 } from "node:fs";
 function runVerify(proofPath, flags) {
   let artifact;
@@ -24831,19 +25181,19 @@ function runVerify(proofPath, flags) {
   }
   if (result.ok) {
     console.log();
-    console.log(`${import_picocolors13.default.green("\u2713 VERIFIED")}  ${import_picocolors13.default.bold(artifact.target)}`);
-    console.log(`  value      ${import_picocolors13.default.green(formatValue(artifact.root.value))} (as of ${artifact.asOf})`);
+    console.log(`${import_picocolors15.default.green("\u2713 VERIFIED")}  ${import_picocolors15.default.bold(artifact.target)}`);
+    console.log(`  value      ${import_picocolors15.default.green(formatValue(artifact.root.value))} (as of ${artifact.asOf})`);
     console.log(`  corpus     ${result.corpusMerkleRoot}`);
     console.log(`  artifact   ${artifact.artifactHash}`);
-    console.log(import_picocolors13.default.dim("  independently re-derived from the corpus; every node matches the recorded derivation"));
+    console.log(import_picocolors15.default.dim("  independently re-derived from the corpus; every node matches the recorded derivation"));
     console.log();
     return EXIT.OK;
   }
   console.error();
-  console.error(`${import_picocolors13.default.red("\u2717 VERIFICATION FAILED")}  (${result.reason})`);
+  console.error(`${import_picocolors15.default.red("\u2717 VERIFICATION FAILED")}  (${result.reason})`);
   console.error(`  ${result.message}`);
   if (result.path)
-    console.error(`  divergence at: ${import_picocolors13.default.bold(result.path)}`);
+    console.error(`  divergence at: ${import_picocolors15.default.bold(result.path)}`);
   if (result.expected)
     console.error(`  expected: ${result.expected}`);
   if (result.actual)
@@ -24924,8 +25274,19 @@ program2.command("flags").description("the full grouped catalog of situation fla
   }
   console.log("All of these work on eval, check, sweep, marginal, cliffs, and compare.");
 });
-program2.command("lookup").description("find the dollar amounts and citations behind a question, e.g. `opentax lookup standard deduction`").argument("<query...>", "plain-English search terms").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((queryWords, flags) => {
-  process.exitCode = runLookup(queryWords, { asOf: flags.asOf, json: flags.json });
+program2.command("lookup").description("find the dollar amounts and citations behind a question, e.g. `opentax lookup standard deduction`").argument("<query...>", "plain-English search terms").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--expect <dollars>", "fact-check a claimed amount: exits 0 verified, 1 refuted, 3 unknown").option("--filing-status <status>", "single | mfj | mfs | hoh | qss (narrows --expect to one status)").option("--json", "machine-readable output").action((queryWords, flags) => {
+  process.exitCode = runLookup(queryWords, {
+    asOf: flags.asOf,
+    json: flags.json,
+    expect: flags.expect,
+    filingStatus: flags.filingStatus
+  });
+});
+program2.command("search").description('full-text search over the encoded law, e.g. `opentax search kiddie tax` \u2014 zero hits means "outside the corpus"').argument("<query...>", "plain-English search terms").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--limit <n>", "max results (default 8)").option("--json", "machine-readable output").action((queryWords, flags) => {
+  process.exitCode = runSearch(queryWords, { asOf: flags.asOf, limit: flags.limit, json: flags.json });
+});
+program2.command("occupation").description("is this a \xA7 224 tipped occupation? matches the Treasury list, never guesses").argument("<title...>", "job title, e.g. `opentax occupation bartender`").option("--json", "machine-readable output").action((words, flags) => {
+  process.exitCode = runOccupation(words, { json: flags.json });
 });
 program2.command("state").description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201) from a composer-facts JSON file").requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((flags) => {
   process.exitCode = runState({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
@@ -24954,6 +25315,9 @@ solverCommand("marginal", "effective marginal rate at a point").requiredOption("
 });
 solverCommand("cliffs", "find exact dollars where one more cent of input costs more than a cent (marginal > 100%)").requiredOption("--from <dollars>", "range start").requiredOption("--to <dollars>", "range end").option("--step <dollars>", "coarse scan step", "1000").action((flags) => {
   process.exitCode = runCliffs(flags);
+});
+solverCommand("invert", "smallest input where the target first reaches a goal (e.g. wages that produce a given tax)").requiredOption("--goal <dollars>", "target value to reach").requiredOption("--lo <dollars>", "search range start").requiredOption("--hi <dollars>", "search range end").action((flags) => {
+  process.exitCode = runInvert(flags);
 });
 solverCommand("compare", "compare the answer across an enum fact's values").action((flags) => {
   process.exitCode = runCompare({ ...flags, vary: flags.vary === "wages" ? "filingStatus" : flags.vary });
