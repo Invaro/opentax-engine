@@ -123,7 +123,7 @@ function ExternalIcon() {
 
 function StepCard({ step, n }: { step: Step; n: number }) {
   return (
-    <div className="flex flex-col p-5 md:p-6">
+    <div className="flex flex-col p-5 md:p-6 min-w-0">
       <span className="w-6 h-6 mb-4 border border-border rounded-full flex items-center justify-center font-mono text-[10px] text-muted-foreground">
         {n}
       </span>
@@ -142,8 +142,8 @@ function StepCard({ step, n }: { step: Step; n: number }) {
           </a>
         )}
         {step.code && (
-          <div className="flex items-stretch gap-1.5">
-            <code className="flex-1 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
+          <div className="flex items-stretch gap-1.5 min-w-0">
+            <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
               {step.code}
             </code>
             <CopyButton text={step.code} className="shrink-0" />
@@ -164,7 +164,7 @@ export function ConnectTabs() {
   return (
     <div className="border border-border border-t-0">
       {/* tab bar */}
-      <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2.5 overflow-x-auto">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 border-b border-border px-3 py-2.5">
         <div className="flex items-center gap-1" role="tablist" aria-label="Choose your client">
           {TABS.map((t) => (
             <button

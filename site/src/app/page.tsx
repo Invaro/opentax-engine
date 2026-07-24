@@ -468,7 +468,7 @@ export default function Page() {
 
           {/* npm + registry row */}
           <div className="grid md:grid-cols-2 border-l border-border">
-            <div className="border-b border-r border-border p-5 md:p-6">
+            <div className="border-b border-r border-border p-5 md:p-6 min-w-0">
               <div className="flex items-center gap-2.5 mb-2">
                 <span className="text-muted-foreground">
                   <NpmMark size={16} />
@@ -478,14 +478,14 @@ export default function Page() {
               <div className="font-mono text-[10px] text-muted-foreground mb-3">
                 one self-contained package: MCP server, CLI, and HTTP host in a single binary
               </div>
-              <div className="flex items-stretch gap-1.5 mb-1.5">
-                <code className="flex-1 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
+              <div className="flex items-stretch gap-1.5 mb-1.5 min-w-0">
+                <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
                   claude mcp add opentax -- npx -y @invaro/opentax
                 </code>
                 <CopyButton text="claude mcp add opentax -- npx -y @invaro/opentax" className="shrink-0" />
               </div>
-              <div className="flex items-stretch gap-1.5">
-                <code className="flex-1 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
+              <div className="flex items-stretch gap-1.5 min-w-0">
+                <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
                   npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2
                 </code>
                 <CopyButton text="npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2" className="shrink-0" />
