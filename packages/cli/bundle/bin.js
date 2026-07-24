@@ -25206,6 +25206,119 @@ function composeNY(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/pa.js
+var classLine = (p, s) => p > 0n || s > 0n ? max04(p) + max04(s) : p + s;
+function composePA(input, evalStateTax, notes) {
+  const box16 = input.paGrossCompensation !== void 0 ? c(input.paGrossCompensation) : c(input.wages);
+  if (input.paGrossCompensation === void 0 && input.wages !== void 0) {
+    notes.push("PA line 1a: W-2 Box 16 total not transcribed \u2014 federal Box 1 wages used (401(k)/elective deferrals are PA-taxable; pass paGrossCompensation when Box 16 differs)");
+  }
+  const l1a = rd2(box16);
+  const l1b = rd2(c(input.paUnreimbursedExpenses));
+  const l1c = max04(l1a - l1b);
+  const l2 = rd2(c(input.paInterest));
+  const l3 = rd2(c(input.paDividends));
+  const bizP = rd2(c(input.paBusinessNet));
+  const bizS = rd2(c(input.paSpouseBusinessNet));
+  const propP = rd2(c(input.paPropertyNet));
+  const propS = rd2(c(input.paSpousePropertyNet));
+  const rentP = rd2(c(input.paRentRoyaltyNet));
+  const rentS = rd2(c(input.paSpouseRentRoyaltyNet));
+  const l4 = classLine(bizP, bizS);
+  const l5 = classLine(propP, propS);
+  const l6 = classLine(rentP, rentS);
+  const l7 = rd2(c(input.paEstateTrust));
+  const l8 = rd2(c(input.paGambling));
+  const extra = {
+    wages: box16,
+    paUnreimbursedBusinessExpenses: c(input.paUnreimbursedExpenses),
+    paInterestIncome: c(input.paInterest),
+    paDividendIncome: c(input.paDividends),
+    paBusinessNetIncome: c(input.paBusinessNet),
+    paSpouseBusinessNetIncome: c(input.paSpouseBusinessNet),
+    paPropertyGainNet: c(input.paPropertyNet),
+    paSpousePropertyGainNet: c(input.paSpousePropertyNet),
+    paRentRoyaltyNet: c(input.paRentRoyaltyNet),
+    paSpouseRentRoyaltyNet: c(input.paSpouseRentRoyaltyNet),
+    paEstateTrustIncome: c(input.paEstateTrust),
+    paGamblingWinnings: c(input.paGambling),
+    studentLoanInterest: c(input.paStudentLoanInterest),
+    pa529Contributions: c(input.pa529Contributions),
+    paAbleContributions: c(input.paAbleContributions),
+    paMsaHsaContributions: c(input.paMsaHsaContributions)
+  };
+  const l9 = rd2(evalStateTax("us.pa.taxable_income", 0n, extra));
+  const l10 = rd2(evalStateTax("us.pa.other_deductions", 0n, extra));
+  const l11 = max04(l9 - l10);
+  const l12 = rd2(evalStateTax("us.pa.income_tax", 0n, extra));
+  const l13 = rd2(c(input.stateWithholding));
+  const l14 = rd2(c(input.priorYearOverpaymentCredited));
+  const l15 = rd2(c(input.estimatedPayments));
+  const l16 = rd2(c(input.extensionPayment));
+  const l17 = rd2(c(input.paNrk1Withholding));
+  const l18 = l14 + l15 + l16 + l17;
+  const spDeps = input.paSpDependentChildren ?? 0;
+  const l21 = rd2(evalStateTax("us.pa.tax_forgiveness", 0n, {
+    ...extra,
+    paSpDependentChildren: spDeps,
+    paEligibilityIncomeAddbacks: c(input.paEligibilityAddbacks),
+    paResidentCredit: c(input.paResidentCredit)
+  }));
+  const l20 = l9 + rd2(c(input.paEligibilityAddbacks));
+  const l22 = rd2(c(input.paResidentCredit));
+  const l23 = rd2(c(input.paScheduleDcCredit)) + rd2(c(input.paScheduleOcCredits));
+  const l24 = l13 + l18 + l21 + l22 + l23;
+  const l25 = rd2(c(input.useTax));
+  const l26 = max04(l12 + l25 - l24);
+  const l27 = rd2(c(input.paPenaltiesInterest));
+  const l28 = l26 + l27;
+  const l29 = max04(l24 - l12 - l25 - l27);
+  const fedEITC = c(input.federalEITC);
+  if (fedEITC > 0n) {
+    const wptc = min2(rd2(fedEITC * 10n / 100n), 80500n);
+    notes.push(`PA Working Pennsylvanians Tax Credit ${fmtD(wptc)} (10% of federal EITC, max $805, refundable) \u2014 NO line on the printed 2025 PA-40; DOR applies it in processing from the attached federal return`);
+  }
+  notes.push("PA local earned income tax (Act 32) is filed separately with the local collector \u2014 out of scope for the PA-40");
+  if (l29 > 0n && l29 <= 100n)
+    notes.push("PA does not issue refunds of $1.00 or less");
+  if (l28 > 0n && l28 <= 100n)
+    notes.push("PA does not require payment of $1.00 or less");
+  return {
+    "1a_gross_compensation": fmtD(l1a),
+    "1b_unreimbursed_expenses": fmtD(l1b),
+    "1c_net_compensation": fmtD(l1c),
+    "2_interest": fmtD(l2),
+    "3_dividends": fmtD(l3),
+    "4_business_net": fmtD(l4),
+    "5_property_net": fmtD(l5),
+    "6_rent_royalty_net": fmtD(l6),
+    "7_estate_trust": fmtD(l7),
+    "8_gambling": fmtD(l8),
+    "9_total_taxable_income": fmtD(l9),
+    "10_other_deductions": fmtD(l10),
+    "11_adjusted_taxable_income": fmtD(l11),
+    "12_tax": fmtD(l12),
+    "13_withholding": fmtD(l13),
+    "14_prior_year_credit": fmtD(l14),
+    "15_estimated_payments": fmtD(l15),
+    "16_extension_payment": fmtD(l16),
+    "17_nonresident_withholding": fmtD(l17),
+    "18_total_estimated_and_credits": fmtD(l18),
+    "19b_sp_dependents": String(spDeps),
+    "20_eligibility_income": fmtD(l20),
+    "21_tax_forgiveness": fmtD(l21),
+    "22_resident_credit": fmtD(l22),
+    "23_other_credits": fmtD(l23),
+    "24_total_payments_credits": fmtD(l24),
+    "25_use_tax": fmtD(l25),
+    "26_tax_due": fmtD(l26),
+    "27_penalties_interest": fmtD(l27),
+    "28_total_due": fmtD(l28),
+    "29_overpayment": fmtD(l29),
+    "30_refund": fmtD(l29)
+  };
+}
+
 // ../compose/dist/va-worksheets.js
 var VA_STD_DEDUCTION_JOINT = 1750000n;
 var VA_STD_DEDUCTION_OTHER = 875000n;
@@ -25422,11 +25535,11 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.describe("federal Form 1040 line 11 (from compute_return, verbatim)"),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -25507,7 +25620,38 @@ var ny = {
   nycHouseholdCredit: usd.optional().describe("NYC household credit from table 5"),
   yonkersSurcharge: usd.optional().describe("us.ny.yonkers_surcharge result (pass the oracle target's answer) \u2014 16.75% of the Yonkers worksheet's netted base (nyYonkersBase). Added into line 62's total and printed on its own line (IT-201 LINE 55, not 54 \u2014 line 54 is MCTMT) when nonzero.")
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny };
+var pa = {
+  // PA is CLASS-BASED (eight classes, 72 P.S. § 7303) — federalAGI is NOT the
+  // PA base. Transcribe the class amounts below; the composer runs the corpus
+  // targets (class netting, Schedule O, 3.07% tax, Schedule SP) itself.
+  paGrossCompensation: usd.optional().describe("PA-40 line 1a: W-2 BOX 16 total (NOT Box 1 \u2014 401(k)/elective deferrals are PA-taxable; eligible retirement distributions are exempt and excluded). Falls back to the shared wages input when omitted (composer discloses). Include taxable early-distribution amounts under the cost-recovery method."),
+  paUnreimbursedExpenses: usd.optional().describe("PA-40 line 1b: Schedule UE unreimbursed employee business expenses (a compensation-class expense, never a line-10 deduction)"),
+  paInterest: usd.optional().describe("PA-40 line 2: PA-taxable interest (gross class \u2014 no expenses; includes commercial-annuity interest taxable as PA interest)"),
+  paDividends: usd.optional().describe("PA-40 line 3: PA-taxable dividends INCLUDING mutual-fund capital-gain distributions (PA classifies them as dividends, not gains)"),
+  paBusinessNet: usd.optional().describe("PA-40 line 4, TAXPAYER's own net business/profession/farm income or LOSS (negative allowed; within-class netting of the taxpayer's own activities only \u2014 a loss never crosses classes or spouses)"),
+  paSpouseBusinessNet: usd.optional().describe("PA-40 line 4, SPOUSE's own net business income or loss (kept separate: PA never nets one spouse's loss against the other's income)"),
+  paPropertyNet: usd.optional().describe("PA-40 line 5, taxpayer's own net gain/loss from sale/exchange/disposition of property (negative allowed; no carryover)"),
+  paSpousePropertyNet: usd.optional().describe("PA-40 line 5, spouse's own net property gain/loss"),
+  paRentRoyaltyNet: usd.optional().describe("PA-40 line 6, taxpayer's own net rents/royalties/patents/copyrights (short-term rentals under 30 days are BUSINESS income, line 4)"),
+  paSpouseRentRoyaltyNet: usd.optional().describe("PA-40 line 6, spouse's own net rent/royalty amount"),
+  paEstateTrust: usd.optional().describe("PA-40 line 7: estate/trust income (PA Schedule J; an estate or trust cannot distribute a loss \u2014 never negative)"),
+  paGambling: usd.optional().describe("PA-40 line 8: gambling and lottery winnings net of wager costs (noncash PA Lottery prizes exempt; cash prizes taxable)"),
+  paStudentLoanInterest: usd.optional().describe("Schedule O code S: student loan interest PAID (new deduction for 2025; the composer caps at $2,500 \u2014 pass the uncapped amount)"),
+  pa529Contributions: usd.optional().describe("Schedule O code T: \xA7 529 contributions, ALREADY capped at $19,000 per beneficiary per taxpayer-spouse (2025); no deduction for rollovers/beneficiary changes"),
+  paAbleContributions: usd.optional().describe("Schedule O code A: PA ABLE contributions, capped at the federal gift-tax exclusion ($19,000 for 2025)"),
+  paMsaHsaContributions: usd.optional().describe("Schedule O codes M/H: MSA + HSA contributions at the federally-allowed amounts"),
+  paSpDependentChildren: external_exports.number().int().optional().describe("Schedule SP dependent CHILDREN count (child/stepchild/adopted; grandchild of a grandparent; foster child of a foster parent \u2014 never other relatives) claimable as federal dependents; each adds $9,500 to the Tax Forgiveness eligibility-income threshold"),
+  paEligibilityAddbacks: usd.optional().describe("Schedule SP Section III nontaxable add-backs (gifts, inheritances, insurance proceeds, non-PA income, nontaxable military pay, excluded home-sale gain, educational assistance, outside cash support). NOT Social Security, eligible retirement benefits, child support, or workers' comp."),
+  paResidentCredit: usd.optional().describe("PA-40 line 22: resident credit for tax paid other states (Schedule G-L; not for reciprocal-state compensation: IN/MD/NJ/OH/VA/WV). Subtracts BEFORE Tax Forgiveness \u2014 the composer handles the ordering."),
+  paScheduleDcCredit: usd.optional().describe("PA-40 line 23 component: the Child and Dependent Care Enhancement credit \u2014 pass us.pa.cdcc's computed answer (= 100% of the federal Form 2441 line 9a tentative credit; refundable)"),
+  paScheduleOcCredits: usd.optional().describe("PA-40 line 23 component: Schedule OC restricted credits total (transcribed; no oracle target)"),
+  paNrk1Withholding: usd.optional().describe("PA-40 line 17: nonresident tax withheld from PA Schedule(s) NRK-1"),
+  paPenaltiesInterest: usd.optional().describe("PA-40 line 27: penalties and interest incl. estimated-underpayment penalty (REV-1630)")
+  // PA line 13 withholding uses the shared stateWithholding input: sum state
+  // tax withheld from EVERY document type (W-2 box 17, W-2G box 15, 1099-R
+  // box 14, 1099-MISC box 15, 1099-NEC box 5).
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -25522,7 +25666,7 @@ function makeStateTaxEvaluator(runTarget, input) {
       spouseItemizes: { type: "bool", value: false }
     };
     for (const [k, v] of Object.entries(extraFacts ?? {})) {
-      facts2[k] = typeof v === "boolean" ? { type: "bool", value: v } : { type: "money", value: String(v) };
+      facts2[k] = typeof v === "boolean" ? { type: "bool", value: v } : typeof v === "number" ? { type: "int", value: String(v) } : { type: "money", value: String(v) };
     }
     return runTarget(facts2, target);
   };
@@ -25536,12 +25680,17 @@ function composeStateReturn(input, evalStateTax) {
     input.filingHohOrQss = fs === "hoh" || fs === "qss" || fs === "mfj";
   }
   const j = input.jurisdiction;
+  if (j !== "pa" && typeof input.federalAGI !== "number") {
+    throw new Error("federalAGI is required for il/va/ca/ny state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+  }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va")
     return { lines: composeVA(input, evalStateTax, notes), notes };
   if (j === "ca")
     return { lines: composeCA(input, evalStateTax, notes), notes };
+  if (j === "pa")
+    return { lines: composePA(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -25763,7 +25912,7 @@ program2.command("search").description('full-text search over the encoded law, e
 program2.command("occupation").description("is this a \xA7 224 tipped occupation? matches the Treasury list, never guesses").argument("<title...>", "job title, e.g. `opentax occupation bartender`").option("--json", "machine-readable output").action((words, flags) => {
   process.exitCode = runOccupation(words, { json: flags.json });
 });
-program2.command("state").description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201) from a composer-facts JSON file").requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((flags) => {
+program2.command("state").description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201, PA-40) from a composer-facts JSON file").requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((flags) => {
   process.exitCode = runState({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
 });
 program2.command("signup").description("get OpenTax updates by email (new features and other things worth knowing)").argument("<email>", "your email address").option("--json", "machine-readable output").action(async (email, flags) => {

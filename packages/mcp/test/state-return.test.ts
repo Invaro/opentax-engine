@@ -234,3 +234,105 @@ describe("composeIL — 2025 IL-1040", () => {
     expect(dollars(lines, "12_tax")).toBe("$1,963"); // 39,658 x 4.95%
   });
 });
+
+// ---------------------------------------------------------------------------
+// PA-40: unlike the stub-evaluated states above, the PA composer delegates
+// line 9/10/12/21 to the corpus targets, so these tests run the REAL corpus —
+// they pin the composition layer AND the rule arithmetic end-to-end.
+// ---------------------------------------------------------------------------
+import { evaluate } from "@invaro/opentax-core";
+import { getCorpus } from "@invaro/opentax-corpus-us-federal";
+import { makeStateTaxEvaluator } from "@invaro/opentax-compose";
+
+const paCorpus = getCorpus();
+const realPaEval = (input: Record<string, unknown>): StateTaxEvaluator =>
+  makeStateTaxEvaluator((facts, target) => {
+    const { value } = evaluate(paCorpus, facts as never, { asOf: "2025-12-31", target });
+    return value.type === "money" ? value.cents : 0n;
+  }, input);
+
+describe("composePA — 2025 PA-40 (real corpus targets)", () => {
+  it("full return: Box 16 compensation, UE, spouse loss isolated, Schedule O 529, balance due", () => {
+    // Hand-computed: 1a 62,000 − 1b 500 = 1c 61,500; interest 300; business:
+    // taxpayer 5,000 + spouse loss (excluded) = 5,000 -> line 9 = 66,800;
+    // line 10 = 4,000 (529); line 11 = 62,800; line 12 = 62,800 x 3.07% =
+    // 1,927.96 -> $1,928; withholding 1,900 -> line 26 due $28.
+    const input = {
+      jurisdiction: "pa" as const, filingStatus: "mfj",
+      paGrossCompensation: 62000, paUnreimbursedExpenses: 500,
+      paInterest: 300, paBusinessNet: 5000, paSpouseBusinessNet: -2000,
+      pa529Contributions: 4000, stateWithholding: 1900,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "1a_gross_compensation")).toBe("$62,000");
+    expect(dollars(lines, "1c_net_compensation")).toBe("$61,500");
+    expect(dollars(lines, "4_business_net")).toBe("$5,000"); // spouse loss never nets
+    expect(dollars(lines, "9_total_taxable_income")).toBe("$66,800");
+    expect(dollars(lines, "10_other_deductions")).toBe("$4,000");
+    expect(dollars(lines, "11_adjusted_taxable_income")).toBe("$62,800");
+    expect(dollars(lines, "12_tax")).toBe("$1,928");
+    expect(dollars(lines, "24_total_payments_credits")).toBe("$1,900");
+    expect(dollars(lines, "26_tax_due")).toBe("$28");
+    expect(dollars(lines, "28_total_due")).toBe("$28");
+    expect(dollars(lines, "29_overpayment")).toBe("$0");
+  });
+
+  it("Schedule SP full forgiveness wipes the tax; withholding refunds; WPTC reported as a note", () => {
+    // MFJ, $30,000 wages, 2 SP dependent children: t100 = 13,000 + 19,000 =
+    // 32,000 >= 30,000 -> 100% forgiveness of the $921 tax; $921 withholding
+    // refunds in full. Federal EITC 4,328 -> WPTC note $433.
+    const input = {
+      jurisdiction: "pa" as const, filingStatus: "mfj",
+      wages: 30000, paSpDependentChildren: 2,
+      stateWithholding: 921, federalEITC: 4328,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "12_tax")).toBe("$921");
+    expect(lines["19b_sp_dependents"]).toBe("2");
+    expect(dollars(lines, "20_eligibility_income")).toBe("$30,000");
+    expect(dollars(lines, "21_tax_forgiveness")).toBe("$921");
+    expect(dollars(lines, "29_overpayment")).toBe("$921");
+    expect(dollars(lines, "30_refund")).toBe("$921");
+    expect(dollars(lines, "26_tax_due")).toBe("$0");
+    expect(notes.some((n) => n.includes("Working Pennsylvanians") && n.includes("$433"))).toBe(true);
+  });
+
+  it("loss-only class displays the loss oval amount but line 9 excludes it", () => {
+    const input = {
+      jurisdiction: "pa" as const, filingStatus: "single",
+      wages: 50000, paBusinessNet: -10000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_business_net")).toBe("-$10,000");
+    expect(dollars(lines, "9_total_taxable_income")).toBe("$50,000");
+    expect(dollars(lines, "12_tax")).toBe("$1,535");
+    // Box 16 fallback disclosed when only federal wages were provided
+    expect(notes.some((n) => n.includes("Box 16"))).toBe(true);
+  });
+
+  it("resident credit subtracts before Tax Forgiveness (SP Section IV ordering)", () => {
+    // MFJ, $32,600 wages, 2 deps -> 70% column. Tax $1,001; resident credit
+    // $200 -> net $801; forgiveness = 70% x 801 = 560.70 -> $561.
+    const input = {
+      jurisdiction: "pa" as const, filingStatus: "mfj",
+      wages: 32600, paSpDependentChildren: 2, paResidentCredit: 200,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "12_tax")).toBe("$1,001");
+    expect(dollars(lines, "22_resident_credit")).toBe("$200");
+    expect(dollars(lines, "21_tax_forgiveness")).toBe("$561");
+  });
+});
+
+describe("composeStateReturn — federalAGI guard", () => {
+  it("AGI-based states refuse loudly without federalAGI (schema made it optional for PA)", () => {
+    expect(() =>
+      composeStateReturn({ jurisdiction: "il", filingStatus: "single" }, stubEval),
+    ).toThrow(/federalAGI is required/);
+  });
+  it("PA composes without federalAGI (class-based)", () => {
+    const input = { jurisdiction: "pa" as const, filingStatus: "single", wages: 10000 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "12_tax")).toBe("$307");
+  });
+});

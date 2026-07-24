@@ -166,7 +166,7 @@ program
 
 program
   .command("state")
-  .description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201) from a composer-facts JSON file")
+  .description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201, PA-40) from a composer-facts JSON file")
   .requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)")
   .option("--as-of <date>", "law in force on this ISO date (default: today)")
   .option("--json", "machine-readable output")
