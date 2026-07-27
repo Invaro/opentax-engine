@@ -14,6 +14,10 @@
   --muted: 40 11% 89%;
   --muted-foreground: 0 0% 38%;
   --border: 45 5% 85%;
+  /* the invaro.ai periwinkle, same hue as the dithered birds field */
+  --brand: 238 79% 64%;
+  /* the jade the dither shifts to further down the page */
+  --brand-jade: 168 76% 30%;
 }
 
 .dark {
@@ -26,6 +30,8 @@
   --muted: 0 0% 11%;
   --muted-foreground: 0 0% 38%;
   --border: 0 0% 17%;
+  --brand: 238 88% 72%;
+  --brand-jade: 168 62% 48%;
 }
 
 body {

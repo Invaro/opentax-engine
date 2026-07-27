@@ -5,6 +5,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { CopyButton } from "@/components/copy-button";
 import { EmailCapture } from "@/components/email-capture";
 import { ConnectTabs } from "@/components/connect-tabs";
+import { DitherField } from "@/components/dither-field";
+import { DitherCanvas } from "@/components/dither-canvas";
+import { GithubStars, SourceButton, OpenSourceProof } from "@/components/github-stars";
 import { GitHubMark, McpMark, NpmMark } from "@/components/brand-icons";
 
 const MCP_URL = "https://opentax.invaro.ai/mcp";
@@ -21,9 +24,9 @@ const useCases = [
   {
     tag: "tax & accounting firms",
     title: "Review every return with a second engine",
-    body: "Connect OpenTax to Claude and drop in the client file: W-2 and 1099 boxes compile deterministically into facts, the full 1040 line set recomputes to the cent, and every line your software disagrees with gets flagged — with the statute attached.",
+    body: "Connect OpenTax to Claude and drop in the client file: W-2 and 1099 boxes compile deterministically into facts, the full 1040 line set recomputes to the cent, and every line your software disagrees with gets flagged, with the statute attached.",
     prompt:
-      "Here's the Hendersons' W-2 and the draft 1040 from our software. Recompute every line and flag anything that doesn't match — citation for each flag.",
+      "Here's the Hendersons' W-2 and the draft 1040 from our software. Recompute every line and flag anything that doesn't match. Citation for each flag.",
   },
   {
     tag: "freelancer & S-corp clients",
@@ -35,9 +38,9 @@ const useCases = [
   {
     tag: "advisory engagements",
     title: "Entity elections, modeled to the cent",
-    body: "S-corp election letters stop being hand-waves: run sole-prop vs S-corp at a reasonable salary — SE tax versus payroll taxes, the QBI wage limit doing its thing, entity and personal pass in one call.",
+    body: "S-corp election letters stop being hand-waves. Run sole-prop vs S-corp at a reasonable salary: SE tax versus payroll taxes, the QBI wage limit doing its thing, entity and personal pass in one call.",
     prompt:
-      "Sole prop, $220k net. Model an S-corp election at a $110k salary: SE vs payroll tax, QBI under the wage limit, total federal delta — cited.",
+      "Sole prop, $220k net. Model an S-corp election at a $110k salary: SE vs payroll tax, QBI under the wage limit, total federal delta, cited.",
   },
   {
     tag: "financial planners",
@@ -49,16 +52,16 @@ const useCases = [
   {
     tag: "every client meeting in 2026",
     title: "The OBBBA answer, ready before they ask",
-    body: "The corpus is dated law: the same facts derive under 2025 or 2026 rules — tips and overtime deductions, the senior deduction, car-loan interest, charity for non-itemizers, the SALT phase-down — so the “what changes for me” letter writes itself.",
+    body: "The corpus is dated law, so the same facts derive under 2025 or 2026 rules: tips and overtime deductions, the senior deduction, car-loan interest, charity for non-itemizers, the SALT phase-down. The “what changes for me” letter writes itself.",
     prompt:
       "Run the Alvarez file under 2025 law, then 2026 law. Draft the client letter: what changes, by how much, and which OBBBA section did it.",
   },
   {
     tag: "review & audit trail",
     title: "Numbers you can staple to the workpapers",
-    body: "Every computation ships a Merkle-rooted proof — facts, rules, arithmetic, citations — verifiable offline months later, byte for byte. And outside the corpus the engine refuses loudly instead of guessing: the failure mode that matters in this profession.",
+    body: "Every computation ships a Merkle-rooted proof of the facts, rules, arithmetic, and citations, verifiable offline months later, byte for byte. And outside the corpus the engine refuses loudly instead of guessing: the failure mode that matters in this profession.",
     prompt:
-      "Recompute Schedule 8812 for the review file and attach the proof artifact — I want every step re-derivable at audit time.",
+      "Recompute Schedule 8812 for the review file and attach the proof artifact. I want every step re-derivable at audit time.",
   },
 ];
 
@@ -125,13 +128,7 @@ export default function Page() {
             <div className="border border-border rounded-full scale-90">
               <ThemeToggle />
             </div>
-            <Link
-              href="https://github.com/Invaro/opentax-engine"
-              className="hidden sm:flex border border-border h-8 px-3.5 font-mono text-xs items-center gap-1.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground whitespace-nowrap"
-            >
-              <GitHubMark size={12} />
-              github
-            </Link>
+            <GithubStars />
             <Link
               href="#install"
               className="h-8 px-3.5 font-mono text-xs font-medium bg-foreground text-background hover:opacity-90 flex items-center whitespace-nowrap"
@@ -143,14 +140,18 @@ export default function Page() {
       </header>
 
       {/* hero */}
-      <section className="container mt-[60px] lg:mt-[120px] relative">
-        <div className="flex flex-col items-center text-center">
-          <div className="rounded-full border border-border flex space-x-2 items-center px-4 py-2 text-sm font-medium mb-8">
+      <section className="relative overflow-hidden pt-[60px] lg:pt-[120px]">
+        <DitherField art="birds" tone="violet" placement="hero" />
+        <div className="container relative flex flex-col items-center text-center">
+          <Link
+            href="#benchmark"
+            className="rounded-full border border-border bg-background flex space-x-2 items-center px-4 py-2 text-sm font-medium mb-8 hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
             <span className="font-mono text-[10px] md:text-xs whitespace-nowrap">
               The deterministic tax engine for AI agents
             </span>
             <Arrow />
-          </div>
+          </Link>
 
           <h1 className="text-[44px] md:text-[96px] font-serif font-normal leading-[1.05] mb-6">
             Turn any AI into a
@@ -173,12 +174,7 @@ export default function Page() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto px-6 sm:px-0">
-            <Link
-              href="https://github.com/Invaro/opentax-engine"
-              className="border border-border h-11 px-6 text-sm font-medium hover:bg-accent hover:text-accent-foreground flex items-center justify-center whitespace-nowrap"
-            >
-              Read the source
-            </Link>
+            <SourceButton />
             <Link
               href="#install"
               className="h-11 px-6 text-sm font-medium bg-foreground text-background hover:opacity-90 flex items-center justify-center whitespace-nowrap"
@@ -217,8 +213,12 @@ export default function Page() {
       </section>
 
       {/* benchmark */}
-      <section id="benchmark" className="container mt-24 md:mt-32 scroll-mt-20">
-        <div className="flex flex-col items-center text-center mb-12">
+      <section
+        id="benchmark"
+        className="relative overflow-hidden mt-24 md:mt-32 pt-12 md:pt-16 scroll-mt-20"
+      >
+        <DitherField art="smoke" tone="violet" placement="crown" />
+        <div className="container relative flex flex-col items-center text-center mb-12">
           <h2 className="text-[32px] md:text-[56px] font-serif leading-tight mb-4">
             The model isn&apos;t the ceiling.
             <br />
@@ -242,6 +242,7 @@ export default function Page() {
           </p>
         </div>
 
+        <div className="container relative">
         <div className="max-w-[780px] mx-auto">
           {/* the transformation: before → connect → after */}
           <div className="border border-border p-6 md:p-10">
@@ -273,7 +274,7 @@ export default function Page() {
                 <span className="flex-1 border-t border-dashed border-border" />
               </div>
               <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground mt-2">
-                one URL, two minutes — nothing else changes
+                one URL, two minutes, nothing else changes
               </div>
             </div>
 
@@ -284,14 +285,16 @@ export default function Page() {
                     after
                   </div>
                   <div className="text-sm md:text-base">
-                    the <span className="font-semibold">same</span> Sonnet, same prompts — with the
+                    the <span className="font-semibold">same</span> Sonnet, same prompts, with the
                     engine
                   </div>
                 </div>
-                <div className="font-serif text-[40px] md:text-[64px] leading-none">96%</div>
+                <div className="font-serif text-[40px] md:text-[64px] leading-none text-brand">
+                  96%
+                </div>
               </div>
               <div className="h-[6px] bg-muted">
-                <div className="h-full bg-foreground" style={{ width: "96%" }} />
+                <div className="h-full bg-brand" style={{ width: "96%" }} />
               </div>
             </div>
           </div>
@@ -302,7 +305,7 @@ export default function Page() {
               <span className="font-mono text-[10px] text-muted-foreground">
                 correct returns · TaxCalcBench TY25
               </span>
-              <span className="font-mono text-[10px] font-bold text-foreground">
+              <span className="font-mono text-[10px] font-bold text-brand">
                 HIGHEST SCORE EVER RECORDED
               </span>
             </div>
@@ -312,14 +315,14 @@ export default function Page() {
                   <div className="flex items-baseline justify-between mb-1.5">
                     <span
                       className={`font-mono text-[10px] md:text-xs ${
-                        b.ours ? "text-foreground" : "text-muted-foreground"
+                        b.ours ? "text-foreground font-medium" : "text-muted-foreground"
                       }`}
                     >
                       {b.label}
                     </span>
                     <span
-                      className={`font-mono text-[10px] md:text-xs ${
-                        b.ours ? "text-foreground" : "text-muted-foreground"
+                      className={`font-mono text-[10px] md:text-xs tabular-nums ${
+                        b.ours ? "text-brand font-medium" : "text-muted-foreground"
                       }`}
                     >
                       {b.pct}%
@@ -327,7 +330,7 @@ export default function Page() {
                   </div>
                   <div className="h-[6px] bg-muted">
                     <div
-                      className={b.ours ? "h-full bg-foreground" : "h-full bg-muted-foreground/70"}
+                      className={b.ours ? "h-full bg-brand" : "h-full bg-muted-foreground/70"}
                       style={{ width: `${b.pct}%` }}
                     />
                   </div>
@@ -359,7 +362,7 @@ export default function Page() {
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               We traced both to reference returns whose worksheets are inconsistent with
-              their own inputs — no published model run has matched those two cases
+              their own inputs. No published model run has matched those two cases
               either.{" "}
               <Link
                 href="https://github.com/column-tax/tax-calc-bench/issues/96"
@@ -377,6 +380,7 @@ export default function Page() {
             returns · leaderboard rows from its published July 2026 results · agent runs cold,
             pass@1
           </p>
+        </div>
         </div>
       </section>
 
@@ -403,7 +407,7 @@ export default function Page() {
             What your agent <span className="italic">does with it</span>
           </h2>
           <p className="text-sm md:text-base text-muted-foreground max-w-[620px]">
-            OpenTax is the computation layer under whatever AI you already use — Claude, ChatGPT,
+            OpenTax is the computation layer under whatever AI you already use: Claude, ChatGPT,
             Cursor, or your own agent. The model does the reading and the writing; the engine does
             the math. In practice:
           </p>
@@ -430,14 +434,19 @@ export default function Page() {
         <p className="mt-6 text-center font-mono text-[10px] text-muted-foreground max-w-[720px] mx-auto">
           research is built in too: <code>search_tax_rules</code> finds the encoded law by keyword,{" "}
           <code>lookup_tax_parameter</code> returns the dollar amounts with citations, and{" "}
-          <code>verify_fact</code> answers verified / refuted — zero hits means &ldquo;outside the
+          <code>verify_fact</code> answers verified / refuted, and zero hits means &ldquo;outside the
           corpus&rdquo;, never a guess · same engine as a CLI (<code>opentax check --expect</code>{" "}
           for CI) and a TypeScript library that runs entirely in a browser tab
         </p>
       </section>
 
       {/* install */}
-      <section id="install" className="container mt-24 md:mt-32 scroll-mt-12">
+      <section
+        id="install"
+        className="relative overflow-hidden mt-24 md:mt-32 py-12 md:py-16 scroll-mt-12"
+      >
+        <DitherField art="smoke" tone="jade" placement="margins" />
+        <div className="container relative">
         <div className="flex flex-col items-center text-center mb-10">
           <h2 className="text-[32px] md:text-[56px] font-serif leading-tight mb-4">
             One URL. <span className="italic">Any agent.</span>
@@ -518,11 +527,38 @@ export default function Page() {
             </div>
           </div>
         </div>
+        </div>
+      </section>
+
+      {/* open source */}
+      <section id="source" className="container mt-24 md:mt-32 scroll-mt-20">
+        <div className="max-w-[780px] mx-auto">
+          <OpenSourceProof />
+        </div>
       </section>
 
       {/* closing */}
-      <section id="connect" className="container mt-24 md:mt-32 mb-24 scroll-mt-20">
-        <div className="flex flex-col items-center text-center">
+      <section
+        id="connect"
+        className="relative overflow-hidden mt-24 md:mt-32 py-20 md:py-28 scroll-mt-20"
+      >
+        {/* the dither, computed live rather than baked */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.55] dark:opacity-[0.4]"
+          style={{
+            maskImage:
+              "radial-gradient(62% 58% at 50% 50%, transparent 22%, #000 88%), linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%)",
+            WebkitMaskImage:
+              "radial-gradient(62% 58% at 50% 50%, transparent 22%, #000 88%), linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%)",
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+          }}
+        >
+          <DitherCanvas color="#12866C" darkColor="#2FBF9E" speed={0.3} />
+        </div>
+
+        <div className="container relative flex flex-col items-center text-center">
           <h2 className="text-[32px] md:text-[64px] font-serif leading-tight mb-6">
             Give your model <span className="italic">the engine</span>
           </h2>

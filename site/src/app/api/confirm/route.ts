@@ -12,7 +12,7 @@ export async function GET(req: Request): Promise<Response> {
     return Response.redirect("https://opentax.invaro.ai/confirmed?ok=0", 302);
   }
   const record = { email: parsed.email, confirmedAt: new Date().toISOString() };
-  // Runtime logs get a hash, not the address — the address lives only in Blob.
+  // Runtime logs get a hash, not the address. The address lives only in Blob.
   const emailHash = createHash("sha256").update(parsed.email).digest("hex").slice(0, 12);
   try {
     await put(

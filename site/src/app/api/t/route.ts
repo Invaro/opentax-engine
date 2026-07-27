@@ -8,7 +8,7 @@ export const runtime = "nodejs";
  * OPENTAX_TELEMETRY=0 client-side). No PII: event name, version, platform.
  *
  * Abuse posture: always 204 (the pinging CLI never cares), but blob writes are
- * budgeted per IP and per instance — over budget we log to stdout only, so an
+ * budgeted per IP and per instance. Over budget we log to stdout only, so an
  * anonymous flood can't run up storage.
  */
 export async function POST(req: Request): Promise<Response> {

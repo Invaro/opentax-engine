@@ -8,6 +8,7 @@ const ITEMS = [
   { key: "F", label: "Features", href: "#features" },
   { key: "U", label: "Use cases", href: "#usecases" },
   { key: "I", label: "Install", href: "#install" },
+  { key: "S", label: "Source", href: "#source" },
 ] as const;
 
 export function KeysNav() {

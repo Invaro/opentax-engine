@@ -138,7 +138,7 @@ export async function POST(req: Request): Promise<Response> {
   } catch (err) {
     console.log(JSON.stringify({ evt: "waitlist_store_error", email: emailHash.slice(0, 12), err: String(err) }));
   }
-  // Runtime logs get a hash, not the address — the address lives only in Blob.
+  // Runtime logs get a hash, not the address. The address lives only in Blob.
   console.log(
     JSON.stringify({ evt: "waitlist_pending", email: emailHash.slice(0, 12), source, confirmationSent: sent }),
   );

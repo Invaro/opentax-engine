@@ -36,7 +36,7 @@ export default function PrivacyPage() {
       <div className="container max-w-[680px] py-16 md:py-24">
         <h1 className="text-[32px] md:text-[48px] font-serif leading-tight mb-3">Privacy</h1>
         <p className="font-mono text-[10px] text-muted-foreground mb-12">
-          effective july 2026 · the source that implements this page is public —{" "}
+          effective july 2026 · the source that implements this page is public:{" "}
           <Link
             href="https://github.com/Invaro/opentax-engine"
             className="underline underline-offset-2 hover:text-foreground"
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
         <Section label="00" title="The short version">
           <p>
             We collect very little. No ad pixels, no fingerprinting, no cross-site tracking, no
-            selling or sharing data — ever. Your tax facts are computed and returned, never stored.
+            selling or sharing data, ever. Your tax facts are computed and returned, never stored.
             The site runs one product-analytics tool (PostHog, disclosed fully below) that honors
             your browser&apos;s Do&nbsp;Not&nbsp;Track setting. The only personal data we ever hold
             is an email address you explicitly gave us, and you can delete it with one message.
@@ -59,12 +59,12 @@ export default function PrivacyPage() {
           <p>
             We use PostHog for product analytics: page views, anonymous usage events (clicks and
             form submissions on this site only), and session replays in which{" "}
-            <em>every input field is masked</em> — nothing you type is recorded. Profiles stay
+            <em>every input field is masked</em>, so nothing you type is recorded. Profiles stay
             anonymous unless you identify yourself (e.g., by signing up). If your browser sends
             Do&nbsp;Not&nbsp;Track, analytics is disabled entirely. PostHog stores a device
             identifier in your browser to tell visits apart; your light/dark preference is kept in
             local storage and never leaves it. Our hosting provider (Vercel) keeps standard,
-            short-lived request logs — as every host does.
+            short-lived request logs, as every host does.
           </p>
         </Section>
 
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
           <p>
             If you sign up for updates (on the site, or via <code className="font-mono text-xs">opentax signup</code>),
             we store exactly three things: your email address, when you signed up, and where the
-            signup came from (site or CLI). Signup is double opt-in — the confirmation link expires
+            signup came from (site or CLI). Signup is double opt-in, and the confirmation link expires
             in 48 hours, and if you never confirm, you are never emailed. Application logs record a
             one-way hash of the address, not the address itself.
           </p>
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
             <a href="mailto:founders@invaro.ai" className="underline underline-offset-2 hover:text-foreground">
               founders@invaro.ai
             </a>{" "}
-            — everything tied to your address is removed.
+            and everything tied to your address is removed.
           </p>
         </Section>
 
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
           <p>
             The published CLI and MCP server send one anonymous usage ping: an event name
             (&quot;cli&quot;, &quot;mcp-stdio&quot;, or &quot;mcp-http&quot;), the package version, the operating
-            system name, and the Node major version. Nothing else — no arguments, no tax data, no
+            system name, and the Node major version. Nothing else: no arguments, no tax data, no
             identifiers, no IP retention. The first run prints a notice saying exactly this.
           </p>
           <p>
@@ -102,13 +102,13 @@ export default function PrivacyPage() {
           <p>
             The hosted MCP endpoint (<code className="font-mono text-xs">opentax.invaro.ai/mcp</code>) is
             stateless: the tax facts in your request are computed in memory and the answer is
-            returned — they are not stored, logged, or used for anything else. For usage metering we
+            returned. It is not stored, logged, or used for anything else. For usage metering we
             record only the JSON-RPC method name, the tool name, the connecting client&apos;s
             self-reported name and version, and a timestamp. IP addresses are used transiently in
             memory for rate limiting and are not written to our storage.
           </p>
           <p>
-            Don&apos;t want to trust that? The engine is AGPL — run{" "}
+            Don&apos;t want to trust that? The engine is AGPL, so run{" "}
             <code className="font-mono text-xs">npx -y @invaro/opentax</code> locally or self-host the
             HTTP server, and nothing touches our infrastructure at all.
           </p>
@@ -119,7 +119,7 @@ export default function PrivacyPage() {
             <a href="mailto:founders@invaro.ai" className="underline underline-offset-2 hover:text-foreground">
               founders@invaro.ai
             </a>{" "}
-            — a human reads it.
+            reaches a human.
           </p>
         </Section>
       </div>

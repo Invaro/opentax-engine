@@ -5,7 +5,7 @@ import { CopyButton } from "@/components/copy-button";
 import { ClaudeMark, CursorMark, OpenAIMark } from "@/components/brand-icons";
 
 const MCP_URL = "https://opentax.invaro.ai/mcp";
-const TRY_PROMPT = "MFJ, $120,000 wages, two kids — what's the federal refund?";
+const TRY_PROMPT = "MFJ, $120,000 wages, two kids. What's the federal refund?";
 const CURSOR_INSTALL =
   "https://cursor.com/en/install-mcp?name=opentax&config=eyJ1cmwiOiJodHRwczovL29wZW50YXguaW52YXJvLmFpL21jcCJ9";
 
@@ -78,7 +78,7 @@ const TABS: Tab[] = [
     steps: [
       {
         title: "Add the MCP server",
-        desc: "One click — or Settings → MCP → Add new MCP server with the URL below.",
+        desc: "One click, or Settings → MCP → Add new MCP server with the URL below.",
         link: { label: "Add to Cursor", href: CURSOR_INSTALL },
       },
       {
@@ -108,7 +108,7 @@ const CLI_STEPS: Step[] = [
   },
   {
     title: "Save a proof, verify it offline",
-    desc: "Every answer re-derives byte for byte — or fails loudly.",
+    desc: "Every answer re-derives byte for byte, or fails loudly.",
     code: "npx -y @invaro/opentax eval --wages 50000 --proof proof.json && npx -y @invaro/opentax verify proof.json",
   },
 ];

@@ -26,7 +26,7 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
   return true;
 }
 
-/** First hop of x-forwarded-for — set by Vercel's edge proxy on every request. */
+/** First hop of x-forwarded-for, set by Vercel's edge proxy on every request. */
 export function clientIp(req: Request): string {
   return (req.headers.get("x-forwarded-for") ?? "").split(",")[0]?.trim() || "unknown";
 }

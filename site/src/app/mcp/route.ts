@@ -1,5 +1,5 @@
 /**
- * Remote MCP connector endpoint — https://<site>/mcp
+ * Remote MCP connector endpoint at https://<site>/mcp
  *
  * Streamable HTTP (MCP spec 2025-03-26), stateless: every POST gets a fresh
  * server + transport, so the function scales horizontally with no session
