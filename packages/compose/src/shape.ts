@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -229,4 +229,26 @@ const nc = {
   ncUnderpaymentInterest: usd.optional().describe("D-400 line 26e: interest on the underpayment of estimated income tax (Form D-422)"),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc };
+const ga = {
+  gaDependentCount: z.number().int().optional().describe("Form 500 line 7c total dependents (7a qualified + 7b unborn-with-heartbeat; never self/spouse) — $4,000 each (us.ga.dependent_exemption)"),
+  gaFederalItemized: usd.optional().describe("Form 500 line 12a: federal Schedule A total. Supplying this FORCES Georgia itemizing ('Leave Line 11 blank if you itemize deductions on your Federal return') — a federal standard-deduction filer must omit it."),
+  gaItemizedAdjustments: usd.optional().describe("Form 500 line 12b: state income taxes in the federal Schedule A total plus the disallowed-SALT proration when the $10,000/$5,000 cap bound (printed formula, hand-computed)"),
+  gaExclusionTier: z.enum(["none", "62to64OrDisabled", "65plus"]).optional().describe("primary taxpayer's GA retirement-exclusion tier: 62-64 during any part of the year or permanently/totally disabled ($35,000 cap) vs 65+ ($65,000 cap) (us.ga.retirement_exclusion)"),
+  gaSpouseExclusionTier: z.enum(["none", "62to64OrDisabled", "65plus"]).optional().describe("spouse's GA retirement-exclusion tier (each spouse qualifies separately; never shared)"),
+  gaRetirementIncome: usd.optional().describe("primary taxpayer's UNEARNED retirement income for the exclusion (pensions, interest, dividends, net rents, capital gains, royalties, military retirement; joint property at 50%; NEVER Social Security — that subtracts automatically)"),
+  gaSpouseRetirementIncome: usd.optional().describe("spouse's unearned retirement income for the exclusion"),
+  gaRetirementEarnedIncome: usd.optional().describe("primary taxpayer's earned income — at most $5,000 counts inside the exclusion (Schedule 1 worksheet)"),
+  gaSpouseRetirementEarnedIncome: usd.optional().describe("spouse's earned income for the exclusion worksheet"),
+  gaMilitaryExclusion: usd.optional().describe("GA military retirement exclusion for under-62 retirees (Schedule 1 page 3 worksheet: $17,500 + additional $17,500 when GA earned income exceeds $17,500 — hand-computed, per qualifying spouse)"),
+  gaNolUtilized: usd.optional().describe("Form 500 line 15b: Georgia NOL utilized (Schedule 4; cannot exceed line 15a or the 80% limitation — composer caps at 15a)"),
+  gaLicExemptions: z.number().int().optional().describe("Low Income Credit Worksheet line 2: self + spouse + natural/legally adopted children (never other dependents or unborn) (us.ga.low_income_credit)"),
+  gaLic65Count: z.number().int().optional().describe("Low Income Credit Worksheet line 3: 1 if filer or spouse is 65+, 2 if both"),
+  gaOtherStateCredit: usd.optional().describe("Form 500 line 18: other state(s) tax credit (printed worksheet, hand-computed; other-state return copy required)"),
+  gaEligibleItemizerCredit: usd.optional().describe("Form 500 line 19: Georgia Eligible Itemizer Tax Credit (NEW 2025; up to $300 per taxpayer, itemizers with 183+ GA days or resident at year end) — TRANSCRIBE the worksheet-computed amount, never assume the full $300; composer caps at $300/$600"),
+  gaIndCrCredits: usd.optional().describe("Form 500 line 20: IND-CR Summary total OTHER than the CDCC (the composer adds us.ga.cdcc itself from gaFederalCdccAllowed)"),
+  gaFederalCdccAllowed: usd.optional().describe("federal Form 2441 line 11 allowed credit — GA IND-CR 202 pays 50% of it (us.ga.cdcc)"),
+  gaOtherWithholding: usd.optional().describe("Form 500 line 25: GA tax withheld on G2-A / G2-FL / G2-LP / G2-RP statements (never W-2/1099 amounts — those go in the shared stateWithholding for line 24)"),
+  gaUetPenalty: usd.optional().describe("Form 500 line 42: Form 500 UET estimated tax penalty"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga };

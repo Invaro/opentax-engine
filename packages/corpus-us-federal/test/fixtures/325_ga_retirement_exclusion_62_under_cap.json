@@ -1,0 +1,12 @@
+{
+  "description": "GA retirement exclusion, 62-64 tier under the cap: unearned $20,000 + min(earned $3,000, $5,000) = $23,000, under the $35,000 cap -> $23,000.00 (the $5,000 earned-income allowance is INSIDE the exclusion, 2023 SB 56).",
+  "facts": {
+    "filingStatus": "single",
+    "gaExclusionTier": "62to64OrDisabled",
+    "gaRetirementIncome": 20000,
+    "gaRetirementEarnedIncome": 3000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ga.retirement_exclusion",
+  "expect": { "valueCents": "2300000" }
+}

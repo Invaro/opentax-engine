@@ -2740,4 +2740,91 @@ export const facts: FactSpec[] = [
       "NC Schedule A line 8 repayment of claim-of-right income (repayments over $3,000 deducted in full — supply only qualifying amounts). In dollars.",
     default: { value: "0", rationale: "No claim-of-right repayment absent contrary input" },
   },
+
+  // ---- Georgia deep pack (state-ga.ts) ------------------------------------
+  {
+    id: "gaFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Form 500 line 8, Form 1040 line 11 verbatim — never federal taxable income) — keys the Low Income Credit table. Can be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal AGI absent contrary input" },
+  },
+  {
+    id: "gaDependentCount",
+    type: "int",
+    min: "0",
+    description:
+      "Form 500 line 7c total dependents (7a qualified + 7b unborn-with-heartbeat; never self/spouse) — each worth the $4,000 Georgia dependent exemption (us.ga.dependent_exemption).",
+    default: { value: "0", rationale: "No dependents assumed absent contrary input" },
+  },
+  {
+    id: "gaLicExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "GA Low Income Credit Worksheet line 2 exemptions: self + spouse + natural/legally adopted children ONLY (never other dependents, never unborn dependents).",
+    default: { value: "0", rationale: "Conservative: no LIC exemptions attested — no credit" },
+  },
+  {
+    id: "gaLic65Count",
+    type: "int",
+    min: "0",
+    description:
+      "GA Low Income Credit Worksheet line 3: 1 if filer or spouse is 65+, 2 if both (the statute's 65+ double credit as extra exemptions).",
+    default: { value: "0", rationale: "No 65+ additions assumed absent contrary input" },
+  },
+  {
+    id: "gaExclusionTier",
+    type: "enum",
+    enumValues: ["none", "62to64OrDisabled", "65plus"],
+    description:
+      "Primary taxpayer's Georgia retirement-exclusion tier (O.C.G.A. § 48-7-27(a)(5)(D)): 62-64 during any part of the year or permanently and totally disabled → $35,000 cap; 65+ during any part of the year → $65,000 cap.",
+    default: { value: "none", rationale: "Conservative: exclusion eligibility not attested — no exclusion" },
+  },
+  {
+    id: "gaSpouseExclusionTier",
+    type: "enum",
+    enumValues: ["none", "62to64OrDisabled", "65plus"],
+    description:
+      "Spouse's Georgia retirement-exclusion tier (each spouse qualifies separately; the exclusion is never shared).",
+    default: { value: "none", rationale: "Conservative: spouse eligibility not attested — no exclusion" },
+  },
+  {
+    id: "gaRetirementIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Primary taxpayer's UNEARNED retirement income for the Georgia exclusion (pensions, annuities, interest, dividends, net rents, capital gains, royalties, military retirement — jointly-owned property income at 50%; NEVER Social Security/RRB, which subtract separately, and never lottery/gambling). In dollars.",
+    default: { value: "0", rationale: "No retirement income absent contrary input" },
+  },
+  {
+    id: "gaSpouseRetirementIncome",
+    type: "money",
+    min: "0",
+    description: "Spouse's unearned retirement income for the Georgia exclusion (same definition, own items + 50% of joint). In dollars.",
+    default: { value: "0", rationale: "No spouse retirement income absent contrary input" },
+  },
+  {
+    id: "gaRetirementEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Primary taxpayer's earned income (wages/salaries/business) — the exclusion counts at most $5,000 of it (Schedule 1 page 2 worksheet 'Maximum Earned Income'). In dollars.",
+    default: { value: "0", rationale: "No earned income supplied for the exclusion worksheet" },
+  },
+  {
+    id: "gaSpouseRetirementEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Spouse's earned income for the exclusion worksheet (at most $5,000 counts). In dollars.",
+    default: { value: "0", rationale: "No spouse earned income supplied for the exclusion worksheet" },
+  },
+  {
+    id: "gaFederalCdccAllowed",
+    type: "money",
+    min: "0",
+    description:
+      "The federal § 21 child and dependent care credit CLAIMED AND ALLOWED (Form 2441 line 11, liability-limited) — Georgia's IND-CR 202 credit is 50% of it (us.ga.cdcc). In dollars.",
+    default: { value: "0", rationale: "No federal CDCC allowed absent contrary input" },
+  },
 ];

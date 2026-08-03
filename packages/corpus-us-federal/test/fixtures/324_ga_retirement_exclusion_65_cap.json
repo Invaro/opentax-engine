@@ -1,0 +1,12 @@
+{
+  "description": "GA retirement exclusion at the 65+ cap: single 65+, unearned retirement $80,000 + min(earned $12,000, $5,000) = $85,000 -> capped at $65,000 (O.C.G.A. 48-7-27(a)(5); Schedule 1 page 2 worksheet).",
+  "facts": {
+    "filingStatus": "single",
+    "gaExclusionTier": "65plus",
+    "gaRetirementIncome": 80000,
+    "gaRetirementEarnedIncome": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ga.retirement_exclusion",
+  "expect": { "valueCents": "6500000" }
+}

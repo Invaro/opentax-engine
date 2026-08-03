@@ -23712,11 +23712,11 @@ function evalExpr(expr, rule, ctx, children) {
       return value;
     }
     case "param": {
-      const param25 = rule.parameters?.[expr.name];
-      if (!param25) {
+      const param26 = rule.parameters?.[expr.name];
+      if (!param26) {
         throw new EngineError(`rule "${rule.id}" has no parameter "${expr.name}"`);
       }
-      return valueFromJSON({ type: param25.type, value: param25.value });
+      return valueFromJSON({ type: param26.type, value: param26.value });
     }
     case "add": {
       const vals = evalAll(expr.args, rule, ctx, children);
@@ -24457,6 +24457,116 @@ function composeCA(input, evalStateTax, notes) {
     "97_overpaid": fmtD(l97),
     "111_amount_owed": fmtD(l111),
     "115_refund": fmtD(l97)
+  };
+}
+
+// ../compose/dist/ga.js
+function composeGA(input, evalStateTax, notes) {
+  const fagi = rd(c(input.federalAGI));
+  const l8 = fagi;
+  const additions = rd(c(input.additions));
+  const taxableSS = rd(c(input.taxableSocialSecurity));
+  if (taxableSS > 0n)
+    notes.push("GA Schedule 1: taxable Social Security subtracted automatically (Georgia never taxes it; Tiers 1 and 2 RRB likewise)");
+  const tiers2 = { none: 0, "62to64OrDisabled": 1, "65plus": 2 };
+  const tier = (v) => typeof v === "string" && v in tiers2 ? v : "none";
+  const retirementExclusion = tier(input.gaExclusionTier) !== "none" || tier(input.gaSpouseExclusionTier) !== "none" ? rd(evalStateTax("us.ga.retirement_exclusion", 0n, {
+    gaRetirementIncome: c(input.gaRetirementIncome),
+    gaSpouseRetirementIncome: c(input.gaSpouseRetirementIncome),
+    gaRetirementEarnedIncome: c(input.gaRetirementEarnedIncome),
+    gaSpouseRetirementEarnedIncome: c(input.gaSpouseRetirementEarnedIncome),
+    gaExclusionTier: tier(input.gaExclusionTier),
+    gaSpouseExclusionTier: tier(input.gaSpouseExclusionTier)
+  })) : 0n;
+  if (retirementExclusion > 0n)
+    notes.push(`GA retirement income exclusion ${fmtD(retirementExclusion)} (Schedule 1 page 2 worksheet; per-spouse caps, $5,000 earned-income allowance)`);
+  const militaryExclusion = rd(c(input.gaMilitaryExclusion));
+  if (militaryExclusion > 0n)
+    notes.push("GA military retirement exclusion (under-62, $17,500 + conditional $17,500 \u2014 Schedule 1 page 3 worksheet, hand-computed)");
+  const subtractions = rd(c(input.subtractions)) + taxableSS + retirementExclusion + militaryExclusion;
+  const l9 = additions - subtractions;
+  const l10 = l8 + l9;
+  const itemizing = c(input.gaFederalItemized) > 0n;
+  let l11 = 0n, l12c = 0n;
+  if (itemizing) {
+    const l12a = rd(c(input.gaFederalItemized));
+    const l12b = rd(c(input.gaItemizedAdjustments));
+    l12c = max02(l12a - l12b);
+    notes.push("GA line 12: federal itemizer must itemize for Georgia ('Leave Line 11 blank if you itemize deductions on your Federal return') \u2014 line 12b subtracts state income taxes and the disallowed-SALT proration");
+  } else {
+    l11 = rd(evalStateTax("us.ga.standard_deduction", 0n));
+  }
+  const l13 = l10 - (itemizing ? l12c : l11);
+  const nDeps = input.gaDependentCount ?? 0;
+  const l14 = rd(evalStateTax("us.ga.dependent_exemption", 0n, { gaDependentCount: nDeps }));
+  const l15a = l13 - l14;
+  const nolRaw = rd(c(input.gaNolUtilized));
+  const l15b = min2(nolRaw, max02(l15a));
+  if (nolRaw > l15b)
+    notes.push("GA line 15b capped at line 15a (the NOL utilized cannot exceed income before NOL; the 80% limitation is the caller's Schedule 4 computation)");
+  const l15c = l15a - l15b;
+  const l16 = rd(evalStateTax("us.ga.income_tax", max02(l15c)));
+  const lic = (input.gaLicExemptions ?? 0) > 0 ? rd(evalStateTax("us.ga.low_income_credit", 0n, {
+    gaFederalAgi: fagi,
+    gaLicExemptions: input.gaLicExemptions ?? 0,
+    gaLic65Count: input.gaLic65Count ?? 0
+  })) : 0n;
+  const l17c = lic;
+  const l18 = rd(c(input.gaOtherStateCredit));
+  const l19 = min2(rd(c(input.gaEligibleItemizerCredit)), 30000n * BigInt(input.filingStatus === "mfj" ? 2 : 1));
+  if (c(input.gaEligibleItemizerCredit) > 0n && !itemizing)
+    notes.push("GA line 19: the Eligible Itemizer Tax Credit requires itemizing \u2014 verify eligibility (183+ days or GA resident at year end)");
+  const cdcc = c(input.gaFederalCdccAllowed) > 0n ? rd(evalStateTax("us.ga.cdcc", 0n, { gaFederalCdccAllowed: c(input.gaFederalCdccAllowed) })) : 0n;
+  if (cdcc > 0n)
+    notes.push(`GA IND-CR 202 child and dependent care credit ${fmtD(cdcc)} (50% of the allowed federal \xA7 21 credit, HB 136) folded into line 20`);
+  const l20 = rd(c(input.gaIndCrCredits)) + cdcc;
+  const l21 = rd(c(input.nonrefundableCredits));
+  const creditsRaw = l17c + l18 + l19 + l20 + l21;
+  const l22 = min2(creditsRaw, l16);
+  if (creditsRaw > l22)
+    notes.push(`GA line 22: total credits ${fmtD(creditsRaw)} capped at the line 16 tax ('cannot exceed Line 16')`);
+  const l23 = max02(l16 - l22);
+  const l24 = rd(c(input.stateWithholding));
+  const l25 = rd(c(input.gaOtherWithholding));
+  const l26 = rd(c(input.estimatedPayments)) + rd(c(input.extensionPayment));
+  const l27 = rd(c(input.refundableCredits));
+  const l28 = l24 + l25 + l26 + l27;
+  const l29 = max02(l23 - l28);
+  const l30 = max02(l28 - l23);
+  const l42 = rd(c(input.gaUetPenalty));
+  const l45 = l29 + l42;
+  const l46 = max02(l30 - l42);
+  notes.push("GA conformity: IRC as of Jan 1, 2025 \u2014 OBBBA changes do NOT apply for TY2025 (IT-511 p.5); QBI never allowed but needs no adjustment (GA starts from federal AGI)");
+  return {
+    "7c_total_dependents": String(nDeps),
+    "8_federal_agi": fmtD(l8),
+    "9_adjustments": fmtD(l9),
+    "10_georgia_agi": fmtD(l10),
+    "11_standard_deduction": fmtD(l11),
+    "12c_georgia_itemized": fmtD(l12c),
+    "13_income_after_deductions": fmtD(l13),
+    "14_dependent_exemption": fmtD(l14),
+    "15a_income_before_nol": fmtD(l15a),
+    "15b_ga_nol_utilized": fmtD(l15b),
+    "15c_georgia_taxable_income": fmtD(l15c),
+    "16_tax": fmtD(l16),
+    "17c_low_income_credit": fmtD(l17c),
+    "18_other_state_credit": fmtD(l18),
+    "19_eligible_itemizer_credit": fmtD(l19),
+    "20_ind_cr_credits": fmtD(l20),
+    "21_schedule2_credits": fmtD(l21),
+    "22_total_credits_used": fmtD(l22),
+    "23_balance": fmtD(l23),
+    "24_withholding_w2_1099": fmtD(l24),
+    "25_other_withholding": fmtD(l25),
+    "26_estimated_payments": fmtD(l26),
+    "27_schedule2b_refundable": fmtD(l27),
+    "28_total_prepayments": fmtD(l28),
+    "29_balance_due": fmtD(l29),
+    "30_overpayment": fmtD(l30),
+    "42_uet_penalty": fmtD(l42),
+    "45_amount_due": fmtD(l45),
+    "46_refund": fmtD(l46)
   };
 }
 
@@ -25350,7 +25460,7 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -25558,7 +25668,28 @@ var nc = {
   ncScorpPayments: usd.optional().describe("D-400 line 21d: NC tax paid by an S corporation on the filer's behalf"),
   ncUnderpaymentInterest: usd.optional().describe("D-400 line 26e: interest on the underpayment of estimated income tax (Form D-422)")
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc };
+var ga = {
+  gaDependentCount: external_exports.number().int().optional().describe("Form 500 line 7c total dependents (7a qualified + 7b unborn-with-heartbeat; never self/spouse) \u2014 $4,000 each (us.ga.dependent_exemption)"),
+  gaFederalItemized: usd.optional().describe("Form 500 line 12a: federal Schedule A total. Supplying this FORCES Georgia itemizing ('Leave Line 11 blank if you itemize deductions on your Federal return') \u2014 a federal standard-deduction filer must omit it."),
+  gaItemizedAdjustments: usd.optional().describe("Form 500 line 12b: state income taxes in the federal Schedule A total plus the disallowed-SALT proration when the $10,000/$5,000 cap bound (printed formula, hand-computed)"),
+  gaExclusionTier: external_exports.enum(["none", "62to64OrDisabled", "65plus"]).optional().describe("primary taxpayer's GA retirement-exclusion tier: 62-64 during any part of the year or permanently/totally disabled ($35,000 cap) vs 65+ ($65,000 cap) (us.ga.retirement_exclusion)"),
+  gaSpouseExclusionTier: external_exports.enum(["none", "62to64OrDisabled", "65plus"]).optional().describe("spouse's GA retirement-exclusion tier (each spouse qualifies separately; never shared)"),
+  gaRetirementIncome: usd.optional().describe("primary taxpayer's UNEARNED retirement income for the exclusion (pensions, interest, dividends, net rents, capital gains, royalties, military retirement; joint property at 50%; NEVER Social Security \u2014 that subtracts automatically)"),
+  gaSpouseRetirementIncome: usd.optional().describe("spouse's unearned retirement income for the exclusion"),
+  gaRetirementEarnedIncome: usd.optional().describe("primary taxpayer's earned income \u2014 at most $5,000 counts inside the exclusion (Schedule 1 worksheet)"),
+  gaSpouseRetirementEarnedIncome: usd.optional().describe("spouse's earned income for the exclusion worksheet"),
+  gaMilitaryExclusion: usd.optional().describe("GA military retirement exclusion for under-62 retirees (Schedule 1 page 3 worksheet: $17,500 + additional $17,500 when GA earned income exceeds $17,500 \u2014 hand-computed, per qualifying spouse)"),
+  gaNolUtilized: usd.optional().describe("Form 500 line 15b: Georgia NOL utilized (Schedule 4; cannot exceed line 15a or the 80% limitation \u2014 composer caps at 15a)"),
+  gaLicExemptions: external_exports.number().int().optional().describe("Low Income Credit Worksheet line 2: self + spouse + natural/legally adopted children (never other dependents or unborn) (us.ga.low_income_credit)"),
+  gaLic65Count: external_exports.number().int().optional().describe("Low Income Credit Worksheet line 3: 1 if filer or spouse is 65+, 2 if both"),
+  gaOtherStateCredit: usd.optional().describe("Form 500 line 18: other state(s) tax credit (printed worksheet, hand-computed; other-state return copy required)"),
+  gaEligibleItemizerCredit: usd.optional().describe("Form 500 line 19: Georgia Eligible Itemizer Tax Credit (NEW 2025; up to $300 per taxpayer, itemizers with 183+ GA days or resident at year end) \u2014 TRANSCRIBE the worksheet-computed amount, never assume the full $300; composer caps at $300/$600"),
+  gaIndCrCredits: usd.optional().describe("Form 500 line 20: IND-CR Summary total OTHER than the CDCC (the composer adds us.ga.cdcc itself from gaFederalCdccAllowed)"),
+  gaFederalCdccAllowed: usd.optional().describe("federal Form 2441 line 11 allowed credit \u2014 GA IND-CR 202 pays 50% of it (us.ga.cdcc)"),
+  gaOtherWithholding: usd.optional().describe("Form 500 line 25: GA tax withheld on G2-A / G2-FL / G2-LP / G2-RP statements (never W-2/1099 amounts \u2014 those go in the shared stateWithholding for line 24)"),
+  gaUetPenalty: usd.optional().describe("Form 500 line 42: Form 500 UET estimated tax penalty")
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -25573,7 +25704,7 @@ function makeStateTaxEvaluator(runTarget, input) {
       spouseItemizes: { type: "bool", value: false }
     };
     for (const [k, v] of Object.entries(extraFacts ?? {})) {
-      facts2[k] = typeof v === "boolean" ? { type: "bool", value: v } : typeof v === "number" ? { type: "int", value: String(v) } : { type: "money", value: String(v) };
+      facts2[k] = typeof v === "boolean" ? { type: "bool", value: v } : typeof v === "number" ? { type: "int", value: String(v) } : typeof v === "string" ? { type: "enum", value: v } : { type: "money", value: String(v) };
     }
     return runTarget(facts2, target);
   };
@@ -25588,7 +25719,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -25604,6 +25735,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeOH(input, evalStateTax, notes), notes };
   if (j === "nc")
     return { lines: composeNC(input, evalStateTax, notes), notes };
+  if (j === "ga")
+    return { lines: composeGA(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -28229,6 +28362,83 @@ var facts = [
     min: "0",
     description: "NC Schedule A line 8 repayment of claim-of-right income (repayments over $3,000 deducted in full \u2014 supply only qualifying amounts). In dollars.",
     default: { value: "0", rationale: "No claim-of-right repayment absent contrary input" }
+  },
+  // ---- Georgia deep pack (state-ga.ts) ------------------------------------
+  {
+    id: "gaFederalAgi",
+    type: "money",
+    description: "Federal adjusted gross income (Form 500 line 8, Form 1040 line 11 verbatim \u2014 never federal taxable income) \u2014 keys the Low Income Credit table. Can be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal AGI absent contrary input" }
+  },
+  {
+    id: "gaDependentCount",
+    type: "int",
+    min: "0",
+    description: "Form 500 line 7c total dependents (7a qualified + 7b unborn-with-heartbeat; never self/spouse) \u2014 each worth the $4,000 Georgia dependent exemption (us.ga.dependent_exemption).",
+    default: { value: "0", rationale: "No dependents assumed absent contrary input" }
+  },
+  {
+    id: "gaLicExemptions",
+    type: "int",
+    min: "0",
+    description: "GA Low Income Credit Worksheet line 2 exemptions: self + spouse + natural/legally adopted children ONLY (never other dependents, never unborn dependents).",
+    default: { value: "0", rationale: "Conservative: no LIC exemptions attested \u2014 no credit" }
+  },
+  {
+    id: "gaLic65Count",
+    type: "int",
+    min: "0",
+    description: "GA Low Income Credit Worksheet line 3: 1 if filer or spouse is 65+, 2 if both (the statute's 65+ double credit as extra exemptions).",
+    default: { value: "0", rationale: "No 65+ additions assumed absent contrary input" }
+  },
+  {
+    id: "gaExclusionTier",
+    type: "enum",
+    enumValues: ["none", "62to64OrDisabled", "65plus"],
+    description: "Primary taxpayer's Georgia retirement-exclusion tier (O.C.G.A. \xA7 48-7-27(a)(5)(D)): 62-64 during any part of the year or permanently and totally disabled \u2192 $35,000 cap; 65+ during any part of the year \u2192 $65,000 cap.",
+    default: { value: "none", rationale: "Conservative: exclusion eligibility not attested \u2014 no exclusion" }
+  },
+  {
+    id: "gaSpouseExclusionTier",
+    type: "enum",
+    enumValues: ["none", "62to64OrDisabled", "65plus"],
+    description: "Spouse's Georgia retirement-exclusion tier (each spouse qualifies separately; the exclusion is never shared).",
+    default: { value: "none", rationale: "Conservative: spouse eligibility not attested \u2014 no exclusion" }
+  },
+  {
+    id: "gaRetirementIncome",
+    type: "money",
+    min: "0",
+    description: "Primary taxpayer's UNEARNED retirement income for the Georgia exclusion (pensions, annuities, interest, dividends, net rents, capital gains, royalties, military retirement \u2014 jointly-owned property income at 50%; NEVER Social Security/RRB, which subtract separately, and never lottery/gambling). In dollars.",
+    default: { value: "0", rationale: "No retirement income absent contrary input" }
+  },
+  {
+    id: "gaSpouseRetirementIncome",
+    type: "money",
+    min: "0",
+    description: "Spouse's unearned retirement income for the Georgia exclusion (same definition, own items + 50% of joint). In dollars.",
+    default: { value: "0", rationale: "No spouse retirement income absent contrary input" }
+  },
+  {
+    id: "gaRetirementEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Primary taxpayer's earned income (wages/salaries/business) \u2014 the exclusion counts at most $5,000 of it (Schedule 1 page 2 worksheet 'Maximum Earned Income'). In dollars.",
+    default: { value: "0", rationale: "No earned income supplied for the exclusion worksheet" }
+  },
+  {
+    id: "gaSpouseRetirementEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Spouse's earned income for the exclusion worksheet (at most $5,000 counts). In dollars.",
+    default: { value: "0", rationale: "No spouse earned income supplied for the exclusion worksheet" }
+  },
+  {
+    id: "gaFederalCdccAllowed",
+    type: "money",
+    min: "0",
+    description: "The federal \xA7 21 child and dependent care credit CLAIMED AND ALLOWED (Form 2441 line 11, liability-limited) \u2014 Georgia's IND-CR 202 credit is 50% of it (us.ga.cdcc). In dollars.",
+    default: { value: "0", rationale: "No federal CDCC allowed absent contrary input" }
   }
 ];
 
@@ -28590,7 +28800,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt3 = (cents) => ({
+  const lt4 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -28609,22 +28819,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt3("500"),
+    cond: lt4("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt3("1500"),
+      cond: lt4("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt3("2500"),
+        cond: lt4("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt3("300000"),
+          cond: lt4("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -36155,14 +36365,14 @@ var caRules = [
         },
         mode: "half-up"
       });
-      const param25 = (name) => ({ kind: "param", name });
+      const param26 = (name) => ({ kind: "param", name });
       const segment = (peakUpperParam, kinkUpperParam, phaseIn, steep, gentle) => ({
         kind: "if",
-        cond: { kind: "cmp", op: "le", left: earned2, right: param25(peakUpperParam) },
+        cond: { kind: "cmp", op: "le", left: earned2, right: param26(peakUpperParam) },
         then: phaseIn,
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: earned2, right: param25(kinkUpperParam) },
+          cond: { kind: "cmp", op: "le", left: earned2, right: param26(kinkUpperParam) },
           then: steep,
           else: gentle
         }
@@ -36172,33 +36382,33 @@ var caRules = [
         "kinkUpper0kids",
         tentative("65025", "1000000"),
         // 7.65% × 85%
-        linear(param25("peakMid0kids"), param25("max0kids"), "-2601", "40000"),
+        linear(param26("peakMid0kids"), param26("max0kids"), "-2601", "40000"),
         // mirror of the phase-in rate
-        linear(param25("gentleAnchorMid0kids"), param25("gentleAnchorValue0kids"), "-9", "1000")
+        linear(param26("gentleAnchorMid0kids"), param26("gentleAnchorValue0kids"), "-9", "1000")
       );
       const col1 = segment(
         "peakUpper1kid",
         "kinkUpper1kid",
         tentative("2890", "10000"),
         // 34% × 85%
-        linear(param25("steepAnchorMid1kid"), param25("steepAnchorValue1kid"), "-289", "1000"),
-        linear(param25("gentleAnchorMid1kid"), param25("gentleAnchorValue1kid"), "-541", "18000")
+        linear(param26("steepAnchorMid1kid"), param26("steepAnchorValue1kid"), "-289", "1000"),
+        linear(param26("gentleAnchorMid1kid"), param26("gentleAnchorValue1kid"), "-541", "18000")
       );
       const col2 = segment(
         "peakUpper2kids",
         "kinkUpper2kids",
         tentative("3400", "10000"),
         // 40% × 85%
-        linear(param25("steepAnchorMid2kids"), param25("steepAnchorValue2kids"), "-17", "50"),
-        linear(param25("gentleAnchorMid2kids"), param25("gentleAnchorValue2kids"), "-25", "596")
+        linear(param26("steepAnchorMid2kids"), param26("steepAnchorValue2kids"), "-17", "50"),
+        linear(param26("gentleAnchorMid2kids"), param26("gentleAnchorValue2kids"), "-25", "596")
       );
       const col3 = segment(
         "peakUpper3kids",
         "kinkUpper3kids",
         tentative("3825", "10000"),
         // 45% × 85%
-        linear(param25("steepAnchorMid3kids"), param25("steepAnchorValue3kids"), "-153", "400"),
-        linear(param25("gentleAnchorMid3kids"), param25("gentleAnchorValue3kids"), "-613", "14400")
+        linear(param26("steepAnchorMid3kids"), param26("steepAnchorValue3kids"), "-153", "400"),
+        linear(param26("gentleAnchorMid3kids"), param26("gentleAnchorValue3kids"), "-613", "14400")
       );
       return {
         kind: "if",
@@ -36679,7 +36889,7 @@ var nyRules = [
       // $50 ($14,001-$18,000, uses fagiLimit as its threshold)
     },
     formula: (() => {
-      const param25 = (name) => ({ kind: "param", name });
+      const param26 = (name) => ({ kind: "param", name });
       const fagi = fact36("nyIt214Fagi");
       const adjustedRent = {
         kind: "mulDiv",
@@ -36714,32 +36924,32 @@ var nyRules = [
       const line19 = table1Rate("35", "300000", table1Rate("40", "500000", table1Rate("45", "700000", table1Rate("50", "900000", table1Rate("55", "1100000", table1Rate("60", "1400000", { kind: "mulDiv", a: fagi, b: money33("65"), c: money33("1000"), round: "half-up" }))))));
       const tableA = {
         kind: "if",
-        cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableAThreshold1") },
-        then: param25("tableAValue1"),
+        cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableAThreshold1") },
+        then: param26("tableAValue1"),
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableAThreshold2") },
-          then: param25("tableAValue2"),
+          cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableAThreshold2") },
+          then: param26("tableAValue2"),
           else: {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableAThreshold3") },
-            then: param25("tableAValue3"),
+            cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableAThreshold3") },
+            then: param26("tableAValue3"),
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableAThreshold4") },
-              then: param25("tableAValue4"),
+              cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableAThreshold4") },
+              then: param26("tableAValue4"),
               else: {
                 kind: "if",
-                cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableAThreshold5") },
-                then: param25("tableAValue5"),
+                cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableAThreshold5") },
+                then: param26("tableAValue5"),
                 else: {
                   kind: "if",
-                  cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableAThreshold6") },
-                  then: param25("tableAValue6"),
+                  cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableAThreshold6") },
+                  then: param26("tableAValue6"),
                   else: {
                     kind: "if",
-                    cond: { kind: "cmp", op: "le", left: fagi, right: param25("fagiLimit") },
-                    then: param25("tableAValue7"),
+                    cond: { kind: "cmp", op: "le", left: fagi, right: param26("fagiLimit") },
+                    then: param26("tableAValue7"),
                     else: money33("0")
                   }
                 }
@@ -36750,20 +36960,20 @@ var nyRules = [
       };
       const tableB2 = {
         kind: "if",
-        cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableBThreshold1") },
-        then: param25("tableBValue1"),
+        cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableBThreshold1") },
+        then: param26("tableBValue1"),
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableBThreshold2") },
-          then: param25("tableBValue2"),
+          cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableBThreshold2") },
+          then: param26("tableBValue2"),
           else: {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: param25("tableBThreshold3") },
-            then: param25("tableBValue3"),
+            cond: { kind: "cmp", op: "le", left: fagi, right: param26("tableBThreshold3") },
+            then: param26("tableBValue3"),
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: fagi, right: param25("fagiLimit") },
-              then: param25("tableBValue4"),
+              cond: { kind: "cmp", op: "le", left: fagi, right: param26("fagiLimit") },
+              then: param26("tableBValue4"),
               else: money33("0")
             }
           }
@@ -36775,9 +36985,9 @@ var nyRules = [
           kind: "or",
           args: [
             { kind: "not", arg: fact36("nyIt214Eligible") },
-            { kind: "cmp", op: "gt", left: fagi, right: param25("fagiLimit") },
+            { kind: "cmp", op: "gt", left: fagi, right: param26("fagiLimit") },
             // line 8 stop
-            { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param25("monthlyRentCap") },
+            { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param26("monthlyRentCap") },
             // line 13 stop
             { kind: "cmp", op: "le", left: line18, right: money33("0") },
             // line 18 stop
@@ -38438,6 +38648,232 @@ var ncRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-ga.js
+var max08 = (arg) => ({ kind: "max0", arg });
+var add4 = (...args) => ({ kind: "add", args });
+var rd6 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var param20 = (name) => ({ kind: "param", name });
+var lt3 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
+var gaRules = [
+  {
+    id: "us.ga.income_tax",
+    version: 2,
+    // v1 was the thin state-other.ts flat rule; v2+ are the deep pack
+    jurisdiction: "us.ga",
+    title: "Georgia income tax \u2014 TY2025: 5.19% flat on Georgia taxable income (Form 500 line 16, HB 111 retroactive)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-20(a.1) as rewritten by 2025 HB 111 (enrolled text, legis.ga.gov; eff. 7-1-2025, applicable to taxable years beginning on/after 1-1-2025); 2025 IT-511 pp. 9, 17 (line 16)",
+      section: "O.C.G.A. \xA7 48-7-20(a.1); Form 500 line 16",
+      url: "https://www.legis.ga.gov/legislation/69464",
+      excerpt: "HB 111 (enrolled, verbatim): 'the tax imposed pursuant to subsection (a) of this Code section shall be 5.19 percent for taxable years beginning on or after January 1, 2025; provided, however, that such rate shall be reduced by 0.10 percent annually beginning on January 1, 2026, until the rate reaches 4.99 percent, provided that such annual reductions in the tax rate shall be subject to delays as provided in paragraph (2)' \u2014 the step-downs are CONDITIONAL (Governor's revenue estimate +3%, prior-year collections above each of the three preceding years, Revenue Shortfall Reserve coverage; OPB reports by December 1). Printed 2025 IT-511 (verbatim): 'Effective January 1, 2025, the income tax rate is 5.19%'; Form 500 line 16: 'Tax (Multiply Line 15c by 5.19%. Round to the nearest dollar).' Surveys printed before HB 111 (signed after the year began, retroactive) still show 5.39% \u2014 the act text wins. TY2026: superseded by 2026 HB 463, which per the Governor's office 'lowers Georgia's state income tax rate from 5.19% to 4.99%, beginning January 1, 2026' and raises standard deductions \u2014 the ENROLLED HB 463 text was not yet verified at encoding, so this rule is TY2025-only and a 2026 asOf REFUSES rather than guessing between 5.09%/4.99%. No Georgia tax table exists \u2014 the flat computation is the method; whole-dollar rounding ('Round to the nearest dollar', half-up). Input: stateTaxableIncome = Form 500 line 15c Georgia taxable income (GA AGI \u2212 standard/itemized deduction \u2212 $4,000-per-dependent exemption \u2212 GA NOL). Part-year/nonresidents compute the base on Schedule 3 (ratio proration \u2014 out of scope, resident target). Filing threshold: required to file when required federally or income exceeds the standard deduction."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    formula: rd6({
+      kind: "mulRate",
+      base: max08(fact36("stateTaxableIncome")),
+      rate: { num: "519", den: "10000" },
+      round: "half-up"
+    })
+  },
+  {
+    id: "us.ga.standard_deduction",
+    version: 1,
+    jurisdiction: "us.ga",
+    title: "Georgia standard deduction \u2014 $24,000 MFJ, $12,000 all other statuses; forced itemizing when federal itemized (Form 500 line 11)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-27(a)(1)(B); 2025 IT-511 p. 16; 2025 Form 500 line 11",
+      section: "O.C.G.A. \xA7 48-7-27(a)(1)(B); Form 500 line 11",
+      url: "https://dor.georgia.gov/it-511-individual-income-tax-instruction-booklet",
+      excerpt: "Statute (verbatim): '(i) In the case of a married couple filing a joint return, $24,000.00; or (ii) In the case of a single taxpayer, head of household, or married taxpayer filing a separate return, $12,000.00.' Printed 2025 table: MFJ $24,000; Single, MFS, HEAD OF HOUSEHOLD, and Qualifying surviving spouse ALL $12,000 \u2014 Georgia gives HOH no extra amount (a common cross-state error). Form 500 line 11 caption: 'Enter $12,000 if the filing status from Line 5 is A, C, or D. If the filing status is B, enter $24,000. Use EITHER Line 11 OR Line 12c.' FORCED ELECTION (line 11 instructions, verbatim): 'Leave Line 11 blank if you itemize deductions on your Federal return' \u2014 a federal itemizer MUST use Georgia itemized deductions (federal Schedule A total less the line 12b adjustments: state income taxes and the disallowed-SALT formula), like Virginia and unlike North Carolina. No age/blind additions; no personal exemptions for filers ('Line 6: Reserved' \u2014 the 2024 restructure folded them into the deduction amounts). TY2026: HB 463 raises the amounts \u2014 re-verify before encoding 2026."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      joint: { value: "2400000", type: "money" },
+      // $24,000 MFJ only
+      other: { value: "1200000", type: "money" }
+      // $12,000 single/MFS/HOH/QSS
+    },
+    formula: {
+      kind: "if",
+      cond: isStatus10("mfj"),
+      then: param20("joint"),
+      else: param20("other")
+    }
+  },
+  {
+    id: "us.ga.dependent_exemption",
+    version: 1,
+    jurisdiction: "us.ga",
+    title: "Georgia dependent exemption \u2014 $4,000 per dependent, including unborn dependents (Form 500 line 14)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-26; 2025 IT-511 p. 16 (lines 7a-7d, 14)",
+      section: "O.C.G.A. \xA7 48-7-26(b); Form 500 lines 7a-7c, 14",
+      url: "https://law.justia.com/codes/georgia/title-48/chapter-7/article-2/section-48-7-26/",
+      excerpt: "Statute (verbatim): 'Each taxpayer shall be allowed as a deduction in computing his or her Georgia taxable income a personal exemption in the amount of $4,000.00 for each dependent of such taxpayer', with 'dependent' as defined in the IRC 'provided, however, that any unborn child with a detectable human heartbeat ... shall qualify as a dependent minor.' Form 500: line 7a qualified dependents ('Do not include yourself, your spouse, and/or dependent unborn children'), line 7b unborn dependents ('cannot be claimed if the child is born during the same tax year' \u2014 a child born during the year goes on 7a instead), line 7c = 7a + 7b; line 14 = 'Enter the number from Line 7c ... Multiply by $4,000.' NO exemption for the taxpayer or spouse (line 6 is Reserved). MFS: only one spouse may claim each dependent, under the pre-TCJA federal entitlement rules. Input: gaDependentCount = the line 7c total."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      perDependent: { value: "400000", type: "money" }
+      // $4,000
+    },
+    formula: { kind: "mulInt", base: param20("perDependent"), count: fact36("gaDependentCount") }
+  },
+  {
+    id: "us.ga.retirement_exclusion",
+    version: 1,
+    jurisdiction: "us.ga",
+    title: "Georgia retirement income exclusion \u2014 $35,000 (62-64/disabled) or $65,000 (65+) per spouse, $5,000 earned-income allowance (Schedule 1)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-27(a)(5) (earned-income cap $5,000 per 2023 SB 56); 2025 IT-511 pp. 21, 24 (Schedule 1 page 2 worksheet)",
+      section: "O.C.G.A. \xA7 48-7-27(a)(5); Form 500 Schedule 1 line 7",
+      url: "https://law.justia.com/codes/georgia/title-48/chapter-7/article-2/section-48-7-27/",
+      excerpt: "Statute (verbatim): 'retirement income from any source not to exceed an exclusion amount of $35,000.00 for each taxpayer' who 'Is 62 years of age or older but less than 65 years of age during any part of the taxable year' or 'Is permanently and totally disabled', 'or an amount of $65,000.00 for each taxpayer' who 'Is 65 years of age or older during any part of the year.' PER SPOUSE (verbatim): 'In the case of a married couple filing jointly, each spouse shall if otherwise qualified be individually entitled to exclude retirement income received by that spouse up to the exclusion amount' \u2014 never shared; jointly-owned property income allocates 50/50. Retirement income includes 'income from military retirement, interest income, dividend income, net income from rental property, capital gains income, income from royalties, income from pensions and annuities, and no more than $5,000.00 of an individual's earned income' \u2014 the $5,000 earned cap (raised from $4,000 by SB 56 for TY2024+) is INSIDE the exclusion, per the printed Schedule 1 page 2 worksheet ('Maximum Earned Income ... 5,000'). Social Security/RRB are NOT in this exclusion \u2014 they subtract fully and separately. Lottery/gambling income never qualifies; business income subject to SE/FICA tax is earned, not unearned. This rule computes each spouse's min(unearned retirement + min(earned, $5,000), tier cap) and sums; tiers are attested via the gaExclusionTier enums (conservative default none \u2192 $0). Part-year/nonresident proration and the date-of-birth documentation requirement are the caller's. TY2027: HB 463 raises the cap to $70,000 (per the Governor's office) \u2014 not applicable here."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      cap62to64: { value: "3500000", type: "money" },
+      // $35,000
+      cap65plus: { value: "6500000", type: "money" },
+      // $65,000
+      earnedIncomeCap: { value: "500000", type: "money" }
+      // $5,000 inside the exclusion
+    },
+    formula: (() => {
+      const perSpouse = (tierFact, retirement, earned2) => {
+        const capForTier = {
+          kind: "match",
+          on: fact36(tierFact),
+          cases: [
+            { when: "none", value: money33("0") },
+            { when: "62to64OrDisabled", value: param20("cap62to64") },
+            { when: "65plus", value: param20("cap65plus") }
+          ]
+        };
+        return {
+          kind: "min",
+          args: [
+            add4(max08(fact36(retirement)), { kind: "min", args: [max08(fact36(earned2)), param20("earnedIncomeCap")] }),
+            capForTier
+          ]
+        };
+      };
+      return add4(perSpouse("gaExclusionTier", "gaRetirementIncome", "gaRetirementEarnedIncome"), perSpouse("gaSpouseExclusionTier", "gaSpouseRetirementIncome", "gaSpouseRetirementEarnedIncome"));
+    })()
+  },
+  {
+    id: "us.ga.low_income_credit",
+    version: 1,
+    jurisdiction: "us.ga",
+    title: "Georgia Low Income Credit \u2014 per-exemption table by federal AGI under $20,000 (Form 500 lines 17a-17c)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7A-3; 2025 IT-511 pp. 17, 35 (Low Income Credit Worksheet + table)",
+      section: "O.C.G.A. \xA7 48-7A-3; Form 500 line 17",
+      url: "https://dor.georgia.gov/it-511-individual-income-tax-instruction-booklet",
+      excerpt: "2025 worksheet (verbatim): line 2 'Enter the number of exemptions. Exemptions are self, spouse and natural or legally adopted children' (NOT other dependents; 'dependents do not include those unborn with a detectable heartbeat'); line 3 'Enter 1 if you or your spouse is 65 or older; enter 2 if you and your spouse are 65 or older' (the statute's 65+ DOUBLE credit, implemented as extra exemptions \u2014 65+ filers get MORE, never barred); line 4 = 2+3; credit = line 4 \xD7 the table amount. PRINTED TABLE (verbatim, federal AGI): 'Under $6,000: $26; $6,000 but not more than $7,999: $20; $8,000 but not more than $9,999: $14; $10,000 but not more than $14,999: $8; $15,000 but not more than $19,999: $5' \u2014 $20,000+ gets nothing. GATES (p. 17 + statute): FAGI under $20,000; RESIDENT taxpayers; not claimed or claimable as a dependent on another return; not an inmate; statute \xA7 48-7A-3(e): a food-stamp (SNAP) recipient for any part of the year is INELIGIBLE (the booklet omits this \u2014 statutory gate, attest before claiming); MFS filers get only what a joint return would have allowed; claim within 12 months. NONREFUNDABLE: 'The credit cannot exceed the taxpayer's income tax liability' (the composer caps via the line 22 total). Inputs: gaFederalAgi, gaLicExemptions (worksheet line 2), gaLic65Count (line 3; conservative defaults 0)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      tier1Max: { value: "600000", type: "money" },
+      // under $6,000 → $26
+      tier2Max: { value: "800000", type: "money" },
+      // to $7,999 → $20
+      tier3Max: { value: "1000000", type: "money" },
+      // to $9,999 → $14
+      tier4Max: { value: "1500000", type: "money" },
+      // to $14,999 → $8
+      tier5Max: { value: "2000000", type: "money" },
+      // to $19,999 → $5; $20,000+ → $0
+      credit1: { value: "2600", type: "money" },
+      credit2: { value: "2000", type: "money" },
+      credit3: { value: "1400", type: "money" },
+      credit4: { value: "800", type: "money" },
+      credit5: { value: "500", type: "money" }
+    },
+    formula: (() => {
+      const agi2 = fact36("gaFederalAgi");
+      const tier = (max, credit, next) => ({
+        kind: "if",
+        cond: lt3(agi2, param20(max)),
+        then: param20(credit),
+        else: next
+      });
+      const perExemption = tier("tier1Max", "credit1", tier("tier2Max", "credit2", tier("tier3Max", "credit3", tier("tier4Max", "credit4", tier("tier5Max", "credit5", money33("0"))))));
+      return add4({ kind: "mulInt", base: perExemption, count: fact36("gaLicExemptions") }, { kind: "mulInt", base: perExemption, count: fact36("gaLic65Count") });
+    })()
+  },
+  {
+    id: "us.ga.cdcc",
+    version: 1,
+    jurisdiction: "us.ga",
+    title: "Georgia Child and Dependent Care Expense Credit \u2014 50% of the allowed federal \xA7 21 credit (IND-CR 202, TY2025+ per HB 136)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-29.10 as amended by 2025 HB 136 \xA7 1-1 (applicable to taxable years beginning on/after 1-1-2025); 2025 IND-CR 202; IT-511 p. 9",
+      section: "O.C.G.A. \xA7 48-7-29.10; IND-CR 202 \u2192 Form 500 line 20",
+      url: "https://www.legis.ga.gov/legislation/69535",
+      excerpt: "HB 136 (enrolled, verbatim): 'The amount of such credit shall be equal to 50 percent of the amount of the credit provided for in Section 21 of the Internal Revenue Code which is claimed and allowed pursuant to the Internal Revenue Code' (strikes the prior 30%). Effective-date section: 'Section 1-1 of this Act shall be applicable to all taxable years beginning on or after January 1, 2025' \u2014 the 50% rate IS in force for TY2025, confirmed by the printed 2025 IND-CR 202 ('Georgia allowable rate ... 50%') and the What's New page ('The amount of the credit has been increased to 50 percent'). Base = the federal \xA7 21 credit CLAIMED AND ALLOWED (the liability-limited Form 2441 line 11 amount \u2014 input gaFederalCdccAllowed), NOT the tentative amount. Nonrefundable, no carryforward; flows through the IND-CR Summary to Form 500 line 20, capped with all credits at the line 16 tax. SEPARATE HB 136 items that start TY2026, never 2025 (verbatim: 'a taxpayer shall be allowed a credit ... in an amount equal to $250.00 for each qualifying child' UNDER AGE SIX, 'For taxable years beginning on or after January 1, 2026', nonrefundable, no carryforward \u2014 new \xA7 48-7-29.27; plus the \xA7 48-7-29.28 employer child-care credit): encode with the TY2026 pack after the 2026 forms publish."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      pctOfFederal: { value: "50", type: "int" }
+    },
+    formula: rd6({
+      kind: "mulRate",
+      base: max08(fact36("gaFederalCdccAllowed")),
+      rate: { num: "50", den: "100" },
+      round: "half-up"
+    })
+  },
+  {
+    id: "us.ga.parameters",
+    version: 1,
+    jurisdiction: "us.ga",
+    title: "Georgia 2025 return parameters \u2014 Schedule 1 adjustments, military exclusion, credits, conformity (Form 500)",
+    citation: {
+      source: "2025 IT-511 booklet + Form 500 Rev. 07/09/25 (dor.georgia.gov, read 2026-08-03); O.C.G.A. \xA7 48-7-27; enrolled 2025 HB 111 / HB 136 (legis.ga.gov)",
+      section: "Form 500 Schedule 1; IND-CR; Form 500 lines 12b, 18, 19",
+      url: "https://dor.georgia.gov/it-511-individual-income-tax-instruction-booklet",
+      excerpt: "CONFORMITY (IT-511 p. 5, verbatim): 'Georgia conforms to the Internal Revenue Code, as amended, provided for in federal law enacted on or before January 1, 2025. Georgia has not adopted the federal tax law changes in the federal One Big Beautiful Bill Act because the Act was signed on July 4, 2025' \u2014 OBBBA below-AGI items never flow (GA starts from federal AGI), and OBBBA above-AGI changes require Schedule 1 adjustments per DOR guidance; disclose when relevant. 'Georgia does not allow the 20% qualified business income deduction. (I.R.C. Section 199A). However, since Georgia starts with Federal AGI, no adjustment is necessary.'\n\nSCHEDULE 1 SUBTRACTIONS (beyond the oracle targets): MILITARY RETIREMENT under-62 (\xA7 48-7-27(a)(5.1), verbatim): 'Up to $17,500.00 of income received by an individual who is less than 62 years of age paid to such individual as retirement benefits from military service ... and an additional amount of up to $17,500.00 of such income, provided that he or she has Georgia earned income otherwise included ... that exceeds $17,500.00' \u2014 per spouse if each qualifies; the printed Schedule 1 page 3 worksheet gates on 'Are you under the age of 62?'. US GOVERNMENT OBLIGATION interest (reduced by allocable expenses; FNMA/GNMA/FHLMC and repurchase-agreement interest is TAXABLE, never subtracted). SOCIAL SECURITY / Railroad Retirement Tiers 1 AND 2 fully subtracted. PATH2COLLEGE 529: 'cannot exceed $4,000 per beneficiary. If a married filing joint return is filed, then the amount cannot exceed $8,000 per beneficiary' (no income limit; \xA7 48-7-27(a)(11.1)). Organ donation up to $25,000; 100% of HIGH-DEDUCTIBLE HEALTH PLAN premiums (\xA7 223 plans) not otherwise deducted (\xA7 48-7-27(a)(13.1)) \u2014 there is NO separate GA HSA subtraction and NO ABLE deduction ('No Deduction is allowed ... for any contribution made pursuant to the Georgia ABLE Program'). Other-state income tax refunds subtract; GEORGIA refunds never do. Hurricane Helene disaster-relief payments (TY2025-2029) and federal crop insurance proceeds (TY2025 only) subtract. SURPLUS REFUNDS (HB 112/HB 1000): 'Surplus refunds are not taxable for Georgia individual income tax purposes but may be Federally taxable.'\n\nADDITIONS: non-Georgia municipal bond interest (and mutual-fund dividends derived from it); lump-sum distributions (Form 4972); federal NOL carryover deducted federally (GA NOL applies on line 15b instead, 80% limitation); loss carryovers from non-GA years. ITEMIZERS (line 12b): subtract state income taxes from the federal Schedule A total; when the federal $10,000/$5,000 SALT cap bound, the disallowed portion prorates by the printed formula (other-state income taxes \xF7 total line 5d taxes \xD7 the capped amount).\n\nCREDITS: OTHER STATE(S) TAX CREDIT (line 18) via the printed worksheet: GA-rate tax on (other-state AGI \u2212 ratio-share of deductions and dependent exemptions), capped at the other state's actual tax \u2014 hand-computed, return copy required. GEORGIA ELIGIBLE ITEMIZER TAX CREDIT (NEW 2025, line 19, verbatim): 'A full-year or part-year resident who itemized and lived in Georgia 183 days or longer, or who is living in Georgia on the last day of the year may qualify for a tax credit of up to $300 per taxpayer ... cannot exceed the tax liability from Line 16 ... cannot be carried forward' \u2014 the computation worksheet was not captured at encoding; TRANSCRIBE the computed amount (never assume the full $300). IND-CR credits (Form 500 line 20): 201 disabled-person home retrofit ($500/$125); 202 CDCC (\u2192 us.ga.cdcc); 204 qualified caregiving (10% of expenses, max $150); 206 disaster assistance (max $500); 207 rural physicians ($5,000/yr); 213 foster child adoption 2021+ ($6,000/child first five years); 214 teacher recruitment ($3,000). Schedule 2 series-100 credits and the refundable Schedule 2B (line 27 \u2014 currently only Timber credits 145/155, never when purchased) require e-filing. Line 22 total credits 'cannot exceed Line 16.'\n\nMECHANICS: whole-dollar rounding; no tax table; Form 500EZ DISCONTINUED for 2025; withholding splits across line 24 (W-2s/1099s) and line 25 (G2-A/G2-FL/G2-LP/G2-RP); estimated payments + Form IT-560 extension payments combine on line 26; UET penalty line 42; donations lines 32-41 ($1 minimum each). TY2026 treadmill notes: HB 463 (4.99% rate, higher standard deductions, tips/overtime exclusions through 2028, some credits repealed \u2014 enrolled text unverified at encoding), HB 136's $250 under-6 CTC and employer child-care credit begin TY2026."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      militaryExclusionBase: { value: "1750000", type: "money" },
+      // $17,500 under-62
+      militaryExclusionAdditional: { value: "1750000", type: "money" },
+      // +$17,500 with GA earned income > $17,500
+      path2college529PerBeneficiary: { value: "400000", type: "money" },
+      // $4,000 ($8,000 MFJ)
+      path2college529PerBeneficiaryJoint: { value: "800000", type: "money" },
+      organDonationCap: { value: "2500000", type: "money" },
+      // $25,000
+      eligibleItemizerCreditMaxPerTaxpayer: { value: "30000", type: "money" },
+      // up to $300 (worksheet-computed)
+      caregivingCreditPct: { value: "10", type: "int" },
+      caregivingCreditMax: { value: "15000", type: "money" },
+      // $150 (IND-CR 204)
+      ctc2026PerChildUnder6: { value: "25000", type: "money" }
+      // $250 (TY2026+, informational)
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: use lookup_tax_parameter for the Georgia amounts; tax \u2192 us.ga.income_tax, deductions \u2192 us.ga.standard_deduction / us.ga.dependent_exemption, exclusions \u2192 us.ga.retirement_exclusion, credits \u2192 us.ga.low_income_credit / us.ga.cdcc; Schedule 1 modifications, the military exclusion worksheet, and the other-state/itemizer credits are agent-composed from the cited lines"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -38598,20 +39034,9 @@ var otherStateRules = [
     excerpt: "Kentucky TY2025: 4.0% flat on KY taxable income (2026 drops to 3.5%). Standard deduction $3,270 PER TAXPAYER (each spouse gets one on a joint return: $6,540 MFJ); no personal exemptions. Pension exclusion up to $31,110 per person named but not modeled \u2014 disclose for retirees.",
     parameters: { standardDeductionPerTaxpayer: { value: "327000", type: "money" } }
   }),
-  flatTax({
-    st: "ga",
-    name: "Georgia",
-    ratePctTimes100: "519",
-    source: "Ga. Code \xA7 48-7-20 as amended by 2025 HB 111 (5.19% RETROACTIVE to 1/1/2025 \u2014 some 2025 surveys still print the pre-HB 111 5.39%); Tax Foundation survey cross-checked (web-verified July 2026)",
-    section: "O.C.G.A. \xA7 48-7-20; 2025 Ga. Laws Act (HB 111)",
-    url: "https://dor.georgia.gov/",
-    excerpt: "Georgia TY2025: 5.19% flat (HB 111, signed April 2025, cut the scheduled 5.39% retroactively to 1/1/2025; the rate continues stepping toward 4.99%). Standard deduction $12,000 single/MFS/HOH, $24,000 MFJ; dependent exemption $4,000 per dependent (unborn-child rule included); no personal exemption for filers.",
-    parameters: {
-      standardDeductionSingle: { value: "1200000", type: "money" },
-      standardDeductionJoint: { value: "2400000", type: "money" },
-      dependentExemption: { value: "400000", type: "money" }
-    }
-  }),
+  // (GA graduated to the deep pack: see state-ga.ts — us.ga.income_tax v2+
+  //  with standard/dependent/retirement-exclusion/LIC/CDCC targets; the thin
+  //  v1 is superseded.)
   flatTax({
     st: "ia",
     name: "Iowa",
@@ -38711,6 +39136,7 @@ var stateParameterRules = [
   ...njRules,
   ...ohRules,
   ...ncRules,
+  ...gaRules,
   ...otherStateRules
 ];
 
@@ -38718,7 +39144,7 @@ var stateParameterRules = [
 var fact37 = (factId) => ({ kind: "fact", factId });
 var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
-var param20 = (name) => ({ kind: "param", name });
+var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
 var isStatus11 = (status) => ({
   kind: "cmp",
@@ -38793,8 +39219,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
   const band = {
     kind: "if",
     cond: isStatus11("mfj"),
-    then: param20("bandJoint"),
-    else: param20("band")
+    then: param21("bandJoint"),
+    else: param21("band")
   };
   const excess = {
     kind: "max0",
@@ -38846,8 +39272,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
   const withFloor = withMinimum ? {
     // OBBBA § 70105: $400 minimum when QBI ≥ $1,000 (TY2026+)
     kind: "if",
-    cond: { kind: "cmp", op: "ge", left: qbi, right: param20("minQbiFloor") },
-    then: { kind: "max", args: [limited, param20("minDeduction")] },
+    cond: { kind: "cmp", op: "ge", left: qbi, right: param21("minQbiFloor") },
+    then: { kind: "max", args: [limited, param21("minDeduction")] },
     else: limited
   } : limited;
   return {
@@ -38935,7 +39361,7 @@ var qbiRules = [
 var fact38 = (factId) => ({ kind: "fact", factId });
 var money35 = (cents) => ({ kind: "money", cents });
 var ruleRef32 = (ruleId) => ({ kind: "rule", ruleId });
-var param21 = (name) => ({ kind: "param", name });
+var param22 = (name) => ({ kind: "param", name });
 var zero25 = money35("0");
 var seNetEarnings = ruleRef32("us.federal.se_net_earnings");
 function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabel) {
@@ -38960,7 +39386,7 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
     },
     formula: {
       kind: "if",
-      cond: { kind: "cmp", op: "lt", left: seNetEarnings, right: param21("seFloor") },
+      cond: { kind: "cmp", op: "lt", left: seNetEarnings, right: param22("seFloor") },
       then: zero25,
       else: {
         kind: "if",
@@ -38994,7 +39420,7 @@ var oasdiComponent = {
         kind: "max0",
         arg: {
           kind: "sub",
-          left: param21("wageBase"),
+          left: param22("wageBase"),
           right: wagesForBase
         }
       }
@@ -39078,7 +39504,7 @@ var selfEmploymentRules = [
 var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
-var param22 = (name) => ({ kind: "param", name });
+var param23 = (name) => ({ kind: "param", name });
 var isStatus12 = (status) => ({
   kind: "cmp",
   op: "eq",
@@ -39091,7 +39517,7 @@ function perSeniorNet() {
     kind: "max0",
     arg: {
       kind: "sub",
-      left: param22("perSenior"),
+      left: param23("perSenior"),
       right: {
         kind: "mulRate",
         base: {
@@ -39214,7 +39640,7 @@ var seniorDeductionRules = [
 var fact40 = (factId) => ({ kind: "fact", factId });
 var money37 = (cents) => ({ kind: "money", cents });
 var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
-var param23 = (name) => ({ kind: "param", name });
+var param24 = (name) => ({ kind: "param", name });
 var pct2 = (num, base) => ({
   kind: "mulRate",
   base,
@@ -39280,8 +39706,8 @@ var isMfj = {
 var byJoint = (joint, other) => ({
   kind: "if",
   cond: isMfj,
-  then: param23(joint),
-  else: param23(other)
+  then: param24(joint),
+  else: param24(other)
 });
 var socialSecurityRules = [
   {
@@ -39676,7 +40102,7 @@ var tipsEligibilityRules = [
 var fact43 = (factId) => ({ kind: "fact", factId });
 var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
-var param24 = (name) => ({ kind: "param", name });
+var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
 var isStatus15 = (status) => ({
   kind: "cmp",
@@ -39716,8 +40142,8 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
                   right: {
                     kind: "if",
                     cond: isStatus15("mfj"),
-                    then: param24("magiThresholdJoint"),
-                    else: param24("magiThreshold")
+                    then: param25("magiThresholdJoint"),
+                    else: param25("magiThreshold")
                   }
                 }
               },
@@ -39760,7 +40186,7 @@ var tipsOvertimeRules = [
       // $25,000 (all eligible statuses)
       ...THRESHOLD_PARAMS
     },
-    formula: cappedPhasedDeduction("qualifiedTips", param24("cap"), {
+    formula: cappedPhasedDeduction("qualifiedTips", param25("cap"), {
       kind: "not",
       arg: { kind: "rule", ruleId: "us.federal.eligible.tips_deduction" }
     })
@@ -39788,8 +40214,8 @@ var tipsOvertimeRules = [
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
       cond: isStatus15("mfj"),
-      then: param24("capJoint"),
-      else: param24("cap")
+      then: param25("capJoint"),
+      else: param25("cap")
     })
   }
 ];
@@ -39953,7 +40379,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add4 = (id, c2) => {
+  const add5 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -39975,20 +40401,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add4("wages", toCents(w.box1));
+    add5("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add4("federalTaxWithheld", toCents(w.box2));
+      add5("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add4("socialSecurityWages", toCents(w.box3));
+      add5("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add4("medicareWages", b5);
+      add5("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add4("federalTaxWithheld", excess);
+          add5("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars2(excess)}; added to withholding`);
         }
       }
@@ -40000,72 +40426,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(r.box4));
+      add5("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add4("wages", taxable3);
-      add4("scheduleRDisabilityIncome", taxable3);
+      add5("wages", taxable3);
+      add5("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars2(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add4("taxableIraDistributions", taxable3);
+      add5("taxableIraDistributions", taxable3);
     else
-      add4("taxablePensionsAndAnnuities", taxable3);
+      add5("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add4("earlyDistributionSubjectToPenalty", taxable3);
+        add5("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars2(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add4("socialSecurityBenefits", toCents(s.box5));
+    add5("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add4("federalTaxWithheld", toCents(s.box6));
+      add5("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(n.box4));
+      add5("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(k.box4));
+      add5("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add4("selfEmploymentNetProfit", net);
+        add5("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars2(seGross)} gross (1099-NEC/K) \u2212 $${dollars2(expenses)} expenses = $${dollars2(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add4("scheduleCNetLoss", -net);
+      add5("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars2(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add4("taxableInterest", toCents(t.box1));
+      add5("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add4("taxableInterest", toCents(t.box3));
+      add5("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars2(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add4("taxExemptInterest", toCents(t.box8));
+      add5("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(t.box4));
+      add5("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -40074,15 +40500,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars2(qualified2)}) exceeds box 1a (total, $${dollars2(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add4("qualifiedDividends", qualified2);
+      add5("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add4("ordinaryDividends", total - qualified2);
+      add5("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add4("__ltProceeds", toCents(d3.box2a));
+      add5("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars2(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(d3.box4));
+      add5("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -40097,24 +40523,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(b.box4));
+      add5("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add4("shortTermCapitalGains", stNet);
+      add5("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add4("shortTermCapitalLoss", -stNet);
+      add5("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add4("longTermCapitalGains", ltNet);
+      add5("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add4("longTermCapitalLoss", -ltNet);
+      add5("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars2(stNet)}, long-term net $${dollars2(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add4("unemploymentCompensation", toCents(g.box1));
+      add5("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add4("federalTaxWithheld", toCents(g.box4));
+      add5("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars2(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -40423,7 +40849,18 @@ var INDIVIDUAL_GROUPS = {
     "ncRealEstateTaxes",
     "ncCharitable",
     "ncMedicalExpenses",
-    "ncClaimOfRightRepayment"
+    "ncClaimOfRightRepayment",
+    "gaFederalAgi",
+    "gaDependentCount",
+    "gaExclusionTier",
+    "gaSpouseExclusionTier",
+    "gaRetirementIncome",
+    "gaSpouseRetirementIncome",
+    "gaRetirementEarnedIncome",
+    "gaSpouseRetirementEarnedIncome",
+    "gaLicExemptions",
+    "gaLic65Count",
+    "gaFederalCdccAllowed"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -40713,7 +41150,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -40740,7 +41177,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd6 = (c2) => {
+      const rd7 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -40767,11 +41204,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd6(after) + rd6(other);
-      const payments = rd6(withheld) + rd6(refundable) + rd6(extension) + rd6(estimated);
+      const total24 = rd7(after) + rd7(other);
+      const payments = rd7(withheld) + rd7(refundable) + rd7(extension) + rd7(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd6(c2));
+      const d3 = (c2) => fmt2(rd7(c2));
       return ok({
         ok: true,
         asOf,
@@ -40798,7 +41235,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd6(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd7(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },
