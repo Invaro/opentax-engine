@@ -1,0 +1,7 @@
+{
+  "description": "NJ Tax Table joint column, the row that catches a chained-anchor error: MFJ $88,010 -> midpoint $88,025 -> .05525 x 88,025 - 2,775 = 4,863.38 - 2,775 = 2,088.38 -> $2,088.00 (printed 2025 Tax Table row 88,000-88,050 col '2, 4, or 5': 2,088). A schedule anchored to the PRIOR row's boundary value ($1,645.50 instead of $1,645.00 at $80,000) would wrongly give $2,089 - the printed Table B constants are discontinuous at $70,000/$80,000.",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 88010 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.income_tax",
+  "expect": { "valueCents": "208800" }
+}

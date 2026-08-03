@@ -1,0 +1,7 @@
+{
+  "description": "OH exemption credit: MAGI $25,000, 3 exemptions (3 x 2,400 = 7,200) -> MAGI less exemptions $17,800 < $30,000 -> $20 x 3 = $60.00 (R.C. 5747.022).",
+  "facts": { "filingStatus": "hoh", "ohModifiedAgi": 25000, "ohExemptionCount": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.exemption_credit",
+  "expect": { "valueCents": "6000" }
+}

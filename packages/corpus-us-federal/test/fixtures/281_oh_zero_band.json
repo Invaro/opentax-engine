@@ -1,0 +1,7 @@
+{
+  "description": "OH zero band: taxable nonbusiness income exactly $26,050 -> 'no tax shall be imposed on that balance' (ORC 5747.02(A)(3)) -> $0. One dollar more would owe ~$342 (the statutory entry cliff).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 26050 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.income_tax",
+  "expect": { "valueCents": "0" }
+}

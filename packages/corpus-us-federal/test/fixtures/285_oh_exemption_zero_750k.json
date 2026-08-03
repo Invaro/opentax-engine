@@ -1,0 +1,7 @@
+{
+  "description": "OH exemption $0 tier (NEW for 2025, HB 96): MAGI $750,000 or greater -> $0 per exemption regardless of count (2025 IT 1040 instructions p. 17 table).",
+  "facts": { "filingStatus": "mfj", "ohModifiedAgi": 750000, "ohExemptionCount": 4 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.exemption_amount",
+  "expect": { "valueCents": "0" }
+}

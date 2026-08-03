@@ -1,0 +1,7 @@
+{
+  "description": "OH nonbusiness brackets, the 2025 booklet's own worked example (p. 18): taxable nonbusiness income $68,050 -> $342 + 2.75% x (68,050 - 26,050 = 42,000) = 342 + 1,155 = $1,497.00 exactly (ORC 5747.02(A)(3)(b), HB 96).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 68050 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.income_tax",
+  "expect": { "valueCents": "149700" }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NJ pension exclusion, middle tier: MFJ, line 27 total income $110,000 ($100,001-$125,000 tier) -> 50% of line 20a pension ($60,000) = $30,000.00 (2025 NJ-1040 p. 20 chart; age-62+/disabled attested).",
+  "facts": {
+    "filingStatus": "mfj",
+    "njTotalIncome": 110000,
+    "njPensionIncome": 60000,
+    "njPensionEligible": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nj.pension_exclusion",
+  "expect": { "valueCents": "3000000" }
+}

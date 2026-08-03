@@ -1,0 +1,7 @@
+{
+  "description": "NJ millionaires' bracket: MFJ, $1,200,000 -> statute fixed form $72,657.50 + 10.75% x 200,000 = 94,157.50 -> $94,158.00 (identical to the printed .1075 x TI - 34,842.50).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 1200000 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.income_tax",
+  "expect": { "valueCents": "9415800" }
+}

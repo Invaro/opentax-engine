@@ -1,0 +1,7 @@
+{
+  "description": "OH exemptions, the 2025 booklet's John & Mary example (p. 17): MAGI $75,000, 3 exemptions -> $40,001-$80,000 tier = $2,150 each -> 'they claim three exemptions totaling $6,450'.",
+  "facts": { "filingStatus": "mfj", "ohModifiedAgi": 75000, "ohExemptionCount": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.exemption_amount",
+  "expect": { "valueCents": "645000" }
+}

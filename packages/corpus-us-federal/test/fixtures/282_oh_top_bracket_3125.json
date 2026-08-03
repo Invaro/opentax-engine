@@ -1,0 +1,12 @@
+{
+  "description": "OH 2025 top bracket (HB 96 cut to 3.125%): $150,000 -> 2,394.32 + 3.125% x 50,000 = 2,394.32 + 1,562.50 = 3,956.82 -> whole-dollar half-up $3,957.00 ('Use whole dollars only'). (The $2,394.32 anchor is the printed/statutory carried amount, NOT 342 + 2.75% x 73,950.)",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.oh.income_tax",
+  "expect": {
+    "valueCents": "395700"
+  }
+}

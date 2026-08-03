@@ -1,0 +1,7 @@
+{
+  "description": "NJ Estimated Use Tax over $200,000: .0852% x $300,000 = $255.60 -> whole-dollar $256.00, under the $494 cap ('.000852 of income, or $494, whichever is less').",
+  "facts": { "filingStatus": "mfj", "njGrossIncome": 300000 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.use_tax",
+  "expect": { "valueCents": "25600" }
+}

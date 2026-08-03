@@ -1,0 +1,7 @@
+{
+  "description": "NJ Child Tax Credit: MFJ, taxable income $35,000 (over $30,000, not over $40,000 -> $800/child), 2 dependents age 5 or younger -> $1,600.00 (refundable in effect, NJ-1040 line 65).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 35000, "njChildrenUnder6": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.ctc",
+  "expect": { "valueCents": "160000" }
+}

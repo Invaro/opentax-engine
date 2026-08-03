@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -134,4 +134,82 @@ const pa = {
   // box 14, 1099-MISC box 15, 1099-NEC box 5).
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa };
+const nj = {
+  // NJ is CATEGORY-BASED (NJ-1040 lines 15-26) — federalAGI is NOT the NJ
+  // base. Transcribe the category nets below (a category loss is entered as
+  // the negative net; the composer suppresses it per the printed no-loss
+  // rule). Spouses combine within a category on a joint return (unlike PA).
+  njWages: usd.optional().describe("NJ-1040 line 15: W-2 BOX 16 state wages total (falls back to the shared wages input; NJ taxes cafeteria/125 benefits and some items federal Box 1 excludes)"),
+  njTaxableInterest: usd.optional().describe("NJ-1040 line 16a taxable interest (NJ-exempt: federal obligations, NJ municipal bonds — exclude here, report on 16b)"),
+  njTaxExemptInterest: usd.optional().describe("NJ-1040 line 16b tax-exempt interest (reported, never taxed)"),
+  njDividends: usd.optional().describe("NJ-1040 line 17 dividends"),
+  njBusinessNet: usd.optional().describe("NJ-1040 line 18 net profits from business (Schedule NJ-BUS-1 Part I; negative allowed — the composer suppresses a net category loss per the printed rule)"),
+  njDispositionNet: usd.optional().describe("NJ-1040 line 19 net gains from disposition of property (Schedule NJ-DOP; NO capital-gain preference, NO loss carryover; negative allowed — suppressed)"),
+  njPension: usd.optional().describe("NJ-1040 line 20a TAXABLE pension/annuity/IRA distributions (NJ three-year rule / general rule basis recovery already applied; Social Security and Railroad Retirement are exempt and never entered)"),
+  njPensionExcludable: usd.optional().describe("NJ-1040 line 20b excludable (previously-taxed) pension/annuity/IRA amounts — display only"),
+  njPartnershipNet: usd.optional().describe("NJ-1040 line 21 distributive share of partnership income (NJK-1; negative suppressed)"),
+  njScorpNet: usd.optional().describe("NJ-1040 line 22 net pro rata share of S corporation income (NJ-K-1; negative suppressed)"),
+  njRentRoyaltyNet: usd.optional().describe("NJ-1040 line 23 net rents/royalties/patents/copyrights (negative suppressed)"),
+  njGamblingNet: usd.optional().describe("NJ-1040 line 24 net gambling winnings (losses net WITHIN the category; NJ Lottery prizes of $10,000 or less are exempt)"),
+  njAlimonyReceived: usd.optional().describe("NJ-1040 line 25 alimony received (NJ did not adopt the TCJA repeal — still NJ income)"),
+  njOtherIncome: usd.optional().describe("NJ-1040 line 26 other income"),
+  njPensionEligible: z.boolean().optional().describe("line 28a gate: filer (or spouse if joint) was 62+ OR blind/disabled per Social Security guidelines on the last day of the year — enables the pension exclusion (us.nj.pension_exclusion)"),
+  njPensionEligibleAmount: usd.optional().describe("joint returns where only ONE spouse is 62+/disabled: that spouse's share of line 20a (the exclusion never covers the ineligible spouse's pension). Defaults to all of line 20a."),
+  njOtherRetirementEligible: z.boolean().optional().describe("line 28b Worksheet D gate: filer is 62 or older (the composer auto-computes the unclaimed exclusion when earned income ≤ $3,000 and line 27 ≤ $100,000)"),
+  njOtherRetirementExclusion: usd.optional().describe("OVERRIDE: hand-computed Worksheet D line 9 unclaimed exclusion (required for the $100,001-$150,000 percentage tiers)"),
+  njSpecialExclusion: z.boolean().optional().describe("line 28b Special Exclusion attested: filer (and spouse if joint) will NEVER be eligible for Social Security/Railroad Retirement because the employer did not participate — adds $6,000 (MFJ/HOH/QSS) / $3,000 (single/MFS)"),
+  njDomesticPartner: z.boolean().optional().describe("registered NJ domestic partner claimed as a line 6 regular exemption (+$1,000)"),
+  njSeniorCount: z.number().int().optional().describe("line 7 count (0-2): filer/spouse 65 or older (born 1960 or earlier for TY2025) — $1,000 each"),
+  njBlindCount: z.number().int().optional().describe("line 8 count (0-2): filer/spouse blind or disabled — $1,000 each"),
+  njVeteranCount: z.number().int().optional().describe("line 9 count (0-2): filer/spouse honorably-discharged veterans — $6,000 each"),
+  njCollegeDependents: z.number().int().optional().describe("line 12 count: dependents under 22 attending college full-time (five months, half support) — $1,000 each ON TOP of the $1,500 line 10/11 exemption (use the shared dependents input for the $1,500 count)"),
+  njMedicalExpenses: usd.optional().describe("unreimbursed medical expenses (Worksheet F line 1) — the composer applies the 2%-of-line-29 floor"),
+  njArcherMsa: usd.optional().describe("Archer MSA contributions (federal Form 8853; NJ has NO HSA deduction — never enter HSA amounts)"),
+  njSeHealthInsurance: usd.optional().describe("self-employed health insurance deduction (Worksheet F line 5)"),
+  njAlimonyPaid: usd.optional().describe("NJ-1040 line 32 court-ordered alimony PAID (still deductible for NJ; never child support)"),
+  njConservationContribution: usd.optional().describe("NJ-1040 line 33 qualified conservation contribution (NJ land, federal amount)"),
+  njHezDeduction: usd.optional().describe("NJ-1040 line 34 Health Enterprise Zone deduction (TB-56)"),
+  njAbcaAdjustment: usd.optional().describe("NJ-1040 line 35 Alternative Business Calculation Adjustment (Schedule NJ-BUS-2 line 11 — the only cross-category loss softener, 20-year carryforward)"),
+  njOrganDonationExpenses: usd.optional().describe("NJ-1040 line 36 organ/bone-marrow donation expenses (composer caps at $10,000)"),
+  njNjbestContributions: usd.optional().describe("NJ-1040 line 37a NJBEST 529 contributions (composer caps at $10,000; all three 37a-c require gross income ≤ $200,000)"),
+  njNjclassPaid: usd.optional().describe("NJ-1040 line 37b NJCLASS loan principal+interest paid (composer caps at $2,500)"),
+  njTuitionPaid: usd.optional().describe("NJ-1040 line 37c NJ-institution tuition paid (composer caps at $10,000)"),
+  njPropertyTaxesPaid: usd.optional().describe("NJ-1040 line 40a: property taxes due and paid on the principal residence (homeowners; after Worksheet G proration). Tenants: use njRentPaid instead and the composer applies the 18% conversion."),
+  njRentPaid: usd.optional().describe("rent paid on the NJ principal residence (tenants) — the composer enters 18% of it on line 40a"),
+  njMfsSameHome: z.boolean().optional().describe("MFS and both spouses maintained the SAME main home — halves the property-tax deduction cap ($7,500) and credit ($25)"),
+  njCojCredit: usd.optional().describe("NJ-1040 line 44 credit for income taxes paid to other jurisdictions (Schedule NJ-COJ, hand-computed; composer caps at the line 43 tax). NO credit for Pennsylvania-reciprocal WAGES (the PA/NJ agreement) — Philadelphia wage tax DOES qualify."),
+  njShelteredWorkshopCredit: usd.optional().describe("NJ-1040 line 46 Sheltered Workshop Tax Credit (GIT-317)"),
+  njGoldStarCredit: usd.optional().describe("NJ-1040 line 47 Gold Star Family Counseling Credit (hours × TRICARE rate)"),
+  njOrganDonorEmployerCredit: usd.optional().describe("NJ-1040 line 48 employer of organ/bone-marrow donor credit (25% of salary, up to 30 days)"),
+  njUnderpaymentInterest: usd.optional().describe("NJ-1040 line 52 interest on underpayment of estimated tax (Form NJ-2210)"),
+  njSrp: usd.optional().describe("NJ-1040 line 53c Shared Responsibility Payment (Worksheet L/Schedule NJ-HCC, hand-computed from coverage months; composer zeroes it below the filing threshold)"),
+  njEitcOverride: usd.optional().describe("OVERRIDE: us.nj.eitc oracle answer — wins over the composer's 40%-of-federalEITC / $260 computation"),
+  njEitcAgeDecoupled: z.boolean().optional().describe("flat-$260 NJEITC attested: 18+, no qualifying child, met all federal EIC requirements except age, not claimed as a dependent (NJ eliminated both federal age limits)"),
+  njExcessUiWfSwf: usd.optional().describe("NJ-1040 line 59 excess UI/WF/SWF withheld (two+ employers over $184.02; Form NJ-2450)"),
+  njExcessDi: usd.optional().describe("NJ-1040 line 60 excess disability insurance withheld (over $380.42; NJ-2450)"),
+  njExcessFli: usd.optional().describe("NJ-1040 line 61 excess family leave insurance withheld (over $545.82; NJ-2450)"),
+  njWwcCredit: usd.optional().describe("NJ-1040 line 62 Wounded Warrior Caregivers Credit (Schedule NJ-WWC; gross income ≤ $100,000 MFJ/HOH/QSS, ≤ $50,000 single/MFS)"),
+  njBaitCredit: usd.optional().describe("NJ-1040 line 63 pass-through Business Alternative Income Tax credit (PTE-K-1)"),
+  njFederalCdcc: usd.optional().describe("the federal Form 2441 child and dependent care credit — enables the line 64 NJ CDCC (us.nj.cdcc: 50%→10% of it by NJ taxable income, $150,000 cap)"),
+  njChildrenUnder6: z.number().int().optional().describe("count of line 10/11 dependents age 5 or younger on 12/31 (born 2020 or later for TY2025) — the line 65 NJ Child Tax Credit multiplier ($1,000→$200 each by taxable income ≤ $80,000; MFS ineligible)"),
+};
+
+const oh = {
+  ohBusinessIncome: usd.optional().describe("OH Schedule of Business Income Part 1 line 10: total business income (Schedule B/C/D/E/F + guaranteed payments to 20%+ owners + § 4797) — the composer runs the $250,000/$125,000 Business Income Deduction and the flat-3% line 6/8b arithmetic from it"),
+  ohRetirementIncome: usd.optional().describe("retirement income received on account of retirement still INCLUDED in Ohio AGI, both spouses combined (NOT Social Security/railroad/uniformed-services amounts — those are deducted and never qualify) — drives the retirement income credit (max $200)"),
+  ohAge65OrOlder: z.boolean().optional().describe("filer (or spouse) was 65 or older at year end — $50 senior citizen credit (once per return; NOT available if the lump sum distribution credit was ever taken)"),
+  ohBothSpousesQualifyingIncome: z.boolean().optional().describe("joint filing credit gate: EACH spouse has $500+ of qualifying income included in Ohio AGI (not interest/dividends/capital gains/rents, and not BID-deducted business income or deducted Social Security/retirement)"),
+  ohFederalCdccTentative: usd.optional().describe("federal Form 2441 line 9c (tentative credit before the federal liability limit) — the Ohio CDCC pays 100% of it when MAGI < $20,000"),
+  ohFederalCdccAllowed: usd.optional().describe("federal Form 2441 line 11 (liability-limited allowed credit) — the Ohio CDCC pays 25% of it when MAGI is $20,000-$39,999"),
+  ohOtherCreditsPreJfc: usd.optional().describe("OH Schedule of Credits lines 3+5+7+8 (lump sum retirement, lump sum distribution, displaced worker training, campaign contribution) — transcribed; they subtract BEFORE the joint filing credit's line-11 base"),
+  ohEicOverride: usd.optional().describe("OVERRIDE: us.oh.eic oracle answer — wins over the composer's 30%-of-federalEITC line 13 computation"),
+  ohNonresidentCredit: usd.optional().describe("OH Schedule of Credits line 38 nonresident credit (Ohio IT NRC, hand-computed)"),
+  ohResidentCredit: usd.optional().describe("OH Schedule of Credits line 39 resident credit for taxes paid other states (Ohio IT RC, hand-computed)"),
+  ohInterestPenalty: usd.optional().describe("IT 1040 line 11 interest penalty on underpayment of estimated tax (Ohio IT/SD 2210)"),
+  // OH line 14 withholding uses the shared stateWithholding input (Schedule of
+  // Ohio Withholding part A line 1 — never city or school district amounts);
+  // line 16 refundable credits (Schedule of Credits lines 41-46, incl. the
+  // IT K-1 pass-through entity credit) use the shared refundableCredits input.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh };

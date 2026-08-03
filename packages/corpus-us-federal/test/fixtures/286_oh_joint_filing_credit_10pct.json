@@ -1,0 +1,13 @@
+{
+  "description": "OH joint filing credit: MFJ, MAGI $60,000, 2 exemptions (2 x 2,150 = 4,300) -> MAGI less exemptions $55,700 -> 10% tier ($50,001-$75,000). Line 11 tax $1,200 -> 10% = $120.00, under the $650 cap. Both spouses' $500 qualifying income attested.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ohModifiedAgi": 60000,
+    "ohExemptionCount": 2,
+    "ohTaxLessCredits": 1200,
+    "ohBothSpousesHaveQualifyingIncome": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.oh.joint_filing_credit",
+  "expect": { "valueCents": "12000", "intermediates": { "us.oh.exemption_amount": "430000" } }
+}

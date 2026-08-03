@@ -642,12 +642,12 @@ var init_util = __esm({
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub3 of error2.issues) {
-    if (sub3.path.length > 0) {
-      fieldErrors[sub3.path[0]] = fieldErrors[sub3.path[0]] || [];
-      fieldErrors[sub3.path[0]].push(mapper(sub3));
+  for (const sub4 of error2.issues) {
+    if (sub4.path.length > 0) {
+      fieldErrors[sub4.path[0]] = fieldErrors[sub4.path[0]] || [];
+      fieldErrors[sub4.path[0]].push(mapper(sub4));
     } else {
-      formErrors.push(mapper(sub3));
+      formErrors.push(mapper(sub4));
     }
   }
   return { formErrors, fieldErrors };
@@ -10557,11 +10557,11 @@ function evalExpr(expr, rule, ctx, children) {
       return value;
     }
     case "param": {
-      const param22 = rule.parameters?.[expr.name];
-      if (!param22) {
+      const param24 = rule.parameters?.[expr.name];
+      if (!param24) {
         throw new EngineError(`rule "${rule.id}" has no parameter "${expr.name}"`);
       }
-      return valueFromJSON({ type: param22.type, value: param22.value });
+      return valueFromJSON({ type: param24.type, value: param24.value });
     }
     case "add": {
       const vals = evalAll(expr.args, rule, ctx, children);
@@ -13492,6 +13492,122 @@ var init_facts = __esm({
         min: "0",
         description: "PA resident credit for income tax paid to other states (PA-40 line 22, Schedule G-L; not allowed for reciprocal-state compensation: IN, MD, NJ, OH, VA, WV). Subtracts from tax BEFORE Tax Forgiveness per Schedule SP Section IV. In dollars.",
         default: { value: "0", rationale: "No other-state tax credit claimed absent contrary input" }
+      },
+      // ---- New Jersey deep pack (state-nj.ts) ---------------------------------
+      {
+        id: "njGrossIncome",
+        type: "money",
+        min: "0",
+        description: "New Jersey gross income (NJ-1040 line 29: total category income minus the pension/retirement exclusions, BEFORE exemptions and deductions) \u2014 keys the Estimated Use Tax Chart (us.nj.use_tax) and the $10,000/$20,000 filing threshold. In dollars.",
+        default: { value: "0", rationale: "Assumed no NJ gross income absent contrary input (bottom use-tax tier)" }
+      },
+      {
+        id: "njFederalCdcc",
+        type: "money",
+        min: "0",
+        description: "The federal child and dependent care credit (Form 2441) \u2014 Worksheet J line 1 input for us.nj.cdcc. Where the federal liability limit zeroed an otherwise-allowable credit, NJ's mock-return guidance supports the credit the filer WOULD have been eligible for; disclose which 2441 amount was supplied. In dollars.",
+        default: { value: "0", rationale: "No federal child and dependent care credit claimed absent contrary input" }
+      },
+      {
+        id: "njChildrenUnder6",
+        type: "int",
+        min: "0",
+        description: "Count of dependents claimed on NJ-1040 lines 10/11 who were age 5 or younger on the last day of the tax year (born 2020 or later for TY2025) \u2014 the NJ Child Tax Credit multiplier (us.nj.ctc).",
+        default: { value: "0", rationale: "No children age 5 or younger assumed absent contrary input" }
+      },
+      {
+        id: "njPensionIncome",
+        type: "money",
+        min: "0",
+        description: "NJ-1040 line 20a taxable pension/annuity/IRA income ELIGIBLE for the line 28a exclusion \u2014 on a joint return where only one spouse is 62+/disabled, ONLY that spouse's pension income (the ineligible spouse's share never excludes). In dollars.",
+        default: { value: "0", rationale: "No eligible pension income absent contrary input" }
+      },
+      {
+        id: "njTotalIncome",
+        type: "money",
+        min: "0",
+        description: "NJ-1040 line 27 total income (all categories, before the pension exclusion) \u2014 the pension-exclusion chart tier and $150,000 cliff key on this amount. In dollars.",
+        default: { value: "0", rationale: "Assumed no NJ total income absent contrary input" }
+      },
+      {
+        id: "njPensionEligible",
+        type: "bool",
+        description: "NJ pension-exclusion age/disability gate attested: the filer (or spouse on a joint return) was age 62 or older OR blind/disabled per Social Security guidelines on the last day of the tax year (2025 NJ-1040 line 28a).",
+        default: { value: false, rationale: "Conservative: exclusion eligibility not attested \u2014 no exclusion" }
+      },
+      {
+        id: "njEitcAgeDecoupled",
+        type: "bool",
+        description: "NJ flat-$260 EITC eligibility attested (2025 NJ-1040 line 58): no qualifying child, at least 18 years old, met ALL federal EIC requirements except the age requirement (NJ eliminated both the under-25 floor and the 65+ ceiling), and not claimed as a dependent on another return.",
+        default: { value: false, rationale: "Conservative: age-decoupled NJEITC eligibility not attested" }
+      },
+      {
+        id: "njPropertyTaxesPaid",
+        type: "money",
+        min: "0",
+        description: "NJ-1040 line 40a: property taxes due and paid on the principal residence (homeowners), or 18% of rent paid (tenants; 18% of site fees for mobile-home owners), after any Worksheet G multi-owner/multi-unit proration. In dollars.",
+        default: { value: "0", rationale: "No property taxes/rent-equivalent paid absent contrary input" }
+      },
+      {
+        id: "njMfsSameHome",
+        type: "bool",
+        description: "Married filing separately AND both spouses maintained the SAME principal residence \u2014 halves the NJ property tax deduction cap ($7,500) and the credit/threshold amounts ($25).",
+        default: { value: false, rationale: "Assumed separate filers did not share the same main home absent contrary input" }
+      },
+      // ---- Ohio deep pack (state-oh.ts) ---------------------------------------
+      {
+        id: "ohModifiedAgi",
+        type: "money",
+        description: "Ohio modified adjusted gross income (MAGI): Ohio adjusted gross income (IT 1040 line 3) PLUS the business income deduction (Schedule of Adjustments line 13) \u2014 the base for the exemption tiers and most credit gates (2025 booklet p. 8). Can be negative. In dollars.",
+        default: { value: "0", rationale: "Assumed no Ohio MAGI absent contrary input" }
+      },
+      {
+        id: "ohExemptionCount",
+        type: "int",
+        min: "0",
+        description: "IT 1040 line 4 exemption count: self (unless claimable as a dependent on another return), spouse if filing jointly, plus federal dependents (Schedule of Dependents).",
+        default: { value: "1", rationale: "Assumed a single self-exemption absent contrary input" }
+      },
+      {
+        id: "ohTaxableBusinessIncome",
+        type: "money",
+        min: "0",
+        description: "IT 1040 line 6 taxable business income (Schedule of Business Income line 15: business income remaining after the $250,000/$125,000 Business Income Deduction, limited to the line 5 Ohio income tax base) \u2014 taxed flat 3% by us.oh.business_income_tax. In dollars.",
+        default: { value: "0", rationale: "No taxable business income absent contrary input" }
+      },
+      {
+        id: "ohEligibleRetirementIncome",
+        type: "money",
+        min: "0",
+        description: "Retirement income received on account of retirement and still INCLUDED in Ohio AGI (both spouses combined) \u2014 the us.oh.retirement_income_credit Table 2 input. Excludes everything deducted on the Schedule of Adjustments (Social Security, railroad, uniformed-services retirement). In dollars.",
+        default: { value: "0", rationale: "No qualifying retirement income absent contrary input" }
+      },
+      {
+        id: "ohTaxLessCredits",
+        type: "money",
+        min: "0",
+        description: "Ohio Schedule of Credits line 11 (line 8c tax less the line 2-9 credits) \u2014 the joint filing credit's percentage base. In dollars.",
+        default: { value: "0", rationale: "Assumed no remaining Ohio tax absent contrary input" }
+      },
+      {
+        id: "ohBothSpousesHaveQualifyingIncome",
+        type: "bool",
+        description: "Ohio joint filing credit gate attested: each spouse has at least $500 of QUALIFYING income included in Ohio AGI \u2014 not interest, dividends/distributions, capital gains, or rents/royalties, and not amounts deducted on the Schedule of Adjustments (deducted business income, Social Security, uniformed-services retirement never qualify).",
+        default: { value: false, rationale: "Conservative: per-spouse $500 qualifying income not attested \u2014 no joint filing credit" }
+      },
+      {
+        id: "ohFederalCdccTentative",
+        type: "money",
+        min: "0",
+        description: "Federal Form 2441 line 9c (the tentative child and dependent care credit BEFORE the federal liability limit; equals line 9a absent prior-year-expense amounts) \u2014 the Ohio CDCC's 100% base when MAGI is under $20,000. In dollars.",
+        default: { value: "0", rationale: "No federal Form 2441 tentative credit absent contrary input" }
+      },
+      {
+        id: "ohFederalCdccAllowed",
+        type: "money",
+        min: "0",
+        description: "Federal Form 2441 line 11 (the liability-LIMITED child and dependent care credit actually allowed federally) \u2014 the Ohio CDCC's 25% base when MAGI is $20,000-$39,999. In dollars.",
+        default: { value: "0", rationale: "No federal Form 2441 allowed credit absent contrary input" }
       }
     ];
   }
@@ -13828,7 +13944,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt = (cents2) => ({
+  const lt2 = (cents2) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -13847,22 +13963,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt("500"),
+    cond: lt2("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt("1500"),
+      cond: lt2("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt("2500"),
+        cond: lt2("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt("300000"),
+          cond: lt2("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -21666,14 +21782,14 @@ var init_state_ca = __esm({
             },
             mode: "half-up"
           });
-          const param22 = (name) => ({ kind: "param", name });
+          const param24 = (name) => ({ kind: "param", name });
           const segment = (peakUpperParam, kinkUpperParam, phaseIn, steep, gentle) => ({
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: earned2, right: param22(peakUpperParam) },
+            cond: { kind: "cmp", op: "le", left: earned2, right: param24(peakUpperParam) },
             then: phaseIn,
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: earned2, right: param22(kinkUpperParam) },
+              cond: { kind: "cmp", op: "le", left: earned2, right: param24(kinkUpperParam) },
               then: steep,
               else: gentle
             }
@@ -21683,33 +21799,33 @@ var init_state_ca = __esm({
             "kinkUpper0kids",
             tentative("65025", "1000000"),
             // 7.65% × 85%
-            linear(param22("peakMid0kids"), param22("max0kids"), "-2601", "40000"),
+            linear(param24("peakMid0kids"), param24("max0kids"), "-2601", "40000"),
             // mirror of the phase-in rate
-            linear(param22("gentleAnchorMid0kids"), param22("gentleAnchorValue0kids"), "-9", "1000")
+            linear(param24("gentleAnchorMid0kids"), param24("gentleAnchorValue0kids"), "-9", "1000")
           );
           const col1 = segment(
             "peakUpper1kid",
             "kinkUpper1kid",
             tentative("2890", "10000"),
             // 34% × 85%
-            linear(param22("steepAnchorMid1kid"), param22("steepAnchorValue1kid"), "-289", "1000"),
-            linear(param22("gentleAnchorMid1kid"), param22("gentleAnchorValue1kid"), "-541", "18000")
+            linear(param24("steepAnchorMid1kid"), param24("steepAnchorValue1kid"), "-289", "1000"),
+            linear(param24("gentleAnchorMid1kid"), param24("gentleAnchorValue1kid"), "-541", "18000")
           );
           const col2 = segment(
             "peakUpper2kids",
             "kinkUpper2kids",
             tentative("3400", "10000"),
             // 40% × 85%
-            linear(param22("steepAnchorMid2kids"), param22("steepAnchorValue2kids"), "-17", "50"),
-            linear(param22("gentleAnchorMid2kids"), param22("gentleAnchorValue2kids"), "-25", "596")
+            linear(param24("steepAnchorMid2kids"), param24("steepAnchorValue2kids"), "-17", "50"),
+            linear(param24("gentleAnchorMid2kids"), param24("gentleAnchorValue2kids"), "-25", "596")
           );
           const col3 = segment(
             "peakUpper3kids",
             "kinkUpper3kids",
             tentative("3825", "10000"),
             // 45% × 85%
-            linear(param22("steepAnchorMid3kids"), param22("steepAnchorValue3kids"), "-153", "400"),
-            linear(param22("gentleAnchorMid3kids"), param22("gentleAnchorValue3kids"), "-613", "14400")
+            linear(param24("steepAnchorMid3kids"), param24("steepAnchorValue3kids"), "-153", "400"),
+            linear(param24("gentleAnchorMid3kids"), param24("gentleAnchorValue3kids"), "-613", "14400")
           );
           return {
             kind: "if",
@@ -22197,7 +22313,7 @@ var init_state_ny = __esm({
           // $50 ($14,001-$18,000, uses fagiLimit as its threshold)
         },
         formula: (() => {
-          const param22 = (name) => ({ kind: "param", name });
+          const param24 = (name) => ({ kind: "param", name });
           const fagi = fact36("nyIt214Fagi");
           const adjustedRent = {
             kind: "mulDiv",
@@ -22232,32 +22348,32 @@ var init_state_ny = __esm({
           const line19 = table1Rate("35", "300000", table1Rate("40", "500000", table1Rate("45", "700000", table1Rate("50", "900000", table1Rate("55", "1100000", table1Rate("60", "1400000", { kind: "mulDiv", a: fagi, b: money33("65"), c: money33("1000"), round: "half-up" }))))));
           const tableA = {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold1") },
-            then: param22("tableAValue1"),
+            cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableAThreshold1") },
+            then: param24("tableAValue1"),
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold2") },
-              then: param22("tableAValue2"),
+              cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableAThreshold2") },
+              then: param24("tableAValue2"),
               else: {
                 kind: "if",
-                cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold3") },
-                then: param22("tableAValue3"),
+                cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableAThreshold3") },
+                then: param24("tableAValue3"),
                 else: {
                   kind: "if",
-                  cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold4") },
-                  then: param22("tableAValue4"),
+                  cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableAThreshold4") },
+                  then: param24("tableAValue4"),
                   else: {
                     kind: "if",
-                    cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold5") },
-                    then: param22("tableAValue5"),
+                    cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableAThreshold5") },
+                    then: param24("tableAValue5"),
                     else: {
                       kind: "if",
-                      cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableAThreshold6") },
-                      then: param22("tableAValue6"),
+                      cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableAThreshold6") },
+                      then: param24("tableAValue6"),
                       else: {
                         kind: "if",
-                        cond: { kind: "cmp", op: "le", left: fagi, right: param22("fagiLimit") },
-                        then: param22("tableAValue7"),
+                        cond: { kind: "cmp", op: "le", left: fagi, right: param24("fagiLimit") },
+                        then: param24("tableAValue7"),
                         else: money33("0")
                       }
                     }
@@ -22266,22 +22382,22 @@ var init_state_ny = __esm({
               }
             }
           };
-          const tableB = {
+          const tableB2 = {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableBThreshold1") },
-            then: param22("tableBValue1"),
+            cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableBThreshold1") },
+            then: param24("tableBValue1"),
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableBThreshold2") },
-              then: param22("tableBValue2"),
+              cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableBThreshold2") },
+              then: param24("tableBValue2"),
               else: {
                 kind: "if",
-                cond: { kind: "cmp", op: "le", left: fagi, right: param22("tableBThreshold3") },
-                then: param22("tableBValue3"),
+                cond: { kind: "cmp", op: "le", left: fagi, right: param24("tableBThreshold3") },
+                then: param24("tableBValue3"),
                 else: {
                   kind: "if",
-                  cond: { kind: "cmp", op: "le", left: fagi, right: param22("fagiLimit") },
-                  then: param22("tableBValue4"),
+                  cond: { kind: "cmp", op: "le", left: fagi, right: param24("fagiLimit") },
+                  then: param24("tableBValue4"),
                   else: money33("0")
                 }
               }
@@ -22293,9 +22409,9 @@ var init_state_ny = __esm({
               kind: "or",
               args: [
                 { kind: "not", arg: fact36("nyIt214Eligible") },
-                { kind: "cmp", op: "gt", left: fagi, right: param22("fagiLimit") },
+                { kind: "cmp", op: "gt", left: fagi, right: param24("fagiLimit") },
                 // line 8 stop
-                { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param22("monthlyRentCap") },
+                { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param24("monthlyRentCap") },
                 // line 13 stop
                 { kind: "cmp", op: "le", left: line18, right: money33("0") },
                 // line 18 stop
@@ -22308,7 +22424,7 @@ var init_state_ny = __esm({
               kind: "if",
               cond: fact36("isAge65OrOlder"),
               then: tableA,
-              else: tableB
+              else: tableB2
             }
           };
         })()
@@ -22819,6 +22935,910 @@ var init_state_pa = __esm({
   }
 });
 
+// ../corpus-us-federal/dist/rules/state-nj.js
+var max04, rd2, param17, le, tableB, njRules;
+var init_state_nj = __esm({
+  "../corpus-us-federal/dist/rules/state-nj.js"() {
+    "use strict";
+    init_state_helpers();
+    max04 = (arg2) => ({ kind: "max0", arg: arg2 });
+    rd2 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+    param17 = (name) => ({ kind: "param", name });
+    le = (left, right) => ({ kind: "cmp", op: "le", left, right });
+    tableB = {
+      kind: "or",
+      args: [isStatus10("mfj"), isStatus10("hoh"), isStatus10("qss")]
+    };
+    njRules = [
+      {
+        id: "us.nj.income_tax",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey gross income tax \u2014 2025 rate schedules with the NJ Tax Table convention (NJ-1040 line 43)",
+        citation: {
+          source: "N.J.S.A. 54A:2-1 (rates, P.L.2020 c.95 text); 2025 NJ-1040 instructions pp. 31, 54-63 (Tax Table + Tax Rate Schedules)",
+          section: "N.J.S.A. 54A:2-1; NJ-1040 line 43",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 New Jersey Tax Rate Schedules (instructions p. 63, verbatim subtraction-constant form). TABLE A, Single / Married-CU partner filing separate: to $20,000 \xD7 .014 \u2212 0; $20,000-$35,000 \xD7 .0175 \u2212 $70.00; $35,000-$40,000 \xD7 .035 \u2212 $682.50; $40,000-$75,000 \xD7 .05525 \u2212 $1,492.50; $75,000-$500,000 \xD7 .0637 \u2212 $2,126.25; $500,000-$1,000,000 \xD7 .0897 \u2212 $15,126.25; over $1,000,000 \xD7 .1075 \u2212 $32,926.25. TABLE B, Married-CU couple filing joint / Head of household / Qualifying widow(er)-surviving CU partner: to $20,000 \xD7 .014 \u2212 0; $20,000-$50,000 \xD7 .0175 \u2212 $70.00; $50,000-$70,000 \xD7 .0245 \u2212 $420.00; $70,000-$80,000 \xD7 .035 \u2212 $1,154.50; $80,000-$150,000 \xD7 .05525 \u2212 $2,775.00; $150,000-$500,000 \xD7 .0637 \u2212 $4,042.50; $500,000-$1,000,000 \xD7 .0897 \u2212 $17,042.50; over $1,000,000 \xD7 .1075 \u2212 $34,842.50. STATUTE CROSS-CHECK (54A:2-1 fixed-dollar form, P.L.2020 c.95): single over $75,000-$500,000 = '$2,651.25 plus 6.370% of the excess over $75,000'; single over $1,000,000 = '$74,573.75 plus 10.750%'; joint over $1,000,000 = '$72,657.50 plus 10.750%' \u2014 arithmetically identical to the printed subtraction constants (this rule encodes the equivalent fixed-plus-rate rows). METHOD (line 43 instructions, verbatim): 'If the income on line 42 is less than $100,000, use the Tax Table on page 54. Otherwise, calculate the tax by using the Tax Rate Schedule for your filing status.' The printed Tax Table runs in $50 rows with two columns (filing status '1 or 3' = single/MFS; '2, 4, or 5' = MFJ/HOH/QSS); verified rows (88,000-88,050 \u2192 3,481/2,088; 97,000-97,050 \u2192 4,054/2,586) reproduce the rate schedule EVALUATED AT THE $50-ROW MIDPOINT, rounded to the dollar \u2014 this rule's default below $100,000 is that midpoint-table method (rows under $50 of income were not individually verified; divergence there is bounded by $1); useFormulaMethod=true evaluates the raw schedule at the exact income instead (the Division's website permits either method below $100,000). ROUNDING (instructions p. 4): 'Round amounts of 50 cents or more up to the next whole dollar' (half-up). NOT APPLIED HERE (composer/agent responsibility, disclosed): the line-29 FILING THRESHOLD \u2014 a filer whose NJ gross income (line 29, BEFORE exemptions/deductions but AFTER the pension exclusion) is $10,000 or less (single/MFS) / $20,000 or less (MFJ/HOH/QSS) pays NO tax regardless of this schedule; this target computes the schedule tax on the already-composed line-42 taxable income and cannot see line 29. Civil-union partners file NJ as married even when federally single (N.J.S.A. 37:1-31)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          tableThreshold: { value: "10000000", type: "money" },
+          // $100,000 (table below, schedule at/above)
+          filingThresholdSingleMfs: { value: "1000000", type: "money" },
+          // $10,000 (line 29 gate, documented)
+          filingThresholdJointHohQss: { value: "2000000", type: "money" }
+          // $20,000 (line 29 gate, documented)
+        },
+        formula: (() => {
+          const base = max04(fact36("stateTaxableIncome"));
+          const scheduleFor = (b, table2) => {
+            const rows = {
+              // fixed = rate × threshold − printed subtraction constant (exact)
+              a: [
+                { thresholdCents: "0", fixedCents: "0", rate: { num: "14", den: "1000" } },
+                { thresholdCents: "2000000", fixedCents: "28000", rate: { num: "175", den: "10000" } },
+                { thresholdCents: "3500000", fixedCents: "54250", rate: { num: "35", den: "1000" } },
+                { thresholdCents: "4000000", fixedCents: "71750", rate: { num: "5525", den: "100000" } },
+                { thresholdCents: "7500000", fixedCents: "265125", rate: { num: "637", den: "10000" } },
+                { thresholdCents: "50000000", fixedCents: "2972375", rate: { num: "897", den: "10000" } },
+                { thresholdCents: "100000000", fixedCents: "7457375", rate: { num: "1075", den: "10000" } }
+              ],
+              b: [
+                { thresholdCents: "0", fixedCents: "0", rate: { num: "14", den: "1000" } },
+                { thresholdCents: "2000000", fixedCents: "28000", rate: { num: "175", den: "10000" } },
+                // NOTE: the printed Table B constants are DISCONTINUOUS at $70,000
+                // (+$0.53) and $80,000 (−$0.50): each fixed anchor below is
+                // rate × threshold − printed constant for the SAME row, never the
+                // prior row's value at the boundary — this is what reproduces the
+                // printed "multiply, then subtract" arithmetic and the Tax Table.
+                { thresholdCents: "5000000", fixedCents: "80500", rate: { num: "245", den: "10000" } },
+                { thresholdCents: "7000000", fixedCents: "129550", rate: { num: "35", den: "1000" } },
+                { thresholdCents: "8000000", fixedCents: "164500", rate: { num: "5525", den: "100000" } },
+                { thresholdCents: "15000000", fixedCents: "551250", rate: { num: "637", den: "10000" } },
+                { thresholdCents: "50000000", fixedCents: "2780750", rate: { num: "897", den: "10000" } },
+                { thresholdCents: "100000000", fixedCents: "7265750", rate: { num: "1075", den: "10000" } }
+              ]
+            };
+            return printedSchedule(b, rows[table2]);
+          };
+          const mid50 = {
+            kind: "add",
+            args: [
+              {
+                kind: "mulInt",
+                base: money33("5000"),
+                count: { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }
+              },
+              money33("2500")
+            ]
+          };
+          const byStatus = (b) => ({
+            kind: "if",
+            cond: tableB,
+            then: scheduleFor(b, "b"),
+            else: scheduleFor(b, "a")
+          });
+          return {
+            kind: "if",
+            cond: {
+              kind: "and",
+              args: [
+                { kind: "cmp", op: "lt", left: base, right: param17("tableThreshold") },
+                { kind: "not", arg: fact36("useFormulaMethod") }
+              ]
+            },
+            then: rd2(byStatus(mid50)),
+            else: rd2(byStatus(base))
+          };
+        })()
+      },
+      {
+        id: "us.nj.eitc",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey Earned Income Tax Credit \u2014 40% of the federal EIC, plus the flat $260 age-decoupled credit (NJ-1040 line 58, refundable)",
+        citation: {
+          source: "N.J.S.A. 54A:4-7; 2025 NJ-1040 instructions p. 42 (line 58)",
+          section: "NJ-1040 line 58",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 line 58 instructions, verbatim: 'The NJEITC is 40% of the federal EIC. If you claimed and were allowed a federal earned income credit (EIC), enter 40% of your federal EIC amount.' Refundable (line 58 aggregates into line 66 payments; excess drives the line 68/80 refund). AGE DECOUPLING (verbatim): 'If you were at least 18 years old, you may be eligible for an NJEITC even if you did not meet the age requirement for a federal EIC. The maximum age limit has been eliminated. Did you meet the following requirements during 2025? You did not have a qualifying child; and You were at least 18 years old on the last day of the tax year; and You met all federal EIC requirements except the age requirement; and You are not listed as a dependent on another tax return. If so, enter $260 on line 58.' \u2014 UNLIKE Illinois (which recomputes 20% of the no-age-gate federal amount), NJ's decoupled credit is a FLAT $260 for 2025, encoded here as the answer whenever njEitcAgeDecoupled is attested AND the ordinary federal EITC is $0 (a filer with a nonzero federal EIC gets the ordinary 40%). MFS: eligible only with a qualifying child who lived with the filer more than half of 2025 while living apart from the spouse the last six months (attested by supplying the federal EITC; not separately gated here). Part-year residents prorate both the 40% amount and the $260 by resident months (not modeled \u2014 full-year resident target). Civil-union couples not filing a joint federal return compute the federal EIC from a mock joint federal return (agent-composed, disclosed)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          pctOfFederal: { value: "40", type: "int" },
+          ageDecoupledFlat: { value: "26000", type: "money" }
+          // $260 (2025)
+        },
+        formula: rd2({
+          kind: "if",
+          cond: {
+            kind: "and",
+            args: [
+              fact36("njEitcAgeDecoupled"),
+              { kind: "cmp", op: "eq", left: ruleRef30("us.federal.eitc"), right: money33("0") }
+            ]
+          },
+          then: param17("ageDecoupledFlat"),
+          else: {
+            kind: "mulRate",
+            base: ruleRef30("us.federal.eitc"),
+            rate: { num: "40", den: "100" },
+            round: "half-up"
+          }
+        })
+      },
+      {
+        id: "us.nj.cdcc",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey Child and Dependent Care Credit \u2014 sliding percentage of the federal credit by NJ taxable income (NJ-1040 line 64, Worksheet J)",
+        citation: {
+          source: "N.J.S.A. 54A:4-17; 2025 NJ-1040 instructions pp. 43-44 (Worksheet J, line 64)",
+          section: "NJ-1040 line 64; Worksheet J",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 Worksheet J (verbatim): line 1 'Enter your federal credit for child and dependent care expenses'; line 2 'Enter your taxable income from line 42, NJ-1040'; line 3 percentage by line 2: '$30,000 or less: 50%; Over $30,000 but not over $60,000: 40%; Over $60,000 but not over $90,000: 30%; Over $90,000 but not over $120,000: 20%; Over $120,000 but not over $150,000: 10%; Over $150,000: not eligible'; line 4 'Multiply line 1 by the percentage on line 3.' Refundable in effect: line 64 aggregates into line 66 total payments and can drive the line 68/80 refund. INPUT (njFederalCdcc): the federal \xA7 21 child and dependent care credit computed on Form 2441 \u2014 for a filer whose federal credit was reduced only by the federal liability limit, the instructions' mock-return language for non-joint federal filers ('calculate the amount of the federal credit... you would have been eligible to receive') supports using the credit the filer WOULD have been eligible for; supply the appropriate 2441 amount and disclose which was used (the worksheet itself does not name a 2441 line number). MFS: 'you are only eligible for the credit if you meet certain exceptions for federal purposes' (the \xA7 21(e) living-apart rules \u2014 attested by supplying a nonzero njFederalCdcc). Part-year residents prorate by resident months (not modeled). Enclose federal Form 2441."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          tier1Max: { value: "3000000", type: "money" },
+          // $30,000 → 50%
+          tier2Max: { value: "6000000", type: "money" },
+          // $60,000 → 40%
+          tier3Max: { value: "9000000", type: "money" },
+          // $90,000 → 30%
+          tier4Max: { value: "12000000", type: "money" },
+          // $120,000 → 20%
+          tier5Max: { value: "15000000", type: "money" }
+          // $150,000 → 10%; above: $0
+        },
+        formula: (() => {
+          const ti = max04(fact36("stateTaxableIncome"));
+          const pct3 = (num) => ({
+            kind: "mulRate",
+            base: fact36("njFederalCdcc"),
+            rate: { num, den: "100" },
+            round: "half-up"
+          });
+          const tier = (max, num, next) => ({
+            kind: "if",
+            cond: le(ti, param17(max)),
+            then: pct3(num),
+            else: next
+          });
+          return rd2(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money33("0")))))));
+        })()
+      },
+      {
+        id: "us.nj.ctc",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey Child Tax Credit \u2014 $1,000 to $200 per child age 5 or younger, by NJ taxable income (NJ-1040 line 65, refundable)",
+        citation: {
+          source: "N.J.S.A. 54A:4-17.1; 2025 NJ-1040 instructions p. 44 (line 65); nj.gov 2025-changes page",
+          section: "NJ-1040 line 65",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 line 65 instructions, verbatim: 'If your taxable income is $80,000 or less, you are eligible for a credit for each dependent who is age 5 or younger on the last day of the tax year. If your filing status is married filing separately, you are not eligible for this credit.' Per-child amount by line 42 taxable income (verbatim): '$30,000 or less: $1,000; Over $30,000 not over $40,000: $800; Over $40,000 not over $50,000: $600; Over $50,000 not over $60,000: $400; Over $60,000 not over $80,000: $200.' Multiply by 'the number of dependents claimed on lines 10 and 11, NJ-1040 who were age 5 or younger on the last day of the tax year (born 2020 or later).' Refundable in effect (line 65 aggregates into the line 66 payments total). Part-year residents prorate by resident months (not modeled \u2014 full-year resident target). The child must be a claimed dependent (line 10/11), not merely a household member."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          tier1Max: { value: "3000000", type: "money" },
+          // ≤$30,000 → $1,000/child
+          tier2Max: { value: "4000000", type: "money" },
+          // ≤$40,000 → $800
+          tier3Max: { value: "5000000", type: "money" },
+          // ≤$50,000 → $600
+          tier4Max: { value: "6000000", type: "money" },
+          // ≤$60,000 → $400
+          tier5Max: { value: "8000000", type: "money" },
+          // ≤$80,000 → $200; above: $0
+          amount1: { value: "100000", type: "money" },
+          amount2: { value: "80000", type: "money" },
+          amount3: { value: "60000", type: "money" },
+          amount4: { value: "40000", type: "money" },
+          amount5: { value: "20000", type: "money" }
+        },
+        formula: (() => {
+          const ti = max04(fact36("stateTaxableIncome"));
+          const tier = (max, amount, next) => ({
+            kind: "if",
+            cond: le(ti, param17(max)),
+            then: param17(amount),
+            else: next
+          });
+          const perChild = tier("tier1Max", "amount1", tier("tier2Max", "amount2", tier("tier3Max", "amount3", tier("tier4Max", "amount4", tier("tier5Max", "amount5", money33("0"))))));
+          return {
+            kind: "if",
+            cond: isStatus10("mfs"),
+            then: money33("0"),
+            else: { kind: "mulInt", base: perChild, count: fact36("njChildrenUnder6") }
+          };
+        })()
+      },
+      {
+        id: "us.nj.pension_exclusion",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey Pension/Retirement Exclusion \u2014 line 28a chart with the $150,000 income cliff",
+        citation: {
+          source: "N.J.S.A. 54A:6-10, 54A:6-15; 2025 NJ-1040 instructions pp. 20-21 (line 28a chart, Worksheet D)",
+          section: "NJ-1040 line 28a",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 line 28a (verbatim): 'You can exclude all or part of the income reported on line 20a if you meet the following qualifications: You (and/or your spouse if filing jointly) were age 62 or older or blind/disabled as defined by Social Security guidelines on the last day of the tax year; and Your income on line 27 is $150,000 or less.' Exclusion = LESSER of the eligible line-20a pension income and the chart amount, by filing status and line-27 total income (verbatim chart): MFJ \u2014 $0-$100,000: $100,000; $100,001-$125,000: 50% of line 20a; $125,001-$150,000: 25% of line 20a. Single/HOH/QSS \u2014 $75,000; 37.5% of line 20a; 18.75% of line 20a. MFS \u2014 $50,000; 25% of line 20a; 12.5% of line 20a. HARD CLIFF: line 27 over $150,000 \u2192 NO exclusion (one dollar of income can destroy the entire exclusion \u2014 a findable cliff). JOINT FILERS (verbatim): 'If only one spouse is 62 or older or disabled, enter only the pension income of that spouse' \u2014 supply only the eligible spouse's line-20a amount in njPensionIncome. Social Security and Railroad Retirement are NOT in line 20a (fully exempt, p. 8 exempt list). The line-28b Other Retirement Income Exclusion (Worksheet D: unclaimed max for 62+ filers with \u2264$3,000 of earned income) and the $6,000/$3,000 Special Exclusion (never SS-eligible) are composed separately by the return composer. Conservative default: njPensionEligible=false \u2192 $0."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          incomeCliff: { value: "15000000", type: "money" },
+          // $150,000 (line 27)
+          fullTierMax: { value: "10000000", type: "money" },
+          // $100,000 (line 27)
+          midTierMax: { value: "12500000", type: "money" },
+          // $125,000 (line 27)
+          capJoint: { value: "10000000", type: "money" },
+          // $100,000
+          capSingleHohQss: { value: "7500000", type: "money" },
+          // $75,000
+          capMfs: { value: "5000000", type: "money" }
+          // $50,000
+        },
+        formula: (() => {
+          const income = fact36("njTotalIncome");
+          const pension = max04(fact36("njPensionIncome"));
+          const pctOfPension = (num, den) => rd2({ kind: "mulRate", base: pension, rate: { num, den }, round: "half-up" });
+          const byStatus = (capParam, mid, low) => ({
+            kind: "if",
+            cond: le(income, param17("fullTierMax")),
+            then: { kind: "min", args: [pension, param17(capParam)] },
+            else: {
+              kind: "if",
+              cond: le(income, param17("midTierMax")),
+              then: pctOfPension(mid[0], mid[1]),
+              else: pctOfPension(low[0], low[1])
+            }
+          });
+          return {
+            kind: "if",
+            cond: {
+              kind: "or",
+              args: [
+                { kind: "not", arg: fact36("njPensionEligible") },
+                { kind: "cmp", op: "gt", left: income, right: param17("incomeCliff") }
+              ]
+            },
+            then: money33("0"),
+            else: {
+              kind: "if",
+              cond: isStatus10("mfs"),
+              then: byStatus("capMfs", ["25", "100"], ["125", "1000"]),
+              else: {
+                kind: "if",
+                cond: isStatus10("single"),
+                then: byStatus("capSingleHohQss", ["375", "1000"], ["1875", "10000"]),
+                else: {
+                  kind: "if",
+                  cond: tableB,
+                  // mfj/hoh/qss
+                  then: {
+                    kind: "if",
+                    cond: isStatus10("mfj"),
+                    then: byStatus("capJoint", ["50", "100"], ["25", "100"]),
+                    else: byStatus("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
+                  },
+                  else: byStatus("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
+                }
+              }
+            }
+          };
+        })()
+      },
+      {
+        id: "us.nj.property_tax_deduction",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey Property Tax Deduction \u2014 line 40a capped at $15,000 ($7,500 MFS same home); the $50 credit alternative is a composer selection",
+        citation: {
+          source: "N.J.S.A. 54A:3A-15 et seq.; 2025 NJ-1040 instructions pp. 25-30 (lines 40a-41, 56; Worksheets G/H)",
+          section: "NJ-1040 lines 40a, 41, 56",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 line 41 (verbatim): 'you can take either a Property Tax Deduction of up to $15,000 ($7,500 if you and your spouse file separate returns but maintained the same main home) or a Property Tax Credit' \u2014 the credit is $50 ($25 MFS same home, refundable, line 56). Line 40a input: property taxes due AND paid on the principal residence; TENANTS (verbatim): 'Enter 18% of the rent paid for 2025. This is the amount that is considered property taxes' (mobile-home owners: 18% of site fees). Supply the already-computed line-40a amount in njPropertyTaxesPaid (for tenants, 18% \xD7 rent; multi-owner/multi-unit prorations per Worksheet G composed by the caller). DEDUCTION-VS-CREDIT (Worksheet H, composer's job \u2014 needs the tax computed both ways): take the deduction when tax-without minus tax-with is $50 or more ($25 MFS same home); otherwise the $50/$25 refundable credit on line 56. Eligibility (p. 25): NJ main home subject to property taxes, income over the filing threshold (seniors/blind/disabled at or below the threshold still get the $50 credit, via NJ-1040 or NJ-1040-HW). This rule computes the LINE 41 DEDUCTION only: min(line 40a, $15,000/$7,500)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          cap: { value: "1500000", type: "money" },
+          // $15,000
+          capMfsSameHome: { value: "750000", type: "money" },
+          // $7,500
+          creditAmount: { value: "5000", type: "money" },
+          // $50 ($25 MFS same home)
+          creditThreshold: { value: "5000", type: "money" }
+          // Worksheet H line 8 test: savings ≥ $50
+        },
+        formula: {
+          kind: "min",
+          args: [
+            max04(fact36("njPropertyTaxesPaid")),
+            {
+              kind: "if",
+              cond: { kind: "and", args: [isStatus10("mfs"), fact36("njMfsSameHome")] },
+              then: param17("capMfsSameHome"),
+              else: param17("cap")
+            }
+          ]
+        }
+      },
+      {
+        id: "us.nj.use_tax",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey Estimated Use Tax Chart \u2014 no-receipts estimate by NJ gross income (NJ-1040 line 51, Worksheet K)",
+        citation: {
+          source: "N.J.S.A. 54:32B-14; 2025 NJ-1040 instructions pp. 35-36 (Worksheet K + Estimated Use Tax Chart)",
+          section: "NJ-1040 line 51; Worksheet K",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf",
+          excerpt: "2025 Estimated Use Tax Chart (verbatim, 'for Part I, line 2 only' \u2014 items under $1,000 each, when exact purchase amounts are unknown), keyed to NJ gross income (line 29): 'up to $15,000: $14; $15,001-$30,000: $44; $30,001-$50,000: $64; $50,001-$75,000: $84; $75,001-$100,000: $106; $100,001-$150,000: $134; $150,001-$200,000: $170; $200,001 and over: .0852% (.000852) of income, or $494, whichever is less.' Items of $1,000 or more each must ALWAYS be computed exactly (6.625% minus other states' sales tax up to 6.625%) \u2014 not modeled here; the exact-records path (Worksheet K Part I lines 1a-1d) is likewise the caller's computation. A filer with NO untaxed purchases enters 0.00 (the form requires an explicit entry) \u2014 this chart applies only when use tax IS owed on under-$1,000 items without records. Input: njGrossIncome = NJ-1040 line 29."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          tier1Max: { value: "1500000", type: "money" },
+          // $15,000 → $14
+          tier2Max: { value: "3000000", type: "money" },
+          // $30,000 → $44
+          tier3Max: { value: "5000000", type: "money" },
+          // $50,000 → $64
+          tier4Max: { value: "7500000", type: "money" },
+          // $75,000 → $84
+          tier5Max: { value: "10000000", type: "money" },
+          // $100,000 → $106
+          tier6Max: { value: "15000000", type: "money" },
+          // $150,000 → $134
+          tier7Max: { value: "20000000", type: "money" },
+          // $200,000 → $170
+          tier1Tax: { value: "1400", type: "money" },
+          tier2Tax: { value: "4400", type: "money" },
+          tier3Tax: { value: "6400", type: "money" },
+          tier4Tax: { value: "8400", type: "money" },
+          tier5Tax: { value: "10600", type: "money" },
+          tier6Tax: { value: "13400", type: "money" },
+          tier7Tax: { value: "17000", type: "money" },
+          overCap: { value: "49400", type: "money" }
+          // $494 cap above $200,000
+        },
+        formula: (() => {
+          const income = max04(fact36("njGrossIncome"));
+          const tier = (max, tax, next) => ({
+            kind: "if",
+            cond: le(income, param17(max)),
+            then: param17(tax),
+            else: next
+          });
+          return tier("tier1Max", "tier1Tax", tier("tier2Max", "tier2Tax", tier("tier3Max", "tier3Tax", tier("tier4Max", "tier4Tax", tier("tier5Max", "tier5Tax", tier("tier6Max", "tier6Tax", tier("tier7Max", "tier7Tax", {
+            kind: "min",
+            args: [
+              rd2({ kind: "mulRate", base: income, rate: { num: "852", den: "1000000" }, round: "half-up" }),
+              param17("overCap")
+            ]
+          })))))));
+        })()
+      },
+      {
+        id: "us.nj.parameters",
+        version: 1,
+        jurisdiction: "us.nj",
+        title: "New Jersey 2025 return parameters \u2014 exemptions, thresholds, deductions, credits, SRP (NJ-1040)",
+        citation: {
+          source: "N.J.S.A. 54A:3-1, 54A:3-1.1; 2025 NJ-1040 form + instructions (nj.gov/treasury/taxation, read 2026-08-02); nj.gov Income Tax Changes for Tax Year 2025",
+          section: "NJ-1040 lines 6-13, 30-38, 46-65",
+          url: "https://www.nj.gov/treasury/taxation/pdf/current/1040.pdf",
+          excerpt: "EXEMPTIONS (printed form multipliers, verbatim): line 6 Regular $1,000 each (self; spouse/CU partner if joint; or registered domestic partner); line 7 Senior 65+ $1,000 each (self/spouse only, born 1960 or earlier); line 8 Blind/Disabled $1,000 each (self/spouse only); line 9 Veteran $6,000 each (honorably discharged, self/spouse only); line 10 Qualified Dependent Children $1,500 each; line 11 Other Dependents $1,500 each; line 12 Dependents Attending Colleges $1,000 each (under 22 all year \u2014 born 2004 or later for 2025 \u2014 full-time, five calendar months at school, taxpayer paid half or more of tuition and maintenance); line 13 total \u2192 line 30 deduction.\n\nFILING THRESHOLDS (line 29 NJ gross income): more than $10,000 (single/MFS) / $20,000 (MFJ/HOH/QSS) must file; at or below \u2192 NO TAX DUE (still file for withholding refunds or NJEITC). The threshold tests LINE 29 (after the pension exclusion, before exemptions/deductions).\n\nDEDUCTIONS (lines 30-37c; NJ has NO standard deduction and NO federal itemized coupling): line 31 MEDICAL over the 2% floor \u2014 Worksheet F: unreimbursed medical expenses minus 2% \xD7 line 29, PLUS Archer MSA contributions (federal Form 8853) and the self-employed health insurance deduction (no HSA deduction exists anywhere on the NJ-1040 \u2014 NJ never adopted \xA7 223); line 32 alimony PAID (court-ordered; NJ did not adopt the TCJA \xA7 11051 repeal \u2014 post-2018 instruments still deduct; child support never); line 33 qualified conservation contribution (NJ land, federal amount); line 34 Health Enterprise Zone deduction (TB-56); line 35 Alternative Business Calculation Adjustment (Schedule NJ-BUS-2, the ONE cross-category softener: 50% sharing among the four business-type categories with a 20-year carryforward FOR THE ADJUSTMENT ONLY); line 36 organ/bone marrow donation up to $10,000; lines 37a-37c College Affordability (gross income \u2264 $200,000 for all three): NJBEST 529 contributions up to $10,000, NJCLASS loan principal+interest up to $2,500, NJ-institution tuition up to $10,000. MFS: combined spouses' deductions cannot exceed the joint caps.\n\nCATEGORY/LOSS RULES (p. 7, verbatim): 'You cannot report a loss on your NJ-1040... You can net losses with gains in the same category of income... You cannot apply a net loss in one category of income against income or gains in a different category... If you have a net loss in any income category, make no entry on that line... No carryback or carryover of losses is allowed.' Spouses on a joint return combine within each category (unlike PA). Tax-exempt interest (line 16b) is reported but never taxed; Social Security and Railroad Retirement are exempt; NJ Lottery prizes of $10,000 or less are exempt (bigger prizes fully taxable); unemployment compensation is exempt.\n\nOTHER RETIREMENT INCOME EXCLUSION (line 28b, Worksheet D): a 62-or-older filer whose earned income (lines 15+18+21+22) is $3,000 or less may claim the UNUSED portion of the line-28a maximum exclusion; SPECIAL EXCLUSION $6,000 (MFJ/HOH/QSS) / $3,000 (single/MFS) for filers who will NEVER be eligible for Social Security or Railroad Retirement because their employer did not participate.\n\nCREDITS: line 44 Credit for Income Taxes Paid to Other Jurisdictions (Schedule NJ-COJ; cannot exceed line 43 tax; NO credit for Pennsylvania-reciprocal WAGES \u2014 the PA/NJ Reciprocal Agreement covers compensation, but NOT Philadelphia's wage tax, which does qualify); line 46 Sheltered Workshop Tax Credit (GIT-317, max $1,000 per disabled employee \u2014 transcribed); line 47 Gold Star Family Counseling Credit (hours \xD7 TRICARE rate); line 48 employer of organ/bone-marrow donor (25% of salary up to 30 days); lines 59-61 EXCESS UI/WF/SWF, DI, FLI withheld from two or more employers (2025 employee maximums, verbatim: UI/WF/SWF $184.02; DI $380.42; FLI $545.82 \u2014 Form NJ-2450); line 62 Wounded Warrior Caregivers Credit (gross income \u2264 $100,000 MFJ/HOH/QSS, \u2264 $50,000 single/MFS; Schedule NJ-WWC); line 63 Pass-Through Business Alternative Income Tax (BAIT) credit from PTE-K-1. Oracle targets: us.nj.eitc (40% of federal EIC + the $260 age-decoupled flat), us.nj.cdcc, us.nj.ctc, us.nj.pension_exclusion, us.nj.property_tax_deduction, us.nj.use_tax, us.nj.income_tax.\n\nSHARED RESPONSIBILITY PAYMENT (line 53c, NJ individual health-coverage mandate, Schedule NJ-HCC/Worksheet L): EXEMPT when line 29 is $20,000 or less ($10,000 single/MFS). Otherwise the payment = the GREATER of 2.5% of household income above the filing threshold or the flat amounts ($695 per adult, $347.50 per under-18, flat cap $2,085), capped by household size: 1 person $4,908; 2 $9,816; 3 $14,724; 4 $19,632; 5+ $24,540; partial-year months at $57.92/adult, $28.96/child per uncovered month \u2014 agent-composed from coverage months, disclosed.\n\nROUNDING (p. 4): rounding to whole dollars is OPTIONAL but all-or-nothing ('If you round, do so for all lines'); 50 cents or more rounds up. PROPERTY-TAX RELIEF PROGRAMS: ANCHOR, Senior Freeze, and Stay NJ are claimed on the separate combined PAS-1 application, NOT on the NJ-1040, and the benefits are exempt income; the only NJ-1040 touchpoint is Worksheet H's Senior-Freeze base-year property-tax amounts. CIVIL UNIONS: partners must file NJ as married (joint or separate) even when their federal status differs. Part-year residents prorate exemptions, deductions, credits, and exclusions by resident months (15+ days = a month) \u2014 the composer targets full-year residents only."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          exemptionRegular: { value: "100000", type: "money" },
+          // $1,000
+          exemptionSenior: { value: "100000", type: "money" },
+          // $1,000
+          exemptionBlindDisabled: { value: "100000", type: "money" },
+          // $1,000
+          exemptionVeteran: { value: "600000", type: "money" },
+          // $6,000
+          exemptionDependent: { value: "150000", type: "money" },
+          // $1,500
+          exemptionCollegeDependent: { value: "100000", type: "money" },
+          // $1,000
+          filingThresholdSingleMfs: { value: "1000000", type: "money" },
+          // $10,000
+          filingThresholdJointHohQss: { value: "2000000", type: "money" },
+          // $20,000
+          medicalFloorPct: { value: "2", type: "int" },
+          // 2% of line 29
+          organDonationCap: { value: "1000000", type: "money" },
+          // $10,000
+          collegeDeductionIncomeCap: { value: "20000000", type: "money" },
+          // $200,000
+          njbestCap: { value: "1000000", type: "money" },
+          // $10,000
+          njclassCap: { value: "250000", type: "money" },
+          // $2,500
+          tuitionCap: { value: "1000000", type: "money" },
+          // $10,000
+          specialExclusionJointHohQss: { value: "600000", type: "money" },
+          // $6,000
+          specialExclusionSingleMfs: { value: "300000", type: "money" },
+          // $3,000
+          otherRetirementEarnedIncomeCap: { value: "300000", type: "money" },
+          // $3,000
+          excessUiWfSwfMax: { value: "18402", type: "money" },
+          // $184.02
+          excessDiMax: { value: "38042", type: "money" },
+          // $380.42
+          excessFliMax: { value: "54582", type: "money" },
+          // $545.82
+          wwcIncomeCapJointHohQss: { value: "10000000", type: "money" },
+          // $100,000
+          wwcIncomeCapSingleMfs: { value: "5000000", type: "money" },
+          // $50,000
+          srpAdultFlat: { value: "69500", type: "money" },
+          // $695
+          srpChildFlat: { value: "34750", type: "money" },
+          // $347.50
+          srpFlatCap: { value: "208500", type: "money" },
+          // $2,085
+          srpPctOfIncome: { value: "25", type: "int" }
+          // 2.5% (tenths of a percent × 10)
+        },
+        formula: {
+          kind: "unsupported",
+          reason: "parameters-only rule: use lookup_tax_parameter for the NJ amounts; tax \u2192 us.nj.income_tax, credits \u2192 us.nj.eitc / us.nj.cdcc / us.nj.ctc, exclusions \u2192 us.nj.pension_exclusion, property tax \u2192 us.nj.property_tax_deduction, use tax \u2192 us.nj.use_tax; the rest is agent-composed from the cited lines"
+        }
+      }
+    ];
+  }
+});
+
+// ../corpus-us-federal/dist/rules/state-oh.js
+var max05, sub3, rd3, param18, le2, lt, magiLessExemptions, ohRules;
+var init_state_oh = __esm({
+  "../corpus-us-federal/dist/rules/state-oh.js"() {
+    "use strict";
+    init_state_helpers();
+    max05 = (arg2) => ({ kind: "max0", arg: arg2 });
+    sub3 = (left, right) => ({ kind: "sub", left, right });
+    rd3 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+    param18 = (name) => ({ kind: "param", name });
+    le2 = (left, right) => ({ kind: "cmp", op: "le", left, right });
+    lt = (left, right) => ({ kind: "cmp", op: "lt", left, right });
+    magiLessExemptions = max05(sub3(fact36("ohModifiedAgi"), ruleRef30("us.oh.exemption_amount")));
+    ohRules = [
+      {
+        id: "us.oh.income_tax",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio nonbusiness income tax \u2014 2025 brackets: 0% to $26,050, $342.00 + 2.75%, $2,394.32 + 3.125% over $100,000 (IT 1040 line 8a)",
+        citation: {
+          source: "ORC 5747.02(A)(3)(b) (2025 Am. Sub. H.B. 96, eff. 9-30-2025); 2025 Ohio IT 1040 instructions p. 18 (bracket table); tax.ohio.gov Annual Tax Rates",
+          section: "R.C. 5747.02(A)(3)(b); IT 1040 line 8a",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.02",
+          excerpt: "Statute (HB 96 codification, verbatim): 'If the balance thus obtained is equal to or less than twenty-six thousand fifty dollars, no tax shall be imposed on that balance. If the balance thus obtained is greater than twenty-six thousand fifty dollars, the tax is hereby levied as follows: ... (b) For taxable years beginning in 2025: More than $26,050 but not more than $100,000 \u2014 $342.00 plus 2.75% of the amount in excess of $26,050; More than $100,000 \u2014 $2,394.32 plus 3.125% of the amount in excess of $100,000.' Printed 2025 instructions bracket table (p. 18) matches verbatim, with the worked example: '$68,050 ... $42,000 x 0.0275 = $1,155 ... $1,155 + $342 = $1,497.' ENCODING NOTE: the $2,394.32 anchor at $100,000 does NOT equal $342 + 2.75% \xD7 $73,950 ($2,375.63) \u2014 the printed/statutory base amounts are carried anchors (the $342 is 1.31287% \xD7 $26,050, the 2025 estate rate), so this rule encodes the PRINTED amounts, never a recomputed continuation; and crossing $26,050 by one dollar jumps tax from $0 to ~$342 BY STATUTE (a real cliff, findable via opentax cliffs). The 2024 top rate was 3.5%; HB 96 cut TY2025's top rate to 3.125% ('For tax year 2025, the highest tax rate has been reduced to 3.125%', booklet Highlights) \u2014 surveys printed before HB 96 still show 3.5%. No tax-lookup table exists; the schedule is computed directly ('Calculate your tax on your Ohio income tax base less business income using the Income Tax Brackets found on page 18'). Rounding: 'Use whole dollars only' / 'Round all figures to the nearest dollar' (half-up). Input: stateTaxableIncome = IT 1040 line 7 TAXABLE NONBUSINESS INCOME (line 5 Ohio income tax base minus line 6 taxable business income) \u2014 business income is taxed separately at 3% (us.oh.business_income_tax). School district income tax (SD 100) and municipal income taxes are SEPARATE levies, not in this target."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          zeroBracketTop: { value: "2605000", type: "money" }
+          // $26,050
+        },
+        formula: (() => {
+          const base = max05(fact36("stateTaxableIncome"));
+          return {
+            kind: "if",
+            cond: le2(base, param18("zeroBracketTop")),
+            then: money33("0"),
+            else: rd3(printedSchedule(base, [
+              { thresholdCents: "2605000", fixedCents: "34200", rate: { num: "275", den: "10000" } },
+              { thresholdCents: "10000000", fixedCents: "239432", rate: { num: "3125", den: "100000" } }
+            ]))
+          };
+        })()
+      },
+      {
+        id: "us.oh.income_tax",
+        version: 2,
+        jurisdiction: "us.oh",
+        title: "Ohio nonbusiness income tax \u2014 TY2026 single rate: $332.00 + 2.75% of the excess over $26,050 (ORC 5747.02(A)(3)(c), enacted)",
+        citation: {
+          source: "ORC 5747.02(A)(3)(c) (2025 Am. Sub. H.B. 96, eff. 9-30-2025)",
+          section: "R.C. 5747.02(A)(3)(c)",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.02",
+          excerpt: "Statute (verbatim): '(c) For taxable years beginning in 2026 and thereafter, $332.00 plus 2.75% of the amount in excess of $26,050.' The zero band below $26,050 continues ('no tax shall be imposed on that balance'); the $332 anchor is 1.27448% \xD7 $26,050 (the 2026 estate rate in the same section). CAVEAT (disclosed): ORC 5747.02(A)(5) directs an annual GDP-deflator adjustment of bracket income amounts (rounded to the nearest $50, rates never adjusted) \u2014 the $26,050 threshold has been unchanged 2023-2025, but the TY2026 printed instructions were not yet published at encoding; re-verify the threshold when the 2026 IT 1040 instructions appear before relying on this rule for exact 2026 filings. TY2026 exemption amounts and the tightened $500,000 exemption/JFC caps are NOT encoded (indexed amounts unknown) \u2014 us.oh.exemption_amount refuses for 2026."
+        },
+        effectiveFrom: "2026-01-01",
+        effectiveTo: "2027-01-01",
+        output: { type: "money" },
+        parameters: {
+          zeroBracketTop: { value: "2605000", type: "money" }
+          // $26,050 (statutory; re-verify against the 2026 instructions)
+        },
+        formula: (() => {
+          const base = max05(fact36("stateTaxableIncome"));
+          return {
+            kind: "if",
+            cond: le2(base, param18("zeroBracketTop")),
+            then: money33("0"),
+            else: rd3(printedSchedule(base, [
+              { thresholdCents: "2605000", fixedCents: "33200", rate: { num: "275", den: "10000" } }
+            ]))
+          };
+        })()
+      },
+      {
+        id: "us.oh.business_income_tax",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio business income tax \u2014 flat 3% of taxable business income after the Business Income Deduction (IT 1040 line 8b)",
+        citation: {
+          source: "ORC 5747.02(A)(4)(a); 2025 Ohio Schedule of Business Income, Parts 2-3",
+          section: "R.C. 5747.02(A)(4); Schedule of Business Income lines 11-16",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.02",
+          excerpt: "Statute: 'the tax imposed by this section on taxable business income shall equal three per cent' (flat, unchanged by HB 96 \u2014 confirmed for 2025 and 2026). 2025 Schedule of Business Income (verbatim): Part 2 BUSINESS INCOME DEDUCTION line 11 'Enter the lesser of line 10 above or Ohio IT 1040, line 1. If negative, enter zero'; line 12 'Enter $250,000 if filing status is single or married filing jointly; OR Enter $125,000 if filing status is married filing separately'; line 13 'Enter the lesser of line 11 or line 12' \u2192 Schedule of Adjustments line 13 deduction. Part 3: line 14 = line 11 minus line 13; line 15 taxable business income = 'the lesser of line 14 above or Ohio IT 1040, line 5' \u2192 IT 1040 line 6; line 16 = 'multiply line 15 by 3% (.03)' \u2192 IT 1040 line 8b. Business income (Part 1) is the Schedule B/C/D/E/F + guaranteed-payment + \xA7 4797 total per R.C. 5747.01(B); the 20%-or-greater-owner compensation rule applies. INPUT: ohTaxableBusinessIncome = the already-composed Schedule line 15 (the composer runs the BID arithmetic from FAGI, business income, and filing status; the caps are this rule's parameters). Unused exemption amounts reduce taxable business income under (A)(4)(b) via the line 5/6 lesser-of mechanics."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2027-01-01",
+        output: { type: "money" },
+        parameters: {
+          bidCap: { value: "25000000", type: "money" },
+          // $250,000 single/MFJ
+          bidCapMfs: { value: "12500000", type: "money" },
+          // $125,000 MFS
+          rate: { value: "3", type: "int" }
+          // 3%
+        },
+        formula: rd3({
+          kind: "mulRate",
+          base: max05(fact36("ohTaxableBusinessIncome")),
+          rate: { num: "3", den: "100" },
+          round: "half-up"
+        })
+      },
+      {
+        id: "us.oh.exemption_amount",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio personal and dependent exemptions \u2014 2025 MAGI-tiered amount per exemption (IT 1040 line 4)",
+        citation: {
+          source: "ORC 5747.025 (2025 Am. Sub. H.B. 96); 2025 Ohio IT 1040 instructions p. 17 (line 4 table)",
+          section: "R.C. 5747.025; IT 1040 line 4",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.025",
+          excerpt: "2025 instructions line 4 table (verbatim): 'Modified Adjusted Gross Income $40,000 or less \u2014 Exemption Amount $2,400; $40,001-$80,000 \u2014 $2,150; $80,001-$749,999 \u2014 $1,900; $750,000 or greater \u2014 $0.' (Statutory base amounts $2,350/$2,100/$1,850 per 5747.025(A), indexed to $2,400/$2,150/$1,900 for 2025 under (C); the $0-above-$750,000 tier is NEW for 2025 per HB 96, and the cap drops to $500,000 for 2026 \u2014 2026 indexed amounts were unpublished at encoding, so this rule is TY2025-only and refuses for 2026.) MAGI = Ohio adjusted gross income (line 3) PLUS the business income deduction (Schedule of Adjustments line 13) \u2014 booklet p. 8, verbatim. Exemptions: self (unless claimable as a dependent on another return \u2014 then $0 for self, per the booklet's Patrick example), spouse if filing jointly and not claimable elsewhere, and each federal dependent (Schedule of Dependents). Inputs: ohModifiedAgi, ohExemptionCount (the IT 1040 line 4 box count)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          tier1Max: { value: "4000000", type: "money" },
+          // $40,000 → $2,400
+          tier2Max: { value: "8000000", type: "money" },
+          // $80,000 → $2,150
+          zeroTierFloor: { value: "75000000", type: "money" },
+          // $750,000+ → $0
+          amount1: { value: "240000", type: "money" },
+          amount2: { value: "215000", type: "money" },
+          amount3: { value: "190000", type: "money" }
+        },
+        formula: (() => {
+          const magi2 = fact36("ohModifiedAgi");
+          const perExemption = {
+            kind: "if",
+            cond: le2(magi2, param18("tier1Max")),
+            then: param18("amount1"),
+            else: {
+              kind: "if",
+              cond: le2(magi2, param18("tier2Max")),
+              then: param18("amount2"),
+              else: {
+                kind: "if",
+                cond: lt(magi2, param18("zeroTierFloor")),
+                then: param18("amount3"),
+                else: money33("0")
+              }
+            }
+          };
+          return { kind: "mulInt", base: perExemption, count: fact36("ohExemptionCount") };
+        })()
+      },
+      {
+        id: "us.oh.joint_filing_credit",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio joint filing credit \u2014 20/15/10/5% of tax after earlier credits, max $650 (Schedule of Credits line 12)",
+        citation: {
+          source: "ORC 5747.05(E) (2025 Am. Sub. H.B. 96); 2025 Ohio Schedule of Credits instructions p. 29 (line 12)",
+          section: "R.C. 5747.05(E); Schedule of Credits line 12",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.05",
+          excerpt: "2025 line 12 instructions (verbatim): 'To qualify, you and your spouse must each have at least $500 of qualifying income, jointly file your return, and have an MAGI less than $750,000. Qualifying income is any amount included in Ohio adjusted gross income (AGI), other than the following: Interest; Dividends and distributions; Capital gains; AND Rents and royalties.' Amounts deducted on the Schedule of Adjustments (business income via the BID, Social Security, railroad retirement, uniformed-services retirement) are NOT in Ohio AGI and thus NOT qualifying income \u2014 a spouse whose only income is deducted business income does NOT qualify (the booklet's Kevin & Krysten example). 'The credit equals a percentage of your tax liability prior to the application of the credit. The maximum credit per return is $650. The percentage used is based on your MAGI less exemptions: 0-$25,000: 20% of line 11; $25,001-$50,000: 15%; $50,001-$75,000: 10%; $75,001-$749,999: 5%.' The base is Schedule of Credits LINE 11 (tax less the line 2-9 credits: retirement/lump-sum/senior/child-care/displaced-worker/campaign/exemption credits subtract FIRST per the R.C. 5747.98 ordering). The $750,000 MAGI cap is NEW for 2025 (statute: 'less than seven hundred fifty thousand dollars for taxable years beginning in 2025 or less than five hundred thousand dollars for taxable years beginning in 2026 or thereafter'). Inputs: ohTaxLessCredits (line 11), ohModifiedAgi + ohExemptionCount (tier + cap), ohBothSpousesHaveQualifyingIncome (attested; conservative default false \u2192 $0). Include a statement listing each spouse's qualifying income (procedural)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          magiCap: { value: "75000000", type: "money" },
+          // $750,000 (2025; $500,000 for 2026)
+          creditCap: { value: "65000", type: "money" },
+          // $650
+          tier1Max: { value: "2500000", type: "money" },
+          // $25,000 → 20%
+          tier2Max: { value: "5000000", type: "money" },
+          // $50,000 → 15%
+          tier3Max: { value: "7500000", type: "money" }
+          // $75,000 → 10%; above → 5%
+        },
+        formula: (() => {
+          const pct3 = (num) => ({
+            kind: "mulRate",
+            base: max05(fact36("ohTaxLessCredits")),
+            rate: { num, den: "100" },
+            round: "half-up"
+          });
+          const tiered = {
+            kind: "if",
+            cond: le2(magiLessExemptions, param18("tier1Max")),
+            then: pct3("20"),
+            else: {
+              kind: "if",
+              cond: le2(magiLessExemptions, param18("tier2Max")),
+              then: pct3("15"),
+              else: {
+                kind: "if",
+                cond: le2(magiLessExemptions, param18("tier3Max")),
+                then: pct3("10"),
+                else: pct3("5")
+              }
+            }
+          };
+          return {
+            kind: "if",
+            cond: {
+              kind: "and",
+              args: [
+                isStatus10("mfj"),
+                fact36("ohBothSpousesHaveQualifyingIncome"),
+                lt(fact36("ohModifiedAgi"), param18("magiCap"))
+              ]
+            },
+            then: rd3({ kind: "min", args: [tiered, param18("creditCap")] }),
+            else: money33("0")
+          };
+        })()
+      },
+      {
+        id: "us.oh.retirement_income_credit",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio retirement income credit \u2014 Table 2 tiers, max $200 per return (Schedule of Credits line 2)",
+        citation: {
+          source: "ORC 5747.055(B); 2025 Ohio Schedule of Credits instructions pp. 28, 44 (Table 2)",
+          section: "R.C. 5747.055(B); Schedule of Credits line 2",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.055",
+          excerpt: "2025 gates (verbatim): 'Your MAGI less exemptions is less than $100,000; You received income from a pension, profit-sharing, or retirement plan (such as traditional IRAs or 401(k) plans); This income was received on account of retirement; This income is included in your Ohio adjusted gross income; AND You have not previously taken the Ohio lump sum retirement credit.' Table 2 (p. 44, verbatim \u2014 total of BOTH spouses' eligible retirement income on a joint return): '$0-$500: $0; $501-$1,500: $25; $1,501-$3,000: $50; $3,001-$5,000: $80; $5,001-$8,000: $130; $8,001 or more: $200.' 'The maximum credit per return is $200.' Amounts DEDUCTED on the Schedule of Adjustments (Social Security, railroad, uniformed-services retirement income) do NOT qualify \u2014 only retirement income still inside Ohio AGI counts (ohEligibleRetirementIncome input). The lump-sum-history disqualifier is attested by the input being supplied (a filer who previously took the lump sum retirement credit must pass $0 \u2014 disclosed). Nonrefundable; ordering per R.C. 5747.98 (this credit or the lump-sum retirement credit comes first)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          magiLessExemptionsCap: { value: "10000000", type: "money" },
+          // $100,000
+          tier1Max: { value: "50000", type: "money" },
+          // $500 → $0
+          tier2Max: { value: "150000", type: "money" },
+          // $1,500 → $25
+          tier3Max: { value: "300000", type: "money" },
+          // $3,000 → $50
+          tier4Max: { value: "500000", type: "money" },
+          // $5,000 → $80
+          tier5Max: { value: "800000", type: "money" },
+          // $8,000 → $130; above → $200
+          credit2: { value: "2500", type: "money" },
+          credit3: { value: "5000", type: "money" },
+          credit4: { value: "8000", type: "money" },
+          credit5: { value: "13000", type: "money" },
+          creditMax: { value: "20000", type: "money" }
+        },
+        formula: (() => {
+          const ri = max05(fact36("ohEligibleRetirementIncome"));
+          const tier = (max, then, next) => ({
+            kind: "if",
+            cond: le2(ri, param18(max)),
+            then,
+            else: next
+          });
+          return {
+            kind: "if",
+            cond: lt(magiLessExemptions, param18("magiLessExemptionsCap")),
+            then: tier("tier1Max", money33("0"), tier("tier2Max", param18("credit2"), tier("tier3Max", param18("credit3"), tier("tier4Max", param18("credit4"), tier("tier5Max", param18("credit5"), param18("creditMax")))))),
+            else: money33("0")
+          };
+        })()
+      },
+      {
+        id: "us.oh.senior_citizen_credit",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio senior citizen credit \u2014 $50 per return, age 65+, MAGI less exemptions under $100,000 (Schedule of Credits line 4)",
+        citation: {
+          source: "ORC 5747.055(F); 2025 Ohio Schedule of Credits instructions p. 28 (line 4)",
+          section: "R.C. 5747.055(F); Schedule of Credits line 4",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.055",
+          excerpt: "2025 line 4 (verbatim): 'To qualify, all of the following must be true: Your MAGI less exemptions is less than $100,000; You were 65 or older at the end of the tax year; AND You have not previously taken the Ohio lump sum distribution credit. The credit is equal to $50 per return.' One $50 per RETURN (not per spouse). The lump-sum-distribution-history disqualifier is not separately modeled \u2014 a filer who ever claimed the one-time lump sum distribution credit (Schedule of Credits line 5) is permanently ineligible and must not use this target (disclosed; conservative for everyone else since isAge65OrOlder defaults false). Nonrefundable."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          credit: { value: "5000", type: "money" },
+          // $50 per return
+          magiLessExemptionsCap: { value: "10000000", type: "money" }
+          // $100,000
+        },
+        formula: {
+          kind: "if",
+          cond: {
+            kind: "and",
+            args: [fact36("isAge65OrOlder"), lt(magiLessExemptions, param18("magiLessExemptionsCap"))]
+          },
+          then: param18("credit"),
+          else: money33("0")
+        }
+      },
+      {
+        id: "us.oh.exemption_credit",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio exemption credit \u2014 $20 per exemption when MAGI less exemptions is under $30,000 (Schedule of Credits line 9)",
+        citation: {
+          source: "ORC 5747.022; 2025 Ohio Schedule of Credits instructions p. 29 (line 9)",
+          section: "R.C. 5747.022; Schedule of Credits line 9",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.022",
+          excerpt: "2025 line 9 (verbatim): 'To qualify, your modified adjusted gross income (MAGI) less exemptions must be less than $30,000. The credit equals $20 for each exemption claimed on your return.' Nonrefundable; uses the same exemption count as IT 1040 line 4 (ohExemptionCount). This is Ohio's surviving low-income credit mechanism \u2014 the former low income credit does not exist on the 2025 return."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          perExemption: { value: "2000", type: "money" },
+          // $20
+          magiLessExemptionsCap: { value: "3000000", type: "money" }
+          // $30,000
+        },
+        formula: {
+          kind: "if",
+          cond: lt(magiLessExemptions, param18("magiLessExemptionsCap")),
+          then: { kind: "mulInt", base: param18("perExemption"), count: fact36("ohExemptionCount") },
+          else: money33("0")
+        }
+      },
+      {
+        id: "us.oh.eic",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio earned income credit \u2014 30% of the federal EIC, nonrefundable (Schedule of Credits line 13)",
+        citation: {
+          source: "ORC 5747.71; 2025 Ohio Schedule of Credits instructions p. 30 (line 13)",
+          section: "R.C. 5747.71; Schedule of Credits line 13",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.71",
+          excerpt: "2025 line 13 (verbatim): 'Your nonrefundable Ohio earned income credit (EIC) equals 30% of your federal EIC (federal 1040 and 1040-SR, line 27a). See R.C. 5747.71.' No cap and no separate phase-out beyond the federal EIC's own; NONREFUNDABLE (it sits in the Schedule of Credits line 12-35 block whose total cannot exceed the remaining tax \u2014 the composer caps it via the line 37 floor). Ohio has NO age-decoupled variant (unlike Illinois' 35 ILCS 5/212(b-5)/(b-10) or New Jersey's flat $260): 30% of the ordinary federal EIC only. Ohio has NO child tax credit for 2025 (the proposed HB 96 CTC was removed before enactment; verified by absence from the 2025 form and booklet)."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          pctOfFederal: { value: "30", type: "int" }
+        },
+        formula: rd3({
+          kind: "mulRate",
+          base: ruleRef30("us.federal.eitc"),
+          rate: { num: "30", den: "100" },
+          round: "half-up"
+        })
+      },
+      {
+        id: "us.oh.cdcc",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio child care & dependent care credit \u2014 100% of the federal tentative credit under $20,000 MAGI, 25% of the allowed credit to $40,000 (Schedule of Credits line 6)",
+        citation: {
+          source: "ORC 5747.054; 2025 Ohio Schedule of Credits instructions pp. 28, 45 (line 6 worksheet)",
+          section: "R.C. 5747.054; Schedule of Credits line 6",
+          url: "https://codes.ohio.gov/ohio-revised-code/section-5747.054",
+          excerpt: "2025 worksheet (p. 45, verbatim): line 1 MAGI \u2014 'If line 1 is $40,000 or more, STOP. You do not qualify for this credit'; line 2 'Enter the amount on your federal form 2441, line 9c'; line 3 'Enter 25% of the amount on your federal form 2441, line 11'; line 4 'If line 1 of this worksheet is less than $20,000, enter the amount from line 2. If line 1 is equal to or greater than $20,000 but less than $40,000, enter the amount from line 3.' NOTE THE ASYMMETRY (as printed): under $20,000 MAGI the credit is 100% of 2441 LINE 9c (the tentative credit BEFORE the federal liability limit \u2014 so a low-income filer with zero federal liability still gets the full Ohio amount); $20,000-$39,999 uses 25% of LINE 11 (the liability-LIMITED federal credit). Inputs are the transcribed 2441 amounts: ohFederalCdccTentative (line 9c; equals the line 9a tentative credit unless prior-year-expense line 9b amounts exist) and ohFederalCdccAllowed (line 11). Gate: MAGI (not MAGI-less-exemptions) < $40,000, per the printed worksheet and the line-6 instruction 'your MAGI must be less than $40,000 and you must have claimed the federal credit for child and dependent care expenses on federal form 2441.' Nonrefundable."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          fullPctMagiCap: { value: "2000000", type: "money" },
+          // $20,000 (under → 100% of 2441 line 9c)
+          magiCap: { value: "4000000", type: "money" }
+          // $40,000 (at/over → $0)
+        },
+        formula: {
+          kind: "if",
+          cond: lt(fact36("ohModifiedAgi"), param18("fullPctMagiCap")),
+          then: rd3(max05(fact36("ohFederalCdccTentative"))),
+          else: {
+            kind: "if",
+            cond: lt(fact36("ohModifiedAgi"), param18("magiCap")),
+            then: rd3({
+              kind: "mulRate",
+              base: max05(fact36("ohFederalCdccAllowed")),
+              rate: { num: "25", den: "100" },
+              round: "half-up"
+            }),
+            else: money33("0")
+          }
+        }
+      },
+      {
+        id: "us.oh.parameters",
+        version: 1,
+        jurisdiction: "us.oh",
+        title: "Ohio 2025 return parameters \u2014 filing thresholds, remaining credits, adjustments, SD 100 and municipal disclosures (IT 1040)",
+        citation: {
+          source: "2025 Ohio IT 1040 instruction booklet (tax.ohio.gov, 'accurate as of November 27, 2025', read 2026-08-02); ORC 5747.98 (credit ordering); ORC 5748 (school district tax)",
+          section: "IT 1040; Schedule of Adjustments; Schedule of Credits; SD 100",
+          url: "https://dam.assets.ohio.gov/image/upload/v1767095693/tax.ohio.gov/forms/ohio_individual/individual/2025/it1040-booklet.pdf",
+          excerpt: "WHO OWES NOTHING (booklet p. 13, verbatim): 'You do not have to file an Ohio income tax return if: Your Ohio adjusted gross income (Ohio IT 1040, line 3) is less than or equal to $0; The total of your senior citizen credit, lump sum distribution credit, and joint filing credit (Ohio Schedule of Credits, lines 4, 5 and 12) is equal to or exceeds your income tax liability (Ohio IT 1040, line 8c) and you are not liable for school district income tax; OR Your exemption amount (Ohio IT 1040, line 4) is the same as or more than your Ohio adjusted gross income (Ohio IT 1040, line 3).' Above $28,450 FAGI the Department recommends filing even at $0 tax (delinquency billing avoidance).\n\nSCHEDULE OF ADJUSTMENTS (2025 line set): additions include non-Ohio state/local government interest and dividends (line 1), Ohio pass-through entity taxes excluded from FAGI (line 2), IRC 168(k)/179 depreciation add-back (line 9); deductions include the Business Income Deduction (line 13), taxable refunds of state/local income taxes (line 15), TAXABLE SOCIAL SECURITY (line 16 \u2014 fully deducted, so Social Security is never taxed by Ohio), railroad benefits (line 17), Ohio public-obligation interest (line 18), STABLE/529 contributions (lines 20/37 \u2014 529 up to $4,000 per beneficiary per year, unlimited carryforward), disaster-work income (line 21), military pay for residents stationed outside Ohio (line 32), uniformed services retirement income (line 34, fully deducted), Ohio educator expenses up to $300 (line 39, increased for 2025), unreimbursed medical care expenses over 7.5% of OAGI (line 44 worksheet), Ohio adoption grants (line 23), pregnancy resource center contributions (line 25, NEW for 2025).\n\nREMAINING SCHEDULE OF CREDITS ITEMS (each transcribed, not oracle targets): lump sum retirement credit (line 3, one-time, Table 1 age multiple \u2014 bars the retirement income credit forever) and lump sum distribution credit (line 5, one-time, age multiple \xD7 $50 \u2014 bars the $50 senior credit forever); displaced worker training credit (line 7, lesser of $500 or 50% of training paid); campaign contribution credit (line 8, up to $50/$100 MFJ for statewide/General Assembly candidates \u2014 LAST YEAR: 'will no longer be available after tax year 2025', repealed by HB 96); home school expenses credit (line 14, $250 PER QUALIFYING STUDENT for 2025, was per return); scholarship donation credit (line 15, lesser of $750 or SGO donations, $1,500 total MFJ when both spouses donate); nonchartered nonpublic school tuition credit (line 16, lesser of tuition or $1,000 if FAGI under $50,000 / $1,500 if $50,000+, one per return); certificate credits (lines 17-35); nonresident credit (line 38, IT NRC) and resident credit for other states' taxes (line 39, IT RC); refundable credits (lines 41-46: refundable historic preservation, job creation, PASS-THROUGH ENTITY CREDIT from IT K-1s (line 43 \u2014 where Ohio's own withheld/PTE taxes land), motion picture, venture capital).\n\nCREDIT ORDERING (R.C. 5747.98, verbatim): 'a taxpayer shall claim any credits to which the taxpayer is entitled in the following order: Either the retirement income credit... or the lump sum retirement income credits...; Either the senior citizen credit... or the lump sum distribution credit...; The dependent care credit...' \u2014 the Schedule of Credits line order IS the statutory order; the joint filing credit applies to line 11 (tax less the line 2-9 credits), and line 37 floors at zero (nonrefundable credits never refund).\n\nSCHOOL DISTRICT INCOME TAX (SD 100, separate return \u2014 NOT in the us.oh targets): 'School district income tax is levied based on one of the following methods: The traditional tax base uses modified adjusted gross income (MAGI) less exemptions... The earned income tax base is limited by MAGI' (booklet pp. 57-58); district-specific rates (0.25%-2%+, ~600 districts, 'T' or 'E' base per the pp. 49-56 list); compute separately and disclose when the taxpayer's district levies one (tax.ohio.gov/Finder). MUNICIPAL INCOME TAXES: separate city levies administered by cities/RITA/CCA, never on the IT 1040 ('Do not include any city income tax withheld').\n\nMISC: rounding 'Round all figures to the nearest dollar'; refund/payment of $1.00 or less is not issued/not required; interest rate for calendar year 2026 is 7%; estimated-tax interest penalty via IT/SD 2210 (line 11); use tax on untaxed out-of-state purchases = purchases \xD7 the COUNTY rate (6.5%-8.25%, printed county table p. 46) on IT 1040 line 12 (county-specific \u2014 transcribed, not an oracle target); Ohio Nonresident Statement replaced form IT NRS beginning 2025 (checkbox on the IT 1040 itself). TY2026 enacted changes: single 2.75% rate (us.oh.income_tax v2), exemption/JFC MAGI caps drop to $500,000, campaign credit gone."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        parameters: {
+          filingRecommendationFagi: { value: "2845000", type: "money" },
+          // $28,450
+          homeSchoolCreditPerStudent: { value: "25000", type: "money" },
+          // $250 (2025: per student)
+          scholarshipDonationCap: { value: "75000", type: "money" },
+          // $750 ($1,500 MFJ both donate)
+          nonchartered_tuition_under50k: { value: "100000", type: "money" },
+          // $1,000 (FAGI < $50,000)
+          nonchartered_tuition_50kPlus: { value: "150000", type: "money" },
+          // $1,500
+          displacedWorkerCap: { value: "50000", type: "money" },
+          // $500
+          campaignContributionCap: { value: "5000", type: "money" },
+          // $50 ($100 MFJ; last year 2025)
+          educatorExpenseDeductionCap: { value: "30000", type: "money" },
+          // $300 (2025)
+          collegeAdvantage529PerBeneficiary: { value: "400000", type: "money" },
+          // $4,000/beneficiary/year
+          medicalExpenseFloorPct: { value: "75", type: "int" },
+          // 7.5% of OAGI (Schedule of Adjustments line 44)
+          deMinimisRefundOrDue: { value: "100", type: "money" }
+          // $1.00
+        },
+        formula: {
+          kind: "unsupported",
+          reason: "parameters-only rule: use lookup_tax_parameter for the Ohio amounts; tax \u2192 us.oh.income_tax + us.oh.business_income_tax, exemptions \u2192 us.oh.exemption_amount, credits \u2192 us.oh.joint_filing_credit / us.oh.retirement_income_credit / us.oh.senior_citizen_credit / us.oh.exemption_credit / us.oh.eic / us.oh.cdcc; SD 100 school district tax and municipal taxes are separate levies \u2014 compute and disclose"
+        }
+      }
+    ];
+  }
+});
+
 // ../corpus-us-federal/dist/rules/state-other.js
 function flatTax(args) {
   return {
@@ -23111,6 +24131,8 @@ var init_state_parameters = __esm({
     init_state_ca();
     init_state_ny();
     init_state_pa();
+    init_state_nj();
+    init_state_oh();
     init_state_other();
     stateParameterRules = [
       ...ilRules,
@@ -23118,6 +24140,8 @@ var init_state_parameters = __esm({
       ...caRules,
       ...nyRules,
       ...paRules,
+      ...njRules,
+      ...ohRules,
       ...otherStateRules
     ];
   }
@@ -23141,8 +24165,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
   const band = {
     kind: "if",
     cond: isStatus11("mfj"),
-    then: param17("bandJoint"),
-    else: param17("band")
+    then: param19("bandJoint"),
+    else: param19("band")
   };
   const excess = {
     kind: "max0",
@@ -23194,8 +24218,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
   const withFloor = withMinimum ? {
     // OBBBA § 70105: $400 minimum when QBI ≥ $1,000 (TY2026+)
     kind: "if",
-    cond: { kind: "cmp", op: "ge", left: qbi, right: param17("minQbiFloor") },
-    then: { kind: "max", args: [limited, param17("minDeduction")] },
+    cond: { kind: "cmp", op: "ge", left: qbi, right: param19("minQbiFloor") },
+    then: { kind: "max", args: [limited, param19("minDeduction")] },
     else: limited
   } : limited;
   return {
@@ -23230,14 +24254,14 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
     }
   };
 }
-var fact37, money34, ruleRef31, param17, zero24, isStatus11, pctOf2, qbi, hasBusinessIncome, taxableBeforeQbi, wageLimitOf, qbiRules;
+var fact37, money34, ruleRef31, param19, zero24, isStatus11, pctOf2, qbi, hasBusinessIncome, taxableBeforeQbi, wageLimitOf, qbiRules;
 var init_qbi = __esm({
   "../corpus-us-federal/dist/rules/qbi.js"() {
     "use strict";
     fact37 = (factId) => ({ kind: "fact", factId });
     money34 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
-    param17 = (name) => ({ kind: "param", name });
+    param19 = (name) => ({ kind: "param", name });
     zero24 = money34("0");
     isStatus11 = (status) => ({
       kind: "cmp",
@@ -23369,7 +24393,7 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
     },
     formula: {
       kind: "if",
-      cond: { kind: "cmp", op: "lt", left: seNetEarnings, right: param18("seFloor") },
+      cond: { kind: "cmp", op: "lt", left: seNetEarnings, right: param20("seFloor") },
       then: zero25,
       else: {
         kind: "if",
@@ -23387,14 +24411,14 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
     }
   };
 }
-var fact38, money35, ruleRef32, param18, zero25, seNetEarnings, wagesForBase, oasdiComponent, medicareComponent, selfEmploymentRules;
+var fact38, money35, ruleRef32, param20, zero25, seNetEarnings, wagesForBase, oasdiComponent, medicareComponent, selfEmploymentRules;
 var init_self_employment = __esm({
   "../corpus-us-federal/dist/rules/self-employment.js"() {
     "use strict";
     fact38 = (factId) => ({ kind: "fact", factId });
     money35 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef32 = (ruleId) => ({ kind: "rule", ruleId });
-    param18 = (name) => ({ kind: "param", name });
+    param20 = (name) => ({ kind: "param", name });
     zero25 = money35("0");
     seNetEarnings = ruleRef32("us.federal.se_net_earnings");
     wagesForBase = {
@@ -23413,7 +24437,7 @@ var init_self_employment = __esm({
             kind: "max0",
             arg: {
               kind: "sub",
-              left: param18("wageBase"),
+              left: param20("wageBase"),
               right: wagesForBase
             }
           }
@@ -23501,7 +24525,7 @@ function perSeniorNet() {
     kind: "max0",
     arg: {
       kind: "sub",
-      left: param19("perSenior"),
+      left: param21("perSenior"),
       right: {
         kind: "mulRate",
         base: {
@@ -23518,14 +24542,14 @@ function perSeniorNet() {
     }
   };
 }
-var fact39, money36, ruleRef33, param19, isStatus12, zero26, seniorDeductionRules;
+var fact39, money36, ruleRef33, param21, isStatus12, zero26, seniorDeductionRules;
 var init_senior_deduction = __esm({
   "../corpus-us-federal/dist/rules/senior-deduction.js"() {
     "use strict";
     fact39 = (factId) => ({ kind: "fact", factId });
     money36 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
-    param19 = (name) => ({ kind: "param", name });
+    param21 = (name) => ({ kind: "param", name });
     isStatus12 = (status) => ({
       kind: "cmp",
       op: "eq",
@@ -23638,14 +24662,14 @@ var init_senior_deduction = __esm({
 });
 
 // ../corpus-us-federal/dist/rules/social-security.js
-var fact40, money37, ruleRef34, param20, pct2, magiBase, ss, provisional, isMfs2, isMfj, byJoint, socialSecurityRules;
+var fact40, money37, ruleRef34, param22, pct2, magiBase, ss, provisional, isMfs2, isMfj, byJoint, socialSecurityRules;
 var init_social_security = __esm({
   "../corpus-us-federal/dist/rules/social-security.js"() {
     "use strict";
     fact40 = (factId) => ({ kind: "fact", factId });
     money37 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
-    param20 = (name) => ({ kind: "param", name });
+    param22 = (name) => ({ kind: "param", name });
     pct2 = (num, base) => ({
       kind: "mulRate",
       base,
@@ -23711,8 +24735,8 @@ var init_social_security = __esm({
     byJoint = (joint, other) => ({
       kind: "if",
       cond: isMfj,
-      then: param20(joint),
-      else: param20(other)
+      then: param22(joint),
+      else: param22(other)
     });
     socialSecurityRules = [
       {
@@ -24151,8 +25175,8 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
                   right: {
                     kind: "if",
                     cond: isStatus15("mfj"),
-                    then: param21("magiThresholdJoint"),
-                    else: param21("magiThreshold")
+                    then: param23("magiThresholdJoint"),
+                    else: param23("magiThreshold")
                   }
                 }
               },
@@ -24168,14 +25192,14 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
     else: zero27
   };
 }
-var fact43, money39, ruleRef36, param21, zero27, isStatus15, WINDOW2, THRESHOLD_PARAMS, tipsOvertimeRules;
+var fact43, money39, ruleRef36, param23, zero27, isStatus15, WINDOW2, THRESHOLD_PARAMS, tipsOvertimeRules;
 var init_tips_overtime = __esm({
   "../corpus-us-federal/dist/rules/tips-overtime.js"() {
     "use strict";
     fact43 = (factId) => ({ kind: "fact", factId });
     money39 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
-    param21 = (name) => ({ kind: "param", name });
+    param23 = (name) => ({ kind: "param", name });
     zero27 = money39("0");
     isStatus15 = (status) => ({
       kind: "cmp",
@@ -24210,7 +25234,7 @@ var init_tips_overtime = __esm({
           // $25,000 (all eligible statuses)
           ...THRESHOLD_PARAMS
         },
-        formula: cappedPhasedDeduction("qualifiedTips", param21("cap"), {
+        formula: cappedPhasedDeduction("qualifiedTips", param23("cap"), {
           kind: "not",
           arg: { kind: "rule", ruleId: "us.federal.eligible.tips_deduction" }
         })
@@ -24238,8 +25262,8 @@ var init_tips_overtime = __esm({
         formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
           kind: "if",
           cond: isStatus15("mfj"),
-          then: param21("capJoint"),
-          else: param21("cap")
+          then: param23("capJoint"),
+          else: param23("cap")
         })
       }
     ];
@@ -24306,7 +25330,7 @@ var init_dist2 = __esm({
     init_occupations();
     corpusInput = {
       name: "@invaro/opentax-corpus-us-federal",
-      version: "0.37.0",
+      version: "0.38.0",
       rules: [
         ...corporateRules,
         ...corporate1120Rules,
@@ -24973,8 +25997,8 @@ var init_ZodError = __esm({
       constructor(issues) {
         super();
         this.issues = [];
-        this.addIssue = (sub3) => {
-          this.issues = [...this.issues, sub3];
+        this.addIssue = (sub4) => {
+          this.issues = [...this.issues, sub4];
         };
         this.addIssues = (subs = []) => {
           this.issues = [...this.issues, ...subs];
@@ -25041,13 +26065,13 @@ var init_ZodError = __esm({
       flatten(mapper = (issue2) => issue2.message) {
         const fieldErrors = {};
         const formErrors = [];
-        for (const sub3 of this.issues) {
-          if (sub3.path.length > 0) {
-            const firstEl = sub3.path[0];
+        for (const sub4 of this.issues) {
+          if (sub4.path.length > 0) {
+            const firstEl = sub4.path[0];
             fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-            fieldErrors[firstEl].push(mapper(sub3));
+            fieldErrors[firstEl].push(mapper(sub4));
           } else {
-            formErrors.push(mapper(sub3));
+            formErrors.push(mapper(sub4));
           }
         }
         return { formErrors, fieldErrors };
@@ -28909,18 +29933,18 @@ var init_zod = __esm({
 });
 
 // ../compose/dist/money.js
-var c, rd2, max04, min2, fmtD;
+var c, rd4, max06, min2, fmtD;
 var init_money2 = __esm({
   "../compose/dist/money.js"() {
     "use strict";
     c = (d3) => BigInt(Math.round((d3 ?? 0) * 100));
-    rd2 = (x) => {
+    rd4 = (x) => {
       const neg = x < 0n;
       const a = neg ? -x : x;
       const r = (a + 50n) / 100n * 100n;
       return neg ? -r : r;
     };
-    max04 = (x) => x > 0n ? x : 0n;
+    max06 = (x) => x > 0n ? x : 0n;
     min2 = (a, b) => a < b ? a : b;
     fmtD = (x) => {
       const neg = x < 0n;
@@ -28944,14 +29968,14 @@ var init_types3 = __esm({
 
 // ../compose/dist/ca.js
 function scheduleCaAdjustments(input, notes) {
-  const ssSub = rd2(c(input.taxableSocialSecurity));
-  const uiSub = rd2(c(input.unemploymentCompensation));
-  const hsaDistSub = rd2(c(input.caHsaTaxableDistribution));
-  const educatorAdd = rd2(c(input.caEducatorExpensesDeducted));
-  const hsaDedAdd = rd2(c(input.caHsaDeduction));
-  const ab5WageAdd = rd2(c(input.caAb5GrossIncomeAddition));
-  const ab5LossAdd = rd2(c(input.caAb5NetLossAddition));
-  const deprAdd = rd2(c(input.caDepreciationAddition));
+  const ssSub = rd4(c(input.taxableSocialSecurity));
+  const uiSub = rd4(c(input.unemploymentCompensation));
+  const hsaDistSub = rd4(c(input.caHsaTaxableDistribution));
+  const educatorAdd = rd4(c(input.caEducatorExpensesDeducted));
+  const hsaDedAdd = rd4(c(input.caHsaDeduction));
+  const ab5WageAdd = rd4(c(input.caAb5GrossIncomeAddition));
+  const ab5LossAdd = rd4(c(input.caAb5NetLossAddition));
+  const deprAdd = rd4(c(input.caDepreciationAddition));
   if (ssSub > 0n)
     notes.push(`CA subtraction: federally taxable social security ${fmtD(ssSub)} (Schedule CA line 6 col B)`);
   if (uiSub > 0n)
@@ -28975,43 +29999,43 @@ function scheduleCaAdjustments(input, notes) {
 }
 function composeCA(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const l13 = rd2(c(input.federalAGI));
+  const l13 = rd4(c(input.federalAGI));
   const { adds, subs } = scheduleCaAdjustments(input, notes);
-  const l17 = rd2(l13 + c(input.additions) + adds - c(input.subtractions) - subs);
+  const l17 = rd4(l13 + c(input.additions) + adds - c(input.subtractions) - subs);
   const standard = joint || isHohOrQss(input) ? STD_DEDUCTION_JOINT_HOH : STD_DEDUCTION_SINGLE;
-  const itemized = rd2(c(input.caItemizedDeductions));
+  const itemized = rd4(c(input.caItemizedDeductions));
   const l18 = itemized > standard ? itemized : standard;
   if (itemized > standard)
     notes.push(`CA itemized deduction ${fmtD(itemized)} exceeds the standard deduction ${fmtD(standard)} \u2014 line 18 itemizes (Schedule CA Part II, agent-computed and disclosed)`);
-  const l19 = max04(l17 - l18);
-  const l31 = rd2(evalStateTax("us.ca.income_tax", l19));
+  const l19 = max06(l17 - l18);
+  const l31 = rd4(evalStateTax("us.ca.income_tax", l19));
   const persons = joint || input.filingStatus === "qss" ? 2n : 1n;
-  const l32 = rd2(persons * PERSONAL_EXEMPTION_CREDIT + BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION_CREDIT + BigInt(input.ageOrBlindBoxes ?? 0) * PERSONAL_EXEMPTION_CREDIT);
-  const renters = rd2(c(input.caRentersCredit));
-  const l48 = max04(l31 - l32 - renters);
+  const l32 = rd4(persons * PERSONAL_EXEMPTION_CREDIT + BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION_CREDIT + BigInt(input.ageOrBlindBoxes ?? 0) * PERSONAL_EXEMPTION_CREDIT);
+  const renters = rd4(c(input.caRentersCredit));
+  const l48 = max06(l31 - l32 - renters);
   if (l31 < l32 + renters && l31 > 0n)
     notes.push("CA exemption credits and/or renter's credit exceed tax \u2014 line 48 floors at $0 (both are nonrefundable)");
-  let amt = rd2(c(input.caAmt));
+  let amt = rd4(c(input.caAmt));
   if (input.caAmt === void 0 && (input.caIsoPreference !== void 0 || input.caAmtTaxesAddback !== void 0)) {
-    const addback = itemized > standard ? rd2(c(input.caAmtTaxesAddback)) : standard;
-    const amti = l19 + addback + rd2(c(input.caIsoPreference));
-    amt = rd2(evalStateTax("us.ca.amt", l19, { caAmti: amti, caRegularTax: l31 }));
-    notes.push(`Schedule P: AMTI ${fmtD(amti)} = taxable income ${fmtD(l19)} + ${itemized > standard ? "itemized-taxes addback" : "standard-deduction addback"} ${fmtD(addback)} + ISO preference ${fmtD(rd2(c(input.caIsoPreference)))}; AMT ${fmtD(amt)}`);
+    const addback = itemized > standard ? rd4(c(input.caAmtTaxesAddback)) : standard;
+    const amti = l19 + addback + rd4(c(input.caIsoPreference));
+    amt = rd4(evalStateTax("us.ca.amt", l19, { caAmti: amti, caRegularTax: l31 }));
+    notes.push(`Schedule P: AMTI ${fmtD(amti)} = taxable income ${fmtD(l19)} + ${itemized > standard ? "itemized-taxes addback" : "standard-deduction addback"} ${fmtD(addback)} + ISO preference ${fmtD(rd4(c(input.caIsoPreference)))}; AMT ${fmtD(amt)}`);
   }
-  const bhst = rd2(c(input.caBhst));
-  const earlyBase = rd2(c(input.caTaxableEarlyDistribution));
-  const l63 = rd2(earlyBase * 25n / 1000n);
+  const bhst = rd4(c(input.caBhst));
+  const earlyBase = rd4(c(input.caTaxableEarlyDistribution));
+  const l63 = rd4(earlyBase * 25n / 1000n);
   if (l63 > 0n)
     notes.push(`CA line 63: 2.5% early-distribution additional tax ${fmtD(l63)} on ${fmtD(earlyBase)} (R&TC \xA7 17085(c)(1))`);
   const l64 = l48 + amt + bhst + l63;
   const l71 = c(input.stateWithholding);
-  const l72 = c(input.estimatedPayments) + rd2(c(input.extensionPayment)) + rd2(c(input.priorYearOverpaymentCredited));
-  const l75 = rd2(c(input.caCalEITC));
-  const l76 = rd2(c(input.caYCTC));
-  const l78 = l71 + l72 + l75 + l76 + rd2(c(input.refundableCredits));
+  const l72 = c(input.estimatedPayments) + rd4(c(input.extensionPayment)) + rd4(c(input.priorYearOverpaymentCredited));
+  const l75 = rd4(c(input.caCalEITC));
+  const l76 = rd4(c(input.caYCTC));
+  const l78 = l71 + l72 + l75 + l76 + rd4(c(input.refundableCredits));
   const due = l64 + c(input.useTax);
-  const l97 = max04(l78 - due);
-  const l111 = max04(due - l78);
+  const l97 = max06(l78 - due);
+  const l111 = max06(due - l78);
   return {
     "13_federal_agi": fmtD(l13),
     "17_ca_agi": fmtD(l17),
@@ -29054,28 +30078,28 @@ function composeIL(input, evalStateTax, notes) {
   const fedEITC = c(input.federalEITC);
   const wh = c(input.stateWithholding);
   const est = c(input.estimatedPayments);
-  const l1 = rd2(fagi);
-  const l4 = rd2(l1 + c(input.additions));
-  const l9 = max04(rd2(l4 - c(input.subtractions)));
+  const l1 = rd4(fagi);
+  const l4 = rd4(l1 + c(input.additions));
+  const l9 = max06(rd4(l4 - c(input.subtractions)));
   const nExemptions = input.exemptions ?? 1;
-  let l10 = rd2(BigInt(nExemptions) * EXEMPTION + BigInt(input.ageOrBlindBoxes ?? 0) * AGE_BLIND_BOX);
+  let l10 = rd4(BigInt(nExemptions) * EXEMPTION + BigInt(input.ageOrBlindBoxes ?? 0) * AGE_BLIND_BOX);
   if (input.claimedAsDependent === true && l9 > EXEMPTION) {
     l10 = 0n;
     notes.push("IL exemption allowance $0: taxpayer is claimable as a dependent on another return and base income exceeds $2,850");
   }
-  const l11 = max04(l9 - l10);
-  const l12 = rd2(evalStateTax("us.il.income_tax", l11));
+  const l11 = max06(l9 - l10);
+  const l12 = rd4(evalStateTax("us.il.income_tax", l11));
   const l14 = l12;
   const l18 = ilNonrefundableCredits(input, l14, notes);
-  const l21 = rd2(c(input.useTax));
+  const l21 = rd4(c(input.useTax));
   const l23 = l14 - l18 + l21;
-  const l29 = input.ilEitcOverride !== void 0 ? rd2(c(input.ilEitcOverride)) : rd2(fedEITC * 20n / 100n);
-  const l30 = input.ilChildUnder12 ? rd2(l29 * 40n / 100n) : 0n;
+  const l29 = input.ilEitcOverride !== void 0 ? rd4(c(input.ilEitcOverride)) : rd4(fedEITC * 20n / 100n);
+  const l30 = input.ilChildUnder12 ? rd4(l29 * 40n / 100n) : 0n;
   if (!input.ilChildUnder12 && l29 > 0n)
     notes.push("IL CTC $0: no dependent child under 12 indicated");
   const l31 = wh + est + l29 + l30;
-  const l32 = max04(l31 - l23);
-  const l41 = max04(l23 - l31);
+  const l32 = max06(l31 - l23);
+  const l41 = max06(l23 - l31);
   return {
     "1_federal_agi": fmtD(l1),
     "4_total_income": fmtD(l4),
@@ -29096,18 +30120,18 @@ function composeIL(input, evalStateTax, notes) {
   };
 }
 function ilNonrefundableCredits(input, taxDue, notes) {
-  const propertyTax = rd2(c(input.ilPropertyTaxPaid) * 5n / 100n);
+  const propertyTax = rd4(c(input.ilPropertyTaxPaid) * 5n / 100n);
   const k12 = (() => {
-    const over = max04(c(input.ilK12Expenses) - 25000n);
-    const credit = rd2(over * 25n / 100n);
+    const over = max06(c(input.ilK12Expenses) - 25000n);
+    const credit = rd4(over * 25n / 100n);
     return credit > 75000n ? 75000n : credit;
   })();
   const teacher = (() => {
-    const t = rd2(c(input.ilTeacherExpenses));
+    const t = rd4(c(input.ilTeacherExpenses));
     const cap = isJoint(input) ? 100000n : 50000n;
     return t > cap ? cap : t;
   })();
-  const available = propertyTax + k12 + teacher + rd2(c(input.nonrefundableCredits));
+  const available = propertyTax + k12 + teacher + rd4(c(input.nonrefundableCredits));
   const allowed = available > taxDue ? taxDue : available;
   if (available > allowed)
     notes.push(`IL credits available ${fmtD(available)} capped at tax due \u2014 line 18 reports the ALLOWED amount`);
@@ -29124,35 +30148,271 @@ var init_il = __esm({
   }
 });
 
+// ../compose/dist/nj.js
+function composeNJ(input, evalStateTax, notes) {
+  const mfsSameHome = isMfs3(input) && input.njMfsSameHome === true;
+  const joint = input.filingStatus === "mfj";
+  const thresholdJoint = input.filingStatus === "mfj" || input.filingStatus === "hoh" || input.filingStatus === "qss";
+  const l15 = cat2(input.njWages ?? input.wages, "line 15 wages", notes);
+  if (input.njWages === void 0 && input.wages !== void 0) {
+    notes.push("NJ line 15: W-2 Box 16 state wages not transcribed \u2014 federal wages used (401(k) deferrals reduce both boxes for NJ, but cafeteria/125 and some benefits differ; pass njWages when Box 16 differs)");
+  }
+  const l16a = cat2(input.njTaxableInterest, "line 16a interest", notes);
+  const l16b = rd4(c(input.njTaxExemptInterest));
+  const l17 = cat2(input.njDividends, "line 17 dividends", notes);
+  const l18 = cat2(input.njBusinessNet, "line 18 business", notes);
+  const l19 = cat2(input.njDispositionNet, "line 19 disposition of property", notes);
+  const l20a = cat2(input.njPension, "line 20a pensions", notes);
+  const l20b = rd4(c(input.njPensionExcludable));
+  const l21 = cat2(input.njPartnershipNet, "line 21 partnership", notes);
+  const l22 = cat2(input.njScorpNet, "line 22 S corporation", notes);
+  const l23 = cat2(input.njRentRoyaltyNet, "line 23 rents/royalties", notes);
+  const l24 = cat2(input.njGamblingNet, "line 24 gambling", notes);
+  const l25 = cat2(input.njAlimonyReceived, "line 25 alimony received", notes);
+  const l26 = cat2(input.njOtherIncome, "line 26 other", notes);
+  const l27 = l15 + l16a + l17 + l18 + l19 + l20a + l21 + l22 + l23 + l24 + l25 + l26;
+  const eligiblePension = input.njPensionEligibleAmount !== void 0 ? rd4(c(input.njPensionEligibleAmount)) : l20a;
+  const l28a = min2(rd4(evalStateTax("us.nj.pension_exclusion", 0n, {
+    njPensionIncome: eligiblePension,
+    njTotalIncome: l27,
+    njPensionEligible: input.njPensionEligible === true
+  })), l20a);
+  let l28b = 0n;
+  if (input.njOtherRetirementExclusion !== void 0) {
+    l28b = rd4(c(input.njOtherRetirementExclusion));
+  } else if (input.njOtherRetirementEligible === true) {
+    const earned2 = l15 + l18 + l21 + l22;
+    if (earned2 <= OTHER_RETIREMENT_EARNED_CAP && l27 <= PENSION_FULL_TIER_MAX) {
+      const cap = joint ? 10000000n : isMfs3(input) ? 5000000n : 7500000n;
+      l28b = max06(cap - l28a);
+      notes.push("NJ line 28b: unclaimed Other Retirement Income Exclusion computed per Worksheet D (62+, earned income \u2264 $3,000, line 27 \u2264 $100,000)");
+    } else if (earned2 > OTHER_RETIREMENT_EARNED_CAP) {
+      notes.push("NJ line 28b $0: earned income (lines 15+18+21+22) exceeds the $3,000 Worksheet D gate");
+    } else {
+      notes.push("NJ line 28b: line 27 above $100,000 \u2014 compute Worksheet D's percentage-tier unclaimed exclusion by hand and pass njOtherRetirementExclusion");
+    }
+  }
+  if (input.njSpecialExclusion === true) {
+    l28b += thresholdJoint ? SPECIAL_EXCLUSION_JOINT : SPECIAL_EXCLUSION_SINGLE;
+    notes.push("NJ line 28b includes the Special Exclusion (never eligible for Social Security/Railroad Retirement \u2014 attested)");
+  }
+  const l28c = l28a + l28b;
+  const l29 = max06(l27 - l28c);
+  const threshold2 = thresholdJoint ? 2000000n : 1000000n;
+  const belowThreshold = l29 <= threshold2;
+  if (belowThreshold) {
+    notes.push(`NJ: line 29 gross income ${fmtD(l29)} is at or below the ${fmtD(threshold2)} filing threshold \u2014 NO NJ tax is due (file only to recover withholding or claim the NJEITC)`);
+  }
+  const regularCount = BigInt(1 + (joint ? 1 : 0) + (input.njDomesticPartner === true ? 1 : 0));
+  const l13 = regularCount * EXEMPTION_REGULAR + BigInt(input.njSeniorCount ?? 0) * EXEMPTION_SENIOR + BigInt(input.njBlindCount ?? 0) * EXEMPTION_BLIND + BigInt(input.njVeteranCount ?? 0) * EXEMPTION_VETERAN + BigInt(input.dependents ?? 0) * EXEMPTION_DEPENDENT + BigInt(input.njCollegeDependents ?? 0) * EXEMPTION_COLLEGE;
+  const l30 = l13;
+  const medicalFloor = rd4(l29 * 2n / 100n);
+  const l31 = max06(rd4(c(input.njMedicalExpenses)) - medicalFloor) + rd4(c(input.njArcherMsa)) + rd4(c(input.njSeHealthInsurance));
+  if (l31 === 0n && c(input.njMedicalExpenses) > 0n) {
+    notes.push(`NJ line 31 $0: medical expenses do not exceed the 2% floor (${fmtD(medicalFloor)})`);
+  }
+  const l32 = rd4(c(input.njAlimonyPaid));
+  const l33 = rd4(c(input.njConservationContribution));
+  const l34 = rd4(c(input.njHezDeduction));
+  const l35 = rd4(c(input.njAbcaAdjustment));
+  const l36 = min2(rd4(c(input.njOrganDonationExpenses)), ORGAN_DONATION_CAP);
+  let l37a = 0n, l37b = 0n, l37c = 0n;
+  const wantsCollege = c(input.njNjbestContributions) > 0n || c(input.njNjclassPaid) > 0n || c(input.njTuitionPaid) > 0n;
+  if (wantsCollege && l29 > COLLEGE_INCOME_CAP) {
+    notes.push("NJ lines 37a-37c $0: the College Affordability deductions require gross income of $200,000 or less");
+  } else {
+    l37a = min2(rd4(c(input.njNjbestContributions)), NJBEST_CAP);
+    l37b = min2(rd4(c(input.njNjclassPaid)), NJCLASS_CAP);
+    l37c = min2(rd4(c(input.njTuitionPaid)), TUITION_CAP);
+  }
+  const l38 = l30 + l31 + l32 + l33 + l34 + l35 + l36 + l37a + l37b + l37c;
+  const l39 = max06(l29 - l38);
+  const l40a = rd4(c(input.njPropertyTaxesPaid)) + rd4(rd4(c(input.njRentPaid)) * 18n / 100n);
+  if (c(input.njRentPaid) > 0n)
+    notes.push("NJ line 40a includes 18% of rent paid (tenant property-tax equivalent)");
+  const taxOn = (ti) => belowThreshold ? 0n : rd4(evalStateTax("us.nj.income_tax", max06(ti)));
+  let l41 = 0n;
+  let l56 = 0n;
+  if (l40a > 0n && !belowThreshold) {
+    const ded = min2(l40a, mfsSameHome ? PROPERTY_TAX_CAP_MFS_SAME_HOME : PROPERTY_TAX_CAP);
+    const savings = taxOn(l39) - taxOn(l39 - ded);
+    const creditThreshold = mfsSameHome ? PROPERTY_TAX_CREDIT / 2n : PROPERTY_TAX_CREDIT;
+    if (savings >= creditThreshold) {
+      l41 = ded;
+      notes.push(`NJ Worksheet H: Property Tax Deduction ${fmtD(ded)} chosen (saves ${fmtD(savings)}, \u2265 the ${fmtD(creditThreshold)} credit)`);
+    } else {
+      l56 = creditThreshold;
+      notes.push(`NJ Worksheet H: ${fmtD(creditThreshold)} Property Tax Credit chosen (deduction would save only ${fmtD(savings)})`);
+    }
+  } else if (l40a > 0n && belowThreshold) {
+    notes.push("NJ property tax: income at or below the filing threshold \u2014 seniors/blind/disabled filers may still claim the $50 credit via Form NJ-1040-HW (not composed here)");
+  }
+  const l42 = max06(l39 - l41);
+  const l43 = taxOn(l42);
+  const cojRaw = rd4(c(input.njCojCredit));
+  const l44 = min2(cojRaw, l43);
+  if (cojRaw > l44)
+    notes.push("NJ line 44 capped at the line 43 tax (Schedule NJ-COJ credit cannot exceed the tax)");
+  const l45 = l43 - l44;
+  const l46 = rd4(c(input.njShelteredWorkshopCredit));
+  const l47 = rd4(c(input.njGoldStarCredit));
+  const l48 = rd4(c(input.njOrganDonorEmployerCredit));
+  const l49 = l46 + l47 + l48;
+  const l50 = max06(l45 - l49);
+  const l51 = rd4(c(input.useTax));
+  const l52 = rd4(c(input.njUnderpaymentInterest));
+  let l53c = rd4(c(input.njSrp));
+  if (belowThreshold && l53c > 0n) {
+    l53c = 0n;
+    notes.push("NJ line 53c $0: income at or below the filing threshold is exempt from the Shared Responsibility Payment");
+  }
+  const l54 = l50 + l51 + l52 + l53c;
+  const l55 = rd4(c(input.stateWithholding));
+  const l57 = rd4(c(input.estimatedPayments)) + rd4(c(input.priorYearOverpaymentCredited)) + rd4(c(input.extensionPayment));
+  const fedEITC = rd4(c(input.federalEITC));
+  const l58 = input.njEitcOverride !== void 0 ? rd4(c(input.njEitcOverride)) : input.njEitcAgeDecoupled === true && fedEITC === 0n ? EITC_AGE_DECOUPLED_FLAT : rd4(fedEITC * 40n / 100n);
+  if (l58 === EITC_AGE_DECOUPLED_FLAT && input.njEitcAgeDecoupled === true && fedEITC === 0n) {
+    notes.push("NJ line 58: flat $260 NJEITC (18+, no qualifying child, met all federal EIC requirements except age \u2014 attested)");
+  }
+  const l59 = rd4(c(input.njExcessUiWfSwf));
+  const l60 = rd4(c(input.njExcessDi));
+  const l61 = rd4(c(input.njExcessFli));
+  const l62 = rd4(c(input.njWwcCredit));
+  const l63 = rd4(c(input.njBaitCredit));
+  const l64 = c(input.njFederalCdcc) > 0n ? rd4(evalStateTax("us.nj.cdcc", l42, { njFederalCdcc: c(input.njFederalCdcc) })) : 0n;
+  if (isMfs3(input) && l64 > 0n) {
+    notes.push("NJ line 64 (MFS): the CDCC requires meeting the federal \xA7 21(e) living-apart exceptions \u2014 attested by supplying njFederalCdcc");
+  }
+  const l65 = rd4(evalStateTax("us.nj.ctc", l42, { njChildrenUnder6: input.njChildrenUnder6 ?? 0 }));
+  const l66 = l55 + l56 + l57 + l58 + l59 + l60 + l61 + l62 + l63 + l64 + l65;
+  const l67 = max06(l54 - l66);
+  const l68 = max06(l66 - l54);
+  notes.push("NJ: ANCHOR / Senior Freeze / Stay NJ property-tax relief is applied for on the separate PAS-1, never on the NJ-1040");
+  return {
+    "13_total_exemption_amount": fmtD(l13),
+    "15_wages": fmtD(l15),
+    "16a_taxable_interest": fmtD(l16a),
+    "16b_tax_exempt_interest": fmtD(l16b),
+    "17_dividends": fmtD(l17),
+    "18_business_net": fmtD(l18),
+    "19_disposition_net": fmtD(l19),
+    "20a_pensions_taxable": fmtD(l20a),
+    "20b_pensions_excludable": fmtD(l20b),
+    "21_partnership": fmtD(l21),
+    "22_s_corporation": fmtD(l22),
+    "23_rents_royalties": fmtD(l23),
+    "24_gambling_net": fmtD(l24),
+    "25_alimony_received": fmtD(l25),
+    "26_other": fmtD(l26),
+    "27_total_income": fmtD(l27),
+    "28a_pension_exclusion": fmtD(l28a),
+    "28b_other_retirement_exclusion": fmtD(l28b),
+    "28c_total_exclusion": fmtD(l28c),
+    "29_nj_gross_income": fmtD(l29),
+    "30_exemption_amount": fmtD(l30),
+    "31_medical_expenses": fmtD(l31),
+    "32_alimony_paid": fmtD(l32),
+    "36_organ_donation": fmtD(l36),
+    "37a_njbest": fmtD(l37a),
+    "37b_njclass": fmtD(l37b),
+    "37c_tuition": fmtD(l37c),
+    "38_total_exemptions_deductions": fmtD(l38),
+    "39_taxable_income": fmtD(l39),
+    "40a_property_taxes_paid": fmtD(l40a),
+    "41_property_tax_deduction": fmtD(l41),
+    "42_nj_taxable_income": fmtD(l42),
+    "43_tax": fmtD(l43),
+    "44_coj_credit": fmtD(l44),
+    "45_balance_of_tax": fmtD(l45),
+    "49_total_credits": fmtD(l49),
+    "50_balance_after_credits": fmtD(l50),
+    "51_use_tax": fmtD(l51),
+    "52_underpayment_interest": fmtD(l52),
+    "53c_shared_responsibility": fmtD(l53c),
+    "54_total_tax_due": fmtD(l54),
+    "55_withholding": fmtD(l55),
+    "56_property_tax_credit": fmtD(l56),
+    "57_estimated_payments": fmtD(l57),
+    "58_nj_eitc": fmtD(l58),
+    "59_excess_ui_wf_swf": fmtD(l59),
+    "60_excess_di": fmtD(l60),
+    "61_excess_fli": fmtD(l61),
+    "62_wounded_warrior": fmtD(l62),
+    "63_bait_credit": fmtD(l63),
+    "64_cdcc": fmtD(l64),
+    "65_nj_ctc": fmtD(l65),
+    "66_total_payments": fmtD(l66),
+    "67_amount_owed": fmtD(l67),
+    "68_overpayment": fmtD(l68),
+    "79_balance_due": fmtD(l67),
+    "80_refund": fmtD(l68)
+  };
+}
+var EXEMPTION_REGULAR, EXEMPTION_SENIOR, EXEMPTION_BLIND, EXEMPTION_VETERAN, EXEMPTION_DEPENDENT, EXEMPTION_COLLEGE, ORGAN_DONATION_CAP, COLLEGE_INCOME_CAP, NJBEST_CAP, NJCLASS_CAP, TUITION_CAP, PROPERTY_TAX_CAP, PROPERTY_TAX_CAP_MFS_SAME_HOME, PROPERTY_TAX_CREDIT, SPECIAL_EXCLUSION_JOINT, SPECIAL_EXCLUSION_SINGLE, OTHER_RETIREMENT_EARNED_CAP, PENSION_FULL_TIER_MAX, EITC_AGE_DECOUPLED_FLAT, cat2;
+var init_nj = __esm({
+  "../compose/dist/nj.js"() {
+    "use strict";
+    init_money2();
+    init_types3();
+    EXEMPTION_REGULAR = 100000n;
+    EXEMPTION_SENIOR = 100000n;
+    EXEMPTION_BLIND = 100000n;
+    EXEMPTION_VETERAN = 600000n;
+    EXEMPTION_DEPENDENT = 150000n;
+    EXEMPTION_COLLEGE = 100000n;
+    ORGAN_DONATION_CAP = 1000000n;
+    COLLEGE_INCOME_CAP = 20000000n;
+    NJBEST_CAP = 1000000n;
+    NJCLASS_CAP = 250000n;
+    TUITION_CAP = 1000000n;
+    PROPERTY_TAX_CAP = 1500000n;
+    PROPERTY_TAX_CAP_MFS_SAME_HOME = 750000n;
+    PROPERTY_TAX_CREDIT = 5000n;
+    SPECIAL_EXCLUSION_JOINT = 600000n;
+    SPECIAL_EXCLUSION_SINGLE = 300000n;
+    OTHER_RETIREMENT_EARNED_CAP = 300000n;
+    PENSION_FULL_TIER_MAX = 10000000n;
+    EITC_AGE_DECOUPLED_FLAT = 26000n;
+    cat2 = (v, label, notes) => {
+      const x = rd4(c(v));
+      if (x < 0n) {
+        notes.push(`NJ ${label}: net category loss not entered (NJ-1040 p.7 \u2014 a loss never offsets another category and never carries over)`);
+        return 0n;
+      }
+      return x;
+    };
+  }
+});
+
 // ../compose/dist/ny.js
 function composeNY(input, evalStateTax, notes) {
-  const l1 = rd2(c(input.wages));
-  const l19 = rd2(c(input.federalAGI));
-  const l24 = rd2(l19 + c(input.additions));
-  const ssSub = rd2(c(input.taxableSocialSecurity));
+  const l1 = rd4(c(input.wages));
+  const l19 = rd4(c(input.federalAGI));
+  const l24 = rd4(l19 + c(input.additions));
+  const ssSub = rd4(c(input.taxableSocialSecurity));
   if (ssSub > 0n)
     notes.push(`NY subtraction: federally taxable social security ${fmtD(ssSub)} (IT-201 line 27)`);
-  const l32 = rd2(c(input.subtractions)) + ssSub;
+  const l32 = rd4(c(input.subtractions)) + ssSub;
   const l33 = l24 - l32;
   const l34 = isJoint(input) ? STD_DEDUCTION_JOINT : isHoh(input) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE2;
-  const l37 = max04(l33 - l34 - BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION);
-  const l39 = rd2(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
-  const l43 = rd2(c(input.nyHouseholdCredit));
-  const l44 = max04(l39 - l43);
+  const l37 = max06(l33 - l34 - BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION);
+  const l39 = rd4(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
+  const l43 = rd4(c(input.nyHouseholdCredit));
+  const l44 = max06(l39 - l43);
   let nycNet = 0n;
   if (input.nycTaxableIncome !== void 0 && c(input.nycTaxableIncome) > 0n) {
-    const nycTax = rd2(evalStateTax("us.ny.nyc_income_tax", rd2(c(input.nycTaxableIncome)), { useFormulaMethod: true }));
-    nycNet = max04(nycTax - rd2(c(input.nycHouseholdCredit)));
+    const nycTax = rd4(evalStateTax("us.ny.nyc_income_tax", rd4(c(input.nycTaxableIncome)), { useFormulaMethod: true }));
+    nycNet = max06(nycTax - rd4(c(input.nycHouseholdCredit)));
   }
-  const yonkers = rd2(c(input.yonkersSurcharge));
+  const yonkers = rd4(c(input.yonkersSurcharge));
   const l62 = l44 + nycNet + yonkers + c(input.useTax);
   const l72 = c(input.stateWithholding);
   const l73 = c(input.cityWithholding);
   const l74 = c(input.yonkersWithholding);
-  const l75 = c(input.estimatedPayments) + rd2(c(input.extensionPayment));
-  const l76 = l72 + l73 + l74 + l75 + rd2(c(input.refundableCredits));
-  const l77 = max04(l76 - l62);
-  const owed = max04(l62 - l76);
+  const l75 = c(input.estimatedPayments) + rd4(c(input.extensionPayment));
+  const l76 = l72 + l73 + l74 + l75 + rd4(c(input.refundableCredits));
+  const l77 = max06(l76 - l62);
+  const owed = max06(l62 - l76);
   if (owed > 0n)
     notes.push(`balance due ${fmtD(owed)} (IT-201 line 80)`);
   return {
@@ -29190,28 +30450,151 @@ var init_ny = __esm({
   }
 });
 
+// ../compose/dist/oh.js
+function composeOH(input, evalStateTax, notes) {
+  const fagi = rd4(c(input.federalAGI));
+  const l1 = fagi;
+  const l2a = rd4(c(input.additions));
+  const bizTotal = rd4(c(input.ohBusinessIncome));
+  const line112 = max06(min2(bizTotal, max06(fagi)));
+  const bid = min2(line112, isMfs3(input) ? BID_CAP_MFS : BID_CAP);
+  if (bid > 0n)
+    notes.push(`OH Business Income Deduction ${fmtD(bid)} (Schedule of Business Income line 13; cap ${isMfs3(input) ? "$125,000 MFS" : "$250,000"})`);
+  const taxableSS = rd4(c(input.taxableSocialSecurity));
+  if (taxableSS > 0n)
+    notes.push("OH Schedule of Adjustments line 16: taxable Social Security deducted automatically (Ohio never taxes it)");
+  const l2b = rd4(c(input.subtractions)) + bid + taxableSS;
+  const l3 = l1 + l2a - l2b;
+  const nExemptions = input.exemptions ?? 1;
+  const magi2 = l3 + bid;
+  const ohBase = {
+    ohModifiedAgi: magi2,
+    ohExemptionCount: nExemptions
+  };
+  const l4 = rd4(evalStateTax("us.oh.exemption_amount", 0n, ohBase));
+  if (input.claimedAsDependent === true) {
+    notes.push("OH line 4: a taxpayer claimable as a dependent on another return takes NO exemption for self \u2014 pass the exemptions count accordingly");
+  }
+  const l5 = max06(l3 - l4);
+  const line14 = max06(line112 - bid);
+  const l6 = min2(line14, l5);
+  const l7 = max06(l5 - l6);
+  const l8a = rd4(evalStateTax("us.oh.income_tax", l7));
+  const l8b = l6 > 0n ? rd4(evalStateTax("us.oh.business_income_tax", 0n, { ohTaxableBusinessIncome: l6 })) : 0n;
+  const l8c = l8a + l8b;
+  const age65 = input.ohAge65OrOlder === true;
+  const sc2 = rd4(evalStateTax("us.oh.retirement_income_credit", 0n, { ...ohBase, ohEligibleRetirementIncome: c(input.ohRetirementIncome) }));
+  const sc4 = rd4(evalStateTax("us.oh.senior_citizen_credit", 0n, { ...ohBase, isAge65OrOlder: age65 }));
+  const sc6 = c(input.ohFederalCdccTentative) > 0n || c(input.ohFederalCdccAllowed) > 0n ? rd4(evalStateTax("us.oh.cdcc", 0n, {
+    ...ohBase,
+    ohFederalCdccTentative: c(input.ohFederalCdccTentative),
+    ohFederalCdccAllowed: c(input.ohFederalCdccAllowed)
+  })) : 0n;
+  const sc9 = rd4(evalStateTax("us.oh.exemption_credit", 0n, ohBase));
+  const scOtherPre = rd4(c(input.ohOtherCreditsPreJfc));
+  const sc10 = sc2 + sc4 + sc6 + sc9 + scOtherPre;
+  const sc11 = max06(l8c - sc10);
+  const sc12 = rd4(evalStateTax("us.oh.joint_filing_credit", 0n, {
+    ...ohBase,
+    ohTaxLessCredits: sc11,
+    ohBothSpousesHaveQualifyingIncome: input.ohBothSpousesQualifyingIncome === true
+  }));
+  if (sc12 > 0n)
+    notes.push("OH joint filing credit claimed \u2014 include the statement listing each spouse's qualifying income (R.C. 5747.05(E))");
+  const fedEITC = rd4(c(input.federalEITC));
+  const sc13 = input.ohEicOverride !== void 0 ? rd4(c(input.ohEicOverride)) : rd4(fedEITC * 30n / 100n);
+  const scOtherPost = rd4(c(input.nonrefundableCredits));
+  const sc36 = sc12 + sc13 + scOtherPost;
+  const sc38 = rd4(c(input.ohNonresidentCredit));
+  const sc39 = rd4(c(input.ohResidentCredit));
+  const sc40 = sc10 + sc36 + sc38 + sc39;
+  if (sc36 > sc11)
+    notes.push(`OH Schedule of Credits: line 12-35 credits ${fmtD(sc36)} exceed the line 11 remaining tax ${fmtD(sc11)} \u2014 line 40 still reports the full sum (the printed form's line 37 is informational); the excess dies at IT 1040 line 10's zero floor, never refunds`);
+  const l9 = sc40;
+  const l10 = max06(l8c - l9);
+  const l11 = rd4(c(input.ohInterestPenalty));
+  const l12 = rd4(c(input.useTax));
+  const l13 = l10 + l11 + l12;
+  const l14 = rd4(c(input.stateWithholding));
+  const l15 = rd4(c(input.estimatedPayments)) + rd4(c(input.priorYearOverpaymentCredited)) + rd4(c(input.extensionPayment));
+  const l16 = rd4(c(input.refundableCredits));
+  const l17 = l14 + l15 + l16;
+  const l20 = max06(l13 - l17);
+  const l23 = max06(l17 - l13);
+  notes.push("OH school district income tax (SD 100) is a SEPARATE return \u2014 if the taxpayer's district levies one (tax.ohio.gov/Finder), compute and disclose it separately");
+  notes.push("OH municipal income taxes are separate city levies (RITA/CCA) \u2014 never on the IT 1040");
+  if (l23 > 0n && l23 <= 100n)
+    notes.push("OH: refunds of $1.00 or less are not issued");
+  if (l20 > 0n && l20 <= 100n)
+    notes.push("OH: amounts due of $1.00 or less need not be paid");
+  return {
+    "1_federal_agi": fmtD(l1),
+    "2a_additions": fmtD(l2a),
+    "2b_deductions": fmtD(l2b),
+    "3_ohio_agi": fmtD(l3),
+    "4_exemption_amount": fmtD(l4),
+    "5_income_tax_base": fmtD(l5),
+    "6_taxable_business_income": fmtD(l6),
+    "7_taxable_nonbusiness_income": fmtD(l7),
+    "8a_nonbusiness_tax": fmtD(l8a),
+    "8b_business_tax": fmtD(l8b),
+    "8c_tax_before_credits": fmtD(l8c),
+    "9_nonrefundable_credits": fmtD(l9),
+    "10_tax_after_credits": fmtD(l10),
+    "11_interest_penalty": fmtD(l11),
+    "12_use_tax": fmtD(l12),
+    "13_total_liability": fmtD(l13),
+    "14_withholding": fmtD(l14),
+    "15_estimated_and_extension": fmtD(l15),
+    "16_refundable_credits": fmtD(l16),
+    "17_total_payments": fmtD(l17),
+    "20_tax_due": fmtD(l20),
+    "22_total_amount_due": fmtD(l20),
+    "23_overpayment": fmtD(l23),
+    "26_refund": fmtD(l23),
+    "credits_2_retirement": fmtD(sc2),
+    "credits_4_senior": fmtD(sc4),
+    "credits_6_cdcc": fmtD(sc6),
+    "credits_9_exemption_credit": fmtD(sc9),
+    "credits_11_tax_less_credits": fmtD(sc11),
+    "credits_12_joint_filing": fmtD(sc12),
+    "credits_13_eic": fmtD(sc13),
+    "credits_40_total_nonrefundable": fmtD(sc40)
+  };
+}
+var BID_CAP, BID_CAP_MFS;
+var init_oh = __esm({
+  "../compose/dist/oh.js"() {
+    "use strict";
+    init_money2();
+    init_types3();
+    BID_CAP = 25000000n;
+    BID_CAP_MFS = 12500000n;
+  }
+});
+
 // ../compose/dist/pa.js
 function composePA(input, evalStateTax, notes) {
   const box16 = input.paGrossCompensation !== void 0 ? c(input.paGrossCompensation) : c(input.wages);
   if (input.paGrossCompensation === void 0 && input.wages !== void 0) {
     notes.push("PA line 1a: W-2 Box 16 total not transcribed \u2014 federal Box 1 wages used (401(k)/elective deferrals are PA-taxable; pass paGrossCompensation when Box 16 differs)");
   }
-  const l1a = rd2(box16);
-  const l1b = rd2(c(input.paUnreimbursedExpenses));
-  const l1c = max04(l1a - l1b);
-  const l2 = rd2(c(input.paInterest));
-  const l3 = rd2(c(input.paDividends));
-  const bizP = rd2(c(input.paBusinessNet));
-  const bizS = rd2(c(input.paSpouseBusinessNet));
-  const propP = rd2(c(input.paPropertyNet));
-  const propS = rd2(c(input.paSpousePropertyNet));
-  const rentP = rd2(c(input.paRentRoyaltyNet));
-  const rentS = rd2(c(input.paSpouseRentRoyaltyNet));
+  const l1a = rd4(box16);
+  const l1b = rd4(c(input.paUnreimbursedExpenses));
+  const l1c = max06(l1a - l1b);
+  const l2 = rd4(c(input.paInterest));
+  const l3 = rd4(c(input.paDividends));
+  const bizP = rd4(c(input.paBusinessNet));
+  const bizS = rd4(c(input.paSpouseBusinessNet));
+  const propP = rd4(c(input.paPropertyNet));
+  const propS = rd4(c(input.paSpousePropertyNet));
+  const rentP = rd4(c(input.paRentRoyaltyNet));
+  const rentS = rd4(c(input.paSpouseRentRoyaltyNet));
   const l4 = classLine(bizP, bizS);
   const l5 = classLine(propP, propS);
   const l6 = classLine(rentP, rentS);
-  const l7 = rd2(c(input.paEstateTrust));
-  const l8 = rd2(c(input.paGambling));
+  const l7 = rd4(c(input.paEstateTrust));
+  const l8 = rd4(c(input.paGambling));
   const extra = {
     wages: box16,
     paUnreimbursedBusinessExpenses: c(input.paUnreimbursedExpenses),
@@ -29230,35 +30613,35 @@ function composePA(input, evalStateTax, notes) {
     paAbleContributions: c(input.paAbleContributions),
     paMsaHsaContributions: c(input.paMsaHsaContributions)
   };
-  const l9 = rd2(evalStateTax("us.pa.taxable_income", 0n, extra));
-  const l10 = rd2(evalStateTax("us.pa.other_deductions", 0n, extra));
-  const l11 = max04(l9 - l10);
-  const l12 = rd2(evalStateTax("us.pa.income_tax", 0n, extra));
-  const l13 = rd2(c(input.stateWithholding));
-  const l14 = rd2(c(input.priorYearOverpaymentCredited));
-  const l15 = rd2(c(input.estimatedPayments));
-  const l16 = rd2(c(input.extensionPayment));
-  const l17 = rd2(c(input.paNrk1Withholding));
+  const l9 = rd4(evalStateTax("us.pa.taxable_income", 0n, extra));
+  const l10 = rd4(evalStateTax("us.pa.other_deductions", 0n, extra));
+  const l11 = max06(l9 - l10);
+  const l12 = rd4(evalStateTax("us.pa.income_tax", 0n, extra));
+  const l13 = rd4(c(input.stateWithholding));
+  const l14 = rd4(c(input.priorYearOverpaymentCredited));
+  const l15 = rd4(c(input.estimatedPayments));
+  const l16 = rd4(c(input.extensionPayment));
+  const l17 = rd4(c(input.paNrk1Withholding));
   const l18 = l14 + l15 + l16 + l17;
   const spDeps = input.paSpDependentChildren ?? 0;
-  const l21 = rd2(evalStateTax("us.pa.tax_forgiveness", 0n, {
+  const l21 = rd4(evalStateTax("us.pa.tax_forgiveness", 0n, {
     ...extra,
     paSpDependentChildren: spDeps,
     paEligibilityIncomeAddbacks: c(input.paEligibilityAddbacks),
     paResidentCredit: c(input.paResidentCredit)
   }));
-  const l20 = l9 + rd2(c(input.paEligibilityAddbacks));
-  const l22 = rd2(c(input.paResidentCredit));
-  const l23 = rd2(c(input.paScheduleDcCredit)) + rd2(c(input.paScheduleOcCredits));
+  const l20 = l9 + rd4(c(input.paEligibilityAddbacks));
+  const l22 = rd4(c(input.paResidentCredit));
+  const l23 = rd4(c(input.paScheduleDcCredit)) + rd4(c(input.paScheduleOcCredits));
   const l24 = l13 + l18 + l21 + l22 + l23;
-  const l25 = rd2(c(input.useTax));
-  const l26 = max04(l12 + l25 - l24);
-  const l27 = rd2(c(input.paPenaltiesInterest));
+  const l25 = rd4(c(input.useTax));
+  const l26 = max06(l12 + l25 - l24);
+  const l27 = rd4(c(input.paPenaltiesInterest));
   const l28 = l26 + l27;
-  const l29 = max04(l24 - l12 - l25 - l27);
+  const l29 = max06(l24 - l12 - l25 - l27);
   const fedEITC = c(input.federalEITC);
   if (fedEITC > 0n) {
-    const wptc = min2(rd2(fedEITC * 10n / 100n), 80500n);
+    const wptc = min2(rd4(fedEITC * 10n / 100n), 80500n);
     notes.push(`PA Working Pennsylvanians Tax Credit ${fmtD(wptc)} (10% of federal EITC, max $805, refundable) \u2014 NO line on the printed 2025 PA-40; DOR applies it in processing from the attached federal return`);
   }
   notes.push("PA local earned income tax (Act 32) is filed separately with the local collector \u2014 out of scope for the PA-40");
@@ -29306,7 +30689,7 @@ var init_pa = __esm({
   "../compose/dist/pa.js"() {
     "use strict";
     init_money2();
-    classLine = (p, s) => p > 0n || s > 0n ? max04(p) + max04(s) : p + s;
+    classLine = (p, s) => p > 0n || s > 0n ? max06(p) + max06(s) : p + s;
   }
 });
 
@@ -29316,15 +30699,15 @@ function vaAgeDeduction(args, notes) {
   const testedMax = BigInt(args.testedCount) * AGE_DEDUCTION_EACH;
   const afagi = args.fagi - args.taxableSS;
   const threshold2 = args.joint ? 7500000n : 5000000n;
-  const reduction = max04(afagi - threshold2);
-  const deduction = rd2(full + max04(testedMax - reduction));
+  const reduction = max06(afagi - threshold2);
+  const deduction = rd4(full + max06(testedMax - reduction));
   if (deduction > 0n || args.testedCount > 0) {
     notes.push(`VA age deduction ${fmtD(deduction)} (AFAGI ${fmtD(afagi)} = FAGI minus taxable social security; reduction ${fmtD(min2(reduction, testedMax))} against ${fmtD(testedMax)} income-tested)`);
   }
   return deduction;
 }
 function vaScheduleA(a, notes) {
-  const med = max04(a.medical - rd2(a.fagi * 10n / 100n));
+  const med = max06(a.medical - rd4(a.fagi * 10n / 100n));
   const vaSaltCap = a.mfs ? 2000000n : 4000000n;
   const salesElected = a.salesTaxes > 0n;
   const line5a = salesElected ? min2(a.salesTaxes, vaSaltCap) : a.incomeTaxes;
@@ -29334,8 +30717,8 @@ function vaScheduleA(a, notes) {
   const peaseThreshold = a.joint ? 39920000n : a.mfs ? 19960000n : a.hoh ? 36595000n : 33270000n;
   let limited = total;
   if (a.fagi > peaseThreshold && total > protectedDed) {
-    const threePct = rd2((a.fagi - peaseThreshold) * 3n / 100n);
-    const eightyPct = rd2((total - protectedDed) * 80n / 100n);
+    const threePct = rd4((a.fagi - peaseThreshold) * 3n / 100n);
+    const eightyPct = rd4((total - protectedDed) * 80n / 100n);
     const reduction = min2(threePct, eightyPct);
     limited = total - reduction;
     notes.push(`VA overall itemized limitation: ${fmtD(total)} reduced by ${fmtD(reduction)} (lesser of 3% of FAGI over ${fmtD(peaseThreshold)} or 80% of non-protected deductions) = ${fmtD(limited)}`);
@@ -29344,13 +30727,13 @@ function vaScheduleA(a, notes) {
   if (!salesElected && line5a > 0n) {
     const capped5a = min2(line5a, vaSaltCap);
     if (limited < total) {
-      line18Reduction = rd2(capped5a * limited / total);
+      line18Reduction = rd4(capped5a * limited / total);
       notes.push("VA Sch A line 18 (income-tax reduction) prorated per the Limited Itemized Deduction Worksheet Part B \u2014 verify against the printed worksheet if this return is limited");
     } else {
       line18Reduction = capped5a;
     }
   }
-  return max04(limited - line18Reduction);
+  return max06(limited - line18Reduction);
 }
 function vaSpouseTaxAdjustment(w, evalStateTax, notes) {
   const exFor = (boxes) => BigInt(boxes) * VA_AGE_BLIND_EXEMPTION + VA_PERSONAL_EXEMPTION;
@@ -29366,10 +30749,10 @@ function vaSpouseTaxAdjustment(w, evalStateTax, notes) {
     notes.push("STA = $259 (worksheet line 5 shortcut: smaller income > $17,000 and taxable income > $34,000)");
     return STA_CAP;
   }
-  const line6 = max04(line4 - line5);
+  const line6 = max06(line4 - line5);
   const line7 = line4 / 2n;
-  const t8 = rd2(evalStateTax("us.va.income_tax", min2(line5, line7)));
-  const t9 = rd2(evalStateTax("us.va.income_tax", line6 > line7 ? line6 : line7));
+  const t8 = rd4(evalStateTax("us.va.income_tax", min2(line5, line7)));
+  const t9 = rd4(evalStateTax("us.va.income_tax", line6 > line7 ? line6 : line7));
   const sta = w.jointTax - (t8 + t9);
   const capped = sta < 0n ? 0n : sta > STA_CAP ? STA_CAP : sta;
   notes.push(`STA worksheet: joint tax ${fmtD(w.jointTax)} \u2212 split taxes ${fmtD(t8)}+${fmtD(t9)} = ${fmtD(capped)} (cap $259)`);
@@ -29383,7 +30766,7 @@ function vaLine23Credit(a, notes) {
   }
   if (a.fedEITC <= 0n && a.familyVagi === void 0)
     return 0n;
-  const refundable = rd2(a.fedEITC * 20n / 100n);
+  const refundable = rd4(a.fedEITC * 20n / 100n);
   const familyVagi = a.familyVagi ?? a.vagi;
   const povertyLine2 = 1565000n + BigInt(Math.max(0, a.exemptions - 1)) * 550000n;
   const cli = familyVagi <= povertyLine2 ? BigInt(a.exemptions) * 30000n : 0n;
@@ -29414,10 +30797,10 @@ var init_va_worksheets = __esm({
 function composeVA(input, evalStateTax, notes) {
   const joint = isJoint(input);
   const fagi = c(input.federalAGI);
-  const l1 = rd2(fagi);
-  const ssSub = rd2(c(input.taxableSocialSecurity));
-  const uiSub = rd2(c(input.unemploymentCompensation));
-  let age = rd2(c(input.vaAgeDeduction));
+  const l1 = rd4(fagi);
+  const ssSub = rd4(c(input.taxableSocialSecurity));
+  const uiSub = rd4(c(input.unemploymentCompensation));
+  let age = rd4(c(input.vaAgeDeduction));
   if (input.vaAgeDeduction === void 0 && (input.vaAgeQualifyingFull !== void 0 || input.vaAgeQualifyingTested !== void 0)) {
     age = vaAgeDeduction({
       fullCount: input.vaAgeQualifyingFull ?? 0,
@@ -29431,25 +30814,25 @@ function composeVA(input, evalStateTax, notes) {
     notes.push(`VA subtraction: federally taxable social security ${fmtD(ssSub)} (760 line 5)`);
   if (uiSub > 0n)
     notes.push(`VA subtraction: unemployment compensation ${fmtD(uiSub)} (Va. Code \xA7 58.1-322.02(9))`);
-  const l9 = rd2(l1 + c(input.additions) - age - ssSub - uiSub - c(input.subtractions));
+  const l9 = rd4(l1 + c(input.additions) - age - ssSub - uiSub - c(input.subtractions));
   const n = input.exemptions ?? (joint ? 2 : 1) + (input.dependents ?? 0);
   let l10 = 0n;
   let l11 = joint ? VA_STD_DEDUCTION_JOINT : VA_STD_DEDUCTION_OTHER;
   if (input.vaItemizing === true) {
     l10 = vaScheduleA({
       fagi,
-      medical: rd2(c(input.vaItemizedMedical)),
-      incomeTaxes: rd2(c(input.vaItemizedStateLocalIncomeTaxes)),
-      salesTaxes: rd2(c(input.vaItemizedSalesTaxes)),
-      realEstateTaxes: rd2(c(input.vaItemizedRealEstateTaxes)),
-      personalPropertyTaxes: rd2(c(input.vaItemizedPersonalPropertyTaxes)),
-      otherTaxes: rd2(c(input.vaItemizedOtherTaxes)),
-      mortgageInterest: rd2(c(input.vaItemizedMortgageInterest)),
-      investmentInterest: rd2(c(input.vaItemizedInvestmentInterest)),
-      charitable: rd2(c(input.vaItemizedCharitable)),
-      casualty: rd2(c(input.vaItemizedCasualty)),
-      gambling: rd2(c(input.vaItemizedGambling)),
-      other: rd2(c(input.vaItemizedOther)),
+      medical: rd4(c(input.vaItemizedMedical)),
+      incomeTaxes: rd4(c(input.vaItemizedStateLocalIncomeTaxes)),
+      salesTaxes: rd4(c(input.vaItemizedSalesTaxes)),
+      realEstateTaxes: rd4(c(input.vaItemizedRealEstateTaxes)),
+      personalPropertyTaxes: rd4(c(input.vaItemizedPersonalPropertyTaxes)),
+      otherTaxes: rd4(c(input.vaItemizedOtherTaxes)),
+      mortgageInterest: rd4(c(input.vaItemizedMortgageInterest)),
+      investmentInterest: rd4(c(input.vaItemizedInvestmentInterest)),
+      charitable: rd4(c(input.vaItemizedCharitable)),
+      casualty: rd4(c(input.vaItemizedCasualty)),
+      gambling: rd4(c(input.vaItemizedGambling)),
+      other: rd4(c(input.vaItemizedOther)),
       joint,
       mfs: isMfs3(input),
       hoh: isHoh(input)
@@ -29459,52 +30842,52 @@ function composeVA(input, evalStateTax, notes) {
     notes.push("VA standard deduction for a claimable-as-dependent filer is limited to earned income \u2014 pass vaItemizing/earned income facts if this binds");
   }
   const abBoxes = input.ageOrBlindBoxes ?? (input.vaYourAgeBlindBoxes ?? 0) + (input.vaSpouseAgeBlindBoxes ?? 0);
-  const l12 = rd2(BigInt(n) * VA_PERSONAL_EXEMPTION + BigInt(abBoxes) * VA_AGE_BLIND_EXEMPTION);
-  const l13 = rd2(c(input.vaScheduleAdjDeductions));
+  const l12 = rd4(BigInt(n) * VA_PERSONAL_EXEMPTION + BigInt(abBoxes) * VA_AGE_BLIND_EXEMPTION);
+  const l13 = rd4(c(input.vaScheduleAdjDeductions));
   const l14 = l10 + l11 + l12 + l13;
   const l15 = l9 - l14;
   const filingThreshold = joint ? 2390000n : 1195000n;
-  let l16 = rd2(evalStateTax("us.va.income_tax", max04(l15)));
+  let l16 = rd4(evalStateTax("us.va.income_tax", max06(l15)));
   if (l9 < filingThreshold && l16 > 0n) {
     notes.push(`VA tax $0: VAGI ${fmtD(l9)} is below the \xA7 58.1-321 filing threshold ${fmtD(filingThreshold)}`);
     l16 = 0n;
   }
-  let l17 = rd2(c(input.vaSpouseTaxAdjustment));
+  let l17 = rd4(c(input.vaSpouseTaxAdjustment));
   if (input.vaSpouseTaxAdjustment === void 0 && joint && input.vaYourVagi !== void 0 && input.vaSpouseVagi !== void 0 && l16 > 0n) {
     l17 = vaSpouseTaxAdjustment({
-      yourVagi: rd2(c(input.vaYourVagi)),
-      spouseVagi: rd2(c(input.vaSpouseVagi)),
+      yourVagi: rd4(c(input.vaYourVagi)),
+      spouseVagi: rd4(c(input.vaSpouseVagi)),
       yourAgeBlindBoxes: input.vaYourAgeBlindBoxes ?? 0,
       spouseAgeBlindBoxes: input.vaSpouseAgeBlindBoxes ?? 0,
-      taxableIncome: max04(l15),
+      taxableIncome: max06(l15),
       jointTax: l16
     }, evalStateTax, notes);
   }
-  const l18 = max04(l16 - l17);
+  const l18 = max06(l16 - l17);
   const l19a = c(input.stateWithholding);
   const l19b = c(input.spouseStateWithholding);
   const l20 = c(input.estimatedPayments);
-  const l21 = rd2(c(input.priorYearOverpaymentCredited));
-  const l22 = rd2(c(input.extensionPayment));
+  const l21 = rd4(c(input.priorYearOverpaymentCredited));
+  const l22 = rd4(c(input.extensionPayment));
   let l23;
   if (input.vaRefundableEitc !== void 0 || input.nonrefundableCredits !== void 0) {
-    const avail = rd2(c(input.nonrefundableCredits));
-    l23 = (avail > l18 ? l18 : avail) + rd2(c(input.vaRefundableEitc));
+    const avail = rd4(c(input.nonrefundableCredits));
+    l23 = (avail > l18 ? l18 : avail) + rd4(c(input.vaRefundableEitc));
   } else {
     l23 = vaLine23Credit({
-      fedEITC: rd2(c(input.federalEITC)),
+      fedEITC: rd4(c(input.federalEITC)),
       netTax: l18,
       vagi: l9,
-      familyVagi: input.vaFamilyVagi !== void 0 ? rd2(c(input.vaFamilyVagi)) : void 0,
+      familyVagi: input.vaFamilyVagi !== void 0 ? rd4(c(input.vaFamilyVagi)) : void 0,
       exemptions: n,
       barred: age > 0n || (input.ageOrBlindBoxes ?? 0) > 0
     }, notes);
   }
-  const l26 = l19a + l19b + l20 + l21 + l22 + l23 + rd2(c(input.refundableCredits));
+  const l26 = l19a + l19b + l20 + l21 + l22 + l23 + rd4(c(input.refundableCredits));
   const l33 = c(input.useTax);
   const totalDue = l18 + l33;
-  const l36 = max04(l26 - totalDue);
-  const l35 = max04(totalDue - l26);
+  const l36 = max06(l26 - totalDue);
+  const l35 = max06(totalDue - l26);
   return {
     "1_federal_agi": fmtD(l1),
     "9_vagi": fmtD(l9),
@@ -29539,14 +30922,14 @@ var init_va = __esm({
 });
 
 // ../compose/dist/shape.js
-var usd, shared, il, va, ca, ny, pa, stateReturnShape;
+var usd, shared, il, va, ca, ny, pa, nj, oh, stateReturnShape;
 var init_shape = __esm({
   "../compose/dist/shape.js"() {
     "use strict";
     init_zod();
     usd = external_exports.number().finite();
     shared = {
-      jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa"]),
+      jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh"]),
       filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
       // federal substrate values, computed by compute_return in the SAME session
       // (pass them verbatim — whole dollars)
@@ -29662,7 +31045,83 @@ var init_shape = __esm({
       // tax withheld from EVERY document type (W-2 box 17, W-2G box 15, 1099-R
       // box 14, 1099-MISC box 15, 1099-NEC box 5).
     };
-    stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa };
+    nj = {
+      // NJ is CATEGORY-BASED (NJ-1040 lines 15-26) — federalAGI is NOT the NJ
+      // base. Transcribe the category nets below (a category loss is entered as
+      // the negative net; the composer suppresses it per the printed no-loss
+      // rule). Spouses combine within a category on a joint return (unlike PA).
+      njWages: usd.optional().describe("NJ-1040 line 15: W-2 BOX 16 state wages total (falls back to the shared wages input; NJ taxes cafeteria/125 benefits and some items federal Box 1 excludes)"),
+      njTaxableInterest: usd.optional().describe("NJ-1040 line 16a taxable interest (NJ-exempt: federal obligations, NJ municipal bonds \u2014 exclude here, report on 16b)"),
+      njTaxExemptInterest: usd.optional().describe("NJ-1040 line 16b tax-exempt interest (reported, never taxed)"),
+      njDividends: usd.optional().describe("NJ-1040 line 17 dividends"),
+      njBusinessNet: usd.optional().describe("NJ-1040 line 18 net profits from business (Schedule NJ-BUS-1 Part I; negative allowed \u2014 the composer suppresses a net category loss per the printed rule)"),
+      njDispositionNet: usd.optional().describe("NJ-1040 line 19 net gains from disposition of property (Schedule NJ-DOP; NO capital-gain preference, NO loss carryover; negative allowed \u2014 suppressed)"),
+      njPension: usd.optional().describe("NJ-1040 line 20a TAXABLE pension/annuity/IRA distributions (NJ three-year rule / general rule basis recovery already applied; Social Security and Railroad Retirement are exempt and never entered)"),
+      njPensionExcludable: usd.optional().describe("NJ-1040 line 20b excludable (previously-taxed) pension/annuity/IRA amounts \u2014 display only"),
+      njPartnershipNet: usd.optional().describe("NJ-1040 line 21 distributive share of partnership income (NJK-1; negative suppressed)"),
+      njScorpNet: usd.optional().describe("NJ-1040 line 22 net pro rata share of S corporation income (NJ-K-1; negative suppressed)"),
+      njRentRoyaltyNet: usd.optional().describe("NJ-1040 line 23 net rents/royalties/patents/copyrights (negative suppressed)"),
+      njGamblingNet: usd.optional().describe("NJ-1040 line 24 net gambling winnings (losses net WITHIN the category; NJ Lottery prizes of $10,000 or less are exempt)"),
+      njAlimonyReceived: usd.optional().describe("NJ-1040 line 25 alimony received (NJ did not adopt the TCJA repeal \u2014 still NJ income)"),
+      njOtherIncome: usd.optional().describe("NJ-1040 line 26 other income"),
+      njPensionEligible: external_exports.boolean().optional().describe("line 28a gate: filer (or spouse if joint) was 62+ OR blind/disabled per Social Security guidelines on the last day of the year \u2014 enables the pension exclusion (us.nj.pension_exclusion)"),
+      njPensionEligibleAmount: usd.optional().describe("joint returns where only ONE spouse is 62+/disabled: that spouse's share of line 20a (the exclusion never covers the ineligible spouse's pension). Defaults to all of line 20a."),
+      njOtherRetirementEligible: external_exports.boolean().optional().describe("line 28b Worksheet D gate: filer is 62 or older (the composer auto-computes the unclaimed exclusion when earned income \u2264 $3,000 and line 27 \u2264 $100,000)"),
+      njOtherRetirementExclusion: usd.optional().describe("OVERRIDE: hand-computed Worksheet D line 9 unclaimed exclusion (required for the $100,001-$150,000 percentage tiers)"),
+      njSpecialExclusion: external_exports.boolean().optional().describe("line 28b Special Exclusion attested: filer (and spouse if joint) will NEVER be eligible for Social Security/Railroad Retirement because the employer did not participate \u2014 adds $6,000 (MFJ/HOH/QSS) / $3,000 (single/MFS)"),
+      njDomesticPartner: external_exports.boolean().optional().describe("registered NJ domestic partner claimed as a line 6 regular exemption (+$1,000)"),
+      njSeniorCount: external_exports.number().int().optional().describe("line 7 count (0-2): filer/spouse 65 or older (born 1960 or earlier for TY2025) \u2014 $1,000 each"),
+      njBlindCount: external_exports.number().int().optional().describe("line 8 count (0-2): filer/spouse blind or disabled \u2014 $1,000 each"),
+      njVeteranCount: external_exports.number().int().optional().describe("line 9 count (0-2): filer/spouse honorably-discharged veterans \u2014 $6,000 each"),
+      njCollegeDependents: external_exports.number().int().optional().describe("line 12 count: dependents under 22 attending college full-time (five months, half support) \u2014 $1,000 each ON TOP of the $1,500 line 10/11 exemption (use the shared dependents input for the $1,500 count)"),
+      njMedicalExpenses: usd.optional().describe("unreimbursed medical expenses (Worksheet F line 1) \u2014 the composer applies the 2%-of-line-29 floor"),
+      njArcherMsa: usd.optional().describe("Archer MSA contributions (federal Form 8853; NJ has NO HSA deduction \u2014 never enter HSA amounts)"),
+      njSeHealthInsurance: usd.optional().describe("self-employed health insurance deduction (Worksheet F line 5)"),
+      njAlimonyPaid: usd.optional().describe("NJ-1040 line 32 court-ordered alimony PAID (still deductible for NJ; never child support)"),
+      njConservationContribution: usd.optional().describe("NJ-1040 line 33 qualified conservation contribution (NJ land, federal amount)"),
+      njHezDeduction: usd.optional().describe("NJ-1040 line 34 Health Enterprise Zone deduction (TB-56)"),
+      njAbcaAdjustment: usd.optional().describe("NJ-1040 line 35 Alternative Business Calculation Adjustment (Schedule NJ-BUS-2 line 11 \u2014 the only cross-category loss softener, 20-year carryforward)"),
+      njOrganDonationExpenses: usd.optional().describe("NJ-1040 line 36 organ/bone-marrow donation expenses (composer caps at $10,000)"),
+      njNjbestContributions: usd.optional().describe("NJ-1040 line 37a NJBEST 529 contributions (composer caps at $10,000; all three 37a-c require gross income \u2264 $200,000)"),
+      njNjclassPaid: usd.optional().describe("NJ-1040 line 37b NJCLASS loan principal+interest paid (composer caps at $2,500)"),
+      njTuitionPaid: usd.optional().describe("NJ-1040 line 37c NJ-institution tuition paid (composer caps at $10,000)"),
+      njPropertyTaxesPaid: usd.optional().describe("NJ-1040 line 40a: property taxes due and paid on the principal residence (homeowners; after Worksheet G proration). Tenants: use njRentPaid instead and the composer applies the 18% conversion."),
+      njRentPaid: usd.optional().describe("rent paid on the NJ principal residence (tenants) \u2014 the composer enters 18% of it on line 40a"),
+      njMfsSameHome: external_exports.boolean().optional().describe("MFS and both spouses maintained the SAME main home \u2014 halves the property-tax deduction cap ($7,500) and credit ($25)"),
+      njCojCredit: usd.optional().describe("NJ-1040 line 44 credit for income taxes paid to other jurisdictions (Schedule NJ-COJ, hand-computed; composer caps at the line 43 tax). NO credit for Pennsylvania-reciprocal WAGES (the PA/NJ agreement) \u2014 Philadelphia wage tax DOES qualify."),
+      njShelteredWorkshopCredit: usd.optional().describe("NJ-1040 line 46 Sheltered Workshop Tax Credit (GIT-317)"),
+      njGoldStarCredit: usd.optional().describe("NJ-1040 line 47 Gold Star Family Counseling Credit (hours \xD7 TRICARE rate)"),
+      njOrganDonorEmployerCredit: usd.optional().describe("NJ-1040 line 48 employer of organ/bone-marrow donor credit (25% of salary, up to 30 days)"),
+      njUnderpaymentInterest: usd.optional().describe("NJ-1040 line 52 interest on underpayment of estimated tax (Form NJ-2210)"),
+      njSrp: usd.optional().describe("NJ-1040 line 53c Shared Responsibility Payment (Worksheet L/Schedule NJ-HCC, hand-computed from coverage months; composer zeroes it below the filing threshold)"),
+      njEitcOverride: usd.optional().describe("OVERRIDE: us.nj.eitc oracle answer \u2014 wins over the composer's 40%-of-federalEITC / $260 computation"),
+      njEitcAgeDecoupled: external_exports.boolean().optional().describe("flat-$260 NJEITC attested: 18+, no qualifying child, met all federal EIC requirements except age, not claimed as a dependent (NJ eliminated both federal age limits)"),
+      njExcessUiWfSwf: usd.optional().describe("NJ-1040 line 59 excess UI/WF/SWF withheld (two+ employers over $184.02; Form NJ-2450)"),
+      njExcessDi: usd.optional().describe("NJ-1040 line 60 excess disability insurance withheld (over $380.42; NJ-2450)"),
+      njExcessFli: usd.optional().describe("NJ-1040 line 61 excess family leave insurance withheld (over $545.82; NJ-2450)"),
+      njWwcCredit: usd.optional().describe("NJ-1040 line 62 Wounded Warrior Caregivers Credit (Schedule NJ-WWC; gross income \u2264 $100,000 MFJ/HOH/QSS, \u2264 $50,000 single/MFS)"),
+      njBaitCredit: usd.optional().describe("NJ-1040 line 63 pass-through Business Alternative Income Tax credit (PTE-K-1)"),
+      njFederalCdcc: usd.optional().describe("the federal Form 2441 child and dependent care credit \u2014 enables the line 64 NJ CDCC (us.nj.cdcc: 50%\u219210% of it by NJ taxable income, $150,000 cap)"),
+      njChildrenUnder6: external_exports.number().int().optional().describe("count of line 10/11 dependents age 5 or younger on 12/31 (born 2020 or later for TY2025) \u2014 the line 65 NJ Child Tax Credit multiplier ($1,000\u2192$200 each by taxable income \u2264 $80,000; MFS ineligible)")
+    };
+    oh = {
+      ohBusinessIncome: usd.optional().describe("OH Schedule of Business Income Part 1 line 10: total business income (Schedule B/C/D/E/F + guaranteed payments to 20%+ owners + \xA7 4797) \u2014 the composer runs the $250,000/$125,000 Business Income Deduction and the flat-3% line 6/8b arithmetic from it"),
+      ohRetirementIncome: usd.optional().describe("retirement income received on account of retirement still INCLUDED in Ohio AGI, both spouses combined (NOT Social Security/railroad/uniformed-services amounts \u2014 those are deducted and never qualify) \u2014 drives the retirement income credit (max $200)"),
+      ohAge65OrOlder: external_exports.boolean().optional().describe("filer (or spouse) was 65 or older at year end \u2014 $50 senior citizen credit (once per return; NOT available if the lump sum distribution credit was ever taken)"),
+      ohBothSpousesQualifyingIncome: external_exports.boolean().optional().describe("joint filing credit gate: EACH spouse has $500+ of qualifying income included in Ohio AGI (not interest/dividends/capital gains/rents, and not BID-deducted business income or deducted Social Security/retirement)"),
+      ohFederalCdccTentative: usd.optional().describe("federal Form 2441 line 9c (tentative credit before the federal liability limit) \u2014 the Ohio CDCC pays 100% of it when MAGI < $20,000"),
+      ohFederalCdccAllowed: usd.optional().describe("federal Form 2441 line 11 (liability-limited allowed credit) \u2014 the Ohio CDCC pays 25% of it when MAGI is $20,000-$39,999"),
+      ohOtherCreditsPreJfc: usd.optional().describe("OH Schedule of Credits lines 3+5+7+8 (lump sum retirement, lump sum distribution, displaced worker training, campaign contribution) \u2014 transcribed; they subtract BEFORE the joint filing credit's line-11 base"),
+      ohEicOverride: usd.optional().describe("OVERRIDE: us.oh.eic oracle answer \u2014 wins over the composer's 30%-of-federalEITC line 13 computation"),
+      ohNonresidentCredit: usd.optional().describe("OH Schedule of Credits line 38 nonresident credit (Ohio IT NRC, hand-computed)"),
+      ohResidentCredit: usd.optional().describe("OH Schedule of Credits line 39 resident credit for taxes paid other states (Ohio IT RC, hand-computed)"),
+      ohInterestPenalty: usd.optional().describe("IT 1040 line 11 interest penalty on underpayment of estimated tax (Ohio IT/SD 2210)")
+      // OH line 14 withholding uses the shared stateWithholding input (Schedule of
+      // Ohio Withholding part A line 1 — never city or school district amounts);
+      // line 16 refundable credits (Schedule of Credits lines 41-46, incl. the
+      // IT K-1 pass-through entity credit) use the shared refundableCredits input.
+    };
+    stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh };
   }
 });
 
@@ -29693,8 +31152,8 @@ function composeStateReturn(input, evalStateTax) {
     input.filingHohOrQss = fs === "hoh" || fs === "qss" || fs === "mfj";
   }
   const j = input.jurisdiction;
-  if (j !== "pa" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+  if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
+    throw new Error("federalAGI is required for il/va/ca/ny/oh state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -29704,6 +31163,10 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeCA(input, evalStateTax, notes), notes };
   if (j === "pa")
     return { lines: composePA(input, evalStateTax, notes), notes };
+  if (j === "nj")
+    return { lines: composeNJ(input, evalStateTax, notes), notes };
+  if (j === "oh")
+    return { lines: composeOH(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 var init_dist4 = __esm({
@@ -29711,7 +31174,9 @@ var init_dist4 = __esm({
     "use strict";
     init_ca();
     init_il();
+    init_nj();
     init_ny();
+    init_oh();
     init_pa();
     init_va();
     init_shape();
@@ -41827,7 +43292,24 @@ var init_schema = __esm({
         "paMsaHsaContributions",
         "paSpDependentChildren",
         "paEligibilityIncomeAddbacks",
-        "paResidentCredit"
+        "paResidentCredit",
+        "njGrossIncome",
+        "njTotalIncome",
+        "njPensionIncome",
+        "njPensionEligible",
+        "njFederalCdcc",
+        "njChildrenUnder6",
+        "njEitcAgeDecoupled",
+        "njPropertyTaxesPaid",
+        "njMfsSameHome",
+        "ohModifiedAgi",
+        "ohExemptionCount",
+        "ohTaxableBusinessIncome",
+        "ohEligibleRetirementIncome",
+        "ohTaxLessCredits",
+        "ohBothSpousesHaveQualifyingIncome",
+        "ohFederalCdccTentative",
+        "ohFederalCdccAllowed"
       ],
       household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
       payments_estimates: [
@@ -42012,7 +43494,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. PA is CLASS-BASED: transcribe the pa* class fields (Box 16 compensation, per-spouse loss classes) \u2014 federalAGI is NOT the PA base; the composer runs the class netting, Schedule O, and Tax Forgiveness targets itself, and reports the WPTC as a note (no printed line). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -42039,7 +43521,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd3 = (c2) => {
+      const rd5 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -42066,11 +43548,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd3(after) + rd3(other);
-      const payments = rd3(withheld) + rd3(refundable) + rd3(extension) + rd3(estimated);
+      const total24 = rd5(after) + rd5(other);
+      const payments = rd5(withheld) + rd5(refundable) + rd5(extension) + rd5(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd3(c2));
+      const d3 = (c2) => fmt2(rd5(c2));
       return ok({
         ok: true,
         asOf,
@@ -42097,7 +43579,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd3(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd5(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },
@@ -45267,6 +46749,142 @@ var FACT_FLAGS = [
     key: "paResidentCredit",
     group: "Credits:",
     help: "PA resident credit for tax paid other states (PA-40 line 22; subtracts before Tax Forgiveness)",
+    boolean: false
+  },
+  {
+    factId: "njGrossIncome",
+    option: "--nj-gross-income <dollars>",
+    key: "njGrossIncome",
+    group: "Income:",
+    help: "NJ gross income (NJ-1040 line 29) \u2014 keys the use-tax chart and filing threshold (us.nj.use_tax)",
+    boolean: false
+  },
+  {
+    factId: "njTotalIncome",
+    option: "--nj-total-income <dollars>",
+    key: "njTotalIncome",
+    group: "Income:",
+    help: "NJ total income (NJ-1040 line 27) \u2014 the pension-exclusion tier/cliff base (us.nj.pension_exclusion)",
+    boolean: false
+  },
+  {
+    factId: "njPensionIncome",
+    option: "--nj-pension <dollars>",
+    key: "njPension",
+    group: "Income:",
+    help: "NJ line 20a eligible taxable pension/annuity/IRA income (us.nj.pension_exclusion)",
+    boolean: false
+  },
+  {
+    factId: "njPensionEligible",
+    option: "--nj-pension-eligible",
+    key: "njPensionEligible",
+    group: "Income:",
+    help: "NJ pension-exclusion gate: filer/spouse 62+ or disabled (us.nj.pension_exclusion)",
+    boolean: true
+  },
+  {
+    factId: "njFederalCdcc",
+    option: "--nj-federal-cdcc <dollars>",
+    key: "njFederalCdcc",
+    group: "Credits:",
+    help: "federal Form 2441 child and dependent care credit (us.nj.cdcc: 50%\u219210% of it by NJ taxable income)",
+    boolean: false
+  },
+  {
+    factId: "njChildrenUnder6",
+    option: "--nj-children-under-6 <count>",
+    key: "njChildrenUnder6",
+    group: "Credits:",
+    help: "NJ dependents age 5 or younger (line 65 NJ Child Tax Credit multiplier) (us.nj.ctc)",
+    boolean: false
+  },
+  {
+    factId: "njEitcAgeDecoupled",
+    option: "--nj-eitc-age-decoupled",
+    key: "njEitcAgeDecoupled",
+    group: "Credits:",
+    help: "NJ flat-$260 NJEITC attested: 18+, childless, met all federal EIC rules except age (us.nj.eitc)",
+    boolean: true
+  },
+  {
+    factId: "njPropertyTaxesPaid",
+    option: "--nj-property-taxes <dollars>",
+    key: "njPropertyTaxes",
+    group: "Deductions:",
+    help: "NJ line 40a property taxes paid (tenants: 18% of rent) (us.nj.property_tax_deduction)",
+    boolean: false
+  },
+  {
+    factId: "njMfsSameHome",
+    option: "--nj-mfs-same-home",
+    key: "njMfsSameHome",
+    group: "Deductions:",
+    help: "NJ MFS spouses maintained the same main home (halves the property-tax caps)",
+    boolean: true
+  },
+  {
+    factId: "ohModifiedAgi",
+    option: "--oh-magi <dollars>",
+    key: "ohMagi",
+    group: "Income:",
+    help: "Ohio MAGI (OAGI + business income deduction) \u2014 exemption tiers and credit gates (us.oh.exemption_amount)",
+    boolean: false
+  },
+  {
+    factId: "ohExemptionCount",
+    option: "--oh-exemptions <count>",
+    key: "ohExemptions",
+    group: "Income:",
+    help: "Ohio IT 1040 line 4 exemption count (self + spouse + dependents) (us.oh.exemption_amount)",
+    boolean: false
+  },
+  {
+    factId: "ohTaxableBusinessIncome",
+    option: "--oh-taxable-business-income <dollars>",
+    key: "ohTaxableBusinessIncome",
+    group: "Income:",
+    help: "Ohio taxable business income after the BID (IT 1040 line 6, flat 3%) (us.oh.business_income_tax)",
+    boolean: false
+  },
+  {
+    factId: "ohEligibleRetirementIncome",
+    option: "--oh-retirement-income <dollars>",
+    key: "ohRetirementIncome",
+    group: "Credits:",
+    help: "retirement income still in Ohio AGI (Table 2 retirement income credit, max $200) (us.oh.retirement_income_credit)",
+    boolean: false
+  },
+  {
+    factId: "ohTaxLessCredits",
+    option: "--oh-tax-less-credits <dollars>",
+    key: "ohTaxLessCredits",
+    group: "Credits:",
+    help: "Ohio Schedule of Credits line 11 (the joint filing credit's percentage base) (us.oh.joint_filing_credit)",
+    boolean: false
+  },
+  {
+    factId: "ohBothSpousesHaveQualifyingIncome",
+    option: "--oh-both-spouses-qualifying",
+    key: "ohBothSpousesQualifying",
+    group: "Credits:",
+    help: "each spouse has $500+ qualifying income in Ohio AGI (joint filing credit gate) (us.oh.joint_filing_credit)",
+    boolean: true
+  },
+  {
+    factId: "ohFederalCdccTentative",
+    option: "--oh-federal-cdcc-tentative <dollars>",
+    key: "ohFederalCdccTentative",
+    group: "Credits:",
+    help: "federal Form 2441 line 9c tentative credit (Ohio CDCC pays 100% under $20,000 MAGI) (us.oh.cdcc)",
+    boolean: false
+  },
+  {
+    factId: "ohFederalCdccAllowed",
+    option: "--oh-federal-cdcc-allowed <dollars>",
+    key: "ohFederalCdccAllowed",
+    group: "Credits:",
+    help: "federal Form 2441 line 11 allowed credit (Ohio CDCC pays 25% at $20,000-$39,999 MAGI) (us.oh.cdcc)",
     boolean: false
   },
   {

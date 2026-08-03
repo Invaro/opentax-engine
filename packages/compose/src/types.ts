@@ -1,7 +1,7 @@
 import type { Cents } from "./money.js";
 
 export type StateReturnInput = {
-  jurisdiction: "il" | "va" | "ca" | "ny" | "pa";
+  jurisdiction: "il" | "va" | "ca" | "ny" | "pa" | "nj" | "oh";
   [k: string]: unknown;
 };
 

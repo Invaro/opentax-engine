@@ -324,15 +324,153 @@ describe("composePA — 2025 PA-40 (real corpus targets)", () => {
   });
 });
 
+describe("composeNJ — 2025 NJ-1040 (real corpus targets)", () => {
+  it("full return: exemptions, Worksheet H picks the property tax deduction, table-method tax", () => {
+    // Hand-computed: 27 = 97,000; 30 = 2×1,000 + 2×1,500 = 5,000; 39 = 92,000.
+    // Worksheet H: ded 9,000; tax(92,000) = .05525×92,025 − 2,775 = 2,309.38
+    // -> 2,309 (printed table row); tax(83,000) = .05525×83,025 − 2,775 =
+    // 1,812.13 -> 1,812; savings 497 >= $50 -> deduction. 42 = 83,000;
+    // 43 = 1,812; CTC $0 (83,000 > 80,000); refund 2,500 − 1,812 = 688.
+    const input = {
+      jurisdiction: "nj" as const, filingStatus: "mfj",
+      njWages: 95000, njTaxableInterest: 2000, dependents: 2,
+      njChildrenUnder6: 2, njPropertyTaxesPaid: 9000, stateWithholding: 2500,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "27_total_income")).toBe("$97,000");
+    expect(dollars(lines, "30_exemption_amount")).toBe("$5,000");
+    expect(dollars(lines, "39_taxable_income")).toBe("$92,000");
+    expect(dollars(lines, "41_property_tax_deduction")).toBe("$9,000");
+    expect(dollars(lines, "42_nj_taxable_income")).toBe("$83,000");
+    expect(dollars(lines, "43_tax")).toBe("$1,812");
+    expect(dollars(lines, "65_nj_ctc")).toBe("$0");
+    expect(dollars(lines, "80_refund")).toBe("$688");
+  });
+
+  it("Worksheet H picks the $50 credit when the deduction saves less than $50", () => {
+    // 39 = 21,000; tax(21,000) = .0175×21,025 − 70 = 297.94 -> 298;
+    // tax(18,000) = .014×18,025 = 252.35 -> 252; savings 46 < 50 -> credit.
+    const input = {
+      jurisdiction: "nj" as const, filingStatus: "single",
+      njWages: 22000, njPropertyTaxesPaid: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "41_property_tax_deduction")).toBe("$0");
+    expect(dollars(lines, "43_tax")).toBe("$298");
+    expect(dollars(lines, "56_property_tax_credit")).toBe("$50");
+    expect(notes.some((n) => n.includes("Property Tax Credit chosen"))).toBe(true);
+  });
+
+  it("filing threshold zeroes the tax; the flat $260 age-decoupled NJEITC still refunds", () => {
+    const input = {
+      jurisdiction: "nj" as const, filingStatus: "single",
+      njWages: 9000, stateWithholding: 200, njEitcAgeDecoupled: true,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "43_tax")).toBe("$0");
+    expect(dollars(lines, "58_nj_eitc")).toBe("$260");
+    expect(dollars(lines, "80_refund")).toBe("$460");
+    expect(notes.some((n) => n.includes("filing threshold"))).toBe(true);
+  });
+
+  it("pension exclusion at the full tier: line 27 exactly $100,000 excludes the whole pension", () => {
+    // 27 = 100,000 (<= the full tier); 28a = min(60,000, 100,000 MFJ cap) =
+    // 60,000; 29 = 40,000; 30 = 2,000; 39 = 42 = 38,000; tax = .0175×38,025
+    // − 70 = 595.44 -> 595.
+    const input = {
+      jurisdiction: "nj" as const, filingStatus: "mfj",
+      njWages: 40000, njPension: 60000, njPensionEligible: true,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "28a_pension_exclusion")).toBe("$60,000");
+    expect(dollars(lines, "29_nj_gross_income")).toBe("$40,000");
+    expect(dollars(lines, "43_tax")).toBe("$595");
+  });
+});
+
+describe("composeOH — 2025 IT 1040 (real corpus targets)", () => {
+  it("full return: BID, MAGI-tiered exemptions, joint filing credit on line 11", () => {
+    // Hand-computed: BID = min(30,000, 98,050, 250,000) = 30,000; OAGI =
+    // 68,050; MAGI = 98,050 -> 4 × $1,900 = 7,600; line 5 = 60,450; line 7 =
+    // 60,450; 8a = 342 + 2.75% × 34,400 = 1,288; JFC: MAGI-less-exemptions
+    // 90,450 -> 5% × 1,288 = 64.40 -> 64; line 10 = 1,224; refund 576.
+    const input = {
+      jurisdiction: "oh" as const, filingStatus: "mfj", federalAGI: 98050,
+      exemptions: 4, ohBusinessIncome: 30000,
+      ohBothSpousesQualifyingIncome: true, stateWithholding: 1800,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "2b_deductions")).toBe("$30,000");
+    expect(dollars(lines, "3_ohio_agi")).toBe("$68,050");
+    expect(dollars(lines, "4_exemption_amount")).toBe("$7,600");
+    expect(dollars(lines, "7_taxable_nonbusiness_income")).toBe("$60,450");
+    expect(dollars(lines, "8a_nonbusiness_tax")).toBe("$1,288");
+    expect(dollars(lines, "credits_12_joint_filing")).toBe("$64");
+    expect(dollars(lines, "10_tax_after_credits")).toBe("$1,224");
+    expect(dollars(lines, "26_refund")).toBe("$576");
+  });
+
+  it("Schedule of Credits line 40 reports the UNCAPPED line 36 (line 37 is a memo line)", () => {
+    // Zero-band filer (line 7 = 25,200 <= 26,050 -> tax $0) with a $4,328
+    // federal EITC: line 13 = 30% = 1,298; the $20 × 2 exemption credit
+    // (MAGI-less-exemptions 25,200 < 30,000) adds $40 on line 9's block. The
+    // printed line 40 = lines 10+36+38+39 with NO cap, so line 9 shows
+    // $1,338 even though line 11 is $0; the excess dies at IT 1040 line 10's
+    // zero floor, never refunding.
+    const input = {
+      jurisdiction: "oh" as const, filingStatus: "hoh", federalAGI: 30000,
+      exemptions: 2, federalEITC: 4328,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8a_nonbusiness_tax")).toBe("$0");
+    expect(dollars(lines, "credits_13_eic")).toBe("$1,298");
+    expect(dollars(lines, "credits_9_exemption_credit")).toBe("$40");
+    expect(dollars(lines, "credits_40_total_nonrefundable")).toBe("$1,338");
+    expect(dollars(lines, "9_nonrefundable_credits")).toBe("$1,338");
+    expect(dollars(lines, "10_tax_after_credits")).toBe("$0");
+    expect(dollars(lines, "26_refund")).toBe("$0");
+    expect(notes.some((n) => n.includes("line 40 still reports the full sum"))).toBe(true);
+  });
+
+  it("R.C. 5747.98 ordering: retirement + senior credits subtract before the JFC's line-11 base", () => {
+    // MAGI 40,000 -> 2 × 2,400 = 4,800; line 7 = 35,200; 8a = 342 + 2.75% ×
+    // 9,150 = 593.63 -> 594. Line 2 retirement (6,000 -> $130) + line 4
+    // senior ($50) = 180; line 11 = 414; JFC 15% tier -> 62.10 -> 62;
+    // line 9 = 242; line 10 = 352. Exemption credit $0 (35,200 >= 30,000).
+    const input = {
+      jurisdiction: "oh" as const, filingStatus: "mfj", federalAGI: 40000,
+      exemptions: 2, ohRetirementIncome: 6000, ohAge65OrOlder: true,
+      ohBothSpousesQualifyingIncome: true,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8a_nonbusiness_tax")).toBe("$594");
+    expect(dollars(lines, "credits_2_retirement")).toBe("$130");
+    expect(dollars(lines, "credits_4_senior")).toBe("$50");
+    expect(dollars(lines, "credits_9_exemption_credit")).toBe("$0");
+    expect(dollars(lines, "credits_11_tax_less_credits")).toBe("$414");
+    expect(dollars(lines, "credits_12_joint_filing")).toBe("$62");
+    expect(dollars(lines, "10_tax_after_credits")).toBe("$352");
+  });
+});
+
 describe("composeStateReturn — federalAGI guard", () => {
   it("AGI-based states refuse loudly without federalAGI (schema made it optional for PA)", () => {
     expect(() =>
       composeStateReturn({ jurisdiction: "il", filingStatus: "single" }, stubEval),
+    ).toThrow(/federalAGI is required/);
+    expect(() =>
+      composeStateReturn({ jurisdiction: "oh", filingStatus: "single" }, stubEval),
     ).toThrow(/federalAGI is required/);
   });
   it("PA composes without federalAGI (class-based)", () => {
     const input = { jurisdiction: "pa" as const, filingStatus: "single", wages: 10000 };
     const { lines } = composeStateReturn(input, realPaEval(input));
     expect(dollars(lines, "12_tax")).toBe("$307");
+  });
+  it("NJ composes without federalAGI (category-based)", () => {
+    const input = { jurisdiction: "nj" as const, filingStatus: "single", njWages: 50000 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    // 50,000 − 1,000 exemption = 49,000 -> .05525 × 49,025 − 1,492.50 = 1,216.13 -> 1,216
+    expect(dollars(lines, "43_tax")).toBe("$1,216");
   });
 });

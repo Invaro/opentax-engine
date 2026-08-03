@@ -1,0 +1,14 @@
+{
+  "description": "NJ flat-$260 NJEITC (age-decoupled): single, childless, wages $8,000, NOT 25+ and NOT 65+ -> ordinary federal EITC $0 (fails the SS 32(c)(1)(A)(ii) age floor); NJ: 'You were at least 18 years old... met all federal EIC requirements except the age requirement... enter $260 on line 58' (attested via njEitcAgeDecoupled).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 8000,
+    "qualifyingChildren": 0,
+    "isAtLeastAge25": false,
+    "isAge65OrOlder": false,
+    "njEitcAgeDecoupled": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nj.eitc",
+  "expect": { "valueCents": "26000", "intermediates": { "us.federal.eitc": "0" } }
+}

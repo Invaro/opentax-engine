@@ -1,0 +1,7 @@
+{
+  "description": "NJ Tax Table method, joint column: MFJ, taxable income $97,030 -> row 97,000-97,050, midpoint $97,025 -> .05525 x 97,025 - 2,775 = 5,360.63125 - 2,775 = 2,585.63 -> $2,586.00. Matches the printed 2025 NJ Tax Table row (column '2, 4, or 5': 2,586).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 97030 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.income_tax",
+  "expect": { "valueCents": "258600" }
+}
