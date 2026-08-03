@@ -14,6 +14,7 @@
  */
 import { composeCA } from "./ca.js";
 import { composeIL } from "./il.js";
+import { composeNC } from "./nc.js";
 import { composeNJ } from "./nj.js";
 import { composeNY } from "./ny.js";
 import { composeOH } from "./oh.js";
@@ -75,7 +76,7 @@ export function composeStateReturn(
   // than compose on a silent $0 AGI. PA and NJ are class/category-based and
   // never use it.
   if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
@@ -83,5 +84,6 @@ export function composeStateReturn(
   if (j === "pa") return { lines: composePA(input, evalStateTax, notes), notes };
   if (j === "nj") return { lines: composeNJ(input, evalStateTax, notes), notes };
   if (j === "oh") return { lines: composeOH(input, evalStateTax, notes), notes };
+  if (j === "nc") return { lines: composeNC(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

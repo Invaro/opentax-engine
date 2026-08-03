@@ -165,19 +165,8 @@ export const otherStateRules: Rule[] = [
     excerpt:
       "Utah TY2025: 4.50% flat on Utah taxable income (HB 106, signed March 2025, cut the 4.55% rate retroactively to 1/1/2025; withholding tables only caught up June 2025 — the ANNUAL return rate is 4.50%). Federal AGI + modifications; Utah has NO standard deduction — instead a nonrefundable TAXPAYER TAX CREDIT of roughly 6% of federal deductions that PHASES OUT with income, which this rule does not model; compute the credit per Utah TC-40 and disclose.",
   }),
-  flatTax({
-    st: "nc", name: "North Carolina", ratePctTimes100: "425",
-    source: "N.C. Gen. Stat. § 105-153.7 (4.25% for 2025); Tax Foundation 2025 survey (web-verified July 2026)",
-    section: "N.C.G.S. § 105-153.7",
-    url: "https://www.ncdor.gov/",
-    excerpt:
-      "North Carolina TY2025: 4.25% flat on NC taxable income (2026 drops to 3.99%). NC standard deduction $12,750 single/MFS, $25,500 MFJ, $19,125 HOH; NO personal exemptions; a $3,000-per-child deduction (income-tiered) exists for CTC-eligible children — compose into the base and disclose.",
-    parameters: {
-      standardDeductionSingle: { value: "1275000", type: "money" },
-      standardDeductionJoint: { value: "2550000", type: "money" },
-      standardDeductionHoh: { value: "1912500", type: "money" },
-    },
-  }),
+  // (NC graduated to the deep pack: see state-nc.ts — us.nc.income_tax v2+
+  //  with standard/itemized/child-deduction targets; the thin v1 is superseded.)
   flatTax({
     st: "az", name: "Arizona", ratePctTimes100: "250",
     source: "Ariz. Rev. Stat. § 43-1011 (2.5% flat); Tax Foundation 2025 survey (web-verified July 2026)",

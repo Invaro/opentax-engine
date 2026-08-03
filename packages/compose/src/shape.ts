@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -212,4 +212,21 @@ const oh = {
   // IT K-1 pass-through entity credit) use the shared refundableCredits input.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh };
+const nc = {
+  ncQualifyingChildren: z.number().int().optional().describe("D-400 line 10a: count of qualifying children for whom the federal § 24 child tax credit was ALLOWED (under 17; ODC-only dependents never count) — drives the AGI-tiered child deduction (us.nc.child_deduction)"),
+  ncBaileyRetirement: usd.optional().describe("NC Schedule S line 20: Bailey settlement retirement benefits (NC/local government or US government incl. military retirees with 5+ years of creditable service as of Aug 12, 1989; state 401(k)/457 contributed before that date) — fully deducted; enclose the 1099-R"),
+  ncMilitaryRetirement: usd.optional().describe("NC Schedule S line 21: military retirement pay / SBP payments for members with 20+ years of service OR Chapter 61 medical retirement — never severance, never double-claimed with Bailey"),
+  ncUsObligationInterest: usd.optional().describe("NC Schedule S line 18: interest from US obligations (Treasuries, savings bonds) included in FAGI — fully deducted"),
+  ncMortgageInterest: usd.optional().describe("NC Schedule A: qualified mortgage interest — the composer applies the $20,000 combined cap with real estate taxes and takes itemized only when it beats the standard deduction"),
+  ncRealEstateTaxes: usd.optional().describe("NC Schedule A: real estate property taxes (NC allows NO income/sales tax deduction) — inside the $20,000 combined cap"),
+  ncCharitable: usd.optional().describe("NC Schedule A: IRC § 170 charitable contributions allowed for the year (no NC dollar cap)"),
+  ncMedicalExpenses: usd.optional().describe("NC Schedule A line 7a: medical/dental expenses BEFORE the floor — the composer subtracts 7.5% of federal AGI"),
+  ncClaimOfRightRepayment: usd.optional().describe("NC Schedule A line 8: claim-of-right repayments over $3,000 (deducted in full)"),
+  ncTaxCredits: usd.optional().describe("D-400 line 16: D-400TC total (other-state credit worksheet, historic rehab) — hand-computed; the composer caps at the line 15 tax. NC has NO EITC and NO child/dependent care credit."),
+  ncUseTaxEstimate: z.boolean().optional().describe("use the printed no-receipts consumer use tax table (keyed to line 14 taxable income, us.nc.use_tax) instead of the useTax input"),
+  ncPartnershipPayments: usd.optional().describe("D-400 line 21c: NC tax paid by a partnership on the filer's behalf"),
+  ncScorpPayments: usd.optional().describe("D-400 line 21d: NC tax paid by an S corporation on the filer's behalf"),
+  ncUnderpaymentInterest: usd.optional().describe("D-400 line 26e: interest on the underpayment of estimated income tax (Form D-422)"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc };

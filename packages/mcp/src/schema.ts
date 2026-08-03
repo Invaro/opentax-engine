@@ -323,6 +323,12 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "ohBothSpousesHaveQualifyingIncome",
     "ohFederalCdccTentative",
     "ohFederalCdccAllowed",
+    "ncFederalAgi",
+    "ncMortgageInterest",
+    "ncRealEstateTaxes",
+    "ncCharitable",
+    "ncMedicalExpenses",
+    "ncClaimOfRightRepayment",
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [

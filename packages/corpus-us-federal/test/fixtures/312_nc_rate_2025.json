@@ -1,0 +1,7 @@
+{
+  "description": "NC flat rate TY2025: $50,000 taxable x 4.25% = $2,125.00 exactly (N.C.G.S. 105-153.7(a); 2025 D-400 line 15 'Multiply Line 14 by 4.25% (0.0425)').",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2025-12-31",
+  "target": "us.nc.income_tax",
+  "expect": { "valueCents": "212500" }
+}

@@ -453,6 +453,54 @@ describe("composeOH — 2025 IT 1040 (real corpus targets)", () => {
   });
 });
 
+describe("composeNC — 2025 D-400 (real corpus targets)", () => {
+  it("full return: child deduction tier, standard deduction, 4.25% flat", () => {
+    // Hand-computed: FAGI 85,000; child deduction 2 × $1,500 (over-$80k MFJ
+    // tier) = 3,000; standard 25,500; line 12b = 56,500; tax = 4.25% ×
+    // 56,500 = 2,401.25 -> 2,401; withholding 2,000 -> due 401.
+    const input = {
+      jurisdiction: "nc" as const, filingStatus: "mfj", federalAGI: 85000,
+      ncQualifyingChildren: 2, stateWithholding: 2000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "10b_child_deduction")).toBe("$3,000");
+    expect(dollars(lines, "11_nc_deduction")).toBe("$25,500");
+    expect(dollars(lines, "14_nc_taxable_income")).toBe("$56,500");
+    expect(dollars(lines, "15_nc_income_tax")).toBe("$2,401");
+    expect(dollars(lines, "26a_tax_due")).toBe("$401");
+  });
+
+  it("itemized beats standard (with the $20,000 cap) and the use-tax estimate keys on line 14", () => {
+    // Itemized: min(15,000+8,000, 20,000) + 2,000 + (10,000 − 7.5%×80,000) =
+    // 26,000 > 12,750 standard. Line 14 = 54,000; tax = 2,295; use tax =
+    // .000675 × 54,000 = 36.45 -> 36.
+    const input = {
+      jurisdiction: "nc" as const, filingStatus: "single", federalAGI: 80000,
+      ncMortgageInterest: 15000, ncRealEstateTaxes: 8000, ncCharitable: 2000,
+      ncMedicalExpenses: 10000, ncUseTaxEstimate: true,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "11_nc_deduction")).toBe("$26,000");
+    expect(dollars(lines, "15_nc_income_tax")).toBe("$2,295");
+    expect(dollars(lines, "18_consumer_use_tax")).toBe("$36");
+    expect(dollars(lines, "19_total_tax")).toBe("$2,331");
+    expect(notes.some((n) => n.includes("itemized deductions"))).toBe(true);
+  });
+
+  it("Social Security and Bailey retirement auto-deduct on line 9", () => {
+    // l9 = 10,000 SS + 20,000 Bailey = 30,000; l12b = 60,000 − 30,000 −
+    // 12,750 = 17,250; tax = 4.25% × 17,250 = 733.13 -> 733.
+    const input = {
+      jurisdiction: "nc" as const, filingStatus: "single", federalAGI: 60000,
+      taxableSocialSecurity: 10000, ncBaileyRetirement: 20000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "9_deductions")).toBe("$30,000");
+    expect(dollars(lines, "15_nc_income_tax")).toBe("$733");
+    expect(notes.some((n) => n.includes("Bailey"))).toBe(true);
+  });
+});
+
 describe("composeStateReturn — federalAGI guard", () => {
   it("AGI-based states refuse loudly without federalAGI (schema made it optional for PA)", () => {
     expect(() =>

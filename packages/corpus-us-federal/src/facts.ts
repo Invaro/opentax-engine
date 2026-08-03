@@ -2691,4 +2691,53 @@ export const facts: FactSpec[] = [
       "Federal Form 2441 line 11 (the liability-LIMITED child and dependent care credit actually allowed federally) — the Ohio CDCC's 25% base when MAGI is $20,000-$39,999. In dollars.",
     default: { value: "0", rationale: "No federal Form 2441 allowed credit absent contrary input" },
   },
+
+  // ---- North Carolina deep pack (state-nc.ts) -----------------------------
+  {
+    id: "ncFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (D-400 line 6, Form 1040 line 11 verbatim) — keys the NC child-deduction table tiers and the Schedule A 7.5% medical floor. Can be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal AGI absent contrary input" },
+  },
+  {
+    id: "ncMortgageInterest",
+    type: "money",
+    min: "0",
+    description:
+      "NC Schedule A qualified home mortgage interest (IRC § 163(h)) — combined with real estate property taxes under the $20,000 NC cap (both spouses combined, MFJ or MFS). In dollars.",
+    default: { value: "0", rationale: "No mortgage interest claimed absent contrary input" },
+  },
+  {
+    id: "ncRealEstateTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "NC Schedule A real estate property taxes (IRC § 164 real property portion only — NC allows NO state/local income tax deduction) — inside the $20,000 combined cap with mortgage interest. In dollars.",
+    default: { value: "0", rationale: "No real estate taxes claimed absent contrary input" },
+  },
+  {
+    id: "ncCharitable",
+    type: "money",
+    min: "0",
+    description:
+      "NC Schedule A charitable contributions allowed under IRC § 170 for the year (federal AGI-percentage limits apply; NO NC dollar cap and no § 68 overall limitation). In dollars.",
+    default: { value: "0", rationale: "No charitable contributions claimed absent contrary input" },
+  },
+  {
+    id: "ncMedicalExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "NC Schedule A line 7a qualified medical and dental expenses BEFORE the floor — the rule subtracts 7.5% of ncFederalAgi (D-400 Schedule A lines 7b-7d). In dollars.",
+    default: { value: "0", rationale: "No medical expenses claimed absent contrary input" },
+  },
+  {
+    id: "ncClaimOfRightRepayment",
+    type: "money",
+    min: "0",
+    description:
+      "NC Schedule A line 8 repayment of claim-of-right income (repayments over $3,000 deducted in full — supply only qualifying amounts). In dollars.",
+    default: { value: "0", rationale: "No claim-of-right repayment absent contrary input" },
+  },
 ];

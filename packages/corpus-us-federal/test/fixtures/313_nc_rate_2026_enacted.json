@@ -1,0 +1,7 @@
+{
+  "description": "NC TY2026 rate, enacted and UNCONDITIONAL (105-153.7(a): 'After 2025 3.99%'; the revenue triggers start with TY2027): $50,000 x 3.99% = $1,995.00. Same income owes $2,125 for TY2025 (fixture 312).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2026-12-31",
+  "target": "us.nc.income_tax",
+  "expect": { "valueCents": "199500" }
+}
