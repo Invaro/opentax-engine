@@ -1,0 +1,7 @@
+{
+  "description": "OH TY2026 single-rate structure (ORC 5747.02(A)(3)(c), enacted by HB 96): $68,050 -> $332 + 2.75% x 42,000 = 332 + 1,155 = $1,487.00 exactly. Same income owes $1,497 under TY2025 (fixture 280) - the $10 difference is the 342->332 base-anchor change.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 68050 },
+  "asOf": "2026-12-31",
+  "target": "us.oh.income_tax",
+  "expect": { "valueCents": "148700" }
+}

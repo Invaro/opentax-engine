@@ -1,0 +1,7 @@
+{
+  "description": "NJ Child and Dependent Care Credit (Worksheet J): taxable income $50,000 -> 40% tier (over $30,000, not over $60,000); federal CDCC $1,200 -> $480.00.",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 50000, "njFederalCdcc": 1200 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.cdcc",
+  "expect": { "valueCents": "48000" }
+}

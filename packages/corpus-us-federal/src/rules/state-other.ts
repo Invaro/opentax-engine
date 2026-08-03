@@ -1,5 +1,5 @@
 /**
- * State coverage pack 2 — beyond the four fully-composed states (IL/VA/CA/NY),
+ * State coverage pack 2 — beyond the seven fully-composed states (IL/VA/CA/NY/PA/NJ/OH),
  * this module gives every remaining high-population/simple-structure state a
  * CITED, web-verified TY2025 computable target or an explicit no-income-tax
  * rule, so lookup_tax_parameter and calculate_tax answer for them instead of
@@ -9,7 +9,7 @@
  * TAX ON ALREADY-COMPOSED STATE TAXABLE INCOME (stateTaxableIncome), with the
  * state's standard deduction / exemption amounts published as parameters for
  * the agent to compose the base — full printed-form composition (the
- * compute_state_return composers) remains IL/VA/CA/NY only for now. Credits,
+ * compute_state_return composers) remains IL/VA/CA/NY/PA/NJ/OH for now. Credits,
  * local surtaxes, and special bases are NAMED in the citation and left to
  * the agent with disclosure — never silently omitted.
  *

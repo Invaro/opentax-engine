@@ -1,6 +1,6 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
-  "version": "0.37.0",
+  "version": "0.38.0",
   "description": "US federal individual income tax rules as cited, content-addressed data (TY2025)",
   "license": "AGPL-3.0-only",
   "type": "module",

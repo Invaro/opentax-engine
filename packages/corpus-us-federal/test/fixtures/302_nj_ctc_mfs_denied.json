@@ -1,0 +1,7 @@
+{
+  "description": "NJ Child Tax Credit MFS disallowance: 'If your filing status is married filing separately, you are not eligible for this credit' -> $0 despite qualifying income and children.",
+  "facts": { "filingStatus": "mfs", "stateTaxableIncome": 25000, "njChildrenUnder6": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.ctc",
+  "expect": { "valueCents": "0" }
+}

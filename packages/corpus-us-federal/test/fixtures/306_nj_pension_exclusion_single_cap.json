@@ -1,0 +1,12 @@
+{
+  "description": "NJ pension exclusion, full tier with the status cap: single, line 27 $90,000 (<= $100,000) -> lesser of line 20a ($80,000) and the single/HOH/QSS cap ($75,000) -> $75,000.00.",
+  "facts": {
+    "filingStatus": "single",
+    "njTotalIncome": 90000,
+    "njPensionIncome": 80000,
+    "njPensionEligible": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nj.pension_exclusion",
+  "expect": { "valueCents": "7500000" }
+}

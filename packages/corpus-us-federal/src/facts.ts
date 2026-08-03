@@ -2556,4 +2556,139 @@ export const facts: FactSpec[] = [
       "PA resident credit for income tax paid to other states (PA-40 line 22, Schedule G-L; not allowed for reciprocal-state compensation: IN, MD, NJ, OH, VA, WV). Subtracts from tax BEFORE Tax Forgiveness per Schedule SP Section IV. In dollars.",
     default: { value: "0", rationale: "No other-state tax credit claimed absent contrary input" },
   },
+
+  // ---- New Jersey deep pack (state-nj.ts) ---------------------------------
+  {
+    id: "njGrossIncome",
+    type: "money",
+    min: "0",
+    description:
+      "New Jersey gross income (NJ-1040 line 29: total category income minus the pension/retirement exclusions, BEFORE exemptions and deductions) — keys the Estimated Use Tax Chart (us.nj.use_tax) and the $10,000/$20,000 filing threshold. In dollars.",
+    default: { value: "0", rationale: "Assumed no NJ gross income absent contrary input (bottom use-tax tier)" },
+  },
+  {
+    id: "njFederalCdcc",
+    type: "money",
+    min: "0",
+    description:
+      "The federal child and dependent care credit (Form 2441) — Worksheet J line 1 input for us.nj.cdcc. Where the federal liability limit zeroed an otherwise-allowable credit, NJ's mock-return guidance supports the credit the filer WOULD have been eligible for; disclose which 2441 amount was supplied. In dollars.",
+    default: { value: "0", rationale: "No federal child and dependent care credit claimed absent contrary input" },
+  },
+  {
+    id: "njChildrenUnder6",
+    type: "int",
+    min: "0",
+    description:
+      "Count of dependents claimed on NJ-1040 lines 10/11 who were age 5 or younger on the last day of the tax year (born 2020 or later for TY2025) — the NJ Child Tax Credit multiplier (us.nj.ctc).",
+    default: { value: "0", rationale: "No children age 5 or younger assumed absent contrary input" },
+  },
+  {
+    id: "njPensionIncome",
+    type: "money",
+    min: "0",
+    description:
+      "NJ-1040 line 20a taxable pension/annuity/IRA income ELIGIBLE for the line 28a exclusion — on a joint return where only one spouse is 62+/disabled, ONLY that spouse's pension income (the ineligible spouse's share never excludes). In dollars.",
+    default: { value: "0", rationale: "No eligible pension income absent contrary input" },
+  },
+  {
+    id: "njTotalIncome",
+    type: "money",
+    min: "0",
+    description:
+      "NJ-1040 line 27 total income (all categories, before the pension exclusion) — the pension-exclusion chart tier and $150,000 cliff key on this amount. In dollars.",
+    default: { value: "0", rationale: "Assumed no NJ total income absent contrary input" },
+  },
+  {
+    id: "njPensionEligible",
+    type: "bool",
+    description:
+      "NJ pension-exclusion age/disability gate attested: the filer (or spouse on a joint return) was age 62 or older OR blind/disabled per Social Security guidelines on the last day of the tax year (2025 NJ-1040 line 28a).",
+    default: { value: false, rationale: "Conservative: exclusion eligibility not attested — no exclusion" },
+  },
+  {
+    id: "njEitcAgeDecoupled",
+    type: "bool",
+    description:
+      "NJ flat-$260 EITC eligibility attested (2025 NJ-1040 line 58): no qualifying child, at least 18 years old, met ALL federal EIC requirements except the age requirement (NJ eliminated both the under-25 floor and the 65+ ceiling), and not claimed as a dependent on another return.",
+    default: { value: false, rationale: "Conservative: age-decoupled NJEITC eligibility not attested" },
+  },
+  {
+    id: "njPropertyTaxesPaid",
+    type: "money",
+    min: "0",
+    description:
+      "NJ-1040 line 40a: property taxes due and paid on the principal residence (homeowners), or 18% of rent paid (tenants; 18% of site fees for mobile-home owners), after any Worksheet G multi-owner/multi-unit proration. In dollars.",
+    default: { value: "0", rationale: "No property taxes/rent-equivalent paid absent contrary input" },
+  },
+  {
+    id: "njMfsSameHome",
+    type: "bool",
+    description:
+      "Married filing separately AND both spouses maintained the SAME principal residence — halves the NJ property tax deduction cap ($7,500) and the credit/threshold amounts ($25).",
+    default: { value: false, rationale: "Assumed separate filers did not share the same main home absent contrary input" },
+  },
+
+  // ---- Ohio deep pack (state-oh.ts) ---------------------------------------
+  {
+    id: "ohModifiedAgi",
+    type: "money",
+    description:
+      "Ohio modified adjusted gross income (MAGI): Ohio adjusted gross income (IT 1040 line 3) PLUS the business income deduction (Schedule of Adjustments line 13) — the base for the exemption tiers and most credit gates (2025 booklet p. 8). Can be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no Ohio MAGI absent contrary input" },
+  },
+  {
+    id: "ohExemptionCount",
+    type: "int",
+    min: "0",
+    description:
+      "IT 1040 line 4 exemption count: self (unless claimable as a dependent on another return), spouse if filing jointly, plus federal dependents (Schedule of Dependents).",
+    default: { value: "1", rationale: "Assumed a single self-exemption absent contrary input" },
+  },
+  {
+    id: "ohTaxableBusinessIncome",
+    type: "money",
+    min: "0",
+    description:
+      "IT 1040 line 6 taxable business income (Schedule of Business Income line 15: business income remaining after the $250,000/$125,000 Business Income Deduction, limited to the line 5 Ohio income tax base) — taxed flat 3% by us.oh.business_income_tax. In dollars.",
+    default: { value: "0", rationale: "No taxable business income absent contrary input" },
+  },
+  {
+    id: "ohEligibleRetirementIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Retirement income received on account of retirement and still INCLUDED in Ohio AGI (both spouses combined) — the us.oh.retirement_income_credit Table 2 input. Excludes everything deducted on the Schedule of Adjustments (Social Security, railroad, uniformed-services retirement). In dollars.",
+    default: { value: "0", rationale: "No qualifying retirement income absent contrary input" },
+  },
+  {
+    id: "ohTaxLessCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Ohio Schedule of Credits line 11 (line 8c tax less the line 2-9 credits) — the joint filing credit's percentage base. In dollars.",
+    default: { value: "0", rationale: "Assumed no remaining Ohio tax absent contrary input" },
+  },
+  {
+    id: "ohBothSpousesHaveQualifyingIncome",
+    type: "bool",
+    description:
+      "Ohio joint filing credit gate attested: each spouse has at least $500 of QUALIFYING income included in Ohio AGI — not interest, dividends/distributions, capital gains, or rents/royalties, and not amounts deducted on the Schedule of Adjustments (deducted business income, Social Security, uniformed-services retirement never qualify).",
+    default: { value: false, rationale: "Conservative: per-spouse $500 qualifying income not attested — no joint filing credit" },
+  },
+  {
+    id: "ohFederalCdccTentative",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Form 2441 line 9c (the tentative child and dependent care credit BEFORE the federal liability limit; equals line 9a absent prior-year-expense amounts) — the Ohio CDCC's 100% base when MAGI is under $20,000. In dollars.",
+    default: { value: "0", rationale: "No federal Form 2441 tentative credit absent contrary input" },
+  },
+  {
+    id: "ohFederalCdccAllowed",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Form 2441 line 11 (the liability-LIMITED child and dependent care credit actually allowed federally) — the Ohio CDCC's 25% base when MAGI is $20,000-$39,999. In dollars.",
+    default: { value: "0", rationale: "No federal Form 2441 allowed credit absent contrary input" },
+  },
 ];

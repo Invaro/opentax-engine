@@ -1,0 +1,7 @@
+{
+  "description": "NJ Tax Table method (income under $100,000): single, taxable income $88,010 -> $50-row 88,000-88,050, midpoint $88,025 -> .0637 x 88,025 - 2,126.25 = 5,607.1925 - 2,126.25 = 3,480.9425 -> $3,481.00. Matches the printed 2025 NJ Tax Table row (column '1 or 3': 3,481).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 88010 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.income_tax",
+  "expect": { "valueCents": "348100" }
+}

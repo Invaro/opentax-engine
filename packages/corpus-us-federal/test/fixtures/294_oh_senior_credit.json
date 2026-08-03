@@ -1,0 +1,7 @@
+{
+  "description": "OH senior citizen credit: 65+, MAGI $50,000 less one $2,150 exemption = $47,850 < $100,000 -> $50 per return (R.C. 5747.055(F)).",
+  "facts": { "filingStatus": "single", "isAge65OrOlder": true, "ohModifiedAgi": 50000, "ohExemptionCount": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.senior_citizen_credit",
+  "expect": { "valueCents": "5000" }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NJ pension exclusion $150,000 HARD CLIFF: MFJ, line 27 = $150,001 -> $0 exclusion (one dollar of income destroys the entire exclusion; 'Your income on line 27 is $150,000 or less' is an eligibility condition, not a phase-out).",
+  "facts": {
+    "filingStatus": "mfj",
+    "njTotalIncome": 150001,
+    "njPensionIncome": 60000,
+    "njPensionEligible": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nj.pension_exclusion",
+  "expect": { "valueCents": "0" }
+}

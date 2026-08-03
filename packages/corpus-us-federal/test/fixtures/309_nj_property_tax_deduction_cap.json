@@ -1,0 +1,7 @@
+{
+  "description": "NJ property tax deduction cap: $18,000 of property taxes paid -> capped at $15,000 (NJ-1040 line 41; the deduction-vs-$50-credit selection is the composer's Worksheet H).",
+  "facts": { "filingStatus": "single", "njPropertyTaxesPaid": 18000 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.property_tax_deduction",
+  "expect": { "valueCents": "1500000" }
+}

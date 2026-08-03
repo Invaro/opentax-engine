@@ -1,0 +1,13 @@
+{
+  "description": "OH joint filing credit $650 cap: MFJ, MAGI $24,000, 2 exemptions (2 x 2,400 = 4,800) -> MAGI less exemptions $19,200 -> 20% tier. Line 11 tax $5,000 -> 20% = $1,000 -> capped at $650 ('The maximum credit per return is $650', 2025 Schedule of Credits p. 29).",
+  "facts": {
+    "filingStatus": "mfj",
+    "ohModifiedAgi": 24000,
+    "ohExemptionCount": 2,
+    "ohTaxLessCredits": 5000,
+    "ohBothSpousesHaveQualifyingIncome": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.oh.joint_filing_credit",
+  "expect": { "valueCents": "65000" }
+}

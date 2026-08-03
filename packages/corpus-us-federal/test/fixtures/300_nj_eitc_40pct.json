@@ -1,0 +1,7 @@
+{
+  "description": "NJ EITC ordinary path: HoH, $13,000 wages, 1 qualifying child (federal EITC $4,328 corpus-pinned, fixtures 22/277) -> 40% x 4,328.00 = 1,731.20 -> $1,731.00 (refundable, NJ-1040 line 58).",
+  "facts": { "filingStatus": "hoh", "wages": 13000, "qualifyingChildren": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.eitc",
+  "expect": { "valueCents": "173100", "intermediates": { "us.federal.eitc": "432800" } }
+}

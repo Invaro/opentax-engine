@@ -1,0 +1,7 @@
+{
+  "description": "NJ Estimated Use Tax Chart: gross income $120,000 -> the $100,001-$150,000 row -> $134.00 (2025 Worksheet K chart).",
+  "facts": { "filingStatus": "single", "njGrossIncome": 120000 },
+  "asOf": "2025-12-31",
+  "target": "us.nj.use_tax",
+  "expect": { "valueCents": "13400" }
+}

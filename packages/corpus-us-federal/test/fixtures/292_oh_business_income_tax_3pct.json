@@ -1,0 +1,7 @@
+{
+  "description": "OH business income tax: taxable business income $40,000 (after the BID) x 3% = $1,200.00 flat (ORC 5747.02(A)(4)(a); Schedule of Business Income line 16).",
+  "facts": { "filingStatus": "single", "ohTaxableBusinessIncome": 40000 },
+  "asOf": "2025-12-31",
+  "target": "us.oh.business_income_tax",
+  "expect": { "valueCents": "120000" }
+}
