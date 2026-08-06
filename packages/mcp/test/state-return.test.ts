@@ -453,6 +453,112 @@ describe("composeOH — 2025 IT 1040 (real corpus targets)", () => {
   });
 });
 
+describe("composeNC — 2025 D-400 (real corpus targets)", () => {
+  it("full return: child deduction tier, standard deduction, 4.25% flat", () => {
+    // Hand-computed: FAGI 85,000; child deduction 2 × $1,500 (over-$80k MFJ
+    // tier) = 3,000; standard 25,500; line 12b = 56,500; tax = 4.25% ×
+    // 56,500 = 2,401.25 -> 2,401; withholding 2,000 -> due 401.
+    const input = {
+      jurisdiction: "nc" as const, filingStatus: "mfj", federalAGI: 85000,
+      ncQualifyingChildren: 2, stateWithholding: 2000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "10b_child_deduction")).toBe("$3,000");
+    expect(dollars(lines, "11_nc_deduction")).toBe("$25,500");
+    expect(dollars(lines, "14_nc_taxable_income")).toBe("$56,500");
+    expect(dollars(lines, "15_nc_income_tax")).toBe("$2,401");
+    expect(dollars(lines, "26a_tax_due")).toBe("$401");
+  });
+
+  it("itemized beats standard (with the $20,000 cap) and the use-tax estimate keys on line 14", () => {
+    // Itemized: min(15,000+8,000, 20,000) + 2,000 + (10,000 − 7.5%×80,000) =
+    // 26,000 > 12,750 standard. Line 14 = 54,000; tax = 2,295; use tax =
+    // .000675 × 54,000 = 36.45 -> 36.
+    const input = {
+      jurisdiction: "nc" as const, filingStatus: "single", federalAGI: 80000,
+      ncMortgageInterest: 15000, ncRealEstateTaxes: 8000, ncCharitable: 2000,
+      ncMedicalExpenses: 10000, ncUseTaxEstimate: true,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "11_nc_deduction")).toBe("$26,000");
+    expect(dollars(lines, "15_nc_income_tax")).toBe("$2,295");
+    expect(dollars(lines, "18_consumer_use_tax")).toBe("$36");
+    expect(dollars(lines, "19_total_tax")).toBe("$2,331");
+    expect(notes.some((n) => n.includes("itemized deductions"))).toBe(true);
+  });
+
+  it("Social Security and Bailey retirement auto-deduct on line 9", () => {
+    // l9 = 10,000 SS + 20,000 Bailey = 30,000; l12b = 60,000 − 30,000 −
+    // 12,750 = 17,250; tax = 4.25% × 17,250 = 733.13 -> 733.
+    const input = {
+      jurisdiction: "nc" as const, filingStatus: "single", federalAGI: 60000,
+      taxableSocialSecurity: 10000, ncBaileyRetirement: 20000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "9_deductions")).toBe("$30,000");
+    expect(dollars(lines, "15_nc_income_tax")).toBe("$733");
+    expect(notes.some((n) => n.includes("Bailey"))).toBe(true);
+  });
+});
+
+describe("composeGA — 2025 Form 500 (real corpus targets)", () => {
+  it("full return: standard deduction, dependent exemption, 5.19% flat, LIC denied over $20,000", () => {
+    // Hand-computed: FAGI 70,000; std 24,000 (MFJ); dependents 2 × 4,000 =
+    // 8,000; line 15c = 38,000; tax = 5.19% × 38,000 = 1,972.20 -> 1,972;
+    // withholding 2,100 -> refund 128. LIC $0 (FAGI ≥ $20,000).
+    const input = {
+      jurisdiction: "ga" as const, filingStatus: "mfj", federalAGI: 70000,
+      gaDependentCount: 2, gaLicExemptions: 4, stateWithholding: 2100,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "11_standard_deduction")).toBe("$24,000");
+    expect(dollars(lines, "14_dependent_exemption")).toBe("$8,000");
+    expect(dollars(lines, "15c_georgia_taxable_income")).toBe("$38,000");
+    expect(dollars(lines, "16_tax")).toBe("$1,972");
+    expect(dollars(lines, "17c_low_income_credit")).toBe("$0");
+    expect(dollars(lines, "30_overpayment")).toBe("$128");
+    expect(dollars(lines, "46_refund")).toBe("$128");
+  });
+
+  it("retirement exclusion + Social Security auto-subtract; LIC caps at the tiny tax", () => {
+    // 65+ single: FAGI 30,000 incl. 10,000 taxable SS; retirement exclusion
+    // min(12,000 + min(3,000, 5,000), 65,000) = 15,000; line 9 = −25,000;
+    // GA AGI 5,000; std 12,000 -> line 15c 0 -> tax 0; LIC (FAGI 30,000)
+    // = $0 anyway. Verifies the subtraction plumbing and zero floors.
+    const input = {
+      jurisdiction: "ga" as const, filingStatus: "single", federalAGI: 30000,
+      taxableSocialSecurity: 10000, gaExclusionTier: "65plus",
+      gaRetirementIncome: 12000, gaRetirementEarnedIncome: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "9_adjustments")).toBe("-$25,000");
+    expect(dollars(lines, "10_georgia_agi")).toBe("$5,000");
+    expect(dollars(lines, "16_tax")).toBe("$0");
+    expect(notes.some((n) => n.includes("retirement income exclusion $15,000"))).toBe(true);
+  });
+
+  it("forced itemizing, CDCC folds into IND-CR, credits cap at line 16", () => {
+    // Federal itemizer: 12a 18,000 − 12b 4,000 = 14,000 GA itemized (no
+    // standard). FAGI 15,000 − 14,000 = 1,000; 15c = 1,000; tax 5.19% ×
+    // 1,000 = 52 -> $52. LIC: FAGI 15,000 -> $5 tier × 2 = 10; CDCC 50% ×
+    // 400 = 200; credits 210 -> capped at 52.
+    const input = {
+      jurisdiction: "ga" as const, filingStatus: "mfj", federalAGI: 15000,
+      gaFederalItemized: 18000, gaItemizedAdjustments: 4000,
+      gaLicExemptions: 2, gaFederalCdccAllowed: 400,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "11_standard_deduction")).toBe("$0");
+    expect(dollars(lines, "12c_georgia_itemized")).toBe("$14,000");
+    expect(dollars(lines, "16_tax")).toBe("$52");
+    expect(dollars(lines, "17c_low_income_credit")).toBe("$10");
+    expect(dollars(lines, "20_ind_cr_credits")).toBe("$200");
+    expect(dollars(lines, "22_total_credits_used")).toBe("$52");
+    expect(dollars(lines, "23_balance")).toBe("$0");
+    expect(notes.some((n) => n.includes("capped at the line 16 tax"))).toBe(true);
+  });
+});
+
 describe("composeStateReturn — federalAGI guard", () => {
   it("AGI-based states refuse loudly without federalAGI (schema made it optional for PA)", () => {
     expect(() =>

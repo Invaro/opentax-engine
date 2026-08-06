@@ -1,0 +1,7 @@
+{
+  "description": "GA CDCC at the NEW 50% rate (HB 136 s.1-1, applicable to TY2025; printed on the 2025 IND-CR 202): federal 2441 line 11 allowed credit $1,200 -> $600.00. The old 30% rate is dead for 2025.",
+  "facts": { "filingStatus": "mfj", "gaFederalCdccAllowed": 1200 },
+  "asOf": "2025-12-31",
+  "target": "us.ga.cdcc",
+  "expect": { "valueCents": "60000" }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "GA LIC boundary + 65-plus doubling: FAGI exactly $6,000 is NOT 'Under $6,000' ($26) - it lands in '$6,000 but not more than $7,999' -> $20; exemptions 2 + one 65+ addition = 3 -> $60.00 (65+ filers get MORE, never barred).",
+  "facts": {
+    "filingStatus": "mfj",
+    "gaFederalAgi": 6000,
+    "gaLicExemptions": 2,
+    "gaLic65Count": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ga.low_income_credit",
+  "expect": { "valueCents": "6000" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "NC standard deduction: MFS whose spouse claims itemized deductions -> $0 (2025 D-401 chart: 'If spouse claims itemized deductions 0'; a non-itemizing spouse would give $12,750).",
+  "facts": { "filingStatus": "mfs", "spouseItemizes": true },
+  "asOf": "2025-12-31",
+  "target": "us.nc.standard_deduction",
+  "expect": { "valueCents": "0" }
+}

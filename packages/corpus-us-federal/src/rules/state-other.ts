@@ -165,19 +165,8 @@ export const otherStateRules: Rule[] = [
     excerpt:
       "Utah TY2025: 4.50% flat on Utah taxable income (HB 106, signed March 2025, cut the 4.55% rate retroactively to 1/1/2025; withholding tables only caught up June 2025 — the ANNUAL return rate is 4.50%). Federal AGI + modifications; Utah has NO standard deduction — instead a nonrefundable TAXPAYER TAX CREDIT of roughly 6% of federal deductions that PHASES OUT with income, which this rule does not model; compute the credit per Utah TC-40 and disclose.",
   }),
-  flatTax({
-    st: "nc", name: "North Carolina", ratePctTimes100: "425",
-    source: "N.C. Gen. Stat. § 105-153.7 (4.25% for 2025); Tax Foundation 2025 survey (web-verified July 2026)",
-    section: "N.C.G.S. § 105-153.7",
-    url: "https://www.ncdor.gov/",
-    excerpt:
-      "North Carolina TY2025: 4.25% flat on NC taxable income (2026 drops to 3.99%). NC standard deduction $12,750 single/MFS, $25,500 MFJ, $19,125 HOH; NO personal exemptions; a $3,000-per-child deduction (income-tiered) exists for CTC-eligible children — compose into the base and disclose.",
-    parameters: {
-      standardDeductionSingle: { value: "1275000", type: "money" },
-      standardDeductionJoint: { value: "2550000", type: "money" },
-      standardDeductionHoh: { value: "1912500", type: "money" },
-    },
-  }),
+  // (NC graduated to the deep pack: see state-nc.ts — us.nc.income_tax v2+
+  //  with standard/itemized/child-deduction targets; the thin v1 is superseded.)
   flatTax({
     st: "az", name: "Arizona", ratePctTimes100: "250",
     source: "Ariz. Rev. Stat. § 43-1011 (2.5% flat); Tax Foundation 2025 survey (web-verified July 2026)",
@@ -200,19 +189,9 @@ export const otherStateRules: Rule[] = [
       "Kentucky TY2025: 4.0% flat on KY taxable income (2026 drops to 3.5%). Standard deduction $3,270 PER TAXPAYER (each spouse gets one on a joint return: $6,540 MFJ); no personal exemptions. Pension exclusion up to $31,110 per person named but not modeled — disclose for retirees.",
     parameters: { standardDeductionPerTaxpayer: { value: "327000", type: "money" } },
   }),
-  flatTax({
-    st: "ga", name: "Georgia", ratePctTimes100: "519",
-    source: "Ga. Code § 48-7-20 as amended by 2025 HB 111 (5.19% RETROACTIVE to 1/1/2025 — some 2025 surveys still print the pre-HB 111 5.39%); Tax Foundation survey cross-checked (web-verified July 2026)",
-    section: "O.C.G.A. § 48-7-20; 2025 Ga. Laws Act (HB 111)",
-    url: "https://dor.georgia.gov/",
-    excerpt:
-      "Georgia TY2025: 5.19% flat (HB 111, signed April 2025, cut the scheduled 5.39% retroactively to 1/1/2025; the rate continues stepping toward 4.99%). Standard deduction $12,000 single/MFS/HOH, $24,000 MFJ; dependent exemption $4,000 per dependent (unborn-child rule included); no personal exemption for filers.",
-    parameters: {
-      standardDeductionSingle: { value: "1200000", type: "money" },
-      standardDeductionJoint: { value: "2400000", type: "money" },
-      dependentExemption: { value: "400000", type: "money" },
-    },
-  }),
+  // (GA graduated to the deep pack: see state-ga.ts — us.ga.income_tax v2+
+  //  with standard/dependent/retirement-exclusion/LIC/CDCC targets; the thin
+  //  v1 is superseded.)
   flatTax({
     st: "ia", name: "Iowa", ratePctTimes100: "380",
     source: "Iowa Code § 422.5A (3.8% flat effective 1/1/2025, 2024 SF 2442); Tax Foundation 2025 survey (web-verified July 2026)",

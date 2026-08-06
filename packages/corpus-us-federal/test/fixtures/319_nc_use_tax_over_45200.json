@@ -1,0 +1,7 @@
+{
+  "description": "NC use tax over $45,200: 'Line 14 x .000675' -> $100,000 x .000675 = $67.50 -> whole-dollar $68.00.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 100000 },
+  "asOf": "2025-12-31",
+  "target": "us.nc.use_tax",
+  "expect": { "valueCents": "6800" }
+}

@@ -20,6 +20,8 @@ import { nyRules } from "./state-ny.js";
 import { paRules } from "./state-pa.js";
 import { njRules } from "./state-nj.js";
 import { ohRules } from "./state-oh.js";
+import { ncRules } from "./state-nc.js";
+import { gaRules } from "./state-ga.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -30,5 +32,7 @@ export const stateParameterRules: Rule[] = [
   ...paRules,
   ...njRules,
   ...ohRules,
+  ...ncRules,
+  ...gaRules,
   ...otherStateRules,
 ];

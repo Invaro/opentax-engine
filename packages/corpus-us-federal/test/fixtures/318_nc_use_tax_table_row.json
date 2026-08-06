@@ -1,0 +1,7 @@
+{
+  "description": "NC no-receipts consumer use tax: line 14 taxable income $30,000 -> printed row $28,900-$30,400 -> $20.00 (2025 D-401 p.26 table, keyed to TAXABLE income, not gross).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 30000 },
+  "asOf": "2025-12-31",
+  "target": "us.nc.use_tax",
+  "expect": { "valueCents": "2000" }
+}

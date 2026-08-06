@@ -1,6 +1,6 @@
 /**
  * `opentax state --facts <file>` — compose a state return (IL-1040, VA 760,
- * CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040) from a composer-facts JSON file, printing every line
+ * CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500) from a composer-facts JSON file, printing every line
  * exactly as the MCP compute_state_return tool would.
  */
 

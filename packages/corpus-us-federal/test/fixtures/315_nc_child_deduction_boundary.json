@@ -1,0 +1,7 @@
+{
+  "description": "NC child deduction HOH boundary: FAGI exactly $105,000 is 'Over $90,000 - Up to $105,000' -> $500/child; one dollar more would be $0. 1 child -> $500.00.",
+  "facts": { "filingStatus": "hoh", "ncFederalAgi": 105000, "qualifyingChildren": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.nc.child_deduction",
+  "expect": { "valueCents": "50000" }
+}

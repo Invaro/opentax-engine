@@ -1,6 +1,6 @@
 /**
  * compute_state_return — deterministic printed-form line composers for the
- * state jurisdictions in the corpus (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040).
+ * state jurisdictions in the corpus (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500).
  *
  * Evaluation finding: agents' state tax ARITHMETIC is oracle-exact, but they
  * transpose printed-form line numbers and drift on whole-dollar rounding when
@@ -13,7 +13,9 @@
  * (VA Schedule A / STA / age deduction, CA Schedule P) are computed here.
  */
 import { composeCA } from "./ca.js";
+import { composeGA } from "./ga.js";
 import { composeIL } from "./il.js";
+import { composeNC } from "./nc.js";
 import { composeNJ } from "./nj.js";
 import { composeNY } from "./ny.js";
 import { composeOH } from "./oh.js";
@@ -52,7 +54,9 @@ export function makeStateTaxEvaluator(
           ? { type: "bool", value: v }
           : typeof v === "number"
             ? { type: "int", value: String(v) } // plain JS number = int fact (counts)
-            : { type: "money", value: String(v) };
+            : typeof v === "string"
+              ? { type: "enum", value: v } // string = enum fact (e.g. GA exclusion tiers)
+              : { type: "money", value: String(v) };
     }
     return runTarget(facts, target);
   };
@@ -75,7 +79,7 @@ export function composeStateReturn(
   // than compose on a silent $0 AGI. PA and NJ are class/category-based and
   // never use it.
   if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
@@ -83,5 +87,7 @@ export function composeStateReturn(
   if (j === "pa") return { lines: composePA(input, evalStateTax, notes), notes };
   if (j === "nj") return { lines: composeNJ(input, evalStateTax, notes), notes };
   if (j === "oh") return { lines: composeOH(input, evalStateTax, notes), notes };
+  if (j === "nc") return { lines: composeNC(input, evalStateTax, notes), notes };
+  if (j === "ga") return { lines: composeGA(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

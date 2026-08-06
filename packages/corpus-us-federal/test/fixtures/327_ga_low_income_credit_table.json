@@ -1,0 +1,7 @@
+{
+  "description": "GA Low Income Credit: FAGI $9,500 -> '$8,000 but not more than $9,999' row -> $14 per exemption x 3 exemptions (self+spouse+child) = $42.00 (2025 IT-511 p.35 worksheet; nonrefundable, composer caps at tax).",
+  "facts": { "filingStatus": "mfj", "gaFederalAgi": 9500, "gaLicExemptions": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.ga.low_income_credit",
+  "expect": { "valueCents": "4200" }
+}

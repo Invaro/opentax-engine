@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -212,4 +212,43 @@ const oh = {
   // IT K-1 pass-through entity credit) use the shared refundableCredits input.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh };
+const nc = {
+  ncQualifyingChildren: z.number().int().optional().describe("D-400 line 10a: count of qualifying children for whom the federal § 24 child tax credit was ALLOWED (under 17; ODC-only dependents never count) — drives the AGI-tiered child deduction (us.nc.child_deduction)"),
+  ncBaileyRetirement: usd.optional().describe("NC Schedule S line 20: Bailey settlement retirement benefits (NC/local government or US government incl. military retirees with 5+ years of creditable service as of Aug 12, 1989; state 401(k)/457 contributed before that date) — fully deducted; enclose the 1099-R"),
+  ncMilitaryRetirement: usd.optional().describe("NC Schedule S line 21: military retirement pay / SBP payments for members with 20+ years of service OR Chapter 61 medical retirement — never severance, never double-claimed with Bailey"),
+  ncUsObligationInterest: usd.optional().describe("NC Schedule S line 18: interest from US obligations (Treasuries, savings bonds) included in FAGI — fully deducted"),
+  ncMortgageInterest: usd.optional().describe("NC Schedule A: qualified mortgage interest — the composer applies the $20,000 combined cap with real estate taxes and takes itemized only when it beats the standard deduction"),
+  ncRealEstateTaxes: usd.optional().describe("NC Schedule A: real estate property taxes (NC allows NO income/sales tax deduction) — inside the $20,000 combined cap"),
+  ncCharitable: usd.optional().describe("NC Schedule A: IRC § 170 charitable contributions allowed for the year (no NC dollar cap)"),
+  ncMedicalExpenses: usd.optional().describe("NC Schedule A line 7a: medical/dental expenses BEFORE the floor — the composer subtracts 7.5% of federal AGI"),
+  ncClaimOfRightRepayment: usd.optional().describe("NC Schedule A line 8: claim-of-right repayments over $3,000 (deducted in full)"),
+  ncTaxCredits: usd.optional().describe("D-400 line 16: D-400TC total (other-state credit worksheet, historic rehab) — hand-computed; the composer caps at the line 15 tax. NC has NO EITC and NO child/dependent care credit."),
+  ncUseTaxEstimate: z.boolean().optional().describe("use the printed no-receipts consumer use tax table (keyed to line 14 taxable income, us.nc.use_tax) instead of the useTax input"),
+  ncPartnershipPayments: usd.optional().describe("D-400 line 21c: NC tax paid by a partnership on the filer's behalf"),
+  ncScorpPayments: usd.optional().describe("D-400 line 21d: NC tax paid by an S corporation on the filer's behalf"),
+  ncUnderpaymentInterest: usd.optional().describe("D-400 line 26e: interest on the underpayment of estimated income tax (Form D-422)"),
+};
+
+const ga = {
+  gaDependentCount: z.number().int().optional().describe("Form 500 line 7c total dependents (7a qualified + 7b unborn-with-heartbeat; never self/spouse) — $4,000 each (us.ga.dependent_exemption)"),
+  gaFederalItemized: usd.optional().describe("Form 500 line 12a: federal Schedule A total. Supplying this FORCES Georgia itemizing ('Leave Line 11 blank if you itemize deductions on your Federal return') — a federal standard-deduction filer must omit it."),
+  gaItemizedAdjustments: usd.optional().describe("Form 500 line 12b: state income taxes in the federal Schedule A total plus the disallowed-SALT proration when the $10,000/$5,000 cap bound (printed formula, hand-computed)"),
+  gaExclusionTier: z.enum(["none", "62to64OrDisabled", "65plus"]).optional().describe("primary taxpayer's GA retirement-exclusion tier: 62-64 during any part of the year or permanently/totally disabled ($35,000 cap) vs 65+ ($65,000 cap) (us.ga.retirement_exclusion)"),
+  gaSpouseExclusionTier: z.enum(["none", "62to64OrDisabled", "65plus"]).optional().describe("spouse's GA retirement-exclusion tier (each spouse qualifies separately; never shared)"),
+  gaRetirementIncome: usd.optional().describe("primary taxpayer's UNEARNED retirement income for the exclusion (pensions, interest, dividends, net rents, capital gains, royalties, military retirement; joint property at 50%; NEVER Social Security — that subtracts automatically)"),
+  gaSpouseRetirementIncome: usd.optional().describe("spouse's unearned retirement income for the exclusion"),
+  gaRetirementEarnedIncome: usd.optional().describe("primary taxpayer's earned income — at most $5,000 counts inside the exclusion (Schedule 1 worksheet)"),
+  gaSpouseRetirementEarnedIncome: usd.optional().describe("spouse's earned income for the exclusion worksheet"),
+  gaMilitaryExclusion: usd.optional().describe("GA military retirement exclusion for under-62 retirees (Schedule 1 page 3 worksheet: $17,500 + additional $17,500 when GA earned income exceeds $17,500 — hand-computed, per qualifying spouse)"),
+  gaNolUtilized: usd.optional().describe("Form 500 line 15b: Georgia NOL utilized (Schedule 4; cannot exceed line 15a or the 80% limitation — composer caps at 15a)"),
+  gaLicExemptions: z.number().int().optional().describe("Low Income Credit Worksheet line 2: self + spouse + natural/legally adopted children (never other dependents or unborn) (us.ga.low_income_credit)"),
+  gaLic65Count: z.number().int().optional().describe("Low Income Credit Worksheet line 3: 1 if filer or spouse is 65+, 2 if both"),
+  gaOtherStateCredit: usd.optional().describe("Form 500 line 18: other state(s) tax credit (printed worksheet, hand-computed; other-state return copy required)"),
+  gaEligibleItemizerCredit: usd.optional().describe("Form 500 line 19: Georgia Eligible Itemizer Tax Credit (NEW 2025; up to $300 per taxpayer, itemizers with 183+ GA days or resident at year end) — TRANSCRIBE the worksheet-computed amount, never assume the full $300; composer caps at $300/$600"),
+  gaIndCrCredits: usd.optional().describe("Form 500 line 20: IND-CR Summary total OTHER than the CDCC (the composer adds us.ga.cdcc itself from gaFederalCdccAllowed)"),
+  gaFederalCdccAllowed: usd.optional().describe("federal Form 2441 line 11 allowed credit — GA IND-CR 202 pays 50% of it (us.ga.cdcc)"),
+  gaOtherWithholding: usd.optional().describe("Form 500 line 25: GA tax withheld on G2-A / G2-FL / G2-LP / G2-RP statements (never W-2/1099 amounts — those go in the shared stateWithholding for line 24)"),
+  gaUetPenalty: usd.optional().describe("Form 500 line 42: Form 500 UET estimated tax penalty"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga };

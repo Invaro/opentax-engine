@@ -1,6 +1,6 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "US federal individual income tax rules as cited, content-addressed data (TY2025)",
   "license": "AGPL-3.0-only",
   "type": "module",
@@ -17,7 +17,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "gen:lock": "pnpm build && node scripts/gen-lock.mjs"
+    "gen:lock": "pnpm build && node scripts/gen-lock.mjs",
+    "report:coverage": "node scripts/coverage-report.mjs"
   },
   "dependencies": {
     "@invaro/opentax-core": "workspace:*"

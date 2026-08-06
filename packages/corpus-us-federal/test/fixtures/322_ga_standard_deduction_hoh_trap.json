@@ -1,0 +1,7 @@
+{
+  "description": "GA standard deduction HOH trap: Georgia gives head of household $12,000 - the SAME as single, NOT a federal-style larger amount. Only MFJ gets $24,000 (O.C.G.A. 48-7-27(a)(1)(B); 2025 IT-511 p.16 table).",
+  "facts": { "filingStatus": "hoh" },
+  "asOf": "2025-12-31",
+  "target": "us.ga.standard_deduction",
+  "expect": { "valueCents": "1200000" }
+}

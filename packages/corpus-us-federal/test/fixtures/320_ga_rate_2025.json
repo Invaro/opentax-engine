@@ -1,0 +1,7 @@
+{
+  "description": "GA flat rate TY2025 (HB 111, retroactive): $50,000 taxable x 5.19% = $2,595.00 exactly (Form 500 line 16 'Multiply Line 15c by 5.19%'). Pre-HB 111 surveys still print 5.39% - the enrolled act and printed form win.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2025-12-31",
+  "target": "us.ga.income_tax",
+  "expect": { "valueCents": "259500" }
+}

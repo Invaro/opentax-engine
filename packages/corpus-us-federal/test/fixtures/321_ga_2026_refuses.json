@@ -1,0 +1,7 @@
+{
+  "description": "GA TY2026 refuses: HB 463 (2026) sets 4.99% per the Governor's office, but the enrolled text was unverified at encoding and HB 111's own 5.09% step was superseded - the engine refuses rather than guessing between them.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2026-12-31",
+  "target": "us.ga.income_tax",
+  "expect": { "error": "NO_APPLICABLE_RULE" }
+}

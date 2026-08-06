@@ -95,7 +95,7 @@ claude mcp add opentax -- npx -y @invaro/opentax
 
 No install at all if you prefer hosted: the same server runs at `https://opentax.invaro.ai/mcp`, and it's on the official MCP registry as `io.github.Invaro/opentax`.
 
-Fifteen tools. Full returns: `compute_return` (the Form 1040 line set), `calculate_tax`, `calculate_business_tax` (1120), `calculate_fiduciary_tax` (1041), `compute_state_return` (CA 540, IL-1040, NY IT-201, VA 760, PA-40, NJ-1040, OH IT 1040). Determinations: `determine_dependent`, `is_tipped_occupation` (the full Treasury occupation list as data). The oracle surface: `verify_tax_claim`, `verify_fact` (fact-check any claimed dollar amount — "CTC is $2,000/child" → *refuted, it's $2,200, § 24(h)(2) as amended by OBBBA*), `lookup_tax_parameter`, `search_tax_rules`, `list_input_facts`, `explain_rule`, `find_tax_cliffs`, `compare_filing_statuses`. Every response carries its assumptions and the corpus hash, so the agent can quote the law and the user can re-verify.
+Fifteen tools. Full returns: `compute_return` (the Form 1040 line set), `calculate_tax`, `calculate_business_tax` (1120), `calculate_fiduciary_tax` (1041), `compute_state_return` (CA 540, IL-1040, NY IT-201, VA 760, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500). Determinations: `determine_dependent`, `is_tipped_occupation` (the full Treasury occupation list as data). The oracle surface: `verify_tax_claim`, `verify_fact` (fact-check any claimed dollar amount — "CTC is $2,000/child" → *refuted, it's $2,200, § 24(h)(2) as amended by OBBBA*), `lookup_tax_parameter`, `search_tax_rules`, `list_input_facts`, `explain_rule`, `find_tax_cliffs`, `compare_filing_statuses`. Every response carries its assumptions and the corpus hash, so the agent can quote the law and the user can re-verify.
 
 On **TaxCalcBench** (50 full TY2025 returns, federal + state), a cold Claude Sonnet agent with this MCP server scores **48/50 exact under strict scoring (96%)** and 98.2% of all scored lines, one attempt per case, graded by the benchmark's own evaluator. The benchmark's paper puts the best frontier model on its own at ~33%. Details in [docs/METHODOLOGY.md](docs/METHODOLOGY.md).
 
@@ -114,14 +114,14 @@ Plus the general contract: add `--json` to **any** command — single JSON objec
 
 ## What's covered today (tax years 2025 & 2026, current law)
 
-**Every W-2 household, all five filing statuses, refunds included.** 264 rules, 278 documented input facts, 311 golden fixtures. The default answer is **net tax** — negative means the government owes you.
+**Every W-2 household, all five filing statuses, refunds included.** 276 rules, 295 documented input facts, 329 golden fixtures. The default answer is **net tax** — negative means the government owes you.
 
 - **Individual (Form 1040)** — brackets, standard & itemized deductions (Schedule A with the OBBBA SALT cap), capital gains & qualified dividends with full § 1222 Schedule D netting, AMT, Social Security taxation, retirement income incl. the § 72(d) pension Simplified Method, residential rental income with § 168 depreciation, SE tax, NIIT & Additional Medicare, kiddie tax, capital losses, HSA, student-loan interest, IRA deduction, foreign earned income exclusion.
 - **Credits** — CTC/ACTC + ODC, EITC (all child counts), education (AOTC/LLC), child & dependent care, saver's, adoption, premium tax credit (2025 no-cliff / 2026 cliff) — plus proof-backed dependent determination.
 - **OBBBA, both years** — tips & overtime deductions (with the 71-occupation eligibility list), senior deduction, car-loan interest, non-itemizer charitable, § 68 haircut, and the 2026 parameter shifts throughout.
 - **Business & corporate (Form 1120)** — QBI § 199A full mechanics, SEP/solo-401(k), § 179 + bonus + R&D expensing + § 163(j), K-1 pass-through, entity classification, flat 21% with charitable/DRD/NOL mechanics, BEAT, corporate FTC, § 250, penalty taxes, QSBS, buyback excise, corporate estimates.
 - **Estates & trusts (Form 1041)**, household employment (Schedule H), farmers & fishermen, estimated-tax safe harbors + annualized installments, withholding checkup.
-- **State (28 states, in the same corpus)** — deep rule packs for IL, VA, CA, NY, PA, NJ, and OH with printed-form composers (via the MCP server's `compute_state_return` and `opentax state`): CalEITC/YCTC/renter's credit and CA AMT, NYC resident tax + Yonkers surcharge + IT-214, VA age deduction and Spouse Tax Adjustment worksheets, IL EITC and use tax, PA's eight-class netting, Schedule SP Tax Forgiveness, and the Working Pennsylvanians Tax Credit, NJ's category netting with the printed Tax Table, pension-exclusion cliff, property-tax deduction-vs-credit worksheet, NJEITC (incl. the flat $260 age-decoupled credit), CTC and CDCC, and OH's HB 96 brackets, MAGI-tiered exemptions, Business Income Deduction, and the joint filing / retirement / senior / EIC / child-care credits. Flat-rate rules for 12 more states; the nine no-income-tax states answer $0 with a citation.
+- **State (30 states, in the same corpus)** — deep rule packs for IL, VA, CA, NY, PA, NJ, OH, NC, and GA with printed-form composers (via the MCP server's `compute_state_return` and `opentax state`): CalEITC/YCTC/renter's credit and CA AMT, NYC resident tax + Yonkers surcharge + IT-214, VA age deduction and Spouse Tax Adjustment worksheets, IL EITC and use tax, PA's eight-class netting, Schedule SP Tax Forgiveness, and the Working Pennsylvanians Tax Credit, NJ's category netting with the printed Tax Table, pension-exclusion cliff, property-tax deduction-vs-credit worksheet, NJEITC (incl. the flat $260 age-decoupled credit), CTC and CDCC, OH's HB 96 brackets, MAGI-tiered exemptions, Business Income Deduction, and the joint filing / retirement / senior / EIC / child-care credits, NC's AGI-tiered child deduction, $20,000 mortgage+property itemized cap, and Bailey/military exclusions, and GA's per-spouse retirement exclusion, Low Income Credit table, and the HB 136 50% CDCC. Flat-rate rules for 10 more states; the nine no-income-tax states answer $0 with a citation.
 - **Out of scope refuses loudly** — consolidated returns, REIT/RIC, fiscal-year returns, CAMT: a named refusal, never a silent wrong answer.
 
 The line-by-line inventory (every rule, its statute, its validity window) is queryable, not prose: `pnpm opentax corpus list`.
@@ -179,7 +179,7 @@ Full walkthrough: **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 | `opentax eval --facts f.json --proof out.json` | facts from a file, save the proof |
 | `opentax check … --expect 6600` | gate a claimed number: exit 0 verified, 1 refuted |
 | `opentax verify proof.json` | re-derive a proof, confirm or refute |
-| `opentax state --facts return.json` | printed-form state return lines (IL/VA/CA/NY/PA/NJ/OH) |
+| `opentax state --facts return.json` | printed-form state return lines (IL/VA/CA/NY/PA/NJ/OH/NC/GA) |
 | `opentax facts` / `opentax flags` | every input, its type, its default / every CLI flag, grouped |
 | `opentax lookup standard deduction` | the dollar amounts behind a question, with citations |
 | `opentax search kiddie tax` | full-text rule search; zero hits means it isn't encoded |
@@ -204,10 +204,10 @@ All take `--json` (except `flags` and `corpus export`, whose output is already r
 ```
 packages/
   core/               the engine: domain-general, zero deps, browser-safe
-  corpus-us-federal/  the tax rules as cited data + golden tests (federal + 28 states)
+  corpus-us-federal/  the tax rules as cited data + golden tests (federal + 30 states)
   solve/              the reasoning layer: sweep, marginal, cliffs, invert, compare,
                       rule search, and the fact-checker (also domain-general)
-  compose/            printed-form state-return composers (IL/VA/CA/NY/PA/NJ/OH)
+  compose/            printed-form state-return composers (IL/VA/CA/NY/PA/NJ/OH/NC/GA)
   cli/                the `opentax` command
   mcp/                @invaro/opentax, the published package:
                       MCP server (stdio + HTTP) and the npx CLI

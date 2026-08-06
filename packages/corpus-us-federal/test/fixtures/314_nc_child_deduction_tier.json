@@ -1,0 +1,7 @@
+{
+  "description": "NC child deduction, MFJ tier: FAGI $85,000 (over $80,000, up to $100,000 -> $1,500/child) x 2 federal-CTC qualifying children = $3,000.00 (2025 D-401 p.14 Child Deduction Table, statute-cross-verified).",
+  "facts": { "filingStatus": "mfj", "ncFederalAgi": 85000, "qualifyingChildren": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.nc.child_deduction",
+  "expect": { "valueCents": "300000" }
+}

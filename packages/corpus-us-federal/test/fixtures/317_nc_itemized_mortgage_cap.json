@@ -1,0 +1,14 @@
+{
+  "description": "NC itemized deductions with the $20,000 combined cap: mortgage $15,000 + real estate taxes $8,000 = $23,000 -> capped $20,000; charitable $2,000 uncapped; medical $10,000 minus 7.5% x $80,000 FAGI ($6,000 floor) = $4,000. Total $26,000.00 (D-400 Schedule A).",
+  "facts": {
+    "filingStatus": "mfj",
+    "ncFederalAgi": 80000,
+    "ncMortgageInterest": 15000,
+    "ncRealEstateTaxes": 8000,
+    "ncCharitable": 2000,
+    "ncMedicalExpenses": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nc.itemized_deductions",
+  "expect": { "valueCents": "2600000" }
+}

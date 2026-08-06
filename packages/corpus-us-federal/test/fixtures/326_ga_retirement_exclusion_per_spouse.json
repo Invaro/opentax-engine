@@ -1,0 +1,14 @@
+{
+  "description": "GA retirement exclusion is PER SPOUSE, never shared: taxpayer 65+ with $70,000 unearned -> capped $65,000; spouse 65+ with $10,000 unearned + min($8,000 earned, $5,000) = $15,000 -> total $80,000.00. The taxpayer's excess never transfers to the spouse's unused cap.",
+  "facts": {
+    "filingStatus": "mfj",
+    "gaExclusionTier": "65plus",
+    "gaSpouseExclusionTier": "65plus",
+    "gaRetirementIncome": 70000,
+    "gaSpouseRetirementIncome": 10000,
+    "gaSpouseRetirementEarnedIncome": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ga.retirement_exclusion",
+  "expect": { "valueCents": "8000000" }
+}

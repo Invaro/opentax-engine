@@ -1,0 +1,7 @@
+{
+  "description": "GA dependent exemption: 3 dependents (line 7c, incl. unborn-with-heartbeat) x $4,000 = $12,000.00 (O.C.G.A. 48-7-26(b); no exemption for filer/spouse - line 6 is Reserved).",
+  "facts": { "filingStatus": "mfj", "gaDependentCount": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.ga.dependent_exemption",
+  "expect": { "valueCents": "1200000" }
+}

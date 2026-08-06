@@ -1,7 +1,7 @@
 import type { Cents } from "./money.js";
 
 export type StateReturnInput = {
-  jurisdiction: "il" | "va" | "ca" | "ny" | "pa" | "nj" | "oh";
+  jurisdiction: "il" | "va" | "ca" | "ny" | "pa" | "nj" | "oh" | "nc" | "ga";
   [k: string]: unknown;
 };
 
@@ -10,12 +10,13 @@ export type StateReturnInput = {
  * extraFacts (values keyed by fact id) merge into the evaluation — used for
  * Schedule P AMT (caAmti/caRegularTax), method toggles, and the PA class
  * facts. Value typing: bigint = money cents, boolean = bool fact, plain JS
- * number = INT fact (counts, e.g. paSpDependentChildren).
+ * number = INT fact (counts, e.g. paSpDependentChildren), string = ENUM fact
+ * (e.g. the GA retirement-exclusion tiers).
  */
 export type StateTaxEvaluator = (
   target: string,
   stateTaxableIncomeCents: Cents,
-  extraFacts?: Record<string, Cents | boolean | number>,
+  extraFacts?: Record<string, Cents | boolean | number | string>,
 ) => Cents;
 
 /** Legacy filing-status flags derived from filingStatus by the dispatcher. */
