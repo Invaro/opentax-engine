@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota standard deduction 80% floor (Worksheet B territory): MFJ AGI 1,200,000 -> the 3%/10% reduction (89,710.50) exceeds 80% x 29,900 -> deduction = 29,900 - 23,920 = 5,980.",
+  "facts": { "filingStatus": "mfj", "mnAgi": 1200000 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.standard_deduction",
+  "expect": { "valueCents": "598000" }
+}

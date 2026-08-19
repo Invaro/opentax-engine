@@ -3035,4 +3035,51 @@ export const facts: FactSpec[] = [
       "BOTH spouses on a joint Wisconsin return were at least 67 on December 31 — raises the Act 15 retirement subtraction cap from $24,000 to $48,000 regardless of which spouse received the income.",
     default: { value: false, rationale: "Assumed not both spouses 67+ absent contrary attestation" },
   },
+  {
+    id: "mnAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Minnesota Form M1 line 1) — keys the standard-deduction limitation (us.mn.standard_deduction: 3%/10% reduction over $238,950, 80% floor), the dependent-exemption phase-out (us.mn.exemptions), and the Social Security subtraction thresholds (us.mn.social_security_subtraction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input" },
+  },
+  {
+    id: "mnStdBoxes",
+    type: "int",
+    min: "0",
+    description:
+      "Count of Minnesota standard-deduction boxes checked (you/spouse 65-or-older — born before January 2, 1961 — and/or blind): each adds $2,000 (single/HOH) or $1,550 (MFJ/QSS/MFS) to the 2025 base (us.mn.standard_deduction).",
+    default: { value: "0", rationale: "Assumed no 65+/blind boxes absent contrary input" },
+  },
+  {
+    id: "mnDependentEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "A dependent-claimed filer's earned income for the Minnesota dependent standard-deduction worksheet (deduction = lesser of the table amount or max($1,250, earned + $350)). Only used when isClaimedAsDependent. In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input" },
+  },
+  {
+    id: "mnDependents",
+    type: "int",
+    min: "0",
+    description:
+      "Number of dependents claimed on Minnesota Schedule M1DQC — $5,200 each for 2025 (us.mn.exemptions, phased 2% per $2,500 ceil-step of AGI over the filing-status threshold).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" },
+  },
+  {
+    id: "mnTaxableSs",
+    type: "money",
+    min: "0",
+    description:
+      "Federally taxable Social Security benefits (Form 1040 line 6b) for the Minnesota Social Security subtraction (us.mn.social_security_subtraction — simplified method; compute the M1M alternative method separately and take the greater when AGI exceeds the full-subtraction threshold). In dollars.",
+    default: { value: "0", rationale: "Assumed no taxable Social Security absent contrary input" },
+  },
+  {
+    id: "mnNetInvestmentIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Minnesota net investment income per Schedule NIIT (the federal Form 8960 concept minus class 2a agricultural-land gains) — us.mn.niit charges 1% of the amount over $1,000,000 (TY2024+, Minn. Stat. \u00a7 290.033). In dollars.",
+    default: { value: "0", rationale: "Assumed no net investment income absent contrary input" },
+  },
 ];

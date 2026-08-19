@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota dependent exemptions phase-out: single AGI 250,000, 2 dependents -> excess 10,950 over 239,050 -> ceil(10,950/2,500) = 5 steps x 2% = 10% reduction -> 10,400 - 1,040 = 9,360.",
+  "facts": { "filingStatus": "single", "mnAgi": 250000, "mnDependents": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.exemptions",
+  "expect": { "valueCents": "936000" }
+}

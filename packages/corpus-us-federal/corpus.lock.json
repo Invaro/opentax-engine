@@ -1,8 +1,8 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.39.0",
-  "merkleRoot": "sha256:36083e3262c354cb1507092151dbc3e90bed34b7edd7a2cd72462835018dc4e0",
-  "ruleCount": 297,
+  "merkleRoot": "sha256:517d935bbe02f47a2f5beee99338ad8e3f70d43bf652edc5725842f52c6aa049",
+  "ruleCount": 303,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
     "us.az.income_tax@1": "sha256:91b9c3f82612144ad22c196afc22d88539394e05ef2f365299eaf9d09f6e3aa2",
@@ -234,6 +234,12 @@
     "us.md.pension_exclusion@1": "sha256:8a0283cc6d639398ffdb06af3f3a6c9960cf63963bd189bfcc8582793330fade",
     "us.md.poverty_level_credit@1": "sha256:57c625e2f718d638882f85ab25ef2e7796d9fe787c4464fce9427d12f953ce75",
     "us.mi.income_tax@1": "sha256:c3171bf3170f257752bd303f02a4e9cac8cfc36c3127ef54e5dfd2bb5bec44b1",
+    "us.mn.exemptions@1": "sha256:6729aeeb1fed8258b14fafaaae093657a2e09fdf22c051cce7637605a9d10e1d",
+    "us.mn.income_tax@1": "sha256:c89eca3516a0d9e5cfc76eaa4b14f108bc21e9ceee0586ff2a58d3a464c65a4b",
+    "us.mn.niit@1": "sha256:20846227dcc0969336c703c9dc7b53422897c3b31edcc3ed9a7b0ba9c8f8f50d",
+    "us.mn.parameters@1": "sha256:745db939d402943a4977a422baac19ada4eede1e134a6f9f60e4b2e34d03da29",
+    "us.mn.social_security_subtraction@1": "sha256:1addcfd8ccff45b575c2e4ad4cd666e1f672145a7970aec50efaefaf801de5e5",
+    "us.mn.standard_deduction@1": "sha256:4aa040a7d2864143d5313a612368f1be8e123548d7eddee63f1254579976ddab",
     "us.mo.business_income_deduction@1": "sha256:9dfb5d8d1a7340d468f9908fe893078be23b4722b57eb44af3c4ce206caca108",
     "us.mo.federal_tax_deduction@1": "sha256:e279551a7520e3a92930f9009e0906a2eea388d67db181782395cdf3ec3da921",
     "us.mo.income_tax@1": "sha256:d299844c9cb1e02ab18b2389e13cb0648425f4cc40f25c1de5c25921dbf55740",

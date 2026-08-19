@@ -366,6 +366,12 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "wiPropertyTaxesPaid",
     "wiRetirementIncome67",
     "wiBothSpouses67",
+    "mnAgi",
+    "mnStdBoxes",
+    "mnDependentEarnedIncome",
+    "mnDependents",
+    "mnTaxableSs",
+    "mnNetInvestmentIncome",
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -418,7 +424,7 @@ const GROUP_DESCRIPTIONS: Record<string, string> = {
   kiddie_tax: "Form 8615 inputs for a child subject to § 1(g)",
   investor_amt: "AMT preferences (ISO spread) and § 1202 QSBS exclusion",
   rentals_passive: "Schedule E rentals/royalties + § 469 passive-loss netting (Form 8582 via us.federal.passive_loss_allowed)",
-  state: "state taxable income for the state tax targets (us.ca/us.va/us.il/us.ny/us.oh/us.nc/us.ga/us.md/us.mo/us.wi income_tax; parameters via lookup_tax_parameter)",
+  state: "state taxable income for the state tax targets (us.ca/us.va/us.il/us.ny/us.oh/us.nc/us.ga/us.md/us.mo/us.wi/us.mn income_tax; parameters via lookup_tax_parameter)",
   household_employer: "Schedule H nanny/household-employee taxes",
   payments_estimates: "withholding, prior-year safe harbor, annualized installments",
 };

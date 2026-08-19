@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -353,4 +353,25 @@ const wi = {
   wiScheduleUInterest: usd.optional().describe("Form 1 line 44: Schedule U underpayment interest"),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi };
+const mn = {
+  mnAdditions: usd.optional().describe("M1 line 2: Schedule M1M line 10 + M1MB line 9 additions (non-MN municipal bond interest, federal bonus-depreciation/\u00a7 179 addbacks, positive M1NC adjustments — Minnesota's IRC is frozen at May 1, 2023, so 2025 OBBBA items convert on Schedule M1NC)"),
+  mnItemized: usd.optional().describe("Schedule M1SA Minnesota itemized deductions AFTER M1SA's own 3%/10%/80% limitation — the composer takes the larger of this or the computed standard deduction (MFS: standard barred when the spouse itemizes; pass mnMfsSpouseItemizes)"),
+  mnMfsSpouseItemizes: z.boolean().optional().describe("MFS only: the other spouse claims Minnesota itemized deductions — bars the standard deduction (the composer then requires mnItemized)"),
+  mnStdBoxes: z.number().int().optional().describe("65-or-older (born before January 2, 1961) and blind boxes for you/spouse — each adds $2,000 (single/HOH) or $1,550 (married statuses) to the standard deduction"),
+  mnDependentEarnedIncome: usd.optional().describe("dependent-claimed filer's earned income for the dependent standard-deduction worksheet (lesser of the table amount or max($1,250, earned + $350))"),
+  mnDependents: z.number().int().optional().describe("dependents on Schedule M1DQC — $5,200 each (2025), phased 2% per $2,500 ceil-step of AGI over $358,550 MFJ/QSS, $239,050 single, $298,800 HOH, $179,275 MFS (gone once the excess passes $122,500/$61,250-MFS); $0 for dependent-claimed filers"),
+  mnSubtractions: usd.optional().describe("M1 line 7 subtractions (M1M line 40 + M1MB line 22) EXCLUDING the composer-computed Social Security subtraction: U.S. government interest, K-12 education expenses, charitable over $500 for non-itemizers (50% of the excess), bonus-depreciation recovery, M1R age-65+/disabled, M1QPEN public pension, military items, the new 2025 items (coerced debt, consumer enforcement, foreign service, SEIU stipends)"),
+  mnStateRefund: usd.optional().describe("M1 line 6: state income tax refund from federal Schedule 1 line 1 (its own subtraction line)"),
+  mnSsAlternativeMethod: usd.optional().describe("the M1M Worksheet ALTERNATIVE-method Social Security subtraction (steps 9-28, agent-computed, NET of the Tier 1 RR offset) — the composer takes the GREATER of this and the oracle simplified method when AGI exceeds the full-subtraction threshold (2025 alternative maxes: $5,840 MFJ/QSS, $4,560 single/HOH, $2,920 MFS)"),
+  mnRrTier1Offset: usd.optional().describe("Tier 1 Railroad Retirement benefits already subtracted on M1M line 17 — the SS worksheet (steps 25-29) reduces the simplified-method subtraction by this amount (no double subtraction)"),
+  mnPenaltyInterest: usd.optional().describe("M1 line 28: late-filing/late-payment penalty and interest (agent-computed per the instructions)"),
+  mnAmt: usd.optional().describe("M1 line 11: Schedule M1MT alternative minimum tax (6.75% broadened base, agent-computed — REQUIRED whenever AMT preference items exist; disclose)"),
+  mnOtherTaxes14a: usd.optional().describe("M1 line 14a: M1HOME/M1529 recapture, M1LS lump-sum tax, and the Schedule NIIT amount if computed outside the composer"),
+  mnNetInvestmentIncome: usd.optional().describe("Schedule NIIT Minnesota net investment income (federal 8960 concept minus class 2a agricultural-land gains) — the composer evaluates us.mn.niit (1% over $1,000,000) into line 14a"),
+  mnAdvanceCtcRepayment: usd.optional().describe("M1 line 14b: repayment of 2025 ADVANCE Child Tax Credit payments elected on the 2024 return (reconciliation, NEW for 2025)"),
+  mnWildlifeContribution: usd.optional().describe("M1 line 18: Nongame Wildlife Fund contribution (reduces the refund)"),
+  mnUnderpaymentPenalty: usd.optional().describe("M1 line 27: Schedule M15 underpayment penalty"),
+  mnAppliedToNextYear: usd.optional().describe("M1 line 30: refund applied to 2026 estimated tax"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn };

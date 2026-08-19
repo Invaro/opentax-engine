@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota table HOH column, same printed row -> $4,896: 2,145.35 + 6.8% x 40,450 = 4,895.95 -> 4,896 (pins the HOH schedule's $40,100 boundary).",
+  "facts": { "filingStatus": "hoh", "stateTaxableIncome": 80550 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.income_tax",
+  "expect": { "valueCents": "489600" }
+}

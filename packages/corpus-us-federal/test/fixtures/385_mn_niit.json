@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota net investment income tax (TY2024+, Minn. Stat. 290.033): 1% x (1,500,000 - 1,000,000) = 5,000 (Schedule NIIT -> M1 line 14a box d).",
+  "facts": { "filingStatus": "single", "mnNetInvestmentIncome": 1500000 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.niit",
+  "expect": { "valueCents": "500000" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota table narrow low rows: 60 falls in the printed 20-100 row -> 5.35% x midpoint 60 = 3.21 -> 3.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 60 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.income_tax",
+  "expect": { "valueCents": "300" }
+}
