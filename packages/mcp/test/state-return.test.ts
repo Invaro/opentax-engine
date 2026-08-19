@@ -738,6 +738,75 @@ describe("composeWI — 2025 Form 1 (real corpus targets)", () => {
   });
 });
 
+describe("composeMN — 2025 Form M1 (real corpus targets)", () => {
+  it("single wage earner: full standard deduction, table tax at the row midpoint", () => {
+    // std 14,950 (AGI under the limitation); l9 = 45,050 -> row mid 45,050:
+    // 1,742.50 + 6.8% x 12,480 = 2,591.14 -> 2,591; withheld 3,500 -> 909.
+    const input = {
+      jurisdiction: "mn" as const, filingStatus: "single", federalAGI: 60000,
+      stateWithholding: 3500,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_deduction")).toBe("$14,950");
+    expect(dollars(lines, "9_taxable_income")).toBe("$45,050");
+    expect(dollars(lines, "10_tax")).toBe("$2,591");
+    expect(dollars(lines, "29_refund")).toBe("$909");
+  });
+
+  it("senior joint: 65+ boxes, full Social Security subtraction below the threshold", () => {
+    // std 29,900 + 2 x 1,550 = 33,000; AGI 105,000 < 108,320 -> full 25,000
+    // SS subtraction; l9 = 47,000 -> table mid 47,050 (below 47,620) ->
+    // 5.35% = 2,517.18 -> 2,517.
+    const input = {
+      jurisdiction: "mn" as const, filingStatus: "mfj", federalAGI: 105000,
+      mnStdBoxes: 2, taxableSocialSecurity: 25000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_deduction")).toBe("$33,000");
+    expect(dollars(lines, "7_subtractions")).toBe("$25,000");
+    expect(dollars(lines, "10_tax")).toBe("$2,517");
+    expect(notes.some((n) => n.includes("full below the AGI threshold"))).toBe(true);
+  });
+
+  it("high earner: deduction limitation, exemption phase-out, 9.85% schedule, 1% NIIT", () => {
+    // std 14,950 − 3% x 91,350-capped-excess(61,050? no: min(excess 111,050,
+    // 91,350)) − 10% x 19,700 = 14,950 − (2,740.50 + 1,970) = 10,239.50 ->
+    // 10,240; exemptions 5,200 − 90% = 520; l9 = 339,240 -> 13,996.80 +
+    // 9.85% x 140,610 = 27,846.89 -> 27,847; NIIT 1% x 200,000 = 2,000.
+    const input = {
+      jurisdiction: "mn" as const, filingStatus: "single", federalAGI: 350000,
+      mnDependents: 1, mnNetInvestmentIncome: 1200000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_deduction")).toBe("$10,240");
+    expect(dollars(lines, "5_exemptions")).toBe("$520");
+    expect(dollars(lines, "9_taxable_income")).toBe("$339,240");
+    expect(dollars(lines, "10_tax")).toBe("$27,847");
+    expect(dollars(lines, "14a_other_taxes")).toBe("$2,000");
+    expect(dollars(lines, "15_tax_before_credits")).toBe("$29,847");
+    expect(notes.some((n) => n.includes("net investment income tax"))).toBe(true);
+  });
+
+  it("greater-of Social Security methods, M1C/M1REF buckets, refund chain", () => {
+    // simplified: excess 11,680 -> 3 steps -> 30% off 30,000 = 21,000 beats
+    // the 3,000 alternative; l9 = 120,000 − 29,900 − 21,000 = 69,100 ->
+    // table mid 69,150 -> 2,547.67 + 6.8% x 21,530 = 4,011.71 -> 4,012;
+    // M1C 800 -> 3,212; payments 3,000 + 1,500 -> refund 1,288.
+    const input = {
+      jurisdiction: "mn" as const, filingStatus: "mfj", federalAGI: 120000,
+      taxableSocialSecurity: 30000, mnSsAlternativeMethod: 3000,
+      nonrefundableCredits: 800, refundableCredits: 1500, stateWithholding: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "7_subtractions")).toBe("$21,000");
+    expect(dollars(lines, "9_taxable_income")).toBe("$69,100");
+    expect(dollars(lines, "10_tax")).toBe("$4,012");
+    expect(dollars(lines, "17_tax_after_credits")).toBe("$3,212");
+    expect(dollars(lines, "29_refund")).toBe("$1,288");
+    expect(notes.some((n) => n.includes("simplified method"))).toBe(true);
+  });
+});
+
 describe("composeNC — 2025 D-400 (real corpus targets)", () => {
   it("full return: child deduction tier, standard deduction, 4.25% flat", () => {
     // Hand-computed: FAGI 85,000; child deduction 2 × $1,500 (over-$80k MFJ

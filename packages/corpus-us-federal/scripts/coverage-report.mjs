@@ -26,7 +26,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 // Jurisdictions with a printed-form composer (keep in sync with
 // packages/compose/src/index.ts — the composer dispatcher).
-const COMPOSED = new Set(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi"]);
+const COMPOSED = new Set(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn"]);
 
 const ALL_STATES = "al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy".split(" ");
 

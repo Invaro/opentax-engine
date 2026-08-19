@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota exemptions hard cutoff: MFJ AGI 482,000 -> excess 123,450 exceeds 122,500 -> line 5 is 0 regardless of dependents.",
+  "facts": { "filingStatus": "mfj", "mnAgi": 482000, "mnDependents": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.exemptions",
+  "expect": { "valueCents": "0" }
+}

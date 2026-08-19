@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota standard deduction Worksheet A: single AGI 300,000 -> reduction = 3% x (300,000 - 238,950) = 1,831.50 (under the 80% cap) -> 14,950 - 1,831.50 = 13,118.50 -> 13,119.",
+  "facts": { "filingStatus": "single", "mnAgi": 300000, "mnStdBoxes": 0 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.standard_deduction",
+  "expect": { "valueCents": "1311900" }
+}

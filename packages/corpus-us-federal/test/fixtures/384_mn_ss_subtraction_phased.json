@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota SS subtraction simplified phase-out: single AGI 95,000 -> excess 10,510 over 84,490 -> ceil(10,510/4,000) = 3 steps x 10% = 30% reduction -> 15,000 x 70% = 10,500.",
+  "facts": { "filingStatus": "single", "mnAgi": 95000, "mnTaxableSs": 15000 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.social_security_subtraction",
+  "expect": { "valueCents": "1050000" }
+}

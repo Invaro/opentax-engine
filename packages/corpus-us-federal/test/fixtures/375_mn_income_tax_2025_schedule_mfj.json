@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota rate schedule (>= 86,800): MFJ 250,000 -> 12,173.75 + 7.85% x 60,820 = 16,948.12 -> 16,948.",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 250000 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.income_tax",
+  "expect": { "valueCents": "1694800" }
+}

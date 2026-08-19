@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota 9.85% top bracket: single 400,000 -> 13,996.80 + 9.85% x 201,370 = 33,831.75 -> 33,832.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 400000 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.income_tax",
+  "expect": { "valueCents": "3383200" }
+}

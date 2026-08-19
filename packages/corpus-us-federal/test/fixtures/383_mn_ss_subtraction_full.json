@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota Social Security subtraction, full: MFJ AGI 100,000 is below the 108,320 threshold -> the entire 20,000 of taxable SS subtracts (M1M line 12).",
+  "facts": { "filingStatus": "mfj", "mnAgi": 100000, "mnTaxableSs": 20000 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.social_security_subtraction",
+  "expect": { "valueCents": "2000000" }
+}

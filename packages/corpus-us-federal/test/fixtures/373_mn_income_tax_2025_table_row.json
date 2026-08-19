@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota tax table printed row 80,500-80,600, single column $5,005: schedule at midpoint 80,550 = 1,742.50 + 6.8% x 47,980 = 5,005.14 -> 5,005.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 80550 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.income_tax",
+  "expect": { "valueCents": "500500" }
+}

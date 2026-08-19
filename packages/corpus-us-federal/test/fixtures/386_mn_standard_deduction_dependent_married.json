@@ -1,0 +1,7 @@
+{
+  "description": "Minnesota dependent worksheet cap regression (adversarial review): a MARRIED dependent-claimed filer's cap is the FLAT $14,950 worksheet step 2 (not the $29,900 MFJ base) — earned 20,000 -> min(20,350, 14,950) = 14,950.",
+  "facts": { "filingStatus": "mfj", "mnAgi": 21000, "isClaimedAsDependent": true, "mnDependentEarnedIncome": 20000, "mnStdBoxes": 0 },
+  "asOf": "2025-12-31",
+  "target": "us.mn.standard_deduction",
+  "expect": { "valueCents": "1495000" }
+}
