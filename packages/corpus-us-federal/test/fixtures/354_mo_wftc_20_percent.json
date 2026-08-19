@@ -1,0 +1,7 @@
+{
+  "description": "Missouri Working Family Tax Credit 2025: 20% x 2,500 federal EIC = 500 (the 143.177 revenue trigger raised the 10% base; nonrefundable cap applied on composition).",
+  "facts": { "filingStatus": "hoh", "moFederalEic": 2500 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.wftc",
+  "expect": { "valueCents": "50000" }
+}

@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -279,4 +279,49 @@ const md = {
   mdHomebuyerPenalty: usd.optional().describe("MD line 51a: first-time homebuyer savings account 10% withdrawal penalty"),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md };
+const mo = {
+  moFagiYou: usd.optional().describe("MO-1040 line 1Y: the PRIMARY taxpayer's share of federal AGI — Missouri combined returns SPLIT total FAGI between spouses per the AGI worksheet (each spouse's own income; joint items allocated). Defaults to the full federalAGI when omitted (one-income couple)."),
+  moFagiSpouse: usd.optional().describe("MO-1040 line 1S: the spouse's share of federal AGI (combined returns). 1Y + 1S must equal the federal AGI. A NEGATIVE share triggers the 12 CSR 10-2.710 zeroing the composer applies (negative spouse $0, other spouse the netted joint FAGI; both $0 when combined FAGI is negative)."),
+  moAdditionsYou: usd.optional().describe("MO-A Part 1 line 7Y: the primary's additions (non-Missouri state/local bond interest, PTE/NOL addbacks, nonqualified 529/ABLE distributions, food pantry, nonresident property tax)"),
+  moAdditionsSpouse: usd.optional().describe("MO-A Part 1 line 7S: the spouse's additions"),
+  moSubtractionsYou: usd.optional().describe("MO-A subtractions for the primary EXCLUDING the composer-computed capital gain (line 18) and business income deduction (line 17): exempt federal-obligation interest, state refund, military retirement (100%), railroad retirement, 529/ABLE contributions ($8,000/taxpayer), qualified health insurance premiums, depreciation adjustments, agriculture disaster relief"),
+  moSubtractionsSpouse: usd.optional().describe("the spouse's MO-A subtractions on the same terms"),
+  moCapitalGainYou: usd.optional().describe("the primary's share of federally reported capital gains (Form 1040 line 7a) — the composer subtracts 100% (MO-A line 18, H.B. 594, NEW for TY2025; a negative amount enters as $0)"),
+  moCapitalGainSpouse: usd.optional().describe("the spouse's share of federal capital gains for the 100% subtraction"),
+  moBusinessIncomeYou: usd.optional().describe("the primary's MISSOURI-SOURCE net business income per the p.16 worksheet (Schedule C line 31 + Schedule E line 32 + Schedule F/4835 profits, losses netted, MINUS agricultural disaster relief payments already on MO-A line 16; $0 if net loss) — the composer takes the 20% \u00a7 143.022 deduction (MO-A line 17Y)"),
+  moBusinessIncomeSpouse: usd.optional().describe("the spouse's net business income for the 20% deduction (17S)"),
+  moPublicPensionYou: usd.optional().describe("the primary's PUBLIC-source pension (federal/state/local government, 1040 line 5b share) — the composer runs MO-A Part 3 Section A (min(pension, $47,633) less their Section C exemption). Military retirement goes in moSubtractionsYou instead (100%, MO-A line 10)."),
+  moPublicPensionSpouse: usd.optional().describe("the spouse's public-source pension for their Section A column"),
+  moPrivatePensionYou: usd.optional().describe("the primary's PRIVATE-source taxable pension/annuity/IRA/401(k) (1040 lines 4b+5b share) — Section B caps each spouse at $6,000 and phases out by income"),
+  moPrivatePensionSpouse: usd.optional().describe("the spouse's private-source pension for Section B"),
+  moSsExemptYou: usd.optional().describe("the primary's MO-A Section C exemption: their TAXABLE Social Security/SSD (1040 line 6b share), 100% exempt — pass ONLY if 62+ by December 31 (the MO-1040 age box) or on Social Security Disability (attested)"),
+  moSsExemptSpouse: usd.optional().describe("the spouse's Section C SS/SSD exemption on the same gates"),
+  moFederalTax9: usd.optional().describe("MO-1040 line 9 'Tax from federal return': federal 1040 line 22 MINUS lines 27a and 29, MINUS Schedule 2 Part 1 line 3, MINUS Schedule 3 Part 2 line 9 — never withholding; the EIC must be subtracted"),
+  moOtherFederalTax10: usd.optional().describe("MO-1040 line 10 'Other federal tax': Schedule 2 Part 1 line 3 + Part 2 lines 8/14/15 + recapture in line 21 + Schedule 3 Part 1 line 1 (attach 4255/8611/8828 for recapture)"),
+  moItemizing: z.boolean().optional().describe("taxpayer itemized FEDERALLY and wants Missouri itemized deductions — the composer computes MO-A Part 2 (federal itemized + payroll-tax addback − net state income taxes) and takes the LARGER of that or the standard deduction unless moRequiredToItemize"),
+  moRequiredToItemize: z.boolean().optional().describe("the filer was REQUIRED to itemize federally (e.g. MFS with an itemizing spouse) — Missouri then requires itemizing even when the standard deduction is larger"),
+  moFederalItemized: usd.optional().describe("MO-A Part 2 line 1: total federal itemized deductions (federal Schedule A total) plus any approved cultural contributions (literary/musical/scholastic/artistic donations, \u00a7 143.141)"),
+  moPayrollTaxAddback: usd.optional().describe("MO-A Part 2 lines 2-7 total: the 2025 employee Social Security tax (capped $10,918 per spouse), Railroad Retirement Tier I+II (capped $17,327 per spouse, net of employer refunds), Medicare tax (with Form 8959 adjustments), and self-employment tax (Schedule 2 line 4 − Schedule 1 line 15 + Form 8959 line 13) — Missouri ADDS payroll taxes into itemized deductions"),
+  moNetStateIncomeTaxes: usd.optional().describe("MO-A Part 2 line 11: state/local income taxes from Schedule A line 5a MINUS Kansas City/St. Louis earnings taxes (which stay deductible) — or the Part 2 worksheet result when SALT exceeded $40,000/$20,000-MFS or FAGI exceeded $500,000/$250,000-MFS"),
+  moStandardDeductionOverride: usd.optional().describe("dependent-claimed filers: the federal DEPENDENT standard deduction limit (greater of $1,350 or earned income + $450, capped at the full amount) — replaces the composer's full standard deduction"),
+  moLtcDeduction: usd.optional().describe("MO-1040 line 16: qualified long-term care insurance premiums (12+ month policies, net of federally deducted amounts, per the worksheet)"),
+  moHcsmDeduction: usd.optional().describe("MO-1040 line 17: health care sharing ministry contributions not deducted federally"),
+  moActiveDutyMilitary: usd.optional().describe("MO-1040 line 18: active duty military income deduction (100%, incl. annual training and — NEW 2025 — National Guard/reserve signing bonuses)"),
+  moInactiveDutyMilitary: usd.optional().describe("MO-1040 line 19: inactive duty (drill) military income deduction"),
+  moOtherDeductions: usd.optional().describe("MO-1040 lines 21-24 bucket: beginning farmer, transport facility, foster parent deductions (agent-transcribed)"),
+  moEnterpriseZoneYou: usd.optional().describe("MO-1040 line 28Y: enterprise zone / rural empowerment zone income modification"),
+  moEnterpriseZoneSpouse: usd.optional().describe("MO-1040 line 28S"),
+  moResidentCreditYou: usd.optional().describe("MO-1040 line 31Y: Form MO-CR credit for taxes paid to other states (agent-computed; the composer caps at line 30Y)"),
+  moResidentCreditSpouse: usd.optional().describe("MO-1040 line 31S (capped at 30S)"),
+  moOtherTaxesYou: usd.optional().describe("MO-1040 line 34Y: 10% of the Federal Form 4972 lump-sum distribution tax, and/or recapture of the low income housing credit (Form 8611) — the printed checkboxes. (Form 4970 trust accumulation amounts are a SUBTRACTION, not a line 34 tax.)"),
+  moOtherTaxesSpouse: usd.optional().describe("MO-1040 line 34S"),
+  moNrPayments: usd.optional().describe("MO-1040 lines 39+40: MO-2NR/MO-2ENT nonresident partner/entertainer payments"),
+  moPropertyTaxCredit: usd.optional().describe("MO-1040 line 43: Form MO-PTS property tax credit (refundable circuit breaker — actual property tax up to $1,100 owners / 20%-of-rent up to $750 renters, from the printed chart; net household income gates $30,000 owners / $27,200 renters; agent-computed from MO-PTS with disclosure)"),
+  moWftcInvestmentOver4400: z.boolean().optional().describe("Form MO-WFTC question 3: investment income exceeds $4,400 — denies the credit. The MO credit follows EIC law FROZEN as of January 1, 2021 (MO-1040 instructions p.10), so this is the indexed pre-ARPA limit; compute investment income the pre-2021 way (taxable AND tax-exempt interest, dividends, positive net capital gain per the MO-WFTC instructions), NOT the current federal $11,950 gate."),
+  moAppliedToNextYear: usd.optional().describe("MO-1040 line 50: overpayment applied to 2026 estimated tax"),
+  moTrustFundDonations: usd.optional().describe("MO-1040 line 51: trust fund donations total (51a-51l)"),
+  mo529Deposit: usd.optional().describe("MO-1040 line 52: refund deposited to a Missouri 529 (MOST) account (minimum $25, Form 5632)"),
+  moUnderpaymentPenalty: usd.optional().describe("MO-1040 line 55: Form MO-2210 underpayment penalty (90% / 66\u2154%-farmer safe harbors)"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo };

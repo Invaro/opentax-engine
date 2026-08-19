@@ -1,6 +1,6 @@
 /**
  * compute_state_return — deterministic printed-form line composers for the
- * state jurisdictions in the corpus (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502).
+ * state jurisdictions in the corpus (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502, MO-1040).
  *
  * Evaluation finding: agents' state tax ARITHMETIC is oracle-exact, but they
  * transpose printed-form line numbers and drift on whole-dollar rounding when
@@ -16,6 +16,7 @@ import { composeCA } from "./ca.js";
 import { composeGA } from "./ga.js";
 import { composeIL } from "./il.js";
 import { composeMD } from "./md.js";
+import { composeMO } from "./mo.js";
 import { composeNC } from "./nc.js";
 import { composeNJ } from "./nj.js";
 import { composeNY } from "./ny.js";
@@ -80,7 +81,7 @@ export function composeStateReturn(
   // than compose on a silent $0 AGI. PA and NJ are class/category-based and
   // never use it.
   if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
@@ -91,5 +92,6 @@ export function composeStateReturn(
   if (j === "nc") return { lines: composeNC(input, evalStateTax, notes), notes };
   if (j === "ga") return { lines: composeGA(input, evalStateTax, notes), notes };
   if (j === "md") return { lines: composeMD(input, evalStateTax, notes), notes };
+  if (j === "mo") return { lines: composeMO(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

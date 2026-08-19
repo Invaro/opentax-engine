@@ -1,0 +1,7 @@
+{
+  "description": "Missouri business income deduction (143.022, fully phased at 20%): 20% x 40,000 = 8,000 (MO-A Part 1 line 17, per spouse).",
+  "facts": { "filingStatus": "single", "moBusinessIncome": 40000 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.business_income_deduction",
+  "expect": { "valueCents": "800000" }
+}

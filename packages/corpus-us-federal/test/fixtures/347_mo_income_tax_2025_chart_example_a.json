@@ -1,0 +1,7 @@
+{
+  "description": "Missouri 2025 Tax Chart printed Example A: taxable income 3,090 -> $26 + 2.5% x (3,090 - 2,626) = 26 + 11.60 = 37.60 -> 38 (round to the nearest whole dollar per the worksheet).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 3090 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.income_tax",
+  "expect": { "valueCents": "3800" }
+}

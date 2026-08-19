@@ -1,0 +1,7 @@
+{
+  "description": "Missouri public pension exemption (MO-A Part 3 Section A): min(50,000 public pension, 47,633 cap) minus the same spouse's 20,000 SS exemption = 27,633 (S.B. 190 removed the old income limits).",
+  "facts": { "filingStatus": "single", "moPublicPension": 50000, "moSsSameSpouseExemption": 20000 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.public_pension_exemption",
+  "expect": { "valueCents": "2763300" }
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Missouri 2025 Tax Chart printed Example B: 12,000 -> $256 + 4.7% x 2,809 = 388.02 -> 388 (the S.B. 3 trigger-reduced 4.7% top rate, effective 1/1/2025).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 12000 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.income_tax",
+  "expect": { "valueCents": "38800" }
+}

@@ -1,8 +1,8 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.39.0",
-  "merkleRoot": "sha256:2b2c40d41963caca9e483d11be455b507a7b33fb70e7e04da379471064db6333",
-  "ruleCount": 284,
+  "merkleRoot": "sha256:711c508123f18e9e1dc1c125f9ededde03aead0717cf78c6cae4c11cbc7382e4",
+  "ruleCount": 290,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
     "us.az.income_tax@1": "sha256:91b9c3f82612144ad22c196afc22d88539394e05ef2f365299eaf9d09f6e3aa2",
@@ -234,6 +234,12 @@
     "us.md.pension_exclusion@1": "sha256:8a0283cc6d639398ffdb06af3f3a6c9960cf63963bd189bfcc8582793330fade",
     "us.md.poverty_level_credit@1": "sha256:57c625e2f718d638882f85ab25ef2e7796d9fe787c4464fce9427d12f953ce75",
     "us.mi.income_tax@1": "sha256:c3171bf3170f257752bd303f02a4e9cac8cfc36c3127ef54e5dfd2bb5bec44b1",
+    "us.mo.business_income_deduction@1": "sha256:9dfb5d8d1a7340d468f9908fe893078be23b4722b57eb44af3c4ce206caca108",
+    "us.mo.federal_tax_deduction@1": "sha256:e279551a7520e3a92930f9009e0906a2eea388d67db181782395cdf3ec3da921",
+    "us.mo.income_tax@1": "sha256:d299844c9cb1e02ab18b2389e13cb0648425f4cc40f25c1de5c25921dbf55740",
+    "us.mo.parameters@1": "sha256:511f2ee99705ba56fd28d6a82b566003c2c425a207de844fc2fb663be3959851",
+    "us.mo.public_pension_exemption@1": "sha256:8ffd0864edc8a3b1561ea495ca0d93b87820a5e94fd4698985a00bac66a4cb65",
+    "us.mo.wftc@1": "sha256:faa6dbccdb3a205c298800fa54849f062085307249ac0e68c1634bc44908b5bb",
     "us.ms.income_tax@1": "sha256:81f824f82493523bb4f979cbe4d11052ec64d655e322be5b0624a672b46b6db8",
     "us.nc.child_deduction@1": "sha256:a6a5030c2af5aeef71c3fe06925f44261cc9993bffe5b6038106188c37a3e189",
     "us.nc.income_tax@2": "sha256:74a4ce40ef5b47804170bf2373e55519c68edc850240834ff27cd83fde8907d8",
