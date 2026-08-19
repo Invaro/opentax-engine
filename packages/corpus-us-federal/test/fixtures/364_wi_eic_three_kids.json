@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin EIC: 3+ qualifying children -> 34% x 5,000 federal EIC (as computed under Wisconsin's IRC) = 1,700 (refundable).",
+  "facts": { "filingStatus": "hoh", "wiFederalEicForWi": 5000, "wiQualifyingChildren": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.eic",
+  "expect": { "valueCents": "170000" }
+}

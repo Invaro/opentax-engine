@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin married couple credit cap: lesser spouse's qualified earned income 20,000 -> capped at 16,000 -> 3% = 480 maximum.",
+  "facts": { "filingStatus": "mfj", "wiLowerQualifiedEarnedIncome": 20000 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.married_couple_credit",
+  "expect": { "valueCents": "48000" }
+}

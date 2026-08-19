@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -324,4 +324,33 @@ const mo = {
   moUnderpaymentPenalty: usd.optional().describe("MO-1040 line 55: Form MO-2210 underpayment penalty (90% / 66\u2154%-farmer safe harbors)"),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo };
+const wi = {
+  wiScheduleIAdjustments: usd.optional().describe("Form 1 line 2: Schedule I net adjustment (may be negative) converting federal AGI to Wisconsin's IRC — Wisconsin conforms to the Code as of December 31, 2022, so post-2022 federal changes (incl. the 2025 OBBBA) need Schedule I conversion per its instructions"),
+  wiCapitalGainSubtraction: usd.optional().describe("Schedule SB line 5 capital gain/loss subtraction from Schedule WD (30% net long-term gain exclusion, 60% farm assets; capital loss limit $3,000/$1,500-MFS since TY2023; simple mutual-fund/REIT distributions may take 30% directly)"),
+  wiRetirement67Income: usd.optional().describe("qualified-plan/IRA retirement income of the 67+ individual(s) for the NEW 2025 Act 15 subtraction (SB line 16, $24,000/$48,000 cap) — CAUTION: claiming it FORFEITS every credit on lines 13-20, 30-35, and Schedule CR (the composer enforces this); compare both ways before passing"),
+  wiBothSpouses67: z.boolean().optional().describe("both spouses 67+ on December 31 (joint returns) — raises the SB-16 cap to $48,000"),
+  wiDependentEarnedIncome: usd.optional().describe("a dependent-claimed filer's earned income for the Standard Deduction Worksheet for Dependents (deduction = smaller of the table amount or max($1,350, earned + $450))"),
+  wiAge65Boxes: z.number().int().optional().describe("count of 65-or-older boxes (taxpayer/spouse) — $250 each on line 10b (Wisconsin has no blindness exemption; the $700 line 10a exemptions come from the shared `exemptions` count)"),
+  wiItemizedComponents: usd.optional().describe("Form 1 Schedule 1 lines 1-4 total: federal Schedule A medical + interest (EXCLUDING out-of-state second homes, boat residences, and U.S.-security carrying interest) + charity + casualty — the composer takes 5% of the excess over the line 8 standard deduction"),
+  wi2441Credit: usd.optional().describe("Schedule WI-2441 line 14 — Wisconsin's additional child and dependent care credit (its own recomputation; transcribe the schedule's result)"),
+  wiBlindWorkerExpenses: usd.optional().describe("blind worker transportation services qualifying expenses (Form 1 line 15 credits 50%)"),
+  wiRentHeatIncluded: usd.optional().describe("2025 rent on the principal Wisconsin residence with heat INCLUDED (line 16a; 2.4% via the printed table's $100-row midpoints)"),
+  wiRentHeatNotIncluded: usd.optional().describe("rent with heat NOT included (line 16a; 3.0% table)"),
+  wiPropertyTaxesPaid: usd.optional().describe("property taxes on the principal residence (line 16b; 12% via the printed $25-wide-row table — a different granularity from the $100-row rent tables) — combined 16a+16b credit caps at $300 ($150 MFS or married-HOH); not claimable with the line 34 veterans credit"),
+  wiMarriedHoh: z.boolean().optional().describe("the Form 1 'Head of household, married' checkbox applies — shares the MFS $150 school property tax credit cap"),
+  wiLowerQualifiedEarnedIncome: usd.optional().describe("the LESSER-earning spouse's Schedule 2 line 5 qualified earned income (earned income minus the listed federal Schedule 1 adjustments) — married couple credit = 3% up to $480 (joint returns, both spouses employed)"),
+  wiOtherStateCredit: usd.optional().describe("Form 1 line 20: net income tax paid to another state (Schedule OS, agent-computed)"),
+  wiDonations: usd.optional().describe("Form 1 line 24: Schedule 3 fund donations total"),
+  wiFederalRetirementPenalties: usd.optional().describe("the FEDERAL penalties on IRAs/retirement plans/MSAs etc. — Wisconsin charges 33% of them on line 25 ('x .33' printed)"),
+  wiOtherPenalties: usd.optional().describe("Form 1 line 26 other penalties (see instructions p.25)"),
+  wiEicQualifyingChildren: z.number().int().optional().describe("federal-EIC qualifying children — Wisconsin EIC = 4%/11%/34% of the federal credit for 1/2/3+ children (NO childless credit; MFS ineligible; full-year residents only)"),
+  wiFederalEicForWi: usd.optional().describe("the federal EIC AS COMPUTED UNDER WISCONSIN'S IRC (Schedule I Part III recomputation when Part I adjustments exist) — defaults to the shared federalEITC when omitted"),
+  wiFarmlandCredit: usd.optional().describe("Form 1 line 31: farmland preservation credit (Schedules FC/FC-A, transcribed)"),
+  wiRepaymentCredit: usd.optional().describe("Form 1 line 32: repayment of income previously taxed credit"),
+  wiHomesteadCredit: usd.optional().describe("Form 1 line 33: homestead credit (Schedule H/H-EZ circuit breaker, agent-computed, refundable)"),
+  wiVeteransCredit: usd.optional().describe("Form 1 line 34: eligible veterans and surviving spouses property tax credit"),
+  wiAppliedToNextYear: usd.optional().describe("Form 1 line 42: overpayment applied to 2026 estimated tax"),
+  wiScheduleUInterest: usd.optional().describe("Form 1 line 44: Schedule U underpayment interest"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi };

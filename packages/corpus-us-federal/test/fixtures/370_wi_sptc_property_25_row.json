@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin homeowner's school property tax credit — the property-tax table uses $25-WIDE rows (unlike the $100-row rent tables): 1,000 -> row 1,000-1,025 midpoint 1,012.50 -> 12% = 121.50 -> 122 (printed-row exact; adversarial-review regression).",
+  "facts": { "filingStatus": "single", "wiPropertyTaxesPaid": 1000 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.school_property_tax_credit",
+  "expect": { "valueCents": "12200" }
+}

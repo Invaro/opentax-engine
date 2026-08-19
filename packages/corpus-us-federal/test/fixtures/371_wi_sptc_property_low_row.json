@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin homeowner's property-tax credit low row: 110 -> $25-wide row 100-125 midpoint 112.50 -> 12% = 13.50 -> 14 (printed-row exact).",
+  "facts": { "filingStatus": "single", "wiPropertyTaxesPaid": 110 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.school_property_tax_credit",
+  "expect": { "valueCents": "1400" }
+}

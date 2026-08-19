@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin table narrow low-end rows: 95 falls in the printed 40-100 row -> 3.5% x midpoint 70 = 2.45 -> 2.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 95 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.income_tax",
+  "expect": { "valueCents": "200" }
+}

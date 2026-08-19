@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin 7.65% top bracket: MFJ 500,000 -> 22,064.26 + 7.65% x 68,940 = 27,338.17 -> 27,338 (worksheet check: 7.65% x 500,000 - 10,911.83, exact).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 500000 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.income_tax",
+  "expect": { "valueCents": "2733800" }
+}

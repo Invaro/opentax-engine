@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin Tax Computation Worksheet (>= 100,000): single 200,000 -> 5.3% x 200,000 - 586.44 = 10,013.56 -> 10,014 (identical to marginal accumulation 2,089 + 5.3% x 149,520).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 200000 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.income_tax",
+  "expect": { "valueCents": "1001400" }
+}

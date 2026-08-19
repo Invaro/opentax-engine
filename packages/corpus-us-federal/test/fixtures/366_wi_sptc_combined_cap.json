@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin school property tax credit combined cap: heat-not-included rent 12,000 -> 3.0% x midpoint 12,050 = 361.50 -> 362 -> capped at the $300 maximum.",
+  "facts": { "filingStatus": "single", "wiRentHeatNotIncluded": 12000 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.school_property_tax_credit",
+  "expect": { "valueCents": "30000" }
+}

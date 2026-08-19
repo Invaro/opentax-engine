@@ -1,8 +1,8 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.39.0",
-  "merkleRoot": "sha256:711c508123f18e9e1dc1c125f9ededde03aead0717cf78c6cae4c11cbc7382e4",
-  "ruleCount": 290,
+  "merkleRoot": "sha256:36083e3262c354cb1507092151dbc3e90bed34b7edd7a2cd72462835018dc4e0",
+  "ruleCount": 297,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
     "us.az.income_tax@1": "sha256:91b9c3f82612144ad22c196afc22d88539394e05ef2f365299eaf9d09f6e3aa2",
@@ -293,6 +293,13 @@
     "us.va.standard_deduction@3": "sha256:b53d27dd62575559f7007d10c19b203d1237bffcba225748f7c69528a4bd98d5",
     "us.va.subtractions@1": "sha256:037cc4dc9789150a6381d721e6c07b4ca3494a043c0daa8a210b065cde316537",
     "us.wa.income_tax@1": "sha256:bf35d6ca61610c3331b21de052ecde078f6e795f0b29fdfd4fd61fcaf41aab7c",
+    "us.wi.eic@1": "sha256:088e9aa74a0082e9119a6508734c317dac3c3cce406f10da59596778c4e169cb",
+    "us.wi.income_tax@1": "sha256:8774baaf6afc8adb68b1667a4ac7659128021d8bc40ebc843f544972de58dbd2",
+    "us.wi.married_couple_credit@1": "sha256:6ce123f782ff2a1304d4a23f81646119109f52c9bda899b9f471adfec96acf25",
+    "us.wi.parameters@1": "sha256:4ea8a6321a6a43ac3751771fac444b49331725719fa4a59c873b57ff6378284b",
+    "us.wi.retirement_subtraction_67@1": "sha256:f1376c1e376da46f9c708738dcb01a58b1a9b48647ec5dc445ed5bec8a2b5480",
+    "us.wi.school_property_tax_credit@1": "sha256:bb3a6d924e2c549c0799718a53d3382e8b62f69ff12a2e606474703ecae3d8bf",
+    "us.wi.standard_deduction@1": "sha256:964cd5ffcdbbc26fea0b6500821bf794dfa17de70b073415fb02163afb4f6121",
     "us.wy.income_tax@1": "sha256:11f094fd4b19b7648f18eeb74b57412a85369f40d3431c739040bceb0f1d5882"
   }
 }

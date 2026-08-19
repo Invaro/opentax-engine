@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin HOH crossover: income 93,600 -> row midpoint 93,750 -> HOH formula is exhausted (17,520 - 22.515% x 74,200 = 813.87) so the GREATER single amount applies: 13,560 - 12% x 74,200 = 4,656 (printed HOH column equals the single column here).",
+  "facts": { "filingStatus": "hoh", "wiIncome": 93600 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.standard_deduction",
+  "expect": { "valueCents": "465600" }
+}
