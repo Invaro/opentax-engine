@@ -1,0 +1,7 @@
+{
+  "description": "Georgia TY2026 dependent exemption (HB 463): $5,000 x 2 dependents = 10,000 (up from $4,000 each).",
+  "facts": { "filingStatus": "mfj", "gaDependentCount": 2 },
+  "asOf": "2026-12-31",
+  "target": "us.ga.dependent_exemption",
+  "expect": { "valueCents": "1000000" }
+}

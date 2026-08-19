@@ -1,0 +1,7 @@
+{
+  "description": "GA TY2026 now ANSWERS at 4.99% (formerly a deliberate refusal pin: HB 463's enrolled text was unverified at the Aug 3 encoding). HB 463 — signed May 11, 2026, effective July 1, 2026, RETROACTIVE to 1/1/2026 — supersedes HB 111's ~5.09% step: 50,000 x 4.99% = 2,495.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2026-12-31",
+  "target": "us.ga.income_tax",
+  "expect": { "valueCents": "249500" }
+}

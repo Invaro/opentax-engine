@@ -16498,6 +16498,30 @@ var nyRules = [
       rate: { num: "1675", den: "10000" },
       round: "half-up"
     }
+  },
+  {
+    id: "us.ny.income_tax",
+    version: 3,
+    // TY2026: the FY2026 budget's enacted rate cuts, refusing pending the 2026 tax table
+    jurisdiction: "us.ny",
+    title: "New York State income tax \u2014 TY2026 ENACTED bottom-bracket rate cuts (FY2026 budget); refuses pending the 2026 IT-201 tax table",
+    citation: {
+      source: "N.Y. Tax Law \xA7 601 as amended by the FY2026 enacted budget (signed May 9, 2025) \u2014 the bottom five brackets each cut 0.1 point for TY2026, with a further 0.1 point in 2027; 2026 withholding tables already reflect the cut (tax.ny.gov); web-verified August 2026",
+      section: "Tax Law \xA7 601; FY2026 enacted budget",
+      url: "https://www.budget.ny.gov/pubs/press/2025/fy26-enacted-budget-new-legislation-cut-taxes-middle-class-nys.html",
+      excerpt: "ENACTED FOR TY2026 (FY2026 budget, signed May 9, 2025): the bottom FIVE bracket rates each drop 0.1 percentage point \u2014 4.00%\u21923.90%, 4.50%\u21924.40%, 5.25%\u21925.15%, 5.50%\u21925.40%, 6.00%\u21925.90% \u2014 on the unchanged statutory bracket boundaries (the 6.85%+ brackets are unchanged for 2026; a further 0.1-point cut follows in 2027). WHY THIS RULE REFUSES: the 2025 corpus rule's DEFAULT method is the printed NYS Tax Table (MANDATORY below $65,000), and the 2026 table does not exist until the 2026 IT-201-I publishes (~January 2027) \u2014 the fixed-dollar schedule anchors also change with the new rates and should be taken from the printed 2026 schedules rather than recomputed. Until then: compute a 2026 estimate from the rates above with the 2025 boundaries, DISCLOSE it as schedule-derived (table pending), and never present it as the filed-return figure. This refusal-with-context replaces a bare NO_APPLICABLE_RULE so 2026 callers learn the enacted law."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rateCutPointsTimes10: { value: "1", type: "int" }
+      // 0.1pp on the bottom five brackets
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "NY TY2026: the FY2026 budget's enacted 0.1-point cuts to the bottom five brackets (4.00\u21923.90, 4.50\u21924.40, 5.25\u21925.15, 5.50\u21925.40, 6.00\u21925.90%) are law, but the MANDATORY sub-$65,000 2026 tax table and the printed 2026 schedules are unpublished \u2014 compute a disclosed estimate from the cited rates or wait for the 2026 IT-201-I"
+    }
   }
 ];
 
@@ -17887,6 +17911,33 @@ var gaRules = [
     })
   },
   {
+    id: "us.ga.income_tax",
+    version: 3,
+    // TY2026: HB 463 (signed May 11, 2026) cut the rate to 4.99% RETROACTIVE to 1/1/2026
+    jurisdiction: "us.ga",
+    title: "Georgia income tax \u2014 TY2026: 4.99% flat (HB 463, retroactive to January 1, 2026)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-20 as amended by 2026 HB 463 (signed May 11, 2026, effective July 1, 2026, RETROACTIVE to taxable years beginning on/after January 1, 2026); Paylocity/BDO compliance alerts (web-verified August 2026)",
+      section: "O.C.G.A. \xA7 48-7-20; 2026 HB 463",
+      url: "https://dor.georgia.gov/",
+      excerpt: "Georgia TY2026: 4.99% flat on Georgia taxable income \u2014 2026 HB 463 accelerated the phase-down, cutting the scheduled rate to 4.99% retroactive to January 1, 2026 (signed May 11, 2026, effective July 1, 2026; surveys and withholding tables printed before May 2026 show stale higher rates; the pre-HB 463 law would have implied ~5.09%). FURTHER CUTS ARE CONTINGENT: beginning January 1, 2027, the rate reduces in 0.125-point steps toward 3.99% ONLY when revenue-collection targets are met \u2014 never assume a 2027+ rate without the certification. HB 463 ALSO RAISED THE 2026 DEDUCTIONS (encoded as us.ga.standard_deduction v2 / us.ga.dependent_exemption v2): standard deduction $15,000 single/MFS/HOH/QSS and $30,000 MFJ (stepping +$375/+$750 per year toward $18,000/$36,000), dependent exemption $5,000 (stepping +$125/year toward $6,000). HB 463 additionally created TEMPORARY state exclusions for qualified TIPS and OVERTIME for 2026-2028 (Georgia-specific \u2014 distinct from the federal OBBBA deductions; agent-composed with disclosure). The remaining deep-pack targets (retirement exclusion, low income credit, CDCC) stay TY2025-windowed until the 2026 IT-511 publishes."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      ratePctTimes100: { value: "499", type: "int" },
+      phaseDownFloorPctTimes100: { value: "399", type: "int" }
+      // annual cuts from 2027
+    },
+    formula: rd5({
+      kind: "mulRate",
+      base: max07(fact36("stateTaxableIncome")),
+      rate: { num: "499", den: "10000" },
+      round: "half-up"
+    })
+  },
+  {
     id: "us.ga.standard_deduction",
     version: 1,
     jurisdiction: "us.ga",
@@ -17914,6 +17965,34 @@ var gaRules = [
     }
   },
   {
+    id: "us.ga.standard_deduction",
+    version: 2,
+    // TY2026: HB 463 raised the amounts
+    jurisdiction: "us.ga",
+    title: "Georgia standard deduction \u2014 TY2026: $30,000 MFJ, $15,000 all other statuses (HB 463)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-27(a)(1)(B) as amended by 2026 HB 463 (signed May 11, 2026, retroactive to taxable years beginning on/after January 1, 2026); BDO/CBS Atlanta confirmations (web-verified August 2026)",
+      section: "O.C.G.A. \xA7 48-7-27(a)(1)(B); 2026 HB 463",
+      url: "https://dor.georgia.gov/",
+      excerpt: "Georgia TY2026 standard deduction (HB 463, retroactive to 1/1/2026): $30,000 married filing jointly; $15,000 single, MFS, head of household, and qualifying surviving spouse (Georgia still gives HOH no extra amount). HB 463 schedules FURTHER annual increases of $750 MFJ / $375 other toward $36,000/$18,000 \u2014 encode each year from the enacted text. The FORCED ELECTION is unchanged: a federal itemizer must use Georgia itemized deductions and leave the standard-deduction line blank. Re-verify the printed 2026 Form 500 line 11 caption when the 2026 IT-511 publishes."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      joint: { value: "3000000", type: "money" },
+      // $30,000 MFJ (HB 463)
+      other: { value: "1500000", type: "money" }
+      // $15,000 single/MFS/HOH/QSS
+    },
+    formula: {
+      kind: "if",
+      cond: isStatus10("mfj"),
+      then: param20("joint"),
+      else: param20("other")
+    }
+  },
+  {
     id: "us.ga.dependent_exemption",
     version: 1,
     jurisdiction: "us.ga",
@@ -17930,6 +18009,27 @@ var gaRules = [
     parameters: {
       perDependent: { value: "400000", type: "money" }
       // $4,000
+    },
+    formula: { kind: "mulInt", base: param20("perDependent"), count: fact36("gaDependentCount") }
+  },
+  {
+    id: "us.ga.dependent_exemption",
+    version: 2,
+    // TY2026: HB 463 raised the amount
+    jurisdiction: "us.ga",
+    title: "Georgia dependent exemption \u2014 TY2026: $5,000 per dependent (HB 463)",
+    citation: {
+      source: "O.C.G.A. \xA7 48-7-26 as amended by 2026 HB 463 (retroactive to taxable years beginning on/after January 1, 2026); web-verified August 2026",
+      section: "O.C.G.A. \xA7 48-7-26(b); 2026 HB 463",
+      url: "https://dor.georgia.gov/",
+      excerpt: "Georgia TY2026 dependent exemption (HB 463, retroactive to 1/1/2026): $5,000 per dependent (up from $4,000), with HB 463 scheduling further $125 annual increases toward $6,000 \u2014 encode each year from the enacted text. The unborn-dependent rule and the no-filer/spouse-exemption structure are unchanged. Input: gaDependentCount = the Form 500 line 7c total."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      perDependent: { value: "500000", type: "money" }
+      // $5,000 (HB 463)
     },
     formula: { kind: "mulInt", base: param20("perDependent"), count: fact36("gaDependentCount") }
   },
@@ -19306,8 +19406,8 @@ function flatTax(args) {
     jurisdiction: `us.${args.st}`,
     title: `${args.name} income tax \u2014 TY2025 flat rate on state taxable income`,
     citation: { source: args.source, section: args.section, url: args.url, excerpt: args.excerpt },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
+    effectiveFrom: args.effectiveFrom ?? "2025-01-01",
+    effectiveTo: args.effectiveTo ?? "2026-01-01",
     output: { type: "money" },
     parameters: args.parameters ?? {},
     formula: {
@@ -19542,6 +19642,190 @@ var otherStateRules = [
         table: [
           { threshold: "0", rate: { num: "500", den: "10000" } },
           { threshold: "108315000", rate: { num: "900", den: "10000" } }
+        ]
+      },
+      mode: "half-up"
+    }
+  },
+  // ==== TY2026 ENACTED RATES (currency pass, web-verified August 19, 2026) ====
+  // Each rule below encodes a 2026 rate that is ENACTED and determinate today.
+  // Indexed companion parameters (standard deductions etc.) that the states
+  // have not yet published are carried from 2025 with re-verify disclosures.
+  flatTax({
+    st: "ky",
+    name: "Kentucky",
+    version: 2,
+    ratePctTimes100: "350",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "KRS 141.020 as amended by 2025 Ky. Acts ch. (HB 1) \u2014 3.5% effective January 1, 2026; DOR announcement and EY/Bloomberg Tax confirmations (web-verified August 2026)",
+    section: "KRS 141.020; 2025 HB 1",
+    url: "https://revenue.ky.gov/",
+    excerpt: "Kentucky TY2026: 3.5% flat (2025 HB 1 cut the 4.0% rate effective January 1, 2026 \u2014 the condition-based phase-down continues toward eventual elimination; a further cut below 3.5% requires new legislation and triggers, none enacted as of August 2026). STANDARD DEDUCTION (indexed, DOR-announced September 4, 2025): $3,360 per taxpayer for 2026 (up from $3,270; each spouse gets one on a joint return). Pension exclusion (up to $31,110/person) unchanged, still not modeled \u2014 disclose for retirees.",
+    parameters: { standardDeductionPerTaxpayer: { value: "336000", type: "money" } }
+    // $3,360 (2026, DOR-announced 9/4/2025)
+  }),
+  flatTax({
+    st: "in",
+    name: "Indiana",
+    version: 2,
+    ratePctTimes100: "295",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "Ind. Code \xA7 6-3-2-1(b) phase-down (2.95% for 2026, 2.9% for 2027); Indiana DOR 'Rates, Fees & Penalties' page (web-verified August 2026)",
+    section: "IC 6-3-2-1(b)",
+    url: "https://www.in.gov/dor/resources/tax-rates-and-reports/rates-fees-and-penalties/",
+    excerpt: "Indiana TY2026: 2.95% flat on state AGI (the enacted IC 6-3-2-1 schedule: 3.00% for 2025, 2.95% for 2026, 2.90% for 2027 \u2014 confirmed on the DOR rates page). Exemptions ($1,000 per taxpayer/spouse, $1,500 per dependent child) are statutory and unchanged. COUNTY income taxes (0.5%\u20132.9%+, county-specific, set annually \u2014 the 2026 county rate table publishes each January/October) apply ON TOP and are NOT modeled; name the county and compute separately with disclosure.",
+    parameters: {
+      exemptionPerFiler: { value: "100000", type: "money" },
+      exemptionPerDependentChild: { value: "150000", type: "money" }
+    }
+  }),
+  {
+    id: "us.ms.income_tax",
+    version: 2,
+    jurisdiction: "us.ms",
+    title: "Mississippi income tax \u2014 TY2026: 4.0% on taxable income over $10,000 (enacted schedule)",
+    citation: {
+      source: "Miss. Code \xA7 27-7-5 (the 2022 phase-down's final scheduled step: 4.0% for 2026) as further amended by 2025 HB 1 ('Build Up Mississippi Act' \u2014 post-2026 trigger-based cuts toward elimination); web-verified August 2026",
+      section: "Miss. Code \xA7 27-7-5; 2025 HB 1",
+      url: "https://www.dor.ms.gov/",
+      excerpt: "Mississippi TY2026: 0% on the first $10,000 of taxable income, 4.0% on the excess \u2014 the 2022 phase-down's final scheduled step (5%/4.7%/4.4%/4.0% for 2023-2026). 2025 HB 1 ('Build Up Mississippi Act') enacts a FIXED schedule after 2026 \u2014 3.75% (2027), 3.5% (2028), 3.25% (2029), 3.0% (2030) \u2014 with revenue-TRIGGER cuts beginning only in 2031 toward elimination; the 2027-2030 rates are determinate and encodable year by year from the statute. Standard deduction ($2,300 single/$4,600 MFJ) and personal exemptions ($6,000/$12,000 + $1,500 per dependent) are statutory and unchanged \u2014 compose into the base."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      standardDeductionSingle: { value: "230000", type: "money" },
+      standardDeductionJoint: { value: "460000", type: "money" },
+      personalExemptionSingle: { value: "600000", type: "money" },
+      personalExemptionJoint: { value: "1200000", type: "money" }
+    },
+    formula: {
+      kind: "roundToDollar",
+      value: {
+        kind: "brackets",
+        base: flatBase,
+        table: [
+          { threshold: "0", rate: { num: "0", den: "100" } },
+          { threshold: "1000000", rate: { num: "400", den: "10000" } }
+        ]
+      },
+      mode: "half-up"
+    }
+  },
+  flatTax({
+    st: "ut",
+    name: "Utah",
+    version: 2,
+    ratePctTimes100: "445",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "Utah Code \xA7 59-10-104 as amended by 2026 Utah Laws (S.B. 60) \u2014 4.45% RETROACTIVE to January 1, 2026 (the sixth consecutive annual cut); EY payroll alert and Utah House confirmations (web-verified August 2026)",
+    section: "Utah Code \xA7 59-10-104; 2026 S.B. 60",
+    url: "https://tax.utah.gov/",
+    excerpt: "Utah TY2026: 4.45% flat on Utah taxable income (the 2026 general session cut the 4.50% rate retroactively to January 1, 2026 \u2014 the sixth cut in six years, from 5% in 2018; mid-year withholding tables lag the annual-return rate as usual). Federal AGI + modifications; NO standard deduction \u2014 the nonrefundable TAXPAYER TAX CREDIT (roughly 6% of federal deductions, income-phased) applies instead and is not modeled; compute per the 2026 TC-40 and disclose."
+  }),
+  flatTax({
+    st: "co",
+    name: "Colorado",
+    version: 2,
+    ratePctTimes100: "440",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "Colo. Rev. Stat. \xA7 39-22-104(1.7) (4.40% statutory); SB24-228 TABOR refund mechanisms (temporary rate reductions live for TY2025-2035, certified each September); web-verified August 2026",
+    section: "C.R.S. \xA7 39-22-104(1.7); SB24-228",
+    url: "https://tax.colorado.gov/",
+    excerpt: "Colorado TY2026: 4.40% STATUTORY flat rate on federal taxable income (TY2025 was certified at the full 4.40% \u2014 the FY2024-25 surplus missed the $300M trigger, so no temporary reduction applied). CAUTION \u2014 TABOR CONTINGENCY (SB24-228, live through 2035): if the FY2025-26 state surplus exceeds the trigger, the TY2026 rate is TEMPORARILY REDUCED (forecasts have projected ~4.36%); the determination is CERTIFIED around September 2026 and was NOT final at encoding \u2014 re-verify the certified 2026 rate from tax.colorado.gov before filing-season use; 4.40% matches the state's own 2026 withholding and estimated-tax guidance in the meantime. Colorado starts from FEDERAL TAXABLE INCOME (the federal standard/itemized deduction is embedded \u2014 do not subtract a state deduction)."
+  }),
+  flatTax({
+    st: "az",
+    name: "Arizona",
+    version: 2,
+    ratePctTimes100: "250",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "Ariz. Rev. Stat. \xA7 43-1011 (permanent 2.5% flat); Tax Foundation 2026 state survey (web-verified August 2026)",
+    section: "A.R.S. \xA7 43-1011",
+    url: "https://azdor.gov/",
+    excerpt: "Arizona TY2026: 2.5% flat on Arizona taxable income (permanent \u2014 no 2026 change enacted). STANDARD DEDUCTION CAVEAT: Arizona mirrors the FEDERAL standard deduction; the federal 2026 amounts are $16,100 single/MFS, $32,200 MFJ, $24,150 HOH (Rev. Proc. 2025-32), and Arizona's 2026 session UPDATED the IRC conformity date to January 1, 2026 (confirmed July 2026), so the federal 2026 amounts apply \u2014 still spot-check the printed 2026 Form 140 when it publishes. The 2026 conformity package also modified veteran pension treatment and added a charitable increase for standard-deduction filers (named, not modeled). Dependent tax credit ($100/$25, income-phased) named but not modeled.",
+    parameters: {
+      standardDeductionSingleFederal2026: { value: "1610000", type: "money" },
+      standardDeductionJointFederal2026: { value: "3220000", type: "money" },
+      standardDeductionHohFederal2026: { value: "2415000", type: "money" }
+    }
+  }),
+  flatTax({
+    st: "ia",
+    name: "Iowa",
+    version: 2,
+    ratePctTimes100: "380",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "Iowa Code \xA7 422.5A (3.8% flat, permanent per 2024 SF 2442); Tax Foundation 2026 survey confirms no 2026 change (web-verified August 2026)",
+    section: "Iowa Code \xA7 422.5A",
+    url: "https://revenue.iowa.gov/",
+    excerpt: "Iowa TY2026: 3.8% flat, unchanged (SF 2442's consolidation landed at 3.8% with no further scheduled steps; no 2026 legislation altered it). Iowa couples to FEDERAL TAXABLE INCOME with Iowa modifications (the federal deduction is embedded); retirement income remains fully EXEMPT for 55+ filers; the $40/$80 personal exemption CREDIT still applies against tax (not modeled)."
+  }),
+  flatTax({
+    st: "la",
+    name: "Louisiana",
+    version: 2,
+    ratePctTimes100: "300",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "La. Rev. Stat. \xA7 47:32 (3.0% flat, 2024 3d Ex. Sess. Act 11); Tax Foundation 2026 survey confirms no 2026 change (web-verified August 2026)",
+    section: "La. R.S. 47:32",
+    url: "https://revenue.louisiana.gov/",
+    excerpt: "Louisiana TY2026: 3.0% flat, unchanged. STANDARD DEDUCTION (Act 11 indexing begins 1/1/2026; LDR RIB 25-012): $12,875 single/MFS and $25,750 MFJ/QSS/HOH per the 2026 withholding parameters \u2014 LDR's own caveat: the FINAL return amounts may differ slightly once the January 2026 CPI-U figure is applied, re-verify against the printed 2026 IT-540. Retirement-income exemptions named but not modeled.",
+    parameters: {
+      standardDeductionSingle: { value: "1287500", type: "money" },
+      // $12,875 (2026, RIB 25-012)
+      standardDeductionJoint: { value: "2575000", type: "money" }
+      // $25,750
+    }
+  }),
+  flatTax({
+    st: "mi",
+    name: "Michigan",
+    version: 2,
+    ratePctTimes100: "425",
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    source: "Mich. Comp. Laws \xA7 206.51 (4.25% \u2014 the 2023 trigger cut to 4.05% was one-year-only per the courts); Tax Foundation 2026 survey (web-verified August 2026)",
+    section: "MCL 206.51",
+    url: "https://www.michigan.gov/taxes",
+    excerpt: "Michigan TY2026: 4.25% flat on Michigan taxable income, unchanged (the 2023 revenue-trigger cut to 4.05% applied to TY2023 only, per the Court of Appeals \u2014 4.25% controls unless a new trigger fires, none certified for 2026). PERSONAL EXEMPTION (indexed, published in Michigan's 2026 Withholding Guide, Form 446): $5,900 per person for 2026 (up from $5,800). NEW FOR 2026-2028 (H.B. 4961, Treasury notice January 6, 2026): Michigan created state DEDUCTIONS for qualified TIPS and qualified OVERTIME compensation \u2014 Michigan-specific and distinct from the federal OBBBA deductions; agent-composed with disclosure. City income taxes (Detroit etc.) and the pension phase-in (2023 PA 4 \u2014 fully phased for most retirees by 2026) still not modeled \u2014 disclose.",
+    parameters: { personalExemption: { value: "590000", type: "money" } }
+    // $5,900 (2026 Withholding Guide)
+  }),
+  {
+    id: "us.ma.income_tax",
+    version: 2,
+    jurisdiction: "us.ma",
+    title: "Massachusetts income tax \u2014 TY2026: 5% Part B rate + 4% surtax over the CERTIFIED $1,107,750 threshold",
+    citation: {
+      source: "Mass. Gen. Laws ch. 62 \xA7 4; Mass. Const. amend. art. CXXI; DOR-certified 2026 surtax threshold $1,107,750 (threshold history: $1,000,000 / $1,053,750 / $1,083,150 / $1,107,750 for 2023-2026); web-verified August 2026",
+      section: "M.G.L. c. 62 \xA7 4; Const. amend. CXXI",
+      url: "https://www.mass.gov/orgs/massachusetts-department-of-revenue",
+      excerpt: "Massachusetts TY2026: 5.0% on Part B taxable income PLUS the 4% surtax on total taxable income over $1,107,750 (the CERTIFIED inflation-indexed 2026 threshold \u2014 up from $1,083,150 in 2025) \u2014 top effective 9%. Short-term capital gains 8.5% and Part A interest/dividends 5% compose separately when present (this rule applies the 5%/9% schedule to the single stateTaxableIncome input; disclose ST-gain composition). Personal exemptions ($4,400/$8,800) statutory, unchanged."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      personalExemptionSingle: { value: "440000", type: "money" },
+      personalExemptionJoint: { value: "880000", type: "money" },
+      surtaxThreshold2026: { value: "110775000", type: "money" }
+    },
+    formula: {
+      kind: "roundToDollar",
+      value: {
+        kind: "brackets",
+        base: flatBase,
+        table: [
+          { threshold: "0", rate: { num: "500", den: "10000" } },
+          { threshold: "110775000", rate: { num: "900", den: "10000" } }
         ]
       },
       mode: "half-up"

@@ -48,6 +48,33 @@ export const gaRules: Rule[] = [
     }),
   },
   {
+    id: "us.ga.income_tax",
+    version: 3, // TY2026: HB 463 (signed May 11, 2026) cut the rate to 4.99% RETROACTIVE to 1/1/2026
+    jurisdiction: "us.ga",
+    title: "Georgia income tax — TY2026: 4.99% flat (HB 463, retroactive to January 1, 2026)",
+    citation: {
+      source:
+        "O.C.G.A. § 48-7-20 as amended by 2026 HB 463 (signed May 11, 2026, effective July 1, 2026, RETROACTIVE to taxable years beginning on/after January 1, 2026); Paylocity/BDO compliance alerts (web-verified August 2026)",
+      section: "O.C.G.A. § 48-7-20; 2026 HB 463",
+      url: "https://dor.georgia.gov/",
+      excerpt:
+        "Georgia TY2026: 4.99% flat on Georgia taxable income — 2026 HB 463 accelerated the phase-down, cutting the scheduled rate to 4.99% retroactive to January 1, 2026 (signed May 11, 2026, effective July 1, 2026; surveys and withholding tables printed before May 2026 show stale higher rates; the pre-HB 463 law would have implied ~5.09%). FURTHER CUTS ARE CONTINGENT: beginning January 1, 2027, the rate reduces in 0.125-point steps toward 3.99% ONLY when revenue-collection targets are met — never assume a 2027+ rate without the certification. HB 463 ALSO RAISED THE 2026 DEDUCTIONS (encoded as us.ga.standard_deduction v2 / us.ga.dependent_exemption v2): standard deduction $15,000 single/MFS/HOH/QSS and $30,000 MFJ (stepping +$375/+$750 per year toward $18,000/$36,000), dependent exemption $5,000 (stepping +$125/year toward $6,000). HB 463 additionally created TEMPORARY state exclusions for qualified TIPS and OVERTIME for 2026-2028 (Georgia-specific — distinct from the federal OBBBA deductions; agent-composed with disclosure). The remaining deep-pack targets (retirement exclusion, low income credit, CDCC) stay TY2025-windowed until the 2026 IT-511 publishes.",
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      ratePctTimes100: { value: "499", type: "int" },
+      phaseDownFloorPctTimes100: { value: "399", type: "int" }, // annual cuts from 2027
+    },
+    formula: rd({
+      kind: "mulRate",
+      base: max0(fact("stateTaxableIncome")),
+      rate: { num: "499", den: "10000" },
+      round: "half-up",
+    }),
+  },
+  {
     id: "us.ga.standard_deduction",
     version: 1,
     jurisdiction: "us.ga",
@@ -74,6 +101,32 @@ export const gaRules: Rule[] = [
     },
   },
   {
+    id: "us.ga.standard_deduction",
+    version: 2, // TY2026: HB 463 raised the amounts
+    jurisdiction: "us.ga",
+    title: "Georgia standard deduction — TY2026: $30,000 MFJ, $15,000 all other statuses (HB 463)",
+    citation: {
+      source: "O.C.G.A. § 48-7-27(a)(1)(B) as amended by 2026 HB 463 (signed May 11, 2026, retroactive to taxable years beginning on/after January 1, 2026); BDO/CBS Atlanta confirmations (web-verified August 2026)",
+      section: "O.C.G.A. § 48-7-27(a)(1)(B); 2026 HB 463",
+      url: "https://dor.georgia.gov/",
+      excerpt:
+        "Georgia TY2026 standard deduction (HB 463, retroactive to 1/1/2026): $30,000 married filing jointly; $15,000 single, MFS, head of household, and qualifying surviving spouse (Georgia still gives HOH no extra amount). HB 463 schedules FURTHER annual increases of $750 MFJ / $375 other toward $36,000/$18,000 — encode each year from the enacted text. The FORCED ELECTION is unchanged: a federal itemizer must use Georgia itemized deductions and leave the standard-deduction line blank. Re-verify the printed 2026 Form 500 line 11 caption when the 2026 IT-511 publishes.",
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      joint: { value: "3000000", type: "money" }, // $30,000 MFJ (HB 463)
+      other: { value: "1500000", type: "money" }, // $15,000 single/MFS/HOH/QSS
+    },
+    formula: {
+      kind: "if",
+      cond: isStatus("mfj"),
+      then: param("joint"),
+      else: param("other"),
+    },
+  },
+  {
     id: "us.ga.dependent_exemption",
     version: 1,
     jurisdiction: "us.ga",
@@ -90,6 +143,26 @@ export const gaRules: Rule[] = [
     output: { type: "money" },
     parameters: {
       perDependent: { value: "400000", type: "money" }, // $4,000
+    },
+    formula: { kind: "mulInt", base: param("perDependent"), count: fact("gaDependentCount") },
+  },
+  {
+    id: "us.ga.dependent_exemption",
+    version: 2, // TY2026: HB 463 raised the amount
+    jurisdiction: "us.ga",
+    title: "Georgia dependent exemption — TY2026: $5,000 per dependent (HB 463)",
+    citation: {
+      source: "O.C.G.A. § 48-7-26 as amended by 2026 HB 463 (retroactive to taxable years beginning on/after January 1, 2026); web-verified August 2026",
+      section: "O.C.G.A. § 48-7-26(b); 2026 HB 463",
+      url: "https://dor.georgia.gov/",
+      excerpt:
+        "Georgia TY2026 dependent exemption (HB 463, retroactive to 1/1/2026): $5,000 per dependent (up from $4,000), with HB 463 scheduling further $125 annual increases toward $6,000 — encode each year from the enacted text. The unborn-dependent rule and the no-filer/spouse-exemption structure are unchanged. Input: gaDependentCount = the Form 500 line 7c total.",
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      perDependent: { value: "500000", type: "money" }, // $5,000 (HB 463)
     },
     formula: { kind: "mulInt", base: param("perDependent"), count: fact("gaDependentCount") },
   },

@@ -1,0 +1,7 @@
+{
+  "description": "NY TY2026 refuses WITH the enacted context (NOT_MODELED, not a bare no-rule): the FY2026 budget cut the bottom five bracket rates 0.1pp for 2026, but the mandatory sub-$65,000 tax table is unpublished until the 2026 IT-201-I — the refusal reason carries the enacted rates.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2026-12-31",
+  "target": "us.ny.income_tax",
+  "expect": { "error": "NOT_MODELED" }
+}

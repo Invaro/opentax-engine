@@ -1,0 +1,7 @@
+{
+  "description": "Georgia TY2026 standard deduction (HB 463, retroactive to 1/1/2026): MFJ $30,000 (up from $24,000; single/MFS/HOH/QSS $15,000) — the adversarial review caught the raise the excerpt had wrongly called 'unchanged'.",
+  "facts": { "filingStatus": "mfj" },
+  "asOf": "2026-12-31",
+  "target": "us.ga.standard_deduction",
+  "expect": { "valueCents": "3000000" }
+}

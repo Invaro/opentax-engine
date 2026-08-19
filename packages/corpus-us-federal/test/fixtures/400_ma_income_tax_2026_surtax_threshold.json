@@ -1,0 +1,7 @@
+{
+  "description": "Massachusetts TY2026 with the CERTIFIED indexed surtax threshold $1,107,750 (up from 1,083,150): 2,000,000 -> 5% x 1,107,750 + 9% x 892,250 = 55,387.50 + 80,302.50 = 135,690.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 2000000 },
+  "asOf": "2026-12-31",
+  "target": "us.ma.income_tax",
+  "expect": { "valueCents": "13569000" }
+}
