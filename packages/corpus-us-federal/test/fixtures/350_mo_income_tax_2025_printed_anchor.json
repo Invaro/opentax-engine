@@ -1,0 +1,7 @@
+{
+  "description": "Missouri printed-anchor pin: 2,626 -> 2.0% x 1,313 = 26.26 -> 26; the NEXT row's printed anchor is the rounded $26 (not the exact 26.26) so 2,700 -> 26 + 2.5% x 74 = 27.85 -> 28 uses the printed constant.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 2700 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.income_tax",
+  "expect": { "valueCents": "2800" }
+}

@@ -2918,4 +2918,51 @@ export const facts: FactSpec[] = [
       "The SAME person's TOTAL Social Security and Railroad Retirement benefits (Tier I + Tier II), whether or not federally taxable — Worksheet 13A line 3 reduces the $41,200 maximum dollar-for-dollar. On a joint return count only the pension-receiving spouse's benefits. In dollars.",
     default: { value: "0", rationale: "Assumed no Social Security/Railroad Retirement benefits absent contrary input" },
   },
+  {
+    id: "moMagi",
+    type: "money",
+    description:
+      "COMBINED Missouri adjusted gross income (MO-1040 line 6 = both spouses' line 5 amounts) — keys the federal tax deduction percentage tiers (us.mo.federal_tax_deduction: 35/25/15/5/0%). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 combined Missouri AGI absent contrary input" },
+  },
+  {
+    id: "moFederalTaxTotal",
+    type: "money",
+    min: "0",
+    description:
+      "MO-1040 line 11 total federal tax: line 9 (federal 1040 line 22 minus lines 27a/29, minus Schedule 2 Part 1 line 3, minus Schedule 3 Part 2 line 9 — never withholding) plus line 10 other federal tax (Schedule 2 Part 1 line 3; Part 2 lines 8, 14, 15; recapture in 21; Schedule 3 Part 1 line 1). Feeds us.mo.federal_tax_deduction. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal tax absent contrary input" },
+  },
+  {
+    id: "moPublicPension",
+    type: "money",
+    min: "0",
+    description:
+      "ONE spouse's taxable pension from PUBLIC sources (any federal/state/local government pension, federal 1040 line 5b share) for the Missouri public pension exemption (us.mo.public_pension_exemption, MO-A Part 3 Section A: capped at $47,633 for 2025, reduced by that spouse's SS/SSD exemption). Military retirement is a separate 100% subtraction — exclude it here. In dollars.",
+    default: { value: "0", rationale: "Assumed no public pension absent contrary input" },
+  },
+  {
+    id: "moSsSameSpouseExemption",
+    type: "money",
+    min: "0",
+    description:
+      "The SAME spouse's Social Security / SS Disability exemption from MO-A Part 3 Section C (their taxable SS, exempted 100% when 62+ by December 31 or on SSD) — displaces the public pension exemption dollar-for-dollar (Section A line 3). In dollars.",
+    default: { value: "0", rationale: "Assumed no Section C exemption for this spouse absent contrary input" },
+  },
+  {
+    id: "moFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "Federal earned income credit (Form 1040 line 27a) for the Missouri Working Family Tax Credit (us.mo.wftc = 20% for 2025, nonrefundable; MFS and dependent-claimed filers denied; the printed MO-WFTC question 3 gates investment income at $4,400 — see the rule's form-vs-statute disclosure). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" },
+  },
+  {
+    id: "moBusinessIncome",
+    type: "money",
+    min: "0",
+    description:
+      "ONE spouse's net business income per the MO-1040 p.16 worksheet (Schedule C/E/F + pass-through business income, losses netted — enter 0 if a combined net loss) — us.mo.business_income_deduction subtracts 20% (R.S.Mo. \u00a7 143.022, MO-A Part 1 line 17). In dollars.",
+    default: { value: "0", rationale: "Assumed no business income absent contrary input" },
+  },
 ];

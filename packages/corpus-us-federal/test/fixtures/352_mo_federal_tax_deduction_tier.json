@@ -1,0 +1,7 @@
+{
+  "description": "Missouri federal tax deduction percentage tier: MO AGI 60,000 -> 15%; 15% x 8,000 = 1,200 (under the single-filer $5,000 cap).",
+  "facts": { "filingStatus": "single", "moMagi": 60000, "moFederalTaxTotal": 8000 },
+  "asOf": "2025-12-31",
+  "target": "us.mo.federal_tax_deduction",
+  "expect": { "valueCents": "120000" }
+}

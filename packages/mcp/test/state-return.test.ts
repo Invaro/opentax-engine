@@ -573,6 +573,100 @@ describe("composeMD — 2025 Form 502 (real corpus targets)", () => {
 });
 
 
+describe("composeMO — 2025 MO-1040 (real corpus targets)", () => {
+  it("single wage earner: 25% federal tax deduction tier, federal standard deduction, chart tax", () => {
+    // l6 = 50,000 -> 25% tier x 4,000 = 1,000; std 15,750; l26 = 33,250;
+    // chart: 256 + 4.7% x 24,059 = 1,386.77 -> 1,387; withheld 1,500 -> 113.
+    const input = {
+      jurisdiction: "mo" as const, filingStatus: "single", federalAGI: 50000,
+      moFederalTax9: 4000, stateWithholding: 1500,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "13_federal_tax_deduction")).toBe("$1,000");
+    expect(dollars(lines, "14_deduction")).toBe("$15,750");
+    expect(dollars(lines, "26_subtotal")).toBe("$33,250");
+    expect(dollars(lines, "30Y_tax")).toBe("$1,387");
+    expect(dollars(lines, "36_total_tax")).toBe("$1,387");
+    expect(dollars(lines, "53_refund")).toBe("$113");
+  });
+
+  it("combined return: FAGI split, H.B. 594 capital-gain subtraction, whole-percent line 7, separate per-spouse chart tax", () => {
+    // 5Y = 50,000 − 10,000 CG = 40,000; 5S = 30,000; l6 = 70,000 -> 57%/43%;
+    // fed tax ded 15% x 6,000 = 900; std 31,500; l26 = 37,600 -> 21,432 /
+    // 16,168; taxes 831 + 584 = 1,415 (separate chart per spouse — no
+    // marriage penalty).
+    const input = {
+      jurisdiction: "mo" as const, filingStatus: "mfj", federalAGI: 80000,
+      moFagiYou: 50000, moFagiSpouse: 30000, moCapitalGainYou: 10000,
+      moFederalTax9: 6000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "5Y_mo_agi")).toBe("$40,000");
+    expect(dollars(lines, "5S_mo_agi")).toBe("$30,000");
+    expect(lines["7Y_income_pct"]).toBe("57%");
+    expect(dollars(lines, "13_federal_tax_deduction")).toBe("$900");
+    expect(dollars(lines, "29Y_taxable_income")).toBe("$21,432");
+    expect(dollars(lines, "29S_taxable_income")).toBe("$16,168");
+    expect(dollars(lines, "30Y_tax")).toBe("$831");
+    expect(dollars(lines, "30S_tax")).toBe("$584");
+    expect(dollars(lines, "36_total_tax")).toBe("$1,415");
+    expect(notes.some((n) => n.includes("capital gain subtraction $10,000"))).toBe(true);
+  });
+
+  it("senior: Section A public pension less the Section C SS exemption, additional standard deduction", () => {
+    // Section C 15,000; Section A min(30,000, 47,633) − 15,000 = 15,000;
+    // l8 = 30,000; fed ded 15% x 3,000 = 450; std 15,750 + 2,000; l26 =
+    // 6,800 -> chart 144 + 4% x 235 = 153.40 -> 153.
+    const input = {
+      jurisdiction: "mo" as const, filingStatus: "single", federalAGI: 55000,
+      moPublicPensionYou: 30000, moSsExemptYou: 15000, taxableSocialSecurity: 15000,
+      ageOrBlindBoxes: 1, moFederalTax9: 3000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_pension_ss_exemption")).toBe("$30,000");
+    expect(dollars(lines, "14_deduction")).toBe("$17,750");
+    expect(dollars(lines, "26_subtotal")).toBe("$6,800");
+    expect(dollars(lines, "30Y_tax")).toBe("$153");
+  });
+
+  it("WFTC: 20% of the federal EIC, nonrefundable cap against tax less lines 42/43; HOH $1,400 exemption", () => {
+    // std 23,625 + 1,400 HOH exemption; l26 = 2,975 -> tax 35; WFTC raw 700
+    // capped at max0(35 − 300 PTC) = 0; payments 300 -> refund 265.
+    const input = {
+      jurisdiction: "mo" as const, filingStatus: "hoh", federalAGI: 28000,
+      federalEITC: 3500, moPropertyTaxCredit: 300,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "15_hoh_qw_exemption")).toBe("$1,400");
+    expect(dollars(lines, "26_subtotal")).toBe("$2,975");
+    expect(dollars(lines, "36_total_tax")).toBe("$35");
+    expect(dollars(lines, "44_wftc")).toBe("$0");
+    expect(dollars(lines, "53_refund")).toBe("$265");
+    expect(notes.some((n) => n.includes("capped at $0"))).toBe(true);
+  });
+
+  it("review fix: 12 CSR 10-2.710 negative-FAGI zeroing nets the joint FAGI into the positive spouse", () => {
+    // 1Y −10,000 / 1S 100,000 -> per the regulation: 1Y $0, 1S $90,000;
+    // pct 0%/100%; fed ded: l6 = 90,000 -> 15% x 5,000 = 750; std 31,500;
+    // l26 = 57,750 all to spouse -> chart 256 + 4.7% x 48,559 = 2,538.27
+    // -> 2,538.
+    const input = {
+      jurisdiction: "mo" as const, filingStatus: "mfj", federalAGI: 90000,
+      moFagiYou: -10000, moFagiSpouse: 100000, moFederalTax9: 5000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "1Y_fagi")).toBe("$0");
+    expect(dollars(lines, "1S_fagi")).toBe("$90,000");
+    expect(lines["7Y_income_pct"]).toBe("0%");
+    expect(dollars(lines, "13_federal_tax_deduction")).toBe("$750");
+    expect(dollars(lines, "29S_taxable_income")).toBe("$57,750");
+    expect(dollars(lines, "30Y_tax")).toBe("$0");
+    expect(dollars(lines, "30S_tax")).toBe("$2,538");
+    expect(notes.some((n) => n.includes("12 CSR 10-2.710"))).toBe(true);
+  });
+});
+
+
 describe("composeNC — 2025 D-400 (real corpus targets)", () => {
   it("full return: child deduction tier, standard deduction, 4.25% flat", () => {
     // Hand-computed: FAGI 85,000; child deduction 2 × $1,500 (over-$80k MFJ
