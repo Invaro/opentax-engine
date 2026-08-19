@@ -1,0 +1,7 @@
+{
+  "description": "Maryland CTC at the eligibility edge: FAGI exactly 24,000 -> ceil(9,000/1,000) = 9 steps -> 500 - 450 = $50 per child (24,001 or greater would be denied entirely).",
+  "facts": { "filingStatus": "single", "mdFagi": 24000, "mdQualifiedChildren": 1 },
+  "asOf": "2025-12-31",
+  "target": "us.md.ctc",
+  "expect": { "valueCents": "5000" }
+}

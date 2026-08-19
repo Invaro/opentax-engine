@@ -1,0 +1,7 @@
+{
+  "description": "Anne Arundel joint bracket schedule (>= 100,000 uses Worksheet 19D): 500,000 -> 13,932.00 + 3.2% x 20,000 = 14,572.",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 500000, "mdSubdivision": "anne_arundel" },
+  "asOf": "2025-12-31",
+  "target": "us.md.local_tax",
+  "expect": { "valueCents": "1457200" }
+}

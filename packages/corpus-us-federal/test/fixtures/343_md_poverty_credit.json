@@ -1,0 +1,7 @@
+{
+  "description": "Maryland poverty level credit (Worksheet 18B): household of 3 -> guideline 26,650; max(earned 12,000, line-7 13,000) below it -> credit = 5% x 12,000 earned = 600.",
+  "facts": { "filingStatus": "single", "mdEarnedIncome": 12000, "mdFagiPlusAdditions": 13000, "mdHouseholdSize": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.md.poverty_level_credit",
+  "expect": { "valueCents": "60000" }
+}

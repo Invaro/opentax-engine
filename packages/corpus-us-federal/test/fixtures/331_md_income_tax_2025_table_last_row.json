@@ -1,0 +1,7 @@
+{
+  "description": "Maryland tax table last row 99,950-100,000: midpoint 99,975 -> 90 + 4.75% x 96,975 = 4,696.31 -> 4,696 (printed-row exact; the table stops at $100,000).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 99980 },
+  "asOf": "2025-12-31",
+  "target": "us.md.income_tax",
+  "expect": { "valueCents": "469600" }
+}

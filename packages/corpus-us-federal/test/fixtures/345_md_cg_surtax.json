@@ -1,0 +1,7 @@
+{
+  "description": "Maryland H.B. 352 capital gains surtax: 502CG line 9 of 40,000 x 2% = 800 (Form 502 line 21b; only reachable when FAGI > 350,000).",
+  "facts": { "filingStatus": "single", "mdNetCapitalGainSubject": 40000 },
+  "asOf": "2025-12-31",
+  "target": "us.md.capital_gains_surtax",
+  "expect": { "valueCents": "80000" }
+}

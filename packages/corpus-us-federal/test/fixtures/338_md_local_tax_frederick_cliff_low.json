@@ -1,0 +1,7 @@
+{
+  "description": "Frederick tier rate on the WHOLE income (single): 25,000 -> 2.25% x 25,000 = 562.50 -> 563. Pair with fixture 339: one more dollar of income jumps the whole return to the 2.75% tier.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 25000, "mdSubdivision": "frederick" },
+  "asOf": "2025-12-31",
+  "target": "us.md.local_tax",
+  "expect": { "valueCents": "56300" }
+}

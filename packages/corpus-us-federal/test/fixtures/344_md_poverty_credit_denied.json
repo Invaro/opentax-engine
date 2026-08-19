@@ -1,0 +1,7 @@
+{
+  "description": "Maryland poverty level credit denial: max(earned 20,000, line-7 28,000) = 28,000 >= the 3-person guideline 26,650 -> 0 (the LARGER of the two amounts is tested).",
+  "facts": { "filingStatus": "single", "mdEarnedIncome": 20000, "mdFagiPlusAdditions": 28000, "mdHouseholdSize": 3 },
+  "asOf": "2025-12-31",
+  "target": "us.md.poverty_level_credit",
+  "expect": { "valueCents": "0" }
+}

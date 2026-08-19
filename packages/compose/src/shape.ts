@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -251,4 +251,32 @@ const ga = {
   gaUetPenalty: usd.optional().describe("Form 500 line 42: Form 500 UET estimated tax penalty"),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga };
+const md = {
+  mdSubdivision: z.string().optional().describe("REQUIRED for MD: the taxing county where the filer resided on the LAST day of the tax year (Form 502 political-subdivision box) — one of baltimore_city, allegany, anne_arundel, baltimore_county, calvert, caroline, carroll, cecil, charles, dorchester, frederick, garrett, harford, howard, kent, montgomery, prince_georges, queen_annes, st_marys, somerset, talbot, washington, wicomico, worcester, nonresident. Drives the mandatory local tax (line 28: flat 2.25%-3.30%; Anne Arundel bracketed with its own printed table; Frederick tiered on the WHOLE income with real cliffs)."),
+  mdStateRefunds: usd.optional().describe("MD line 8: taxable state/local income tax refunds included in federal AGI (subtraction)"),
+  mdChildCareExpenses: usd.optional().describe("MD line 9: child and dependent care EXPENSES from federal Form 2441 line 6 — an income subtraction in Maryland (separate from any 502CR Part B credit); the composer caps it at $3,000 ($6,000 when mdChildCareTwoOrMoreDependents)"),
+  mdChildCareTwoOrMoreDependents: z.boolean().optional().describe("two or more care dependents — raises the MD line 9 expense cap from $3,000 to $6,000"),
+  mdPensionYou: usd.optional().describe("primary taxpayer's qualifying \u00a7 401(a)/403/457(b) pension in FAGI for the Worksheet 13A pension exclusion — ONLY if 65+/totally disabled (or spouse totally disabled); IRAs/SEP/Keogh never qualify. The composer evaluates us.md.pension_exclusion per spouse."),
+  mdSsRrBenefitsYou: usd.optional().describe("primary taxpayer's TOTAL Social Security + Railroad Retirement benefits (taxable or not) — reduces the $41,200 cap in the primary's 13A column"),
+  mdPensionSpouse: usd.optional().describe("spouse's qualifying pension for their own 13A column (same gates)"),
+  mdSsRrBenefitsSpouse: usd.optional().describe("spouse's TOTAL SS/RR benefits for their 13A column"),
+  mdRangerPension: usd.optional().describe("MD line 10b: Retired Forest/Park/Wildlife Ranger pension exclusion (Worksheet 13E, agent-computed, disclosed)"),
+  mdTwoIncomeLesserSpouseNet: usd.optional().describe("Worksheet 13D line 6: the LESSER-income spouse's net Maryland income (their FAGI share + additions share − subtractions share) — the composer caps it at $1,200 for line 14 (joint returns only)"),
+  mdItemizing: z.boolean().optional().describe("taxpayer itemized FEDERALLY and elects Maryland itemized deductions — the composer computes 17a−17b−17c (with the H.B. 352 7.5% phase-out over $200,000/$100,000-MFS FAGI) and still takes the standard deduction if larger (Maryland allows either)"),
+  mdFederalItemized: usd.optional().describe("MD line 17a: total federal itemized deductions (federal Schedule A line 17)"),
+  mdItemizedStateLocalTaxes: usd.optional().describe("MD line 17b: state and local INCOME taxes claimed in the federal Schedule A (plus preservation-easement contributions claimed as a credit) — subtracted from 17a"),
+  mdEicQualifyingChild: z.boolean().optional().describe("the filer has at least one EIC qualifying child — with married filers this routes line 22 to 50% of the federal EIC (Worksheet 18A) and line 44 to the 45% refundable worksheet (21A); childless single/HOH/QSS filers instead get 100% refundable (18A.1). Also drives the Form 502 EIC checkboxes."),
+  mdEarnedIncome: usd.optional().describe("MD line 1b earned income (wages + net SE profit, no loss netting) — the poverty level credit base (us.md.poverty_level_credit) and the local poverty credit (19C)"),
+  mdHouseholdSize: z.number().int().optional().describe("persons in the family/household from the federal return — enables the poverty level credit computation (2025 guideline $15,650 + $5,500 each additional person)"),
+  mdNetCapitalGainSubject: usd.optional().describe("Form 502CG line 9: net capital gain subject to the H.B. 352 2% surtax (line 1c gain minus the six exempt classes — primary-residence sale under $1.5M, retirement-plan assets, livestock, easement land, trade-or-business property, nonprofit affordable housing). The composer zeroes it (with a note) unless FAGI exceeds $350,000."),
+  mdRecapturedCredit: usd.optional().describe("MD line 21a: recaptured credit from Form 502CR Part DD line 1"),
+  mdBusinessCredits: usd.optional().describe("MD line 25: business tax credits (Form 500CR — e-file only; transcribed)"),
+  md502crPartBB: usd.optional().describe("MD line 31: local tax credit from Form 502CR Part BB line 1"),
+  mdCtcChildren: z.number().int().optional().describe("Maryland CTC qualified children (dependents under 6, or over 5 and under 17 with a disability) — the composer evaluates us.md.ctc ($500/child, phased out $50 per $1,000 of FAGI over $15,000, $0 above $24,000; refundable via 502CR Part CC into line 45)"),
+  mdMw506nrs: usd.optional().describe("MD line 42: tax withheld on Form MW506NRS (nonresident real property sale)"),
+  mdContributions: usd.optional().describe("MD lines 35-39: voluntary fund contributions total (reduces the refund)"),
+  mdInterestCharges: usd.optional().describe("MD line 51: Form 502UP interest / late-filing interest"),
+  mdHomebuyerPenalty: usd.optional().describe("MD line 51a: first-time homebuyer savings account 10% withdrawal penalty"),
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md };
