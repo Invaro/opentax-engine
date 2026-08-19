@@ -453,6 +453,126 @@ describe("composeOH — 2025 IT 1040 (real corpus targets)", () => {
   });
 });
 
+describe("composeMD — 2025 Form 502 (real corpus targets)", () => {
+  it("full return: flat standard deduction, exemption chart, tax-table midpoint, 50% EIC, Montgomery local + local EIC", () => {
+    // Hand-computed: MFJ FAGI 60,000; std 6,700; exemptions 4 x 3,200 =
+    // 12,800; line 20 = 40,500 -> table row 40,500-40,550 mid 40,525 ->
+    // 90 + 4.75% x 37,525 = 1,872.44 -> 1,872; EIC 50% x 2,000 = 1,000 ->
+    // line 27 = 872; Montgomery 3.2% x 40,500 = 1,296, local EIC 32% x
+    // 2,000 = 640 -> line 33 = 656; total 1,528; withheld 3,000 -> refund
+    // 1,472. Refundable EIC $0 (the 50% credit did not absorb the tax).
+    const input = {
+      jurisdiction: "md" as const, filingStatus: "mfj", federalAGI: 60000,
+      exemptions: 4, mdSubdivision: "montgomery", mdEicQualifyingChild: true,
+      federalEITC: 2000, stateWithholding: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "17_deduction")).toBe("$6,700");
+    expect(dollars(lines, "19_exemption_amount")).toBe("$12,800");
+    expect(dollars(lines, "20_taxable_net_income")).toBe("$40,500");
+    expect(dollars(lines, "21_md_tax")).toBe("$1,872");
+    expect(dollars(lines, "22_eic")).toBe("$1,000");
+    expect(dollars(lines, "27_md_tax_after_credits")).toBe("$872");
+    expect(dollars(lines, "28_local_tax")).toBe("$1,296");
+    expect(dollars(lines, "29_local_eic")).toBe("$640");
+    expect(dollars(lines, "33_local_tax_after_credits")).toBe("$656");
+    expect(dollars(lines, "34_total_md_and_local_tax")).toBe("$1,528");
+    expect(dollars(lines, "44_refundable_eic")).toBe("$0");
+    expect(dollars(lines, "50_refund")).toBe("$1,472");
+    expect(notes.some((n) => n.includes("did not fully absorb"))).toBe(true);
+  });
+
+  it("senior: pension exclusion (SS reduces the cap), taxable-SS auto-subtraction, $1,000 age box, printed-row-exact tax", () => {
+    // FAGI 55,000 incl. 30,000 pension + 6,000 taxable SS; 13A exclusion
+    // min(30,000, 41,200 − 12,000) = 29,200; line 16 = 19,800; std 3,350;
+    // exemptions 3,200 + 1,000 age box; line 20 = 12,250 -> printed row
+    // 12,250-12,300 -> $531 (booklet-exact); Baltimore City 3.2% = 392.
+    const input = {
+      jurisdiction: "md" as const, filingStatus: "single", federalAGI: 55000,
+      exemptions: 1, ageOrBlindBoxes: 1, mdSubdivision: "baltimore_city",
+      mdPensionYou: 30000, mdSsRrBenefitsYou: 12000, taxableSocialSecurity: 6000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "10a_pension_exclusion")).toBe("$29,200");
+    expect(dollars(lines, "16_md_agi")).toBe("$19,800");
+    expect(dollars(lines, "19_exemption_amount")).toBe("$4,200");
+    expect(dollars(lines, "20_taxable_net_income")).toBe("$12,250");
+    expect(dollars(lines, "21_md_tax")).toBe("$531");
+    expect(dollars(lines, "28_local_tax")).toBe("$392");
+    expect(notes.some((n) => n.includes("pension exclusion"))).toBe(true);
+  });
+
+  it("high earner: H.B. 352 itemized phase-out, zero exemptions, 6.25% bracket, 2% CG surtax, Anne Arundel 19D schedule", () => {
+    // 17c = 7.5% x 500,000 = 37,500; itemized 60,000 − 10,000 − 37,500 =
+    // 12,500 > 3,350 std; line 20 = 687,500 -> Schedule I: 27,135 + 6.25%
+    // x 187,500 = 38,853.75 -> 38,854; 21b = 2% x 100,000 = 2,000; AA
+    // single: 11,640 + 3.2% x 287,500 = 20,840; total 61,694.
+    const input = {
+      jurisdiction: "md" as const, filingStatus: "single", federalAGI: 700000,
+      exemptions: 1, mdSubdivision: "anne_arundel", mdItemizing: true,
+      mdFederalItemized: 60000, mdItemizedStateLocalTaxes: 10000,
+      mdNetCapitalGainSubject: 100000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "17c_itemized_phaseout")).toBe("$37,500");
+    expect(dollars(lines, "17_deduction")).toBe("$12,500");
+    expect(dollars(lines, "19_exemption_amount")).toBe("$0");
+    expect(dollars(lines, "21_md_tax")).toBe("$38,854");
+    expect(dollars(lines, "21b_cg_additional_tax")).toBe("$2,000");
+    expect(dollars(lines, "28_local_tax")).toBe("$20,840");
+    expect(dollars(lines, "34_total_md_and_local_tax")).toBe("$61,694");
+    expect(notes.some((n) => n.includes("2% H.B. 352 surtax"))).toBe(true);
+  });
+
+  it("low income: childless 100% refundable EIC, poverty level credit + local twin, refundable CTC", () => {
+    // Line 20 = 12,000 − 3,350 − 3,200 = 5,450 -> table mid 5,475 -> 208;
+    // EIC 100% x 600; poverty 5% x 12,000 = 600 (guideline 15,650); line 27
+    // = 0; Worcester 2.25% x 5,450 = 123; local EIC 22.5% x 600 = 135,
+    // local poverty 2.25% x 12,000 = 270 -> line 33 = 0; refundable EIC
+    // 600 − 208 = 392; CTC 500 (FAGI <= 15,000) -> refund 892.
+    const input = {
+      jurisdiction: "md" as const, filingStatus: "single", federalAGI: 12000,
+      exemptions: 1, mdSubdivision: "worcester", federalEITC: 600,
+      mdEarnedIncome: 12000, mdHouseholdSize: 1, mdCtcChildren: 1,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "20_taxable_net_income")).toBe("$5,450");
+    expect(dollars(lines, "21_md_tax")).toBe("$208");
+    expect(dollars(lines, "22_eic")).toBe("$600");
+    expect(dollars(lines, "23_poverty_level_credit")).toBe("$600");
+    expect(dollars(lines, "27_md_tax_after_credits")).toBe("$0");
+    expect(dollars(lines, "28_local_tax")).toBe("$123");
+    expect(dollars(lines, "29_local_eic")).toBe("$135");
+    expect(dollars(lines, "30_local_poverty_credit")).toBe("$270");
+    expect(dollars(lines, "33_local_tax_after_credits")).toBe("$0");
+    expect(dollars(lines, "44_refundable_eic")).toBe("$392");
+    expect(dollars(lines, "45_refundable_credits")).toBe("$500");
+    expect(dollars(lines, "50_refund")).toBe("$892");
+  });
+
+  it("review fixes: line 9 expense cap and the Instruction 22 refund/interest netting", () => {
+    // Care expenses 5,000 cap to 3,000 (one dependent); line 20 = 30,000 −
+    // 3,000 − 3,350 − 3,200 = 20,450 -> table mid 20,475 -> 920; Worcester
+    // 2.25% = 460; total 1,380; withheld 2,000 -> overpayment 620; the $100
+    // interest nets against it: refund 520, amount due 0.
+    const input = {
+      jurisdiction: "md" as const, filingStatus: "single", federalAGI: 30000,
+      exemptions: 1, mdSubdivision: "worcester", mdChildCareExpenses: 5000,
+      stateWithholding: 2000, mdInterestCharges: 100,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "20_taxable_net_income")).toBe("$20,450");
+    expect(dollars(lines, "21_md_tax")).toBe("$920");
+    expect(dollars(lines, "28_local_tax")).toBe("$460");
+    expect(dollars(lines, "48_overpayment")).toBe("$620");
+    expect(dollars(lines, "50_refund")).toBe("$520");
+    expect(dollars(lines, "52_total_amount_due")).toBe("$0");
+    expect(notes.some((n) => n.includes("line 9 capped"))).toBe(true);
+    expect(notes.some((n) => n.includes("refund netting"))).toBe(true);
+  });
+});
+
+
 describe("composeNC — 2025 D-400 (real corpus targets)", () => {
   it("full return: child deduction tier, standard deduction, 4.25% flat", () => {
     // Hand-computed: FAGI 85,000; child deduction 2 × $1,500 (over-$80k MFJ

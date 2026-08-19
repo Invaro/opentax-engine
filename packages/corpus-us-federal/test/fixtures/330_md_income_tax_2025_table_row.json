@@ -1,0 +1,7 @@
+{
+  "description": "Maryland tax table convention: taxable 3,180 falls in the printed $50 row 3,150-3,200 -> schedule at midpoint 3,175 = 90 + 4.75% x 175 = 98.31 -> 98 (printed-row exact).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 3180 },
+  "asOf": "2025-12-31",
+  "target": "us.md.income_tax",
+  "expect": { "valueCents": "9800" }
+}

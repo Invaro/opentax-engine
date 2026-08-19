@@ -1,0 +1,7 @@
+{
+  "description": "Maryland exemption chart 10A: single FAGI 130,000 falls in the over-125,000-to-150,000 tier -> $800 per exemption x 2 = 1,600.",
+  "facts": { "filingStatus": "single", "mdFagi": 130000, "mdExemptionCount": 2 },
+  "asOf": "2025-12-31",
+  "target": "us.md.exemption_amount",
+  "expect": { "valueCents": "160000" }
+}

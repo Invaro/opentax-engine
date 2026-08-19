@@ -2827,4 +2827,95 @@ export const facts: FactSpec[] = [
       "The federal § 21 child and dependent care credit CLAIMED AND ALLOWED (Form 2441 line 11, liability-limited) — Georgia's IND-CR 202 credit is 50% of it (us.ga.cdcc). In dollars.",
     default: { value: "0", rationale: "No federal CDCC allowed absent contrary input" },
   },
+  {
+    id: "mdSubdivision",
+    type: "enum",
+    enumValues: [
+      "baltimore_city", "allegany", "anne_arundel", "baltimore_county", "calvert",
+      "caroline", "carroll", "cecil", "charles", "dorchester", "frederick",
+      "garrett", "harford", "howard", "kent", "montgomery", "prince_georges",
+      "queen_annes", "st_marys", "somerset", "talbot", "washington", "wicomico",
+      "worcester", "nonresident",
+    ],
+    description:
+      "Maryland taxing subdivision — the county (or Baltimore City) where the filer resided on the LAST day of the tax year (Form 502 political-subdivision box), driving the us.md.local_tax rate (2025 chart: 2.25%-3.30%; Anne Arundel and Frederick are bracketed/tiered by filing status). Use nonresident for the Tax-Gen. \u00a7 10-106.1 special 2.25% nonresident rate.",
+    // no default — the engine must never guess the taxing county
+  },
+  {
+    id: "mdFagi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Maryland Form 502 line 1) — keys the exemption phase-out chart (us.md.exemption_amount), the child tax credit phase-out (us.md.ctc), and the $350,000 Form 502CG surtax gate. May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input" },
+  },
+  {
+    id: "mdExemptionCount",
+    type: "int",
+    min: "0",
+    description:
+      "Maryland exemption COUNT: Form 502 Exemptions areas A (self + spouse) plus C (dependents from Form 502B line 3) — each worth the Chart 10A phased amount via us.md.exemption_amount. Do NOT include the age-65+/blind area-B boxes (those are a separate unphased $1,000 each).",
+    default: { value: "1", rationale: "A single filer claiming their own exemption absent contrary input" },
+  },
+  {
+    id: "mdDependentTaxpayer",
+    type: "bool",
+    description:
+      "Maryland Filing Status 6 — the filer can be claimed as a dependent on another person's return: every Chart 10A exemption is $0 and the poverty level credit is denied (us.md.exemption_amount / us.md.poverty_level_credit).",
+    default: { value: false, rationale: "Assumed not claimable as a dependent absent contrary input" },
+  },
+  {
+    id: "mdQualifiedChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Number of Maryland CTC qualified children on Form 502B: dependents UNDER 6 at year end, or over 5 and under 17 WITH a disability (assessment attached) — us.md.ctc ($500 each, H.B. 352 phase-out over $15,000 FAGI, gone above $24,000).",
+    default: { value: "0", rationale: "Assumed no Maryland CTC qualified children absent contrary input" },
+  },
+  {
+    id: "mdEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Earned income for the Maryland poverty level credit (Form 502 line 1b / Worksheet 18B line 2): wages, salaries, tips, other employee compensation plus net self-employment profit — do NOT net farm/business losses. In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input" },
+  },
+  {
+    id: "mdFagiPlusAdditions",
+    type: "money",
+    description:
+      "Maryland Form 502 line 7 (federal AGI + Maryland additions) for the poverty level credit gate (Worksheet 18B line 1; MFS filers who filed a joint federal return use the JOINT federal AGI + additions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 line 7 absent contrary input" },
+  },
+  {
+    id: "mdHouseholdSize",
+    type: "int",
+    min: "1",
+    description:
+      "Number of persons in the family/household from the federal return, for the Maryland poverty income guideline (2025: $15,650 for 1 + $5,500 each additional person — printed-chart exact through 8).",
+    default: { value: "1", rationale: "A one-person household absent contrary input" },
+  },
+  {
+    id: "mdNetCapitalGainSubject",
+    type: "money",
+    min: "0",
+    description:
+      "Form 502CG line 9 — net capital gain income SUBJECT to Maryland's 2% additional tax (line 1c gain minus the six 502CG exempt classes: primary-residence sale under $1.5M, retirement-plan assets, livestock, easement land, trade-or-business property, nonprofit affordable housing). Only nonzero when federal AGI exceeds $350,000. Feeds us.md.capital_gains_surtax (Form 502 lines 20a/21b). In dollars.",
+    default: { value: "0", rationale: "Assumed no surtaxable net capital gain (FAGI at or below $350,000, or fully exempt classes) absent contrary input" },
+  },
+  {
+    id: "mdQualifyingPension",
+    type: "money",
+    min: "0",
+    description:
+      "ONE person's qualifying pension/retirement annuity in federal AGI for the Maryland pension exclusion (Worksheet 13A line 1): \u00a7 401(a)/403/457(b) employee-retirement-system income only — IRAs (traditional/Roth/rollover), SEP, Keogh, ineligible deferred comp, and foreign retirement income do NOT qualify; the person must be 65+ or totally disabled (or have a totally disabled spouse). Evaluate us.md.pension_exclusion once per qualifying spouse. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualifying pension absent contrary input" },
+  },
+  {
+    id: "mdSsRrBenefits",
+    type: "money",
+    min: "0",
+    description:
+      "The SAME person's TOTAL Social Security and Railroad Retirement benefits (Tier I + Tier II), whether or not federally taxable — Worksheet 13A line 3 reduces the $41,200 maximum dollar-for-dollar. On a joint return count only the pension-receiving spouse's benefits. In dollars.",
+    default: { value: "0", rationale: "Assumed no Social Security/Railroad Retirement benefits absent contrary input" },
+  },
 ];

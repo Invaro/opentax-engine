@@ -1,0 +1,7 @@
+{
+  "description": "Maryland tax table special first row $0-$50 -> $0 (the generic midpoint fiction would charge 2% x 25 = 0.50 -> 1; the printed table says 0).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 40 },
+  "asOf": "2025-12-31",
+  "target": "us.md.income_tax",
+  "expect": { "valueCents": "0" }
+}

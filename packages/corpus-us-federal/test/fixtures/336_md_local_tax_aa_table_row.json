@@ -1,0 +1,7 @@
+{
+  "description": "Anne Arundel printed county table row 15,000-15,050: 2.7% x midpoint 15,025 = 405.68 -> 406 (printed-row exact).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 15020, "mdSubdivision": "anne_arundel" },
+  "asOf": "2025-12-31",
+  "target": "us.md.local_tax",
+  "expect": { "valueCents": "40600" }
+}

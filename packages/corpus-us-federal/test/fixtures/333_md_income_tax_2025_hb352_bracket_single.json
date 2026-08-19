@@ -1,0 +1,7 @@
+{
+  "description": "Maryland H.B. 352 NEW 6.25% bracket (Schedule I): single 600,000 -> 27,135.00 + 6.25% x 100,000 = 33,385.00 (formula method, >= 100,000).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 600000 },
+  "asOf": "2025-12-31",
+  "target": "us.md.income_tax",
+  "expect": { "valueCents": "3338500" }
+}

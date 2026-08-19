@@ -1,0 +1,7 @@
+{
+  "description": "Frederick's enacted CLIFF: 25,001 -> 2.75% x 25,001 = 687.53 -> 688 (the tier rate applies to the WHOLE income, ~+$125 for one extra dollar — verbatim '.0275 for taxpayers who have a taxable net income of at least $25,001').",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 25001, "mdSubdivision": "frederick" },
+  "asOf": "2025-12-31",
+  "target": "us.md.local_tax",
+  "expect": { "valueCents": "68800" }
+}

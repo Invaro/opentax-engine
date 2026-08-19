@@ -1,0 +1,7 @@
+{
+  "description": "Maryland H.B. 352 NEW 6.5% top bracket (Schedule II thresholds are $600k/$1.2M for MFJ): 1,500,000 -> 69,822.50 + 6.5% x 300,000 = 89,322.50 -> 89,323 (half-up to whole dollars).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 1500000 },
+  "asOf": "2025-12-31",
+  "target": "us.md.income_tax",
+  "expect": { "valueCents": "8932300" }
+}

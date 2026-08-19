@@ -1,0 +1,7 @@
+{
+  "description": "Maryland pension exclusion (Worksheet 13A): min(pension 30,000, 41,200 - TOTAL SS/RR 12,000 = 29,200) = 29,200 (the gross SS benefit reduces the cap, not the taxable amount).",
+  "facts": { "filingStatus": "single", "mdQualifyingPension": 30000, "mdSsRrBenefits": 12000 },
+  "asOf": "2025-12-31",
+  "target": "us.md.pension_exclusion",
+  "expect": { "valueCents": "2920000" }
+}
