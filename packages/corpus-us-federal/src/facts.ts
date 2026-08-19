@@ -2965,4 +2965,74 @@ export const facts: FactSpec[] = [
       "ONE spouse's net business income per the MO-1040 p.16 worksheet (Schedule C/E/F + pass-through business income, losses netted — enter 0 if a combined net loss) — us.mo.business_income_deduction subtracts 20% (R.S.Mo. \u00a7 143.022, MO-A Part 1 line 17). In dollars.",
     default: { value: "0", rationale: "Assumed no business income absent contrary input" },
   },
+  {
+    id: "wiIncome",
+    type: "money",
+    description:
+      "Wisconsin income (Form 1 line 7 = federal AGI as adjusted by Schedule I, plus Schedule AD additions, minus Schedule SB subtractions) — drives the sliding standard deduction (us.wi.standard_deduction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 Wisconsin income absent contrary input" },
+  },
+  {
+    id: "wiQualifyingChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Number of federal-EIC qualifying children for the Wisconsin earned income credit (us.wi.eic: 1 → 4%, 2 → 11%, 3+ → 34% of the federal credit; zero children → no Wisconsin credit).",
+    default: { value: "0", rationale: "Assumed no qualifying children absent contrary input" },
+  },
+  {
+    id: "wiFederalEicForWi",
+    type: "money",
+    min: "0",
+    description:
+      "The federal earned income credit AS COMPUTED UNDER WISCONSIN'S IRC (Schedule I Part III recomputation when Part I adjustments exist; otherwise Form 1040 line 27) — the us.wi.eic base. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" },
+  },
+  {
+    id: "wiLowerQualifiedEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "The LESSER-earning spouse's qualified earned income from Form 1 Schedule 2 line 5 (earned income minus the listed federal Schedule 1 adjustments and any Wisconsin disability exclusion) — us.wi.married_couple_credit takes 3% up to $480. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualified earned income absent contrary input" },
+  },
+  {
+    id: "wiRentHeatIncluded",
+    type: "money",
+    min: "0",
+    description:
+      "2025 rent paid on the principal Wisconsin residence where HEAT WAS INCLUDED in rent (Form 1 line 16a) — credited at 2.4% via the printed table's $100-row midpoints (us.wi.school_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no heat-included rent absent contrary input" },
+  },
+  {
+    id: "wiRentHeatNotIncluded",
+    type: "money",
+    min: "0",
+    description:
+      "2025 rent paid where heat was NOT included (Form 1 line 16a) — credited at 3.0% via the printed table. In dollars.",
+    default: { value: "0", rationale: "Assumed no heat-not-included rent absent contrary input" },
+  },
+  {
+    id: "wiPropertyTaxesPaid",
+    type: "money",
+    min: "0",
+    description:
+      "2025 property taxes paid on the principal Wisconsin residence (Form 1 line 16b) — credited at 12% via the printed table; the combined 16a+16b credit caps at $300 ($150 MFS). In dollars.",
+    default: { value: "0", rationale: "Assumed no property taxes absent contrary input" },
+  },
+  {
+    id: "wiRetirementIncome67",
+    type: "money",
+    min: "0",
+    description:
+      "Federally taxable qualified-plan/IRA retirement income of the 67+ individual(s) NOT already subtracted on Schedule SB lines 12-15 — the NEW 2025 Act 15 subtraction (us.wi.retirement_subtraction_67, $24,000/$48,000 cap). CAUTION: claiming it forfeits every Form 1 credit (lines 13-20, 30-35, Schedule CR). In dollars.",
+    default: { value: "0", rationale: "Assumed no 67+ retirement income absent contrary input" },
+  },
+  {
+    id: "wiBothSpouses67",
+    type: "bool",
+    description:
+      "BOTH spouses on a joint Wisconsin return were at least 67 on December 31 — raises the Act 15 retirement subtraction cap from $24,000 to $48,000 regardless of which spouse received the income.",
+    default: { value: false, rationale: "Assumed not both spouses 67+ absent contrary attestation" },
+  },
 ];

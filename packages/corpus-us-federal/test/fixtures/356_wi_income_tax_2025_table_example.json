@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin printed tax-table example (instructions p.38): MFJ taxable income 28,653 -> row 28,600-28,700 -> $1,084 (= schedule at midpoint 28,650: 685.30 + 4.4% x 9,070 = 1,084.38).",
+  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 28653 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.income_tax",
+  "expect": { "valueCents": "108400" }
+}

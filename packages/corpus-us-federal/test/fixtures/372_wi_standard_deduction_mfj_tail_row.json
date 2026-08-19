@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin standard deduction special narrow tail row 155,000-155,169 (MFJ only, printed $17): income 155,100 -> the row's own midpoint 155,084.50 -> 25,110 - 19.778% x 126,874.50 = 16.76 -> 17 (the generic $500-row midpoint would wrongly give $0).",
+  "facts": { "filingStatus": "mfj", "wiIncome": 155100 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.standard_deduction",
+  "expect": { "valueCents": "1700" }
+}

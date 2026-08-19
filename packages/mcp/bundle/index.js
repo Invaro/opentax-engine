@@ -22547,7 +22547,8 @@ var JURISDICTION_NAMES = {
   "us.ny": "new york ny nyc it-201",
   "us.va": "virginia va form 760",
   "us.md": "maryland md form 502 baltimore county local",
-  "us.mo": "missouri mo mo-1040 kansas city st louis"
+  "us.mo": "missouri mo mo-1040 kansas city st louis",
+  "us.wi": "wisconsin wi form 1 madison milwaukee"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -23473,6 +23474,166 @@ function composeMO(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/wi.js
+var EXEMPTION2 = 70000n;
+var EXEMPTION_65 = 25000n;
+var DEP_STD_MIN = 135000n;
+var DEP_STD_ADDITION = 45000n;
+function composeWI(input, evalStateTax, notes) {
+  const joint = isJoint(input);
+  const mfs = isMfs(input);
+  const fagi = c(input.federalAGI);
+  const l1 = rd(fagi);
+  const l2 = rd(c(input.wiScheduleIAdjustments));
+  if (l2 !== 0n)
+    notes.push(`WI Schedule I adjustment ${fmtD(l2)} (Wisconsin conforms to the IRC as of December 31, 2022 \u2014 post-2022 federal changes incl. the 2025 OBBBA need Schedule I conversion)`);
+  const l3 = l1 + l2;
+  const l4 = rd(c(input.additions));
+  const l5 = l3 + l4;
+  const ss2 = rd(c(input.taxableSocialSecurity));
+  if (ss2 > 0n)
+    notes.push(`WI SB line 4: federally taxable Social Security ${fmtD(ss2)} subtracted (Wisconsin never taxes it)`);
+  const cgSub = rd(c(input.wiCapitalGainSubtraction));
+  if (cgSub > 0n)
+    notes.push(`WI SB line 5 capital gain subtraction ${fmtD(cgSub)} (Schedule WD: 30% net LTCG exclusion, 60% farm; loss limit $3,000/$1,500-MFS for TY2023+)`);
+  const ret67 = c(input.wiRetirement67Income) > 0n ? rd(evalStateTax("us.wi.retirement_subtraction_67", 0n, {
+    wiRetirementIncome67: c(input.wiRetirement67Income),
+    wiBothSpouses67: input.wiBothSpouses67 === true
+  })) : 0n;
+  const creditsForfeited = ret67 > 0n;
+  if (creditsForfeited)
+    notes.push(`WI SB line 16 retirement subtraction ${fmtD(ret67)} (2025 Act 15, 67+, cap $${input.wiBothSpouses67 === true && joint ? "48,000" : "24,000"}) \u2014 ALL Form 1 credits on lines 13-20 and 30-35 and Schedule CR are FORFEITED (including carryforwards); compare both ways before electing`);
+  const l6 = rd(c(input.subtractions)) + ss2 + cgSub + ret67;
+  const l7 = l5 - l6;
+  let l8 = rd(evalStateTax("us.wi.standard_deduction", 0n, { wiIncome: l7 }));
+  if (input.claimedAsDependent === true) {
+    const earned2 = rd(c(input.wiDependentEarnedIncome));
+    const limit = earned2 + DEP_STD_ADDITION < DEP_STD_MIN ? DEP_STD_MIN : earned2 + DEP_STD_ADDITION;
+    if (limit < l8) {
+      l8 = limit;
+      notes.push(`WI dependent standard deduction ${fmtD(l8)} (worksheet: greater of $1,350 or earned income + $450, capped at the table amount)`);
+    }
+  }
+  const l9 = max02(l7 - l8);
+  const nExemptions = input.exemptions ?? (joint ? 2 : 1);
+  const boxes65 = BigInt(input.wiAge65Boxes ?? 0);
+  const l10a = BigInt(nExemptions) * EXEMPTION2;
+  const l10b = boxes65 * EXEMPTION_65;
+  const l10c = l10a + l10b;
+  if (input.claimedAsDependent === true && nExemptions > 0)
+    notes.push("WI exemptions: a filer claimable as a dependent gets NO $700 exemption for themself \u2014 the exemptions count should exclude them (line 10a instructions)");
+  if (boxes65 > 0n && nExemptions === 0)
+    notes.push("WI line 10b: the $250 age-65 exemption is allowed only for a person allowed the $700 line 10a exemption \u2014 verify the boxes");
+  const l11 = max02(l9 - l10c);
+  const l12 = rd(evalStateTax("us.wi.income_tax", l11));
+  const forfeit = (v, label) => {
+    if (creditsForfeited && v > 0n) {
+      notes.push(`WI ${label} forced to $0 \u2014 forfeited by the SB line 16 retirement subtraction election`);
+      return 0n;
+    }
+    return v;
+  };
+  const itemizedComponents = rd(c(input.wiItemizedComponents));
+  const l13 = forfeit(itemizedComponents > l8 ? rd((itemizedComponents - l8) * 5n / 100n) : 0n, "itemized deduction credit");
+  const l14 = forfeit(rd(c(input.wi2441Credit)), "additional child and dependent care credit");
+  const l15 = forfeit(rd(rd(c(input.wiBlindWorkerExpenses)) * 50n / 100n), "blind worker transportation credit");
+  const sptcInputs = c(input.wiRentHeatIncluded) + c(input.wiRentHeatNotIncluded) + c(input.wiPropertyTaxesPaid);
+  let l16 = forfeit(sptcInputs > 0n ? rd(evalStateTax("us.wi.school_property_tax_credit", 0n, {
+    wiRentHeatIncluded: c(input.wiRentHeatIncluded),
+    wiRentHeatNotIncluded: c(input.wiRentHeatNotIncluded),
+    wiPropertyTaxesPaid: c(input.wiPropertyTaxesPaid)
+  })) : 0n, "school property tax credit");
+  if (input.wiMarriedHoh === true && l16 > 15000n) {
+    l16 = 15000n;
+    notes.push("WI school property tax credit capped at $150: 'Head of household, married' filers share the MFS cap (instructions p.18)");
+  }
+  if (l16 > 0n && c(input.wiVeteransCredit) > 0n) {
+    notes.push("WI conflict: the school property tax credit is NOT claimable when the line 34 veterans and surviving spouses credit is claimed (instructions p.18) \u2014 resolve before filing");
+  }
+  const l17 = 0n;
+  let l18 = 0n;
+  if (c(input.wiLowerQualifiedEarnedIncome) > 0n) {
+    if (!joint)
+      notes.push("WI married couple credit $0: joint returns with two earners only");
+    else
+      l18 = forfeit(rd(evalStateTax("us.wi.married_couple_credit", 0n, { wiLowerQualifiedEarnedIncome: c(input.wiLowerQualifiedEarnedIncome) })), "married couple credit");
+  }
+  const l19 = forfeit(rd(c(input.nonrefundableCredits)), "Schedule CR nonrefundable credits");
+  const l20 = forfeit(rd(c(input.wiOtherStateCredit)), "credit for net tax paid to another state");
+  const l21 = l13 + l14 + l15 + l16 + l17 + l18 + l19 + l20;
+  const l22 = max02(l12 - l21);
+  const l23 = rd(c(input.useTax));
+  const l24 = rd(c(input.wiDonations));
+  const l25 = rd(rd(c(input.wiFederalRetirementPenalties)) * 33n / 100n);
+  if (l25 > 0n)
+    notes.push(`WI line 25: 33% of the federal retirement-plan/IRA/MSA penalties = ${fmtD(l25)}`);
+  const l26 = rd(c(input.wiOtherPenalties));
+  const l27 = l22 + l23 + l24 + l25 + l26;
+  const l28 = rd(c(input.stateWithholding));
+  const l29 = rd(c(input.estimatedPayments)) + rd(c(input.priorYearOverpaymentCredited));
+  let l30 = 0n;
+  const eicBase = input.wiFederalEicForWi !== void 0 ? c(input.wiFederalEicForWi) : c(input.federalEITC);
+  const kids = input.wiEicQualifyingChildren ?? 0;
+  if (eicBase > 0n && kids > 0) {
+    if (mfs)
+      notes.push("WI earned income credit $0: married filing separately is ineligible (unless IRC \xA7 7703(b) applies \u2014 then file as 'head of household, married')");
+    else {
+      l30 = rd(evalStateTax("us.wi.eic", 0n, { wiFederalEicForWi: eicBase, wiQualifyingChildren: kids }));
+      if (creditsForfeited) {
+        notes.push("WI earned income credit forced to $0 \u2014 forfeited by the SB line 16 retirement subtraction election");
+        l30 = 0n;
+      } else
+        notes.push(`WI earned income credit ${fmtD(l30)} (${kids >= 3 ? 34 : kids === 2 ? 11 : 4}% of the federal EIC as computed under Wisconsin's IRC)`);
+    }
+  } else if (eicBase > 0n && kids === 0)
+    notes.push("WI earned income credit $0: no credit without a qualifying child (unlike federal)");
+  if (c(input.wiVeteransCredit) > 0n && (c(input.wiFarmlandCredit) > 0n || c(input.wiHomesteadCredit) > 0n)) {
+    notes.push("WI conflict: farmland preservation and homestead credits are NOT claimable together with the veterans and surviving spouses credit \u2014 resolve before filing");
+  }
+  const l31 = forfeit(rd(c(input.wiFarmlandCredit)), "farmland preservation credit");
+  const l32 = forfeit(rd(c(input.wiRepaymentCredit)), "repayment credit");
+  const l33 = forfeit(rd(c(input.wiHomesteadCredit)), "homestead credit");
+  const l34 = forfeit(rd(c(input.wiVeteransCredit)), "veterans and surviving spouses property tax credit");
+  const l35 = forfeit(rd(c(input.refundableCredits)), "Schedule CR refundable credits");
+  const l37 = l28 + l29 + l30 + l31 + l32 + l33 + l34 + l35;
+  const l39 = l37;
+  const l40 = max02(l39 - l27);
+  const l42 = rd(c(input.wiAppliedToNextYear));
+  const l41 = max02(l40 - l42);
+  const l43 = max02(l27 - l39);
+  const l44 = rd(c(input.wiScheduleUInterest));
+  const l45 = l43 + l44;
+  return {
+    "1_federal_agi": fmtD(l1),
+    ...l2 !== 0n ? { "2_schedule_i_adjustments": fmtD(l2) } : {},
+    "4_additions": fmtD(l4),
+    "6_subtractions": fmtD(l6),
+    "7_wisconsin_income": fmtD(l7),
+    "8_standard_deduction": fmtD(l8),
+    "9_after_deduction": fmtD(l9),
+    "10c_exemptions": fmtD(l10c),
+    "11_taxable_income": fmtD(l11),
+    "12_tax": fmtD(l12),
+    "13_itemized_deduction_credit": fmtD(l13),
+    ...l14 !== 0n ? { "14_additional_cdcc": fmtD(l14) } : {},
+    "16_school_property_tax_credit": fmtD(l16),
+    "18_married_couple_credit": fmtD(l18),
+    "21_total_nonrefundable_credits": fmtD(l21),
+    "22_net_tax": fmtD(l22),
+    ...l23 !== 0n ? { "23_sales_use_tax": fmtD(l23) } : {},
+    ...l25 !== 0n ? { "25_retirement_penalties_33pct": fmtD(l25) } : {},
+    "27_total_tax": fmtD(l27),
+    "28_withholding": fmtD(l28),
+    "30_earned_income_credit": fmtD(l30),
+    ...l33 !== 0n ? { "33_homestead_credit": fmtD(l33) } : {},
+    "37_total_payments": fmtD(l37),
+    "40_overpaid": fmtD(l40),
+    "41_refund": fmtD(l41),
+    "43_underpaid": fmtD(l43),
+    "45_amount_owed": fmtD(l45)
+  };
+}
+
 // ../compose/dist/nc.js
 function composeNC(input, evalStateTax, notes) {
   const fagi = rd(c(input.federalAGI));
@@ -24295,7 +24456,7 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -24595,7 +24756,35 @@ var mo = {
   mo529Deposit: usd.optional().describe("MO-1040 line 52: refund deposited to a Missouri 529 (MOST) account (minimum $25, Form 5632)"),
   moUnderpaymentPenalty: usd.optional().describe("MO-1040 line 55: Form MO-2210 underpayment penalty (90% / 66\u2154%-farmer safe harbors)")
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo };
+var wi = {
+  wiScheduleIAdjustments: usd.optional().describe("Form 1 line 2: Schedule I net adjustment (may be negative) converting federal AGI to Wisconsin's IRC \u2014 Wisconsin conforms to the Code as of December 31, 2022, so post-2022 federal changes (incl. the 2025 OBBBA) need Schedule I conversion per its instructions"),
+  wiCapitalGainSubtraction: usd.optional().describe("Schedule SB line 5 capital gain/loss subtraction from Schedule WD (30% net long-term gain exclusion, 60% farm assets; capital loss limit $3,000/$1,500-MFS since TY2023; simple mutual-fund/REIT distributions may take 30% directly)"),
+  wiRetirement67Income: usd.optional().describe("qualified-plan/IRA retirement income of the 67+ individual(s) for the NEW 2025 Act 15 subtraction (SB line 16, $24,000/$48,000 cap) \u2014 CAUTION: claiming it FORFEITS every credit on lines 13-20, 30-35, and Schedule CR (the composer enforces this); compare both ways before passing"),
+  wiBothSpouses67: external_exports.boolean().optional().describe("both spouses 67+ on December 31 (joint returns) \u2014 raises the SB-16 cap to $48,000"),
+  wiDependentEarnedIncome: usd.optional().describe("a dependent-claimed filer's earned income for the Standard Deduction Worksheet for Dependents (deduction = smaller of the table amount or max($1,350, earned + $450))"),
+  wiAge65Boxes: external_exports.number().int().optional().describe("count of 65-or-older boxes (taxpayer/spouse) \u2014 $250 each on line 10b (Wisconsin has no blindness exemption; the $700 line 10a exemptions come from the shared `exemptions` count)"),
+  wiItemizedComponents: usd.optional().describe("Form 1 Schedule 1 lines 1-4 total: federal Schedule A medical + interest (EXCLUDING out-of-state second homes, boat residences, and U.S.-security carrying interest) + charity + casualty \u2014 the composer takes 5% of the excess over the line 8 standard deduction"),
+  wi2441Credit: usd.optional().describe("Schedule WI-2441 line 14 \u2014 Wisconsin's additional child and dependent care credit (its own recomputation; transcribe the schedule's result)"),
+  wiBlindWorkerExpenses: usd.optional().describe("blind worker transportation services qualifying expenses (Form 1 line 15 credits 50%)"),
+  wiRentHeatIncluded: usd.optional().describe("2025 rent on the principal Wisconsin residence with heat INCLUDED (line 16a; 2.4% via the printed table's $100-row midpoints)"),
+  wiRentHeatNotIncluded: usd.optional().describe("rent with heat NOT included (line 16a; 3.0% table)"),
+  wiPropertyTaxesPaid: usd.optional().describe("property taxes on the principal residence (line 16b; 12% via the printed $25-wide-row table \u2014 a different granularity from the $100-row rent tables) \u2014 combined 16a+16b credit caps at $300 ($150 MFS or married-HOH); not claimable with the line 34 veterans credit"),
+  wiMarriedHoh: external_exports.boolean().optional().describe("the Form 1 'Head of household, married' checkbox applies \u2014 shares the MFS $150 school property tax credit cap"),
+  wiLowerQualifiedEarnedIncome: usd.optional().describe("the LESSER-earning spouse's Schedule 2 line 5 qualified earned income (earned income minus the listed federal Schedule 1 adjustments) \u2014 married couple credit = 3% up to $480 (joint returns, both spouses employed)"),
+  wiOtherStateCredit: usd.optional().describe("Form 1 line 20: net income tax paid to another state (Schedule OS, agent-computed)"),
+  wiDonations: usd.optional().describe("Form 1 line 24: Schedule 3 fund donations total"),
+  wiFederalRetirementPenalties: usd.optional().describe("the FEDERAL penalties on IRAs/retirement plans/MSAs etc. \u2014 Wisconsin charges 33% of them on line 25 ('x .33' printed)"),
+  wiOtherPenalties: usd.optional().describe("Form 1 line 26 other penalties (see instructions p.25)"),
+  wiEicQualifyingChildren: external_exports.number().int().optional().describe("federal-EIC qualifying children \u2014 Wisconsin EIC = 4%/11%/34% of the federal credit for 1/2/3+ children (NO childless credit; MFS ineligible; full-year residents only)"),
+  wiFederalEicForWi: usd.optional().describe("the federal EIC AS COMPUTED UNDER WISCONSIN'S IRC (Schedule I Part III recomputation when Part I adjustments exist) \u2014 defaults to the shared federalEITC when omitted"),
+  wiFarmlandCredit: usd.optional().describe("Form 1 line 31: farmland preservation credit (Schedules FC/FC-A, transcribed)"),
+  wiRepaymentCredit: usd.optional().describe("Form 1 line 32: repayment of income previously taxed credit"),
+  wiHomesteadCredit: usd.optional().describe("Form 1 line 33: homestead credit (Schedule H/H-EZ circuit breaker, agent-computed, refundable)"),
+  wiVeteransCredit: usd.optional().describe("Form 1 line 34: eligible veterans and surviving spouses property tax credit"),
+  wiAppliedToNextYear: usd.optional().describe("Form 1 line 42: overpayment applied to 2026 estimated tax"),
+  wiScheduleUInterest: usd.optional().describe("Form 1 line 44: Schedule U underpayment interest")
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -24625,7 +24814,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -24647,6 +24836,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeMD(input, evalStateTax, notes), notes };
   if (j === "mo")
     return { lines: composeMO(input, evalStateTax, notes), notes };
+  if (j === "wi")
+    return { lines: composeWI(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -27490,6 +27681,67 @@ var facts = [
     min: "0",
     description: "ONE spouse's net business income per the MO-1040 p.16 worksheet (Schedule C/E/F + pass-through business income, losses netted \u2014 enter 0 if a combined net loss) \u2014 us.mo.business_income_deduction subtracts 20% (R.S.Mo. \xA7 143.022, MO-A Part 1 line 17). In dollars.",
     default: { value: "0", rationale: "Assumed no business income absent contrary input" }
+  },
+  {
+    id: "wiIncome",
+    type: "money",
+    description: "Wisconsin income (Form 1 line 7 = federal AGI as adjusted by Schedule I, plus Schedule AD additions, minus Schedule SB subtractions) \u2014 drives the sliding standard deduction (us.wi.standard_deduction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 Wisconsin income absent contrary input" }
+  },
+  {
+    id: "wiQualifyingChildren",
+    type: "int",
+    min: "0",
+    description: "Number of federal-EIC qualifying children for the Wisconsin earned income credit (us.wi.eic: 1 \u2192 4%, 2 \u2192 11%, 3+ \u2192 34% of the federal credit; zero children \u2192 no Wisconsin credit).",
+    default: { value: "0", rationale: "Assumed no qualifying children absent contrary input" }
+  },
+  {
+    id: "wiFederalEicForWi",
+    type: "money",
+    min: "0",
+    description: "The federal earned income credit AS COMPUTED UNDER WISCONSIN'S IRC (Schedule I Part III recomputation when Part I adjustments exist; otherwise Form 1040 line 27) \u2014 the us.wi.eic base. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" }
+  },
+  {
+    id: "wiLowerQualifiedEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "The LESSER-earning spouse's qualified earned income from Form 1 Schedule 2 line 5 (earned income minus the listed federal Schedule 1 adjustments and any Wisconsin disability exclusion) \u2014 us.wi.married_couple_credit takes 3% up to $480. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualified earned income absent contrary input" }
+  },
+  {
+    id: "wiRentHeatIncluded",
+    type: "money",
+    min: "0",
+    description: "2025 rent paid on the principal Wisconsin residence where HEAT WAS INCLUDED in rent (Form 1 line 16a) \u2014 credited at 2.4% via the printed table's $100-row midpoints (us.wi.school_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no heat-included rent absent contrary input" }
+  },
+  {
+    id: "wiRentHeatNotIncluded",
+    type: "money",
+    min: "0",
+    description: "2025 rent paid where heat was NOT included (Form 1 line 16a) \u2014 credited at 3.0% via the printed table. In dollars.",
+    default: { value: "0", rationale: "Assumed no heat-not-included rent absent contrary input" }
+  },
+  {
+    id: "wiPropertyTaxesPaid",
+    type: "money",
+    min: "0",
+    description: "2025 property taxes paid on the principal Wisconsin residence (Form 1 line 16b) \u2014 credited at 12% via the printed table; the combined 16a+16b credit caps at $300 ($150 MFS). In dollars.",
+    default: { value: "0", rationale: "Assumed no property taxes absent contrary input" }
+  },
+  {
+    id: "wiRetirementIncome67",
+    type: "money",
+    min: "0",
+    description: "Federally taxable qualified-plan/IRA retirement income of the 67+ individual(s) NOT already subtracted on Schedule SB lines 12-15 \u2014 the NEW 2025 Act 15 subtraction (us.wi.retirement_subtraction_67, $24,000/$48,000 cap). CAUTION: claiming it forfeits every Form 1 credit (lines 13-20, 30-35, Schedule CR). In dollars.",
+    default: { value: "0", rationale: "Assumed no 67+ retirement income absent contrary input" }
+  },
+  {
+    id: "wiBothSpouses67",
+    type: "bool",
+    description: "BOTH spouses on a joint Wisconsin return were at least 67 on December 31 \u2014 raises the Act 15 retirement subtraction cap from $24,000 to $48,000 regardless of which spouse received the income.",
+    default: { value: false, rationale: "Assumed not both spouses 67+ absent contrary attestation" }
   }
 ];
 
@@ -27851,7 +28103,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt5 = (cents) => ({
+  const lt6 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -27870,22 +28122,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt5("500"),
+    cond: lt6("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt5("1500"),
+      cond: lt6("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt5("2500"),
+        cond: lt6("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt5("300000"),
+          cond: lt6("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -38516,6 +38768,341 @@ var moRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-wi.js
+var rd9 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var lt5 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
+var iff3 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt2 = (base, count) => ({ kind: "mulInt", base, count });
+var isStatus11 = (v) => ({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: v } });
+var SINGLE_HOH = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "35", den: "1000" } },
+  { thresholdCents: "1468000", fixedCents: "51380", rate: { num: "44", den: "1000" } },
+  { thresholdCents: "5048000", fixedCents: "208900", rate: { num: "53", den: "1000" } },
+  { thresholdCents: "32329000", fixedCents: "1654793", rate: { num: "765", den: "10000" } }
+];
+var MFJ = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "35", den: "1000" } },
+  { thresholdCents: "1958000", fixedCents: "68530", rate: { num: "44", den: "1000" } },
+  { thresholdCents: "6730000", fixedCents: "278498", rate: { num: "53", den: "1000" } },
+  { thresholdCents: "43106000", fixedCents: "2206426", rate: { num: "765", den: "10000" } }
+];
+var MFS = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "35", den: "1000" } },
+  { thresholdCents: "979000", fixedCents: "34265", rate: { num: "44", den: "1000" } },
+  { thresholdCents: "3365000", fixedCents: "139249", rate: { num: "53", den: "1000" } },
+  { thresholdCents: "21553000", fixedCents: "1103213", rate: { num: "765", den: "10000" } }
+];
+var wiRules = [
+  {
+    id: "us.wi.income_tax",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin income tax \u2014 2025 four-bracket schedules with the Act 15 widened 4.4% bracket and the Tax Table convention (Form 1 line 12)",
+    citation: {
+      source: "Wis. Stat. \xA7 71.06 as amended by 2025 Act 15 (signed July 3, 2025, retroactive to TY2025); 2025 Form 1 instructions: Tax Table pp.38-43, Tax Computation Worksheet p.44",
+      section: "Wis. Stat. \xA7 71.06; Form 1 line 12; 2025 Act 15",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-inst.pdf",
+      excerpt: "2025 rate schedules (bracket boundaries re-derived from the printed \u2265$100,000 Tax Computation Worksheet subtraction constants AND confirmed against printed tax-table rows; the 5.3% constants agree to the cent everywhere, and the 7.65% constants imply single/MFS top anchors of $16,547.925/$11,032.125 \u2014 half a cent under this rule's marginal $16,547.93/$11,032.13, so literal worksheet arithmetic can differ by $1 at ~$2,000 intervals of top-bracket single/MFS income; MFJ is exact everywhere): SINGLE and HEAD OF HOUSEHOLD (same schedule; HOH differs only in the standard deduction): 3.5% to $14,680; $513.80 + 4.4% over $14,680 to $50,480; $2,089.00 + 5.3% over $50,480 to $323,290; $16,547.93 + 7.65% over $323,290. MARRIED FILING JOINTLY: 3.5% to $19,580; $685.30 + 4.4% to $67,300; $2,784.98 + 5.3% to $431,060; $22,064.26 + 7.65% above. MARRIED FILING SEPARATELY: 3.5% to $9,790; $342.65 + 4.4% to $33,650; $1,392.49 + 5.3% to $215,530; $11,032.13 + 7.65% above. 2025 ACT 15 (retroactive to TY2025): the 4.4% bracket's CEILING was RAISED by $21,110 single / $28,150 MFJ (to $50,480 / $67,300 \u2014 pre-Act surveys print the old, narrower bracket; the printed 2025 forms control). PRINTED \u2265$100,000 WORKSHEET (verbatim subtraction-constant form, arithmetically identical to the schedules above): single/HOH $100,000\u2013$323,290 \u2192 5.3% \xD7 income \u2212 $586.44; $323,290+ \u2192 7.65% \xD7 income \u2212 $8,183.76; MFJ \u2212 $781.92 / \u2212 $10,911.83 (break $431,060); MFS \u2212 $390.96 / \u2212 $5,455.92 (break $215,530). METHOD: taxable income UNDER $100,000 MUST use the printed Tax Table ('Use this Tax Table if your taxable income is less than $100,000') \u2014 three status columns (single/HOH share one), row value = the schedule evaluated at the ROW MIDPOINT rounded half-up; rows are $20-wide ($0\u2013$20 \u2192 $0, $20\u2013$40 \u2192 $1), then $40\u2013$100, $100\u2013$200, and $100-wide thereafter \u2014 verified against 8 printed rows incl. the instructions' own example ($28,653 MFJ \u2192 row 28,600\u201328,700 \u2192 $1,084) and boundary-straddling rows (67,300\u201367,400: single $2,983 / MFJ $2,788 / MFS $3,179, pinning all three schedules' boundaries). $100,000+ uses the worksheet (whole dollars). useFormulaMethod=true evaluates the raw schedule at the exact income below $100,000. Wisconsin has NO local income taxes. NONRESIDENT/PART-YEAR: Form 1NPR (not composed \u2014 this target is the full-year-resident Form 1 tax on line 11 taxable income). [Input: Wisconsin taxable income (Form 1 line 11).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      tableThreshold: { value: "10000000", type: "money" },
+      // $100,000
+      act15SecondBracketCeilingSingle: { value: "5048000", type: "money" },
+      // $50,480
+      act15SecondBracketCeilingJoint: { value: "6730000", type: "money" },
+      // $67,300
+      topRatePctTimes100: { value: "765", type: "int" }
+      // 7.65%
+    },
+    formula: (() => {
+      const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
+      const sched = (b) => iff3(isStatus11("mfj"), printedSchedule(b, MFJ), iff3(isStatus11("mfs"), printedSchedule(b, MFS), printedSchedule(b, SINGLE_HOH)));
+      const mid = {
+        kind: "add",
+        args: [
+          mulInt2(money33("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }),
+          money33("5000")
+        ]
+      };
+      const table2 = iff3(lt5(base, money33("2000")), sched(money33("1000")), iff3(lt5(base, money33("4000")), sched(money33("3000")), iff3(lt5(base, money33("10000")), sched(money33("7000")), sched(mid))));
+      return rd9(iff3({ kind: "and", args: [lt5(base, money33("10000000")), { kind: "not", arg: fact36("useFormulaMethod") }] }, table2, sched(base)));
+    })()
+  },
+  {
+    id: "us.wi.standard_deduction",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin sliding standard deduction \u2014 2025 phase-out formulas with the printed table's $500-row midpoint convention (Form 1 line 8)",
+    citation: {
+      source: "Wis. Stat. \xA7 71.05(22) (2025 indexed amounts); 2025 Form 1 instructions, Standard Deduction Table pp.35-37; 2025 Form 1-ES instructions (published formulas)",
+      section: "Wis. Stat. \xA7 71.05(22); Form 1 line 8; 2025 Standard Deduction Table",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-inst.pdf",
+      excerpt: "2025 sliding standard deduction formulas (DOR-published in the 2025 Form 1-ES instructions, keyed to WISCONSIN INCOME \u2014 Form 1 line 7): SINGLE: income under $19,550 \u2192 $13,560; $19,550\u2013$132,550 \u2192 $13,560 \u2212 12.0% \xD7 (income \u2212 $19,550); over \u2192 $0. MARRIED FILING JOINTLY: under $28,210 \u2192 $25,110; to $155,169 \u2192 $25,110 \u2212 19.778% \xD7 (income \u2212 $28,210); over \u2192 $0. MARRIED FILING SEPARATELY: under $13,390 \u2192 $11,930; to $73,710 \u2192 $11,930 \u2212 19.778% \xD7 (income \u2212 $13,390); over \u2192 $0. HEAD OF HOUSEHOLD: under $19,550 \u2192 $17,520; to $57,210 \u2192 $17,520 \u2212 22.515% \xD7 (income \u2212 $19,550); ABOVE $57,210 the HOH filer takes the SINGLE deduction \u2014 i.e. HOH = the GREATER of the HOH formula or the single formula (verified: the printed table's HOH column equals the single column from ~$57,210 up, e.g. row 93,500\u201394,000 \u2192 $4,656 in both). TABLE CONVENTION (printed Standard Deduction Table, verified against 12 rows): rows are $500-wide (first row $0\u2013$13,390, then $13,390\u2013$13,500; plus one special NARROW tail row $155,000\u2013$155,169 \u2192 MFJ $17 at its own midpoint $155,084.50 \u2014 the single/MFS zero-crossings get NO special row), each row = the formula at the ROW MIDPOINT rounded half-up (row 48,000\u201348,500 MFJ: 25,110 \u2212 19.778% \xD7 20,040 = $21,146.49 \u2192 $21,146; row 44,000\u201344,500 MFS: $5,826.51 \u2192 $5,827 \u2014 both printed-exact). useFormulaMethod=true evaluates the formula at the exact income instead. DEPENDENT FILERS (checkbox on line 8): the deduction is the SMALLER of the table amount or max($1,350, earned income + $450) per the Standard Deduction Worksheet for Dependents \u2014 the earned-income limb is composed on the return, not here. Amounts are indexed annually under \xA7 71.05(22)(ds). [Input: wiIncome = Form 1 line 7 Wisconsin income (may be negative \u2014 treated as $0).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      maxSingle: { value: "1356000", type: "money" },
+      // $13,560
+      maxJoint: { value: "2511000", type: "money" },
+      // $25,110
+      maxMfs: { value: "1193000", type: "money" },
+      // $11,930
+      maxHoh: { value: "1752000", type: "money" },
+      // $17,520
+      phaseStartSingleHoh: { value: "1955000", type: "money" },
+      // $19,550
+      phaseStartJoint: { value: "2821000", type: "money" },
+      // $28,210
+      phaseStartMfs: { value: "1339000", type: "money" },
+      // $13,390
+      dependentMinimum: { value: "135000", type: "money" },
+      // $1,350 (worksheet)
+      dependentEarnedAddition: { value: "45000", type: "money" }
+      // $450
+    },
+    formula: (() => {
+      const income = { kind: "max0", arg: fact36("wiIncome") };
+      const phase = (maxC, rate2, startC, x) => ({
+        kind: "max0",
+        arg: {
+          kind: "min",
+          args: [
+            money33(maxC),
+            {
+              kind: "sub",
+              left: money33(maxC),
+              right: {
+                kind: "mulRate",
+                base: { kind: "max0", arg: { kind: "sub", left: x, right: money33(startC) } },
+                rate: rate2,
+                round: "half-up"
+              }
+            }
+          ]
+        }
+      });
+      const formulas = (x) => iff3(isStatus11("mfj"), phase("2511000", { num: "19778", den: "100000" }, "2821000", x), iff3(isStatus11("mfs"), phase("1193000", { num: "19778", den: "100000" }, "1339000", x), iff3(
+        { kind: "or", args: [isStatus11("hoh"), isStatus11("qss")] },
+        // HOH: greater of its own steeper phase-out or the single amount
+        {
+          kind: "max",
+          args: [
+            phase("1752000", { num: "22515", den: "100000" }, "1955000", x),
+            phase("1356000", { num: "12", den: "100" }, "1955000", x)
+          ]
+        },
+        phase("1356000", { num: "12", den: "100" }, "1955000", x)
+      )));
+      const mid = {
+        kind: "add",
+        args: [
+          money33("1350000"),
+          mulInt2(money33("50000"), {
+            kind: "stepUnits",
+            value: { kind: "sub", left: income, right: money33("1350000") },
+            unitCents: "50000",
+            mode: "floor"
+          }),
+          money33("25000")
+        ]
+      };
+      const tableIncome = iff3(lt5(income, money33("1339000")), income, iff3(
+        lt5(income, money33("1350000")),
+        money33("1344500"),
+        // printed special tail row 155,000-155,169 (MFJ column -> $17 at
+        // mid $155,084.50; harmless for other statuses, already $0 there)
+        iff3({ kind: "and", args: [{ kind: "cmp", op: "ge", left: income, right: money33("15500000") }, lt5(income, money33("15516900"))] }, money33("15508450"), mid)
+      ));
+      return rd9(formulas(iff3(fact36("useFormulaMethod"), income, tableIncome)));
+    })()
+  },
+  {
+    id: "us.wi.eic",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin earned income credit \u2014 4% / 11% / 34% of the federal EIC by number of qualifying children (Form 1 line 30, refundable)",
+    citation: {
+      source: "Wis. Stat. \xA7 71.07(9e); 2025 Form 1 instructions, Line 30 (Steps 1-4)",
+      section: "Wis. Stat. \xA7 71.07(9e); Form 1 line 30",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-inst.pdf",
+      excerpt: "Line 30 (2025 instructions, verbatim Step 3 table): 1 qualifying child \u2192 4%; 2 \u2192 11%; 3 or more \u2192 34% of the federal earned income credit. NO credit with zero qualifying children. REFUNDABLE. Requirements: legal Wisconsin resident for the ENTIRE year; MFS filers are INELIGIBLE unless they meet IRC \xA7 7703(b) (then Wisconsin status is 'head of household, married'). CONFORMITY WRINKLE (verbatim): ''Federal earned income credit' means the credit computed using the IRC as adopted by Wisconsin' \u2014 a filer with Schedule I Part I adjustments must RECOMPUTE the federal EIC on Schedule I Part III and use that recomputed amount, not the actual Form 1040 line 27 credit. Include federal Schedule EIC (and Form 8867 if paid-prepared). The DOR will compute the credit on request ('EIC' notation). CAUTION: claiming the NEW 67+ retirement income subtraction (Schedule SB line 16) FORFEITS this credit (lines 30-35 restriction). [Inputs: wiFederalEicForWi = the federal EIC as computed under Wisconsin's IRC (Schedule I Part III when applicable, else Form 1040 line 27); wiQualifyingChildren.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      pctOneChild: { value: "4", type: "int" },
+      pctTwoChildren: { value: "11", type: "int" },
+      pctThreePlus: { value: "34", type: "int" }
+    },
+    formula: (() => {
+      const eic = { kind: "max0", arg: fact36("wiFederalEicForWi") };
+      const kids = fact36("wiQualifyingChildren");
+      const pct3 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct3("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct3("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct3("4"), money33("0"))));
+    })()
+  },
+  {
+    id: "us.wi.married_couple_credit",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin married couple credit \u2014 3% of the lesser-earning spouse's qualified earned income, maximum $480 (Form 1 Schedule 2, line 18)",
+    citation: {
+      source: "Wis. Stat. \xA7 71.07(6); 2025 Form 1, Schedule 2 (page 4) and instructions Line 18",
+      section: "Wis. Stat. \xA7 71.07(6); Form 1 line 18 / Schedule 2",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-inst.pdf",
+      excerpt: "Schedule 2 (printed form, verbatim): both spouses must have qualified earned income on a JOINT return (and neither files federal Form 2555/2555-EZ or 4563). Qualified earned income per column = taxable wages/salaries/tips/other employee compensation (NO deferred compensation, interest, dividends, pensions, unemployment, or other unearned income) + net self-employment profit, MINUS the federal Schedule 1 adjustments on lines 12, 16, 20, 24e, 24f, and 24g and any Wisconsin disability income exclusion, floor $0. Line 6 = the SMALLER column, capped at $16,000; credit = 3% \xD7 line 6, 'Do not fill in more than $480.' NONREFUNDABLE (part of the line 21 credit stack). Forfeited if the Schedule SB line 16 retirement subtraction is claimed. [Input: wiLowerQualifiedEarnedIncome = the lesser spouse's Schedule 2 line 5 amount.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      earnedIncomeCap: { value: "1600000", type: "money" },
+      // $16,000
+      creditMax: { value: "48000", type: "money" },
+      // $480
+      ratePct: { value: "3", type: "int" }
+    },
+    formula: {
+      kind: "min",
+      args: [
+        rd9({
+          kind: "mulRate",
+          base: { kind: "min", args: [{ kind: "max0", arg: fact36("wiLowerQualifiedEarnedIncome") }, money33("1600000")] },
+          rate: { num: "3", den: "100" },
+          round: "half-up"
+        }),
+        money33("48000")
+      ]
+    }
+  },
+  {
+    id: "us.wi.school_property_tax_credit",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin school property tax credit \u2014 12% via the printed rent (20%/25% occupancy factors) and property-tax tables, combined maximum $300 (Form 1 lines 16a/16b)",
+    citation: {
+      source: "Wis. Stat. \xA7 71.07(9); 2025 Form 1 instructions, Lines 16a/16b and the printed rent/property-tax credit tables pp.19-20",
+      section: "Wis. Stat. \xA7 71.07(9); Form 1 lines 16a-16b",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-inst.pdf",
+      excerpt: "Two printed lookup tables (decoded and verified against 10 printed rows): RENT (line 16a, $100-WIDE rows, value = rate \xD7 row midpoint, half-up): heat INCLUDED in rent \u2192 2.4% of rent (12% \xD7 the 20% occupancy-cost factor; row $4,300\u2013$4,400 \u2192 $104 = 2.4% \xD7 $4,350); heat NOT included \u2192 3.0% (12% \xD7 25%; same row \u2192 $131; row $3,500\u2013$3,600 \u2192 $106.50 \u2192 $107; first row $1\u2013$100 \u2192 $1/$2). PROPERTY TAXES on the principal residence (line 16b): the homeowner's table uses $25-WIDE rows \u2014 $1\u2013$25 \u2192 $2; $25\u2013$50 \u2192 $5; $100\u2013$125 \u2192 $14; $1,000\u2013$1,025 \u2192 $122; $2,475\u2013$2,500 \u2192 $299; '$2,500 or more' \u2192 the $300 maximum (= 12% \xD7 the $25-row midpoint, half-up \u2014 a DIFFERENT granularity from the rent tables). COMBINED CAP (verbatim): 'combined credit claimed on lines 16a and 16b may not be more than $300 ($150 if married filing a separate return or married filing as head of household)' \u2014 this rule caps $150 for mfs; the 'Head of household, married' checkbox case is composed (the composer applies $150 when wiMarriedHoh is attested). MUTUAL EXCLUSION (instructions p.18): NOT claimable if the filer or spouse claims the veterans and surviving spouses property tax credit (Form 1 line 34) \u2014 composed disclosure. NONREFUNDABLE; rent must be on a principal Wisconsin residence subject to property tax; forfeited under the Schedule SB line 16 retirement subtraction. [Inputs: wiRentHeatIncluded, wiRentHeatNotIncluded, wiPropertyTaxesPaid; filingStatus.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      combinedMax: { value: "30000", type: "money" },
+      // $300
+      combinedMaxMfs: { value: "15000", type: "money" },
+      // $150
+      rentHeatIncludedRatePctTimes10: { value: "24", type: "int" },
+      // 2.4%
+      rentHeatNotIncludedRatePctTimes10: { value: "30", type: "int" },
+      // 3.0%
+      propertyTaxRatePct: { value: "12", type: "int" }
+    },
+    formula: (() => {
+      const midRow = (f, widthCents, halfCents) => ({
+        kind: "add",
+        args: [
+          mulInt2(money33(widthCents), { kind: "stepUnits", value: fact36(f), unitCents: widthCents, mode: "floor" }),
+          money33(halfCents)
+        ]
+      });
+      const part = (f, num, den, widthCents, halfCents) => iff3({ kind: "cmp", op: "le", left: fact36(f), right: money33("0") }, money33("0"), rd9({ kind: "mulRate", base: midRow(f, widthCents, halfCents), rate: { num, den }, round: "half-up" }));
+      const propertyPart = iff3({ kind: "cmp", op: "le", left: fact36("wiPropertyTaxesPaid"), right: money33("0") }, money33("0"), iff3({ kind: "cmp", op: "ge", left: fact36("wiPropertyTaxesPaid"), right: money33("250000") }, money33("30000"), part("wiPropertyTaxesPaid", "12", "100", "2500", "1250")));
+      const total = {
+        kind: "add",
+        args: [
+          part("wiRentHeatIncluded", "24", "1000", "10000", "5000"),
+          part("wiRentHeatNotIncluded", "30", "1000", "10000", "5000"),
+          propertyPart
+        ]
+      };
+      const cap = iff3(isStatus11("mfs"), money33("15000"), money33("30000"));
+      return { kind: "min", args: [total, cap] };
+    })()
+  },
+  {
+    id: "us.wi.retirement_subtraction_67",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin retirement income subtraction (67+) \u2014 up to $24,000/$48,000, NEW under 2025 Act 15, FORFEITS all Form 1 credits (Schedule SB line 16)",
+    citation: {
+      source: "Wis. Stat. \xA7 71.05(6)(b) as created by 2025 Act 15; 2025 Schedule SB instructions, Line 16 'Retirement Income Subtraction (Credits Restricted)'",
+      section: "2025 Act 15; Schedule SB line 16",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-ScheduleSB-Inst.pdf",
+      excerpt: "NEW for TY2025 (2025 Act 15, signed July 3, 2025, retroactive to January 1, 2025). SB line 16 instructions (verbatim): a filer (or spouse on a joint return) 'at least 67 years old as of December 31, 2025' may subtract federally taxable retirement income from a qualified retirement plan or IRA 'that has not been removed from Wisconsin income on lines 12 through 15' (military/uniformed-services, state/local, federal, and railroad retirement are ALREADY fully subtracted on those lines \u2014 no double count). CAP: $24,000 per individual; 'a married couple who file a joint return and are BOTH at least 67 years old... may subtract up to $48,000... regardless of how much retirement income each spouse received' (one-spouse-67 joint returns: $24,000 of the 67+ spouse's income). THE PRICE (verbatim caution): 'if you claim this subtraction, you may not claim ANY tax credit on Schedule CR and on lines 13 through 20 and 30 through 35 of the Form 1' \u2014 that forfeits the itemized deduction credit, WI-2441 child care credit, school property tax credit, married couple credit, other-state credit, the EIC, homestead credit, farmland, and veterans credits, INCLUDING carryforwards in AND out ('completely foregoing any credit... including any amount... carried forward to a future year, and being unable to utilize any credit carried forward from a prior year'). Claim it only when the subtraction's tax saving beats every forfeited credit \u2014 compute both ways. Distinct from the OLD $5,000 subtraction (SB line 17: 65+, federal AGI under $15,000/$30,000, worksheet-limited \u2014 income-restricted, NOT credit-restricted; the two interact through the line-17 worksheet's nontaxable-benefits offset). [Inputs: wiRetirementIncome67 = the eligible qualified-plan/IRA income of the 67+ individual(s); wiBothSpouses67 (joint returns).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      capIndividual: { value: "2400000", type: "money" },
+      // $24,000
+      capJointBoth67: { value: "4800000", type: "money" }
+      // $48,000
+    },
+    formula: {
+      kind: "min",
+      args: [
+        { kind: "max0", arg: fact36("wiRetirementIncome67") },
+        iff3({ kind: "and", args: [isStatus11("mfj"), fact36("wiBothSpouses67")] }, money33("4800000"), money33("2400000"))
+      ]
+    }
+  },
+  {
+    id: "us.wi.parameters",
+    version: 1,
+    jurisdiction: "us.wi",
+    title: "Wisconsin 2025 return parameters \u2014 exemptions, IRC conformity, capital-gain exclusion, subtractions, credits, and composition conventions (Form 1)",
+    citation: {
+      source: "2025 Form 1 + 46-page instructions; 2025 Schedules SB/AD/I/WD/CS/PS and the SB instructions; Wis. Stat. ch. 71 as amended by 2025 Act 15",
+      section: "Form 1; Schedules SB, AD, I, WD; Instructions pp.3-34",
+      url: "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-inst.pdf",
+      excerpt: "IRC CONFORMITY (Instruction p.13/Schedule I, load-bearing for 2025): Wisconsin conforms to the IRC 'as amended to December 31, 2022, with certain exceptions' \u2014 federal changes enacted AFTER 12/31/2022 (including the 2025 OBBBA) do NOT apply unless specifically adopted; Schedule I (Form 1 line 2) converts the federal AGI to Wisconsin's IRC (additions: principal-residence debt discharge, federal bonus/\xA7 179 differences, federal-vs-Wisconsin capital/ordinary gain-loss swaps, certain student loan forgiveness) \u2014 agent-composed per its instructions, and a filer with Part I adjustments must ALSO recompute EIC-relevant amounts (Schedule I Part III). EXEMPTIONS (Form 1 line 10, printed): $700 \xD7 exemptions (self unless claimable as a dependent, spouse on joint returns unless claimable, plus each dependent) + $250 \xD7 each 65-or-older box (taxpayer/spouse only). CAPITAL GAINS (Schedule SB line 5 via Schedule WD): Wisconsin excludes 30% of NET LONG-TERM capital gain (60% for farm assets); simple mutual-fund/REIT capital gain distributions may take the 30% directly without Schedule WD; capital LOSS deduction limit is $3,000 ($1,500 MFS) for TY2023+ (2021 legislation conformed it to federal \u2014 verify the act citation against the Schedule WD instructions; the famous old $500 Wisconsin limit is DEAD, and pre-2023 carryovers flow through Schedule WD). SOCIAL SECURITY: 100% subtracted (SB line 4 = the federally taxable line 6b amount \u2014 Wisconsin never taxes it). Other SB subtractions (transcribed, per-line): state tax refund, U.S. government interest, UNEMPLOYMENT compensation (Wisconsin's OWN base computation per the SB worksheet \u2014 not automatically the federal amount), medical care insurance (100%, exclusions listed), long-term care insurance, TUITION up to $7,649 per student (RAISED for 2025, income phase-out), private school tuition (Schedule PS), Edvest/Tomorrow's Scholar 529 up to $5,130 per beneficiary ($2,560 MFS \u2014 2025 amounts), military/uniformed-services + state/local + federal + railroad retirement (100%, SB lines 12-15), the NEW 67+ retirement subtraction (us.wi.retirement_subtraction_67 \u2014 CREDITS FORFEITED), the OLD $5,000 retirement subtraction (SB 17: 65+, federal AGI under $15,000/$30,000-joint incl. MFS-combined, worksheet net of lines 12-16), armed-forces active duty pay, ADOPTION expenses up to $15,000 per child (RAISED, Act 15), ABLE contributions, disability income exclusion (Schedule 2440W), WI NOL, Native American income, organ donation (page 2 lines). STANDARD DEDUCTION \u2192 us.wi.standard_deduction (sliding, table convention); DEPENDENT filers: smaller of the table amount or max($1,350, earned + $450) (printed worksheet). CREDIT STACK (lines 13-20, nonrefundable against line 12, all FORFEITED by the SB-16 subtraction): itemized deduction credit (Schedule 1: 5% \xD7 the excess of [federal Schedule A medical + interest (excluding out-of-state second homes/boat residences/US-security carrying interest) + charity + casualty] over the line 8 standard deduction); WI-2441 additional child & dependent care credit (Wisconsin's own recomputation \u2014 transcribe Schedule WI-2441 line 14); blind worker transportation 50% of expenses; school property tax credit (us.wi.school_property_tax_credit, $300 cap \u2014 $150 for MFS and for the 'Head of household, married' checkbox; NOT claimable alongside the line 34 veterans credit); WORKING FAMILIES credit line 17 (2025 instructions verbatim: 'Do not enter any amount on this line. No credit is allowable' \u2014 a dead line); married couple credit (us.wi.married_couple_credit, max $480); Schedule CR credits; net tax paid to another state (Schedule OS). LINE 22 net tax floors at $0. LINE 23 sales/use tax on out-of-state purchases (self-computed, county rates; certification checkbox when zero). LINE 25: penalties on IRAs/retirement plans/MSAs = 33% of the federal penalty ('\xD7 .33', printed). REFUNDABLE: EIC (us.wi.eic \u2014 4/11/34%), homestead credit (Schedule H circuit breaker \u2014 household income limits, transcribed; NOT claimable with the veterans credit), farmland preservation (FC/FC-A; same veterans-credit exclusion), eligible veterans and surviving spouses property tax credit, Schedule CR refundables, repayment credit. FILING THRESHOLDS (2025 printed): single under 65 $14,260 (65+ $14,510); MFJ $26,510/$26,760-one-65/$27,010-both; MFS $12,630. Interest on underpayment computed via Schedule U (line 44). WISCONSIN HAS NO LOCAL INCOME TAXES and no county income tax. Part-year/nonresidents: Form 1NPR (not composed)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      exemptionPerPerson: { value: "70000", type: "money" },
+      // $700
+      exemptionAge65: { value: "25000", type: "money" },
+      // $250
+      capitalGainExclusionPct: { value: "30", type: "int" },
+      // 60% farm assets
+      capitalLossLimit: { value: "300000", type: "money" },
+      // $3,000 ($1,500 MFS), TY2023+
+      tuitionSubtractionMax: { value: "764900", type: "money" },
+      // $7,649/student (2025)
+      edvestPerBeneficiary: { value: "513000", type: "money" },
+      // $5,130 ($2,560 MFS)
+      adoptionMax: { value: "1500000", type: "money" },
+      // $15,000 (Act 15)
+      retirement5kFagiLimitSingle: { value: "1500000", type: "money" },
+      // $15,000
+      retirement5kFagiLimitJoint: { value: "3000000", type: "money" },
+      // $30,000
+      iraPenaltyRatePct: { value: "33", type: "int" },
+      // line 25
+      blindWorkerCreditPct: { value: "50", type: "int" },
+      // line 15
+      itemizedCreditPct: { value: "5", type: "int" }
+      // Schedule 1
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Wisconsin composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.wi.income_tax, us.wi.standard_deduction, us.wi.eic, us.wi.married_couple_credit, us.wi.school_property_tax_credit, us.wi.retirement_subtraction_67"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -38781,6 +39368,7 @@ var stateParameterRules = [
   ...gaRules,
   ...mdRules,
   ...moRules,
+  ...wiRules,
   ...otherStateRules
 ];
 
@@ -38790,7 +39378,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus11 = (status) => ({
+var isStatus12 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -38862,7 +39450,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus11("mfj"),
+    cond: isStatus12("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -38961,7 +39549,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus11("mfj"),
+      cond: isStatus12("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -39149,7 +39737,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus12 = (status) => ({
+var isStatus13 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -39205,7 +39793,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus12("mfs"),
+      cond: isStatus13("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -39216,7 +39804,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus12("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus13("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -39236,7 +39824,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus12("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus13("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -39443,7 +40031,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus13 = (status) => ({
+var isStatus14 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -39582,7 +40170,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus13("mfs"),
+      cond: isStatus14("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -39671,11 +40259,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus13("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus14("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus13("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus14("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -39685,7 +40273,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus14 = (status) => ({
+var isStatus15 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -39733,7 +40321,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus14("mfs") },
+        { kind: "not", arg: isStatus15("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -39748,13 +40336,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus15 = (status) => ({
+var isStatus16 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus16("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -39785,7 +40373,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus15("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus15("mfj"),
+                    cond: isStatus16("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -39857,7 +40445,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus15("mfj"),
+      cond: isStatus16("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -40521,7 +41109,16 @@ var INDIVIDUAL_GROUPS = {
     "moPublicPension",
     "moSsSameSpouseExemption",
     "moFederalEic",
-    "moBusinessIncome"
+    "moBusinessIncome",
+    "wiIncome",
+    "wiQualifyingChildren",
+    "wiFederalEicForWi",
+    "wiLowerQualifiedEarnedIncome",
+    "wiRentHeatIncluded",
+    "wiRentHeatNotIncluded",
+    "wiPropertyTaxesPaid",
+    "wiRetirementIncome67",
+    "wiBothSpouses67"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -40567,7 +41164,7 @@ var GROUP_DESCRIPTIONS = {
   kiddie_tax: "Form 8615 inputs for a child subject to \xA7 1(g)",
   investor_amt: "AMT preferences (ISO spread) and \xA7 1202 QSBS exclusion",
   rentals_passive: "Schedule E rentals/royalties + \xA7 469 passive-loss netting (Form 8582 via us.federal.passive_loss_allowed)",
-  state: "state taxable income for the state tax targets (us.ca/us.va/us.il/us.ny/us.oh/us.nc/us.ga/us.md/us.mo income_tax; parameters via lookup_tax_parameter)",
+  state: "state taxable income for the state tax targets (us.ca/us.va/us.il/us.ny/us.oh/us.nc/us.ga/us.md/us.mo/us.wi income_tax; parameters via lookup_tax_parameter)",
   household_employer: "Schedule H nanny/household-employee taxes",
   payments_estimates: "withholding, prior-year safe harbor, annualized installments"
 };
@@ -40811,7 +41408,7 @@ function createServer() {
     }
   });
   server2.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -40838,7 +41435,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd9 = (c2) => {
+      const rd10 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -40865,11 +41462,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd9(after) + rd9(other);
-      const payments = rd9(withheld) + rd9(refundable) + rd9(extension) + rd9(estimated);
+      const total24 = rd10(after) + rd10(other);
+      const payments = rd10(withheld) + rd10(refundable) + rd10(extension) + rd10(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd9(c2));
+      const d3 = (c2) => fmt2(rd10(c2));
       return ok({
         ok: true,
         asOf,
@@ -40896,7 +41493,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd9(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd10(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

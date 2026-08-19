@@ -667,6 +667,77 @@ describe("composeMO — 2025 MO-1040 (real corpus targets)", () => {
 });
 
 
+describe("composeWI — 2025 Form 1 (real corpus targets)", () => {
+  it("single wage earner: sliding standard deduction, $700 exemption, table tax", () => {
+    // l7 = 60,000 -> std at row mid 60,250 = 13,560 − 12% x 40,700 = 8,676;
+    // l11 = 50,624 -> table mid 50,650 = 2,089 + 5.3% x 170 = 2,098.01 ->
+    // 2,098; withheld 2,500 -> refund 402.
+    const input = {
+      jurisdiction: "wi" as const, filingStatus: "single", federalAGI: 60000,
+      stateWithholding: 2500,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_standard_deduction")).toBe("$8,676");
+    expect(dollars(lines, "11_taxable_income")).toBe("$50,624");
+    expect(dollars(lines, "12_tax")).toBe("$2,098");
+    expect(dollars(lines, "41_refund")).toBe("$402");
+  });
+
+  it("joint: SS + Schedule WD subtractions, MFJ deduction rounding pin, SPTC cap, married couple credit cap", () => {
+    // l6 = 10,000 SS + 2,400 (30% WD exclusion) = 12,400; l7 = 77,600 ->
+    // std mid 77,750 = 25,110 − 19.778% x 49,540 = 15,311.99 -> 15,312;
+    // l11 = 60,888 -> mid 60,850 -> 685.30-anchor row: 2,501.18 -> 2,501;
+    // SPTC 12% x 3,050 = 366 -> capped 300; MCC min(16,500, 16,000) x 3% =
+    // 480; net tax 2,501 − 780 = 1,721.
+    const input = {
+      jurisdiction: "wi" as const, filingStatus: "mfj", federalAGI: 90000,
+      exemptions: 2, taxableSocialSecurity: 10000, wiCapitalGainSubtraction: 2400,
+      wiPropertyTaxesPaid: 3000, wiLowerQualifiedEarnedIncome: 16500,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_subtractions")).toBe("$12,400");
+    expect(dollars(lines, "8_standard_deduction")).toBe("$15,312");
+    expect(dollars(lines, "12_tax")).toBe("$2,501");
+    expect(dollars(lines, "16_school_property_tax_credit")).toBe("$300");
+    expect(dollars(lines, "18_married_couple_credit")).toBe("$480");
+    expect(dollars(lines, "22_net_tax")).toBe("$1,721");
+  });
+
+  it("Act 15 retirement subtraction forfeits the credit stack (SB-16 caution enforced)", () => {
+    // ret67 = min(30,000, 24,000); l7 = 26,000 -> std mid 26,250 = 12,756;
+    // l10c = 700 + 250; l11 = 12,294 -> table mid 12,250 -> 3.5% = 428.75
+    // -> 429; the $2,000 property-tax credit is FORCED to $0.
+    const input = {
+      jurisdiction: "wi" as const, filingStatus: "single", federalAGI: 50000,
+      wiRetirement67Income: 30000, wiPropertyTaxesPaid: 2000, wiAge65Boxes: 1,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_subtractions")).toBe("$24,000");
+    expect(dollars(lines, "8_standard_deduction")).toBe("$12,756");
+    expect(dollars(lines, "10c_exemptions")).toBe("$950");
+    expect(dollars(lines, "12_tax")).toBe("$429");
+    expect(dollars(lines, "16_school_property_tax_credit")).toBe("$0");
+    expect(dollars(lines, "22_net_tax")).toBe("$429");
+    expect(notes.some((n) => n.includes("FORFEITED"))).toBe(true);
+    expect(notes.some((n) => n.includes("forced to $0"))).toBe(true);
+  });
+
+  it("EIC: 11% of the federal credit with two children; HOH greater-of deduction; printed-row tax", () => {
+    // HOH l7 = 25,000 -> std mid 25,250: HOH formula 16,236.64 -> 16,237
+    // (beats single 12,876); l11 = 8,063 -> printed row 8,000-8,100 -> 282;
+    // EIC 11% x 4,000 = 440 -> refund 158.
+    const input = {
+      jurisdiction: "wi" as const, filingStatus: "hoh", federalAGI: 25000,
+      wiEicQualifyingChildren: 2, federalEITC: 4000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_standard_deduction")).toBe("$16,237");
+    expect(dollars(lines, "12_tax")).toBe("$282");
+    expect(dollars(lines, "30_earned_income_credit")).toBe("$440");
+    expect(dollars(lines, "41_refund")).toBe("$158");
+  });
+});
+
 describe("composeNC — 2025 D-400 (real corpus targets)", () => {
   it("full return: child deduction tier, standard deduction, 4.25% flat", () => {
     // Hand-computed: FAGI 85,000; child deduction 2 × $1,500 (over-$80k MFJ

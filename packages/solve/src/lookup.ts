@@ -58,6 +58,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.va": "virginia va form 760",
   "us.md": "maryland md form 502 baltimore county local",
   "us.mo": "missouri mo mo-1040 kansas city st louis",
+  "us.wi": "wisconsin wi form 1 madison milwaukee",
 };
 
 export function lookupParameters(

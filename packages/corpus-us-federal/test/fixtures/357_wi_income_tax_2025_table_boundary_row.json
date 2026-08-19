@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin table row 67,300-67,400 straddles bracket boundaries (printed single column $2,983): midpoint 67,350 -> 2,089.00 + 5.3% x 16,870 = 2,983.11 -> 2,983 — pins the Act 15 single 4.4% ceiling at exactly $50,480.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 67350 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.income_tax",
+  "expect": { "valueCents": "298300" }
+}

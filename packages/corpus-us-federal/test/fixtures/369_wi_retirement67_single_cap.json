@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin Act 15 retirement subtraction, individual cap: single 67+ with 60,000 of qualified retirement income -> 24,000 (the 48,000 cap needs a joint return with BOTH spouses 67+).",
+  "facts": { "filingStatus": "single", "wiRetirementIncome67": 60000 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.retirement_subtraction_67",
+  "expect": { "valueCents": "2400000" }
+}

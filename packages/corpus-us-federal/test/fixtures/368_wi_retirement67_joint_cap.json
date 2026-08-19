@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin Act 15 retirement subtraction (NEW TY2025): both spouses 67+ on a joint return -> 60,000 of qualified retirement income capped at 48,000 (claiming it forfeits all Form 1 credits).",
+  "facts": { "filingStatus": "mfj", "wiRetirementIncome67": 60000, "wiBothSpouses67": true },
+  "asOf": "2025-12-31",
+  "target": "us.wi.retirement_subtraction_67",
+  "expect": { "valueCents": "4800000" }
+}

@@ -24,6 +24,7 @@ import { ncRules } from "./state-nc.js";
 import { gaRules } from "./state-ga.js";
 import { mdRules } from "./state-md.js";
 import { moRules } from "./state-mo.js";
+import { wiRules } from "./state-wi.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -38,5 +39,6 @@ export const stateParameterRules: Rule[] = [
   ...gaRules,
   ...mdRules,
   ...moRules,
+  ...wiRules,
   ...otherStateRules,
 ];

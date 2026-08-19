@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin school property tax credit printed rent row: heat-included rent 4,350 -> 2.4% x midpoint 4,350 = 104.40 -> 104 (printed table row 4,300-4,400 -> $104).",
+  "facts": { "filingStatus": "single", "wiRentHeatIncluded": 4350 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.school_property_tax_credit",
+  "expect": { "valueCents": "10400" }
+}

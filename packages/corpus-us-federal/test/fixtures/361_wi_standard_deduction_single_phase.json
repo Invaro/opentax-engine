@@ -1,0 +1,7 @@
+{
+  "description": "Wisconsin sliding standard deduction, single: income 42,750 -> table row 42,500-43,000 midpoint 42,750 -> 13,560 - 12% x 23,200 = 10,776 (printed-row exact).",
+  "facts": { "filingStatus": "single", "wiIncome": 42750 },
+  "asOf": "2025-12-31",
+  "target": "us.wi.standard_deduction",
+  "expect": { "valueCents": "1077600" }
+}
