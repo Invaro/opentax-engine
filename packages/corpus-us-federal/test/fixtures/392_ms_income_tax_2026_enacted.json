@@ -1,0 +1,7 @@
+{
+  "description": "Mississippi TY2026 (the 2022 phase-down's final step): (50,000 - 10,000 exempt) x 4.0% = 1,600; the 2025 HB 1 trigger cuts begin 2027 and are NOT assumed.",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2026-12-31",
+  "target": "us.ms.income_tax",
+  "expect": { "valueCents": "160000" }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 enacted rate (Iowa \u2014 unchanged, no 2026 legislation): 50,000 x 3.8% (us.ia.income_tax v2 \u2014 an asOf in 2026 now answers instead of refusing).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ia.income_tax",
+  "expect": {
+    "valueCents": "190000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 enacted rate (Colorado \u2014 statutory rate; the SB24-228 TABOR 2026 certification is pending and disclosed): 50,000 x 4.40% (us.co.income_tax v2 \u2014 an asOf in 2026 now answers instead of refusing).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.co.income_tax",
+  "expect": {
+    "valueCents": "220000"
+  }
+}

@@ -518,4 +518,30 @@ export const nyRules: Rule[] = [
       round: "half-up",
     },
   },
+  {
+    id: "us.ny.income_tax",
+    version: 3, // TY2026: the FY2026 budget's enacted rate cuts, refusing pending the 2026 tax table
+    jurisdiction: "us.ny",
+    title:
+      "New York State income tax — TY2026 ENACTED bottom-bracket rate cuts (FY2026 budget); refuses pending the 2026 IT-201 tax table",
+    citation: {
+      source:
+        "N.Y. Tax Law § 601 as amended by the FY2026 enacted budget (signed May 9, 2025) — the bottom five brackets each cut 0.1 point for TY2026, with a further 0.1 point in 2027; 2026 withholding tables already reflect the cut (tax.ny.gov); web-verified August 2026",
+      section: "Tax Law § 601; FY2026 enacted budget",
+      url: "https://www.budget.ny.gov/pubs/press/2025/fy26-enacted-budget-new-legislation-cut-taxes-middle-class-nys.html",
+      excerpt:
+        "ENACTED FOR TY2026 (FY2026 budget, signed May 9, 2025): the bottom FIVE bracket rates each drop 0.1 percentage point — 4.00%→3.90%, 4.50%→4.40%, 5.25%→5.15%, 5.50%→5.40%, 6.00%→5.90% — on the unchanged statutory bracket boundaries (the 6.85%+ brackets are unchanged for 2026; a further 0.1-point cut follows in 2027). WHY THIS RULE REFUSES: the 2025 corpus rule's DEFAULT method is the printed NYS Tax Table (MANDATORY below $65,000), and the 2026 table does not exist until the 2026 IT-201-I publishes (~January 2027) — the fixed-dollar schedule anchors also change with the new rates and should be taken from the printed 2026 schedules rather than recomputed. Until then: compute a 2026 estimate from the rates above with the 2025 boundaries, DISCLOSE it as schedule-derived (table pending), and never present it as the filed-return figure. This refusal-with-context replaces a bare NO_APPLICABLE_RULE so 2026 callers learn the enacted law.",
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rateCutPointsTimes10: { value: "1", type: "int" }, // 0.1pp on the bottom five brackets
+    },
+    formula: {
+      kind: "unsupported",
+      reason:
+        "NY TY2026: the FY2026 budget's enacted 0.1-point cuts to the bottom five brackets (4.00→3.90, 4.50→4.40, 5.25→5.15, 5.50→5.40, 6.00→5.90%) are law, but the MANDATORY sub-$65,000 2026 tax table and the printed 2026 schedules are unpublished — compute a disclosed estimate from the cited rates or wait for the 2026 IT-201-I",
+    },
+  },
 ];

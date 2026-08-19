@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 enacted rate (Utah \u2014 2026 S.B. 60, retroactive to January 1, 2026 (sixth annual cut)): 50,000 x 4.45% (us.ut.income_tax v2 \u2014 an asOf in 2026 now answers instead of refusing).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ut.income_tax",
+  "expect": {
+    "valueCents": "222500"
+  }
+}

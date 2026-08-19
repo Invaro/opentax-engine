@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 enacted rate (Kentucky \u2014 2025 HB 1 cut effective January 1, 2026): 50,000 x 3.5% (us.ky.income_tax v2 \u2014 an asOf in 2026 now answers instead of refusing).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ky.income_tax",
+  "expect": {
+    "valueCents": "175000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 enacted rate (Louisiana \u2014 unchanged; the standard deduction indexes from 2026 (disclosed)): 50,000 x 3.0% (us.la.income_tax v2 \u2014 an asOf in 2026 now answers instead of refusing).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.la.income_tax",
+  "expect": {
+    "valueCents": "150000"
+  }
+}

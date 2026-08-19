@@ -1,0 +1,7 @@
+{
+  "description": "Dated rule selection pin: the SAME 50,000 of Kentucky taxable income owes 4.0% = 2,000 under TY2025 law (asOf 2025-12-31) but 3.5% = 1,750 under TY2026 law — this fixture pins the 2025 side of the pair (see fixture 390 for 2026).",
+  "facts": { "filingStatus": "single", "stateTaxableIncome": 50000 },
+  "asOf": "2025-12-31",
+  "target": "us.ky.income_tax",
+  "expect": { "valueCents": "200000" }
+}
