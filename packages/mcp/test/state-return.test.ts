@@ -1115,3 +1115,86 @@ describe("composeAL — 2025 Form 40 (real corpus targets)", () => {
     expect(notes.some((n) => n.includes("EXPRESSLY EXCLUDES a surviving spouse"))).toBe(true);
   });
 });
+
+describe("composeOR — 2025 Form OR-40 (real corpus targets)", () => {
+  it("full MFJ return: federal tax subtraction, Chart J tax, exemption + political credits, kicker, EIC, Kids Credit phased out", () => {
+    // Hand-computed: line 10 worksheet = 4,200 (under the $8,500 cap at AGI
+    // 65,000); line 14 = 4,200 + 1,800 = 6,000; line 15 = 59,000; standard
+    // 5,670 -> line 19 = 53,330 -> Chart J: 3,756 + 8.75% x 3,330 =
+    // 4,047.375 -> $4,047. Credits: 4 x $256 = 1,024 + political $100 ->
+    // line 31 = 2,923. Kicker 9.863% x 3,000 = 295.89 -> $296; EIC 9% x
+    // 1,200 = $108; Kids Credit $0 (QI 59,000 over $31,550). Line 40 =
+    // 296 + 3,200 + 108 = 3,604 -> refund $681.
+    const input = {
+      jurisdiction: "or" as const,
+      filingStatus: "mfj",
+      federalAGI: 65000,
+      orFederal1040Line22: 4200,
+      orSubtractions: 1800,
+      orRegularExemptions: 4,
+      orPoliticalContributions: 120,
+      or2024TaxLiability: 3000,
+      stateWithholding: 3200,
+      federalEITC: 1200,
+      orKidsUnder6: 2,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "10_federal_tax_subtraction")).toBe("$4,200");
+    expect(dollars(lines, "15_income_after_subtractions")).toBe("$59,000");
+    expect(dollars(lines, "18_deduction")).toBe("$5,670");
+    expect(dollars(lines, "19_taxable_income")).toBe("$53,330");
+    expect(dollars(lines, "20_tax")).toBe("$4,047");
+    expect(dollars(lines, "25_exemption_credit")).toBe("$1,024");
+    expect(dollars(lines, "26_political_contribution_credit")).toBe("$100");
+    expect(dollars(lines, "31_tax_after_credits")).toBe("$2,923");
+    expect(dollars(lines, "32_kicker")).toBe("$296");
+    expect(dollars(lines, "37_eic")).toBe("$108");
+    expect(lines["38_kids_credit"]).toBeUndefined();
+    expect(dollars(lines, "41_overpayment")).toBe("$681");
+    expect(dollars(lines, "53_net_refund")).toBe("$681");
+    expect(notes.some((n) => n.includes("Kids Credit $0"))).toBe(true);
+    expect(notes.some((n) => n.includes("9.863%"))).toBe(true);
+  });
+
+  it("single high earner: Table 4 phase-out step, Chart S tax, exemption credit cliff", () => {
+    // AGI 130,000 -> federal tax subtraction capped at the $5,100 step
+    // (not 22,000); line 19 = 130,000 - 5,100 - 2,835 = 122,065 -> Chart S:
+    // 4,065 + 8.75% x 72,065 = 10,370.69 -> $10,371; exemption credit $0
+    // (AGI over $100,000 cliff).
+    const input = {
+      jurisdiction: "or" as const,
+      filingStatus: "single",
+      federalAGI: 130000,
+      orFederal1040Line22: 22000,
+      orRegularExemptions: 1,
+      stateWithholding: 11000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "10_federal_tax_subtraction")).toBe("$5,100");
+    expect(dollars(lines, "19_taxable_income")).toBe("$122,065");
+    expect(dollars(lines, "20_tax")).toBe("$10,371");
+    expect(lines["25_exemption_credit"]).toBeUndefined();
+    expect(dollars(lines, "47_refund")).toBe("$629");
+  });
+
+  it("MFS with itemizing spouse: standard deduction $0, itemized used; table tax below $50,000", () => {
+    // line 10 = 2,500 (under the $4,250 MFS cap); line 15 = 37,500; std $0
+    // (spouse itemizes) -> itemized 3,000 -> line 19 = 34,500 -> table row
+    // 34,500-34,600 midpoint 34,550: 661 + 8.75% x 23,450 = 2,712.875 ->
+    // $2,713.
+    const input = {
+      jurisdiction: "or" as const,
+      filingStatus: "mfs",
+      federalAGI: 40000,
+      orFederal1040Line22: 2500,
+      orSpouseItemizes: true,
+      orItemizedDeductions: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "18_deduction")).toBe("$3,000");
+    expect(lines["_deduction_method"]).toBe("itemized");
+    expect(dollars(lines, "19_taxable_income")).toBe("$34,500");
+    expect(dollars(lines, "20_tax")).toBe("$2,713");
+    expect(notes.some((n) => n.includes("standard deduction is $0 because the spouse itemizes"))).toBe(true);
+  });
+});

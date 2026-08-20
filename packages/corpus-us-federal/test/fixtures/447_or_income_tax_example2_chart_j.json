@@ -1,0 +1,12 @@
+{
+  "description": "OR instructions Example 2 (Daniel & Madison): MFJ $75,500 -> Chart J: 3,756 + 8.75% x 25,500 = 5,987.25 -> $5,987 (the printed chart anchor 3,756 chains from the rounded 1,323 anchor; the pure schedule would give 3,755 at 50,000).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 75500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "598700"
+  }
+}

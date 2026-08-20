@@ -1,0 +1,13 @@
+{
+  "description": "OR Table 4 MFJ: AGI $255,000 -> maximum $6,800 (the $250,000-$260,000 step); liability $9,000 capped there.",
+  "facts": {
+    "filingStatus": "mfj",
+    "orAgi": 255000,
+    "orFederalTaxLiability": 9000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.federal_tax_subtraction",
+  "expect": {
+    "valueCents": "680000"
+  }
+}

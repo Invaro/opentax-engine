@@ -1,0 +1,11 @@
+{
+  "description": "OR standard deduction single 2025: $2,835.",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.standard_deduction",
+  "expect": {
+    "valueCents": "283500"
+  }
+}

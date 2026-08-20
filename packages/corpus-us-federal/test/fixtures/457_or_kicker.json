@@ -1,0 +1,12 @@
+{
+  "description": "OR 2025 surplus kicker: 9.863% of a $5,000 2024 liability = $493.15 -> $493.",
+  "facts": {
+    "filingStatus": "single",
+    "or2024TaxLiability": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kicker",
+  "expect": {
+    "valueCents": "49300"
+  }
+}

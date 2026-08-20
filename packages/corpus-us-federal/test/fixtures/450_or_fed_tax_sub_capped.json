@@ -1,0 +1,13 @@
+{
+  "description": "OR federal tax subtraction: single AGI $100,000, worksheet liability $12,000 -> capped at $8,500 (Table 4, AGI under $125,000).",
+  "facts": {
+    "filingStatus": "single",
+    "orAgi": 100000,
+    "orFederalTaxLiability": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.federal_tax_subtraction",
+  "expect": {
+    "valueCents": "850000"
+  }
+}

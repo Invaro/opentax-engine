@@ -1,0 +1,14 @@
+{
+  "description": "OR exemption credit: MFJ AGI $150,000, 4 regular exemptions -> 4 x $256 = $1,024 (under the $200,000 joint cliff); a disability exemption would be $0 (the $100,000 disability cliff applies to every status).",
+  "facts": {
+    "filingStatus": "mfj",
+    "orAgi": 150000,
+    "orRegularExemptions": 4,
+    "orDisabilityExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.exemption_credit",
+  "expect": {
+    "valueCents": "102400"
+  }
+}

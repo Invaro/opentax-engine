@@ -1,0 +1,13 @@
+{
+  "description": "OR Kids Credit phase-out: QI $29,050 -> ratio (29,050-26,550)/5,000 = 0.50 -> 2 x 1,050 x (1 - 0.50) = $1,050.",
+  "facts": {
+    "filingStatus": "mfj",
+    "orKidsQualifyingIncome": 29050,
+    "orKidsUnder6": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kids_credit",
+  "expect": {
+    "valueCents": "105000"
+  }
+}

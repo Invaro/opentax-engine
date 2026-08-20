@@ -1,0 +1,13 @@
+{
+  "description": "OR exemption credit boundary: single AGI exactly $100,000 -> allowed ('more than $100,000' denies): 1 x $256.",
+  "facts": {
+    "filingStatus": "single",
+    "orAgi": 100000,
+    "orRegularExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.exemption_credit",
+  "expect": {
+    "valueCents": "25600"
+  }
+}

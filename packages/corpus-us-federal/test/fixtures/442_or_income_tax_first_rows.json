@@ -1,0 +1,12 @@
+{
+  "description": "OR tax table printed row [20,50) -> $2 both columns: 4.75% x 35 = 1.66 -> $2 (generic midpoint half-up covers the narrow first rows).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 35
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "200"
+  }
+}

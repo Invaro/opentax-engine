@@ -1,0 +1,13 @@
+{
+  "description": "OR Table 4 phase-out: single AGI $127,000 -> maximum $6,800 (the $125,000-$130,000 step).",
+  "facts": {
+    "filingStatus": "single",
+    "orAgi": 127000,
+    "orFederalTaxLiability": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.federal_tax_subtraction",
+  "expect": {
+    "valueCents": "680000"
+  }
+}

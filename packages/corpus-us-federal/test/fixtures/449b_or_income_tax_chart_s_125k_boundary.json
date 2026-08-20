@@ -1,0 +1,12 @@
+{
+  "description": "OR Chart S boundary: exactly $125,000 follows the printed row-1 assignment ('$50,000 or more but not over $125,000') -> 4,065 + 8.75% x 75,000 = 10,627.50 -> $10,628 ($1 above the over-row's own printed $10,627 anchor \u2014 the chart is internally inconsistent at this point).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 125000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "1062800"
+  }
+}

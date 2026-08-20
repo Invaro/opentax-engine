@@ -3206,4 +3206,89 @@ export const facts: FactSpec[] = [
       "One taxpayer's overtime PREMIUM (the amount above the base rate — W-2 Box 12 code TT) for the TY2026-2028 Alabama overtime premium deduction (us.al.overtime_premium_deduction, Act 2026-604, capped $1,000 per taxpayer). In dollars.",
     default: { value: "0", rationale: "Assumed no overtime premium absent contrary input" },
   },
+  {
+    id: "orAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Form OR-40 line 7) — keys the federal tax subtraction Table 4 phase-out (us.or.federal_tax_subtraction) and the exemption credit cliffs (us.or.exemption_credit: $100,000 single/MFS, $200,000 others; disability exemptions $100,000 for all). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input" },
+  },
+  {
+    id: "orFederalTaxLiability",
+    type: "money",
+    min: "0",
+    description:
+      "The Oregon federal tax liability worksheet line 10 result: 1040 line 22 minus excess-APTC repayment (floor 0), plus Schedule 2 lines 8/16/17 income taxes, minus AOC + refundable adoption + Form 8962 line 24 PTC (floor 0 — the EITC and ACTC are NOT subtracted) — us.or.federal_tax_subtraction caps it at $8,500/$4,250-MFS with the Table 4 AGI phase-out. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal tax liability absent contrary input" },
+  },
+  {
+    id: "orStdBoxes",
+    type: "int",
+    min: "0",
+    description:
+      "Count of Oregon standard-deduction boxes 17a-d (you/spouse turned 65 by January 1, 2026, and/or blind) — each adds $1,200 (single/HOH) or $1,000 (other statuses) (us.or.standard_deduction).",
+    default: { value: "0", rationale: "Assumed no 65+/blind boxes absent contrary input" },
+  },
+  {
+    id: "orDependentEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "A dependent-claimed filer's earned income for Oregon's dependent standard-deduction limit (larger of $1,350 or earned + $450, capped at the Table 5 amount). Only used when isClaimedAsDependent. In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input" },
+  },
+  {
+    id: "orRegularExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Oregon regular exemption count (OR-40 boxes 6a/6b 'regular' + line 6c dependents) — $256 each for 2025, $0 above the $100,000/$200,000 federal AGI cliff (us.or.exemption_credit).",
+    default: { value: "0", rationale: "Assumed no exemptions absent contrary input" },
+  },
+  {
+    id: "orDisabilityExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Oregon severe-disability exemption boxes (6a/6b) plus children with a qualifying disability (line 6d) — $256 each, $0 above $100,000 federal AGI for EVERY filing status (us.or.exemption_credit).",
+    default: { value: "0", rationale: "Assumed no disability exemptions absent contrary input" },
+  },
+  {
+    id: "orFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "The federal earned income credit (Form 1040 line 27a) — us.or.eic pays 9% of it (12% when the youngest dependent is under 3). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" },
+  },
+  {
+    id: "orYoungestUnder3",
+    type: "bool",
+    description:
+      "The filer's youngest dependent was younger than 3 at the end of the tax year — raises the Oregon EIC percentage from 9% to 12% of the federal EITC (us.or.eic, Table 9).",
+    default: { value: false, rationale: "Assumed no dependent under 3 absent contrary input" },
+  },
+  {
+    id: "orKidsQualifyingIncome",
+    type: "money",
+    description:
+      "Oregon Kids Credit worksheet line 4 qualifying income: OR-40 line 15 income-after-subtractions + OR-ASC code 390/391/392 (tips/overtime/vehicle-interest) addbacks + the Part B loss-and-exclusion addback (losses beyond $20,000 and all excluded foreign earned income) — us.or.kids_credit phases out $26,550-$31,550. May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 qualifying income absent contrary input" },
+  },
+  {
+    id: "orKidsUnder6",
+    type: "int",
+    min: "0",
+    description:
+      "Dependents age 5 or younger at the end of 2025 for the Oregon Kids Credit — $1,050 each, capped at 5 children by us.or.kids_credit (refundable; MFS denied; released-exemption children do not count).",
+    default: { value: "0", rationale: "Assumed no children under 6 absent contrary input" },
+  },
+  {
+    id: "or2024TaxLiability",
+    type: "money",
+    min: "0",
+    description:
+      "The 2024 total Oregon personal income tax liability: 2024 OR-40 line 24 tax-before-credits MINUS the Schedule OR-ASC code 802/815 credit for taxes paid to another state (Kicker worksheet Part A — NOT line 31, which is after the exemption and other credits) — us.or.kicker pays 9.863% of it on the 2025 return. Requires the 2024 return filed before the 2025 return. In dollars.",
+    default: { value: "0", rationale: "Assumed no 2024 liability absent contrary input (no kicker)" },
+  },
 ];

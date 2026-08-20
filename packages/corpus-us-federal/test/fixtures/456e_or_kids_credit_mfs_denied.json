@@ -1,0 +1,13 @@
+{
+  "description": "OR Kids Credit: married filing separately is ineligible -> $0.",
+  "facts": {
+    "filingStatus": "mfs",
+    "orKidsQualifyingIncome": 10000,
+    "orKidsUnder6": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kids_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

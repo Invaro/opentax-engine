@@ -28,6 +28,7 @@ import { wiRules } from "./state-wi.js";
 import { mnRules } from "./state-mn.js";
 import { scRules } from "./state-sc.js";
 import { alRules } from "./state-al.js";
+import { orRules } from "./state-or.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -46,5 +47,6 @@ export const stateParameterRules: Rule[] = [
   ...mnRules,
   ...scRules,
   ...alRules,
+  ...orRules,
   ...otherStateRules,
 ];

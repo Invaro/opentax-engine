@@ -8,11 +8,11 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -435,4 +435,44 @@ const al = {
   // the shared nonrefundableCredits input (capped at the line 17 tax).
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al };
+const orShape = {
+  orAdditions: usd.optional().describe("OR-40 line 8: Schedule OR-ASC line A5 additions (non-Oregon municipal interest, federal-state depreciation differences, 529 recapture)"),
+  orFederal1040Line22: usd.optional().describe("federal Form 1040 LINE 22 (tax after nonrefundable credits) — the federal tax subtraction worksheet's line 1 (from compute_return, verbatim)"),
+  orExcessAptcRepayment: usd.optional().describe("excess advance premium tax credit repayment (1040 Schedule 2 line 1a) — SUBTRACTED in the worksheet (floor 0)"),
+  orFederalOtherIncomeTaxes: usd.optional().describe("other INCOME taxes from Schedule 2 lines 8, 16, 17 (income-tax recaptures only — never SE tax, SS/Medicare tip tax, household employment taxes, penalties, or excise)"),
+  orFederalAoc: usd.optional().describe("American Opportunity Credit (1040 line 29) — subtracted in the federal tax worksheet"),
+  orFederalRefundableAdoption: usd.optional().describe("refundable adoption credit (1040 line 30) — subtracted"),
+  orFederalPtc: usd.optional().describe("premium tax credit from Form 8962 LINE 24 (the full allowable credit regardless of advance payments) — subtracted. NOTE: the EITC and additional child tax credit are NOT subtracted."),
+  orFederalTaxLiabilityOverride: usd.optional().describe("OVERRIDE for the worksheet line 10 result (amended federal returns, foreign income tax, 1040-NR, recapture situations — Publication OR-17 worksheets); the Table 4 AGI cap still applies via the oracle"),
+  orStateRefund: usd.optional().describe("OR-40 line 12: OREGON state income tax refund from federal Schedule 1 line 1 (never other states' or local refunds)"),
+  orSubtractions: usd.optional().describe("OR-40 line 13: Schedule OR-ASC line B7 subtractions — including the OBBBA-conforming tips/overtime/passenger-vehicle-interest deductions (codes 390/391/392: Oregon lets you claim the same amounts as federal), US government interest, the federal pension percentage subtraction, OR-HOME first-time home buyer savings, tier 2 Railroad Retirement. Do NOT include Social Security (automatic via taxableSocialSecurity)."),
+  orItemizedDeductions: usd.optional().describe("Schedule OR-A line 23 OREGON itemized deductions (Oregon's own computation — never the federal Schedule A total). The composer takes the larger of this and the standard deduction."),
+  orStdBoxes: z.number().int().optional().describe("OR-40 boxes 17a-d: count of 65-or-older (born before January 2, 1961... turned 65 by January 1, 2026) and blind boxes for you/spouse — each adds $1,200 (single/HOH) or $1,000 (other statuses) to the standard deduction"),
+  orSpouseItemizes: z.boolean().optional().describe("MFS only: the other spouse itemizes — the Oregon standard deduction becomes $0"),
+  orDependentEarnedIncome: usd.optional().describe("dependent-claimed filer's earned income — the standard deduction is limited to max($1,350, earned + $450), capped at the Table 5 amount"),
+  orTaxMethodOverride: usd.optional().describe("OR-40 line 20 alternate-method tax: farm income averaging (OR-FIA-40, box 20a), farm capital gain (Worksheet FCG, box 20b), or the IRREVOCABLE Oregon PTE reduced rate (OR-PTE-FY, box 20c) — agent-computed; wins over the table/chart tax"),
+  orInstallmentInterest: usd.optional().describe("OR-40 line 21: interest on installment-sale deferred tax liability (9% annual rate for 2025)"),
+  orCreditRecaptures: usd.optional().describe("OR-40 line 22: tax recaptures from Schedule OR-ASC line C5"),
+  orRegularExemptions: z.number().int().optional().describe("regular exemption count: 'yourself' + 'spouse' credit boxes (6a/6b) + dependents (6c) — $256 each, $0 cliff above $100,000 federal AGI (single/MFS) or $200,000 (others)"),
+  orDisabilityExemptions: z.number().int().optional().describe("severe-disability boxes (6a/6b) + children with a qualifying disability (6d) — $256 each, $0 cliff above $100,000 federal AGI for EVERY filing status"),
+  orPoliticalContributions: usd.optional().describe("2025 cash contributions to qualified Oregon political parties/candidates/PACs — the composer caps at $50 ($100 joint) and denies above $75,000/$150,000 federal AGI"),
+  orCarryforwardCredits: usd.optional().describe("OR-40 line 30: Schedule OR-ASC line E9 carryforward credits used this year (capped at the remaining tax by the composer)"),
+  or2024TaxLiability: usd.optional().describe("the filer's 2024 total Oregon personal income tax liability (after the other-state credit, before all other credits/payments — 2024 OR-40 line 24 tax-before-credits MINUS the Schedule OR-ASC code 802/815 credit for taxes paid to another state, per Table 8 / Kicker worksheet Part A) — the composer computes the 9.863% kicker (us.or.kicker). Requires the 2024 return filed before the 2025 return. Prorate by 2024 Oregon-AGI share if the filing status changed (worksheet Parts B/C)."),
+  orKickerDonate: z.boolean().optional().describe("filer elects to donate the ENTIRE kicker to the State School Fund (irrevocable after the due date) — line 32 becomes $0 and box 55 is checked"),
+  orPtePayments: usd.optional().describe("OR-40 line 36: estimated payments from Schedule OR-K-1 line 20 (PTE owner payments via Form OR-19)"),
+  orYoungestUnder3: z.boolean().optional().describe("the youngest dependent was younger than 3 at year end — raises the Oregon EIC from 9% to 12% of the federal EITC (us.or.eic)"),
+  orKidsUnder6: z.number().int().optional().describe("dependents age 5 or younger at the end of 2025 (max 5 count) — $1,050 each Oregon Kids Credit (us.or.kids_credit, refundable, MFS denied). A child claimed only via a RELEASED dependent exemption does not count."),
+  orKidsObbbaAddback: usd.optional().describe("Kids Credit worksheet line 2: tips/overtime/vehicle-interest subtractions claimed (OR-ASC codes 390/391/392) — ADDED BACK to qualifying income"),
+  orKidsLossAddback: usd.optional().describe("Kids Credit worksheet Part B: federal losses + OR-ASC loss-subtraction codes beyond the $20,000 allowance, plus ALL excluded foreign earned income — added back to qualifying income"),
+  orPenalty: usd.optional().describe("OR-40 line 43: penalty AND interest for filing or paying late (one combined printed line — 5% late-pay penalty, +20% over 3 months late, 100% for 3 consecutive unfiled years, plus the late-payment interest)"),
+  orInterest: usd.optional().describe("OR-40 line 44: interest on UNDERPAYMENT OF ESTIMATED TAX from Form OR-10 (boxes 44a/44b) — late-payment interest goes in line 43 instead"),
+  orAppliedToNextYear: usd.optional().describe("OR-40 line 48: refund applied to 2026 estimated tax"),
+  orCharitableCheckoffs: usd.optional().describe("OR-40 line 49: Schedule OR-DONATE charitable checkoffs (reduce the refund)"),
+  orPoliticalPartyCheckoff: usd.optional().describe("OR-40 line 50: political party $3 checkoff from the refund"),
+  or529Deposits: usd.optional().describe("OR-40 line 51: Oregon 529 deposits from Schedule OR-529 (reduce the refund)"),
+  // OR line 27 standard credits (OR-ASC D16: retirement income credit,
+  // other-state credit) use the shared nonrefundableCredits input; line 39
+  // refundable credits (OR-ASC F7) use the shared refundableCredits input.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape };

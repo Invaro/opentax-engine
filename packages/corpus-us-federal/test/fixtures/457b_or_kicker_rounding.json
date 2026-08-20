@@ -1,0 +1,12 @@
+{
+  "description": "OR kicker rounding: 9.863% of $12,345 = $1,217.59 -> $1,218.",
+  "facts": {
+    "filingStatus": "mfj",
+    "or2024TaxLiability": 12345
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kicker",
+  "expect": {
+    "valueCents": "121800"
+  }
+}

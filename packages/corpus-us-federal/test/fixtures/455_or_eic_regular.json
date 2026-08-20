@@ -1,0 +1,13 @@
+{
+  "description": "OR earned income credit: 9% of a $2,000 federal EITC = $180 (youngest dependent 3 or older).",
+  "facts": {
+    "filingStatus": "hoh",
+    "orFederalEic": 2000,
+    "orYoungestUnder3": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.eic",
+  "expect": {
+    "valueCents": "18000"
+  }
+}
