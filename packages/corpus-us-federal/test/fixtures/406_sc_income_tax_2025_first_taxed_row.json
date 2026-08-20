@@ -1,0 +1,12 @@
+{
+  "description": "SC1040TT printed row 3,600-3,650 -> $2: midpoint 3,625, 3% x 65 = 1.95 -> $2. First nonzero row; same table for every filing status.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 3625
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "200"
+  }
+}

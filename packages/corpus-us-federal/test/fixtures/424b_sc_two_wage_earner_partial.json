@@ -1,0 +1,12 @@
+{
+  "description": "SC Two Wage Earner Credit: lesser spouse earned $30,000 -> 0.7% = $210.",
+  "facts": {
+    "filingStatus": "mfj",
+    "scLowerQualifiedEarnedIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.two_wage_earner_credit",
+  "expect": {
+    "valueCents": "21000"
+  }
+}

@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -374,4 +374,39 @@ const mn = {
   mnAppliedToNextYear: usd.optional().describe("M1 line 30: refund applied to 2026 estimated tax"),
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn };
+const sc = {
+  // SC's base is FEDERAL TAXABLE INCOME (SC1040 line 1) — federalAGI is NOT used.
+  scFederalTaxableIncome: usd.optional().describe("REQUIRED for SC: federal Form 1040 line 15 TAXABLE income (from compute_return, verbatim) — the SC1040 line 1 starting point (NOT federal AGI). A NEGATIVE amount is allowed: the composer enters $0 on line 1 and preserves the loss on subtraction line r per the printed instructions."),
+  scAdditions: usd.optional().describe("SC1040 line 2 total additions (lines a-e: the state income/sales tax deducted in federal itemized deductions MUST be added back on line a; out-of-state rental/business losses; non-SC municipal bond interest; expenses on reserve/subsistence income). CRITICAL for TY2025: SC REJECTED OBBBA conformity (IRC conformity frozen at December 31, 2024) — line e must ADD BACK every OBBBA deduction in federal taxable income (tips exclusion, overtime premium, the $6,000 senior deduction, car-loan interest, OBBBA business items)."),
+  scSubtractionsOther: usd.optional().describe("SC subtraction lines f/g/h/j/k/l/m/n/v total (state tax refund, total-and-permanent disability retirement, out-of-state non-personal-service income, volunteer firefighter/EMS/police $6,000 (2025), Future Scholar 529 (unlimited), ACTIVE TRADE OR BUSINESS income electing the I-335 3% flat tax (line l — must pair with scActiveTradeTax), US government interest, nontaxable Guard/Reserve pay, other) — EXCLUDING the composer-computed lines i/o/p/q/r/s/t/u/w"),
+  scNetLtcgAfterLosses: usd.optional().describe("net LONG-TERM capital gain held over one year, AFTER netting ALL capital losses (short-term included — the printed example nets an ST loss against the LT gain first) — the composer takes the 44% deduction (line i)"),
+  scRetirementIncomeYou: usd.optional().describe("primary taxpayer's qualified retirement income (401(k)/403(b)/457, IRA, Keogh — EXCLUDING military retirement, which goes in scMilitaryRetirementYou) — the composer caps at $3,000 under 65 / $10,000 at 65+ (line p-1; us.sc.retirement_deduction)"),
+  scRetirementIncomeSpouse: usd.optional().describe("spouse's qualified retirement income for line p-2 (each spouse's own cap; joint returns)"),
+  scMilitaryRetirementYou: usd.optional().describe("primary taxpayer's military retirement income — 100% deductible since TY2022 (line p-4); per the printed worksheet it REDUCES the same person's retirement-deduction CAP and age-65 deduction (instructions Example 5: $16,000 military at 65+ leaves $0 on lines p-1 and q-1) — the composer handles the interplay"),
+  scMilitaryRetirementSpouse: usd.optional().describe("spouse's military retirement income (line p-5)"),
+  scIs65You: z.boolean().optional().describe("primary taxpayer was 65 or older by December 31 — raises the retirement cap to $10,000 and enables the $15,000 age-65 deduction (line q-1, reduced by the retirement + military deductions claimed)"),
+  scIs65Spouse: z.boolean().optional().describe("spouse was 65 or older by December 31 (lines p-2/q-2)"),
+  scSubsistenceDays: z.number().int().optional().describe("SC line s: days as a full-time federal/state/local law enforcement officer, firefighter, or EMS worker — $16/day subsistence allowance"),
+  scDependents: z.number().int().optional().describe("SC line w dependent count (must equal the federal return's) — $4,930 each for 2025 (us.sc.dependent_exemption); falls back to the shared dependents input"),
+  scDependentsUnder6: z.number().int().optional().describe("SC line t: dependents under age 6 on December 31 — the SAME $4,930 again each (on top of their line w exemption)"),
+  scConsumerProtection: usd.optional().describe("SC line u: identity-theft/consumer protection services purchased after a security breach notification — the composer caps at $300 (individual) / $1,000 (joint or with dependents)"),
+  scLumpSumTax: usd.optional().describe("SC1040 line 7: tax on lump-sum distribution (SC4972, agent-computed, attached)"),
+  scActiveTradeTax: usd.optional().describe("SC1040 line 8: I-335 flat 3% tax on active trade or business income (agent-computed; the electing income must also appear in scSubtractionsOther as the line l subtraction)"),
+  scCatastropheTax: usd.optional().describe("SC1040 line 9: tax on excess Catastrophe Savings Account withdrawals"),
+  scCareExpenses: usd.optional().describe("federal Form 2441 child/dependent care EXPENSES (not the credit) — SC line 11 pays 7%, max $210/$420 (us.sc.cdcc); DENIED to married filing separately"),
+  scCareChildren: z.number().int().optional().describe("count of qualifying care children/dependents — 2+ raises the SC CDCC cap from $210 to $420"),
+  scLowerQualifiedEarnedIncome: usd.optional().describe("the LESSER-earning spouse's SC qualified earned income per the Two Wage Earner worksheet (earned income minus attributable federal adjustments) — line 12 credit = 0.7% capped at $50,000 base / $350 credit; MFJ only (us.sc.two_wage_earner_credit)"),
+  scI290Payments: usd.optional().describe("SC1040 line 19: nonresident real estate withholding paid on Form I-290"),
+  scOtherWithholding: usd.optional().describe("SC1040 line 20: other SC withholding from 1099s (W-2 amounts go in the shared stateWithholding for line 16)"),
+  scTuitionCredit: usd.optional().describe("SC1040 line 21: REFUNDABLE tuition tax credit (Form I-319: 50% of qualifying SC-institution tuition within the form's limits — agent-computed with disclosure, form attached)"),
+  scAppliedToNextYear: usd.optional().describe("SC1040 line 27: amount of the line 24 overpayment credited to 2026 estimated tax"),
+  scContributions: usd.optional().describe("SC1040 line 28: check-off contributions total (I-330 attached; reduces the refund)"),
+  scLatePenalties: usd.optional().describe("SC1040 line 32: late filing/late payment penalties and interest"),
+  scUnderpaymentPenalty: usd.optional().describe("SC1040 line 33: underpayment of estimated tax penalty (SC2210 attached)"),
+  // SC line 13 nonrefundable SC1040TC credits use the shared nonrefundableCredits
+  // input — but the composer ADDS the SC EITC (125% of federalEITC, § 12-6-3632)
+  // itself when federalEITC is passed; do not double-count it there. Line 22
+  // refundable credits (22a-d) use the shared refundableCredits input.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc };

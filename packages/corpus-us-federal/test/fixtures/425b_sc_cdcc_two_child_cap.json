@@ -1,0 +1,13 @@
+{
+  "description": "SC CDCC cap: $7,000 of expenses, two children -> min(7% x 7,000 = 490, $420 cap) = $420.",
+  "facts": {
+    "filingStatus": "mfj",
+    "scCareExpenses": 7000,
+    "scCareChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.cdcc",
+  "expect": {
+    "valueCents": "42000"
+  }
+}

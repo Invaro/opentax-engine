@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026 continuity: $30,000 -> $597 by BOTH printed forms (1.99% x 30,000 = 5.21% x 30,000 - 966) \u2014 no cliff at the bracket edge.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 30000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "59700"
+  }
+}

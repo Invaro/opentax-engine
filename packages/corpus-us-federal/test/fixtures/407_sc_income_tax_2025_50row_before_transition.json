@@ -1,0 +1,12 @@
+{
+  "description": "SC1040TT printed row 6,950-7,000 -> $102: the LAST $50-wide row; midpoint 6,975, 3% x 3,415 = 102.45 -> $102.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 6975
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "10200"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "SC zero taxable income -> $0 (row 0-50 midpoint 25 in the 0% bracket).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

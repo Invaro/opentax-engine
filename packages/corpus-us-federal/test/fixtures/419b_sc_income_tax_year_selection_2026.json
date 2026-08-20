@@ -1,0 +1,12 @@
+{
+  "description": "SC year selection pair (with 419): $40,000 at asOf 2026 -> 5.21% x 40,000 - 966 = 1,118.40 -> $1,118 (H.4216).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 40000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "111800"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "SC dependent exemption: 3 dependents x $4,930 (2025 indexed) = $14,790 (line w; the under-6 line t uses the same target with the under-6 count).",
+  "facts": {
+    "filingStatus": "mfj",
+    "scDependents": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.dependent_exemption",
+  "expect": {
+    "valueCents": "1479000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026 Income Adjusted Deduction phase-out (H.4216 enrolled fractions): single AGI $51,000 -> reduction 15,000 x 11,000/55,000 = $3,000 exactly -> deduction $12,000.",
+  "facts": {
+    "filingStatus": "single",
+    "scAgi": 51000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_adjusted_deduction",
+  "expect": {
+    "valueCents": "1200000"
+  }
+}

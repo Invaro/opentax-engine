@@ -8637,12 +8637,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub6 of error2.issues) {
-    if (sub6.path.length > 0) {
-      fieldErrors[sub6.path[0]] = fieldErrors[sub6.path[0]] || [];
-      fieldErrors[sub6.path[0]].push(mapper(sub6));
+  for (const sub7 of error2.issues) {
+    if (sub7.path.length > 0) {
+      fieldErrors[sub7.path[0]] = fieldErrors[sub7.path[0]] || [];
+      fieldErrors[sub7.path[0]].push(mapper(sub7));
     } else {
-      formErrors.push(mapper(sub6));
+      formErrors.push(mapper(sub7));
     }
   }
   return { formErrors, fieldErrors };
@@ -15040,8 +15040,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub6) => {
-      this.issues = [...this.issues, sub6];
+    this.addIssue = (sub7) => {
+      this.issues = [...this.issues, sub7];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -15108,13 +15108,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub6 of this.issues) {
-      if (sub6.path.length > 0) {
-        const firstEl = sub6.path[0];
+    for (const sub7 of this.issues) {
+      if (sub7.path.length > 0) {
+        const firstEl = sub7.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub6));
+        fieldErrors[firstEl].push(mapper(sub7));
       } else {
-        formErrors.push(mapper(sub6));
+        formErrors.push(mapper(sub7));
       }
     }
     return { formErrors, fieldErrors };
@@ -24156,7 +24156,8 @@ var JURISDICTION_NAMES = {
   "us.md": "maryland md form 502 baltimore county local",
   "us.mo": "missouri mo mo-1040 kansas city st louis",
   "us.wi": "wisconsin wi form 1 madison milwaukee",
-  "us.mn": "minnesota mn form m1 st paul minneapolis"
+  "us.mn": "minnesota mn form m1 st paul minneapolis",
+  "us.sc": "south carolina sc sc1040 charleston columbia"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -25963,6 +25964,179 @@ function composePA(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/sc.js
+var SUBSISTENCE_PER_DAY = 1600n;
+var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
+var CONSUMER_PROTECTION_JOINT_OR_DEPS = 100000n;
+function composeSC(input, evalStateTax, notes) {
+  const joint = isJoint(input);
+  const mfs = isMfs(input);
+  if (typeof input.scFederalTaxableIncome !== "number") {
+    throw new Error("scFederalTaxableIncome is required for SC returns \u2014 the SC1040 starts from FEDERAL TAXABLE INCOME (Form 1040 line 15), not federal AGI; run compute_return first and pass line 15 verbatim (a negative amount is allowed and handled via line r)");
+  }
+  const fti = c(input.scFederalTaxableIncome);
+  const l1 = max02(rd(fti));
+  const negFti = max02(-rd(fti));
+  const l2 = rd(c(input.scAdditions));
+  if (l2 > 0n)
+    notes.push(`SC line 2 additions ${fmtD(l2)} (lines a-e: state tax addback for federal itemizers, out-of-state losses, non-SC municipal interest \u2014 transcribed)`);
+  const l3 = l1 + l2;
+  const netLtcg = max02(rd(c(input.scNetLtcgAfterLosses)));
+  const lineI = netLtcg > 0n ? rd((netLtcg * 44n + 50n) / 100n) : 0n;
+  if (lineI > 0n)
+    notes.push(`SC line i: 44% net long-term capital gain deduction ${fmtD(lineI)} (net of ALL capital losses first, incl. short-term, per the printed example)`);
+  const lineO = rd(c(input.taxableSocialSecurity));
+  if (lineO > 0n)
+    notes.push(`SC line o: Social Security/Railroad Retirement subtraction ${fmtD(lineO)} (100% of the federally taxed amount \u2014 automatic)`);
+  const person = (retirement, military, is65, label) => {
+    const mil = max02(rd(military));
+    const p = retirement > 0n ? rd(evalStateTax("us.sc.retirement_deduction", 0n, {
+      scQualifiedRetirementIncome: retirement,
+      scMilitaryRetirementDeduction: mil,
+      scIs65: is65
+    })) : 0n;
+    if (mil > 0n)
+      notes.push(`SC ${label} military retirement deduction ${fmtD(mil)} (100% since TY2022; the printed worksheet reduces the same person's retirement-deduction CAP and age-65 deduction by it)`);
+    const q = is65 ? rd(evalStateTax("us.sc.age65_deduction", 0n, { scRetirementDeductionsClaimed: p + mil })) : 0n;
+    return { p, mil, q };
+  };
+  const you = person(rd(c(input.scRetirementIncomeYou)), rd(c(input.scMilitaryRetirementYou)), input.scIs65You === true, "taxpayer");
+  const spouse = joint ? person(rd(c(input.scRetirementIncomeSpouse)), rd(c(input.scMilitaryRetirementSpouse)), input.scIs65Spouse === true, "spouse") : { p: 0n, mil: 0n, q: 0n };
+  const lineP = you.p + you.mil + spouse.p + spouse.mil;
+  const lineQ = you.q + spouse.q;
+  if (you.p + spouse.p > 0n)
+    notes.push(`SC line p retirement deduction ${fmtD(you.p + spouse.p)} (per person: qualified retirement income capped $3,000 under 65 / $10,000 at 65+)`);
+  if (lineQ > 0n)
+    notes.push(`SC line q age-65 deduction ${fmtD(lineQ)} ($15,000 per 65+ person, REDUCED by that person's retirement + military retirement deductions; usable against any SC income)`);
+  if (negFti > 0n)
+    notes.push(`SC line r: negative federal taxable income ${fmtD(negFti)} entered as a subtraction (line 1 floors at $0; the loss is preserved here)`);
+  const days = BigInt(input.scSubsistenceDays ?? 0);
+  const lineS = days * SUBSISTENCE_PER_DAY;
+  if (lineS > 0n)
+    notes.push(`SC line s: subsistence allowance ${fmtD(lineS)} (${days} days \xD7 $16 \u2014 federal/state/local police, full-time fire, EMS)`);
+  const under6 = input.scDependentsUnder6 ?? 0;
+  const lineT = under6 > 0 ? rd(evalStateTax("us.sc.dependent_exemption", 0n, { scDependents: under6 })) : 0n;
+  if (lineT > 0n)
+    notes.push(`SC line t: dependents under 6 deduction ${fmtD(lineT)} (${under6} \xD7 $4,930 \u2014 the SAME indexed amount as line w, claimed AGAIN for each child under 6 on December 31)`);
+  const cpRaw = rd(c(input.scConsumerProtection));
+  const deps = input.scDependents ?? input.dependents ?? 0;
+  const cpCap = joint || deps > 0 ? CONSUMER_PROTECTION_JOINT_OR_DEPS : CONSUMER_PROTECTION_INDIVIDUAL;
+  const lineU = min2(cpRaw, cpCap);
+  if (cpRaw > lineU)
+    notes.push(`SC line u: consumer protection services capped at ${fmtD(lineU)} ($300 individual / $1,000 joint-or-with-dependents)`);
+  const lineW = deps > 0 ? rd(evalStateTax("us.sc.dependent_exemption", 0n, { scDependents: deps })) : 0n;
+  if (lineW > 0n)
+    notes.push(`SC line w: dependent exemption ${fmtD(lineW)} (${deps} \xD7 $4,930, 2025 indexed; must match the federal dependent count)`);
+  const otherSubs = rd(c(input.scSubtractionsOther));
+  if (otherSubs > 0n)
+    notes.push(`SC other subtractions ${fmtD(otherSubs)} (lines f/g/h/j/k/l/m/n/v: state refund, disability retirement, out-of-state income, volunteer deductions, Future Scholar 529, active trade or business, US interest, Guard/Reserve pay \u2014 transcribed)`);
+  const l4 = lineI + lineO + lineP + lineQ + negFti + lineS + lineT + lineU + lineW + otherSubs;
+  const l5 = max02(l3 - l4);
+  const l6 = rd(evalStateTax("us.sc.income_tax", l5));
+  const l7 = rd(c(input.scLumpSumTax));
+  if (l7 > 0n)
+    notes.push("SC line 7: tax on lump-sum distribution (SC4972 \u2014 agent-computed, form attached)");
+  const l8 = rd(c(input.scActiveTradeTax));
+  if (l8 > 0n)
+    notes.push("SC line 8: tax on active trade or business income (I-335 flat 3% election \u2014 agent-computed; the electing income must be excluded from line 5 via subtraction line l)");
+  const l9 = rd(c(input.scCatastropheTax));
+  const l10 = l6 + l7 + l8 + l9;
+  let l11 = 0n;
+  const careExpenses = rd(c(input.scCareExpenses));
+  if (careExpenses > 0n) {
+    if (mfs) {
+      notes.push("SC line 11 Child and Dependent Care Credit $0: denied to married filing separately");
+    } else {
+      l11 = rd(evalStateTax("us.sc.cdcc", 0n, { scCareExpenses: careExpenses, scCareChildren: input.scCareChildren ?? 1 }));
+      notes.push(`SC line 11: Child and Dependent Care Credit ${fmtD(l11)} (7% of the federal Form 2441 EXPENSES, max $210 one child / $420 two or more)`);
+    }
+  }
+  let l12 = 0n;
+  const lowerEarned = rd(c(input.scLowerQualifiedEarnedIncome));
+  if (lowerEarned > 0n) {
+    if (!joint) {
+      notes.push("SC line 12 Two Wage Earner Credit $0: married-filing-jointly only");
+    } else {
+      l12 = rd(evalStateTax("us.sc.two_wage_earner_credit", 0n, { scLowerQualifiedEarnedIncome: lowerEarned }));
+      notes.push(`SC line 12: Two Wage Earner Credit ${fmtD(l12)} (0.7% of the lesser spouse's SC qualified earned income, capped $50,000 \u2014 max $350)`);
+    }
+  }
+  const fedEitc = rd(c(input.federalEITC));
+  let scEitc = 0n;
+  if (fedEitc > 0n) {
+    scEitc = rd((fedEitc * 125n + 50n) / 100n);
+    notes.push(`SC EITC ${fmtD(scEitc)} in line 13 (125% of the federal EIC, NONREFUNDABLE, full-year residents, via SC1040TC/TC-60 \u2014 \xA7 12-6-3632, fully phased since 2023)`);
+  }
+  const l13 = scEitc + rd(c(input.nonrefundableCredits));
+  const l14 = l11 + l12 + l13;
+  const l15 = max02(l10 - l14);
+  if (l14 > l10)
+    notes.push(`SC nonrefundable credits ${fmtD(l14)} exceed the line 10 tax ${fmtD(l10)} \u2014 line 15 floors at $0 (no carryforward, no refund of the excess)`);
+  const l16 = rd(c(input.stateWithholding));
+  const l17 = rd(c(input.estimatedPayments)) + rd(c(input.priorYearOverpaymentCredited));
+  const l18 = rd(c(input.extensionPayment));
+  const l19 = rd(c(input.scI290Payments));
+  const l20 = rd(c(input.scOtherWithholding));
+  const l21 = rd(c(input.scTuitionCredit));
+  if (l21 > 0n)
+    notes.push("SC line 21: refundable tuition tax credit (I-319: 50% of qualifying SC-institution tuition within the form's limits \u2014 agent-computed, form attached)");
+  const l22 = rd(c(input.refundableCredits));
+  if (l22 > 0n)
+    notes.push("SC line 22 refundable credits (22a-d: anhydrous ammonia I-333, milk I-334, classroom teacher I-360, parental refundable I-361 \u2014 transcribed, forms attached)");
+  const l23 = l16 + l17 + l18 + l19 + l20 + l21 + l22;
+  const l24 = max02(l23 - l15);
+  const l25 = max02(l15 - l23);
+  const l26 = rd(c(input.useTax));
+  if (l26 > 0n)
+    notes.push(`SC line 26: use tax ${fmtD(l26)} (county sales-tax rate on untaxed online/out-of-state purchases \u2014 transcribed)`);
+  const l27 = rd(c(input.scAppliedToNextYear));
+  const l28 = rd(c(input.scContributions));
+  const l29 = l26 + l27 + l28;
+  const l30 = l29 > l24 ? 0n : l24 - l29;
+  const l31 = l25 + max02(l29 - l24);
+  if (l24 > 0n && l29 > l24)
+    notes.push(`SC lines 26-28 (${fmtD(l29)}) exceed the line 24 overpayment (${fmtD(l24)}) \u2014 the shortfall becomes line 31 tax due`);
+  const l32 = rd(c(input.scLatePenalties));
+  const l33 = rd(c(input.scUnderpaymentPenalty));
+  const l34 = l31 + l32 + l33;
+  notes.push("SC OBBBA nonconformity (TY2025): South Carolina conforms to the IRC only through December 31, 2024 (the 2026 conformity bill failed) \u2014 federal OBBBA deductions taken in federal taxable income (tips, overtime premium, the $6,000 senior deduction, car-loan interest, OBBBA business items) MUST be added back in scAdditions (SC1040 line e); verify the federal return for these before composing");
+  notes.push("SC filing note: the SCDOR granted ALL taxpayers an automatic extension to October 15, 2026 for 2025 returns (no form required) \u2014 FILING only; 90% of the liability was due April 15, 2026. TY2026 is restructured by H.4216 (federal-AGI base, phase-out Income Adjusted Deduction, 1.99%/5.21% rates, EITC capped $200)");
+  return {
+    "1_federal_taxable_income": fmtD(l1),
+    ...l2 !== 0n ? { "2_additions": fmtD(l2) } : {},
+    "3_subtotal": fmtD(l3),
+    ...lineI !== 0n ? { "i_ltcg_44pct": fmtD(lineI) } : {},
+    ...lineO !== 0n ? { "o_social_security": fmtD(lineO) } : {},
+    ...lineP !== 0n ? { "p_retirement_military": fmtD(lineP) } : {},
+    ...lineQ !== 0n ? { "q_age65": fmtD(lineQ) } : {},
+    ...negFti !== 0n ? { "r_negative_fti": fmtD(negFti) } : {},
+    ...lineS !== 0n ? { "s_subsistence": fmtD(lineS) } : {},
+    ...lineT !== 0n ? { "t_under6": fmtD(lineT) } : {},
+    ...lineU !== 0n ? { "u_consumer_protection": fmtD(lineU) } : {},
+    ...lineW !== 0n ? { "w_dependent_exemption": fmtD(lineW) } : {},
+    "4_total_subtractions": fmtD(l4),
+    "5_sc_income_subject_to_tax": fmtD(l5),
+    "6_tax": fmtD(l6),
+    ...l7 + l8 + l9 !== 0n ? { "7to9_other_taxes": fmtD(l7 + l8 + l9) } : {},
+    "10_total_tax": fmtD(l10),
+    ...l11 !== 0n ? { "11_cdcc": fmtD(l11) } : {},
+    ...l12 !== 0n ? { "12_two_wage_earner": fmtD(l12) } : {},
+    ...l13 !== 0n ? { "13_other_nonrefundable": fmtD(l13) } : {},
+    "14_total_credits": fmtD(l14),
+    "15_tax_after_credits": fmtD(l15),
+    "16_withholding": fmtD(l16),
+    ...l21 !== 0n ? { "21_tuition_credit": fmtD(l21) } : {},
+    "23_total_payments": fmtD(l23),
+    "24_overpayment": fmtD(l24),
+    "25_amount_due": fmtD(l25),
+    ...l26 !== 0n ? { "26_use_tax": fmtD(l26) } : {},
+    ...l29 !== 0n ? { "29_use_tax_credit_contributions": fmtD(l29) } : {},
+    "30_net_refund": fmtD(l30),
+    ...l32 + l33 !== 0n ? { "32_33_penalties": fmtD(l32 + l33) } : {},
+    "34_balance_due": fmtD(l34)
+  };
+}
+
 // ../compose/dist/va-worksheets.js
 var VA_STD_DEDUCTION_JOINT = 1750000n;
 var VA_STD_DEDUCTION_OTHER = 875000n;
@@ -26179,7 +26353,7 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -26527,7 +26701,41 @@ var mn = {
   mnUnderpaymentPenalty: usd.optional().describe("M1 line 27: Schedule M15 underpayment penalty"),
   mnAppliedToNextYear: usd.optional().describe("M1 line 30: refund applied to 2026 estimated tax")
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn };
+var sc = {
+  // SC's base is FEDERAL TAXABLE INCOME (SC1040 line 1) — federalAGI is NOT used.
+  scFederalTaxableIncome: usd.optional().describe("REQUIRED for SC: federal Form 1040 line 15 TAXABLE income (from compute_return, verbatim) \u2014 the SC1040 line 1 starting point (NOT federal AGI). A NEGATIVE amount is allowed: the composer enters $0 on line 1 and preserves the loss on subtraction line r per the printed instructions."),
+  scAdditions: usd.optional().describe("SC1040 line 2 total additions (lines a-e: the state income/sales tax deducted in federal itemized deductions MUST be added back on line a; out-of-state rental/business losses; non-SC municipal bond interest; expenses on reserve/subsistence income). CRITICAL for TY2025: SC REJECTED OBBBA conformity (IRC conformity frozen at December 31, 2024) \u2014 line e must ADD BACK every OBBBA deduction in federal taxable income (tips exclusion, overtime premium, the $6,000 senior deduction, car-loan interest, OBBBA business items)."),
+  scSubtractionsOther: usd.optional().describe("SC subtraction lines f/g/h/j/k/l/m/n/v total (state tax refund, total-and-permanent disability retirement, out-of-state non-personal-service income, volunteer firefighter/EMS/police $6,000 (2025), Future Scholar 529 (unlimited), ACTIVE TRADE OR BUSINESS income electing the I-335 3% flat tax (line l \u2014 must pair with scActiveTradeTax), US government interest, nontaxable Guard/Reserve pay, other) \u2014 EXCLUDING the composer-computed lines i/o/p/q/r/s/t/u/w"),
+  scNetLtcgAfterLosses: usd.optional().describe("net LONG-TERM capital gain held over one year, AFTER netting ALL capital losses (short-term included \u2014 the printed example nets an ST loss against the LT gain first) \u2014 the composer takes the 44% deduction (line i)"),
+  scRetirementIncomeYou: usd.optional().describe("primary taxpayer's qualified retirement income (401(k)/403(b)/457, IRA, Keogh \u2014 EXCLUDING military retirement, which goes in scMilitaryRetirementYou) \u2014 the composer caps at $3,000 under 65 / $10,000 at 65+ (line p-1; us.sc.retirement_deduction)"),
+  scRetirementIncomeSpouse: usd.optional().describe("spouse's qualified retirement income for line p-2 (each spouse's own cap; joint returns)"),
+  scMilitaryRetirementYou: usd.optional().describe("primary taxpayer's military retirement income \u2014 100% deductible since TY2022 (line p-4); per the printed worksheet it REDUCES the same person's retirement-deduction CAP and age-65 deduction (instructions Example 5: $16,000 military at 65+ leaves $0 on lines p-1 and q-1) \u2014 the composer handles the interplay"),
+  scMilitaryRetirementSpouse: usd.optional().describe("spouse's military retirement income (line p-5)"),
+  scIs65You: external_exports.boolean().optional().describe("primary taxpayer was 65 or older by December 31 \u2014 raises the retirement cap to $10,000 and enables the $15,000 age-65 deduction (line q-1, reduced by the retirement + military deductions claimed)"),
+  scIs65Spouse: external_exports.boolean().optional().describe("spouse was 65 or older by December 31 (lines p-2/q-2)"),
+  scSubsistenceDays: external_exports.number().int().optional().describe("SC line s: days as a full-time federal/state/local law enforcement officer, firefighter, or EMS worker \u2014 $16/day subsistence allowance"),
+  scDependents: external_exports.number().int().optional().describe("SC line w dependent count (must equal the federal return's) \u2014 $4,930 each for 2025 (us.sc.dependent_exemption); falls back to the shared dependents input"),
+  scDependentsUnder6: external_exports.number().int().optional().describe("SC line t: dependents under age 6 on December 31 \u2014 the SAME $4,930 again each (on top of their line w exemption)"),
+  scConsumerProtection: usd.optional().describe("SC line u: identity-theft/consumer protection services purchased after a security breach notification \u2014 the composer caps at $300 (individual) / $1,000 (joint or with dependents)"),
+  scLumpSumTax: usd.optional().describe("SC1040 line 7: tax on lump-sum distribution (SC4972, agent-computed, attached)"),
+  scActiveTradeTax: usd.optional().describe("SC1040 line 8: I-335 flat 3% tax on active trade or business income (agent-computed; the electing income must also appear in scSubtractionsOther as the line l subtraction)"),
+  scCatastropheTax: usd.optional().describe("SC1040 line 9: tax on excess Catastrophe Savings Account withdrawals"),
+  scCareExpenses: usd.optional().describe("federal Form 2441 child/dependent care EXPENSES (not the credit) \u2014 SC line 11 pays 7%, max $210/$420 (us.sc.cdcc); DENIED to married filing separately"),
+  scCareChildren: external_exports.number().int().optional().describe("count of qualifying care children/dependents \u2014 2+ raises the SC CDCC cap from $210 to $420"),
+  scLowerQualifiedEarnedIncome: usd.optional().describe("the LESSER-earning spouse's SC qualified earned income per the Two Wage Earner worksheet (earned income minus attributable federal adjustments) \u2014 line 12 credit = 0.7% capped at $50,000 base / $350 credit; MFJ only (us.sc.two_wage_earner_credit)"),
+  scI290Payments: usd.optional().describe("SC1040 line 19: nonresident real estate withholding paid on Form I-290"),
+  scOtherWithholding: usd.optional().describe("SC1040 line 20: other SC withholding from 1099s (W-2 amounts go in the shared stateWithholding for line 16)"),
+  scTuitionCredit: usd.optional().describe("SC1040 line 21: REFUNDABLE tuition tax credit (Form I-319: 50% of qualifying SC-institution tuition within the form's limits \u2014 agent-computed with disclosure, form attached)"),
+  scAppliedToNextYear: usd.optional().describe("SC1040 line 27: amount of the line 24 overpayment credited to 2026 estimated tax"),
+  scContributions: usd.optional().describe("SC1040 line 28: check-off contributions total (I-330 attached; reduces the refund)"),
+  scLatePenalties: usd.optional().describe("SC1040 line 32: late filing/late payment penalties and interest"),
+  scUnderpaymentPenalty: usd.optional().describe("SC1040 line 33: underpayment of estimated tax penalty (SC2210 attached)")
+  // SC line 13 nonrefundable SC1040TC credits use the shared nonrefundableCredits
+  // input — but the composer ADDS the SC EITC (125% of federalEITC, § 12-6-3632)
+  // itself when federalEITC is passed; do not double-count it there. Line 22
+  // refundable credits (22a-d) use the shared refundableCredits input.
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -26556,7 +26764,7 @@ function composeStateReturn(input, evalStateTax) {
     input.filingHohOrQss = fs === "hoh" || fs === "qss" || fs === "mfj";
   }
   const j = input.jurisdiction;
-  if (j !== "pa" && j !== "nj" && typeof input.federalAGI !== "number") {
+  if (j !== "pa" && j !== "nj" && j !== "sc" && typeof input.federalAGI !== "number") {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
@@ -26583,6 +26791,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeWI(input, evalStateTax, notes), notes };
   if (j === "mn")
     return { lines: composeMN(input, evalStateTax, notes), notes };
+  if (j === "sc")
+    return { lines: composeSC(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -29528,6 +29738,67 @@ var facts = [
     min: "0",
     description: "Minnesota net investment income per Schedule NIIT (the federal Form 8960 concept minus class 2a agricultural-land gains) \u2014 us.mn.niit charges 1% of the amount over $1,000,000 (TY2024+, Minn. Stat. \xA7 290.033). In dollars.",
     default: { value: "0", rationale: "Assumed no net investment income absent contrary input" }
+  },
+  {
+    id: "scDependents",
+    type: "int",
+    min: "0",
+    description: "South Carolina dependent count for the exemption being computed (us.sc.dependent_exemption, $4,930 each for 2025): pass the FULL federal dependent count for the SC1040 line w exemption, or the under-age-6 count for the additional line t deduction (evaluate the target once per line).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" }
+  },
+  {
+    id: "scQualifiedRetirementIncome",
+    type: "money",
+    min: "0",
+    description: "One person's qualified retirement income for the South Carolina retirement deduction (401(k)/403(b)/457, IRA, Keogh \u2014 EXCLUDING military retirement, which is 100% deducted separately and reduces this deduction) \u2014 us.sc.retirement_deduction caps it at $3,000 (under 65) / $10,000 (65+). Per person; evaluate each spouse separately. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualified retirement income absent contrary input" }
+  },
+  {
+    id: "scMilitaryRetirementDeduction",
+    type: "money",
+    min: "0",
+    description: "The SAME person's military retirement deduction (SC1040 line p-4/p-5, 100% since TY2022) \u2014 the printed worksheet REDUCES the us.sc.retirement_deduction CAP ($3,000/$10,000) by this amount before limiting to qualified retirement income (instructions Example 5). In dollars.",
+    default: { value: "0", rationale: "Assumed no military retirement deduction absent contrary input" }
+  },
+  {
+    id: "scAgi",
+    type: "money",
+    description: "Federal adjusted gross income for the TY2026 South Carolina Income Adjusted Deduction phase-out (us.sc.income_adjusted_deduction: reduced by deduction x excess-over-$40,000/$60,000/$80,000 divided by $55,000/$82,500/$110,000, the reduction floored to $10s; H.4216). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input (full deduction below the phase-out threshold)" }
+  },
+  {
+    id: "scIs65",
+    type: "bool",
+    description: "The person whose South Carolina retirement deduction is being computed was 65 or older by December 31 \u2014 raises the us.sc.retirement_deduction cap from $3,000 to $10,000 (and gates the separate $15,000 age-65 deduction).",
+    default: { value: false, rationale: "Assumed under 65 absent contrary attestation" }
+  },
+  {
+    id: "scRetirementDeductionsClaimed",
+    type: "money",
+    min: "0",
+    description: "The SAME person's South Carolina retirement deduction (line p-1/p-2) PLUS military retirement deduction (line p-4/p-5) already claimed \u2014 us.sc.age65_deduction reduces the $15,000 age-65 deduction by this amount per the printed worksheet. In dollars.",
+    default: { value: "0", rationale: "Assumed no retirement deductions claimed absent contrary input" }
+  },
+  {
+    id: "scLowerQualifiedEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "The LESSER-earning spouse's South Carolina qualified earned income per the Two Wage Earner Credit worksheet (SC earned income minus the federal adjustments attributable to it) \u2014 us.sc.two_wage_earner_credit pays 0.7% of it capped at $50,000 (max $350; married filing jointly only). In dollars.",
+    default: { value: "0", rationale: "Assumed no second-earner income absent contrary input" }
+  },
+  {
+    id: "scCareExpenses",
+    type: "money",
+    min: "0",
+    description: "Federal Form 2441 child and dependent care EXPENSES (the expense amount, not the federal credit) \u2014 us.sc.cdcc pays 7% of it, capped $210/$420 (denied to married filing separately). In dollars.",
+    default: { value: "0", rationale: "Assumed no care expenses absent contrary input" }
+  },
+  {
+    id: "scCareChildren",
+    type: "int",
+    min: "0",
+    description: "Count of qualifying children/dependents for the South Carolina Child and Dependent Care Credit \u2014 2 or more raises the us.sc.cdcc cap from $210 to $420.",
+    default: { value: "1", rationale: "Assumed one qualifying child absent contrary input (the conservative $210 cap)" }
   }
 ];
 
@@ -29889,7 +30160,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt7 = (cents) => ({
+  const lt8 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -29908,22 +30179,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt7("500"),
+    cond: lt8("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt7("1500"),
+      cond: lt8("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt7("2500"),
+        cond: lt8("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt7("300000"),
+          cond: lt8("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -41277,6 +41548,302 @@ var mnRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-sc.js
+var rd11 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var lt7 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
+var iff5 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt4 = (base, count) => ({ kind: "mulInt", base, count });
+var sub6 = (left, right) => ({ kind: "sub", left, right });
+var isStatus13 = (v) => ({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: v } });
+var SCHED_2025 = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "0", den: "100" } },
+  { thresholdCents: "356000", fixedCents: "0", rate: { num: "3", den: "100" } },
+  { thresholdCents: "1783000", fixedCents: "42810", rate: { num: "6", den: "100" } }
+];
+var scRules = [
+  {
+    id: "us.sc.income_tax",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina income tax \u2014 TY2025: 0% / 3% / 6.0% (trigger-reduced top rate) with the SC1040TT table convention (SC1040 line 6)",
+    citation: {
+      source: "S.C. Code \xA7 12-6-510 and \xA7 12-6-545 trigger reductions (6.2% \u2192 6.0% for 2025); 2025 SC1040TT, Individual Income Tax Tables (Revised 6/17/25) incl. the printed Tax Rate Schedule for $100,000+",
+      section: "S.C. Code \xA7 12-6-510; SC1040 line 6; 2025 SC1040TT",
+      url: "https://dor.sc.gov/forms-site/Forms/SC1040TT_2025.pdf",
+      excerpt: "2025 brackets (decoded from the printed SC1040TT and confirmed by its own $100,000+ schedule \u2014 the SAME schedule for every filing status): 0% to $3,560; 3% from $3,560 to $17,830; 6.0% over $17,830 (marginal anchor $428.10 at $17,830). THE TOP RATE IS 6.0% FOR 2025 \u2014 the annual revenue-trigger reduction cut it from 6.2% (2024) and 6.4% (2023); surveys printed before the determination show the stale 6.2%. METHOD (SC1040TT verbatim): 'You must use the Tax Tables instead of this Tax Rate Schedule if your taxable income is less than $100,000'; the printed table uses $50-wide rows below $7,000 and $100-wide rows from $7,000, each row = the schedule at the ROW MIDPOINT rounded to the nearest dollar \u2014 verified against 10 printed rows incl. the bracket transitions ($3,600\u2013$3,650 \u2192 $2 = 3% \xD7 $65; $17,900\u2013$18,000 \u2192 $435 = $428.10 + 6% \xD7 $120; $99,900\u2013$100,000 \u2192 $5,355). $100,000 AND OVER (printed schedule, verbatim): 'Multiply the amount on line 5 by 6%; Subtract $642' (worked example: $101,000 \u2192 $5,418; the exact marginal constant is $641.70 \u2014 the printed $642 is the DOR's rounding, encoded as printed for $100,000+). useFormulaMethod=true evaluates the marginal schedule at the exact income below $100,000. THE BASE (SC1040 line 5) starts from FEDERAL TAXABLE INCOME (line 1, floor $0 \u2014 a negative federal taxable income enters $0 on line 1 and the NEGATIVE amount is preserved via the line r subtraction), plus additions, minus subtractions \u2192 us.sc.* companion targets. FILING NOTE (SCDOR, 2026): ALL taxpayers received an AUTOMATIC extension for 2025 returns to October 15, 2026 \u2014 FILING ONLY: at least 90% of the 2025 liability was still due April 15, 2026 to avoid penalties. TY2026 IS A DIFFERENT WORLD: H.4216 (signed March 30, 2026) replaces this structure \u2014 see us.sc.income_tax v2. Part-year/nonresidents: Schedule NR (not composed)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      zeroBracketTop: { value: "356000", type: "money" },
+      // $3,560
+      threePctBracketTop: { value: "1783000", type: "money" },
+      // $17,830
+      topRatePct: { value: "6", type: "int" },
+      // trigger-reduced for 2025
+      printedConstant100k: { value: "64200", type: "money" },
+      // $642 ($641.70 exact)
+      tableThreshold: { value: "10000000", type: "money" }
+      // $100,000
+    },
+    formula: (() => {
+      const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
+      const sched = (b) => printedSchedule(b, SCHED_2025);
+      const mid50 = {
+        kind: "add",
+        args: [mulInt4(money33("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money33("2500")]
+      };
+      const mid100 = {
+        kind: "add",
+        args: [mulInt4(money33("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money33("5000")]
+      };
+      const table2 = iff5(lt7(base, money33("700000")), sched(mid50), sched(mid100));
+      const over100k = sub6({ kind: "mulRate", base, rate: { num: "6", den: "100" }, round: "half-up" }, money33("64200"));
+      return rd11(iff5(lt7(base, money33("10000000")), iff5(fact36("useFormulaMethod"), sched(base), table2), { kind: "max0", arg: over100k }));
+    })()
+  },
+  {
+    id: "us.sc.income_tax",
+    version: 2,
+    jurisdiction: "us.sc",
+    title: "South Carolina income tax \u2014 TY2026 (H.4216 restructure): 1.99% to $30,000, $597 + 5.21% above, on the NEW federal-AGI base",
+    citation: {
+      source: "H.4216 (signed by the Governor March 30, 2026, effective beginning with the 2026 tax year); SCDOR 'Information about H. 4216' (dor.sc.gov/news/information-about-h-4216); web-verified August 2026",
+      section: "H.4216; S.C. Code \xA7 12-6-510 as rewritten",
+      url: "https://dor.sc.gov/news/information-about-h-4216",
+      excerpt: "H.4216 REPLACES the SC income tax structure for TY2026 (returns due April 15, 2027; it does NOT affect 2025 filings). RATES (SCDOR verbatim): 'The tax rate for income less than $30,000 is 1.99%. The tax rate for income from $30,000 and above is 5.21%, minus $966' \u2014 the two forms are EXACTLY continuous (5.21% \xD7 $30,000 \u2212 $966 = $597 = 1.99% \xD7 $30,000), so this rule encodes the marginal form ($597 anchor at $30,000). NEW BASE (verbatim): 'Federal Adjusted Gross Income (AGI) is now the starting point' \u2014 SC DECOUPLES from federal deductions; a new SOUTH CAROLINA INCOME ADJUSTED DEDUCTION replaces the federal standard deduction \u2192 us.sc.income_adjusted_deduction ($15,000 single/MFS, $22,500 HOH, $30,000 MFJ/QSS). BEA TRIGGER (verbatim): 'The top Individual Income Tax rate will be further reduced if the Board of Economic Advisors (BEA) projects that revenue collections will increase by 5% or greater from the previous fiscal year' \u2014 the enrolled step size is the GREATER of $200 million or 25% of the recurring surplus (limited to the projected increase), and 'the reduction required by this item shall continue until the top marginal income tax rate equals 1.99 percent'; never assume a post-2026 rate without the certification. TY2026 EITC (enrolled \xA7 12-6-3632 amendment, verbatim): 125% of the federal EITC, nonrefundable, 'but not to exceed $200' \u2014 the $200 CAP is NEW for 2026 (TY2025 is uncapped). CAVEATS: the 2026 SC1040 form, its line structure, the fate of the TY2025 subtraction set (44% LTCG, retirement/age-65 deductions, dependent exemptions) under the new base, and the 2026 tax-table convention are unpublished until the 2026 forms land (~January 2027) \u2014 this rule computes the enacted schedule on already-composed 2026 taxable income; compose the base per H.4216's enrolled text with disclosure, and re-verify against the printed 2026 SC1040 when it publishes. [Input: SC income subject to tax for 2026, composed per H.4216.]"
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      bracketTop: { value: "3000000", type: "money" },
+      // $30,000
+      lowRatePctTimes100: { value: "199", type: "int" },
+      // 1.99%
+      topRatePctTimes100: { value: "521", type: "int" },
+      // 5.21%
+      printedSubtractionConstant: { value: "96600", type: "money" }
+      // $966
+    },
+    formula: rd11(printedSchedule({ kind: "max0", arg: fact36("stateTaxableIncome") }, [
+      { thresholdCents: "0", fixedCents: "0", rate: { num: "199", den: "10000" } },
+      { thresholdCents: "3000000", fixedCents: "59700", rate: { num: "521", den: "10000" } }
+    ]))
+  },
+  {
+    id: "us.sc.income_adjusted_deduction",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina Income Adjusted Deduction \u2014 TY2026 (H.4216): $15,000 / $22,500 / $30,000, PHASED OUT by federal AGI over $40,000/$60,000/$80,000 (fully gone at $95,000/$142,500/$190,000)",
+    citation: {
+      source: "H.4216 enrolled text (scstatehouse.gov/sess126_2025-2026/bills/4216.htm, phase-out fractions verbatim); SCDOR 'Information about H. 4216'; web-verified August 2026",
+      section: "H.4216; SC1040 (2026 structure)",
+      url: "https://www.scstatehouse.gov/sess126_2025-2026/bills/4216.htm",
+      excerpt: "NEW for TY2026 (H.4216): 'A South Carolina Income Adjusted Deduction replaces the federal standard deduction': $15,000 for single or married filing separately; $22,500 for head of household; $30,000 for married filing jointly or a surviving spouse \u2014 applied against the NEW federal-AGI starting point (SC no longer inherits the federal standard/itemized deduction through federal taxable income). PHASE-OUT (enrolled text, verbatim mechanism): the deduction is 'reduced by a fraction whereby the numerator is the amount the taxpayer's federal adjusted gross income exceeds' the threshold 'and the denominator is' the range \u2014 single/MFS: threshold $40,000, denominator $55,000 (eliminated at $95,000 AGI); HOH: $60,000 over $82,500 (eliminated at $142,500); MFJ/QSS: $80,000 over $110,000 (eliminated at $190,000). ROUNDING (verbatim): 'Any reduction amount which is not a multiplier of ten dollars must be rounded to the next lowest ten dollars' \u2014 the REDUCTION rounds DOWN to the next $10 (i.e. reduction = deduction \xD7 excess/range, floored to $10s; the deduction itself is base minus that). Example: MFJ AGI $100,000 \u2192 reduction $30,000 \xD7 20,000/110,000 = $5,454.54 \u2192 $5,450 \u2192 deduction $24,550. Age additions, dependent interactions, and the printed worksheet still await the 2026 forms \u2014 re-verify against the printed 2026 SC1040 when it publishes. [Inputs: filingStatus; scAgi = federal AGI for 2026.]"
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      singleMfs: { value: "1500000", type: "money" },
+      hoh: { value: "2250000", type: "money" },
+      jointQss: { value: "3000000", type: "money" },
+      phaseoutStartSingleMfs: { value: "4000000", type: "money" },
+      // $40,000
+      phaseoutRangeSingleMfs: { value: "5500000", type: "money" },
+      // $55,000
+      phaseoutStartHoh: { value: "6000000", type: "money" },
+      // $60,000
+      phaseoutRangeHoh: { value: "8250000", type: "money" },
+      // $82,500
+      phaseoutStartJointQss: { value: "8000000", type: "money" },
+      // $80,000
+      phaseoutRangeJointQss: { value: "11000000", type: "money" }
+      // $110,000
+    },
+    formula: (() => {
+      const phased2 = (base, start, range) => {
+        const excess = { kind: "max0", arg: sub6(fact36("scAgi"), money33(start)) };
+        const reductionRaw = { kind: "mulDiv", a: money33(base), b: excess, c: money33(range), round: "floor" };
+        const reduction10 = mulInt4(money33("1000"), { kind: "stepUnits", value: reductionRaw, unitCents: "1000", mode: "floor" });
+        return { kind: "max0", arg: sub6(money33(base), reduction10) };
+      };
+      return iff5({ kind: "or", args: [isStatus13("mfj"), isStatus13("qss")] }, phased2("3000000", "8000000", "11000000"), iff5(isStatus13("hoh"), phased2("2250000", "6000000", "8250000"), phased2("1500000", "4000000", "5500000")));
+    })()
+  },
+  {
+    id: "us.sc.dependent_exemption",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina dependent exemption \u2014 $4,930 per dependent for 2025 (SC1040 line w; the same amount again per child under 6 on line t)",
+    citation: {
+      source: "S.C. Code \xA7 12-6-1160 (line w dependent exemption) and \xA7 12-6-1140(13) (the additional under-age-6 deduction), both indexed; 2025 SC1040 instructions (dependent exemption worksheet and the Worksheet for dependent under age 6, both printing $4,930)",
+      section: "SC1040 lines t and w; 2025 instructions",
+      url: "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf",
+      excerpt: "2025 amount (printed worksheets, verbatim): $4,930 per eligible dependent (qualifying children AND qualifying relatives; the SC dependent count must equal the federal return's) \u2014 claimed on SC1040 line w. ADDITIONAL under-6 deduction (line t, its own printed worksheet): the SAME $4,930 again for each dependent who had not reached age 6 during the tax year (i.e. an under-6 dependent yields $9,860 total across lines t and w). Both are SUBTRACTIONS from federal taxable income. Form 8332 attaches when required federally. The amount is indexed annually. [Input: scDependents = the count for the line being computed \u2014 evaluate once with the full dependent count (line w) and once with the under-6 count (line t).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      perDependent: { value: "493000", type: "money" }
+      // $4,930 (2025 indexed)
+    },
+    formula: mulInt4(money33("493000"), fact36("scDependents"))
+  },
+  {
+    id: "us.sc.retirement_deduction",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina retirement deduction \u2014 the $3,000 (under 65) / $10,000 (65+) CAP is first reduced by the same person's military retirement deduction, then limited to qualified retirement income (SC1040 lines p-1/p-2)",
+    citation: {
+      source: "S.C. Code \xA7 12-6-1170(A); 2025 SC1040 instructions, lines p-1 through p-6 worksheets and Examples 3-5",
+      section: "S.C. Code \xA7 12-6-1170(A); SC1040 lines p-1/p-2/p-3",
+      url: "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf",
+      excerpt: "Per person (2025 instructions, verbatim): 'An individual who is under age 65 may claim a retirement deduction up to $3,000 on qualified retirement income'; 65 or older by year end \u2192 up to $10,000, from the person's OWN qualified plan (401(k)/403(b)/457, IRAs, Keogh). MILITARY retirement is 100% deducted separately on lines p-4/p-6 \u2014 and the printed worksheet REDUCES THE CAP, not the income: retirement deduction available = ($3,000 or $10,000) MINUS the military retirement deduction taken for that person; p-1/p-2 = the LESSER of qualified retirement income and that reduced cap. Instructions Example 5: a 65+ taxpayer deducting $16,000 of military retirement 'is not allowed an additional amount on line p-1 or line q-1' \u2014 the $10,000 cap is exhausted even though $8,000 of other retirement income remains. Surviving-spouse variant (p-3): the deceased spouse's cap based on the deceased's age. Income already subtracted elsewhere (Social Security, disability) does not count. Interacts with the AGE-65 deduction: us.sc.age65_deduction is reduced by the amounts claimed here and on the military lines. [Inputs (one person per evaluation): scQualifiedRetirementIncome (EXCLUDING military retirement), scMilitaryRetirementDeduction (the same person's p-4/p-5 amount), scIs65.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      capUnder65: { value: "300000", type: "money" },
+      // $3,000
+      cap65Plus: { value: "1000000", type: "money" }
+      // $10,000
+    },
+    formula: {
+      kind: "min",
+      args: [
+        { kind: "max0", arg: fact36("scQualifiedRetirementIncome") },
+        {
+          kind: "max0",
+          arg: sub6(iff5(fact36("scIs65"), money33("1000000"), money33("300000")), { kind: "max0", arg: fact36("scMilitaryRetirementDeduction") })
+        }
+      ]
+    }
+  },
+  {
+    id: "us.sc.age65_deduction",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina age 65 and older deduction \u2014 $15,000 per qualifying person, reduced by the retirement and military-retirement deductions claimed (SC1040 lines q-1/q-2)",
+    citation: {
+      source: "S.C. Code \xA7 12-6-1170(B); 2025 SC1040 instructions, lines q-1/q-2 and the printed reduction worksheet",
+      section: "S.C. Code \xA7 12-6-1170(B); SC1040 lines q-1/q-2",
+      url: "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf",
+      excerpt: "A resident who is 65 or older by December 31 may deduct up to $15,000 'against any South Carolina income' (not just retirement income) \u2014 but the printed worksheet REDUCES the $15,000 by the retirement deduction (line p-1/p-2) AND the military retirement deduction (line p-4/p-5) claimed by the SAME person (a 65+ filer who took the full $10,000 retirement deduction has $5,000 of age-65 deduction left). Per person; each spouse computes separately. [Inputs (one person): scRetirementDeductionsClaimed = that person's line p amounts (retirement + military retirement).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      base: { value: "1500000", type: "money" }
+      // $15,000
+    },
+    formula: {
+      kind: "max0",
+      arg: sub6(money33("1500000"), { kind: "max0", arg: fact36("scRetirementDeductionsClaimed") })
+    }
+  },
+  {
+    id: "us.sc.two_wage_earner_credit",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina Two Wage Earner Credit \u2014 0.7% of the lesser-earning spouse's SC qualified earned income, capped at $50,000 (max $350; SC1040 line 12)",
+    citation: {
+      source: "S.C. Code \xA7 12-6-3330; 2025 SC1040 instructions, Line 12 and the Two Wage Earner Credit worksheet",
+      section: "S.C. Code \xA7 12-6-3330; SC1040 line 12",
+      url: "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf",
+      excerpt: "2025 instructions (verbatim): 'the credit is computed at .007 of the lesser of $50,000 or the South Carolina qualified earned income of the spouse with the lower South Carolina qualified earned income' \u2014 maximum $350. MARRIED FILING JOINTLY ONLY, both spouses with earned income taxed to SC ('not allowed on returns with a filing status of Single, Married Filing Separately, or Head of Household'). Qualified earned income = SC earned income minus the federal 1040 adjustments attributable to it (deductible \xBD SE tax, SE retirement/SEP, SE health insurance, etc. per the worksheet). NONREFUNDABLE. [Input: scLowerQualifiedEarnedIncome = the lesser spouse's worksheet result.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      ratePctTimes10: { value: "7", type: "int" },
+      // 0.7%
+      earnedIncomeCap: { value: "5000000", type: "money" },
+      // $50,000
+      creditMax: { value: "35000", type: "money" }
+      // $350
+    },
+    formula: rd11({
+      kind: "mulRate",
+      base: { kind: "min", args: [{ kind: "max0", arg: fact36("scLowerQualifiedEarnedIncome") }, money33("5000000")] },
+      rate: { num: "7", den: "1000" },
+      round: "half-up"
+    })
+  },
+  {
+    id: "us.sc.cdcc",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina Child and Dependent Care Credit \u2014 7% of the federal care expenses, max $210 / $420 (SC1040 line 11)",
+    citation: {
+      source: "S.C. Code \xA7 12-6-3380; 2025 SC1040 instructions, Line 11 (with worked examples)",
+      section: "S.C. Code \xA7 12-6-3380; SC1040 line 11",
+      url: "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf",
+      excerpt: "2025 instructions (verbatim): 'the credit is calculated at 7% of the federal child and dependent care EXPENSE' (the federal Form 2441 expense amount, NOT the federal credit \u2014 worked example: $2,000 of federal expenses \u2192 $140). 'The maximum credit allowed is $210 for one child or $420 for two or more children' (= 7% of the federal $3,000/$6,000 expense caps). DENIED to married filing separately. Part-year/nonresidents prorate (and residents of states with no nonresident-reciprocal credit are ineligible) \u2014 not composed. NONREFUNDABLE. [Inputs: scCareExpenses (federal 2441 expenses), scCareChildren.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      pctOfExpenses: { value: "7", type: "int" },
+      maxOneChild: { value: "21000", type: "money" },
+      // $210
+      maxTwoPlus: { value: "42000", type: "money" }
+      // $420
+    },
+    formula: {
+      kind: "min",
+      args: [
+        rd11({
+          kind: "mulRate",
+          base: { kind: "max0", arg: fact36("scCareExpenses") },
+          rate: { num: "7", den: "100" },
+          round: "half-up"
+        }),
+        iff5({ kind: "cmp", op: "ge", left: fact36("scCareChildren"), right: { kind: "int", value: "2" } }, money33("42000"), money33("21000"))
+      ]
+    }
+  },
+  {
+    id: "us.sc.parameters",
+    version: 1,
+    jurisdiction: "us.sc",
+    title: "South Carolina 2025 return parameters \u2014 44% capital gain deduction, military retirement, EITC 125%, subtractions, credits, and composition conventions (SC1040)",
+    citation: {
+      source: "2025 SC1040 + 26-page instructions (dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf); 2025 SC1040TT; S.C. Code Title 12; SCDOR H.4216 page",
+      section: "SC1040; 2025 instructions",
+      url: "https://dor.sc.gov/sites/dor/files/forms/SC1040Instr_2025.pdf",
+      excerpt: "BASE: SC1040 line 1 = FEDERAL TAXABLE INCOME (zero floor; a NEGATIVE federal taxable income enters $0 on line 1 and the negative amount is preserved as the line r subtraction \u2014 net effect keeps the loss). ADDITIONS (lines a-e): STATE TAX ADDBACK for federal itemizers (the state income/sales tax deducted federally), out-of-state losses, National Guard/Reserve expense addback, non-SC municipal bond interest, other \u2014 AND, CRITICAL FOR TY2025: SOUTH CAROLINA REJECTED OBBBA CONFORMITY (the March 31, 2026 conformity bill failed the Senate; SC conforms to the IRC only through December 31, 2024), so line e must ADD BACK every 2025 federal deduction from IRC sections SC does not adopt \u2014 the OBBBA tips exclusion, overtime-premium exclusion, the enhanced $6,000 senior deduction, car-loan interest, and OBBBA business-asset deductions (the instructions' line e: 'Add back any federal deductions resulting from IRC sections that South Carolina does not adopt'; this nonconformity is why the SCDOR granted the October 15 extension). SUBTRACTIONS (lines f-w): state tax refund (f); total-and-permanent disability retirement (g); out-of-state non-personal-service income/gain (h); 44% OF NET LONG-TERM CAPITAL GAINS held over one year (i \u2014 SC nets LT gains against ALL capital losses first: the printed example nets an ST loss against the LT gain before applying 44%); volunteer firefighter/EMS/police/reserve/DNR deduction (j, $6,000 for 2025 per the printed instructions); Future Scholar/SC 529 contributions (k, unlimited-to-contribution); ACTIVE TRADE OR BUSINESS INCOME deduction (l, pairs with the I-335 flat 3% election on line 8); US government interest (m); nontaxable Guard/Reserve pay (n); SOCIAL SECURITY and railroad retirement to the extent federally taxed (o \u2014 SC never taxes SS); retirement deductions (p-1..p-3 \u2192 us.sc.retirement_deduction) and MILITARY RETIREMENT 100% (p-4..p-6, TY2022+: 'individuals may deduct all military retirement income', which REDUCES both the regular retirement deduction and the age-65 deduction for that person); AGE 65+ $15,000 deduction (q \u2192 us.sc.age65_deduction); negative federal taxable income (r); SUBSISTENCE ALLOWANCE $16/day for police/fire/EMS (s); dependents under 6 (t \u2192 us.sc.dependent_exemption with the under-6 count); consumer protection services ($300 individual/$1,000 MFJ-or-with-dependents, u); other (v); DEPENDENT EXEMPTION $4,930 each (w \u2192 us.sc.dependent_exemption). TAX: line 6 \u2192 us.sc.income_tax; line 7 SC4972 lump-sum; line 8 I-335 active-trade 3% flat election; line 9 catastrophe-savings withdrawal tax. NONREFUNDABLE CREDITS: CDCC (line 11 \u2192 us.sc.cdcc), Two Wage Earner (line 12 \u2192 us.sc.two_wage_earner_credit), SC1040TC bundle (line 13, transcribed): SC EARNED INCOME TAX CREDIT = 125% of the federal EITC, NONREFUNDABLE, full-year residents (\xA7 12-6-3632, fully phased since 2023, UNCAPPED for TY2025 \u2014 H.4216 caps it at $200 beginning TY2026; TC-60), other-state credit, nursing home, classroom teacher (also a refundable variant), motor fuel user fee credit (I-385). PAYMENTS/REFUNDABLES: withholding (16), estimates (17), extension (18), I-290 nonresident real estate (19), other withholding (20), TUITION TAX CREDIT (21, I-319: 50% of tuition within the I-319 limits, REFUNDABLE, SC colleges), refundable bundle (22a-d: anhydrous ammonia, milk, classroom teacher I-360, parental refundable I-361). USE TAX line 26 (county-rate based, self-computed; certification checkbox). Contributions via I-330 (28). Refund/due chain lines 24-34 (the use tax/credited-forward/contributions NET against the overpayment on lines 26-30 \u2014 a shortfall flows into line 31). PENALTIES: line 32 late file/pay; line 33 SC2210 underpayment. FILING NOTE: the SCDOR granted ALL taxpayers an AUTOMATIC extension to OCTOBER 15, 2026 for 2025 returns (no form needed) \u2014 FILING ONLY: at least 90% of the 2025 liability was due April 15, 2026 to avoid penalties. TY2026: H.4216 restructures everything (FAGI base, Income Adjusted Deduction, 1.99%/5.21% \u2014 us.sc.income_tax v2); the fate of these subtractions under the new base publishes with the 2026 forms. No local income taxes."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      ltcgDeductionPct: { value: "44", type: "int" },
+      eitcPctOfFederal: { value: "125", type: "int" },
+      // nonrefundable, TC-60
+      subsistencePerDay: { value: "1600", type: "money" },
+      // $16
+      consumerProtectionIndividual: { value: "30000", type: "money" },
+      // $300
+      consumerProtectionJointOrDependents: { value: "100000", type: "money" },
+      // $1,000
+      activeTradeBusinessRatePct: { value: "3", type: "int" }
+      // I-335 election
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: South Carolina composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.sc.income_tax (v1 TY2025 / v2 TY2026), us.sc.income_adjusted_deduction (TY2026), us.sc.dependent_exemption, us.sc.retirement_deduction, us.sc.age65_deduction, us.sc.two_wage_earner_credit, us.sc.cdcc"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -41728,6 +42295,7 @@ var stateParameterRules = [
   ...moRules,
   ...wiRules,
   ...mnRules,
+  ...scRules,
   ...otherStateRules
 ];
 
@@ -41737,7 +42305,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus13 = (status) => ({
+var isStatus14 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -41809,7 +42377,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus13("mfj"),
+    cond: isStatus14("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -41908,7 +42476,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus13("mfj"),
+      cond: isStatus14("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -42096,7 +42664,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus14 = (status) => ({
+var isStatus15 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -42152,7 +42720,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus14("mfs"),
+      cond: isStatus15("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -42163,7 +42731,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus14("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus15("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -42183,7 +42751,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus14("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus15("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -42390,7 +42958,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus15 = (status) => ({
+var isStatus16 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -42529,7 +43097,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus15("mfs"),
+      cond: isStatus16("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -42618,11 +43186,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus15("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus16("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus15("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus16("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -42632,7 +43200,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus16 = (status) => ({
+var isStatus17 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -42680,7 +43248,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus16("mfs") },
+        { kind: "not", arg: isStatus17("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -42695,13 +43263,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus17 = (status) => ({
+var isStatus18 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus17("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus18("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -42732,7 +43300,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus17("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus17("mfj"),
+                    cond: isStatus18("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -42804,7 +43372,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus17("mfj"),
+      cond: isStatus18("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -43483,7 +44051,16 @@ var INDIVIDUAL_GROUPS = {
     "mnDependentEarnedIncome",
     "mnDependents",
     "mnTaxableSs",
-    "mnNetInvestmentIncome"
+    "mnNetInvestmentIncome",
+    "scDependents",
+    "scQualifiedRetirementIncome",
+    "scMilitaryRetirementDeduction",
+    "scAgi",
+    "scIs65",
+    "scRetirementDeductionsClaimed",
+    "scLowerQualifiedEarnedIncome",
+    "scCareExpenses",
+    "scCareChildren"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -43773,7 +44350,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -43800,7 +44377,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd11 = (c2) => {
+      const rd12 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -43827,11 +44404,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd11(after) + rd11(other);
-      const payments = rd11(withheld) + rd11(refundable) + rd11(extension) + rd11(estimated);
+      const total24 = rd12(after) + rd12(other);
+      const payments = rd12(withheld) + rd12(refundable) + rd12(extension) + rd12(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd11(c2));
+      const d3 = (c2) => fmt2(rd12(c2));
       return ok({
         ok: true,
         asOf,
@@ -43858,7 +44435,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd11(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd12(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

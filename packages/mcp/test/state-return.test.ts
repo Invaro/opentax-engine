@@ -934,3 +934,107 @@ describe("composeStateReturn — federalAGI guard", () => {
     expect(dollars(lines, "43_tax")).toBe("$1,216");
   });
 });
+
+describe("composeSC — 2025 SC1040 (real corpus targets)", () => {
+  it("full MFJ return: LTCG 44%, retirement/age-65 interplay, dependents, CDCC + Two Wage Earner, use-tax netting", () => {
+    // Hand-computed: line 1 = 95,000 + additions 1,200 = 96,200.
+    // Subtractions: i 44% x 10,000 = 4,400; p 10,000 (65+ cap) + 2,000; q
+    // 15,000 - 10,000 = 5,000; t 1 x 4,930; w 2 x 4,930 = 9,860 -> line 4 =
+    // 36,190; line 5 = 60,010. Tax: SC1040TT row 60,000-60,100 midpoint
+    // 60,050 -> 428.10 + 6% x 42,220 = 2,961.30 -> $2,961. Credits: CDCC
+    // min(7% x 6,000, 420) = 420; Two Wage Earner 0.7% x 20,000 = 140 ->
+    // line 15 = 2,401. Withholding 2,500 -> overpayment 99; use tax 40 +
+    // contributions 20 = 60 -> net refund $39.
+    const input = {
+      jurisdiction: "sc" as const,
+      filingStatus: "mfj",
+      scFederalTaxableIncome: 95000,
+      scAdditions: 1200,
+      scNetLtcgAfterLosses: 10000,
+      scRetirementIncomeYou: 12000,
+      scIs65You: true,
+      scRetirementIncomeSpouse: 2000,
+      scDependents: 2,
+      scDependentsUnder6: 1,
+      scCareExpenses: 6000,
+      scCareChildren: 2,
+      scLowerQualifiedEarnedIncome: 20000,
+      stateWithholding: 2500,
+      useTax: 40,
+      scContributions: 20,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "1_federal_taxable_income")).toBe("$95,000");
+    expect(dollars(lines, "i_ltcg_44pct")).toBe("$4,400");
+    expect(dollars(lines, "p_retirement_military")).toBe("$12,000");
+    expect(dollars(lines, "q_age65")).toBe("$5,000");
+    expect(dollars(lines, "t_under6")).toBe("$4,930");
+    expect(dollars(lines, "w_dependent_exemption")).toBe("$9,860");
+    expect(dollars(lines, "4_total_subtractions")).toBe("$36,190");
+    expect(dollars(lines, "5_sc_income_subject_to_tax")).toBe("$60,010");
+    expect(dollars(lines, "6_tax")).toBe("$2,961");
+    expect(dollars(lines, "11_cdcc")).toBe("$420");
+    expect(dollars(lines, "12_two_wage_earner")).toBe("$140");
+    expect(dollars(lines, "15_tax_after_credits")).toBe("$2,401");
+    expect(dollars(lines, "24_overpayment")).toBe("$99");
+    expect(dollars(lines, "30_net_refund")).toBe("$39");
+    expect(dollars(lines, "34_balance_due")).toBe("$0");
+    expect(notes.some((n) => n.includes("REDUCED by that person's retirement"))).toBe(true);
+  });
+
+  it("negative federal taxable income preserved on line r; 125% EITC nonrefundable floors line 15 at $0", () => {
+    // line 1 = $0 (FTI -5,000); additions 8,000 -> line 3 = 8,000; line r =
+    // 5,000 -> line 5 = 3,000 -> table row 3,000-3,050 midpoint 3,025 in the
+    // 0% bracket -> tax $0. SC EITC = 125% x 1,000 = 1,250 nonrefundable ->
+    // line 15 stays $0; withholding 100 refunds in full.
+    const input = {
+      jurisdiction: "sc" as const,
+      filingStatus: "single",
+      scFederalTaxableIncome: -5000,
+      scAdditions: 8000,
+      federalEITC: 1000,
+      stateWithholding: 100,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "1_federal_taxable_income")).toBe("$0");
+    expect(dollars(lines, "r_negative_fti")).toBe("$5,000");
+    expect(dollars(lines, "5_sc_income_subject_to_tax")).toBe("$3,000");
+    expect(dollars(lines, "6_tax")).toBe("$0");
+    expect(dollars(lines, "13_other_nonrefundable")).toBe("$1,250");
+    expect(dollars(lines, "15_tax_after_credits")).toBe("$0");
+    expect(dollars(lines, "30_net_refund")).toBe("$100");
+    expect(notes.some((n) => n.includes("125% of the federal EIC"))).toBe(true);
+    expect(notes.some((n) => n.includes("floors at $0"))).toBe(true);
+  });
+
+  it("military retirement exhausts the same person's retirement CAP and age-65 deduction (Example 5); MFS denied the CDCC", () => {
+    // Printed worksheet: the $30,000 military deduction exceeds the $10,000
+    // 65+ cap -> p-1 = min(4,000, max0(10,000 - 30,000)) = $0 (instructions
+    // Example 5); q = max0(15,000 - 30,000) = $0. Line p = military 30,000
+    // only; line 5 = 60,000 - 30,000 = 30,000 -> row 30,000-30,100 midpoint
+    // 30,050 -> 428.10 + 6% x 12,220 = 1,161.30 -> $1,161. CDCC $0 (MFS).
+    const input = {
+      jurisdiction: "sc" as const,
+      filingStatus: "mfs",
+      scFederalTaxableIncome: 60000,
+      scRetirementIncomeYou: 4000,
+      scMilitaryRetirementYou: 30000,
+      scIs65You: true,
+      scCareExpenses: 3000,
+      scCareChildren: 1,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "p_retirement_military")).toBe("$30,000");
+    expect(lines["q_age65"]).toBeUndefined();
+    expect(dollars(lines, "5_sc_income_subject_to_tax")).toBe("$30,000");
+    expect(dollars(lines, "6_tax")).toBe("$1,161");
+    expect(lines["11_cdcc"]).toBeUndefined();
+    expect(notes.some((n) => n.includes("denied to married filing separately"))).toBe(true);
+  });
+
+  it("refuses loudly without scFederalTaxableIncome (federal TAXABLE income, not AGI, is the SC base)", () => {
+    expect(() =>
+      composeStateReturn({ jurisdiction: "sc", filingStatus: "single", federalAGI: 50000 }, stubEval),
+    ).toThrow(/scFederalTaxableIncome is required/);
+  });
+});

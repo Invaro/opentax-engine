@@ -1,0 +1,11 @@
+{
+  "description": "SC TY2026 Income Adjusted Deduction (H.4216): MFJ -> $30,000 (replaces the federal standard deduction under the new FAGI base).",
+  "facts": {
+    "filingStatus": "mfj"
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_adjusted_deduction",
+  "expect": {
+    "valueCents": "3000000"
+  }
+}

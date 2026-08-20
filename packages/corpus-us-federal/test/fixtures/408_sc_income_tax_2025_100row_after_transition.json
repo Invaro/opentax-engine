@@ -1,0 +1,12 @@
+{
+  "description": "SC1040TT printed row 7,000-7,100 -> $105: the FIRST $100-wide row; midpoint 7,050, 3% x 3,490 = 104.70 -> $105.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 7050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "10500"
+  }
+}

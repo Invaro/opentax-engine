@@ -1,0 +1,12 @@
+{
+  "description": "SC Two Wage Earner Credit: lesser spouse earned $60,000 -> base capped $50,000 x 0.007 = $350 (the printed maximum).",
+  "facts": {
+    "filingStatus": "mfj",
+    "scLowerQualifiedEarnedIncome": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.two_wage_earner_credit",
+  "expect": {
+    "valueCents": "35000"
+  }
+}
