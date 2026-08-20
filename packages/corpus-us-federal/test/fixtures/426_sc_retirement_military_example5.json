@@ -1,0 +1,14 @@
+{
+  "description": "SC instructions Example 5: 65+ taxpayer with a $16,000 military retirement deduction and $8,000 other retirement income -> p-1 = min(8,000, max0(10,000 - 16,000)) = $0 ('is not allowed an additional amount on line p-1').",
+  "facts": {
+    "filingStatus": "single",
+    "scQualifiedRetirementIncome": 8000,
+    "scMilitaryRetirementDeduction": 16000,
+    "scIs65": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.retirement_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

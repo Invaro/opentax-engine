@@ -1,0 +1,13 @@
+{
+  "description": "SC retirement deduction under 65: $2,500 of qualified retirement income -> $2,500 (below the $3,000 cap).",
+  "facts": {
+    "filingStatus": "single",
+    "scQualifiedRetirementIncome": 2500,
+    "scIs65": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.retirement_deduction",
+  "expect": {
+    "valueCents": "250000"
+  }
+}

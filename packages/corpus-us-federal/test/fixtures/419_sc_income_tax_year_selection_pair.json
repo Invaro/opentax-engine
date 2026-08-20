@@ -1,0 +1,13 @@
+{
+  "description": "SC year selection: the SAME $40,000 answers $1,758 for asOf 2025 (428.10 + 6% x 22,170 via formula method) but $1,118 for 2026 \u2014 see 419b.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 40000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "175800"
+  }
+}

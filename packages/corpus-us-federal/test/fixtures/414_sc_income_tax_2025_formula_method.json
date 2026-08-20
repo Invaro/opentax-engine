@@ -1,0 +1,13 @@
+{
+  "description": "SC formula method (useFormulaMethod): exact marginal schedule at 50,000 = 428.10 + 6% x 32,170 = 2,358.30 -> $2,358.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "235800"
+  }
+}

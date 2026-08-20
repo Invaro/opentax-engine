@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026 SCIAD fully eliminated: MFJ AGI $190,000 (threshold $80,000 + range $110,000) -> deduction $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "scAgi": 190000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_adjusted_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

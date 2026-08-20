@@ -1,0 +1,12 @@
+{
+  "description": "SC1040TT printed Tax Rate Schedule worked example: $101,000 -> 6% x 101,000 - $642 = $5,418 (the printed $642 constant applies at $100,000+, not the exact $641.70).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 101000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "541800"
+  }
+}

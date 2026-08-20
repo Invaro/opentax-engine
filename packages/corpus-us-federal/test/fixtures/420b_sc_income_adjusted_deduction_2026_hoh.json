@@ -1,0 +1,11 @@
+{
+  "description": "SC TY2026 Income Adjusted Deduction: HOH -> $22,500 (single/MFS $15,000).",
+  "facts": {
+    "filingStatus": "hoh"
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_adjusted_deduction",
+  "expect": {
+    "valueCents": "2250000"
+  }
+}

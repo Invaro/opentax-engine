@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026: $100,000 -> 5.21% x 100,000 - 966 = $4,244 (= 597 + 5.21% x 70,000 marginal form).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "424400"
+  }
+}

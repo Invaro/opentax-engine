@@ -1,0 +1,12 @@
+{
+  "description": "SC1040TT printed row 23,000-23,100 -> $741: midpoint 23,050, 428.10 + 6% x 5,220 = 741.30 -> $741.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 23050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "74100"
+  }
+}

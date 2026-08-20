@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026 SCIAD HOH: AGI $101,250 -> reduction 22,500 x 41,250/82,500 = $11,250 exactly -> deduction $11,250.",
+  "facts": {
+    "filingStatus": "hoh",
+    "scAgi": 101250
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_adjusted_deduction",
+  "expect": {
+    "valueCents": "1125000"
+  }
+}

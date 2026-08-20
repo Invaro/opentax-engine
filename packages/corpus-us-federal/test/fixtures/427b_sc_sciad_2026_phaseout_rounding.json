@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026 SCIAD $10 rounding: MFJ AGI $100,000 -> reduction 30,000 x 20,000/110,000 = 5,454.54 -> 'next lowest ten dollars' = $5,450 -> deduction $24,550.",
+  "facts": {
+    "filingStatus": "mfj",
+    "scAgi": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_adjusted_deduction",
+  "expect": {
+    "valueCents": "2455000"
+  }
+}

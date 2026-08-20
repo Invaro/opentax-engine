@@ -3082,4 +3082,74 @@ export const facts: FactSpec[] = [
       "Minnesota net investment income per Schedule NIIT (the federal Form 8960 concept minus class 2a agricultural-land gains) — us.mn.niit charges 1% of the amount over $1,000,000 (TY2024+, Minn. Stat. \u00a7 290.033). In dollars.",
     default: { value: "0", rationale: "Assumed no net investment income absent contrary input" },
   },
+  {
+    id: "scDependents",
+    type: "int",
+    min: "0",
+    description:
+      "South Carolina dependent count for the exemption being computed (us.sc.dependent_exemption, $4,930 each for 2025): pass the FULL federal dependent count for the SC1040 line w exemption, or the under-age-6 count for the additional line t deduction (evaluate the target once per line).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" },
+  },
+  {
+    id: "scQualifiedRetirementIncome",
+    type: "money",
+    min: "0",
+    description:
+      "One person's qualified retirement income for the South Carolina retirement deduction (401(k)/403(b)/457, IRA, Keogh — EXCLUDING military retirement, which is 100% deducted separately and reduces this deduction) — us.sc.retirement_deduction caps it at $3,000 (under 65) / $10,000 (65+). Per person; evaluate each spouse separately. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualified retirement income absent contrary input" },
+  },
+  {
+    id: "scMilitaryRetirementDeduction",
+    type: "money",
+    min: "0",
+    description:
+      "The SAME person's military retirement deduction (SC1040 line p-4/p-5, 100% since TY2022) — the printed worksheet REDUCES the us.sc.retirement_deduction CAP ($3,000/$10,000) by this amount before limiting to qualified retirement income (instructions Example 5). In dollars.",
+    default: { value: "0", rationale: "Assumed no military retirement deduction absent contrary input" },
+  },
+  {
+    id: "scAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income for the TY2026 South Carolina Income Adjusted Deduction phase-out (us.sc.income_adjusted_deduction: reduced by deduction x excess-over-$40,000/$60,000/$80,000 divided by $55,000/$82,500/$110,000, the reduction floored to $10s; H.4216). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input (full deduction below the phase-out threshold)" },
+  },
+  {
+    id: "scIs65",
+    type: "bool",
+    description:
+      "The person whose South Carolina retirement deduction is being computed was 65 or older by December 31 — raises the us.sc.retirement_deduction cap from $3,000 to $10,000 (and gates the separate $15,000 age-65 deduction).",
+    default: { value: false, rationale: "Assumed under 65 absent contrary attestation" },
+  },
+  {
+    id: "scRetirementDeductionsClaimed",
+    type: "money",
+    min: "0",
+    description:
+      "The SAME person's South Carolina retirement deduction (line p-1/p-2) PLUS military retirement deduction (line p-4/p-5) already claimed — us.sc.age65_deduction reduces the $15,000 age-65 deduction by this amount per the printed worksheet. In dollars.",
+    default: { value: "0", rationale: "Assumed no retirement deductions claimed absent contrary input" },
+  },
+  {
+    id: "scLowerQualifiedEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "The LESSER-earning spouse's South Carolina qualified earned income per the Two Wage Earner Credit worksheet (SC earned income minus the federal adjustments attributable to it) — us.sc.two_wage_earner_credit pays 0.7% of it capped at $50,000 (max $350; married filing jointly only). In dollars.",
+    default: { value: "0", rationale: "Assumed no second-earner income absent contrary input" },
+  },
+  {
+    id: "scCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Form 2441 child and dependent care EXPENSES (the expense amount, not the federal credit) — us.sc.cdcc pays 7% of it, capped $210/$420 (denied to married filing separately). In dollars.",
+    default: { value: "0", rationale: "Assumed no care expenses absent contrary input" },
+  },
+  {
+    id: "scCareChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Count of qualifying children/dependents for the South Carolina Child and Dependent Care Credit — 2 or more raises the us.sc.cdcc cap from $210 to $420.",
+    default: { value: "1", rationale: "Assumed one qualifying child absent contrary input (the conservative $210 cap)" },
+  },
 ];

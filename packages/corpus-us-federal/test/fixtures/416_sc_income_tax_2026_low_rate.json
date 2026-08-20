@@ -1,0 +1,12 @@
+{
+  "description": "SC TY2026 (H.4216): $25,000 -> 1.99% flat = 497.50 -> $498. The 2026 structure replaces the 0/3/6 schedule entirely.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "49800"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "SC1040TT printed row 3,550-3,600 -> $0: $50-wide row, midpoint 3,575, 3% x (3,575-3,560) = 0.45 -> $0 (half-up).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 3575
+  },
+  "asOf": "2025-12-31",
+  "target": "us.sc.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}
