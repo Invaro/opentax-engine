@@ -373,7 +373,21 @@ export default function Page() {
       </section>
 
       {/* benchmark */}
-      <section id="benchmark" className="relative overflow-hidden mt-28 md:mt-44 pt-12 md:pt-16 scroll-mt-20">
+      <section
+        id="benchmark"
+        className="relative overflow-hidden mt-28 md:mt-44 py-12 md:py-16 scroll-mt-20"
+      >
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <Image
+            src="/dither-coast.jpg"
+            alt=""
+            fill
+            quality={90}
+            sizes="100vw"
+            className="object-cover opacity-50 dark:opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/25 to-background" />
+        </div>
         <div className="container relative flex flex-col items-center text-center mb-12">
           <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
             The model isn&apos;t the ceiling.
@@ -456,7 +470,7 @@ export default function Page() {
             </div>
 
             {/* bars */}
-            <div className="border-l border-r border-b border-border p-6 md:p-8">
+            <div className="border-l border-r border-b border-border bg-background p-6 md:p-8">
               <div className="flex items-baseline justify-between gap-3 mb-5">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   correct returns · TaxCalcBench TY25
@@ -497,7 +511,7 @@ export default function Page() {
             </div>
 
             {/* stat tiles */}
-            <div className="grid grid-cols-3 border-l border-r border-b border-border">
+            <div className="grid grid-cols-3 border-l border-r border-b border-border bg-background">
               {[
                 { n: "48/50", d: "returns exact to the dollar" },
                 { n: "98.2%", d: "of all 820 scored lines exact" },
@@ -516,7 +530,7 @@ export default function Page() {
             </div>
 
             {/* the other two */}
-            <div className="border-l border-r border-b border-t border-border p-6 md:p-8">
+            <div className="border-l border-r border-b border-t border-border bg-background p-6 md:p-8">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3">
                 and the two misses?
               </div>
