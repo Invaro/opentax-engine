@@ -175,36 +175,6 @@ function Divider() {
   );
 }
 
-type PillTone = "green" | "neutral";
-
-function StatusPill({ tone, children }: { tone: PillTone; children: string }) {
-  const tones: Record<PillTone, string> = {
-    green:
-      "border-green-600/20 bg-green-600/10 text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-400",
-    neutral: "border-border bg-accent text-muted-foreground",
-  };
-  return (
-    <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-[10px] ${tones[tone]}`}
-    >
-      {children}
-    </span>
-  );
-}
-
-const returnLines: Array<{ line: string; label: string; amount: string; tone: PillTone; status: string }> = [
-  { line: "1a", label: "Wages (W-2 box 1)", amount: "$145,200.00", tone: "green", status: "Cited" },
-  { line: "2b", label: "Taxable interest", amount: "$1,150.00", tone: "green", status: "Cited" },
-  { line: "7", label: "Capital gain", amount: "$15,750.00", tone: "green", status: "Cited" },
-  { line: "11", label: "Adjusted gross income", amount: "$162,100.00", tone: "neutral", status: "Computed" },
-  { line: "12", label: "Standard deduction", amount: "$30,000.00", tone: "green", status: "Cited" },
-  { line: "15", label: "Taxable income", amount: "$132,100.00", tone: "neutral", status: "Computed" },
-  { line: "16", label: "Tax", amount: "$27,068.00", tone: "green", status: "Cited" },
-  { line: "24", label: "Total tax", amount: "$27,373.00", tone: "neutral", status: "Computed" },
-  { line: "25", label: "Federal withholding", amount: "$30,000.00", tone: "green", status: "Cited" },
-  { line: "34", label: "Refund", amount: "$2,627.00", tone: "neutral", status: "Computed" },
-];
-
 const heroClients = [
   { name: "Claude", icon: <ClaudeMark size={18} /> },
   { name: "ChatGPT", icon: <OpenAIMark size={18} /> },
@@ -370,96 +340,6 @@ export default function Page() {
                 {c.icon}
               </span>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* hero media */}
-      <section className="container mt-14 md:mt-20">
-        <div className="mx-auto max-w-[1100px] border border-border">
-          <Image
-            src="/dither-shore.png"
-            alt=""
-            width={1200}
-            height={800}
-            priority
-            quality={90}
-            sizes="(max-width: 1148px) 100vw, 1100px"
-            className="w-full"
-          />
-        </div>
-      </section>
-
-      {/* the return, live */}
-      <section className="container mt-16 md:mt-24">
-        <div className="max-w-[780px] mx-auto border border-border bg-card p-4 md:p-8">
-          <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
-            <span className="text-sm">Form 1040</span>
-            <span className="text-[10px] md:text-xs text-muted-foreground">
-              TY 2025 · asOf 2025-12-31
-            </span>
-          </div>
-
-          <div className="mb-6 grid grid-cols-2 gap-3">
-            <div className="border border-border bg-background p-4 md:p-5">
-              <div className="font-serif text-lg md:text-2xl tabular-nums">$162,100.00</div>
-              <div className="mt-1 text-xs md:text-sm">Adjusted gross income</div>
-              <div className="text-[10px] md:text-xs text-muted-foreground">line 11</div>
-            </div>
-            <div className="border border-border bg-background p-4 md:p-5">
-              <div className="font-serif text-lg md:text-2xl tabular-nums">$27,373.00</div>
-              <div className="mt-1 text-xs md:text-sm">Total tax</div>
-              <div className="text-[10px] md:text-xs text-muted-foreground">line 24</div>
-            </div>
-            <div className="border border-border bg-background p-4 md:p-5">
-              <div className="font-serif text-lg md:text-2xl tabular-nums">$2,627.00</div>
-              <div className="mt-1 text-xs md:text-sm">Refund</div>
-              <div className="text-[10px] md:text-xs text-muted-foreground">line 34</div>
-            </div>
-            <div className="border border-border bg-background p-4 md:p-5">
-              <div className="flex items-center justify-between gap-2">
-                <div className="font-serif text-lg md:text-2xl">Proven</div>
-                <div className="flex items-center gap-[3px]">
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className={`h-4 w-[2px] ${i < 9 ? "bg-foreground" : "bg-border"}`}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="mt-1 text-xs md:text-sm">Proof status</div>
-              <div className="text-[10px] md:text-xs text-muted-foreground">
-                Merkle-rooted · replayable
-              </div>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto border border-border bg-background">
-            <table className="w-full text-left text-xs md:text-sm">
-              <thead>
-                <tr className="border-b border-border bg-accent/60 text-[10px] md:text-xs text-muted-foreground">
-                  <th className="px-3 md:px-4 py-2.5 font-normal">Line</th>
-                  <th className="px-3 md:px-4 py-2.5 font-normal">Description</th>
-                  <th className="px-3 md:px-4 py-2.5 font-normal">Amount</th>
-                  <th className="px-3 md:px-4 py-2.5 font-normal">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {returnLines.map((r) => (
-                  <tr key={r.line} className="border-b border-border last:border-b-0">
-                    <td className="px-3 md:px-4 py-2.5 text-[10px] md:text-xs text-muted-foreground">
-                      {r.line}
-                    </td>
-                    <td className="px-3 md:px-4 py-2.5">{r.label}</td>
-                    <td className="px-3 md:px-4 py-2.5 tabular-nums">{r.amount}</td>
-                    <td className="px-3 md:px-4 py-2.5">
-                      <StatusPill tone={r.tone}>{r.status}</StatusPill>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       </section>
@@ -846,38 +726,49 @@ export default function Page() {
       </section>
 
       {/* closing */}
-      <section id="connect" className="relative overflow-hidden mt-28 md:mt-44 py-20 md:py-28 scroll-mt-20">
-        <div className="container relative flex flex-col items-center text-center">
-          <h2 className="font-serif text-3xl md:text-6xl leading-tight tracking-tight mb-6">
-            Give your model <em className="not-italic text-muted-foreground">the engine</em>
-          </h2>
-          <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[560px] mb-8">
-            One MCP server. Grouped facts in, the full scored line set out: cited, rounded the way
-            the forms round, and provable.
-          </p>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto px-6 sm:px-0">
-            <Link
-              href="#install"
-              className="h-11 px-6 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center whitespace-nowrap"
-            >
-              Add the connector
-            </Link>
-            <Link
-              href="https://cal.com/invaro/15min"
-              className="border border-border h-11 px-6 text-sm font-medium hover:border-muted-foreground transition-colors flex items-center justify-center whitespace-nowrap"
-            >
-              Talk to us
-            </Link>
-          </div>
-          <div className="mt-10 flex flex-col items-center gap-2">
-            <p className="text-[10px] text-muted-foreground">
-              or get new features and other things worth knowing in your inbox · double opt-in ·{" "}
-              <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
-                privacy
-              </Link>
+      <section id="connect" className="container mt-28 md:mt-44 scroll-mt-20">
+        <div className="relative mx-auto max-w-[1100px] overflow-hidden border border-border">
+          <Image
+            src="/dither-shore.png"
+            alt=""
+            fill
+            quality={90}
+            sizes="(max-width: 1148px) 100vw, 1100px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-black/15" />
+          <div className="relative flex flex-col items-center px-6 py-24 text-center md:py-36">
+            <h2 className="mb-6 font-serif text-3xl leading-tight tracking-tight text-white md:text-6xl">
+              Give your model <em className="not-italic text-white/70">the engine</em>
+            </h2>
+            <p className="mb-8 max-w-[560px] text-sm leading-relaxed text-white/80 md:text-base">
+              One MCP server. Grouped facts in, the full scored line set out: cited, rounded the
+              way the forms round, and provable.
             </p>
-            <EmailCapture />
+            <div className="flex w-full flex-col items-stretch gap-3 px-6 sm:w-auto sm:flex-row sm:items-center sm:gap-4 sm:px-0">
+              <Link
+                href="#install"
+                className="flex h-11 items-center justify-center whitespace-nowrap bg-white px-6 text-sm font-medium text-neutral-900 transition-colors hover:bg-white/90"
+              >
+                Add the connector
+              </Link>
+              <Link
+                href="https://cal.com/invaro/15min"
+                className="flex h-11 items-center justify-center whitespace-nowrap border border-white/40 px-6 text-sm font-medium text-white transition-colors hover:border-white"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
+        </div>
+        <div className="mt-10 flex flex-col items-center gap-2 text-center">
+          <p className="text-[10px] text-muted-foreground">
+            or get new features and other things worth knowing in your inbox · double opt-in ·{" "}
+            <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
+              privacy
+            </Link>
+          </p>
+          <EmailCapture />
         </div>
       </section>
 
