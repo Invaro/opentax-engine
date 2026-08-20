@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { InvaroLogo } from "@/components/logo";
 import { KeysNav } from "@/components/keys-nav";
@@ -5,20 +6,47 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { CopyButton } from "@/components/copy-button";
 import { EmailCapture } from "@/components/email-capture";
 import { ConnectTabs } from "@/components/connect-tabs";
-import { DitherField } from "@/components/dither-field";
-import { DitherCanvas } from "@/components/dither-canvas";
 import { GithubStars, SourceButton, OpenSourceProof } from "@/components/github-stars";
-import { GitHubMark, McpMark, NpmMark } from "@/components/brand-icons";
+import {
+  ClaudeMark,
+  CopilotMark,
+  CursorMark,
+  GeminiMark,
+  GitHubMark,
+  LangChainMark,
+  McpMark,
+  N8nMark,
+  NpmMark,
+  OllamaMark,
+  OpenAIMark,
+  PerplexityMark,
+  RaycastMark,
+  WindsurfMark,
+  ZapierMark,
+  ZedMark,
+} from "@/components/brand-icons";
 
 const MCP_URL = "https://opentax.invaro.ai/mcp";
 
 const benchmark = [
-  { label: "Claude Sonnet + OpenTax MCP", pct: 96, ours: true },
-  { label: "GPT-5.6 Sol + web search", pct: 58 },
-  { label: "GPT-5.5 + web search", pct: 54 },
-  { label: "Claude Fable 5 + web search", pct: 34 },
-  { label: "Claude Sonnet, unaided", pct: 6 },
+  { label: "Claude Sonnet + OpenTax MCP", pct: 96, ours: true, brand: "claude" as const },
+  { label: "GPT-5.6 Sol + web search", pct: 58, brand: "openai" as const },
+  { label: "GPT-5.5 + web search", pct: 54, brand: "openai" as const },
+  { label: "Claude Fable 5 + web search", pct: 34, brand: "claude" as const },
+  { label: "Claude Sonnet, unaided", pct: 6, brand: "claude" as const },
 ];
+
+function ModelMark({ brand, active }: { brand: "claude" | "openai"; active?: boolean }) {
+  return (
+    <span
+      className={
+        active ? "shrink-0" : "shrink-0 opacity-50 [filter:grayscale(1)]"
+      }
+    >
+      {brand === "claude" ? <ClaudeMark size={14} /> : <OpenAIMark size={14} />}
+    </span>
+  );
+}
 
 const useCases = [
   {
@@ -65,16 +93,40 @@ const useCases = [
   },
 ];
 
-function Arrow() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={10} height={10} viewBox="0 0 12 12" fill="none">
-      <path
-        fill="currentColor"
-        d="M8.783 6.667H.667V5.333h8.116L5.05 1.6 6 .667 11.333 6 6 11.333l-.95-.933 3.733-3.733Z"
-      />
+const featureIcons: Record<string, React.ReactNode> = {
+  "01": (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z" />
+      <path d="M14 3v5h5" />
+      <path d="M8 13h8M8 17h5" />
     </svg>
-  );
-}
+  ),
+  "02": (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  ),
+  "03": (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" />
+      <path d="M3 9h18M8 4v5" />
+      <path d="M7 14h4M7 17h7" />
+    </svg>
+  ),
+  "04": (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2Z" />
+      <path d="M12 8v4M12 16h.01" />
+    </svg>
+  ),
+  "05": (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m9 3-6 2v16l6-2 6 2 6-2V3l-6 2-6-2Z" />
+      <path d="M9 3v16M15 5v16" />
+    </svg>
+  ),
+};
 
 const features = [
   {
@@ -104,34 +156,124 @@ const features = [
   },
 ];
 
+function Arrow() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={10} height={10} viewBox="0 0 12 12" fill="none">
+      <path
+        fill="currentColor"
+        d="M8.783 6.667H.667V5.333h8.116L5.05 1.6 6 .667 11.333 6 6 11.333l-.95-.933 3.733-3.733Z"
+      />
+    </svg>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="container">
+      <div className="h-px w-full border-t border-border" />
+    </div>
+  );
+}
+
+const heroClients = [
+  { name: "Claude", icon: <ClaudeMark size={18} /> },
+  { name: "ChatGPT", icon: <OpenAIMark size={18} /> },
+  { name: "Cursor", icon: <CursorMark size={18} /> },
+  { name: "GitHub Copilot", icon: <CopilotMark size={18} /> },
+  { name: "Gemini", icon: <GeminiMark size={18} /> },
+  { name: "Perplexity", icon: <PerplexityMark size={18} /> },
+  { name: "Windsurf", icon: <WindsurfMark size={18} /> },
+  { name: "Zed", icon: <ZedMark size={18} /> },
+  { name: "Raycast", icon: <RaycastMark size={18} /> },
+];
+
+const marqueeRowA = [
+  { name: "Claude", icon: <ClaudeMark size={13} /> },
+  { name: "ChatGPT", icon: <OpenAIMark size={13} /> },
+  { name: "Gemini", icon: <GeminiMark size={13} /> },
+  { name: "Perplexity", icon: <PerplexityMark size={13} /> },
+  { name: "Claude Code", icon: <ClaudeMark size={13} /> },
+  { name: "GitHub Copilot", icon: <CopilotMark size={13} /> },
+  { name: "Gemini CLI", icon: <GeminiMark size={13} /> },
+  { name: "LibreChat" },
+  { name: "Goose" },
+  { name: "OpenCode" },
+  { name: "Msty" },
+  { name: "Ollama", icon: <OllamaMark size={13} /> },
+];
+
+const marqueeRowB = [
+  { name: "Cursor", icon: <CursorMark size={13} /> },
+  { name: "Windsurf", icon: <WindsurfMark size={13} /> },
+  { name: "Zed", icon: <ZedMark size={13} /> },
+  { name: "VS Code" },
+  { name: "Cline" },
+  { name: "Continue" },
+  { name: "Raycast", icon: <RaycastMark size={13} /> },
+  { name: "LangChain", icon: <LangChainMark size={13} /> },
+  { name: "n8n", icon: <N8nMark size={13} /> },
+  { name: "Zapier", icon: <ZapierMark size={13} /> },
+  { name: "Make" },
+  { name: "Vercel AI SDK" },
+];
+
+function MarqueeRow({
+  items,
+  direction,
+}: {
+  items: Array<{ name: string; icon?: React.ReactNode }>;
+  direction: "left" | "right";
+}) {
+  const doubled = [...items, ...items];
+  return (
+    <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]">
+      <div
+        className={`flex w-max items-center gap-3 py-1.5 hover:[animation-play-state:paused] ${
+          direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
+        }`}
+      >
+        {doubled.map((c, i) => (
+          <span
+            key={`${c.name}-${i}`}
+            className="flex items-center gap-2 whitespace-nowrap rounded-full border border-border bg-background px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+          >
+            {c.icon ? (
+              <span className="[filter:grayscale(1)] opacity-70">{c.icon}</span>
+            ) : null}
+            {c.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <main className="min-h-screen">
       {/* header */}
-      <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-sm border-b border-border">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-background-semi-transparent">
         <div className="container relative flex items-center justify-between h-14">
           <div className="flex items-center gap-2.5">
             <Link href="/" aria-label="OpenTax home" className="flex items-center gap-2.5">
               <InvaroLogo size={15} />
-              <span className="font-mono text-[15px] tracking-tight leading-none">opentax</span>
+              <span className="text-[15px] tracking-tight leading-none">opentax</span>
             </Link>
             <span className="hidden sm:block w-px h-3.5 bg-border mx-0.5" />
             <Link
               href="https://invaro.ai"
-              className="hidden sm:block font-mono text-[10px] text-muted-foreground leading-none hover:text-foreground transition-colors whitespace-nowrap"
+              className="hidden sm:block text-xs text-muted-foreground leading-none hover:text-foreground transition-colors whitespace-nowrap"
             >
               by Invaro
             </Link>
           </div>
           <KeysNav />
           <div className="flex items-center gap-3">
-            <div className="border border-border rounded-full scale-90">
-              <ThemeToggle />
-            </div>
+            <ThemeToggle />
             <GithubStars />
             <Link
               href="#install"
-              className="h-8 px-3.5 font-mono text-xs font-medium bg-foreground text-background hover:opacity-90 flex items-center whitespace-nowrap"
+              className="h-8 px-3.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center whitespace-nowrap"
             >
               Install
             </Link>
@@ -141,46 +283,63 @@ export default function Page() {
 
       {/* hero */}
       <section className="relative overflow-hidden pt-[60px] lg:pt-[120px]">
-        <DitherField art="birds" tone="violet" placement="hero" />
         <div className="container relative flex flex-col items-center text-center">
           <Link
             href="#benchmark"
-            className="rounded-full border border-border bg-background flex space-x-2 items-center px-4 py-2 text-sm font-medium mb-8 hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="animate-fade-blur-in rounded-full border border-border flex space-x-2 items-center px-3.5 py-1.5 mb-8 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
           >
-            <span className="font-mono text-[10px] md:text-xs whitespace-nowrap">
-              The deterministic tax engine for AI agents
-            </span>
+            <span className="whitespace-nowrap">The deterministic tax engine for AI agents</span>
             <Arrow />
           </Link>
 
-          <h1 className="text-[44px] md:text-[96px] font-serif font-normal leading-[1.05] mb-6">
+          <h1
+            className="animate-fade-blur-in font-serif font-normal text-[40px] md:text-6xl xl:text-7xl leading-[1.1] tracking-tight mb-6"
+            style={{ animationDelay: "80ms" }}
+          >
             Turn any AI into a
             <br />
-            <span className="italic">precise tax preparer</span>
+            <em className="not-italic text-muted-foreground">precise tax preparer</em>
           </h1>
 
-          <p className="text-sm md:text-lg text-muted-foreground max-w-[640px] mb-10">
+          <p
+            className="animate-fade-blur-in text-sm md:text-base lg:text-lg leading-relaxed text-muted-foreground max-w-[640px] mb-10"
+            style={{ animationDelay: "160ms" }}
+          >
             Language models are probabilistic. Tax law is not. OpenTax is a deterministic
             computation engine: the same facts produce the same return, every time, with every
             line traced to the statute that produced it. It is{" "}
-            <span className="text-foreground font-semibold">
-              the only open-source tax engine on the market
-            </span>
+            <span className="text-foreground">the only open-source tax engine on the market</span>
             , and{" "}
-            <span className="text-foreground font-semibold">
-              the highest-scoring engine ever measured
-            </span>{" "}
+            <span className="text-foreground">the highest-scoring engine ever measured</span>{" "}
             against one.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto px-6 sm:px-0">
+          <div
+            className="animate-fade-blur-in flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto px-6 sm:px-0"
+            style={{ animationDelay: "240ms" }}
+          >
             <SourceButton />
             <Link
               href="#install"
-              className="h-11 px-6 text-sm font-medium bg-foreground text-background hover:opacity-90 flex items-center justify-center whitespace-nowrap"
+              className="h-11 px-6 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center whitespace-nowrap"
             >
               Install in 30 seconds
             </Link>
+          </div>
+
+          <div
+            className="animate-fade-blur-in mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-4"
+            style={{ animationDelay: "320ms" }}
+          >
+            {heroClients.map((c) => (
+              <span
+                key={c.name}
+                title={c.name}
+                className="opacity-40 [filter:grayscale(1)] transition-all duration-200 hover:opacity-100 hover:[filter:none]"
+              >
+                {c.icon}
+              </span>
+            ))}
           </div>
         </div>
       </section>
@@ -202,11 +361,12 @@ export default function Page() {
               d: "96% exact returns on TaxCalcBench. No model, no engine, open or closed, has ever scored higher.",
             },
           ].map((c) => (
-            <div key={c.t} className="border-b border-r border-border p-6 md:p-7 text-center md:text-left">
+            <div
+              key={c.t}
+              className="border-b border-r border-border p-6 md:p-7 text-center md:text-left transition-colors hover:bg-accent/40"
+            >
               <div className="font-serif text-xl md:text-2xl mb-2">{c.t}</div>
-              <p className="font-mono text-[10px] md:text-[11px] text-muted-foreground leading-relaxed">
-                {c.d}
-              </p>
+              <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{c.d}</p>
             </div>
           ))}
         </div>
@@ -215,26 +375,36 @@ export default function Page() {
       {/* benchmark */}
       <section
         id="benchmark"
-        className="relative overflow-hidden mt-24 md:mt-32 pt-12 md:pt-16 scroll-mt-20"
+        className="relative overflow-hidden mt-28 md:mt-44 py-12 md:py-16 scroll-mt-20"
       >
-        <DitherField art="smoke" tone="violet" placement="crown" />
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <Image
+            src="/dither-coast.jpg"
+            alt=""
+            fill
+            quality={90}
+            sizes="100vw"
+            className="object-cover opacity-50 dark:opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/25 to-background" />
+        </div>
         <div className="container relative flex flex-col items-center text-center mb-12">
-          <h2 className="text-[32px] md:text-[56px] font-serif leading-tight mb-4">
+          <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
             The model isn&apos;t the ceiling.
             <br />
-            <span className="italic">The engine is.</span>
+            <em className="not-italic text-muted-foreground">The engine is.</em>
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-[620px]">
+          <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[620px]">
             <Link
               href="https://github.com/column-tax/tax-calc-bench"
-              className="underline underline-offset-2 hover:text-foreground"
+              className="underline underline-offset-4 hover:text-foreground"
             >
               TaxCalcBench
             </Link>
             , the industry benchmark for AI tax work, asks a model to prepare 50 complete US
             tax returns. A return only counts if every line is exact. Claude Sonnet on its own
             gets 6% of returns right.{" "}
-            <span className="text-foreground font-semibold">
+            <span className="text-foreground">
               The same Sonnet, using OpenTax, gets 96%. The highest score ever recorded
             </span>
             , above every top model, with or without web search. The engine amplifies whatever
@@ -243,157 +413,170 @@ export default function Page() {
         </div>
 
         <div className="container relative">
-        <div className="max-w-[780px] mx-auto">
-          {/* the transformation: before → connect → after */}
-          <div className="border border-border p-6 md:p-10">
-            <div>
-              <div className="flex items-end justify-between gap-4 mb-2.5">
-                <div>
-                  <div className="font-mono text-[9px] md:text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
-                    before
+          <div className="max-w-[780px] mx-auto">
+            {/* the transformation: before → connect → after */}
+            <div className="border border-border bg-card p-6 md:p-10">
+              <div>
+                <div className="flex items-end justify-between gap-4 mb-2.5">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                      before
+                    </div>
+                    <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
+                      <ModelMark brand="claude" />
+                      Claude Sonnet, on its own
+                    </div>
                   </div>
-                  <div className="text-sm md:text-base text-muted-foreground">
-                    Claude Sonnet, on its own
+                  <div className="font-serif text-[40px] md:text-[64px] leading-none text-muted-foreground/60">
+                    6%
                   </div>
                 </div>
-                <div className="font-serif text-[40px] md:text-[64px] leading-none text-muted-foreground/60">
-                  6%
+                <div className="h-[6px] bg-muted">
+                  <div className="h-full bg-muted-foreground/70" style={{ width: "6%" }} />
                 </div>
               </div>
-              <div className="h-[6px] bg-muted">
-                <div className="h-full bg-muted-foreground/70" style={{ width: "6%" }} />
+
+              <div className="flex flex-col items-center my-7 md:my-9">
+                <div className="w-full flex items-center gap-3 md:gap-4">
+                  <span className="flex-1 border-t border-dashed border-border" />
+                  <span className="border border-foreground px-4 md:px-5 py-2 font-mono text-[10px] md:text-xs whitespace-nowrap">
+                    + connect the OpenTax MCP
+                  </span>
+                  <span className="flex-1 border-t border-dashed border-border" />
+                </div>
+                <div className="text-[10px] text-muted-foreground mt-2">
+                  one URL, two minutes, nothing else changes
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-end justify-between gap-4 mb-2.5">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                      after
+                    </div>
+                    <div className="flex items-center gap-2 text-sm md:text-base">
+                      <ModelMark brand="claude" active />
+                      the <span className="underline underline-offset-4">same</span> Sonnet, same
+                      prompts, with the engine
+                    </div>
+                  </div>
+                  <div className="font-serif text-[40px] md:text-[64px] leading-none">96%</div>
+                </div>
+                <div className="h-[6px] bg-muted">
+                  <div className="h-full bg-foreground" style={{ width: "96%" }} />
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col items-center my-7 md:my-9">
-              <div className="w-full flex items-center gap-3 md:gap-4">
-                <span className="flex-1 border-t border-dashed border-border" />
-                <span className="border border-foreground px-4 md:px-5 py-2 font-mono text-[10px] md:text-xs whitespace-nowrap">
-                  + connect the OpenTax MCP
+            {/* bars */}
+            <div className="border-l border-r border-b border-border bg-background p-6 md:p-8">
+              <div className="flex items-baseline justify-between gap-3 mb-5">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  correct returns · TaxCalcBench TY25
                 </span>
-                <span className="flex-1 border-t border-dashed border-border" />
+                <span className="inline-flex items-center whitespace-nowrap rounded-full border border-green-600/20 bg-green-600/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-green-700 dark:border-green-500/20 dark:bg-green-500/10 dark:text-green-400">
+                  highest score ever recorded
+                </span>
               </div>
-              <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground mt-2">
-                one URL, two minutes, nothing else changes
+              <div className="space-y-4">
+                {benchmark.map((b) => (
+                  <div key={b.label}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span
+                        className={`flex items-center gap-2 text-xs md:text-sm ${
+                          b.ours ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        <ModelMark brand={b.brand} active={b.ours} />
+                        {b.label}
+                      </span>
+                      <span
+                        className={`text-xs md:text-sm tabular-nums ${
+                          b.ours ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        {b.pct}%
+                      </span>
+                    </div>
+                    <div className="h-[6px] bg-muted">
+                      <div
+                        className={b.ours ? "h-full bg-foreground" : "h-full bg-muted-foreground/70"}
+                        style={{ width: `${b.pct}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div>
-              <div className="flex items-end justify-between gap-4 mb-2.5">
-                <div>
-                  <div className="font-mono text-[9px] md:text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
-                    after
-                  </div>
-                  <div className="text-sm md:text-base">
-                    the <span className="font-semibold">same</span> Sonnet, same prompts, with the
-                    engine
-                  </div>
-                </div>
-                <div className="font-serif text-[40px] md:text-[64px] leading-none text-brand">
-                  96%
-                </div>
-              </div>
-              <div className="h-[6px] bg-muted">
-                <div className="h-full bg-brand" style={{ width: "96%" }} />
-              </div>
-            </div>
-          </div>
-
-          {/* bars */}
-          <div className="border-l border-r border-b border-border p-6 md:p-8">
-            <div className="flex items-baseline justify-between mb-5">
-              <span className="font-mono text-[10px] text-muted-foreground">
-                correct returns · TaxCalcBench TY25
-              </span>
-              <span className="font-mono text-[10px] font-bold text-brand">
-                HIGHEST SCORE EVER RECORDED
-              </span>
-            </div>
-            <div className="space-y-4">
-              {benchmark.map((b) => (
-                <div key={b.label}>
-                  <div className="flex items-baseline justify-between mb-1.5">
-                    <span
-                      className={`font-mono text-[10px] md:text-xs ${
-                        b.ours ? "text-foreground font-medium" : "text-muted-foreground"
-                      }`}
-                    >
-                      {b.label}
-                    </span>
-                    <span
-                      className={`font-mono text-[10px] md:text-xs tabular-nums ${
-                        b.ours ? "text-brand font-medium" : "text-muted-foreground"
-                      }`}
-                    >
-                      {b.pct}%
-                    </span>
-                  </div>
-                  <div className="h-[6px] bg-muted">
-                    <div
-                      className={b.ours ? "h-full bg-brand" : "h-full bg-muted-foreground/70"}
-                      style={{ width: `${b.pct}%` }}
-                    />
+            {/* stat tiles */}
+            <div className="grid grid-cols-3 border-l border-r border-b border-border bg-background">
+              {[
+                { n: "48/50", d: "returns exact to the dollar" },
+                { n: "98.2%", d: "of all 820 scored lines exact" },
+                { n: "16×", d: "better than the same model alone" },
+              ].map((s) => (
+                <div
+                  key={s.n}
+                  className="border-r last:border-r-0 border-border p-4 md:p-6 text-center"
+                >
+                  <div className="font-serif text-2xl md:text-4xl mb-1">{s.n}</div>
+                  <div className="text-[10px] md:text-xs text-muted-foreground leading-relaxed">
+                    {s.d}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* stat tiles */}
-          <div className="grid grid-cols-3 border-l border-r border-b border-border">
-            {[
-              { n: "48/50", d: "returns exact to the dollar" },
-              { n: "98.2%", d: "of all 820 scored lines exact" },
-              { n: "16×", d: "better than the same model alone" },
-            ].map((s) => (
-              <div key={s.n} className="border-r last:border-r-0 border-border p-4 md:p-6 text-center">
-                <div className="font-serif text-2xl md:text-4xl mb-1">{s.n}</div>
-                <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground leading-relaxed">
-                  {s.d}
-                </div>
+            {/* the other two */}
+            <div className="border-l border-r border-b border-t border-border bg-background p-6 md:p-8">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3">
+                and the two misses?
               </div>
-            ))}
-          </div>
-
-          {/* the other two */}
-          <div className="border-l border-r border-b border-t border-border p-6 md:p-8">
-            <div className="font-mono text-[10px] text-muted-foreground mb-3">
-              and the two misses?
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                We traced both to reference returns whose worksheets are inconsistent with
+                their own inputs. No published model run has matched those two cases
+                either.{" "}
+                <Link
+                  href="https://github.com/column-tax/tax-calc-bench/issues/96"
+                  className="underline underline-offset-4 hover:text-foreground"
+                >
+                  We filed the bug upstream
+                </Link>
+                . An engine precise enough to audit the exam it&apos;s taking.
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              We traced both to reference returns whose worksheets are inconsistent with
-              their own inputs. No published model run has matched those two cases
-              either.{" "}
-              <Link
-                href="https://github.com/column-tax/tax-calc-bench/issues/96"
-                className="underline underline-offset-2 hover:text-foreground"
-              >
-                We filed the bug upstream
-              </Link>
-              . An engine precise enough to audit the exam it&apos;s taking.
+
+            <p className="mx-auto mt-6 max-w-[620px] text-center text-[10px] md:text-xs text-muted-foreground/80 leading-relaxed">
+              methodology: TaxCalcBench TY25 by column-tax, 50 returns, strict scoring (every line
+              exact) · scored with the benchmark&apos;s own evaluator against its reference
+              returns · leaderboard rows from its published July 2026 results · agent runs cold,
+              pass@1
             </p>
           </div>
-
-          <p className="font-mono text-[9px] md:text-[10px] text-muted-foreground mt-4 leading-relaxed">
-            methodology: TaxCalcBench TY25 by column-tax, 50 returns, strict scoring (every line
-            exact) · scored with the benchmark&apos;s own evaluator against its reference
-            returns · leaderboard rows from its published July 2026 results · agent runs cold,
-            pass@1
-          </p>
-        </div>
         </div>
       </section>
 
       {/* features */}
-      <section id="features" className="container mt-24 md:mt-32 scroll-mt-20">
+      <section id="features" className="container mt-28 md:mt-44 scroll-mt-20">
         <div className="grid md:grid-cols-3 border-t border-l border-border">
           {features.map((f) => (
             <div
               key={f.k}
-              className={`border-b border-r border-border p-6 md:p-8 ${f.k === "05" ? "md:col-span-2" : ""}`}
+              className={`border-b border-r border-border p-6 md:p-8 transition-colors hover:bg-accent/40 ${
+                f.k === "05" ? "md:col-span-2" : ""
+              }`}
             >
-              <div className="font-mono text-[10px] text-muted-foreground mb-4">{f.k}</div>
-              <h3 className="text-lg font-medium mb-2">{f.title}</h3>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex h-10 w-10 items-center justify-center border border-border bg-accent text-muted-foreground">
+                  {featureIcons[f.k]}
+                </div>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {f.k}
+                </span>
+              </div>
+              <h3 className="text-base md:text-lg mb-2">{f.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{f.body}</p>
             </div>
           ))}
@@ -401,12 +584,12 @@ export default function Page() {
       </section>
 
       {/* use cases */}
-      <section id="usecases" className="container mt-24 md:mt-32 scroll-mt-20">
+      <section id="usecases" className="container mt-28 md:mt-44 scroll-mt-20">
         <div className="flex flex-col items-center text-center mb-10">
-          <h2 className="text-[32px] md:text-[56px] font-serif leading-tight mb-4">
-            What your agent <span className="italic">does with it</span>
+          <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
+            What your agent <em className="not-italic text-muted-foreground">does with it</em>
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-[620px]">
+          <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[620px]">
             OpenTax is the computation layer under whatever AI you already use: Claude, ChatGPT,
             Cursor, or your own agent. The model does the reading and the writing; the engine does
             the math. In practice:
@@ -415,15 +598,20 @@ export default function Page() {
 
         <div className="grid md:grid-cols-2 border-t border-l border-border">
           {useCases.map((u) => (
-            <div key={u.title} className="border-b border-r border-border p-6 md:p-8 flex flex-col">
-              <div className="font-mono text-[10px] text-muted-foreground mb-4">{u.tag}</div>
-              <h3 className="text-lg font-medium mb-2">{u.title}</h3>
+            <div
+              key={u.title}
+              className="border-b border-r border-border p-6 md:p-8 flex flex-col transition-colors hover:bg-accent/40"
+            >
+              <span className="inline-flex self-start rounded-full border border-border bg-accent px-2.5 py-1 text-[10px] uppercase tracking-wider text-muted-foreground mb-4">
+                {u.tag}
+              </span>
+              <h3 className="text-base md:text-lg mb-2">{u.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5">{u.body}</p>
               <div className="mt-auto">
-                <div className="font-mono text-[9px] text-muted-foreground mb-1.5">
+                <div className="text-[10px] text-muted-foreground mb-1.5">
                   → to your agent, verbatim
                 </div>
-                <blockquote className="bg-accent px-4 py-3 font-mono text-[11px] leading-relaxed">
+                <blockquote className="bg-accent border border-border px-4 py-3 font-mono text-[11px] leading-relaxed">
                   &ldquo;{u.prompt}&rdquo;
                 </blockquote>
               </div>
@@ -431,182 +619,273 @@ export default function Page() {
           ))}
         </div>
 
-        <p className="mt-6 text-center font-mono text-[10px] text-muted-foreground max-w-[720px] mx-auto">
-          research is built in too: <code>search_tax_rules</code> finds the encoded law by keyword,{" "}
-          <code>lookup_tax_parameter</code> returns the dollar amounts with citations, and{" "}
-          <code>verify_fact</code> answers verified / refuted, and zero hits means &ldquo;outside the
-          corpus&rdquo;, never a guess · same engine as a CLI (<code>opentax check --expect</code>{" "}
+        <p className="mt-6 text-center text-xs text-muted-foreground max-w-[720px] mx-auto leading-relaxed">
+          research is built in too: <code className="font-mono">search_tax_rules</code> finds the
+          encoded law by keyword, <code className="font-mono">lookup_tax_parameter</code> returns
+          the dollar amounts with citations, and <code className="font-mono">verify_fact</code>{" "}
+          answers verified / refuted, and zero hits means &ldquo;outside the corpus&rdquo;, never a
+          guess · same engine as a CLI (<code className="font-mono">opentax check --expect</code>{" "}
           for CI) and a TypeScript library that runs entirely in a browser tab
         </p>
       </section>
 
-      {/* install */}
-      <section
-        id="install"
-        className="relative overflow-hidden mt-24 md:mt-32 py-12 md:py-16 scroll-mt-12"
-      >
-        <DitherField art="smoke" tone="jade" placement="margins" />
-        <div className="container relative">
-        <div className="flex flex-col items-center text-center mb-10">
-          <h2 className="text-[32px] md:text-[56px] font-serif leading-tight mb-4">
-            One URL. <span className="italic">Any agent.</span>
+      {/* clients marquee */}
+      <section className="mt-28 md:mt-44">
+        <div className="container flex flex-col items-center text-center mb-10">
+          <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
+            Works with <em className="not-italic text-muted-foreground">what you already use</em>
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-[560px]">
-            Hosted, stateless, free to try. Paste the connector into anything that speaks MCP.
+          <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[560px]">
+            If it speaks MCP, it can prepare a return: assistants, IDEs, agents, and automation
+            platforms.
           </p>
         </div>
-
-        <div className="max-w-[780px] mx-auto">
-          {/* the URL */}
-          <div className="border border-border">
-            <div className="flex items-center justify-between border-b border-border px-4 py-2">
-              <span className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
-                <McpMark size={12} />
-                hosted connector · streamable http
-              </span>
-              <span className="font-mono text-[10px] text-muted-foreground">stateless</span>
-            </div>
-            <div className="p-5 md:p-6 flex items-center justify-center gap-3">
-              <code className="font-mono text-sm md:text-lg break-all">{MCP_URL}</code>
-              <CopyButton text={MCP_URL} />
-            </div>
-          </div>
-
-          {/* per-client connect steps */}
-          <ConnectTabs />
-
-          {/* npm + registry row */}
-          <div className="grid md:grid-cols-2 border-l border-border">
-            <div className="border-b border-r border-border p-5 md:p-6 min-w-0">
-              <div className="flex items-center gap-2.5 mb-2">
-                <span className="text-muted-foreground">
-                  <NpmMark size={16} />
-                </span>
-                <span className="text-sm font-medium">Run it locally</span>
-              </div>
-              <div className="font-mono text-[10px] text-muted-foreground mb-3">
-                one self-contained package: MCP server, CLI, and HTTP host in a single binary
-              </div>
-              <div className="flex items-stretch gap-1.5 mb-1.5 min-w-0">
-                <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
-                  claude mcp add opentax -- npx -y @invaro/opentax
-                </code>
-                <CopyButton text="claude mcp add opentax -- npx -y @invaro/opentax" className="shrink-0" />
-              </div>
-              <div className="flex items-stretch gap-1.5 min-w-0">
-                <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
-                  npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2
-                </code>
-                <CopyButton text="npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2" className="shrink-0" />
-              </div>
-            </div>
-            <div className="border-b border-r border-border p-5 md:p-6">
-              <div className="flex items-center gap-2.5 mb-2">
-                <span className="text-muted-foreground">
-                  <GitHubMark size={16} />
-                </span>
-                <span className="text-sm font-medium">Open source, listed</span>
-              </div>
-              <div className="font-mono text-[10px] text-muted-foreground mb-3">
-                AGPL-3.0 + commercial · on the official MCP registry as io.github.Invaro/opentax
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Link
-                  href="https://github.com/Invaro/opentax-engine"
-                  className="font-mono text-[11px] underline underline-offset-2 text-muted-foreground hover:text-foreground"
-                >
-                  github.com/Invaro/opentax-engine
-                </Link>
-                <Link
-                  href="https://www.npmjs.com/package/@invaro/opentax"
-                  className="font-mono text-[11px] underline underline-offset-2 text-muted-foreground hover:text-foreground"
-                >
-                  npmjs.com/package/@invaro/opentax
-                </Link>
-              </div>
-            </div>
-          </div>
+        <div className="mx-auto max-w-[1100px] space-y-3 px-4">
+          <MarqueeRow items={marqueeRowA} direction="left" />
+          <MarqueeRow items={marqueeRowB} direction="right" />
         </div>
+      </section>
+
+      {/* install */}
+      <section id="install" className="relative overflow-hidden mt-28 md:mt-44 py-12 md:py-16 scroll-mt-12">
+        <div className="container relative">
+          <div className="flex flex-col items-center text-center mb-10">
+            <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
+              One URL. <em className="not-italic text-muted-foreground">Any agent.</em>
+            </h2>
+            <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[560px]">
+              Hosted, stateless, free to try. Paste the connector into anything that speaks MCP.
+            </p>
+          </div>
+
+          <div className="max-w-[780px] mx-auto">
+            {/* the URL */}
+            <div className="border border-border bg-card">
+              <div className="flex items-center justify-between border-b border-border px-4 py-2">
+                <span className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                  <McpMark size={12} />
+                  hosted connector · streamable http
+                </span>
+                <span className="text-[10px] text-muted-foreground">stateless</span>
+              </div>
+              <div className="p-5 md:p-6 flex items-center justify-center gap-3">
+                <code className="font-mono text-sm md:text-lg break-all">{MCP_URL}</code>
+                <CopyButton text={MCP_URL} />
+              </div>
+            </div>
+
+            {/* per-client connect steps */}
+            <ConnectTabs />
+
+            {/* npm + registry row */}
+            <div className="grid md:grid-cols-2 border-l border-border">
+              <div className="border-b border-r border-border p-5 md:p-6 min-w-0">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <span className="text-muted-foreground">
+                    <NpmMark size={16} />
+                  </span>
+                  <span className="text-sm">Run it locally</span>
+                </div>
+                <div className="text-xs text-muted-foreground mb-3">
+                  one self-contained package: MCP server, CLI, and HTTP host in a single binary
+                </div>
+                <div className="flex items-stretch gap-1.5 mb-1.5 min-w-0">
+                  <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
+                    claude mcp add opentax -- npx -y @invaro/opentax
+                  </code>
+                  <CopyButton text="claude mcp add opentax -- npx -y @invaro/opentax" className="shrink-0" />
+                </div>
+                <div className="flex items-stretch gap-1.5 min-w-0">
+                  <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
+                    npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2
+                  </code>
+                  <CopyButton text="npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2" className="shrink-0" />
+                </div>
+              </div>
+              <div className="border-b border-r border-border p-5 md:p-6">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <span className="text-muted-foreground">
+                    <GitHubMark size={16} />
+                  </span>
+                  <span className="text-sm">Open source, listed</span>
+                </div>
+                <div className="text-xs text-muted-foreground mb-3">
+                  AGPL-3.0 + commercial · on the official MCP registry as io.github.Invaro/opentax
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Link
+                    href="https://github.com/Invaro/opentax-engine"
+                    className="font-mono text-[11px] underline underline-offset-4 text-muted-foreground hover:text-foreground"
+                  >
+                    github.com/Invaro/opentax-engine
+                  </Link>
+                  <Link
+                    href="https://www.npmjs.com/package/@invaro/opentax"
+                    className="font-mono text-[11px] underline underline-offset-4 text-muted-foreground hover:text-foreground"
+                  >
+                    npmjs.com/package/@invaro/opentax
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* open source */}
-      <section id="source" className="container mt-24 md:mt-32 scroll-mt-20">
+      <section id="source" className="container mt-28 md:mt-44 scroll-mt-20">
         <div className="max-w-[780px] mx-auto">
           <OpenSourceProof />
         </div>
       </section>
 
       {/* closing */}
-      <section
-        id="connect"
-        className="relative overflow-hidden mt-24 md:mt-32 py-20 md:py-28 scroll-mt-20"
-      >
-        {/* the dither, computed live rather than baked */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.55] dark:opacity-[0.4]"
-          style={{
-            maskImage:
-              "radial-gradient(62% 58% at 50% 50%, transparent 22%, #000 88%), linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(62% 58% at 50% 50%, transparent 22%, #000 88%), linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%)",
-            maskComposite: "intersect",
-            WebkitMaskComposite: "source-in",
-          }}
-        >
-          <DitherCanvas color="#12866C" darkColor="#2FBF9E" speed={0.3} />
-        </div>
-
-        <div className="container relative flex flex-col items-center text-center">
-          <h2 className="text-[32px] md:text-[64px] font-serif leading-tight mb-6">
-            Give your model <span className="italic">the engine</span>
-          </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-[560px] mb-8">
-            One MCP server. Grouped facts in, the full scored line set out: cited, rounded the way
-            the forms round, and provable.
-          </p>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto px-6 sm:px-0">
-            <Link
-              href="#install"
-              className="h-11 px-6 text-sm font-medium bg-foreground text-background hover:opacity-90 flex items-center justify-center whitespace-nowrap"
-            >
-              Add the connector
-            </Link>
-            <Link
-              href="https://cal.com/invaro/15min"
-              className="border border-border h-11 px-6 text-sm font-medium hover:bg-accent hover:text-accent-foreground flex items-center justify-center whitespace-nowrap"
-            >
-              Talk to us
-            </Link>
-          </div>
-          <div className="mt-10 flex flex-col items-center gap-2">
-            <p className="font-mono text-[10px] text-muted-foreground">
-              or get new features and other things worth knowing in your inbox · double opt-in ·{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
-                privacy
-              </Link>
+      <section id="connect" className="container mt-28 md:mt-44 scroll-mt-20">
+        <div className="relative mx-auto max-w-[1100px] overflow-hidden border border-border">
+          <Image
+            src="/dither-shore.png"
+            alt=""
+            fill
+            quality={90}
+            sizes="(max-width: 1148px) 100vw, 1100px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-black/15" />
+          <div className="relative flex flex-col items-center px-6 py-24 text-center md:py-36">
+            <h2 className="mb-6 font-serif text-3xl leading-tight tracking-tight text-white md:text-6xl">
+              Give your model <em className="not-italic text-white/70">the engine</em>
+            </h2>
+            <p className="mb-8 max-w-[560px] text-sm leading-relaxed text-white/80 md:text-base">
+              One MCP server. Grouped facts in, the full scored line set out: cited, rounded the
+              way the forms round, and provable.
             </p>
-            <EmailCapture />
+            <div className="flex w-full flex-col items-stretch gap-3 px-6 sm:w-auto sm:flex-row sm:items-center sm:gap-4 sm:px-0">
+              <Link
+                href="#install"
+                className="flex h-11 items-center justify-center whitespace-nowrap bg-white px-6 text-sm font-medium text-neutral-900 transition-colors hover:bg-white/90"
+              >
+                Add the connector
+              </Link>
+              <Link
+                href="https://cal.com/invaro/15min"
+                className="flex h-11 items-center justify-center whitespace-nowrap border border-white/40 px-6 text-sm font-medium text-white transition-colors hover:border-white"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
+        </div>
+        <div className="mt-10 flex flex-col items-center gap-2 text-center">
+          <p className="text-[10px] text-muted-foreground">
+            or get new features and other things worth knowing in your inbox · double opt-in ·{" "}
+            <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
+              privacy
+            </Link>
+          </p>
+          <EmailCapture />
         </div>
       </section>
 
-      <footer className="border-t border-border">
-        <div className="container flex flex-col md:flex-row md:items-center justify-between gap-3 py-6 font-mono text-[10px] text-muted-foreground">
-          <span className="flex items-center space-x-2">
-            <InvaroLogo size={14} />
+      {/* footer */}
+      <footer className="relative overflow-hidden border-t border-border">
+        <div className="container py-14 sm:pb-56">
+          <div className="flex flex-col lg:flex-row justify-between gap-10">
+            <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:gap-16">
+              <div>
+                <h3 className="text-sm mb-4">Engine</h3>
+                <ul className="space-y-2.5">
+                  <li>
+                    <Link
+                      href="https://github.com/Invaro/opentax-engine"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      github
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="https://www.npmjs.com/package/@invaro/opentax"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      npm
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="https://registry.modelcontextprotocol.io/v0.1/servers?search=opentax"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      mcp registry
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="https://github.com/column-tax/tax-calc-bench"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      the benchmark
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm mb-4">Company</h3>
+                <ul className="space-y-2.5">
+                  <li>
+                    <Link
+                      href="https://invaro.ai"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      invaro.ai
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="https://cal.com/invaro/15min"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      talk to us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/privacy"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      privacy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="flex flex-col items-start lg:items-end gap-6">
+              <p className="text-xl">The model reads. The engine computes.</p>
+              <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="relative flex h-2 w-2 items-center justify-center">
+                  <span className="absolute h-2 w-2 rounded-full bg-green-500 animate-[pulse-glow_2s_ease-in-out_infinite]" />
+                  <span className="relative h-1.5 w-1.5 rounded-full bg-green-500" />
+                </span>
+                deterministic · every line cited
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-14 flex items-center gap-2 text-xs text-muted-foreground">
+            <InvaroLogo size={13} />
             <span>© {new Date().getFullYear()} Invaro Inc.</span>
-          </span>
-          <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <Link href="https://github.com/Invaro/opentax-engine" className="hover:text-foreground">github</Link>
-            <Link href="https://www.npmjs.com/package/@invaro/opentax" className="hover:text-foreground">npm</Link>
-            <Link href="https://registry.modelcontextprotocol.io/v0.1/servers?search=opentax" className="hover:text-foreground">mcp registry</Link>
-            <Link href="https://github.com/column-tax/tax-calc-bench" className="hover:text-foreground">the benchmark</Link>
-            <Link href="https://cal.com/invaro/15min" className="hover:text-foreground">talk to us</Link>
-            <Link href="/privacy" className="hover:text-foreground">privacy</Link>
-            <Link href="https://invaro.ai" className="hover:text-foreground">invaro.ai</Link>
-          </span>
+          </div>
+        </div>
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 hidden translate-y-[42%] select-none text-center font-serif leading-none sm:block"
+          style={{
+            fontSize: "min(24vw, 340px)",
+            color: "hsl(var(--secondary))",
+            WebkitTextStroke: "1px hsl(var(--muted-foreground))",
+          }}
+        >
+          opentax
         </div>
       </footer>
     </main>

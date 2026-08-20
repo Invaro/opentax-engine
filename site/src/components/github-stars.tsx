@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { GitHubMark } from "./brand-icons";
-import { DitherField } from "./dither-field";
 import { LiveStars } from "./live-stars";
 import { REPO_URL, exact, fetchRepoStats } from "@/lib/github";
 
@@ -30,7 +29,7 @@ export async function GithubStars() {
     <Link
       href={REPO_URL}
       title="Star opentax-engine on GitHub"
-      className="group hidden sm:flex border border-border h-8 font-mono text-xs items-center text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+      className="group hidden sm:flex border border-border h-8 text-xs items-center text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
     >
       <span className="flex h-full items-center gap-1.5 px-2.5 border-r border-border group-hover:bg-accent transition-colors">
         <GitHubMark size={12} />
@@ -57,11 +56,14 @@ export async function SourceButton() {
   return (
     <Link
       href={REPO_URL}
-      className="group border border-border h-11 px-6 text-sm font-medium hover:bg-accent hover:text-accent-foreground flex items-center justify-center gap-2.5 whitespace-nowrap"
+      className="group border border-border h-11 px-5 text-sm font-medium hover:border-muted-foreground transition-colors flex items-center justify-center gap-2.5 whitespace-nowrap"
     >
+      <span className="text-muted-foreground transition-colors group-hover:text-foreground">
+        <GitHubMark size={16} />
+      </span>
       Read the source
       {stats && (
-        <span className="flex items-center gap-1 font-mono text-xs text-brand tabular-nums">
+        <span className="flex items-center gap-1 border-l border-border pl-2.5 text-xs text-muted-foreground tabular-nums transition-colors group-hover:text-foreground">
           <Star size={11} />
           <LiveStars initial={stats.stars} />
         </span>
@@ -78,34 +80,31 @@ export async function OpenSourceProof() {
     {
       n: stats ? <LiveStars initial={stats.stars} format="exact" /> : "n/a",
       d: "stars on GitHub",
-      tone: "text-brand",
     },
     { n: stats ? exact(stats.forks) : "n/a", d: "forks" },
     { n: "AGPL-3.0", d: "plus a commercial license" },
-    { n: "29", d: "states, every line cited", tone: "text-brand-jade" },
+    { n: "29", d: "states, every line cited" },
   ];
 
   return (
-    <div className="relative border border-border overflow-hidden">
-      <DitherField art="birds" tone="jade" placement="band" />
-
+    <div className="relative border border-border bg-card overflow-hidden">
       <div className="relative p-8 md:p-12">
         <div className="flex flex-col items-center text-center">
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground mb-5">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground mb-5">
             built in the open
           </span>
-          <h2 className="text-[28px] md:text-[44px] font-serif leading-tight mb-4">
+          <h2 className="font-serif text-3xl md:text-[44px] leading-tight tracking-tight mb-4">
             {stats ? (
               <>
                 <span className="tabular-nums">
                   <LiveStars initial={stats.stars} format="exact" /> people
                 </span>{" "}
                 have starred{" "}
-                <span className="italic">the engine</span>
+                <em className="not-italic text-muted-foreground">the engine</em>
               </>
             ) : (
               <>
-                The whole engine, <span className="italic">in public</span>
+                The whole engine, <em className="not-italic text-muted-foreground">in public</em>
               </>
             )}
           </h2>
@@ -118,13 +117,14 @@ export async function OpenSourceProof() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 border-t border-l border-border mt-9">
           {tiles.map((t) => (
-            <div key={t.d} className="border-b border-r border-border p-4 md:p-6 text-center">
-              <div
-                className={`font-serif text-2xl md:text-[32px] leading-none mb-2 tabular-nums ${t.tone ?? ""}`}
-              >
+            <div
+              key={t.d}
+              className="border-b border-r border-border bg-background p-4 md:p-6 text-center"
+            >
+              <div className="font-serif text-2xl md:text-[32px] leading-none mb-2 tabular-nums">
                 {t.n}
               </div>
-              <div className="font-mono text-[9px] md:text-[10px] text-muted-foreground leading-relaxed">
+              <div className="text-[10px] md:text-xs text-muted-foreground leading-relaxed">
                 {t.d}
               </div>
             </div>
@@ -134,14 +134,14 @@ export async function OpenSourceProof() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-8">
           <Link
             href={REPO_URL}
-            className="h-11 px-6 text-sm font-medium bg-foreground text-background hover:opacity-90 flex items-center justify-center gap-2 whitespace-nowrap"
+            className="h-11 px-6 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
           >
             <Star size={13} />
             Star on GitHub
           </Link>
           <Link
             href={`${REPO_URL}/blob/main/CONTRIBUTING.md`}
-            className="border border-border bg-background h-11 px-6 text-sm font-medium hover:bg-accent hover:text-accent-foreground flex items-center justify-center whitespace-nowrap"
+            className="border border-border bg-background h-11 px-6 text-sm font-medium hover:border-muted-foreground transition-colors flex items-center justify-center whitespace-nowrap"
           >
             Contribute a rule
           </Link>

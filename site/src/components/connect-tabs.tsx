@@ -124,10 +124,10 @@ function ExternalIcon() {
 function StepCard({ step, n }: { step: Step; n: number }) {
   return (
     <div className="flex flex-col p-5 md:p-6 min-w-0">
-      <span className="w-6 h-6 mb-4 border border-border rounded-full flex items-center justify-center font-mono text-[10px] text-muted-foreground">
+      <span className="w-6 h-6 mb-4 border border-border rounded-full flex items-center justify-center text-[10px] text-muted-foreground">
         {n}
       </span>
-      <h3 className="text-sm font-medium mb-1.5">{step.title}</h3>
+      <h3 className="text-sm mb-1.5">{step.title}</h3>
       <p className="text-xs text-muted-foreground leading-relaxed mb-4">{step.desc}</p>
       <div className="mt-auto flex flex-col gap-1.5">
         {step.link && (
@@ -135,7 +135,7 @@ function StepCard({ step, n }: { step: Step; n: number }) {
             href={step.link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 self-start border border-border h-8 px-3.5 font-mono text-[11px] text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="inline-flex items-center gap-1.5 self-start border border-border h-8 px-3.5 text-[11px] text-muted-foreground hover:border-muted-foreground hover:text-foreground transition-colors"
           >
             {step.link.label}
             <ExternalIcon />
@@ -176,9 +176,9 @@ export function ConnectTabs() {
                 setTab(t.id);
                 setMode("mcp");
               }}
-              className={`flex items-center gap-2 h-8 px-3.5 rounded-full font-mono text-xs whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-2 h-8 px-3.5 rounded-full text-xs whitespace-nowrap transition-colors ${
                 mode === "mcp" && tab === t.id
-                  ? "bg-foreground text-background"
+                  ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -195,8 +195,10 @@ export function ConnectTabs() {
               role="tab"
               aria-selected={mode === m}
               onClick={() => setMode(m)}
-              className={`h-7 px-3 rounded-full font-mono text-[11px] uppercase transition-colors ${
-                mode === m ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+              className={`h-7 px-3 rounded-full text-[11px] uppercase tracking-wider transition-colors ${
+                mode === m
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {m}

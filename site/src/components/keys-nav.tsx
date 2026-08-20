@@ -34,7 +34,7 @@ export function KeysNav() {
   return (
     <nav
       aria-label="Sections"
-      className="hidden lg:flex items-center gap-6 font-mono text-xs absolute left-1/2 -translate-x-1/2"
+      className="hidden lg:flex items-center gap-6 text-xs absolute left-1/2 -translate-x-1/2"
     >
       {ITEMS.map((i) => (
         <Link
