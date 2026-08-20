@@ -1,0 +1,12 @@
+{
+  "description": "OR $50,000 exactly -> the rate charts take over: Chart S = $4,065 as printed.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "406500"
+  }
+}

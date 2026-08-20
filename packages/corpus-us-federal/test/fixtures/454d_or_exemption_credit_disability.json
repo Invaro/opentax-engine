@@ -1,0 +1,14 @@
+{
+  "description": "OR exemption credit with disability: MFJ AGI $90,000, 2 regular + 1 severe-disability -> 3 x $256 = $768.",
+  "facts": {
+    "filingStatus": "mfj",
+    "orAgi": 90000,
+    "orRegularExemptions": 2,
+    "orDisabilityExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.exemption_credit",
+  "expect": {
+    "valueCents": "76800"
+  }
+}

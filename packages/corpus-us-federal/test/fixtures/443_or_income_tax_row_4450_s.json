@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 4,400-4,500 column S $212: midpoint 4,450 crosses into 6.75% -> 209 + 6.75% x 50 = 212.375 -> $212.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 4450
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "21200"
+  }
+}

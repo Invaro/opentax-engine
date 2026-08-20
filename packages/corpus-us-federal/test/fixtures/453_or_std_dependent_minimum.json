@@ -1,0 +1,13 @@
+{
+  "description": "OR dependent-claimed filer, earned income $800 -> max($1,350, 800 + 450 = 1,250) = $1,350.",
+  "facts": {
+    "filingStatus": "single",
+    "isClaimedAsDependent": true,
+    "orDependentEarnedIncome": 800
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.standard_deduction",
+  "expect": {
+    "valueCents": "135000"
+  }
+}

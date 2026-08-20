@@ -8637,12 +8637,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub8 of error2.issues) {
-    if (sub8.path.length > 0) {
-      fieldErrors[sub8.path[0]] = fieldErrors[sub8.path[0]] || [];
-      fieldErrors[sub8.path[0]].push(mapper(sub8));
+  for (const sub9 of error2.issues) {
+    if (sub9.path.length > 0) {
+      fieldErrors[sub9.path[0]] = fieldErrors[sub9.path[0]] || [];
+      fieldErrors[sub9.path[0]].push(mapper(sub9));
     } else {
-      formErrors.push(mapper(sub8));
+      formErrors.push(mapper(sub9));
     }
   }
   return { formErrors, fieldErrors };
@@ -15040,8 +15040,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub8) => {
-      this.issues = [...this.issues, sub8];
+    this.addIssue = (sub9) => {
+      this.issues = [...this.issues, sub9];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -15108,13 +15108,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub8 of this.issues) {
-      if (sub8.path.length > 0) {
-        const firstEl = sub8.path[0];
+    for (const sub9 of this.issues) {
+      if (sub9.path.length > 0) {
+        const firstEl = sub9.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub8));
+        fieldErrors[firstEl].push(mapper(sub9));
       } else {
-        formErrors.push(mapper(sub8));
+        formErrors.push(mapper(sub9));
       }
     }
     return { formErrors, fieldErrors };
@@ -24158,7 +24158,8 @@ var JURISDICTION_NAMES = {
   "us.wi": "wisconsin wi form 1 madison milwaukee",
   "us.mn": "minnesota mn form m1 st paul minneapolis",
   "us.sc": "south carolina sc sc1040 charleston columbia",
-  "us.al": "alabama al form 40 birmingham montgomery"
+  "us.al": "alabama al form 40 birmingham montgomery",
+  "us.or": "oregon or or-40 portland salem kicker"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -26081,6 +26082,172 @@ function composeAL(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/or.js
+function composeOR(input, evalStateTax, notes) {
+  const joint = isJoint(input);
+  const mfs = isMfs(input);
+  const fagi = rd(c(input.federalAGI));
+  const l7 = fagi;
+  const l8 = rd(c(input.orAdditions));
+  if (l8 > 0n)
+    notes.push(`OR line 8 additions ${fmtD(l8)} (Schedule OR-ASC line A5 \u2014 transcribed)`);
+  const l9 = l7 + l8;
+  let worksheetLine10;
+  if (input.orFederalTaxLiabilityOverride !== void 0) {
+    worksheetLine10 = rd(c(input.orFederalTaxLiabilityOverride));
+    notes.push("OR line 10: federal tax liability taken from override (amended/foreign-tax/1040-NR/recapture situations per Publication OR-17)");
+  } else {
+    const wl3 = max02(rd(c(input.orFederal1040Line22)) - rd(c(input.orExcessAptcRepayment)));
+    const wl5 = wl3 + rd(c(input.orFederalOtherIncomeTaxes));
+    const wl9 = rd(c(input.orFederalAoc)) + rd(c(input.orFederalRefundableAdoption)) + rd(c(input.orFederalPtc));
+    worksheetLine10 = max02(wl5 - wl9);
+  }
+  const l10 = rd(evalStateTax("us.or.federal_tax_subtraction", 0n, {
+    orFederalTaxLiability: worksheetLine10,
+    orAgi: fagi
+  }));
+  if (l10 > 0n)
+    notes.push(`OR line 10: federal tax liability subtraction ${fmtD(l10)} (1040 line 22 \u2212 excess-APTC + other income taxes, minus AOC/refundable-adoption/PTC \u2014 NOT the EITC or ACTC; capped $8,500/$4,250-MFS and AGI-phased per Table 4)`);
+  else if (worksheetLine10 > 0n)
+    notes.push(`OR line 10: the $${fmtD(worksheetLine10)} federal tax liability is fully phased out by AGI (Table 4: $0 at $145,000+ single/MFS, $290,000+ joint/HOH/QSS)`);
+  const l11 = rd(c(input.taxableSocialSecurity));
+  if (l11 > 0n)
+    notes.push(`OR line 11: Social Security subtraction ${fmtD(l11)} (federal line 6b in full \u2014 Oregon never taxes SS; tier 2/windfall Railroad Retirement subtracts on OR-ASC instead)`);
+  const l12 = rd(c(input.orStateRefund));
+  const l13 = rd(c(input.orSubtractions));
+  if (l13 > 0n)
+    notes.push(`OR line 13 subtractions ${fmtD(l13)} (Schedule OR-ASC line B7: OBBBA-conforming tips/overtime/vehicle-interest codes 390/391/392, US government interest, federal pension %, OR-HOME first-time home buyer, 529 contributions \u2014 transcribed)`);
+  const l14 = l10 + l11 + l12 + l13;
+  const l15 = l9 - l14;
+  const boxes = input.orStdBoxes ?? 0;
+  const l17 = rd(evalStateTax("us.or.standard_deduction", 0n, {
+    orStdBoxes: boxes,
+    isClaimedAsDependent: input.claimedAsDependent === true,
+    orDependentEarnedIncome: c(input.orDependentEarnedIncome),
+    spouseItemizes: input.orSpouseItemizes === true
+  }));
+  const l16 = rd(c(input.orItemizedDeductions));
+  const l18 = l16 > l17 ? l16 : l17;
+  if (l16 > l17)
+    notes.push(`OR itemized deductions ${fmtD(l16)} (Schedule OR-A \u2014 Oregon's own amounts, NOT the federal Schedule A) beat the standard deduction ${fmtD(l17)}`);
+  if (mfs && input.orSpouseItemizes === true)
+    notes.push("OR MFS: standard deduction is $0 because the spouse itemizes \u2014 Schedule OR-A required");
+  const l19 = max02(l15 - l18);
+  let l20;
+  if (input.orTaxMethodOverride !== void 0) {
+    l20 = rd(c(input.orTaxMethodOverride));
+    notes.push("OR line 20: tax from an alternate method (20a farm income averaging OR-FIA-40 / 20b farm capital gain Worksheet FCG / 20c the IRREVOCABLE OR-PTE-FY reduced rate \u2014 agent-computed, box checked)");
+  } else {
+    l20 = rd(evalStateTax("us.or.income_tax", l19));
+  }
+  const l21 = rd(c(input.orInstallmentInterest));
+  if (l21 > 0n)
+    notes.push("OR line 21: interest on installment-sale deferred tax (9% annual rate for 2025)");
+  const l22 = rd(c(input.orCreditRecaptures));
+  const l23 = l21 + l22;
+  const l24 = l20 + l23;
+  const l25 = rd(evalStateTax("us.or.exemption_credit", 0n, {
+    orRegularExemptions: input.orRegularExemptions ?? 0,
+    orDisabilityExemptions: input.orDisabilityExemptions ?? 0,
+    orAgi: fagi
+  }));
+  if (l25 > 0n)
+    notes.push(`OR line 25: exemption credit ${fmtD(l25)} ($256 per exemption; $0 cliff above $100,000/$200,000 federal AGI \u2014 disability exemptions cliff at $100,000 for every status)`);
+  const polRaw = rd(c(input.orPoliticalContributions));
+  let l26 = 0n;
+  if (polRaw > 0n) {
+    const agiLimit = joint ? 15000000n : 7500000n;
+    if (fagi > agiLimit) {
+      notes.push(`OR line 26: political contribution credit $0 \u2014 federal AGI exceeds ${fmtD(agiLimit)}`);
+    } else {
+      l26 = min2(polRaw, joint ? 10000n : 5000n);
+      notes.push(`OR line 26: political contribution credit ${fmtD(l26)} (standard credit, max $${joint ? "100" : "50"})`);
+    }
+  }
+  const l27 = rd(c(input.nonrefundableCredits));
+  const l28 = l25 + l26 + l27;
+  const l29 = max02(l24 - l28);
+  const l30 = min2(rd(c(input.orCarryforwardCredits)), l29);
+  const l31 = l29 - l30;
+  let l32 = 0n;
+  const liab2024 = rd(c(input.or2024TaxLiability));
+  if (input.orKickerDonate === true) {
+    notes.push("OR line 32: kicker $0 \u2014 filer irrevocably donates the entire kicker to the State School Fund (box 55)");
+  } else if (liab2024 > 0n) {
+    l32 = rd(evalStateTax("us.or.kicker", 0n, { or2024TaxLiability: liab2024 }));
+    notes.push(`OR line 32: surplus kicker ${fmtD(l32)} (9.863% of the 2024 liability ${fmtD(liab2024)} \u2014 the 2024 after-other-state-credit liability; requires the 2024 return filed first)`);
+  }
+  const l33 = rd(c(input.stateWithholding));
+  const l34 = rd(c(input.priorYearOverpaymentCredited));
+  const l35 = rd(c(input.estimatedPayments)) + rd(c(input.extensionPayment));
+  const l36 = rd(c(input.orPtePayments));
+  const fedEic = rd(c(input.federalEITC));
+  let l37 = 0n;
+  if (fedEic > 0n) {
+    l37 = rd(evalStateTax("us.or.eic", 0n, { orFederalEic: fedEic, orYoungestUnder3: input.orYoungestUnder3 === true }));
+    notes.push(`OR line 37: earned income credit ${fmtD(l37)} (${input.orYoungestUnder3 === true ? "12% \u2014 youngest dependent under 3" : "9%"} of the federal EITC, refundable)`);
+  }
+  let l38 = 0n;
+  const kidsUnder6 = input.orKidsUnder6 ?? 0;
+  if (kidsUnder6 > 0) {
+    if (mfs) {
+      notes.push("OR line 38: Oregon Kids Credit $0 \u2014 married filing separately is ineligible");
+    } else {
+      const qi = l15 + rd(c(input.orKidsObbbaAddback)) + rd(c(input.orKidsLossAddback));
+      l38 = rd(evalStateTax("us.or.kids_credit", 0n, { orKidsQualifyingIncome: qi, orKidsUnder6: kidsUnder6 }));
+      if (l38 > 0n)
+        notes.push(`OR line 38: Oregon Kids Credit ${fmtD(l38)} (${Math.min(kidsUnder6, 5)} \xD7 $1,050, refundable; qualifying income ${fmtD(qi)} vs the $26,550-$31,550 phase-out)`);
+      else
+        notes.push(`OR line 38: Oregon Kids Credit $0 \u2014 qualifying income ${fmtD(qi)} is $31,550 or more`);
+    }
+  }
+  const l39 = rd(c(input.refundableCredits));
+  const l40 = l32 + l33 + l34 + l35 + l36 + l37 + l38 + l39;
+  const l41 = max02(l40 - l31);
+  const l42 = max02(l31 - l40);
+  const l45 = rd(c(input.orPenalty)) + rd(c(input.orInterest));
+  const l46 = l42 > 0n ? l42 + l45 : l45 > l41 ? l45 - l41 : 0n;
+  const l47 = l41 > 0n ? max02(l41 - l45) : 0n;
+  if (l41 > 0n && l45 > l41)
+    notes.push(`OR penalty and interest ${fmtD(l45)} exceed the overpayment ${fmtD(l41)} \u2014 see the line 46 instructions (the excess is owed)`);
+  const l48to51 = rd(c(input.orAppliedToNextYear)) + rd(c(input.orCharitableCheckoffs)) + rd(c(input.orPoliticalPartyCheckoff)) + rd(c(input.or529Deposits));
+  const l52 = min2(l48to51, l47);
+  const l53 = l47 - l52;
+  notes.push("OR scope: the statewide transit tax (0.1% of wages, employer-withheld), Portland Metro SHS, Multnomah County PFA, and TriMet/LTD self-employment taxes are SEPARATE filings \u2014 never on Form OR-40");
+  return {
+    "7_federal_agi": fmtD(l7),
+    ...l8 !== 0n ? { "8_additions": fmtD(l8) } : {},
+    "10_federal_tax_subtraction": fmtD(l10),
+    ...l11 !== 0n ? { "11_social_security": fmtD(l11) } : {},
+    ...l12 !== 0n ? { "12_state_refund": fmtD(l12) } : {},
+    ...l13 !== 0n ? { "13_asc_subtractions": fmtD(l13) } : {},
+    "14_total_subtractions": fmtD(l14),
+    "15_income_after_subtractions": fmtD(l15),
+    "18_deduction": fmtD(l18),
+    "_deduction_method": l16 > l17 ? "itemized" : "standard",
+    "19_taxable_income": fmtD(l19),
+    "20_tax": fmtD(l20),
+    ...l23 !== 0n ? { "23_additions_to_tax": fmtD(l23) } : {},
+    "24_tax_before_credits": fmtD(l24),
+    ...l25 !== 0n ? { "25_exemption_credit": fmtD(l25) } : {},
+    ...l26 !== 0n ? { "26_political_contribution_credit": fmtD(l26) } : {},
+    "28_standard_credits": fmtD(l28),
+    ...l30 !== 0n ? { "30_carryforward_credits": fmtD(l30) } : {},
+    "31_tax_after_credits": fmtD(l31),
+    ...l32 !== 0n ? { "32_kicker": fmtD(l32) } : {},
+    "33_withholding": fmtD(l33),
+    ...l37 !== 0n ? { "37_eic": fmtD(l37) } : {},
+    ...l38 !== 0n ? { "38_kids_credit": fmtD(l38) } : {},
+    "40_total_payments": fmtD(l40),
+    "41_overpayment": fmtD(l41),
+    "42_tax_to_pay": fmtD(l42),
+    "46_amount_owed": fmtD(l46),
+    "47_refund": fmtD(l47),
+    ...l52 !== 0n ? { "52_refund_applications": fmtD(l52) } : {},
+    "53_net_refund": fmtD(l53)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -26470,11 +26637,11 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -26877,7 +27044,46 @@ var al = {
   // refundableCredits input; line 18's Schedule OC nonrefundable credits use
   // the shared nonrefundableCredits input (capped at the line 17 tax).
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al };
+var orShape = {
+  orAdditions: usd.optional().describe("OR-40 line 8: Schedule OR-ASC line A5 additions (non-Oregon municipal interest, federal-state depreciation differences, 529 recapture)"),
+  orFederal1040Line22: usd.optional().describe("federal Form 1040 LINE 22 (tax after nonrefundable credits) \u2014 the federal tax subtraction worksheet's line 1 (from compute_return, verbatim)"),
+  orExcessAptcRepayment: usd.optional().describe("excess advance premium tax credit repayment (1040 Schedule 2 line 1a) \u2014 SUBTRACTED in the worksheet (floor 0)"),
+  orFederalOtherIncomeTaxes: usd.optional().describe("other INCOME taxes from Schedule 2 lines 8, 16, 17 (income-tax recaptures only \u2014 never SE tax, SS/Medicare tip tax, household employment taxes, penalties, or excise)"),
+  orFederalAoc: usd.optional().describe("American Opportunity Credit (1040 line 29) \u2014 subtracted in the federal tax worksheet"),
+  orFederalRefundableAdoption: usd.optional().describe("refundable adoption credit (1040 line 30) \u2014 subtracted"),
+  orFederalPtc: usd.optional().describe("premium tax credit from Form 8962 LINE 24 (the full allowable credit regardless of advance payments) \u2014 subtracted. NOTE: the EITC and additional child tax credit are NOT subtracted."),
+  orFederalTaxLiabilityOverride: usd.optional().describe("OVERRIDE for the worksheet line 10 result (amended federal returns, foreign income tax, 1040-NR, recapture situations \u2014 Publication OR-17 worksheets); the Table 4 AGI cap still applies via the oracle"),
+  orStateRefund: usd.optional().describe("OR-40 line 12: OREGON state income tax refund from federal Schedule 1 line 1 (never other states' or local refunds)"),
+  orSubtractions: usd.optional().describe("OR-40 line 13: Schedule OR-ASC line B7 subtractions \u2014 including the OBBBA-conforming tips/overtime/passenger-vehicle-interest deductions (codes 390/391/392: Oregon lets you claim the same amounts as federal), US government interest, the federal pension percentage subtraction, OR-HOME first-time home buyer savings, tier 2 Railroad Retirement. Do NOT include Social Security (automatic via taxableSocialSecurity)."),
+  orItemizedDeductions: usd.optional().describe("Schedule OR-A line 23 OREGON itemized deductions (Oregon's own computation \u2014 never the federal Schedule A total). The composer takes the larger of this and the standard deduction."),
+  orStdBoxes: external_exports.number().int().optional().describe("OR-40 boxes 17a-d: count of 65-or-older (born before January 2, 1961... turned 65 by January 1, 2026) and blind boxes for you/spouse \u2014 each adds $1,200 (single/HOH) or $1,000 (other statuses) to the standard deduction"),
+  orSpouseItemizes: external_exports.boolean().optional().describe("MFS only: the other spouse itemizes \u2014 the Oregon standard deduction becomes $0"),
+  orDependentEarnedIncome: usd.optional().describe("dependent-claimed filer's earned income \u2014 the standard deduction is limited to max($1,350, earned + $450), capped at the Table 5 amount"),
+  orTaxMethodOverride: usd.optional().describe("OR-40 line 20 alternate-method tax: farm income averaging (OR-FIA-40, box 20a), farm capital gain (Worksheet FCG, box 20b), or the IRREVOCABLE Oregon PTE reduced rate (OR-PTE-FY, box 20c) \u2014 agent-computed; wins over the table/chart tax"),
+  orInstallmentInterest: usd.optional().describe("OR-40 line 21: interest on installment-sale deferred tax liability (9% annual rate for 2025)"),
+  orCreditRecaptures: usd.optional().describe("OR-40 line 22: tax recaptures from Schedule OR-ASC line C5"),
+  orRegularExemptions: external_exports.number().int().optional().describe("regular exemption count: 'yourself' + 'spouse' credit boxes (6a/6b) + dependents (6c) \u2014 $256 each, $0 cliff above $100,000 federal AGI (single/MFS) or $200,000 (others)"),
+  orDisabilityExemptions: external_exports.number().int().optional().describe("severe-disability boxes (6a/6b) + children with a qualifying disability (6d) \u2014 $256 each, $0 cliff above $100,000 federal AGI for EVERY filing status"),
+  orPoliticalContributions: usd.optional().describe("2025 cash contributions to qualified Oregon political parties/candidates/PACs \u2014 the composer caps at $50 ($100 joint) and denies above $75,000/$150,000 federal AGI"),
+  orCarryforwardCredits: usd.optional().describe("OR-40 line 30: Schedule OR-ASC line E9 carryforward credits used this year (capped at the remaining tax by the composer)"),
+  or2024TaxLiability: usd.optional().describe("the filer's 2024 total Oregon personal income tax liability (after the other-state credit, before all other credits/payments \u2014 2024 OR-40 line 24 tax-before-credits MINUS the Schedule OR-ASC code 802/815 credit for taxes paid to another state, per Table 8 / Kicker worksheet Part A) \u2014 the composer computes the 9.863% kicker (us.or.kicker). Requires the 2024 return filed before the 2025 return. Prorate by 2024 Oregon-AGI share if the filing status changed (worksheet Parts B/C)."),
+  orKickerDonate: external_exports.boolean().optional().describe("filer elects to donate the ENTIRE kicker to the State School Fund (irrevocable after the due date) \u2014 line 32 becomes $0 and box 55 is checked"),
+  orPtePayments: usd.optional().describe("OR-40 line 36: estimated payments from Schedule OR-K-1 line 20 (PTE owner payments via Form OR-19)"),
+  orYoungestUnder3: external_exports.boolean().optional().describe("the youngest dependent was younger than 3 at year end \u2014 raises the Oregon EIC from 9% to 12% of the federal EITC (us.or.eic)"),
+  orKidsUnder6: external_exports.number().int().optional().describe("dependents age 5 or younger at the end of 2025 (max 5 count) \u2014 $1,050 each Oregon Kids Credit (us.or.kids_credit, refundable, MFS denied). A child claimed only via a RELEASED dependent exemption does not count."),
+  orKidsObbbaAddback: usd.optional().describe("Kids Credit worksheet line 2: tips/overtime/vehicle-interest subtractions claimed (OR-ASC codes 390/391/392) \u2014 ADDED BACK to qualifying income"),
+  orKidsLossAddback: usd.optional().describe("Kids Credit worksheet Part B: federal losses + OR-ASC loss-subtraction codes beyond the $20,000 allowance, plus ALL excluded foreign earned income \u2014 added back to qualifying income"),
+  orPenalty: usd.optional().describe("OR-40 line 43: penalty AND interest for filing or paying late (one combined printed line \u2014 5% late-pay penalty, +20% over 3 months late, 100% for 3 consecutive unfiled years, plus the late-payment interest)"),
+  orInterest: usd.optional().describe("OR-40 line 44: interest on UNDERPAYMENT OF ESTIMATED TAX from Form OR-10 (boxes 44a/44b) \u2014 late-payment interest goes in line 43 instead"),
+  orAppliedToNextYear: usd.optional().describe("OR-40 line 48: refund applied to 2026 estimated tax"),
+  orCharitableCheckoffs: usd.optional().describe("OR-40 line 49: Schedule OR-DONATE charitable checkoffs (reduce the refund)"),
+  orPoliticalPartyCheckoff: usd.optional().describe("OR-40 line 50: political party $3 checkoff from the refund"),
+  or529Deposits: usd.optional().describe("OR-40 line 51: Oregon 529 deposits from Schedule OR-529 (reduce the refund)")
+  // OR line 27 standard credits (OR-ASC D16: retirement income credit,
+  // other-state credit) use the shared nonrefundableCredits input; line 39
+  // refundable credits (OR-ASC F7) use the shared refundableCredits input.
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -26907,7 +27113,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -26937,6 +27143,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeSC(input, evalStateTax, notes), notes };
   if (j === "al")
     return { lines: composeAL(input, evalStateTax, notes), notes };
+  if (j === "or")
+    return { lines: composeOR(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -29990,6 +30198,80 @@ var facts = [
     min: "0",
     description: "One taxpayer's overtime PREMIUM (the amount above the base rate \u2014 W-2 Box 12 code TT) for the TY2026-2028 Alabama overtime premium deduction (us.al.overtime_premium_deduction, Act 2026-604, capped $1,000 per taxpayer). In dollars.",
     default: { value: "0", rationale: "Assumed no overtime premium absent contrary input" }
+  },
+  {
+    id: "orAgi",
+    type: "money",
+    description: "Federal adjusted gross income (Form OR-40 line 7) \u2014 keys the federal tax subtraction Table 4 phase-out (us.or.federal_tax_subtraction) and the exemption credit cliffs (us.or.exemption_credit: $100,000 single/MFS, $200,000 others; disability exemptions $100,000 for all). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input" }
+  },
+  {
+    id: "orFederalTaxLiability",
+    type: "money",
+    min: "0",
+    description: "The Oregon federal tax liability worksheet line 10 result: 1040 line 22 minus excess-APTC repayment (floor 0), plus Schedule 2 lines 8/16/17 income taxes, minus AOC + refundable adoption + Form 8962 line 24 PTC (floor 0 \u2014 the EITC and ACTC are NOT subtracted) \u2014 us.or.federal_tax_subtraction caps it at $8,500/$4,250-MFS with the Table 4 AGI phase-out. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal tax liability absent contrary input" }
+  },
+  {
+    id: "orStdBoxes",
+    type: "int",
+    min: "0",
+    description: "Count of Oregon standard-deduction boxes 17a-d (you/spouse turned 65 by January 1, 2026, and/or blind) \u2014 each adds $1,200 (single/HOH) or $1,000 (other statuses) (us.or.standard_deduction).",
+    default: { value: "0", rationale: "Assumed no 65+/blind boxes absent contrary input" }
+  },
+  {
+    id: "orDependentEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "A dependent-claimed filer's earned income for Oregon's dependent standard-deduction limit (larger of $1,350 or earned + $450, capped at the Table 5 amount). Only used when isClaimedAsDependent. In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input" }
+  },
+  {
+    id: "orRegularExemptions",
+    type: "int",
+    min: "0",
+    description: "Oregon regular exemption count (OR-40 boxes 6a/6b 'regular' + line 6c dependents) \u2014 $256 each for 2025, $0 above the $100,000/$200,000 federal AGI cliff (us.or.exemption_credit).",
+    default: { value: "0", rationale: "Assumed no exemptions absent contrary input" }
+  },
+  {
+    id: "orDisabilityExemptions",
+    type: "int",
+    min: "0",
+    description: "Oregon severe-disability exemption boxes (6a/6b) plus children with a qualifying disability (line 6d) \u2014 $256 each, $0 above $100,000 federal AGI for EVERY filing status (us.or.exemption_credit).",
+    default: { value: "0", rationale: "Assumed no disability exemptions absent contrary input" }
+  },
+  {
+    id: "orFederalEic",
+    type: "money",
+    min: "0",
+    description: "The federal earned income credit (Form 1040 line 27a) \u2014 us.or.eic pays 9% of it (12% when the youngest dependent is under 3). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" }
+  },
+  {
+    id: "orYoungestUnder3",
+    type: "bool",
+    description: "The filer's youngest dependent was younger than 3 at the end of the tax year \u2014 raises the Oregon EIC percentage from 9% to 12% of the federal EITC (us.or.eic, Table 9).",
+    default: { value: false, rationale: "Assumed no dependent under 3 absent contrary input" }
+  },
+  {
+    id: "orKidsQualifyingIncome",
+    type: "money",
+    description: "Oregon Kids Credit worksheet line 4 qualifying income: OR-40 line 15 income-after-subtractions + OR-ASC code 390/391/392 (tips/overtime/vehicle-interest) addbacks + the Part B loss-and-exclusion addback (losses beyond $20,000 and all excluded foreign earned income) \u2014 us.or.kids_credit phases out $26,550-$31,550. May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 qualifying income absent contrary input" }
+  },
+  {
+    id: "orKidsUnder6",
+    type: "int",
+    min: "0",
+    description: "Dependents age 5 or younger at the end of 2025 for the Oregon Kids Credit \u2014 $1,050 each, capped at 5 children by us.or.kids_credit (refundable; MFS denied; released-exemption children do not count).",
+    default: { value: "0", rationale: "Assumed no children under 6 absent contrary input" }
+  },
+  {
+    id: "or2024TaxLiability",
+    type: "money",
+    min: "0",
+    description: "The 2024 total Oregon personal income tax liability: 2024 OR-40 line 24 tax-before-credits MINUS the Schedule OR-ASC code 802/815 credit for taxes paid to another state (Kicker worksheet Part A \u2014 NOT line 31, which is after the exemption and other credits) \u2014 us.or.kicker pays 9.863% of it on the 2025 return. Requires the 2024 return filed before the 2025 return. In dollars.",
+    default: { value: "0", rationale: "Assumed no 2024 liability absent contrary input (no kicker)" }
   }
 ];
 
@@ -30351,7 +30633,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt9 = (cents) => ({
+  const lt10 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -30370,22 +30652,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt9("500"),
+    cond: lt10("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt9("1500"),
+      cond: lt10("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt9("2500"),
+        cond: lt10("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt9("300000"),
+          cond: lt10("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -42267,6 +42549,317 @@ var alRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-or.js
+var rd13 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var lt9 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
+var iff7 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt6 = (base, count) => ({ kind: "mulInt", base, count });
+var sub8 = (left, right) => ({ kind: "sub", left, right });
+var isStatus15 = (v) => ({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: v } });
+var isColumnS = { kind: "or", args: [isStatus15("single"), isStatus15("mfs")] };
+var SCHED_S = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "475", den: "10000" } },
+  { thresholdCents: "440000", fixedCents: "20900", rate: { num: "675", den: "10000" } },
+  // $4,400 -> $209
+  { thresholdCents: "1110000", fixedCents: "66100", rate: { num: "875", den: "10000" } }
+  // $11,100 -> $661 (exact 661.25)
+];
+var SCHED_J = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "475", den: "10000" } },
+  { thresholdCents: "880000", fixedCents: "41800", rate: { num: "675", den: "10000" } },
+  // $8,800 -> $418
+  { thresholdCents: "2220000", fixedCents: "132300", rate: { num: "875", den: "10000" } }
+  // $22,200 -> $1,323 (exact 1,322.50)
+];
+var orRules = [
+  {
+    id: "us.or.income_tax",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon income tax \u2014 4.75%/6.75%/8.75%/9.9% (2025 brackets $4,400/$11,100/$125,000 single-MFS, $8,800/$22,200/$250,000 joint-HOH-QSS) via the printed tables and rate charts (OR-40 line 20)",
+    citation: {
+      source: "ORS 316.037 (indexed under ORS 316.045); 2025 Form OR-40 Instructions (150-101-040-1 Rev. 01-29-26): tax tables pp. 27-31, 2025 Tax rate charts p. 32; Publication OR-17 rate table",
+      section: "ORS 316.037; OR-40 line 20; 2025 tables/charts",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "TWO COLUMNS (instructions verbatim): 'Use Column S if your filing status is single or married filing separately. Use Column J if your filing status is married filing jointly, head of household, or qualifying surviving spouse.' 2025 INDEXED BRACKETS (OR-17): S \u2014 4.75% first $4,400; 6.75% $4,401-$11,100; 8.75% $11,101-$125,000; 9.9% over $125,000. J \u2014 4.75% first $8,800; 6.75% $8,801-$22,200; 8.75% $22,201-$250,000; 9.9% over $250,000. METHOD: taxable income UNDER $50,000 must use the printed TAX TABLES; '$50,000 or more' uses the printed RATE CHARTS: Chart S 'your tax is $4,065 plus 8.75% of excess over $50,000' ($50,000-$125,000) then '$10,627 plus 9.9% of excess over $125,000'; Chart J '$3,756 plus 8.75%' ($50,000-$250,000) then '$21,256 plus 9.9% of excess over $250,000' \u2014 all four chart constants encoded AS PRINTED. BOUNDARY: Chart S row 1 covers '$50,000 or more but not over $125,000', so exactly $125,000 computes 4,065 + 8.75% x 75,000 = 10,627.50 -> $10,628 \u2014 $1 ABOVE the over-$125,000 row's own $10,627 anchor (the printed chart is internally inconsistent at this point; this rule follows the printed row assignment). At exactly $250,000, Chart J gives $21,256 either way. CONVENTION (decoded from 20+ printed rows AND the charts): every value chains from WHOLE-DOLLAR ROUNDED bracket anchors \u2014 the 8.75% anchors are $661 (exact 661.25) and $1,323 (exact 1,322.50) \u2014 evaluated at the ROW MIDPOINT and rounded half-up (verified: S [19,500-19,600)\u2192$1,400 \u2014 the pure unrounded schedule gives 1,400.625\u21921,401 WRONG; J chart $3,756 = 1,323 + 2,432.50 \u2192 3,755.50 up, where the pure schedule gives exactly 3,755). Row widths: [0,20), [20,50), [50,100), then $100-wide to $50,000 \u2014 the generic midpoint covers every row incl. the first three. useFormulaMethod=true evaluates the rounded-anchor marginal schedule at the exact income (the charts' own method extended below $50,000). ALTERNATE METHODS (checkboxes 20a-c, transcribed, not computed): farm income averaging (OR-FIA-40), farm capital gain rate (Worksheet FCG), and the IRREVOCABLE Oregon PTE reduced rate (OR-PTE-FY). Part-year (OR-40-P) and nonresident (OR-40-N) returns not composed. Brackets index annually \u2014 the 2026 table publishes ~January 2027."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      sBracket2: { value: "440000", type: "money" },
+      // $4,400
+      sBracket3: { value: "1110000", type: "money" },
+      // $11,100
+      jBracket2: { value: "880000", type: "money" },
+      // $8,800
+      jBracket3: { value: "2220000", type: "money" },
+      // $22,200
+      topBracketS: { value: "12500000", type: "money" },
+      // $125,000
+      topBracketJ: { value: "25000000", type: "money" },
+      // $250,000
+      chartAnchorS50k: { value: "406500", type: "money" },
+      // $4,065 as printed
+      chartAnchorJ50k: { value: "375600", type: "money" },
+      // $3,756 as printed
+      chartAnchorS125k: { value: "1062700", type: "money" },
+      // $10,627 as printed
+      chartAnchorJ250k: { value: "2125600", type: "money" },
+      // $21,256 as printed
+      tableThreshold: { value: "5000000", type: "money" }
+      // $50,000
+    },
+    formula: (() => {
+      const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
+      const sched = (b) => iff7(isColumnS, printedSchedule(b, SCHED_S), printedSchedule(b, SCHED_J));
+      const mid = (width, offset) => ({
+        kind: "add",
+        args: [mulInt6(money33(width), { kind: "stepUnits", value: base, unitCents: width, mode: "floor" }), money33(offset)]
+      });
+      const table2 = iff7(
+        lt9(base, money33("2000")),
+        sched(money33("1000")),
+        // [0,20) midpoint $10
+        iff7(
+          lt9(base, money33("5000")),
+          sched(money33("3500")),
+          // [20,50) midpoint $35
+          iff7(lt9(base, money33("10000")), sched(money33("7500")), sched(mid("10000", "5000")))
+        )
+      );
+      const chart = (a50k, top, aTop) => iff7({ kind: "cmp", op: "le", left: base, right: money33(top) }, { kind: "add", args: [money33(a50k), { kind: "mulRate", base: sub8(base, money33("5000000")), rate: { num: "875", den: "10000" }, round: "half-up" }] }, { kind: "add", args: [money33(aTop), { kind: "mulRate", base: sub8(base, money33(top)), rate: { num: "99", den: "1000" }, round: "half-up" }] });
+      const charts = iff7(isColumnS, chart("406500", "12500000", "1062700"), chart("375600", "25000000", "2125600"));
+      return rd13(iff7(fact36("useFormulaMethod"), sched(base), iff7(lt9(base, money33("5000000")), table2, charts)));
+    })()
+  },
+  {
+    id: "us.or.federal_tax_subtraction",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon federal tax liability subtraction \u2014 capped $8,500 ($4,250 MFS) and phased out by federal AGI in five steps ($125,000-$145,000 single/MFS; $250,000-$290,000 joint/HOH/QSS) (OR-40 line 10)",
+    citation: {
+      source: "ORS 316.685/316.695 (indexed); 2025 Form OR-40 Instructions, line 10 worksheet and Table 4 (Federal tax liability subtraction AGI phaseout)",
+      section: "ORS 316.685; OR-40 line 10; Table 4",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "'Your federal tax liability subtraction amount is your federal income tax after all credits other than the earned income tax credit (EITC). For 2025, the amount you may subtract is limited to $8,500 ($4,250 if married filing separately)' and further limited by AGI. WORKSHEET (printed, verbatim structure): line 1 = federal Form 1040 LINE 22; line 2 = excess advance premium tax credit repayment (Schedule 2 line 1a) \u2014 SUBTRACTED (floor 0); line 4 = other INCOME taxes and recaptures from Schedule 2 lines 8, 16, 17 (never SE tax, SS/Medicare tip tax, household employment taxes, penalties, interest, excise) \u2014 ADDED; minus the refundable credits: line 6 American Opportunity (1040 line 29), line 7 refundable adoption (line 30), line 8 PREMIUM TAX CREDIT (Form 8962 LINE 24 \u2014 the full allowable credit, 'regardless of any excess advance payments'); floor $0. NOTE which refundables are NOT subtracted: the EITC and the additional child tax credit. TABLE 4 CAPS (verbatim): single \u2014 $8,500 (AGI < $125,000), $6,800 (< $130,000), $5,100 (< $135,000), $3,400 (< $140,000), $1,700 (< $145,000), $0 at $145,000+; MFS \u2014 $4,250/$3,400/$2,550/$1,700/$850/$0 at the SAME AGI breakpoints; MFJ, HOH, and QSS \u2014 $8,500 (AGI < $250,000), $6,800 (< $260,000), $5,100 (< $270,000), $3,400 (< $280,000), $1,700 (< $290,000), $0 at $290,000+. Joint-federal/separate-Oregon filers and RDPs use ACTUAL federal returns, not 'as if' returns. [Inputs: orFederalTaxLiability (the worksheet line 10 result \u2014 composed per the printed steps), orAgi, filingStatus.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      capRegular: { value: "850000", type: "money" },
+      // $8,500
+      capMfs: { value: "425000", type: "money" },
+      // $4,250
+      phaseoutStartSingleMfs: { value: "12500000", type: "money" },
+      // $125,000
+      phaseoutStartJoint: { value: "25000000", type: "money" }
+      // $250,000
+    },
+    formula: (() => {
+      const agi2 = fact36("orAgi");
+      const tier = (bounds, caps) => {
+        let e = money33("0");
+        for (let i = bounds.length - 1; i >= 0; i--) {
+          e = iff7(lt9(agi2, money33(bounds[i])), money33(caps[i]), e);
+        }
+        return e;
+      };
+      const capSingle = tier(["12500000", "13000000", "13500000", "14000000", "14500000"], ["850000", "680000", "510000", "340000", "170000"]);
+      const capMfs = tier(["12500000", "13000000", "13500000", "14000000", "14500000"], ["425000", "340000", "255000", "170000", "85000"]);
+      const capJoint = tier(["25000000", "26000000", "27000000", "28000000", "29000000"], ["850000", "680000", "510000", "340000", "170000"]);
+      const cap = iff7(isStatus15("mfs"), capMfs, iff7(isStatus15("single"), capSingle, capJoint));
+      return { kind: "min", args: [{ kind: "max0", arg: fact36("orFederalTaxLiability") }, cap] };
+    })()
+  },
+  {
+    id: "us.or.standard_deduction",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon standard deduction \u2014 2025: $2,835 single/MFS, $5,670 MFJ/QSS, $4,560 HOH; +$1,200 (single/HOH) or +$1,000 (others) per 65+/blind box; dependent-claimed limit; $0 for MFS with itemizing spouse (OR-40 line 17)",
+    citation: {
+      source: "ORS 316.695(1)(c) (indexed); 2025 Form OR-40 Instructions, Table 5 and the standard deduction worksheets",
+      section: "OR-40 line 17; Table 5",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "TABLE 5 (2025, verbatim): single $2,835; married filing jointly $5,670; married filing separately $2,835 if the spouse claims the standard deduction, $0 IF THE SPOUSE ITEMIZES ('This applies even if the standard deduction is more than your itemized deductions'); head of household $4,560; qualifying surviving spouse $5,670. AGE 65+/BLIND: for each box checked (turned 65 by January 1, 2026, or blind at year end \u2014 you/spouse), ADD $1,200 (single or head of household) or $1,000 (all other statuses). DEPENDENT-CLAIMED filers: the basic deduction is limited to the larger of $1,350 or earned income + $450, capped at the filing status's Table 5 amount ('even if the other person doesn't actually claim you'); the 65+/blind additions apply ON TOP of the limited basic amount (printed worksheet lines 8-10). Non-U.S. citizens without permanent-resident status: $0 (itemizing allowed). Oregon itemized deductions (Schedule OR-A \u2014 NOT the federal amounts) are claimed instead when larger; line 18 takes the LARGER of lines 16 and 17. [Inputs: filingStatus, orStdBoxes, spouseItemizes (MFS), isClaimedAsDependent, orDependentEarnedIncome.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      single: { value: "283500", type: "money" },
+      mfj: { value: "567000", type: "money" },
+      hoh: { value: "456000", type: "money" },
+      addlSingleHoh: { value: "120000", type: "money" },
+      // $1,200 per box
+      addlOther: { value: "100000", type: "money" },
+      // $1,000 per box
+      dependentMinimum: { value: "135000", type: "money" },
+      // $1,350
+      dependentEarnedAddon: { value: "45000", type: "money" }
+      // $450
+    },
+    formula: (() => {
+      const basic = iff7({ kind: "or", args: [isStatus15("mfj"), isStatus15("qss")] }, money33("567000"), iff7(isStatus15("hoh"), money33("456000"), money33("283500")));
+      const dependentLimited = {
+        kind: "min",
+        args: [
+          basic,
+          {
+            kind: "max",
+            args: [money33("135000"), { kind: "add", args: [{ kind: "max0", arg: fact36("orDependentEarnedIncome") }, money33("45000")] }]
+          }
+        ]
+      };
+      const base = iff7(fact36("isClaimedAsDependent"), dependentLimited, basic);
+      const perBox = iff7({ kind: "or", args: [isStatus15("single"), isStatus15("hoh")] }, money33("120000"), money33("100000"));
+      const withBoxes = { kind: "add", args: [base, mulInt6(perBox, fact36("orStdBoxes"))] };
+      return iff7({ kind: "and", args: [isStatus15("mfs"), fact36("spouseItemizes")] }, money33("0"), withBoxes);
+    })()
+  },
+  {
+    id: "us.or.exemption_credit",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon exemption credit \u2014 $256 per exemption for 2025, denied above $100,000 federal AGI (single/MFS) or $200,000 (others); disability exemptions denied above $100,000 for ALL statuses (OR-40 line 25)",
+    citation: {
+      source: "ORS 316.085 (indexed); 2025 Form OR-40 Instructions, line 25 exemption credit worksheet",
+      section: "OR-40 line 25; exemption credit worksheet",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "2025 amount: $256 per exemption (worksheet line 5: 'Line 4 multiplied by $256'). REGULAR exemptions (self/spouse boxes 6a-6b + dependents 6c): $0 'If your federal AGI is more than $200,000 ($100,000 if your filing status is single or married filing separately)' \u2014 a CLIFF, not a phase-out. SEVERE-DISABILITY exemptions (boxes 6a/6b) and exemptions for CHILDREN WITH A QUALIFYING DISABILITY (line 6d): $0 if federal AGI is more than $100,000 \u2014 the $100,000 disability cliff applies to EVERY filing status including joint (worksheet lines 2-3). A standard credit (nonrefundable, no carryforward). [Inputs: orRegularExemptions (6a+6b regular boxes + 6c dependents), orDisabilityExemptions (severe-disability boxes + 6d qualifying-disability children), orAgi, filingStatus.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      perExemption: { value: "25600", type: "money" },
+      // $256
+      regularAgiLimitSingleMfs: { value: "10000000", type: "money" },
+      // $100,000
+      regularAgiLimitOther: { value: "20000000", type: "money" },
+      // $200,000
+      disabilityAgiLimit: { value: "10000000", type: "money" }
+      // $100,000 all statuses
+    },
+    formula: (() => {
+      const agi2 = fact36("orAgi");
+      const regularLimit = iff7(isColumnS, money33("10000000"), money33("20000000"));
+      const regular = iff7({ kind: "cmp", op: "le", left: agi2, right: regularLimit }, mulInt6(money33("25600"), fact36("orRegularExemptions")), money33("0"));
+      const disability = iff7({ kind: "cmp", op: "le", left: agi2, right: money33("10000000") }, mulInt6(money33("25600"), fact36("orDisabilityExemptions")), money33("0"));
+      return { kind: "add", args: [regular, disability] };
+    })()
+  },
+  {
+    id: "us.or.eic",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon earned income credit \u2014 9% of the federal EITC (12% with a dependent younger than 3 at year end), refundable (OR-40 line 37)",
+    citation: {
+      source: "ORS 315.266; 2025 Form OR-40 Instructions, line 37 and Table 9 (EITC percentage)",
+      section: "ORS 315.266; OR-40 line 37; Table 9",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "TABLE 9 (verbatim): youngest dependent 'At least 3 years old, or no dependents' \u2192 9 percent (0.09) of the federal EITC (1040 line 27a); 'Younger than 3' \u2192 12 percent (0.12). REFUNDABLE. RDPs may claim it using the 'as if' federal return. ITIN filers who cannot claim the federal EITC (filer, spouse, or children lacking work-valid SSNs) may qualify via Schedule OR-EIC-ITIN \u2014 the Oregon-computed equivalent (transcribed, not modeled). [Inputs: orFederalEic, orYoungestUnder3.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      pctRegular: { value: "9", type: "int" },
+      pctUnder3: { value: "12", type: "int" }
+    },
+    formula: rd13(iff7(fact36("orYoungestUnder3"), { kind: "mulRate", base: { kind: "max0", arg: fact36("orFederalEic") }, rate: { num: "12", den: "100" }, round: "half-up" }, { kind: "mulRate", base: { kind: "max0", arg: fact36("orFederalEic") }, rate: { num: "9", den: "100" }, round: "half-up" }))
+  },
+  {
+    id: "us.or.kids_credit",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon Kids Credit \u2014 $1,050 per dependent age 5 or younger (max 5), phased out ratably over qualifying income $26,550-$31,550, refundable; MFS denied (OR-40 line 38)",
+    citation: {
+      source: "ORS 315.273; 2025 Form OR-40 Instructions (updated January 29, 2026 to correct this credit's worksheet), line 38 and the Oregon Kids Credit worksheet",
+      section: "ORS 315.273; OR-40 line 38",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "2025 maximum: '$1,050 per qualifying dependent, for up to five dependents' (max $5,250), REFUNDABLE. DENIED to married filing separately. QUALIFYING INCOME (worksheet Part A): OR-40 line 15 income-after-subtractions PLUS any tips/overtime/vehicle-interest subtractions claimed (Schedule OR-ASC codes 390, 391, 392 \u2014 the OBBBA-parallel items are ADDED BACK for this test) PLUS the Part B loss-and-exclusion addback (federal losses and OR-ASC loss-subtractions beyond a $20,000 allowance, and ALL excluded foreign earned income). PHASE-OUT (worksheet verbatim): qualifying income '$26,550 or less' \u2192 full credit; '$31,550 or more' \u2192 $0; between, the reduction ratio = (QI \u2212 $26,550) \xF7 $5,000 'Round to two decimal places', credit = (dependents \xD7 $1,050) \xD7 (1 \u2212 ratio) \u2014 the two-decimal rounding of the RATIO is the printed convention. Custodial-parent rule: a child claimed only via a released dependent exemption does NOT qualify; the custodial parent may claim even after releasing the exemption. [Inputs: orKidsQualifyingIncome (the worksheet line 4 result, composed), orKidsUnder6 (count, capped at 5 by this rule).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      perChild: { value: "105000", type: "money" },
+      // $1,050
+      maxChildren: { value: "5", type: "int" },
+      phaseoutStart: { value: "2655000", type: "money" },
+      // $26,550
+      phaseoutEnd: { value: "3155000", type: "money" }
+      // $31,550
+    },
+    formula: (() => {
+      const qi = fact36("orKidsQualifyingIncome");
+      const base = iff7({ kind: "cmp", op: "gt", left: fact36("orKidsUnder6"), right: { kind: "int", value: "5" } }, mulInt6(money33("105000"), { kind: "int", value: "5" }), mulInt6(money33("105000"), fact36("orKidsUnder6")));
+      const excess = { kind: "max0", arg: sub8(qi, money33("2655000")) };
+      const hundredths = { kind: "mulDiv", a: excess, b: money33("100"), c: money33("500000"), round: "half-up" };
+      const reduction = { kind: "mulDiv", a: base, b: hundredths, c: money33("100"), round: "half-up" };
+      const credit = { kind: "max0", arg: sub8(base, reduction) };
+      return iff7({ kind: "cmp", op: "ge", left: qi, right: money33("3155000") }, money33("0"), iff7(isStatus15("mfs"), money33("0"), rd13(credit)));
+    })()
+  },
+  {
+    id: "us.or.kicker",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon surplus credit (kicker) \u2014 9.863% of the 2024 total Oregon personal income tax liability, claimed on the 2025 return (OR-40 line 32)",
+    citation: {
+      source: "ORS 291.349; 2025 Form OR-40 Instructions, line 32 ('For 2025, your kicker is 9.863 percent of your 2024 total Oregon personal income tax liability')",
+      section: "ORS 291.349; OR-40 line 32",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "2025 kicker (verbatim): '9.863 percent of your 2024 total Oregon personal income tax liability' \u2014 where the 2024 liability is 'your Oregon income tax before all payments or credits OTHER THAN the credit for income taxes paid to another state on mutually-taxed income' (i.e. after the other-state credit, before everything else). ELIGIBILITY: (1) filed the 2024 Oregon return before the 2025 return, (2) had a 2024 Oregon tax liability, (3) file a 2025 return even with no other filing requirement. Claimed as a PAYMENT-like refundable amount on line 32. Filing-status changes prorate by 2024 Oregon-AGI share (worksheet Parts B/C); a 2024 amendment adjusts the kicker (and can be billed back). The filer may irrevocably donate the ENTIRE kicker to the State School Fund instead (enter 0 on line 32 + checkbox 55). The kicker exists only in surplus years (odd-year returns when certified) \u2014 there is NO kicker on 2024 or 2026 returns. [Input: or2024TaxLiability (the 2024 after-other-state-credit liability, transcribed from the 2024 return).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      kickerPctTimes1000: { value: "9863", type: "int" }
+      // 9.863%
+    },
+    formula: rd13({
+      kind: "mulRate",
+      base: { kind: "max0", arg: fact36("or2024TaxLiability") },
+      rate: { num: "9863", den: "100000" },
+      round: "half-up"
+    })
+  },
+  {
+    id: "us.or.parameters",
+    version: 1,
+    jurisdiction: "us.or",
+    title: "Oregon 2025 OR-40 parameters \u2014 Social Security subtraction, OBBBA conformity via OR-ASC codes, political contribution credit, alternate tax methods, and composition conventions",
+    citation: {
+      source: "2025 Form OR-40 + Instructions (150-101-040-1 Rev. 01-29-26); Publication OR-17 (101-431, 143pp); web-verified August 2026",
+      section: "Form OR-40; 2025 instructions; OR-17",
+      url: "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+      excerpt: "STRUCTURE (lines 7-53): 7 federal AGI (1040 line 11; the federal return with Schedules 1/1-A/2/3 ATTACHES); 8 additions (Schedule OR-ASC line A5); 9 = 7+8; SUBTRACTIONS: 10 federal tax liability subtraction (\u2192 us.or.federal_tax_subtraction), 11 SOCIAL SECURITY/tier 1 RR = federal line 6b IN FULL (Oregon never taxes SS; tier 2/windfall RR subtract on OR-ASC), 12 Oregon state refund from federal Schedule 1 line 1 (never other states'), 13 OR-ASC subtractions (line B7) \u2014 including the NEW OBBBA-CONFORMING subtractions ('You may be able to claim the same deductions for tip income, overtime wages, and passenger vehicle loan interest that you're claiming on your federal return' \u2014 codes 390/391/392; note these ADD BACK for the Kids Credit income test) and the new 2025 First-Time Home Buyer Savings Account subtraction (OR-HOME); 14 = 10+11+12+13; 15 = 9\u221214; 16 OREGON itemized (Schedule OR-A \u2014 never the federal Schedule A total); 17 standard deduction (\u2192 us.or.standard_deduction); 18 = LARGER of 16/17; 19 taxable income = 15\u221218 (floor 0). TAX: 20 \u2192 us.or.income_tax (or checkbox methods 20a OR-FIA-40 farm averaging / 20b Worksheet FCG farm gain / 20c OR-PTE-FY reduced rate, transcribed); 21 installment-sale interest (9% rate for 2025, 8% for 2026); 22 OR-ASC recaptures (C5); 23 = 21+22; 24 = 20+23. STANDARD CREDITS: 25 exemption credit (\u2192 us.or.exemption_credit); 26 POLITICAL CONTRIBUTION credit \u2014 up to $50 ($100 joint), DENIED when federal AGI exceeds $75,000 ($150,000 joint); 27 OR-ASC standard credits (D16 \u2014 retirement income credit, other-state credit, etc., transcribed); 28 = 25+26+27; 29 = max0(24\u221228); 30 OR-ASC carryforward credits (E9 \u2014 political NOT carryforward; these are); 31 = 29\u221230. PAYMENTS/REFUNDABLES: 32 KICKER (\u2192 us.or.kicker); 33 withholding (W-2/1099 attach; NEVER the statewide transit tax); 34 prior-year refund applied; 35 estimates INCLUDING extension payments made by April 15, 2026; 36 OR-K-1/OR-19 PTE payments; 37 EIC (\u2192 us.or.eic); 38 Kids Credit (\u2192 us.or.kids_credit); 39 OR-ASC refundables (F7); 40 = 32..39. SETTLE: 41 overpayment = 40\u221231; 42 tax to pay = 31\u221240; 43 penalty AND interest for filing/paying late (one combined line: 5% late-pay, +20% over 3 months, 100% for 3 consecutive unfiled years); 44 = Form OR-10 interest on UNDERPAYMENT of estimated tax; 45 = 43+44 (when line 45 exceeds a line 41 overpayment, line 46 = 45 \u2212 41 per the printed note); 46 = 42+45 OWED; 47 = 41\u221245 REFUND (refunds under $1 not issued; 3-year claim window); 48-51 applications (2026 estimates, OR-DONATE charities, political party contribution, OR-529 deposits); 52 = their total (\u2264 line 47); 53 net refund. NOT ON THIS RETURN: the statewide transit tax (0.1% of wages, employer-withheld, Form OR-STI only if untaxed), Portland Metro SHS 1% and Multnomah County PFA (separate local returns), TriMet/LTD self-employment transit taxes (OR-TM/OR-LTD). Whole-dollar rounding throughout. Federal conformity: ROLLING (ORS 316.048 ties to the IRC 'as amended' for personal income) \u2014 the OBBBA tips/overtime/vehicle-interest deductions are BELOW-the-line federally (they do not reduce federal AGI), which is why Oregon grants them via the OR-ASC subtraction codes above. RDPs: Oregon recognizes registered domestic partners filing jointly via 'as if' federal returns (not composed)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      politicalContributionMax: { value: "5000", type: "money" },
+      // $50 ($100 joint)
+      politicalContributionMaxJoint: { value: "10000", type: "money" },
+      politicalContributionAgiLimit: { value: "7500000", type: "money" },
+      // $75,000
+      politicalContributionAgiLimitJoint: { value: "15000000", type: "money" },
+      installmentInterestPct2025: { value: "9", type: "int" },
+      transitTaxRateBps: { value: "10", type: "int" }
+      // 0.1% statewide transit (separate)
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Oregon OR-40 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.or.income_tax, us.or.federal_tax_subtraction, us.or.standard_deduction, us.or.exemption_credit, us.or.eic, us.or.kids_credit, and us.or.kicker"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -42720,6 +43313,7 @@ var stateParameterRules = [
   ...mnRules,
   ...scRules,
   ...alRules,
+  ...orRules,
   ...otherStateRules
 ];
 
@@ -42729,7 +43323,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus15 = (status) => ({
+var isStatus16 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -42801,7 +43395,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus15("mfj"),
+    cond: isStatus16("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -42900,7 +43494,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus15("mfj"),
+      cond: isStatus16("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -43088,7 +43682,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus16 = (status) => ({
+var isStatus17 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -43144,7 +43738,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus16("mfs"),
+      cond: isStatus17("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -43155,7 +43749,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus16("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus17("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -43175,7 +43769,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus16("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus17("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -43382,7 +43976,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus17 = (status) => ({
+var isStatus18 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -43521,7 +44115,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus17("mfs"),
+      cond: isStatus18("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -43610,11 +44204,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus17("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus18("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus17("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus18("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -43624,7 +44218,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus18 = (status) => ({
+var isStatus19 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -43672,7 +44266,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus18("mfs") },
+        { kind: "not", arg: isStatus19("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -43687,13 +44281,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus19 = (status) => ({
+var isStatus20 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus19("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus20("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -43724,7 +44318,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus19("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus19("mfj"),
+                    cond: isStatus20("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -43796,7 +44390,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus19("mfj"),
+      cond: isStatus20("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -44491,7 +45085,18 @@ var INDIVIDUAL_GROUPS = {
     "alFederalRefundableCredits",
     "alTaxableRetirement",
     "alIs65",
-    "alOvertimePremium"
+    "alOvertimePremium",
+    "orAgi",
+    "orFederalTaxLiability",
+    "orStdBoxes",
+    "orDependentEarnedIncome",
+    "orRegularExemptions",
+    "orDisabilityExemptions",
+    "orFederalEic",
+    "orYoungestUnder3",
+    "orKidsQualifyingIncome",
+    "orKidsUnder6",
+    "or2024TaxLiability"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -44781,7 +45386,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -44808,7 +45413,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd13 = (c2) => {
+      const rd14 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -44835,11 +45440,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd13(after) + rd13(other);
-      const payments = rd13(withheld) + rd13(refundable) + rd13(extension) + rd13(estimated);
+      const total24 = rd14(after) + rd14(other);
+      const payments = rd14(withheld) + rd14(refundable) + rd14(extension) + rd14(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd13(c2));
+      const d3 = (c2) => fmt2(rd14(c2));
       return ok({
         ok: true,
         asOf,
@@ -44866,7 +45471,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd13(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd14(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

@@ -1,0 +1,13 @@
+{
+  "description": "OR Kids Credit: QI exactly $31,550 ('$31,550 or more') -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "orKidsQualifyingIncome": 31550,
+    "orKidsUnder6": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kids_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

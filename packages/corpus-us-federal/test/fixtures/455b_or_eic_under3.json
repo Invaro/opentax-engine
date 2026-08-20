@@ -1,0 +1,13 @@
+{
+  "description": "OR earned income credit at 12%: youngest dependent under 3 -> 12% x $2,000 = $240.",
+  "facts": {
+    "filingStatus": "hoh",
+    "orFederalEic": 2000,
+    "orYoungestUnder3": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.eic",
+  "expect": {
+    "valueCents": "24000"
+  }
+}

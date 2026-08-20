@@ -1,0 +1,12 @@
+{
+  "description": "OR standard deduction HOH with 2 boxes (65+ and blind) -> 4,560 + 2 x 1,200 = $6,960 ($1,200 per box for single/HOH).",
+  "facts": {
+    "filingStatus": "hoh",
+    "orStdBoxes": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.standard_deduction",
+  "expect": {
+    "valueCents": "696000"
+  }
+}

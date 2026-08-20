@@ -1,0 +1,12 @@
+{
+  "description": "OR MFS with an itemizing spouse -> standard deduction $0 ('even if the standard deduction is more than your itemized deductions').",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.standard_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

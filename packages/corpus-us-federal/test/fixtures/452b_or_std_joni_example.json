@@ -1,0 +1,12 @@
+{
+  "description": "OR instructions Joni example: MFJ, one spouse 65+ (1 box) -> 5,670 + 1,000 = $6,670.",
+  "facts": {
+    "filingStatus": "mfj",
+    "orStdBoxes": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.standard_deduction",
+  "expect": {
+    "valueCents": "667000"
+  }
+}

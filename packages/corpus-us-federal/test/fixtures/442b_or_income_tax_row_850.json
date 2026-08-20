@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 800-900 -> $40/$40: 4.75% x 850 = 40.375 -> $40.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 850
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "4000"
+  }
+}
