@@ -375,20 +375,23 @@ export default function Page() {
       </section>
 
       {/* hero media */}
-      <section className="relative mt-14 md:mt-20">
-        <Image
-          src="/dither-shore.jpg"
-          alt=""
-          width={2400}
-          height={1600}
-          priority
-          sizes="100vw"
-          className="h-[300px] w-full object-cover md:h-[600px]"
-        />
+      <section className="container mt-14 md:mt-20">
+        <div className="mx-auto max-w-[1100px] border border-border">
+          <Image
+            src="/dither-shore.png"
+            alt=""
+            width={1200}
+            height={800}
+            priority
+            quality={90}
+            sizes="(max-width: 1148px) 100vw, 1100px"
+            className="w-full"
+          />
+        </div>
       </section>
 
       {/* the return, live */}
-      <section className="container relative -mt-28 md:-mt-56">
+      <section className="container mt-16 md:mt-24">
         <div className="max-w-[780px] mx-auto border border-border bg-card p-4 md:p-8">
           <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
             <span className="text-sm">Form 1040</span>
