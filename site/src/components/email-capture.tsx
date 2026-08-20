@@ -24,7 +24,7 @@ export function EmailCapture() {
 
   if (state === "done") {
     return (
-      <p className="font-mono text-[11px] text-foreground">
+      <p className="text-xs text-foreground">
         Almost in: we sent you a confirmation link. One click and you&apos;re on the list.
       </p>
     );
@@ -39,17 +39,17 @@ export function EmailCapture() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
         aria-label="Email address"
-        className="flex-1 border border-border bg-transparent px-4 h-11 font-mono text-xs placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+        className="flex-1 border border-border bg-transparent px-4 h-11 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-muted-foreground"
       />
       <button
         type="submit"
         disabled={state === "sending"}
-        className="h-11 px-5 text-sm font-medium bg-foreground text-background hover:opacity-90 disabled:opacity-60 whitespace-nowrap"
+        className="h-11 px-5 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60 whitespace-nowrap"
       >
         {state === "sending" ? "…" : "Get updates"}
       </button>
       {state === "error" && (
-        <span className="font-mono text-[10px] text-muted-foreground self-center">
+        <span className="text-[10px] text-muted-foreground self-center">
           didn&apos;t go through, try again
         </span>
       )}

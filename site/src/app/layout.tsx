@@ -1,18 +1,26 @@
 import "./globals.css";
 import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
-import { Instrument_Serif } from "next/font/google";
+import { Hedvig_Letters_Sans, Hedvig_Letters_Serif } from "next/font/google";
 import { ConsoleEgg } from "@/components/console-egg";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-const instrumentSerif = Instrument_Serif({
+const hedvigSans = Hedvig_Letters_Sans({
   subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
+  weight: "400",
+  display: "swap",
+  variable: "--font-hedvig-sans",
+  fallback: ["system-ui", "arial"],
+});
+
+const hedvigSerif = Hedvig_Letters_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-hedvig-serif",
+  fallback: ["Georgia", "Times New Roman", "serif"],
 });
 
 export const metadata: Metadata = {
@@ -50,9 +58,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${GeistSans.variable} ${GeistMono.variable} ${instrumentSerif.variable}`}
+      className={`${hedvigSans.variable} ${hedvigSerif.variable} ${GeistMono.variable}`}
     >
-      <body className="font-sans">
+      <body className="bg-background overflow-x-hidden font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <PostHogProvider>
             <ConsoleEgg />

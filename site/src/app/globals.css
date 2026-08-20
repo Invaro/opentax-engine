@@ -9,11 +9,22 @@
   --foreground: 0 0% 7%;
   --card: 45 18% 96%;
   --card-foreground: 240 10% 3.9%;
-  --accent: 40 10% 94%;
-  --accent-foreground: 240 5.9% 10%;
+  --popover: 45 18% 96%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 40 11% 89%;
+  --secondary-foreground: 240 5.9% 10%;
   --muted: 40 11% 89%;
   --muted-foreground: 0 0% 38%;
+  --accent: 40 10% 94%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
   --border: 45 5% 85%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --radius: 0.5rem;
   /* the invaro.ai periwinkle, same hue as the dithered birds field */
   --brand: 238 79% 64%;
   /* the jade the dither shifts to further down the page */
@@ -21,19 +32,79 @@
 }
 
 .dark {
-  --background: 0 0% 7%;
+  --background: 0 0% 5%;
   --foreground: 0 0% 98%;
   --card: 0 0% 7%;
   --card-foreground: 0 0% 98%;
-  --accent: 0 0% 11%;
-  --accent-foreground: 0 0% 98%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 0 0% 7%;
+  --secondary-foreground: 0 0% 98%;
   --muted: 0 0% 11%;
   --muted-foreground: 0 0% 38%;
-  --border: 0 0% 17%;
+  --accent: 0 0% 11%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 359 100% 61%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 11%;
+  --input: 0 0% 11%;
+  --ring: 240 4.9% 83.9%;
   --brand: 238 88% 72%;
   --brand-jade: 168 62% 48%;
 }
 
 body {
   @apply bg-background text-foreground antialiased;
+}
+
+/* frosted header ground: a background-colored overlay under backdrop-blur */
+.bg-background-semi-transparent {
+  position: relative;
+}
+
+.bg-background-semi-transparent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background));
+  opacity: 0.8;
+  z-index: -1;
+}
+
+@keyframes fadeInBlur {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.2);
+    box-shadow: 0 0 6px 2px rgba(34, 197, 94, 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
