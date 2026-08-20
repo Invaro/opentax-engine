@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { InvaroLogo } from "@/components/logo";
 import { KeysNav } from "@/components/keys-nav";
@@ -373,9 +374,22 @@ export default function Page() {
         </div>
       </section>
 
+      {/* hero media */}
+      <section className="relative mt-14 md:mt-20">
+        <Image
+          src="/dither-shore.jpg"
+          alt=""
+          width={2400}
+          height={1600}
+          priority
+          sizes="100vw"
+          className="h-[300px] w-full object-cover md:h-[600px]"
+        />
+      </section>
+
       {/* the return, live */}
-      <section className="container mt-16 md:mt-24">
-        <div className="max-w-[780px] mx-auto border border-border bg-card p-4 md:p-8">
+      <section className="container relative -mt-28 md:-mt-56">
+        <div className="max-w-[780px] mx-auto border border-border bg-card p-4 md:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.3)]">
           <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
             <span className="text-sm">Form 1040</span>
             <span className="text-[10px] md:text-xs text-muted-foreground">
