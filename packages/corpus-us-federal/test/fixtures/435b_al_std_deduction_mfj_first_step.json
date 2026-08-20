@@ -1,0 +1,12 @@
+{
+  "description": "AL chart row $26,000-$26,499 MFJ -> $8,325 (first $175 step).",
+  "facts": {
+    "filingStatus": "mfj",
+    "alAgi": 26000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "832500"
+  }
+}

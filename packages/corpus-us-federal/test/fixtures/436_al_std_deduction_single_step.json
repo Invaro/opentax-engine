@@ -1,0 +1,12 @@
+{
+  "description": "AL chart single: row $26,000-$26,499 -> $2,975 ($25 steps from $3,000).",
+  "facts": {
+    "filingStatus": "single",
+    "alAgi": 26499
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "297500"
+  }
+}

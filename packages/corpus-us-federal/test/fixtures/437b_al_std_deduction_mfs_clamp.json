@@ -1,0 +1,12 @@
+{
+  "description": "AL chart MFS floor CLAMP at $17,750+: the raw $88-step progression would reach $2,490, but the printed floor is $2,500.",
+  "facts": {
+    "filingStatus": "mfs",
+    "alAgi": 17750
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "250000"
+  }
+}

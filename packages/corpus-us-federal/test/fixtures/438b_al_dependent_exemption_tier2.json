@@ -1,0 +1,13 @@
+{
+  "description": "AL dependent chart: AGI $50,001 -> $500 each; 2 dependents -> $1,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "alAgi": 50001,
+    "alDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.dependent_exemption",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

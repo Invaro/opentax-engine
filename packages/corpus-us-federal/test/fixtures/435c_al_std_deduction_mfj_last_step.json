@@ -1,0 +1,12 @@
+{
+  "description": "AL chart row $35,000-$35,499 MFJ -> $5,175; the floor $5,000 starts at $35,500.",
+  "facts": {
+    "filingStatus": "mfj",
+    "alAgi": 35499
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "517500"
+  }
+}

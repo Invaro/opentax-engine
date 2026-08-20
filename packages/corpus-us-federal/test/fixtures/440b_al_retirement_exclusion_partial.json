@@ -1,0 +1,13 @@
+{
+  "description": "AL Schedule RS exclusion: 65+, $4,000 taxable retirement -> $4,000 ('not to exceed the Retirement Income Taxable to Alabama').",
+  "facts": {
+    "filingStatus": "mfj",
+    "alTaxableRetirement": 4000,
+    "alIs65": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.retirement_exclusion",
+  "expect": {
+    "valueCents": "400000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "AL chart head of family: row $26,500-$26,999 -> $4,930 ($135 steps from $5,200).",
+  "facts": {
+    "filingStatus": "hoh",
+    "alAgi": 26999
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "493000"
+  }
+}

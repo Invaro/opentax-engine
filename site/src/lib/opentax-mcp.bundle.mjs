@@ -7263,8 +7263,8 @@ var ZodError = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub7) => {
-      this.issues = [...this.issues, sub7];
+    this.addIssue = (sub8) => {
+      this.issues = [...this.issues, sub8];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -7331,13 +7331,13 @@ var ZodError = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub7 of this.issues) {
-      if (sub7.path.length > 0) {
-        const firstEl = sub7.path[0];
+    for (const sub8 of this.issues) {
+      if (sub8.path.length > 0) {
+        const firstEl = sub8.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub7));
+        fieldErrors[firstEl].push(mapper(sub8));
       } else {
-        formErrors.push(mapper(sub7));
+        formErrors.push(mapper(sub8));
       }
     }
     return { formErrors, fieldErrors };
@@ -11636,12 +11636,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub7 of error2.issues) {
-    if (sub7.path.length > 0) {
-      fieldErrors[sub7.path[0]] = fieldErrors[sub7.path[0]] || [];
-      fieldErrors[sub7.path[0]].push(mapper(sub7));
+  for (const sub8 of error2.issues) {
+    if (sub8.path.length > 0) {
+      fieldErrors[sub8.path[0]] = fieldErrors[sub8.path[0]] || [];
+      fieldErrors[sub8.path[0]].push(mapper(sub8));
     } else {
-      formErrors.push(mapper(sub7));
+      formErrors.push(mapper(sub8));
     }
   }
   return { formErrors, fieldErrors };
@@ -22411,7 +22411,8 @@ var JURISDICTION_NAMES = {
   "us.mo": "missouri mo mo-1040 kansas city st louis",
   "us.wi": "wisconsin wi form 1 madison milwaukee",
   "us.mn": "minnesota mn form m1 st paul minneapolis",
-  "us.sc": "south carolina sc sc1040 charleston columbia"
+  "us.sc": "south carolina sc sc1040 charleston columbia",
+  "us.al": "alabama al form 40 birmingham montgomery"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -24218,6 +24219,122 @@ function composePA(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/al.js
+var PERSONAL_EXEMPTION_SINGLE_MFS = 150000n;
+var PERSONAL_EXEMPTION_JOINT_HOF = 300000n;
+function composeAL(input, evalStateTax, notes) {
+  const joint = isJoint(input);
+  if (input.filingStatus === "qss") {
+    notes.push("AL filing status: Alabama has no qualifying-surviving-spouse status, and Head of Family EXPRESSLY EXCLUDES a surviving spouse ('is not a surviving spouse' \u2014 2025 booklet p. 6; Ala. Admin. Code r. 810-3-19-.02 adopts 26 U.S.C. \xA7 2(b), which bars \xA7 2(a) surviving spouses). Joint requires being married at year end or the spouse dying DURING the tax year \u2014 composed as SINGLE ($1,500 exemption, single deduction column)");
+    input.filingStatus = "single";
+    input.filingHoh = false;
+    input.filingHohOrQss = false;
+  }
+  const l5b = rd(c(input.alWages ?? input.wages));
+  const l6 = rd(c(input.alInterestDividends));
+  const retPerson = (taxable3, is65, label) => {
+    if (taxable3 <= 0n)
+      return 0n;
+    const excl = is65 ? rd(evalStateTax("us.al.retirement_exclusion", 0n, { alTaxableRetirement: taxable3, alIs65: true })) : 0n;
+    if (excl > 0n)
+      notes.push(`AL ${label} Schedule RS retirement exclusion ${fmtD(excl)} (65+, up to $6,000 of otherwise-taxable retirement; defined-benefit pensions/SS/military are already fully exempt and never entered). NOTE: the widely reported "$12,000 in 2026" is FALSE \u2014 HB388 died in May 2025; $6,000 continues.`);
+    return max02(taxable3 - excl);
+  };
+  const l4ret = retPerson(rd(c(input.alTaxableRetirementYou)), input.alIs65You === true, "taxpayer") + retPerson(rd(c(input.alTaxableRetirementSpouse)), input.alIs65Spouse === true, "spouse");
+  const otherIncome = rd(c(input.alOtherIncome));
+  const l7 = otherIncome + l4ret;
+  const l8 = l5b + l6 + l7;
+  const l9 = rd(c(input.alAdjustments));
+  if (l9 > 0n)
+    notes.push(`AL line 9 adjustments ${fmtD(l9)} (Part II: per-spouse IRA, Keogh/SEP, alimony paid, adoption, MOVING EXPENSES (Alabama kept them), SE health insurance, College Counts 529/PACT, HSA, catastrophe savings, ABLE \u2014 transcribed)`);
+  const l10 = l8 - l9;
+  const std = rd(evalStateTax("us.al.standard_deduction", 0n, { alAgi: l10 }));
+  const itemized = rd(c(input.alItemizedDeductions));
+  let l11 = std;
+  let method = "standard";
+  if (itemized > std) {
+    l11 = itemized;
+    method = "itemized";
+    notes.push(`AL itemized deductions ${fmtD(itemized)} (Schedule A: FICA/Medicare/SE taxes ARE deductible, medical floor 4% of AGI, NEW 2025 vehicle-loan interest up to $10,000 with the $100,000/$200,000 AGI phase-out \u2014 transcribed) beat the standard deduction ${fmtD(std)}`);
+  } else if (itemized > 0n) {
+    notes.push(`AL deduction: standard ${fmtD(std)} beats itemized ${fmtD(itemized)} \u2014 Alabama allows whichever is larger (MFS spouses must use the same method unless living apart all year)`);
+  }
+  let l12;
+  if (input.alFederalTaxDeductionOverride !== void 0) {
+    l12 = rd(c(input.alFederalTaxDeductionOverride));
+    notes.push(`AL line 12 federal tax deduction ${fmtD(l12)} from override (joint-federal/separate-Alabama returns and part-year residents RATIO the federal liability per the instructions)`);
+  } else {
+    l12 = rd(evalStateTax("us.al.federal_tax_deduction", 0n, {
+      alFederalTaxPlusNiit: rd(c(input.alFederalTaxPlusNiit)),
+      alFederalRefundableCredits: rd(c(input.alFederalRefundableCredits))
+    }));
+    if (l12 > 0n)
+      notes.push(`AL line 12: federal income tax deduction ${fmtD(l12)} (UNLIMITED: 1040 line 22 + Form 8960 NIIT, minus EIC/ACTC/AOC/refundable-adoption/2439 \u2014 never the W-2 withholding; attach federal pages 1-2 + Schedule 1)`);
+  }
+  const l13 = joint || isHoh(input) ? PERSONAL_EXEMPTION_JOINT_HOF : PERSONAL_EXEMPTION_SINGLE_MFS;
+  const deps = input.alDependents ?? input.dependents ?? 0;
+  const l14 = deps > 0 ? rd(evalStateTax("us.al.dependent_exemption", 0n, { alDependents: deps, alAgi: l10 })) : 0n;
+  if (l14 > 0n)
+    notes.push(`AL line 14: dependent exemption ${fmtD(l14)} (${deps} \xD7 the chart amount \u2014 $1,000 at AGI \u2264 $50,000, $500 to $100,000, $300 above; Alabama's OWN relationship list, not federal \xA7 152)`);
+  const l15 = l11 + l12 + l13 + l14;
+  const l16 = max02(l10 - l15);
+  if (l10 - l15 < 0n)
+    notes.push("AL line 16 taxable income computed below zero \u2014 entered $0 (tax $0)");
+  const l17 = rd(evalStateTax("us.al.income_tax", l16));
+  const oc = rd(c(input.nonrefundableCredits));
+  const l18 = max02(l17 - oc);
+  if (oc > 0n)
+    notes.push(`AL line 18: Schedule OC nonrefundable credits ${fmtD(oc > l17 ? l17 : oc)} applied${oc > l17 ? ` (${fmtD(oc)} claimed, capped at the line 17 tax)` : ""} \u2014 many OC credits require My Alabama Taxes pre-registration/reservation`);
+  const useTax = rd(c(input.useTax));
+  const l19 = useTax + rd(c(input.alAtpOtherTaxes));
+  if (useTax > 0n)
+    notes.push(`AL line 19 includes use tax ${fmtD(useTax)} (Schedule ATP: general 4%, automotive 2%, food/grocery 2% on/after September 1, 2025 (3% before), farm 1.5%)`);
+  const l20 = rd(c(input.alCampaignCheckoff));
+  const l21 = l18 + l19 + l20;
+  const l22 = rd(c(input.stateWithholding));
+  const l23 = rd(c(input.estimatedPayments)) + rd(c(input.extensionPayment)) + rd(c(input.priorYearOverpaymentCredited));
+  const l25 = rd(c(input.refundableCredits));
+  const l26 = rd(c(input.alScheduleCpPayments));
+  const l27 = l22 + l23 + l25 + l26;
+  const l29 = l27;
+  const l31 = rd(c(input.alPenalties));
+  const l30 = l21 > l29 ? l21 - l29 + l31 : 0n;
+  const l32 = max02(l29 - l21);
+  const l33 = rd(c(input.alAppliedToNextYear));
+  const l34 = rd(c(input.alDonations));
+  const l35 = l32 > 0n ? max02(l32 - l31 - l33 - l34) : 0n;
+  if (l32 > 0n && l31 > 0n)
+    notes.push(`AL line 35: penalties ${fmtD(l31)} subtract from the refund per the printed formula (line 32 \u2212 lines 31/33/34)`);
+  if (l31 > 0n && l30 === 0n && l31 + l33 + l34 > l32)
+    notes.push(`AL penalties ${fmtD(l31)}: the printed lines 30/35 leave ${fmtD(l31 + l33 + l34 - l32)} of penalties/elections uncollected on the form (line 21 does not exceed line 29 and the refund cannot absorb them) \u2014 the balance is billed/due separately`);
+  notes.push("AL overtime: wages for overtime EARNED January 1-June 30, 2025 are exempt (Act 2023-421/2024-437; W-2 Box 14 'EX OT WAGES', already excluded from Box 16 state wages) \u2014 July-December 2025 overtime is fully taxable; the TY2026-2028 replacement is the $1,000-capped premium deduction (Act 2026-604)");
+  return {
+    "5b_wages": fmtD(l5b),
+    ...l6 !== 0n ? { "6_interest_dividends": fmtD(l6) } : {},
+    ...l7 !== 0n ? { "7_other_income": fmtD(l7) } : {},
+    "8_total_income": fmtD(l8),
+    ...l9 !== 0n ? { "9_adjustments": fmtD(l9) } : {},
+    "10_alabama_agi": fmtD(l10),
+    "11_deduction": fmtD(l11),
+    "_deduction_method": method,
+    "12_federal_tax_deduction": fmtD(l12),
+    "13_personal_exemption": fmtD(l13),
+    ...l14 !== 0n ? { "14_dependent_exemption": fmtD(l14) } : {},
+    "15_total_deductions": fmtD(l15),
+    "16_taxable_income": fmtD(l16),
+    "17_tax": fmtD(l17),
+    "18_net_tax": fmtD(l18),
+    ...l19 !== 0n ? { "19_additional_taxes": fmtD(l19) } : {},
+    ...l20 !== 0n ? { "20_campaign_checkoff": fmtD(l20) } : {},
+    "21_total_tax": fmtD(l21),
+    "22_withholding": fmtD(l22),
+    "27_total_payments": fmtD(l27),
+    "30_amount_you_owe": fmtD(l30),
+    "32_overpaid": fmtD(l32),
+    "35_refund": fmtD(l35)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -24607,7 +24724,7 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -24989,7 +25106,32 @@ var sc = {
   // itself when federalEITC is passed; do not double-count it there. Line 22
   // refundable credits (22a-d) use the shared refundableCredits input.
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc };
+var al = {
+  // AL builds Alabama AGI from its own transcribed lines — federalAGI is NOT used.
+  alWages: usd.optional().describe("Form 40 line 5b: W-2 BOX 16 state wages from ALL states (Schedule W-2 col I+J; Alabama state wages often EXCEED federal Box 1 \u2014 deferrals are AL-taxable). Overtime earned Jan 1-Jun 30, 2025 is exempt and already EXCLUDED from Box 16 (W-2 Box 14 'EX OT WAGES'). Falls back to the shared wages input."),
+  alInterestDividends: usd.optional().describe("Form 40 line 6: interest and dividend income (Schedule B attached if over $1,500)"),
+  alOtherIncome: usd.optional().describe("Form 40 Part I lines 1-3 and 5-7 total EXCLUDING retirement (alimony received, business income/loss, gains \u2014 the 1/1/2025+ precious-metal-bullion gain is EXEMPT, rents/royalties/partnerships, farm; negative allowed). Retirement goes in the alTaxableRetirement* fields for the Schedule RS exclusion."),
+  alTaxableRetirementYou: usd.optional().describe("primary taxpayer's OTHERWISE-TAXABLE retirement income (IRA/401(k)/SEP/Keogh/403(b) distributions after basis recovery) \u2014 defined-BENEFIT pensions, Social Security, Railroad Retirement, military, and US/AL government retirement are 100% EXEMPT and never entered. The composer applies the 65+ $6,000 Schedule RS exclusion (us.al.retirement_exclusion)."),
+  alTaxableRetirementSpouse: usd.optional().describe("spouse's otherwise-taxable retirement income (Schedule RS Part III)"),
+  alIs65You: external_exports.boolean().optional().describe("primary taxpayer was 65 or older \u2014 enables their $6,000 retirement exclusion (NOTE: still $6,000 for 2026; the reported $12,000 increase was HB388, which died May 2025)"),
+  alIs65Spouse: external_exports.boolean().optional().describe("spouse was 65 or older \u2014 enables their own $6,000 exclusion"),
+  alAdjustments: usd.optional().describe("Form 40 line 9 / Part II total (per-spouse IRA deduction, Keogh/SEP, early-withdrawal penalty, alimony paid, adoption expenses, MOVING EXPENSES (Alabama kept them), SE health insurance, College Counts 529/PACT, small-employer health premiums, wind/flood retrofit, catastrophe savings, HSA, First/Second-Chance Home Buyer, firefighter insurance, ABLE)"),
+  alItemizedDeductions: usd.optional().describe("Alabama Schedule A total \u2014 differs from federal: FICA/Medicare/SE taxes ARE deductible, medical floor is 4% of AGI, NO federal income tax here (it's line 12), NEW 2025 vehicle-loan interest \u2264$10,000 phased out $200 per $1,000 ceil-step of AGI over $100,000/$200,000-MFJ. The composer takes the larger of this or the AGI-phased standard deduction."),
+  alFederalTaxPlusNiit: usd.optional().describe("federal Form 1040 LINE 22 tax PLUS Form 8960 line 17 NIIT \u2014 the line 12 worksheet's gross federal tax (from compute_return, verbatim; NEVER the W-2 federal withholding)"),
+  alFederalRefundableCredits: usd.optional().describe("the line 12 worksheet's refundable-credit subtraction: 1040 line 27a EIC + line 28 ACTC + line 29 AOC + line 30 refundable adoption + Schedule 3 Part II line 13a Form 2439 credits"),
+  alFederalTaxDeductionOverride: usd.optional().describe("OVERRIDE for Form 40 line 12: the RATIOED federal tax for joint-federal/separate-Alabama returns (by each spouse's FAGI share) or part-year residents (AL-AGI/FAGI ratio) \u2014 wins over the composer's oracle computation"),
+  alDependents: external_exports.number().int().optional().describe("Form 40 line 14 dependent count \u2014 Alabama's OWN relationship list (\xA7 40-18-19: child/stepchild/parent/grandparent/sibling/in-laws/blood uncle-aunt-nephew-niece with over-50% support; NOT federal \xA7 152) \u2014 $1,000/$500/$300 each by AL AGI (us.al.dependent_exemption); falls back to the shared dependents input"),
+  alAtpOtherTaxes: usd.optional().describe("Schedule ATP Part I taxes OTHER than the use tax (which uses the shared useTax input): catastrophe-savings recapture (+2.5%), etc."),
+  alCampaignCheckoff: usd.optional().describe("Form 40 line 20: $1/$2 Alabama Democratic/Republican party checkoffs \u2014 these ADD to the tax due (not fund-neutral like the federal checkoff)"),
+  alScheduleCpPayments: usd.optional().describe("Form 40 line 26: payments from Schedule CP, Section B line 1 (composite payments)"),
+  alPenalties: usd.optional().describe("Form 40 line 31: Schedule ATP Part II penalties (estimated-tax penalty Form 2210AL etc.) \u2014 added to an amount owed, or SUBTRACTED from the refund per the printed line 35 formula"),
+  alAppliedToNextYear: usd.optional().describe("Form 40 line 33: overpayment applied to 2026 estimated tax"),
+  alDonations: usd.optional().describe("Form 40 line 34: Schedule DC donation check-offs total (reduces the refund)")
+  // AL line 25 refundable credits (Schedule OC Section F) use the shared
+  // refundableCredits input; line 18's Schedule OC nonrefundable credits use
+  // the shared nonrefundableCredits input (capped at the line 17 tax).
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -25018,7 +25160,7 @@ function composeStateReturn(input, evalStateTax) {
     input.filingHohOrQss = fs === "hoh" || fs === "qss" || fs === "mfj";
   }
   const j = input.jurisdiction;
-  if (j !== "pa" && j !== "nj" && j !== "sc" && typeof input.federalAGI !== "number") {
+  if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
@@ -25047,6 +25189,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeMN(input, evalStateTax, notes), notes };
   if (j === "sc")
     return { lines: composeSC(input, evalStateTax, notes), notes };
+  if (j === "al")
+    return { lines: composeAL(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -28053,6 +28197,53 @@ var facts = [
     min: "0",
     description: "Count of qualifying children/dependents for the South Carolina Child and Dependent Care Credit \u2014 2 or more raises the us.sc.cdcc cap from $210 to $420.",
     default: { value: "1", rationale: "Assumed one qualifying child absent contrary input (the conservative $210 cap)" }
+  },
+  {
+    id: "alAgi",
+    type: "money",
+    description: "Alabama adjusted gross income (Form 40 line 10) \u2014 keys the AGI-phased standard deduction chart (us.al.standard_deduction) and the dependent exemption tiers (us.al.dependent_exemption: $1,000 to $50,000, $500 to $100,000, $300 above). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input" }
+  },
+  {
+    id: "alDependents",
+    type: "int",
+    min: "0",
+    description: "Alabama dependent count (Form 40 line 14 / Schedule DS) under Alabama's OWN relationship-and-support definition (\xA7 40-18-19 list + over-50% support; NOT federal \xA7 152) \u2014 us.al.dependent_exemption pays $1,000/$500/$300 each by Alabama AGI.",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" }
+  },
+  {
+    id: "alFederalTaxPlusNiit",
+    type: "money",
+    min: "0",
+    description: "Federal Form 1040 LINE 22 tax PLUS Form 8960 line 17 Net Investment Income Tax \u2014 the gross federal tax for Alabama's unlimited federal income tax deduction worksheet (us.al.federal_tax_deduction). NEVER the W-2 federal withholding. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal tax absent contrary input" }
+  },
+  {
+    id: "alFederalRefundableCredits",
+    type: "money",
+    min: "0",
+    description: "The Alabama line 12 worksheet's refundable-credit subtraction: federal EIC (1040 line 27a) + Additional CTC (line 28) + American Opportunity Credit (line 29) + refundable adoption credit (line 30) + Form 2439 credits (Schedule 3 Part II line 13a). In dollars.",
+    default: { value: "0", rationale: "Assumed no refundable federal credits absent contrary input" }
+  },
+  {
+    id: "alTaxableRetirement",
+    type: "money",
+    min: "0",
+    description: "One person's OTHERWISE-TAXABLE Alabama retirement income (IRA/401(k)/SEP/Keogh/403(b) distributions after basis recovery \u2014 defined-benefit pensions, Social Security, military, and US/AL government retirement are fully exempt and never enter) for the Schedule RS 65+ exclusion (us.al.retirement_exclusion, up to $6,000). Per person. In dollars.",
+    default: { value: "0", rationale: "Assumed no taxable retirement income absent contrary input" }
+  },
+  {
+    id: "alIs65",
+    type: "bool",
+    description: "The person whose Alabama retirement exclusion is being computed was 65 or older \u2014 gates the $6,000 Schedule RS exclusion (us.al.retirement_exclusion). Still $6,000 for TY2026 (HB388's $12,000 increase DIED May 2025).",
+    default: { value: false, rationale: "Assumed under 65 absent contrary attestation" }
+  },
+  {
+    id: "alOvertimePremium",
+    type: "money",
+    min: "0",
+    description: "One taxpayer's overtime PREMIUM (the amount above the base rate \u2014 W-2 Box 12 code TT) for the TY2026-2028 Alabama overtime premium deduction (us.al.overtime_premium_deduction, Act 2026-604, capped $1,000 per taxpayer). In dollars.",
+    default: { value: "0", rationale: "Assumed no overtime premium absent contrary input" }
   }
 ];
 
@@ -28414,7 +28605,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt8 = (cents) => ({
+  const lt9 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -28433,22 +28624,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt8("500"),
+    cond: lt9("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt8("1500"),
+      cond: lt9("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt8("2500"),
+        cond: lt9("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt8("300000"),
+          cond: lt9("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -40098,6 +40289,238 @@ var scRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-al.js
+var rd12 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var lt8 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
+var le6 = (left, right) => ({ kind: "cmp", op: "le", left, right });
+var iff6 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt5 = (base, count) => ({ kind: "mulInt", base, count });
+var sub7 = (left, right) => ({ kind: "sub", left, right });
+var isStatus14 = (v) => ({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: v } });
+var isMfjExpr = isStatus14("mfj");
+var SCHED_SINGLE = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "2", den: "100" } },
+  { thresholdCents: "50000", fixedCents: "1000", rate: { num: "4", den: "100" } },
+  // $500
+  { thresholdCents: "300000", fixedCents: "11000", rate: { num: "5", den: "100" } }
+  // $3,000
+];
+var SCHED_MFJ = [
+  { thresholdCents: "0", fixedCents: "0", rate: { num: "2", den: "100" } },
+  { thresholdCents: "100000", fixedCents: "2000", rate: { num: "4", den: "100" } },
+  // $1,000
+  { thresholdCents: "600000", fixedCents: "22000", rate: { num: "5", den: "100" } }
+  // $6,000
+];
+var alRules = [
+  {
+    id: "us.al.income_tax",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama income tax \u2014 2%/4%/5% at $500/$3,000 (single/MFS/HOF) or $1,000/$6,000 (MFJ), via the printed Form 40 tax table and its over-$100,000 worksheet (Form 40 line 17)",
+    citation: {
+      source: "Ala. Code \xA7 40-18-5; 2025 Form 40 booklet, Tax Tables pp. 25-30 and the 'Over $100,000.00' worksheet (revenue.alabama.gov)",
+      section: "Ala. Code \xA7 40-18-5; Form 40 line 17; 2025 Tax Tables",
+      url: "https://www.revenue.alabama.gov/forms/?d=income-tax&y=2025",
+      excerpt: "RATES (\xA7 40-18-5, unchanged): single/married-filing-separately/head-of-family \u2014 2% on the first $500, 4% on the next $2,500, 5% over $3,000; married filing jointly \u2014 2% on the first $1,000, 4% on the next $5,000, 5% over $6,000. The printed table has TWO columns only: 'Single * Married filing separately * Head of family' share one column and 'Married filing jointly' the other. METHOD (booklet verbatim): 'You must figure your tax from the Tax Tables' unless claiming a Form NOL-85A net operating loss. TABLE CONVENTION (decoded from 12 printed rows): $100-wide rows from $100 to $100,000, each row = the schedule at the ROW MIDPOINT rounded HALF-UP (verified incl. [3,000-3,100)\u2192$113/$102, [5,900-6,000)\u2192$258/$218, [16,000-16,100)\u2192$763/$723, [25,900-26,000)\u2192$1,258/$1,218, [99,900-100,000)\u2192$4,958/$4,918); the two sub-$100 rows are $50-wide and printed [0-50)\u2192$0 and [50-100)\u2192$1 in BOTH columns \u2014 their $.50 midpoints round DOWN as printed (encoded as printed, not half-up). OVER $100,000 (printed worksheet, verbatim): tax = 5% \xD7 (taxable income \u2212 $100,000) PLUS $4,958.00 (single/MFS/HOF) or $4,918.00 (MFJ) \u2014 NOTE the printed materials leave EXACTLY $100,000 uncovered (the last table row is 'less than 100,000' and the worksheet says 'over $100,000'); this rule routes $100,000 to the worksheet (= the anchor itself), the standard software convention \u2014 the printed anchors equal the LAST TABLE ROW's rounded value and are $2 BELOW the pure marginal schedule ($4,960/$4,920); encoded AS PRINTED. useFormulaMethod=true evaluates the exact marginal schedule instead (below $100,000 only). BASE: Form 40 line 16 taxable income = Alabama AGI \u2212 (itemized-or-standard deduction + FEDERAL INCOME TAX DEDUCTION + personal exemption + dependent exemption) \u2192 us.al.* companion targets. The 2%/4%/5% schedule is NOT indexed and applies unchanged for TY2026 (the 2026 printed table publishes ~January 2027 \u2014 re-verify the anchors then). Part-year residents prorate; Form 40NR not composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      singleBracket2: { value: "50000", type: "money" },
+      // $500
+      singleBracket3: { value: "300000", type: "money" },
+      // $3,000
+      mfjBracket2: { value: "100000", type: "money" },
+      // $1,000
+      mfjBracket3: { value: "600000", type: "money" },
+      // $6,000
+      printedAnchorSingle100k: { value: "495800", type: "money" },
+      // $4,958 as printed
+      printedAnchorMfj100k: { value: "491800", type: "money" },
+      // $4,918 as printed
+      tableThreshold: { value: "10000000", type: "money" }
+      // $100,000
+    },
+    formula: (() => {
+      const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
+      const sched = (b) => iff6(isMfjExpr, printedSchedule(b, SCHED_MFJ), printedSchedule(b, SCHED_SINGLE));
+      const mid100 = {
+        kind: "add",
+        args: [mulInt5(money33("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money33("5000")]
+      };
+      const table2 = iff6(
+        lt8(base, money33("5000")),
+        money33("0"),
+        // printed row [0, 50) -> $0
+        iff6(lt8(base, money33("10000")), money33("100"), sched(mid100))
+      );
+      const over100k = {
+        kind: "add",
+        args: [
+          iff6(isMfjExpr, money33("491800"), money33("495800")),
+          { kind: "mulRate", base: sub7(base, money33("10000000")), rate: { num: "5", den: "100" }, round: "half-up" }
+        ]
+      };
+      return rd12(iff6(lt8(base, money33("10000000")), iff6(fact36("useFormulaMethod"), sched(base), table2), over100k));
+    })()
+  },
+  {
+    id: "us.al.standard_deduction",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama standard deduction \u2014 AGI-phased printed chart: MFJ $8,500\u2192$5,000, single $3,000\u2192$2,500, HOF $5,200\u2192$2,500 (steps of $500 from $26,000), MFS $4,250\u2192$2,500 (steps of $250 from $13,000)",
+    citation: {
+      source: "Ala. Code \xA7 40-18-15(b) as amended by Act 2022-292; 2025 Form 40 booklet, Standard Deduction chart p. 9",
+      section: "Form 40 line 11 box b; 2025 chart",
+      url: "https://www.revenue.alabama.gov/forms/?d=income-tax&y=2025",
+      excerpt: "Printed 2025 chart (keyed to ALABAMA AGI, Form 40 line 10): MARRIED FILING JOINT \u2014 $8,500 for AGI $0-$25,999, then MINUS $175 per $500 step ($26,000-$26,499 \u2192 $8,325 \u2026 $35,000-$35,499 \u2192 $5,175), floor $5,000 at $35,500+. SINGLE \u2014 $3,000 to $25,999, minus $25 per $500 step, floor $2,500 at $35,500+. HEAD OF FAMILY \u2014 $5,200 to $25,999, minus $135 per $500 step, floor $2,500 at $35,500+. MARRIED FILING SEPARATE \u2014 $4,250 for AGI $0-$12,999, minus $88 per $250 step ($13,000-$13,249 \u2192 $4,162 \u2026 $17,500-$17,749 \u2192 $2,578), floor $2,500 at $17,750+ (the MFS floor CLAMPS: the raw progression would reach $2,490). Amounts are NOT indexed (Act 2022-292 set them; identical for 2026 until amended). A dependent or student may take the FULL standard deduction even if claimed as a dependent by someone else (unlike federal law). Itemized deductions (Schedule A) may be claimed instead whenever larger \u2014 Alabama allows free choice, except MFS spouses must both use the same method unless living apart all year. [Inputs: filingStatus, alAgi.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      maxMfj: { value: "850000", type: "money" },
+      floorMfj: { value: "500000", type: "money" },
+      maxSingle: { value: "300000", type: "money" },
+      maxHof: { value: "520000", type: "money" },
+      maxMfs: { value: "425000", type: "money" },
+      floorOthers: { value: "250000", type: "money" },
+      phaseStart: { value: "2600000", type: "money" }
+      // $26,000 ($13,000 MFS)
+    },
+    formula: (() => {
+      const agi2 = { kind: "max0", arg: fact36("alAgi") };
+      const chart = (max, step, floor, start, width) => {
+        const excess = sub7(agi2, money33(start));
+        const steps = {
+          kind: "add",
+          args: [{ kind: "stepUnits", value: excess, unitCents: width, mode: "floor" }, { kind: "int", value: "1" }]
+        };
+        const reduced = { kind: "max", args: [sub7(money33(max), mulInt5(money33(step), steps)), money33(floor)] };
+        return iff6(lt8(agi2, money33(start)), money33(max), reduced);
+      };
+      return iff6(isMfjExpr, chart("850000", "17500", "500000", "2600000", "50000"), iff6(isStatus14("hoh"), chart("520000", "13500", "250000", "2600000", "50000"), iff6(isStatus14("mfs"), chart("425000", "8800", "250000", "1300000", "25000"), chart("300000", "2500", "250000", "2600000", "50000"))));
+    })()
+  },
+  {
+    id: "us.al.dependent_exemption",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama dependent exemption \u2014 $1,000 / $500 / $300 per dependent by Alabama AGI ($0-$50,000 / $50,001-$100,000 / over $100,000) (Form 40 line 14)",
+    citation: {
+      source: "Ala. Code \xA7 40-18-19(a)(9); 2025 Form 40 booklet, Line 14 dependent chart p. 8",
+      section: "Form 40 line 14; Part III",
+      url: "https://www.revenue.alabama.gov/forms/?d=income-tax&y=2025",
+      excerpt: "Printed chart (verbatim, keyed to Form 40 page 1 line 10 Alabama AGI): '0 - 50,000 \u2192 1,000; 50,001 - 100,000 \u2192 500; Over 100,000 \u2192 300' per dependent (AGI of exactly $50,000 \u2192 $1,000; exactly $100,000 \u2192 $500). Alabama defines 'dependent' by its OWN list (\xA7 40-18-19: child, stepchild, parent, grandparent, sibling, in-laws, blood uncle/aunt/nephew/niece \u2014 NOT the federal \xA7 152 test; an unrelated household member never qualifies) with an over-50%-support test. Claimed on Schedule DS/Part III. Note the personal exemption is separate: $1,500 (single/MFS) or $3,000 (MFJ/head of family), printed on the Form 40 filing-status line, NOT AGI-phased, and a dependent-claimed filer may still take it. [Inputs: alDependents, alAgi.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      tier1: { value: "100000", type: "money" },
+      // $1,000 (AGI <= $50,000)
+      tier2: { value: "50000", type: "money" },
+      // $500 (AGI <= $100,000)
+      tier3: { value: "30000", type: "money" }
+      // $300
+    },
+    formula: mulInt5(iff6(le6(fact36("alAgi"), money33("5000000")), money33("100000"), iff6(le6(fact36("alAgi"), money33("10000000")), money33("50000"), money33("30000"))), fact36("alDependents"))
+  },
+  {
+    id: "us.al.federal_tax_deduction",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama federal income tax deduction \u2014 UNLIMITED: federal tax (1040 line 22 + Form 8960 NIIT) minus the refundable credits (EIC, ACTC, AOC, refundable adoption, Form 2439), floored at $0 (Form 40 line 12)",
+    citation: {
+      source: "Ala. Const. art. XI \xA7 211.04 (the deduction is constitutional and unlimited); Ala. Code \xA7 40-18-15(a)(3); 2025 Form 40 booklet, Federal Income Tax Deduction Worksheet p. 31",
+      section: "Form 40 line 12; 2025 worksheet",
+      url: "https://www.revenue.alabama.gov/forms/?d=income-tax&y=2025",
+      excerpt: "2025 printed worksheet (verbatim structure): line 1 = 2025 Form 1040 LINE 22 tax; line 2 = Net Investment Income Tax (Form 8960 line 17) \u2014 ADDED; line 5 = the sum of the REFUNDABLE credits: 4a Earned Income Credit (1040 line 27a), 4b Additional Child Tax Credit (line 28), 4c American Opportunity Credit (line 29), 4d refundable Adoption Credit (line 30), 4e Form 2439 credits (Schedule 3 Part II line 13a); line 6 = line 3 \u2212 line 5, 'If amount is negative enter zero'. UNLIMITED \u2014 Alabama is one of the few states with a full federal-tax deduction, and it is constitutionally protected. NEVER the federal withholding ('DO NOT ENTER THE FEDERAL TAX WITHHELD FROM YOUR FORM W-2(S)' \u2014 printed on the form). Pages 1-2 + Schedule 1 of the federal return attach. JOINT-FEDERAL/SEPARATE-ALABAMA returns and part-year residents RATIO the federal liability by each spouse's federal AGI share (or the AL-AGI/federal-AGI ratio) \u2014 compose with disclosure. [Inputs: alFederalTaxPlusNiit (1040 line 22 + 8960 line 17), alFederalRefundableCredits (the 4a-4e sum).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: {
+      kind: "max0",
+      arg: sub7({ kind: "max0", arg: fact36("alFederalTaxPlusNiit") }, { kind: "max0", arg: fact36("alFederalRefundableCredits") })
+    }
+  },
+  {
+    id: "us.al.retirement_exclusion",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama retirement exclusion (Lynn Greer Act) \u2014 first $6,000 of taxable retirement income per person 65 or older (Schedule RS; defined-contribution/IRA distributions)",
+    citation: {
+      source: "Ala. Code \xA7 40-18-19(a)(13) (Act 2022-294, the Lynn Greer Retirement Income Tax Cut Act); 2025 Schedule RS (Form 40), Parts II/III retirement-exclusion questions",
+      section: "Schedule RS; Form 40 Part I line 4",
+      url: "https://www.revenue.alabama.gov/wp-content/uploads/2026/01/25schrsblk.pdf",
+      excerpt: "2025 Schedule RS (verbatim): 'RETIREMENT EXCLUSION. Is the primary taxpayer 65 or older and receives taxable retirement? If Yes, each taxpayer is eligible up to $6,000 not to exceed the Retirement Income Taxable to Alabama on line 9.' Per person (primary Part II / spouse Part III), against OTHERWISE-TAXABLE retirement income \u2014 i.e. defined-CONTRIBUTION distributions (IRA/401(k)/SEP/Keogh/403(b)), since defined-BENEFIT pensions, Social Security, Railroad Retirement, military retirement, and US/Alabama government retirement (TRS/ERS/JRF) are already 100% EXEMPT under \xA7 40-18-19 and never reach this exclusion. MISINFORMATION WARNING (verified August 2026): tax surveys widely report the exclusion 'doubles to $12,000 starting January 1, 2026' \u2014 that was HB388 (2025), which DIED May 14, 2025 without enactment; no 2026-session act revived it, so $6,000 CONTINUES for TY2026. Re-verify if a future act passes. [Inputs (one person): alTaxableRetirement (the person's otherwise-taxable retirement income), alIs65.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      exclusionCap: { value: "600000", type: "money" }
+      // $6,000 — NOT $12,000 (HB388 died)
+    },
+    formula: iff6(fact36("alIs65"), { kind: "min", args: [{ kind: "max0", arg: fact36("alTaxableRetirement") }, money33("600000")] }, money33("0"))
+  },
+  {
+    id: "us.al.overtime_premium_deduction",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama overtime premium deduction (Act 2026-604) \u2014 lesser of the overtime PREMIUM (W-2 Box 12 code TT) or $1,000 per taxpayer, TY2026-2028, itemizing not required",
+    citation: {
+      source: "Act 2026-604; ADOR 'Overtime Premium Deduction (Act 2026-604)' (revenue.alabama.gov/individual-corporate/overtime-premium-deduction-act-2026-604); web-verified August 2026",
+      section: "Act 2026-604",
+      url: "https://www.revenue.alabama.gov/individual-corporate/overtime-premium-deduction-act-2026-604/",
+      excerpt: "ADOR (verbatim): 'Beginning with the 2026 and ending with the 2028 calendar year', taxpayers may deduct the PREMIUM portion of overtime wages 'regardless of whether they itemize deductions or not'; 'The deduction is the lesser of the actual overtime premium or a maximum annual amount of $1,000 per taxpayer.' PREMIUM ONLY: 'If you earn time and a half for overtime, only the half portion above your base rate of pay is considered the overtime premium.' Reported by employers in W-2 BOX 12 code TT (informational \u2014 it does not change Box 16 wages, so this is a RETURN-level deduction, unlike the 2023-2025 exemption which was excluded from state wages at the W-2). Per taxpayer \u2014 each spouse claims their own on a joint return. HISTORY: the prior FULL overtime-wage EXEMPTION (Act 2023-421 as amended by Act 2024-437, FLSA definition) ENDED June 30, 2025 \u2014 for TY2025, overtime earned January 1-June 30, 2025 is exempt (W-2 Box 14 'EX OT WAGES', already excluded from Box 16) and July-December 2025 overtime is fully taxable, with NO deduction; this $1,000-capped deduction is the 2026-2028 replacement. SUNSET: expires after the 2028 calendar year. [Input: alOvertimePremium (one taxpayer's Box 12 code TT amount).]"
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2029-01-01",
+    output: { type: "money" },
+    parameters: {
+      capPerTaxpayer: { value: "100000", type: "money" }
+      // $1,000
+    },
+    formula: { kind: "min", args: [{ kind: "max0", arg: fact36("alOvertimePremium") }, money33("100000")] }
+  },
+  {
+    id: "us.al.parameters",
+    version: 1,
+    jurisdiction: "us.al",
+    title: "Alabama 2025 Form 40 parameters \u2014 personal exemptions, exempt income, itemized quirks (FICA deductible, 4% medical floor, vehicle-loan interest), overtime timeline, use tax rates, and composition conventions",
+    citation: {
+      source: "2025 Form 40 + 34-page booklet (revenue.alabama.gov); Ala. Code \xA7\xA7 40-18-5, -15, -19; ADOR overtime pages; web-verified August 2026",
+      section: "Form 40; 2025 booklet",
+      url: "https://www.revenue.alabama.gov/forms/?d=income-tax&y=2025",
+      excerpt: "STRUCTURE: Form 40 line 5b wages = W-2 BOX 16 state wages from ALL states (Schedule W-2 column I+J; Alabama state wages often EXCEED federal Box 1 \u2014 state-employee deferrals are AL-taxable); line 6 interest/dividends (Schedule B over $1,500); line 7 other income (page 2 Part I: alimony, business, gains \u2014 including the 1/1/2025+ precious-metal-bullion gain EXEMPTION, retirement via Schedule RS \u2192 us.al.retirement_exclusion, rents/royalties, farm); line 9 adjustments (Part II: IRA per spouse, Keogh/SEP, early-withdrawal penalty, alimony paid, adoption expenses, MOVING EXPENSES (Alabama kept them; in-state moves), self-employed health insurance, College Counts 529/PACT, small-employer health premiums, wind/flood retrofit, catastrophe savings, HSA, First-Time/Second-Chance Home Buyer, firefighter insurance, ABLE); line 10 = Alabama AGI. DEDUCTIONS: line 11 itemized (Schedule A) OR standard (\u2192 us.al.standard_deduction \u2014 free choice, larger wins); line 12 \u2192 us.al.federal_tax_deduction (UNLIMITED); line 13 PERSONAL EXEMPTION printed on the filing-status line: $1,500 single/MFS, $3,000 MFJ/head-of-family (not AGI-phased; a dependent-claimed filer still takes it); line 14 \u2192 us.al.dependent_exemption. TAX: line 16 taxable income; line 17 \u2192 us.al.income_tax (table mandatory unless NOL-85A); line 18 net of Schedule OC credits (MAT pre-registration required for many; transcribed); line 19 Schedule ATP additional taxes (USE TAX: general 4%, automotive 2%, food/grocery 3% before September 1, 2025 and 2% ON/AFTER (Act 2025 grocery cut; the 2026 session ALSO enacted a ~two-month suspension of the 2% state grocery tax alongside Act 2026-604 \u2014 re-verify grocery use-tax rates for 2026 purchases), farm machinery 1.5%; catastrophe-savings recapture at +2.5% under \xA7 40-18-312); line 20 $1/$2 party checkoffs (ADD to tax); lines 22-29 payments (withholding, estimates+automatic-extension, amended-only lines 24/28, Schedule OC-F refundable credits line 25, Schedule CP line 26); line 30 owe (+line 31 ATP Part II penalties); lines 32-35 overpaid \u2212 applied-to-2026 \u2212 Schedule DC donations = refund. ITEMIZED QUIRKS (Schedule A): FICA/Medicare/self-employment taxes are DEDUCTIBLE; medical floor is 4% of AGI (not 7.5%); FEDERAL income tax is NOT on Schedule A (it is line 12); NEW 2025 line 11c qualified VEHICLE LOAN INTEREST \u2014 capped $10,000, phased out $200 per $1,000 CEIL-step of AL AGI over $100,000 ($200,000 MFJ) per the printed worksheet (Alabama's own OBBBA-parallel). EXEMPT INCOME (\xA7 40-18-19): Social Security, Railroad Retirement, DEFINED-BENEFIT pensions (all of them, private included), US/Alabama government retirement (TRS/ERS/JRF), military retirement, peace-officer/firefighter retirement, up to $50,000 administrative-downsizing severance, combat pay, PACT/College Counts withdrawals, ABLE income, 1/1/2025+ precious-metal-bullion capital gains. OVERTIME TIMELINE: wages for overtime EARNED January 1-June 30, 2025 are EXEMPT (Act 2023-421/2024-437, FLSA definition, W-2 Box 14 'EX OT WAGES', excluded from Box 16); July 1-December 31, 2025 overtime is FULLY TAXABLE; TY2026-2028 \u2192 us.al.overtime_premium_deduction ($1,000 premium cap, Act 2026-604). Whole-dollar rounding on all lines. NO state EITC, NO CDCC, NO grocery income-tax credit; municipal occupational taxes (e.g. Birmingham 1%) are employer-withheld and NOT on this return. Part-year residents prorate (itemized deductions only while resident; FULL personal exemption). Federal-joint/Alabama-separate: ratio the line 12 deduction by FAGI shares."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      personalExemptionSingleMfs: { value: "150000", type: "money" },
+      // $1,500
+      personalExemptionJointHof: { value: "300000", type: "money" },
+      // $3,000
+      medicalFloorPctOfAgi: { value: "4", type: "int" },
+      severanceExclusionCap: { value: "5000000", type: "money" },
+      // $50,000
+      vehicleLoanInterestCap: { value: "1000000", type: "money" },
+      // $10,000
+      useTaxGeneralPct: { value: "4", type: "int" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Alabama Form 40 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.al.income_tax, us.al.standard_deduction, us.al.dependent_exemption, us.al.federal_tax_deduction, us.al.retirement_exclusion, and (TY2026-2028) us.al.overtime_premium_deduction"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -40550,6 +40973,7 @@ var stateParameterRules = [
   ...wiRules,
   ...mnRules,
   ...scRules,
+  ...alRules,
   ...otherStateRules
 ];
 
@@ -40559,7 +40983,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus14 = (status) => ({
+var isStatus15 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -40631,7 +41055,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus14("mfj"),
+    cond: isStatus15("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -40730,7 +41154,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus14("mfj"),
+      cond: isStatus15("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -40918,7 +41342,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus15 = (status) => ({
+var isStatus16 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -40974,7 +41398,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus15("mfs"),
+      cond: isStatus16("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -40985,7 +41409,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus15("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus16("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -41005,7 +41429,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus15("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus16("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -41212,7 +41636,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus16 = (status) => ({
+var isStatus17 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -41351,7 +41775,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus16("mfs"),
+      cond: isStatus17("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -41440,11 +41864,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus16("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus17("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus16("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus17("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -41454,7 +41878,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus17 = (status) => ({
+var isStatus18 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -41502,7 +41926,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus17("mfs") },
+        { kind: "not", arg: isStatus18("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -41517,13 +41941,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus18 = (status) => ({
+var isStatus19 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus18("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus19("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -41554,7 +41978,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus18("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus18("mfj"),
+                    cond: isStatus19("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -41626,7 +42050,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus18("mfj"),
+      cond: isStatus19("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -42314,7 +42738,14 @@ var INDIVIDUAL_GROUPS = {
     "scRetirementDeductionsClaimed",
     "scLowerQualifiedEarnedIncome",
     "scCareExpenses",
-    "scCareChildren"
+    "scCareChildren",
+    "alAgi",
+    "alDependents",
+    "alFederalTaxPlusNiit",
+    "alFederalRefundableCredits",
+    "alTaxableRetirement",
+    "alIs65",
+    "alOvertimePremium"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -42604,7 +43035,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -42631,7 +43062,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd12 = (c2) => {
+      const rd13 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -42658,11 +43089,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd12(after) + rd12(other);
-      const payments = rd12(withheld) + rd12(refundable) + rd12(extension) + rd12(estimated);
+      const total24 = rd13(after) + rd13(other);
+      const payments = rd13(withheld) + rd13(refundable) + rd13(extension) + rd13(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd12(c2));
+      const d3 = (c2) => fmt2(rd13(c2));
       return ok({
         ok: true,
         asOf,
@@ -42689,7 +43120,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd12(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd13(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

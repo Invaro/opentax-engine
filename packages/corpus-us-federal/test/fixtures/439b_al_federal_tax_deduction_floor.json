@@ -1,0 +1,13 @@
+{
+  "description": "AL federal tax deduction floors at $0 when refundable credits (EIC/ACTC/AOC) exceed the federal tax ('If amount is negative enter zero').",
+  "facts": {
+    "filingStatus": "hoh",
+    "alFederalTaxPlusNiit": 1500,
+    "alFederalRefundableCredits": 5200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.federal_tax_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

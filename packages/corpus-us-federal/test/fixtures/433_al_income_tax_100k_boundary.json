@@ -1,0 +1,12 @@
+{
+  "description": "AL $100,000 exactly: the printed over-$100,000 worksheet anchors at $4,958 (single) \u2014 $2 BELOW the pure schedule's $4,960; encoded as printed.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "495800"
+  }
+}

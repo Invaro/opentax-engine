@@ -1,0 +1,12 @@
+{
+  "description": "AL chart MFS ($250-wide steps from $13,000): row $13,000-$13,249 -> $4,162.",
+  "facts": {
+    "filingStatus": "mfs",
+    "alAgi": 13249
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "416200"
+  }
+}

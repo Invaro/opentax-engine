@@ -1,0 +1,12 @@
+{
+  "description": "AL head of family uses the single/MFS/HOF shared column: 3,050 -> $113 (same as single).",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 3050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "11300"
+  }
+}

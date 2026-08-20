@@ -1,0 +1,12 @@
+{
+  "description": "AL over-$100,000 printed worksheet: MFJ $150,000 -> 4,918 + 5% x 50,000 = $7,418.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "741800"
+  }
+}

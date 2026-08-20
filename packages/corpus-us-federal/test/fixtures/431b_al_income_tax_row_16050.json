@@ -1,0 +1,12 @@
+{
+  "description": "AL printed row 16,000-16,100 single $763: 110 + 5% x 13,050 = 762.50 -> $763 (MFJ column prints $723 = 220 + 5% x 10,050 = 722.50 -> 723).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 16050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "76300"
+  }
+}
