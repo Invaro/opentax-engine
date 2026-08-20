@@ -1038,3 +1038,80 @@ describe("composeSC — 2025 SC1040 (real corpus targets)", () => {
     ).toThrow(/scFederalTaxableIncome is required/);
   });
 });
+
+describe("composeAL — 2025 Form 40 (real corpus targets)", () => {
+  it("full MFJ return: RS exclusions, itemized beats phased standard, unlimited FIT deduction, dependent tier, checkoff adds", () => {
+    // Hand-computed: retirement line 4 = (10,000 - 6,000 exclusion) + 2,000
+    // (spouse under 65, no exclusion) = 6,000; line 7 = 9,000; line 8 =
+    // 95,200; line 10 = 90,000. Standard (MFJ, AGI over 35,500) = floor
+    // 5,000 -> itemized 7,000 wins. Line 12 FIT = 9,500; line 13 = 3,000;
+    // line 14 = 2 x $500 (AGI 50,001-100,000 tier) = 1,000 -> line 15 =
+    // 20,500; line 16 = 69,500. Tax: table row 69,500-69,600 midpoint
+    // 69,550 -> 220 + 5% x 63,550 = 3,397.50 -> $3,398. OC 200 -> 3,198;
+    // use tax 50 + $2 checkoff -> line 21 = 3,250. Withholding 3,600 ->
+    // overpaid 350; applied 100 + donations 25 -> refund $225.
+    const input = {
+      jurisdiction: "al" as const,
+      filingStatus: "mfj",
+      alWages: 85000,
+      alInterestDividends: 1200,
+      alOtherIncome: 3000,
+      alTaxableRetirementYou: 10000,
+      alIs65You: true,
+      alTaxableRetirementSpouse: 2000,
+      alAdjustments: 5200,
+      alItemizedDeductions: 7000,
+      alFederalTaxPlusNiit: 9500,
+      alDependents: 2,
+      nonrefundableCredits: 200,
+      useTax: 50,
+      alCampaignCheckoff: 2,
+      stateWithholding: 3600,
+      alAppliedToNextYear: 100,
+      alDonations: 25,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "7_other_income")).toBe("$9,000");
+    expect(dollars(lines, "10_alabama_agi")).toBe("$90,000");
+    expect(dollars(lines, "11_deduction")).toBe("$7,000");
+    expect(lines["_deduction_method"]).toBe("itemized");
+    expect(dollars(lines, "12_federal_tax_deduction")).toBe("$9,500");
+    expect(dollars(lines, "13_personal_exemption")).toBe("$3,000");
+    expect(dollars(lines, "14_dependent_exemption")).toBe("$1,000");
+    expect(dollars(lines, "16_taxable_income")).toBe("$69,500");
+    expect(dollars(lines, "17_tax")).toBe("$3,398");
+    expect(dollars(lines, "18_net_tax")).toBe("$3,198");
+    expect(dollars(lines, "21_total_tax")).toBe("$3,250");
+    expect(dollars(lines, "32_overpaid")).toBe("$350");
+    expect(dollars(lines, "35_refund")).toBe("$225");
+    expect(notes.some((n) => n.includes("HB388 died"))).toBe(true);
+  });
+
+  it("single wage earner: AGI-phased standard deduction row and the shared single/MFS/HOF tax column", () => {
+    // AGI 30,000 -> standard row 30,000-30,499 = 3,000 - 25 x 9 = $2,775;
+    // line 16 = 30,000 - (2,775 + 1,800 + 1,500) = 23,925 -> table row
+    // 23,900-24,000 midpoint 23,950 -> 110 + 5% x 20,950 = 1,157.50 ->
+    // $1,158; withholding 1,000 -> owe $158.
+    const input = {
+      jurisdiction: "al" as const,
+      filingStatus: "single",
+      alWages: 30000,
+      alFederalTaxPlusNiit: 1800,
+      stateWithholding: 1000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "11_deduction")).toBe("$2,775");
+    expect(dollars(lines, "13_personal_exemption")).toBe("$1,500");
+    expect(dollars(lines, "16_taxable_income")).toBe("$23,925");
+    expect(dollars(lines, "17_tax")).toBe("$1,158");
+    expect(dollars(lines, "30_amount_you_owe")).toBe("$158");
+  });
+
+  it("QSS maps to SINGLE (Alabama HOF expressly excludes a surviving spouse); AL composes without federalAGI", () => {
+    const input = { jurisdiction: "al" as const, filingStatus: "qss", alWages: 10000 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "13_personal_exemption")).toBe("$1,500");
+    expect(dollars(lines, "11_deduction")).toBe("$3,000"); // single column, AGI below $26,000
+    expect(notes.some((n) => n.includes("EXPRESSLY EXCLUDES a surviving spouse"))).toBe(true);
+  });
+});

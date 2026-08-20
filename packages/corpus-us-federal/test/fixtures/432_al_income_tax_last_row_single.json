@@ -1,0 +1,12 @@
+{
+  "description": "AL last printed table row 99,900-100,000 single $4,958: 110 + 5% x 96,950 = 4,957.50 -> $4,958.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 99950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "495800"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "AL printed row 6,000-6,100 MFJ column $223: midpoint 6,050 crosses the MFJ $6,000 boundary -> 220 + 5% x 50 = 222.50 -> $223.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 6050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "22300"
+  }
+}

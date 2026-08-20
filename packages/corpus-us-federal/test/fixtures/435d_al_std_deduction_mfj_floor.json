@@ -1,0 +1,12 @@
+{
+  "description": "AL chart MFJ floor: AGI $35,500 and above -> $5,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "alAgi": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "500000"
+  }
+}

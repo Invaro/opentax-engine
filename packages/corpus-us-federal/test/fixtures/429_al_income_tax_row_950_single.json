@@ -1,0 +1,12 @@
+{
+  "description": "AL printed row 900-1,000 single column $28: midpoint 950 -> 10 + 4% x 450 = $28.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "2800"
+  }
+}

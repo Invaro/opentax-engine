@@ -61,6 +61,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.wi": "wisconsin wi form 1 madison milwaukee",
   "us.mn": "minnesota mn form m1 st paul minneapolis",
   "us.sc": "south carolina sc sc1040 charleston columbia",
+  "us.al": "alabama al form 40 birmingham montgomery",
 };
 
 export function lookupParameters(

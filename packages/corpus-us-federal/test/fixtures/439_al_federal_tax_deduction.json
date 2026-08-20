@@ -1,0 +1,13 @@
+{
+  "description": "AL federal tax deduction worksheet: 1040 line 22 + NIIT = $8,000 minus refundable credits $2,000 -> $6,000 (unlimited, no cap).",
+  "facts": {
+    "filingStatus": "single",
+    "alFederalTaxPlusNiit": 8000,
+    "alFederalRefundableCredits": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.federal_tax_deduction",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

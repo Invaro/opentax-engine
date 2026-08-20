@@ -1,0 +1,13 @@
+{
+  "description": "AL Schedule RS exclusion: under 65 -> $0 regardless of retirement income.",
+  "facts": {
+    "filingStatus": "single",
+    "alTaxableRetirement": 10000,
+    "alIs65": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.retirement_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

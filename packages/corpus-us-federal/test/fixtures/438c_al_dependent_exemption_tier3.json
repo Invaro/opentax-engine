@@ -1,0 +1,13 @@
+{
+  "description": "AL dependent chart: AGI over $100,000 -> $300 each (AGI exactly $100,000 stays $500); 2 dependents at $100,001 -> $600.",
+  "facts": {
+    "filingStatus": "single",
+    "alAgi": 100001,
+    "alDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.dependent_exemption",
+  "expect": {
+    "valueCents": "60000"
+  }
+}

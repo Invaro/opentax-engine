@@ -1,0 +1,12 @@
+{
+  "description": "AL Act 2026-604: $600 of overtime premium -> $600 (lesser of actual or $1,000).",
+  "facts": {
+    "filingStatus": "mfj",
+    "alOvertimePremium": 600
+  },
+  "asOf": "2026-12-31",
+  "target": "us.al.overtime_premium_deduction",
+  "expect": {
+    "valueCents": "60000"
+  }
+}

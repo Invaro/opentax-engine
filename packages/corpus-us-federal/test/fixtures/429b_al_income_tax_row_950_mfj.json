@@ -1,0 +1,12 @@
+{
+  "description": "AL printed row 900-1,000 MFJ column $19: midpoint 950 still in the MFJ 2% bracket (to $1,000) -> 2% x 950 = $19.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "1900"
+  }
+}

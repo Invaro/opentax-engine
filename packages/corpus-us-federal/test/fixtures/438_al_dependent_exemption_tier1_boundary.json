@@ -1,0 +1,13 @@
+{
+  "description": "AL dependent chart: AGI exactly $50,000 is in the '0 - 50,000' tier -> $1,000 each; 3 dependents -> $3,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "alAgi": 50000,
+    "alDependents": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.dependent_exemption",
+  "expect": {
+    "valueCents": "300000"
+  }
+}

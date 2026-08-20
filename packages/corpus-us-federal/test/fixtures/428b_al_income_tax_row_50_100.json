@@ -1,0 +1,12 @@
+{
+  "description": "AL tax table printed row [50,100) -> $1 in BOTH columns (2% x 75 = 1.50 rounds DOWN as printed, not half-up).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 75
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

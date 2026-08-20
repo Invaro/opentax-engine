@@ -8,7 +8,7 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
@@ -409,4 +409,30 @@ const sc = {
   // refundable credits (22a-d) use the shared refundableCredits input.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc };
+const al = {
+  // AL builds Alabama AGI from its own transcribed lines — federalAGI is NOT used.
+  alWages: usd.optional().describe("Form 40 line 5b: W-2 BOX 16 state wages from ALL states (Schedule W-2 col I+J; Alabama state wages often EXCEED federal Box 1 — deferrals are AL-taxable). Overtime earned Jan 1-Jun 30, 2025 is exempt and already EXCLUDED from Box 16 (W-2 Box 14 'EX OT WAGES'). Falls back to the shared wages input."),
+  alInterestDividends: usd.optional().describe("Form 40 line 6: interest and dividend income (Schedule B attached if over $1,500)"),
+  alOtherIncome: usd.optional().describe("Form 40 Part I lines 1-3 and 5-7 total EXCLUDING retirement (alimony received, business income/loss, gains — the 1/1/2025+ precious-metal-bullion gain is EXEMPT, rents/royalties/partnerships, farm; negative allowed). Retirement goes in the alTaxableRetirement* fields for the Schedule RS exclusion."),
+  alTaxableRetirementYou: usd.optional().describe("primary taxpayer's OTHERWISE-TAXABLE retirement income (IRA/401(k)/SEP/Keogh/403(b) distributions after basis recovery) — defined-BENEFIT pensions, Social Security, Railroad Retirement, military, and US/AL government retirement are 100% EXEMPT and never entered. The composer applies the 65+ $6,000 Schedule RS exclusion (us.al.retirement_exclusion)."),
+  alTaxableRetirementSpouse: usd.optional().describe("spouse's otherwise-taxable retirement income (Schedule RS Part III)"),
+  alIs65You: z.boolean().optional().describe("primary taxpayer was 65 or older — enables their $6,000 retirement exclusion (NOTE: still $6,000 for 2026; the reported $12,000 increase was HB388, which died May 2025)"),
+  alIs65Spouse: z.boolean().optional().describe("spouse was 65 or older — enables their own $6,000 exclusion"),
+  alAdjustments: usd.optional().describe("Form 40 line 9 / Part II total (per-spouse IRA deduction, Keogh/SEP, early-withdrawal penalty, alimony paid, adoption expenses, MOVING EXPENSES (Alabama kept them), SE health insurance, College Counts 529/PACT, small-employer health premiums, wind/flood retrofit, catastrophe savings, HSA, First/Second-Chance Home Buyer, firefighter insurance, ABLE)"),
+  alItemizedDeductions: usd.optional().describe("Alabama Schedule A total — differs from federal: FICA/Medicare/SE taxes ARE deductible, medical floor is 4% of AGI, NO federal income tax here (it's line 12), NEW 2025 vehicle-loan interest ≤$10,000 phased out $200 per $1,000 ceil-step of AGI over $100,000/$200,000-MFJ. The composer takes the larger of this or the AGI-phased standard deduction."),
+  alFederalTaxPlusNiit: usd.optional().describe("federal Form 1040 LINE 22 tax PLUS Form 8960 line 17 NIIT — the line 12 worksheet's gross federal tax (from compute_return, verbatim; NEVER the W-2 federal withholding)"),
+  alFederalRefundableCredits: usd.optional().describe("the line 12 worksheet's refundable-credit subtraction: 1040 line 27a EIC + line 28 ACTC + line 29 AOC + line 30 refundable adoption + Schedule 3 Part II line 13a Form 2439 credits"),
+  alFederalTaxDeductionOverride: usd.optional().describe("OVERRIDE for Form 40 line 12: the RATIOED federal tax for joint-federal/separate-Alabama returns (by each spouse's FAGI share) or part-year residents (AL-AGI/FAGI ratio) — wins over the composer's oracle computation"),
+  alDependents: z.number().int().optional().describe("Form 40 line 14 dependent count — Alabama's OWN relationship list (§ 40-18-19: child/stepchild/parent/grandparent/sibling/in-laws/blood uncle-aunt-nephew-niece with over-50% support; NOT federal § 152) — $1,000/$500/$300 each by AL AGI (us.al.dependent_exemption); falls back to the shared dependents input"),
+  alAtpOtherTaxes: usd.optional().describe("Schedule ATP Part I taxes OTHER than the use tax (which uses the shared useTax input): catastrophe-savings recapture (+2.5%), etc."),
+  alCampaignCheckoff: usd.optional().describe("Form 40 line 20: $1/$2 Alabama Democratic/Republican party checkoffs — these ADD to the tax due (not fund-neutral like the federal checkoff)"),
+  alScheduleCpPayments: usd.optional().describe("Form 40 line 26: payments from Schedule CP, Section B line 1 (composite payments)"),
+  alPenalties: usd.optional().describe("Form 40 line 31: Schedule ATP Part II penalties (estimated-tax penalty Form 2210AL etc.) — added to an amount owed, or SUBTRACTED from the refund per the printed line 35 formula"),
+  alAppliedToNextYear: usd.optional().describe("Form 40 line 33: overpayment applied to 2026 estimated tax"),
+  alDonations: usd.optional().describe("Form 40 line 34: Schedule DC donation check-offs total (reduces the refund)"),
+  // AL line 25 refundable credits (Schedule OC Section F) use the shared
+  // refundableCredits input; line 18's Schedule OC nonrefundable credits use
+  // the shared nonrefundableCredits input (capped at the line 17 tax).
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al };

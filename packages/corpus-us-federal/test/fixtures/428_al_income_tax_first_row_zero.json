@@ -1,0 +1,12 @@
+{
+  "description": "AL tax table printed row [0,50) -> $0 in both columns (the $.50 midpoint rounds DOWN as printed).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

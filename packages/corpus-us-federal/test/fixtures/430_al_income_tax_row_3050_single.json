@@ -1,0 +1,12 @@
+{
+  "description": "AL printed row 3,000-3,100 single column $113: midpoint 3,050 crosses into 5% -> 110 + 5% x 50 = 112.50 -> $113 (half-up).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 3050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "11300"
+  }
+}

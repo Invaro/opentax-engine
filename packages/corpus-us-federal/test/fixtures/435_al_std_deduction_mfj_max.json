@@ -1,0 +1,12 @@
+{
+  "description": "AL standard deduction chart: MFJ AGI $20,000 (below $26,000) -> the full $8,500.",
+  "facts": {
+    "filingStatus": "mfj",
+    "alAgi": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "850000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "AL chart MFS last stepped row $17,500-$17,749 -> $2,578 (4,250 - 88 x 19).",
+  "facts": {
+    "filingStatus": "mfs",
+    "alAgi": 17749
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.standard_deduction",
+  "expect": {
+    "valueCents": "257800"
+  }
+}

@@ -3152,4 +3152,58 @@ export const facts: FactSpec[] = [
       "Count of qualifying children/dependents for the South Carolina Child and Dependent Care Credit — 2 or more raises the us.sc.cdcc cap from $210 to $420.",
     default: { value: "1", rationale: "Assumed one qualifying child absent contrary input (the conservative $210 cap)" },
   },
+  {
+    id: "alAgi",
+    type: "money",
+    description:
+      "Alabama adjusted gross income (Form 40 line 10) — keys the AGI-phased standard deduction chart (us.al.standard_deduction) and the dependent exemption tiers (us.al.dependent_exemption: $1,000 to $50,000, $500 to $100,000, $300 above). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input" },
+  },
+  {
+    id: "alDependents",
+    type: "int",
+    min: "0",
+    description:
+      "Alabama dependent count (Form 40 line 14 / Schedule DS) under Alabama's OWN relationship-and-support definition (\u00a7 40-18-19 list + over-50% support; NOT federal \u00a7 152) — us.al.dependent_exemption pays $1,000/$500/$300 each by Alabama AGI.",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" },
+  },
+  {
+    id: "alFederalTaxPlusNiit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Form 1040 LINE 22 tax PLUS Form 8960 line 17 Net Investment Income Tax — the gross federal tax for Alabama's unlimited federal income tax deduction worksheet (us.al.federal_tax_deduction). NEVER the W-2 federal withholding. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal tax absent contrary input" },
+  },
+  {
+    id: "alFederalRefundableCredits",
+    type: "money",
+    min: "0",
+    description:
+      "The Alabama line 12 worksheet's refundable-credit subtraction: federal EIC (1040 line 27a) + Additional CTC (line 28) + American Opportunity Credit (line 29) + refundable adoption credit (line 30) + Form 2439 credits (Schedule 3 Part II line 13a). In dollars.",
+    default: { value: "0", rationale: "Assumed no refundable federal credits absent contrary input" },
+  },
+  {
+    id: "alTaxableRetirement",
+    type: "money",
+    min: "0",
+    description:
+      "One person's OTHERWISE-TAXABLE Alabama retirement income (IRA/401(k)/SEP/Keogh/403(b) distributions after basis recovery — defined-benefit pensions, Social Security, military, and US/AL government retirement are fully exempt and never enter) for the Schedule RS 65+ exclusion (us.al.retirement_exclusion, up to $6,000). Per person. In dollars.",
+    default: { value: "0", rationale: "Assumed no taxable retirement income absent contrary input" },
+  },
+  {
+    id: "alIs65",
+    type: "bool",
+    description:
+      "The person whose Alabama retirement exclusion is being computed was 65 or older — gates the $6,000 Schedule RS exclusion (us.al.retirement_exclusion). Still $6,000 for TY2026 (HB388's $12,000 increase DIED May 2025).",
+    default: { value: false, rationale: "Assumed under 65 absent contrary attestation" },
+  },
+  {
+    id: "alOvertimePremium",
+    type: "money",
+    min: "0",
+    description:
+      "One taxpayer's overtime PREMIUM (the amount above the base rate — W-2 Box 12 code TT) for the TY2026-2028 Alabama overtime premium deduction (us.al.overtime_premium_deduction, Act 2026-604, capped $1,000 per taxpayer). In dollars.",
+    default: { value: "0", rationale: "Assumed no overtime premium absent contrary input" },
+  },
 ];

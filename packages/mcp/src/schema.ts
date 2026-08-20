@@ -381,6 +381,13 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "scLowerQualifiedEarnedIncome",
     "scCareExpenses",
     "scCareChildren",
+    "alAgi",
+    "alDependents",
+    "alFederalTaxPlusNiit",
+    "alFederalRefundableCredits",
+    "alTaxableRetirement",
+    "alIs65",
+    "alOvertimePremium",
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [

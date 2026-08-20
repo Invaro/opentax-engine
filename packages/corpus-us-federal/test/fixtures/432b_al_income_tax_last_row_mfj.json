@@ -1,0 +1,12 @@
+{
+  "description": "AL last printed table row 99,900-100,000 MFJ $4,918: 220 + 5% x 93,950 = 4,917.50 -> $4,918.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 99950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "491800"
+  }
+}

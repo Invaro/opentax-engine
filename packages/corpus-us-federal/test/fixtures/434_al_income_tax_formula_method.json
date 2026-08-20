@@ -1,0 +1,13 @@
+{
+  "description": "AL formula method (useFormulaMethod): exact schedule at 50,000 single = 110 + 5% x 47,000 = $2,460 (the table would answer 2,463 at midpoint 50,050).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.al.income_tax",
+  "expect": {
+    "valueCents": "246000"
+  }
+}
