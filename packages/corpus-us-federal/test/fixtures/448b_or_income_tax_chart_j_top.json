@@ -1,0 +1,12 @@
+{
+  "description": "OR Chart J top bracket: MFJ $300,000 -> 21,256 + 9.9% x 50,000 = $26,206.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "2620600"
+  }
+}

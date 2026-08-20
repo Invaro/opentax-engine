@@ -1,0 +1,13 @@
+{
+  "description": "OR exemption credit cliff: single AGI $100,001 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "orAgi": 100001,
+    "orRegularExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.exemption_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

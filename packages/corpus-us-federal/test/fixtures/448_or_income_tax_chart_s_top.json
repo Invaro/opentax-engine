@@ -1,0 +1,12 @@
+{
+  "description": "OR Chart S top bracket: single $200,000 -> 10,627 + 9.9% x 75,000 = $18,052 (the printed $10,627 anchor = the rounded-anchor chain 661 + 8.75% x 113,900 = 10,627.25 -> 10,627).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "1805200"
+  }
+}

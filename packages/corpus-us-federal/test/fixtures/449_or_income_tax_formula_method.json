@@ -1,0 +1,13 @@
+{
+  "description": "OR formula method (useFormulaMethod): rounded-anchor schedule at exactly 30,000 single = 661 + 8.75% x 18,900 = 2,314.75 -> $2,315 (the table row would answer 2,319 at midpoint 30,050).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 30000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "231500"
+  }
+}

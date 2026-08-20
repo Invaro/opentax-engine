@@ -1,0 +1,13 @@
+{
+  "description": "OR Kids Credit five-child cap: 7 children under 6, QI $10,000 -> 5 x $1,050 = $5,250 maximum.",
+  "facts": {
+    "filingStatus": "mfj",
+    "orKidsQualifyingIncome": 10000,
+    "orKidsUnder6": 7
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kids_credit",
+  "expect": {
+    "valueCents": "525000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 22,200-22,300 column J $1,327: rounded anchor $1,323 (from 1,322.50) + 8.75% x 50 = 1,327.375 -> 1,327.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 22250
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "132700"
+  }
+}

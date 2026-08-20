@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 11,000-11,100 -> S $658 / J $570: midpoint 11,050 -> S 209 + 6.75% x 6,650 = 657.875 -> 658.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 11050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "65800"
+  }
+}

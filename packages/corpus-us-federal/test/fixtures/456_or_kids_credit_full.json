@@ -1,0 +1,13 @@
+{
+  "description": "OR Kids Credit: qualifying income $20,000 (under $26,550), 2 children under 6 -> 2 x $1,050 = $2,100.",
+  "facts": {
+    "filingStatus": "hoh",
+    "orKidsQualifyingIncome": 20000,
+    "orKidsUnder6": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.kids_credit",
+  "expect": {
+    "valueCents": "210000"
+  }
+}

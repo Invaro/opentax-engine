@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 11,100-11,200 column S $665 \u2014 THE ROUNDED-ANCHOR PROOF: $661 (rounded from 661.25) + 8.75% x 50 = 665.375 -> 665; the unrounded schedule gives 665.625 -> 666, which the printed table contradicts.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 11150
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "66500"
+  }
+}

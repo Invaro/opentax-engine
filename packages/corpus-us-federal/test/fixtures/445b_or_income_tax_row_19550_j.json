@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 19,500-19,600 column J $1,144: 418 + 6.75% x 10,750 = 1,143.625 -> 1,144.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 19550
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "114400"
+  }
+}

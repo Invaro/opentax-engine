@@ -1,0 +1,12 @@
+{
+  "description": "OR printed row 4,400-4,500 column J $211: midpoint 4,450 still in the J 4.75% bracket (to $8,800) -> 211.375 -> $211.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 4450
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "21100"
+  }
+}

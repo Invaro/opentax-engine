@@ -1,0 +1,12 @@
+{
+  "description": "OR last printed table rows 49,900-50,000 -> S $4,060 / J $3,751: S = 661 + 8.75% x 38,850 = 4,060.375 -> 4,060.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 49950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "406000"
+  }
+}

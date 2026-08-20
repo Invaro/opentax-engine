@@ -1,0 +1,12 @@
+{
+  "description": "OR instructions Example 1 (Emily): single, $19,525 -> table row 19,500-19,600 -> $1,400 (rounded anchor 661 + 8.75% x 8,450 = 1,400.375; the unrounded schedule gives 1,400.625 -> 1,401).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 19525
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.income_tax",
+  "expect": {
+    "valueCents": "140000"
+  }
+}

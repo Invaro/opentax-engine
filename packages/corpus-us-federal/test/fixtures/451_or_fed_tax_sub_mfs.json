@@ -1,0 +1,13 @@
+{
+  "description": "OR federal tax subtraction MFS: AGI $60,000, liability $3,000 -> $3,000 (under the $4,250 MFS cap).",
+  "facts": {
+    "filingStatus": "mfs",
+    "orAgi": 60000,
+    "orFederalTaxLiability": 3000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.or.federal_tax_subtraction",
+  "expect": {
+    "valueCents": "300000"
+  }
+}
