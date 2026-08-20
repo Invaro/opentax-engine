@@ -389,7 +389,7 @@ export default function Page() {
 
       {/* the return, live */}
       <section className="container relative -mt-28 md:-mt-56">
-        <div className="max-w-[780px] mx-auto border border-border bg-card p-4 md:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.3)]">
+        <div className="max-w-[780px] mx-auto border border-border bg-card p-4 md:p-8">
           <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
             <span className="text-sm">Form 1040</span>
             <span className="text-[10px] md:text-xs text-muted-foreground">
