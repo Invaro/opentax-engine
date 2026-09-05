@@ -1,0 +1,15 @@
+{
+  "description": "OK Form 538-S: 65+ filer raises the limit to $50,000 -> $30,000 income, 2 exemptions -> $80.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okStrEligible": true,
+    "okStrIs65": true,
+    "okGrossHouseholdIncome": 30000,
+    "okStrExemptions": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.sales_tax_relief_credit",
+  "expect": {
+    "valueCents": "8000"
+  }
+}

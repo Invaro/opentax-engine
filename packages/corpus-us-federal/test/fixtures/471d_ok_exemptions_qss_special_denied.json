@@ -1,0 +1,14 @@
+{
+  "description": "OK qualifying surviving spouse: no QSS limit is listed for the special exemption \u2014 conservatively denied; 2 basic exemptions -> $2,000.",
+  "facts": {
+    "filingStatus": "qss",
+    "okBasicExemptions": 2,
+    "okSpecialExemptions65": 1,
+    "okFederalAgi": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

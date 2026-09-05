@@ -1,0 +1,14 @@
+{
+  "description": "OK Form 538-H: household income $12,000.01 exceeds $12,000 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "okPtrEligible": true,
+    "okPropertyTaxPaid": 500,
+    "okGrossHouseholdIncome": "12000.01"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.property_tax_relief_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

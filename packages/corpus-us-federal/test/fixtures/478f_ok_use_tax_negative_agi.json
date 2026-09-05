@@ -1,0 +1,12 @@
+{
+  "description": "OK Use Tax Table: a negative federal AGI is below the printed table's $0 lower bound -> $0 estimate (disclosed), not the first band's $1.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalAgi": -5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.use_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OK packet's own example: Mr. and Mrs. Jones, joint, taxable income $14,793 -> row [14,750-14,800) -> $325 ($307 + 4.75% x $375 = $324.81).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 14793
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "32500"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OK married filing separate shares the single column: $14,793 -> $513.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 14793
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "51300"
+  }
+}

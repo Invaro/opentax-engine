@@ -1,0 +1,12 @@
+{
+  "description": "OK TY2026 single $100,000: $109.25 + 4.5% x $92,800 = $4,285.25 -> $4,285.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "428500"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OK MFS $6,350 \u2014 and a dependent-claimed filer still gets the full amount ('You qualify for the Oklahoma standard deduction even when claimed as a dependent').",
+  "facts": {
+    "filingStatus": "mfs",
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.standard_deduction",
+  "expect": {
+    "valueCents": "635000"
+  }
+}

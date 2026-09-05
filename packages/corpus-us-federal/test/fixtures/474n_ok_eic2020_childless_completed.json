@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC: $15,820 or more with no children -> $0.",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 0,
+    "okEicEarnedIncome": 15825,
+    "okEicAgi": 15825
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "0"
+  }
+}

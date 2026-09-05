@@ -1,0 +1,15 @@
+{
+  "description": "OK Schedule 511-D under the cap: $15,000 Schedule A - $4,000 SALT = $11,000; line 6 = $11,000 - $1,000 medical - $2,000 charity = $8,000 <= $17,000 -> line 11 = $11,000.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalItemizedTotal": 15000,
+    "okFederalSaltDeducted": 4000,
+    "okFederalMedical": 1000,
+    "okFederalCharity": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.itemized_deductions",
+  "expect": {
+    "valueCents": "1100000"
+  }
+}

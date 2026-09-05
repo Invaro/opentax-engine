@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [0,50) -> $0 both columns: 0.25% x $25 midpoint = $0.06 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 35
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

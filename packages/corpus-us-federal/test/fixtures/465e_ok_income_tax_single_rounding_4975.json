@@ -1,0 +1,12 @@
+{
+  "description": "OK single $100,221: $4,562 + 4.75% x $221 = $4,572.4975 -> $4,572 \u2014 a single half-up rounding to the dollar; rounding to cents first ($10.50) would wrongly give $4,573.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100221
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "457200"
+  }
+}

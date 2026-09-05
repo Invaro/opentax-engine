@@ -1,0 +1,12 @@
+{
+  "description": "OK head of household uses the 'Married filing joint or head of household' column: $14,793 -> $325.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 14793
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "32500"
+  }
+}

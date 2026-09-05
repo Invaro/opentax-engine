@@ -1,0 +1,14 @@
+{
+  "description": "OK Form 538-S: gross household income exactly $20,000 'cannot exceed $20,000' -> allowed: 1 exemption x $40.",
+  "facts": {
+    "filingStatus": "single",
+    "okStrEligible": true,
+    "okGrossHouseholdIncome": 20000,
+    "okStrExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.sales_tax_relief_credit",
+  "expect": {
+    "valueCents": "4000"
+  }
+}

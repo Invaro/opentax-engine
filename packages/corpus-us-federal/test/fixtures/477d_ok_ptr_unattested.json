@@ -1,0 +1,13 @@
+{
+  "description": "OK Form 538-H gates not attested (65+/totally disabled head of household, full-year domiciled) -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "okPropertyTaxPaid": 500,
+    "okGrossHouseholdIncome": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.property_tax_relief_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OK Use Tax Table: '$54,670 and over \u2014 multiply Federal AGI times by 0.00056': $30.6152 -> $31.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okFederalAgi": 54670
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.use_tax",
+  "expect": {
+    "valueCents": "3100"
+  }
+}

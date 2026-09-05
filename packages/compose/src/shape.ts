@@ -8,11 +8,11 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -475,4 +475,61 @@ const orShape = {
   // refundable credits (OR-ASC F7) use the shared refundableCredits input.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape };
+
+const okShape = {
+  okUsInterest: usd.optional().describe("OK Schedule 511-A line 1: interest on U.S. government obligations included in federal AGI (not FNMA/GNMA)"),
+  okCsrsRetirement: usd.optional().describe("OK Schedule 511-A line 3: Federal Civil Service Retirement System benefits paid in lieu of Social Security (100% excluded; CSA/CSF 1099-R claim number required — FERS does not qualify except the CSRS component or the FERS annuity supplement)"),
+  okMilitaryRetirement: usd.optional().describe("OK Schedule 511-A line 4: military retirement benefits included in federal AGI (100% excluded)"),
+  okGovRetirementYou: usd.optional().describe("OK Schedule 511-A line 5, TAXPAYER: Oklahoma-government / U.S. civil service retirement in the taxpayer's own name (OPERS, TRS, police, fire, judges, county/municipal systems) — excluded up to $10,000 per person (us.ok.retirement_exclusion)"),
+  okGovRetirementSpouse: usd.optional().describe("OK Schedule 511-A line 5, SPOUSE: the spouse's own government retirement (separate $10,000 cap)"),
+  okOtherRetirementYou: usd.optional().describe("OK Schedule 511-A line 6, TAXPAYER: other qualified plan / IRA / 403(b) / 457 / lump-sum retirement income — the $10,000 per-person cap is shared with line 5"),
+  okOtherRetirementSpouse: usd.optional().describe("OK Schedule 511-A line 6, SPOUSE: the spouse's own other retirement income"),
+  okRailroadRetirement: usd.optional().describe("OK Schedule 511-A line 7: U.S. Railroad Retirement Board benefits included in federal AGI (excluded)"),
+  okOutOfStateIncome: usd.optional().describe("OK Form 511 line 4: income from real or tangible personal property or BUSINESS activity in another state (partnership/S-corp shares included) — NEVER wages, interest, dividends, pensions, unemployment, or gambling. When > 0 the composer prorates deductions and exemptions on Schedule 511-E and leaves lines 10-11 blank."),
+  okMilitaryPay: usd.optional().describe("OK Schedule 511-C line 1: active-duty, Reserve, and National Guard military pay included in federal AGI (100% excluded)"),
+  ok529Contributions: usd.optional().describe("OK Schedule 511-C line 3: Oklahoma 529 College Savings Plan / OklahomaDream 529 contributions (incl. carryforwards and contributions through April 15) — the composer caps at $10,000 ($20,000 joint)"),
+  okOtherAdjustments: usd.optional().describe("OK Schedule 511-C lines 2, 4-6 total: disability modification expenses, foster care (≤ $5,000), Parental Choice payments, and the misc codes (MSA/HSA, ag processing, organ donation ≤ $10,000, poll-worker leave, homebuyer savings $5,000/$10,000, ABLE $10,000/$20,000, etc.) — transcribed"),
+  okFederalItemized: z.boolean().optional().describe("taxpayer ITEMIZED on the federal return — Oklahoma then REQUIRES Oklahoma itemized deductions (Schedule 511-D) even if smaller than the standard deduction; a federal standard-deduction filer must take the Oklahoma standard deduction"),
+  okFederalItemizedTotal: usd.optional().describe("federal Schedule A line 17 total itemized deductions (Schedule 511-D line 1)"),
+  okFederalSaltDeducted: usd.optional().describe("state and local income OR sales taxes from Schedule A line 5a to the extent included in line 5e after the SALT cap (Schedule 511-D line 2 add-back)"),
+  okFederalMedical: usd.optional().describe("federal Schedule A line 4 medical and dental (after the 7.5% floor) — exempt from the $17,000 Oklahoma cap"),
+  okFederalCharity: usd.optional().describe("federal Schedule A line 14 gifts to charity — exempt from the $17,000 Oklahoma cap"),
+  okBlindExemptions: z.number().int().optional().describe("count of legally-blind boxes (taxpayer/spouse) — $1,000 each, added to the shared `exemptions` count (self + spouse + dependents)"),
+  okSpecialExemptions65: z.number().int().optional().describe("count of 65-or-older boxes (taxpayer/spouse, 0-2) — $1,000 each ONLY when federal AGI less Roth conversions is at or under $15,000 single / $25,000 joint / $12,500 MFS / $19,000 HOH (not listed for QSS — the composer denies it and discloses)"),
+  okRothConversionIncome: usd.optional().describe("Roth IRA conversion income included in federal AGI — excluded from AGI for the special 65+ exemption limits only (attach Form 8606)"),
+  okFarmIncomeAveragingTax: usd.optional().describe("OVERRIDE for line 14a: Form 573 farm income averaging tax (box 1) — agent-computed; replaces the table tax"),
+  okAdditionalTax: usd.optional().describe("OK line 14b: HSA non-qualified withdrawal 10% additional tax (box 2), Oklahoma Affordable Housing credit recapture (box 3), or IRC § 965(h) installment (box 4)"),
+  okFederalChildCareCredit: usd.optional().describe("federal child and dependent care credit allowed (Schedule 3 line 2 / Form 2441) — Oklahoma allows 20% (line 15, greater-of test; $100,000 federal AGI cliff)"),
+  okFederalChildTaxCredit: usd.optional().describe("federal child tax credit PLUS additional child tax credit allowed (1040 line 19 + line 28, Schedule 8812) — Oklahoma allows 5% (line 15, greater-of test). Line 19 includes the $500 § 24(h)(4) other-dependent credit; the packet names only the CTC/ACTC — include it (it is part of § 24) and disclose when present"),
+  okOtherStateCredit: usd.optional().describe("OK line 16: Form 511-TX credit for tax paid to another state on PERSONAL-SERVICES income (agent-computed per the form's proportion; capped at the remaining tax by the composer)"),
+  okUseTaxEstimate: z.boolean().optional().describe("filer kept no records of out-of-state purchases and elects the printed Use Tax Table estimate on federal AGI for line 19 (us.ok.use_tax — the 2025 table; for a TY2026 return the estimate REFUSES until the 2026 packet publishes, pass useTax instead) — otherwise pass useTax (worksheet amount) or nothing (certify no use tax is due)"),
+  okGrossHouseholdIncome: usd.optional().describe("Forms 538-S / 538-H: TOTAL gross household income of everyone in the household, taxable or not — wages incl. nontaxable W-2 amounts, interest, dependents' income, full Social Security incl. Medicare premiums, pensions/IRAs, alimony, unemployment, EIC received, public assistance, child support, workers' comp, gross rents/business receipts; NOT deferred 401(k)/IRA contributions or gifts"),
+  okStrEligible: z.boolean().optional().describe("Form 538-S gates attested: Oklahoma resident (domiciled) the ENTIRE year, no TANF in any month, not a DOC inmate during the year after a felony conviction, not living in Oklahoma under a visa, and the return is filed by the due date — enables the sales tax relief credit (line 25)"),
+  okStrExemptions: z.number().int().optional().describe("Form 538-S Box D qualified exemptions (yourself + spouse + federally-claimed dependents who were Oklahoma residents all year; the 65+/blind boxes NEVER count) — $40 each; defaults to the shared `exemptions` count"),
+  okStrHasDependent: z.boolean().optional().describe("filer can claim a dependent — raises the sales tax relief gross household income limit from $20,000 to $50,000"),
+  okStrIs65: z.boolean().optional().describe("taxpayer or spouse 65 or older by December 31 — raises the sales tax relief limit to $50,000"),
+  okStrDisabled: z.boolean().optional().describe("taxpayer or spouse has a physical disability constituting a substantial handicap to employment (proof attached) — raises the sales tax relief limit to $50,000"),
+  okPtrEligible: z.boolean().optional().describe("Form 538-H gates attested: 65 or older OR totally disabled, head of a household (owner who maintained the home — the 538-H definition, not the filing status), domiciled in Oklahoma the entire year — enables the property tax relief credit (line 24; also needs gross household income ≤ $12,000)"),
+  okPropertyTaxPaid: usd.optional().describe("Form 538-H line 15: 2025 real estate (ad valorem) taxes paid on the homestead (no personal property taxes) — credit = amount over 1% of gross household income, max $200"),
+  okNaturalDisasterCredit: usd.optional().describe("OK line 26: Natural Disaster Tax Credit from Form 576 (refundable; transcribed)"),
+  okForm578Credit: usd.optional().describe("OK line 27: refundable credit for electricity generated by zero-emission facilities from Form 578 (85% of face; transcribed)"),
+  okEicEligible: z.boolean().optional().describe("Form 511-EIC eligibility under the FEDERAL 2020 rules attested: work-valid SSNs, not married filing separately, investment income $3,650 or less, and with no qualifying child age 25-64 and not a dependent — enables the Oklahoma EIC (line 28)"),
+  okEicQualifyingChildren: z.number().int().optional().describe("EIC qualifying children under the 2020 federal rules (0, 1, 2, or 3+)"),
+  okEicEarnedIncome2025: usd.optional().describe("Form 511-EIC line 15 (Tax Year 2025 column): total earned income — 1040 line 1z wages less excluded Medicaid waiver payments, plus elected nontaxable combat pay, plus net self-employment earnings (Schedule SE line 3 + 4b + 5a − line 13, statutory employee Schedule C line 1). The composer looks it up in the printed 2020 EIC table (us.ok.eic_2020_rules) with federalAGI as line 17."),
+  okEicEarnedIncome2024: usd.optional().describe("Form 511-EIC line 15 (Tax Year 2024 column): the PRIOR year's total earned income — Oklahoma lets the filer use 2024 or 2025 earned income; when given (with okEicAgi2024) the composer computes both columns and keeps the larger (line 20). Omit if the filer had no 2024 Oklahoma filing requirement."),
+  okEicAgi2024: usd.optional().describe("Form 511-EIC line 17 (Tax Year 2024 column): 2024 federal AGI — REQUIRED with okEicEarnedIncome2024 (the composer skips the 2024 column without it, since the line 19 AGI look-up cannot run)"),
+  okHomeschoolCredit: usd.optional().describe("OK line 29: Parental Choice Tax Credit for homeschool expenses from Form 591-D (refundable) — the composer caps at $1,000 × okHomeschoolStudents when the count is given"),
+  okHomeschoolStudents: z.number().int().optional().describe("OK line 29: number of eligible homeschool students claimed (one Form 591-D each)"),
+  okAmendedPaid: usd.optional().describe("OK line 30 (amended return only): amount paid with the original return plus additional payments after it was filed"),
+  okAmendedPriorOverpayment: usd.optional().describe("OK line 32 (amended return only): overpayment shown on the original / prior amended return or as previously adjusted"),
+  okAppliedToNextYear: usd.optional().describe("OK line 35: overpayment applied to 2026 estimated tax (original return only)"),
+  okDonations: usd.optional().describe("OK line 36: Schedule 511-H donations from the refund (CASA programs, Wildlife Diversity Fund — $2/$5/other)"),
+  okUnderpaymentInterest: usd.optional().describe("OK line 40: underpayment-of-estimated-tax interest from Form OW-8-P (none when the income tax liability is under $1,000; when there is also an overpayment the composer nets it against the refund per the printed instruction)"),
+  okPenalty: usd.optional().describe("OK line 41a: delinquent payment penalty (5% of line 39 minus line 19 after the original due date)"),
+  okInterest: usd.optional().describe("OK line 41b: delinquent payment interest (1.25% per month from the original due date)"),
+  // Schedule 511-A lines 8-17 use the shared `subtractions` input; Schedule
+  // 511-B uses the shared `additions`; Form 511-CR credits use the shared
+  // nonrefundableCredits (capped at the remaining tax).
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape };

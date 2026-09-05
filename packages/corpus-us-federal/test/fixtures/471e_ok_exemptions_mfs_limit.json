@@ -1,0 +1,14 @@
+{
+  "description": "OK MFS FAGI $12,500 (at the MFS limit) with 1 regular + 1 special -> $2,000.",
+  "facts": {
+    "filingStatus": "mfs",
+    "okBasicExemptions": 1,
+    "okSpecialExemptions65": 1,
+    "okFederalAgi": 12500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

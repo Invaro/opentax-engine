@@ -1,0 +1,13 @@
+{
+  "description": "OK useFormulaMethod joint $3,000: $5 + 0.75% x $1,000 = $12.50 -> $13 (half-up on an exact half dollar).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 3000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "1300"
+  }
+}

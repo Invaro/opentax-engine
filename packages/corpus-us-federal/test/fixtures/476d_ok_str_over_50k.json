@@ -1,0 +1,15 @@
+{
+  "description": "OK Form 538-S: $50,000.01 exceeds even the expanded limit -> $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okStrEligible": true,
+    "okStrHasDependent": true,
+    "okGrossHouseholdIncome": "50000.01",
+    "okStrExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.sales_tax_relief_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

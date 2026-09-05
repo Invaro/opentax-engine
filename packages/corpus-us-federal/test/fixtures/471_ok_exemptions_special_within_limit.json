@@ -1,0 +1,14 @@
+{
+  "description": "OK single, 1 regular + 1 special 65+ exemption, FAGI $15,000 (at the limit) -> 2 x $1,000 = $2,000.",
+  "facts": {
+    "filingStatus": "single",
+    "okBasicExemptions": 1,
+    "okSpecialExemptions65": 1,
+    "okFederalAgi": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

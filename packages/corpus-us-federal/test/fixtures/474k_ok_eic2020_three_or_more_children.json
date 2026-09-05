@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC, four qualifying children uses the three-or-more column: $6,660 - 21.06% x ($20,025 - $19,330) = $6,513.63 -> $6,514.",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "hoh",
+    "okEicQualifyingChildren": 4,
+    "okEicEarnedIncome": 20000,
+    "okEicAgi": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "651400"
+  }
+}

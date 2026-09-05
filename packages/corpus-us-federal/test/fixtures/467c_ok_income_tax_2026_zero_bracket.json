@@ -1,0 +1,12 @@
+{
+  "description": "OK TY2026 single $3,750 falls entirely in the new 0% bracket -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 3750
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

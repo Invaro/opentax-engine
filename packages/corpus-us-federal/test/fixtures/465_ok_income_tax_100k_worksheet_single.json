@@ -1,0 +1,12 @@
+{
+  "description": "OK taxable income of exactly $100,000 uses the printed worksheet: '$4,562 plus 0.0475 over $100,000' -> $4,562.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "456200"
+  }
+}

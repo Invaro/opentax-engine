@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [14,400-14,450) joint -> $308: $307 anchor at $14,400 + 4.75% x $25 = $308.19 \u2014 the true start of the joint 4.75% bracket.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 14400
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "30800"
+  }
+}

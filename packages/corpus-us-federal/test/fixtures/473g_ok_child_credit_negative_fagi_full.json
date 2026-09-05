@@ -1,0 +1,14 @@
+{
+  "description": "OK child credit proration, OAC 710:50-15-71(d): federal AGI zero or less -> ratio 100% even with a smaller (negative) Oklahoma AGI: 20% x $1,000 = $200.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalChildCareCredit": 1000,
+    "okFederalAgi": -500,
+    "okAgi": -1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.child_care_child_tax_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

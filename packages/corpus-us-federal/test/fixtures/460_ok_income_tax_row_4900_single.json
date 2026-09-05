@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [4,900-4,950) single -> $68: $67.25 anchor + 3.75% x $25 = $68.19 (the 3.75% bracket starts at $4,900).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 4900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "6800"
+  }
+}

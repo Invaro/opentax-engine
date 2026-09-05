@@ -1198,3 +1198,132 @@ describe("composeOR — 2025 Form OR-40 (real corpus targets)", () => {
     expect(notes.some((n) => n.includes("standard deduction is $0 because the spouse itemizes"))).toBe(true);
   });
 });
+
+describe("composeOK — 2025 Form 511 (real corpus targets)", () => {
+  it("full MFJ return: retirement exclusion, 529 cap, table tax, prorated child credit, sales tax relief denied by income", () => {
+    // Hand-computed: line 2 = $10,000 (12,000 OPERS capped); line 7 = 55,000;
+    // line 8 = 20,000 (25,000 of 529 contributions capped at the joint
+    // $20,000); line 9 = 35,000; 10 = 12,700; 11 = 4 x 1,000; 13 = 18,300 ->
+    // joint column row [18,300-18,350): 307 + 4.75% x 3,925 = 493.44 -> $493.
+    // Line 15: 5% x 4,400 = 220, PRORATED (line 7 55,000 < line 1 65,000):
+    // 220 x 55/65 = 186.15 -> $186. Line 18 = 307. Withholding 1,800 ->
+    // refund $1,493. Sales tax relief: household income 66,000 > $50,000.
+    const input = {
+      jurisdiction: "ok" as const,
+      filingStatus: "mfj",
+      federalAGI: 65000,
+      okGovRetirementYou: 12000,
+      exemptions: 4,
+      ok529Contributions: 25000,
+      okFederalChildTaxCredit: 4400,
+      stateWithholding: 1800,
+      okStrEligible: true,
+      okStrHasDependent: true,
+      okGrossHouseholdIncome: 66000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "2_subtractions")).toBe("$10,000");
+    expect(dollars(lines, "7_oklahoma_agi")).toBe("$55,000");
+    expect(dollars(lines, "8_adjustments")).toBe("$20,000");
+    expect(dollars(lines, "10_deduction")).toBe("$12,700");
+    expect(dollars(lines, "11_exemptions")).toBe("$4,000");
+    expect(dollars(lines, "13_taxable_income")).toBe("$18,300");
+    expect(dollars(lines, "14a_tax_from_table")).toBe("$493");
+    expect(dollars(lines, "15_child_care_child_tax_credit")).toBe("$186");
+    expect(dollars(lines, "18_income_tax")).toBe("$307");
+    expect(lines["25_sales_tax_relief_credit"]).toBeUndefined();
+    expect(dollars(lines, "34_overpayment")).toBe("$1,493");
+    expect(dollars(lines, "38_refund")).toBe("$1,493");
+    expect(notes.some((n) => n.includes("capped at $20,000"))).toBe(true);
+    expect(notes.some((n) => n.includes("PRORATED on Schedule 511-F"))).toBe(true);
+    expect(notes.some((n) => n.includes("sales tax relief credit $0"))).toBe(true);
+  });
+
+  it("HOH low-income return: 2020-rule EIC from the better of two years, sales tax relief, use tax estimate", () => {
+    // 13 = 24,000 - 9,350 - 2,000 = 12,650 -> joint column row [12,650-12,700):
+    // 134.50 + 3.75% x 2,875 = 242.31 -> $242; line 15 = 5% x 2,200 = $110 ->
+    // line 18 = 132; use tax table at FAGI 24,000 -> $13; line 20 = 145.
+    // EIC: 2025 column (EI 24,000, AGI 24,000, 1 child) = 3,583.60 - 15.98% x
+    // (24,025 - 19,330) = 2,833.34 -> $2,833; 2024 column (EI 18,000) = the
+    // $3,584 maximum -> line 20 = 3,584 -> 5% = 179.20 -> $179. Sales tax
+    // relief 2 x $40 = $80 (24,000 <= $50,000 with a dependent). Payments
+    // 300 + 80 + 179 = 559 -> refund 414.
+    const input = {
+      jurisdiction: "ok" as const,
+      filingStatus: "hoh",
+      federalAGI: 24000,
+      exemptions: 2,
+      okFederalChildTaxCredit: 2200,
+      okUseTaxEstimate: true,
+      stateWithholding: 300,
+      okStrEligible: true,
+      okStrHasDependent: true,
+      okGrossHouseholdIncome: 24000,
+      okEicEligible: true,
+      okEicQualifyingChildren: 1,
+      okEicEarnedIncome2025: 24000,
+      okEicEarnedIncome2024: 18000,
+      okEicAgi2024: 18000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "13_taxable_income")).toBe("$12,650");
+    expect(dollars(lines, "14a_tax_from_table")).toBe("$242");
+    expect(dollars(lines, "15_child_care_child_tax_credit")).toBe("$110");
+    expect(dollars(lines, "18_income_tax")).toBe("$132");
+    expect(dollars(lines, "19_use_tax")).toBe("$13");
+    expect(dollars(lines, "20_balance")).toBe("$145");
+    expect(dollars(lines, "25_sales_tax_relief_credit")).toBe("$80");
+    expect(dollars(lines, "_form_511_eic_line_20")).toBe("$3,584");
+    expect(dollars(lines, "28_earned_income_credit")).toBe("$179");
+    expect(dollars(lines, "34_overpayment")).toBe("$414");
+    expect(dollars(lines, "38_refund")).toBe("$414");
+    expect(notes.some((n) => n.includes("2024 earned income column"))).toBe(true);
+    expect(notes.some((n) => n.includes("Box D: qualified exemptions defaulted to the 2"))).toBe(true);
+  });
+
+  it("single with out-of-state rental income: Schedule 511-E proration, mandatory itemizing with the $17,000 cap, child credit cliff, balance due", () => {
+    // line 4 = 20,000 -> line 7 = 100,000; Schedule 511-D: 30,000 - 10,000
+    // SALT = 20,000; line 6 = 20,000 - 2,000 charity = 18,000 > 17,000 ->
+    // 17,000 + 2,000 = 19,000; + 1,000 exemption = 20,000 x (100,000 /
+    // 120,000) = 16,666.67 -> $16,667 (lines 10-11 blank); 13 = 83,333 ->
+    // single row [83,300-83,350): 153.50 + 4.75% x 76,125 = 3,769.44 ->
+    // $3,769; line 15 $0 (FAGI over $100,000); use tax 25 -> line 20 3,794;
+    // withholding 3,000 -> owe $794.
+    const input = {
+      jurisdiction: "ok" as const,
+      filingStatus: "single",
+      federalAGI: 120000,
+      okOutOfStateIncome: 20000,
+      exemptions: 1,
+      okFederalItemized: true,
+      okFederalItemizedTotal: 30000,
+      okFederalSaltDeducted: 10000,
+      okFederalCharity: 2000,
+      okFederalChildTaxCredit: 2200,
+      useTax: 25,
+      stateWithholding: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_out_of_state_income")).toBe("$20,000");
+    expect(dollars(lines, "7_oklahoma_agi")).toBe("$100,000");
+    expect(lines["10_deduction"]).toBeUndefined();
+    expect(dollars(lines, "_schedule_511e_total_before_proration")).toBe("$20,000");
+    expect(dollars(lines, "12_total_deductions_and_exemptions")).toBe("$16,667");
+    expect(dollars(lines, "13_taxable_income")).toBe("$83,333");
+    expect(dollars(lines, "14a_tax_from_table")).toBe("$3,769");
+    expect(lines["15_child_care_child_tax_credit"]).toBeUndefined();
+    expect(dollars(lines, "20_balance")).toBe("$3,794");
+    expect(dollars(lines, "39_tax_due")).toBe("$794");
+    expect(dollars(lines, "42_total_tax_penalty_and_interest")).toBe("$794");
+    expect(notes.some((n) => n.includes("federal AGI exceeds $100,000"))).toBe(true);
+    expect(notes.some((n) => n.includes("Schedule 511-E"))).toBe(true);
+  });
+
+  it("MFJ at the survey trap: taxable $12,400 is still in the 3.75% bracket ($233); federalAGI is required", () => {
+    const input = { jurisdiction: "ok" as const, filingStatus: "mfj", federalAGI: 27100, exemptions: 2 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "13_taxable_income")).toBe("$12,400");
+    expect(dollars(lines, "14a_tax_from_table")).toBe("$233");
+    expect(() => composeStateReturn({ jurisdiction: "ok" as const, filingStatus: "mfj" }, realPaEval({}))).toThrow(/federalAGI is required/);
+  });
+});

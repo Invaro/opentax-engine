@@ -1,0 +1,14 @@
+{
+  "description": "OK line 28: 5% x $3,584 = $179.20 -> $179.",
+  "facts": {
+    "filingStatus": "hoh",
+    "okEic2020Amount": 3584,
+    "okAgi": 18000,
+    "okFederalAgi": 18000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic",
+  "expect": {
+    "valueCents": "17900"
+  }
+}

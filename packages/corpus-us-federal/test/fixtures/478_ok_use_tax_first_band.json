@@ -1,0 +1,12 @@
+{
+  "description": "OK Use Tax Table: federal AGI $2,089 (under $2,090) -> $1.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalAgi": 2089
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.use_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

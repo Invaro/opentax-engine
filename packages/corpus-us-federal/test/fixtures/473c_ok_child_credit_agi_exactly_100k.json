@@ -1,0 +1,14 @@
+{
+  "description": "OK FAGI exactly $100,000 is '$100,000 or less' -> allowed: 20% x $1,000 = $200.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okFederalChildCareCredit": 1000,
+    "okFederalAgi": 100000,
+    "okAgi": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.child_care_child_tax_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OK TY2026 head of household $100,000 (joint schedule): $218.50 + 4.5% x $85,600 = $4,070.50 -> $4,071.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "407100"
+  }
+}

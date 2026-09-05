@@ -1,0 +1,14 @@
+{
+  "description": "OK line 28: 5% x $842 (Form 511-EIC line 20) = $42.10 -> $42.",
+  "facts": {
+    "filingStatus": "single",
+    "okEic2020Amount": 842,
+    "okAgi": 30000,
+    "okFederalAgi": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic",
+  "expect": {
+    "valueCents": "4200"
+  }
+}

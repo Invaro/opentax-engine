@@ -1,0 +1,14 @@
+{
+  "description": "OK single FAGI $15,000.01 exceeds the special exemption limit -> only the regular $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "okBasicExemptions": 1,
+    "okSpecialExemptions65": 1,
+    "okFederalAgi": "15000.01"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

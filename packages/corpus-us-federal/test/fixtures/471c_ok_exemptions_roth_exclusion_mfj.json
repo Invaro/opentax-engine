@@ -1,0 +1,15 @@
+{
+  "description": "OK joint FAGI $30,000 including $6,000 of Roth conversion income: the limit test uses $24,000 <= $25,000 -> 2 regular + 2 special = $4,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okBasicExemptions": 2,
+    "okSpecialExemptions65": 2,
+    "okFederalAgi": 30000,
+    "okRothConversionIncome": 6000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "400000"
+  }
+}

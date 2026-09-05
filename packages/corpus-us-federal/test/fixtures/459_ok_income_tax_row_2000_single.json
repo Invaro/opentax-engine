@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [2,000-2,050) single column -> $10: $2.50 + 0.75% x $1,025 = $10.19.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "1000"
+  }
+}

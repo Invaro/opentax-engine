@@ -1,0 +1,11 @@
+{
+  "description": "OK standard deduction qualifying surviving spouse $12,700 (same as MFJ).",
+  "facts": {
+    "filingStatus": "qss"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.standard_deduction",
+  "expect": {
+    "valueCents": "1270000"
+  }
+}

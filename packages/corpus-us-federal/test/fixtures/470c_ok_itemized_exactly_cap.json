@@ -1,0 +1,13 @@
+{
+  "description": "OK Schedule 511-D line 6 exactly $17,000 is NOT 'more than $17,000' -> line 3 = $17,000 stands.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalItemizedTotal": 20000,
+    "okFederalSaltDeducted": 3000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.itemized_deductions",
+  "expect": {
+    "valueCents": "1700000"
+  }
+}

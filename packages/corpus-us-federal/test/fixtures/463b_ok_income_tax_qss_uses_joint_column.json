@@ -1,0 +1,12 @@
+{
+  "description": "OK qualifying surviving spouse: 'This column must also be used by a Qualified Surviving Spouse' -> $14,793 -> $325.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 14793
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "32500"
+  }
+}

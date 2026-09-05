@@ -1,0 +1,12 @@
+{
+  "description": "OK Schedule 511-A line 5: $12,000 of OPERS retirement -> capped at $10,000.",
+  "facts": {
+    "filingStatus": "single",
+    "okGovRetirementYou": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.retirement_exclusion",
+  "expect": {
+    "valueCents": "1000000"
+  }
+}

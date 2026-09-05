@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [12,200-12,250) joint -> $225: still the 3.75% bracket ($134.50 + 3.75% x $2,425 = $225.44). Every rate survey prints the joint 4.75% bracket starting at $12,200 \u2014 the statute says 3.75% on the next $4,600 after $9,800, so 4.75% starts at $14,400.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 12200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "22500"
+  }
+}

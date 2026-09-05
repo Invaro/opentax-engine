@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC table row [25,200-25,250) married filing jointly, one child, prints the $3,584 maximum because it contains the $25,220 phase-out threshold (the midpoint formula would give $3,583).",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "mfj",
+    "okEicQualifyingChildren": 1,
+    "okEicEarnedIncome": 25230,
+    "okEicAgi": 25230
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "358400"
+  }
+}
