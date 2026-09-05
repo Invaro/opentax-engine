@@ -1,0 +1,12 @@
+{
+  "description": "KS MFJ $46,001: row [46,001-46,050] midpoint $46,025.50 -> $2,392 + 5.58% x $25.50 = $2,393.42 -> $2,393.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 46001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "239300"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "KS useFormulaMethod below $100,000: exact 5.2% x $3,325 = $172.90 -> $173 (table row also $173).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 3325,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "17300"
+  }
+}

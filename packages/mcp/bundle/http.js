@@ -8637,12 +8637,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub11 of error2.issues) {
-    if (sub11.path.length > 0) {
-      fieldErrors[sub11.path[0]] = fieldErrors[sub11.path[0]] || [];
-      fieldErrors[sub11.path[0]].push(mapper(sub11));
+  for (const sub12 of error2.issues) {
+    if (sub12.path.length > 0) {
+      fieldErrors[sub12.path[0]] = fieldErrors[sub12.path[0]] || [];
+      fieldErrors[sub12.path[0]].push(mapper(sub12));
     } else {
-      formErrors.push(mapper(sub11));
+      formErrors.push(mapper(sub12));
     }
   }
   return { formErrors, fieldErrors };
@@ -15040,8 +15040,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub11) => {
-      this.issues = [...this.issues, sub11];
+    this.addIssue = (sub12) => {
+      this.issues = [...this.issues, sub12];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -15108,13 +15108,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub11 of this.issues) {
-      if (sub11.path.length > 0) {
-        const firstEl = sub11.path[0];
+    for (const sub12 of this.issues) {
+      if (sub12.path.length > 0) {
+        const firstEl = sub12.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub11));
+        fieldErrors[firstEl].push(mapper(sub12));
       } else {
-        formErrors.push(mapper(sub11));
+        formErrors.push(mapper(sub12));
       }
     }
     return { formErrors, fieldErrors };
@@ -24161,7 +24161,8 @@ var JURISDICTION_NAMES = {
   "us.al": "alabama al form 40 birmingham montgomery",
   "us.or": "oregon or or-40 portland salem kicker",
   "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief",
-  "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport"
+  "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport",
+  "us.ks": "kansas ks k-40 wichita topeka overland park kpers"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -26731,6 +26732,190 @@ function composeCT(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/ks.js
+function composeKS(input, evalStateTax, notes) {
+  const joint = isJoint(input);
+  const fs = input.filingStatus;
+  if (fs === "qss")
+    notes.push("KS filing status: 'If your federal filing status is Qualifying Widow(er) with Dependent Child, check the Head of Household box' \u2014 composed as Kansas head of household (single-column rates, $6,180 deduction, $9,160 exemption). The form's HOH box also carries the $2,320 additional exemption and this composer follows the form; K.S.A. 79-32,121b(b)(1) grants it to 'head of household, as defined in 26 U.S.C. \xA7 2(b)', which a federal QSS (\xA7 2(a)) is not \u2014 a preparer may take the stricter view; disclose");
+  const fagi = rd(c(input.federalAGI));
+  const a9 = rd(c(input.additions));
+  if (a9 > 0n)
+    notes.push(`KS Schedule S line A9: additions ${fmtD(a9)} (non-Kansas municipal interest, KPERS employee contributions from W-2 box 14, \xA7 163(j) carryforward, unqualified savings-account withdrawals, other \u2014 transcribed)`);
+  const a10 = rd(c(input.taxableSocialSecurity));
+  if (a10 > 0n)
+    notes.push(`KS Schedule S line A10: taxable Social Security ${fmtD(a10)} subtracted in full (100% exempt since TY2024 \u2014 no AGI limit)`);
+  const a12 = rd(c(input.ksUsInterest));
+  const a13 = rd(c(input.ksStateRefund));
+  const a14 = rd(c(input.ksExemptRetirement));
+  if (a14 > 0n)
+    notes.push(`KS Schedule S line A14: exempt retirement benefits ${fmtD(a14)} (KPERS, federal civil service and military retirement, Railroad Retirement, Kansas police/fire/teachers/judges systems \u2014 keep the 1099-Rs)`);
+  const c529 = rd(c(input.ks529Contributions));
+  let a16 = 0n;
+  if (c529 > 0n) {
+    const beneficiaries = BigInt(input.ks529Beneficiaries ?? 1);
+    const cap = (joint ? 600000n : 300000n) * beneficiaries;
+    a16 = min2(c529, cap);
+    if (a16 < c529)
+      notes.push(`KS Schedule S line A16: 529 contributions ${fmtD(c529)} capped at ${fmtD(cap)} (${joint ? "$6,000" : "$3,000"} per beneficiary \xD7 ${beneficiaries})`);
+    else
+      notes.push(`KS Schedule S line A16: 529 contributions ${fmtD(a16)} subtracted`);
+  }
+  const aOther = rd(c(input.subtractions));
+  if (aOther > 0n)
+    notes.push(`KS Schedule S other subtractions ${fmtD(aOther)} (lines A11, A15, A17-A25 \u2014 KPERS lump sums, military bonuses, ABLE $3,000/$6,000, first-time home buyer, adoption savings, organ donor \u2264 $5,000 \u2014 transcribed)`);
+  const a26 = a10 + a12 + a13 + a14 + a16 + aOther;
+  const l2 = a9 - a26;
+  const l1 = fagi;
+  const l3 = l1 + l2;
+  const boxes = input.ksStdBoxes ?? 0;
+  const standard = rd(evalStateTax("us.ks.standard_deduction", 0n, { ksStdBoxes: boxes }));
+  const hasItemized = c(input.ksMedicalExpenses) > 0n || c(input.ksPropertyTaxes) > 0n || c(input.ksMortgageInterest) > 0n || c(input.ksCharitableContributions) > 0n;
+  let itemized = 0n;
+  if (hasItemized) {
+    itemized = rd(evalStateTax("us.ks.itemized_deductions", 0n, {
+      ksMedicalExpenses: c(input.ksMedicalExpenses),
+      ksFederalAgi: fagi,
+      ksPropertyTaxes: c(input.ksPropertyTaxes),
+      ksMortgageInterest: c(input.ksMortgageInterest),
+      ksCharitableContributions: c(input.ksCharitableContributions)
+    }));
+  }
+  let l4;
+  let method;
+  if (input.ksItemize === true) {
+    l4 = itemized;
+    method = "itemized";
+  } else if (input.ksItemize === false || !hasItemized) {
+    l4 = standard;
+    method = "standard";
+  } else if (itemized > standard) {
+    l4 = itemized;
+    method = "itemized";
+    notes.push(`KS line 4: Kansas itemized deductions ${fmtD(itemized)} beat the ${fmtD(standard)} standard deduction (Kansas lets you itemize regardless of the federal election)`);
+  } else {
+    l4 = standard;
+    method = "standard";
+    notes.push(`KS line 4: standard deduction ${fmtD(standard)} kept (Kansas Schedule A total ${fmtD(itemized)})`);
+  }
+  if (fs === "mfs")
+    notes.push(`KS line 4 (MFS): both spouses must use the same method \u2014 K.S.A. 79-32,115(g): neither is allowed the Kansas itemized deduction unless both itemize, and neither may use the tax table unless both do; this return is ${method} \u2014 pass ksItemize to match the spouse`);
+  const l5 = rd(evalStateTax("us.ks.exemptions", 0n, {
+    ksDependents: input.dependents ?? 0,
+    ksChildrenBornThisYear: input.ksChildrenBornThisYear ?? 0,
+    ksStillbirths: input.ksStillbirths ?? 0,
+    ksDisabledVeterans: input.ksDisabledVeterans ?? 0,
+    isClaimedAsDependent: input.claimedAsDependent === true
+  }));
+  const l6 = l4 + l5;
+  const l7 = max02(l3 - l6);
+  const l8 = rd(evalStateTax("us.ks.income_tax", l7));
+  const lumpFed = rd(c(input.ksFederalLumpSumTax));
+  const l11 = lumpFed > 0n ? rd((lumpFed * 13n + 50n) / 100n) : 0n;
+  if (l11 > 0n)
+    notes.push(`KS line 11: Kansas tax on lump-sum distributions ${fmtD(l11)} = 13% of the federal Form 4972 tax ${fmtD(lumpFed)}`);
+  const l12 = l8 + l11;
+  let l13 = 0n;
+  const osPaid = rd(c(input.ksOtherStateTaxPaid));
+  const osIncome = rd(c(input.ksOtherStateIncome));
+  if (osPaid > 0n && osIncome > 0n && l3 > 0n) {
+    const maxCredit = osIncome >= l3 ? l12 : rd(l12 * osIncome / l3);
+    l13 = min2(osPaid, maxCredit);
+    notes.push(`KS line 13: credit for taxes paid to another state ${fmtD(l13)} (lesser of ${fmtD(osPaid)} paid or ${fmtD(l12)} \xD7 ${fmtD(osIncome)} \xF7 ${fmtD(l3)} = ${fmtD(maxCredit)}; enclose the other state's return; not the amount withheld)`);
+  }
+  let l14 = 0n;
+  const fedCdcc = rd(c(input.ksFederalChildCareCredit));
+  if (fedCdcc > 0n) {
+    l14 = rd(evalStateTax("us.ks.child_care_credit", 0n, { ksFederalChildCareCredit: fedCdcc }));
+    const room = max02(l12 - l13);
+    if (l14 > room) {
+      notes.push(`KS line 14: child and dependent care credit ${fmtD(l14)} limited to the remaining tax ${fmtD(room)} (nonrefundable)`);
+      l14 = room;
+    } else
+      notes.push(`KS line 14: child and dependent care credit ${fmtD(l14)} (50% of the federal credit; residents only; valid SSNs required)`);
+  }
+  const l15 = min2(rd(c(input.nonrefundableCredits)), max02(l12 - l13 - l14));
+  if (l15 > 0n)
+    notes.push(`KS line 15: other credits ${fmtD(l15)} (Schedule K credits \u2014 capped at the remaining tax)`);
+  const l16 = max02(l12 - l13 - l14 - l15);
+  const fedEic = rd(c(input.federalEITC));
+  let l17 = 0n;
+  let l22 = 0n;
+  if (fedEic > 0n) {
+    const ksEitc = rd(evalStateTax("us.ks.eitc", 0n, { ksFederalEic: fedEic }));
+    l17 = min2(ksEitc, l16);
+    l22 = ksEitc - l17;
+    notes.push(`KS EITC ${fmtD(ksEitc)} = 17% of the ${fmtD(fedEic)} federal EIC: ${fmtD(l17)} nonrefundable on line 17 (up to line 16) and ${fmtD(l22)} refundable on line 22 (residents only)`);
+  }
+  const l18 = max02(l16 - l17);
+  const l19 = rd(c(input.stateWithholding)) + rd(c(input.spouseStateWithholding));
+  const l20 = rd(c(input.estimatedPayments)) + rd(c(input.priorYearOverpaymentCredited));
+  const l21 = rd(c(input.extensionPayment));
+  const l23 = rd(c(input.refundableCredits));
+  const l24 = rd(c(input.ksAmendedPaid));
+  const l25 = rd(c(input.ksK120sCredit));
+  const l26 = rd(c(input.ksAmendedOverpayment));
+  const l27 = l19 + l20 + l21 + l22 + l23 + l24 + l25 - l26;
+  const l28 = max02(l18 - l27);
+  const l29 = rd(c(input.ksInterest));
+  const l30 = rd(c(input.ksPenalty));
+  const l31 = rd(c(input.ksEstimatedTaxPenalty));
+  const checkoffs = rd(c(input.ksCheckoffs));
+  const l33 = max02(l27 - l18);
+  const l34 = min2(rd(c(input.ksCreditForward)), l33);
+  const refundBeforeCheckoffs = max02(l33 - l34);
+  const checkoffsFromRefund = min2(checkoffs, refundBeforeCheckoffs);
+  const l43 = refundBeforeCheckoffs - checkoffsFromRefund;
+  const l32 = l28 > 0n ? l28 + l29 + l30 + l31 + checkoffs : l29 + l30 + l31 + (checkoffs - checkoffsFromRefund);
+  if (l43 > 0n && l43 < 500n)
+    notes.push("KS line 43: a refund under $5 is not issued \u2014 carry it forward (line 34) or donate it (lines 35-42)");
+  if (l28 === 0n && l29 + l30 + l31 > 0n && l33 > 0n)
+    notes.push(`KS lines 32/33: interest, penalty, or the K-210 estimated tax penalty ${fmtD(l29 + l30 + l31)} is owed on line 32 while line 33 shows an overpayment of ${fmtD(l33)} \u2014 the printed form keeps both (line 32 = 'add lines 28 through 31'); pay line 32 and receive line 43`);
+  if (l28 > 0n && l28 < 500n)
+    notes.push("KS line 32: a balance due under $5 need not be paid");
+  notes.push("KS scope: Form K-40 is composed for a full-year RESIDENT \u2014 nonresidents and part-year residents prorate on Schedule S Part B (lines 9-10, not composed); Kansas has no local income taxes; the homestead/property tax refunds (K-40H, K-40PT, K-40SVR) are separate claims; Schedule K credits, Form K-9, and Schedule K-210 amounts are transcribed inputs");
+  return {
+    "1_federal_agi": fmtD(l1),
+    ...l2 !== 0n ? { "2_modifications": fmtD(l2) } : {},
+    ...a10 !== 0n ? { "A10_social_security": fmtD(a10) } : {},
+    ...a14 !== 0n ? { "A14_exempt_retirement": fmtD(a14) } : {},
+    ...a16 !== 0n ? { "A16_529_contributions": fmtD(a16) } : {},
+    "3_kansas_agi": fmtD(l3),
+    "4_deduction": fmtD(l4),
+    _deduction_method: method,
+    "5_exemption_allowance": fmtD(l5),
+    "6_total_deductions": fmtD(l6),
+    "7_taxable_income": fmtD(l7),
+    "8_tax": fmtD(l8),
+    ...l11 !== 0n ? { "11_lump_sum_tax": fmtD(l11) } : {},
+    "12_total_income_tax": fmtD(l12),
+    ...l13 !== 0n ? { "13_other_state_credit": fmtD(l13) } : {},
+    ...l14 !== 0n ? { "14_child_care_credit": fmtD(l14) } : {},
+    ...l15 !== 0n ? { "15_other_credits": fmtD(l15) } : {},
+    "16_subtotal": fmtD(l16),
+    ...l17 !== 0n ? { "17_eitc_nonrefundable": fmtD(l17) } : {},
+    "18_total_tax_balance": fmtD(l18),
+    "19_withholding": fmtD(l19),
+    ...l20 !== 0n ? { "20_estimated_payments": fmtD(l20) } : {},
+    ...l21 !== 0n ? { "21_extension_payment": fmtD(l21) } : {},
+    ...l22 !== 0n ? { "22_eitc_refundable": fmtD(l22) } : {},
+    ...l23 !== 0n ? { "23_refundable_credits": fmtD(l23) } : {},
+    ...l24 !== 0n ? { "24_amended_payments": fmtD(l24) } : {},
+    ...l25 !== 0n ? { "25_k120s_credit": fmtD(l25) } : {},
+    ...l26 !== 0n ? { "26_amended_overpayment": fmtD(l26) } : {},
+    "27_total_refundable_credits": fmtD(l27),
+    "28_underpayment": fmtD(l28),
+    ...l29 !== 0n ? { "29_interest": fmtD(l29) } : {},
+    ...l30 !== 0n ? { "30_penalty": fmtD(l30) } : {},
+    ...l31 !== 0n ? { "31_estimated_tax_penalty": fmtD(l31) } : {},
+    "32_amount_you_owe": fmtD(l32),
+    "33_overpayment": fmtD(l33),
+    ...l34 !== 0n ? { "34_credit_forward": fmtD(l34) } : {},
+    ...checkoffs !== 0n ? { "35_42_checkoffs": fmtD(checkoffs) } : {},
+    "43_refund": fmtD(l43)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -27120,18 +27305,18 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: external_exports.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
   ageOrBlindBoxes: external_exports.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions)"),
+  dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 \u2014 Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -27653,7 +27838,38 @@ var ctShape = {
   // subtraction lines (39, 40, 42, 46, 47, 48a, 48c, 49) use the shared
   // `subtractions`; Schedule CT-IT credits use the shared nonrefundableCredits.
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape };
+var ksShape = {
+  ksExemptRetirement: usd.optional().describe("KS Schedule S line A14: retirement benefits exempt from Kansas tax included in federal AGI \u2014 KPERS, Kansas Police & Fire, Kansas teachers' annuities, federal civil service and MILITARY retirement (incl. TSP), Railroad Retirement, Highway Patrol, judges, Board of Public Utilities, Regents annuity contracts, Washburn, Overland Park police/fire (NOT Social Security \u2014 automatic via taxableSocialSecurity)"),
+  ksUsInterest: usd.optional().describe("KS Schedule S line A12: interest/dividends on U.S. government obligations included in federal AGI, net of related expenses (not FNMA/GNMA/FHLMC)"),
+  ksStateRefund: usd.optional().describe("KS Schedule S line A13: state or local income tax refund included in federal AGI (Schedule 1 line 1)"),
+  ks529Contributions: usd.optional().describe("KS Schedule S line A16: contributions to Learning Quest / Quest529 / Schwab 529 or another state's 529 plan \u2014 the composer caps at $3,000 per beneficiary ($6,000 MFJ) using ks529Beneficiaries"),
+  ks529Beneficiaries: external_exports.number().int().optional().describe("number of 529 beneficiaries contributed for (caps line A16 at $3,000/$6,000 each); defaults to 1 when contributions are given"),
+  ksStdBoxes: external_exports.number().int().optional().describe("Kansas standard-deduction boxes checked for 65-or-older and/or blind (taxpayer + spouse, 0-4): +$850 each single/HOH/QSS, +$700 each MFJ/MFS"),
+  ksItemize: external_exports.boolean().optional().describe("force the deduction method: true = Kansas itemized (Schedule A), false = standard. Omit to let the composer take the LARGER (Kansas allows either regardless of the federal election; married-filing-separately spouses must use the same method \u2014 disclose)"),
+  ksMedicalExpenses: usd.optional().describe("KS Schedule A line 1: medical and dental expenses paid (federal Schedule A line 1, or the total if not itemizing federally) \u2014 the composer applies the 7.5%-of-federal-AGI floor"),
+  ksPropertyTaxes: usd.optional().describe("KS Schedule A lines 5-6: state and local real estate taxes plus value-based personal property taxes (100%, no SALT cap; NO income or sales taxes)"),
+  ksMortgageInterest: usd.optional().describe("KS Schedule A line 9: qualified residence interest and points (100%)"),
+  ksCharitableContributions: usd.optional().describe("KS Schedule A line 13: gifts to charity by cash, other than cash, and carryover (100%, \xA7 170 limits)"),
+  ksChildrenBornThisYear: external_exports.number().int().optional().describe("dependent children born during the tax year \u2014 additional $2,320 exemption each"),
+  ksStillbirths: external_exports.number().int().optional().describe("certified stillbirths during the tax year \u2014 $2,320 exemption each"),
+  ksDisabledVeterans: external_exports.number().int().optional().describe("taxpayer and/or spouse honorably discharged and VA-certified 100% permanently disabled \u2014 additional $2,320 exemption each"),
+  ksFederalLumpSumTax: usd.optional().describe("KS line 11: the FEDERAL tax on a lump-sum distribution from Form 4972 \u2014 Kansas tax is 13% of it (residents; KPERS lump sums prorated by the agent)"),
+  ksOtherStateTaxPaid: usd.optional().describe("KS line 13 worksheet line 1: 2025 income tax actually paid to ONE other state (incl. its localities) \u2014 not the amount withheld; enclose that state's return"),
+  ksOtherStateIncome: usd.optional().describe("KS line 13 worksheet line 3: total income from the other state included in Kansas AGI \u2014 the credit is limited to Kansas tax \xD7 (this \xF7 KAGI)"),
+  ksFederalChildCareCredit: usd.optional().describe("federal child and dependent care credit ALLOWED (Form 2441 / Schedule 3 line 2) \u2014 Kansas allows 50% on line 14, nonrefundable, residents only"),
+  ksK120sCredit: usd.optional().describe("KS line 25: credit for the 5.58% tax paid on the filer's behalf by electing pass-through entities (Form K-9 Part C)"),
+  ksAmendedPaid: usd.optional().describe("KS line 24 (amended return only): payments remitted with the original return"),
+  ksAmendedOverpayment: usd.optional().describe("KS line 26 (amended return only): overpayment shown on the original return (subtracted)"),
+  ksInterest: usd.optional().describe("KS line 29: interest on a late-paid balance \u2014 0.6667% per month (8% per annum) from the due date (agent-computed)"),
+  ksPenalty: usd.optional().describe("KS line 30: late payment penalty \u2014 1% per month or fraction, maximum 24% (none when 90% was paid by the due date under an extension)"),
+  ksEstimatedTaxPenalty: usd.optional().describe("KS line 31: underpayment of estimated tax penalty from Schedule K-210 (applies when line 18 less withholding and refundable credits is $500 or more)"),
+  ksCreditForward: usd.optional().describe("KS line 34: overpayment applied to 2026 estimated tax ($1 or more)"),
+  ksCheckoffs: usd.optional().describe("KS lines 35-42 total: voluntary contributions (Chickadee, Meals on Wheels, breast cancer research, military emergency relief, hometown heroes, creative arts, school district, historic site) \u2014 reduce the refund or increase the amount owed")
+  // Schedule S other additions (A1-A8) use the shared `additions`; other
+  // subtractions (A11, A15, A17-A25) use the shared `subtractions`; K-40
+  // line 15 uses nonrefundableCredits and line 23 uses refundableCredits.
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -27683,7 +27899,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -27719,6 +27935,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeOK(input, evalStateTax, notes), notes };
   if (j === "ct")
     return { lines: composeCT(input, evalStateTax, notes), notes };
+  if (j === "ks")
+    return { lines: composeKS(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -31119,6 +31337,91 @@ var facts = [
     min: "0",
     description: "Taxable IRA distributions other than Roth (Form 1040 line 4b) \u2014 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" }
+  },
+  // ---- Kansas (Form K-40) ----
+  {
+    id: "ksStdBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description: "Count of Kansas standard-deduction boxes for 65-or-older and/or blind (taxpayer and spouse: at most 2 for single/HOH/QSS, 4 for MFJ/MFS \u2014 the rule clamps a single/HOH count at 2) \u2014 each adds $850 (single/HOH/QSS) or $700 (MFJ/MFS) to the base deduction (us.ks.standard_deduction).",
+    default: { value: "0", rationale: "Assumed no 65+/blind boxes absent contrary input" }
+  },
+  {
+    id: "ksDependents",
+    type: "int",
+    min: "0",
+    description: "Number of dependents claimed on the federal return \u2014 $2,320 each on Form K-40 (us.ks.exemptions); zero when the filer is claimed as someone else's dependent (isClaimedAsDependent).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" }
+  },
+  {
+    id: "ksChildrenBornThisYear",
+    type: "int",
+    min: "0",
+    description: "Dependent children born during the tax year \u2014 an ADDITIONAL $2,320 Kansas exemption each (K.S.A. 79-32,121; us.ks.exemptions).",
+    default: { value: "0", rationale: "Assumed no children born this year absent contrary input" }
+  },
+  {
+    id: "ksStillbirths",
+    type: "int",
+    min: "0",
+    description: "Stillbirths during the tax year for which a certificate of stillbirth was issued \u2014 $2,320 Kansas exemption each (us.ks.exemptions).",
+    default: { value: "0", rationale: "Assumed none absent contrary input" }
+  },
+  {
+    id: "ksDisabledVeterans",
+    type: "int",
+    min: "0",
+    description: "Honorably discharged veterans on the return (taxpayer and/or spouse) certified by the VA at the 100% permanent disability rate \u2014 an additional $2,320 Kansas exemption each for 2025 and later (us.ks.exemptions).",
+    default: { value: "0", rationale: "Assumed no qualifying disabled veterans absent contrary input" }
+  },
+  {
+    id: "ksMedicalExpenses",
+    type: "money",
+    min: "0",
+    description: "Medical and dental expenses paid (Kansas Schedule A line 1; the federal Schedule A line 1 amount, or the total if the filer did not itemize federally) \u2014 Kansas allows 100% of \xA7 213 expenses over 7.5% of federal AGI (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no medical expenses absent contrary input" }
+  },
+  {
+    id: "ksFederalAgi",
+    type: "money",
+    description: "Federal adjusted gross income (Kansas Schedule A line 2 = Form 1040 line 11) \u2014 the base of the 7.5% medical floor (us.ks.itemized_deductions). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input" }
+  },
+  {
+    id: "ksPropertyTaxes",
+    type: "money",
+    min: "0",
+    description: "State and local REAL ESTATE plus value-based PERSONAL PROPERTY taxes paid (Kansas Schedule A lines 5-6) \u2014 100% deductible with no SALT cap; state/local income or sales taxes are NOT deductible in Kansas (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no property taxes absent contrary input" }
+  },
+  {
+    id: "ksMortgageInterest",
+    type: "money",
+    min: "0",
+    description: "Qualified residence interest and points (Kansas Schedule A lines 8a-8c, \xA7 163(h)) \u2014 100% deductible (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no mortgage interest absent contrary input" }
+  },
+  {
+    id: "ksCharitableContributions",
+    type: "money",
+    min: "0",
+    description: "Gifts to charity by cash, other than cash, and carryover (Kansas Schedule A lines 10-12, \xA7 170 limits) \u2014 100% deductible (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no charitable contributions absent contrary input" }
+  },
+  {
+    id: "ksFederalEic",
+    type: "money",
+    min: "0",
+    description: "Federal earned income credit (Form 1040 line 27a) \u2014 Kansas allows 17%, nonrefundable to the line 16 tax with the excess refundable (us.ks.eitc); residents only, valid SSNs required. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" }
+  },
+  {
+    id: "ksFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description: "Federal child and dependent care credit ALLOWED (Form 2441 / Schedule 3 line 2) \u2014 Kansas allows 50%, nonrefundable, residents only (us.ks.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal child care credit absent contrary input" }
   }
 ];
 
@@ -31480,7 +31783,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt12 = (cents) => ({
+  const lt13 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -31499,22 +31802,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt12("500"),
+    cond: lt13("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt12("1500"),
+      cond: lt13("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt12("2500"),
+        cond: lt13("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt12("300000"),
+          cond: lt13("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -44780,6 +45083,232 @@ var ctRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-ks.js
+var rd16 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp3 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt12 = (l, r) => cmp3("lt", l, r);
+var le9 = (l, r) => cmp3("le", l, r);
+var iff10 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add7 = (...args) => ({ kind: "add", args });
+var sub11 = (left, right) => ({ kind: "sub", left, right });
+var max011 = (arg) => ({ kind: "max0", arg });
+var mulInt9 = (base, count) => ({ kind: "mulInt", base, count });
+var isStatus18 = (v) => cmp3("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isMfj = isStatus18("mfj");
+var isKsHoh = { kind: "or", args: [isStatus18("hoh"), isStatus18("qss")] };
+var times3 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled3 = (n, denCents) => times3({ kind: "mulDiv", a: n, b: money33("1"), c: money33(denCents), round: "half-up" }, "100");
+var scaledSchedule3 = (base, rows) => add7(...rows.map((r, i) => {
+  const excess = sub11(base, money33(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money33("0"), hi: money33(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max011(excess);
+  return times3(portion, r.rateNum);
+}));
+var SCHED_MFJ2 = [
+  { thresholdCents: "0", rateNum: "520" },
+  // 5.2% of the first $46,000
+  { thresholdCents: "4600000", rateNum: "558" }
+  // $2,392 + 5.58% over $46,000
+];
+var SCHED_OTHER = [
+  { thresholdCents: "0", rateNum: "520" },
+  // 5.2% of the first $23,000
+  { thresholdCents: "2300000", rateNum: "558" }
+  // $1,196 + 5.58% over $23,000
+];
+var BOOKLET_URL2 = "https://www.ksrevenue.gov/pdf/ip25.pdf";
+var ksRules = [
+  {
+    id: "us.ks.income_tax",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas income tax \u2014 5.2% to $23,000 ($46,000 MFJ), 5.58% above, via the printed tax table to $100,000 and the Tax Computation Worksheet above; QSS uses the single/HOH column (Form K-40 line 8)",
+    citation: {
+      source: "K.S.A. 79-32,110(a)(1)(B), (a)(2)(B) (as amended by 2024 Special Session SB 1 and 2025 SB 269); 2025 Kansas Individual Income Tax booklet: line 8 instructions p. 7, 2025 Kansas Tax Table pp. 27-33 (the TOC says 25), 2025 Tax Computation Worksheet p. 34; KDOR Notice 25-06 (October 2, 2025)",
+      section: "K.S.A. 79-32,110(a); K-40 line 8; 2025 Tax Table; Tax Computation Worksheet",
+      url: BOOKLET_URL2,
+      excerpt: "STATUTE (verbatim): married filing jointly \u2014 'Not over $46,000\u20145.2% of Kansas taxable income; Over $46,000\u2014$2,392 plus 5.58% of excess over $46,000'; all other individuals \u2014 'Not over $23,000\u20145.2% of Kansas taxable income; Over $23,000\u2014$1,196 plus 5.58% of excess over $23,000'. FILING STATUS (booklet p. 6, verbatim): 'Your Kansas filing status must be the same as your federal filing status. If your federal filing status is Qualifying Widow(er) with Dependent Child, check the Head of Household box' \u2014 a federal QSS files as Kansas HEAD OF HOUSEHOLD and uses the single/HOH/MFS column, NOT the joint schedule. METHOD (line 8, verbatim): 'If line 7 is $100,000 or less, use the Tax Tables beginning on page 27 to find the amount of your tax. If line 7 is more than $100,000, you will need to use the Tax Computation Worksheet on page 34.' TABLE (two columns: 'Single, Head of Household or Married Filing Separate' and 'Married Filing Joint'; rows 'at least 26 / but not more than 50', then '51-100', '101-150' \u2026 '99,951-100,000'): every row equals the statutory schedule at the ROW MIDPOINT (row [50k+1, 50k+50] \u2192 $50k + 25.50; the first row [26, 50] \u2192 $38), rounded half-up \u2014 verified on all 2,000 printed rows; there is no printed row below $26 (and K.S.A. 79-32,110(e)'s zero-liability band applied only to 'tax years 2018 through 2023'), so for taxable income of $1-$25 this rule applies the statutory 5.2% directly (at most $1). WORKSHEET (p. 34, verbatim constants): joint \u2014 '$0 \u2013 $46,000 \u2026 5.2% (.052) \u2026 $0' and '$46,001 and over \u2026 5.58% (.0558) \u2026 $175' subtraction; single/HOH/MFS \u2014 '$23,001 and over \u2026 5.58% (.0558) \u2026 $87' \u2014 the printed subtraction constants are ROUNDED ($174.80 and $87.40 exactly), so the worksheet method (rate \xD7 income \u2212 constant, one rounding to whole dollars) is encoded as printed for income over $100,000; useFormulaMethod=true evaluates the exact statutory schedule at any income instead. TY2026 (Notice 25-06, verbatim): the SB 269 trigger requires FY collections above the inflation-adjusted base AND a 15% rainy-day fund; 'the amount of total fiscal year adjusted general revenue fund collections from FY 2025 are not in excess of the inflation adjusted base year revenues for FY 2025' ($6,038,279,792 vs $6,126,761,315), so no rate reduction applies for tax year 2026 \u2014 5.2%/5.58% continue; the next determination is August 15, 2026 (for TY2027). The 2026 printed table publishes ~January 2027 (re-verify rows then). Nonresidents/part-year residents prorate on Schedule S Part B (Form K-40 lines 9-10) \u2014 not composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      lowRateBps: { value: "520", type: "int" },
+      highRateBps: { value: "558", type: "int" },
+      bracketMfj: { value: "4600000", type: "money" },
+      // $46,000
+      bracketOther: { value: "2300000", type: "money" },
+      // $23,000
+      tableTop: { value: "10000000", type: "money" },
+      // $100,000
+      worksheetSubtractionMfj: { value: "17500", type: "money" },
+      // $175 as printed
+      worksheetSubtractionOther: { value: "8700", type: "money" },
+      // $87 as printed
+      tableFirstRowStart: { value: "2600", type: "money" }
+      // $26
+    },
+    formula: (() => {
+      const base = max011(fact36("stateTaxableIncome"));
+      const sched = (b) => iff10(isMfj, dollarsFromScaled3(scaledSchedule3(b, SCHED_MFJ2), "1000000"), dollarsFromScaled3(scaledSchedule3(b, SCHED_OTHER), "1000000"));
+      const units = { kind: "stepUnits", value: sub11(base, money33("100")), unitCents: "5000", mode: "floor" };
+      const mid = add7(mulInt9(money33("5000"), units), money33("2550"));
+      const table2 = iff10(lt12(base, money33("2600")), sched(base), iff10(le9(base, money33("5000")), sched(money33("3800")), sched(mid)));
+      const worksheet = iff10(isMfj, dollarsFromScaled3(sub11(times3(base, "558"), times3(money33("17500"), "10000")), "1000000"), dollarsFromScaled3(sub11(times3(base, "558"), times3(money33("8700"), "10000")), "1000000"));
+      return iff10(fact36("useFormulaMethod"), sched(base), iff10(le9(base, money33("10000000")), table2, worksheet));
+    })()
+  },
+  {
+    id: "us.ks.standard_deduction",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas standard deduction \u2014 $3,605 single, $8,240 MFJ, $6,180 HOH (and federal QSS), $4,120 MFS, plus $850 (single/HOH) or $700 (MFJ/MFS) per 65-or-older/blind box (Form K-40 line 4)",
+    citation: {
+      source: "K.S.A. 79-32,119 (as amended by 2024 Special Session SB 1); 2025 Kansas Individual Income Tax booklet, line 4 instructions and the 'Worksheet - Standard Deduction for People 65 or Older and/or Blind' p. 6",
+      section: "K.S.A. 79-32,119; K-40 line 4",
+      url: BOOKLET_URL2,
+      excerpt: "BOOKLET (verbatim): 'The following amounts will be the standard deduction for most people to enter on line 4: Single $3,605; Married Filing Joint $8,240; Head of Household $6,180; Married Filing Separate $4,120.' WORKSHEET (verbatim rows, boxes checked \u2192 line 4): Single 1 \u2192 $4,455, 2 \u2192 $5,305; Married Filing Joint 1 \u2192 $8,940, 2 \u2192 $9,640, 3 \u2192 $10,340, 4 \u2192 $11,040; Married Filing Separate 1 \u2192 $4,820, 2 \u2192 $5,520, 3 \u2192 $6,220, 4 \u2192 $6,920; Head of Household 1 \u2192 $7,030, 2 \u2192 $7,880 \u2014 i.e. $850 per box for single/HOH and $700 per box for MFJ/MFS (K.S.A. 79-32,119(c)). ELECTION IS INDEPENDENT OF FEDERAL (verbatim): 'If you did not itemize your deductions on your federal return, you may choose to itemize your deductions or claim the standard deduction on your Kansas return whichever is to your advantage. If you itemized on your federal return, you may either itemize or take the standard deduction on your Kansas return' \u2014 except MFS spouses 'must use the same method of claiming deductions'. A federal qualifying surviving spouse checks the Kansas Head of Household box (booklet p. 6) \u2192 $6,180 and the $850 box amount. No dependent-filer limitation appears in the booklet or statute. Not indexed \u2014 TY2026 identical (no 2025/2026 act amended \xA7 79-32,119). [Inputs: filingStatus, ksStdBoxes.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      single: { value: "360500", type: "money" },
+      mfj: { value: "824000", type: "money" },
+      hohQss: { value: "618000", type: "money" },
+      mfs: { value: "412000", type: "money" },
+      perBoxSingleHoh: { value: "85000", type: "money" },
+      perBoxMfjMfs: { value: "70000", type: "money" }
+    },
+    formula: (() => {
+      const base = iff10(isMfj, money33("824000"), iff10(isKsHoh, money33("618000"), iff10(isStatus18("mfs"), money33("412000"), money33("360500"))));
+      const perBox = iff10({ kind: "or", args: [isMfj, isStatus18("mfs")] }, money33("70000"), money33("85000"));
+      const boxes = iff10({ kind: "and", args: [{ kind: "not", arg: { kind: "or", args: [isMfj, isStatus18("mfs")] } }, cmp3("gt", fact36("ksStdBoxes"), { kind: "int", value: "2" })] }, { kind: "int", value: "2" }, fact36("ksStdBoxes"));
+      return add7(base, mulInt9(perBox, boxes));
+    })()
+  },
+  {
+    id: "us.ks.exemptions",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas exemption allowance \u2014 $18,320 MFJ or $9,160 single/HOH/MFS (plus $2,320 for head of household, incl. federal QSS), plus $2,320 for each dependent, child born this year, stillbirth, and 100% disabled veteran (Form K-40 line 5)",
+    citation: {
+      source: "K.S.A. 79-32,121 (as amended by 2024 Special Session SB 1, 2025 HB 2062 [ch. 112 \xA7 6: unborn-child exemption] and 2025 HB 2231 [ch. 123 \xA7 9, codified at \xA7 79-32,121b: HOH and disabled-veteran exemptions]); 2025 Kansas Individual Income Tax booklet, 'Exemptions and Dependents' and 'Additional Exemptions' p. 6 and the Form K-40 exemption boxes",
+      section: "K.S.A. 79-32,121; Form K-40 exemption boxes \u2192 line 5",
+      url: BOOKLET_URL2,
+      excerpt: `BOOKLET (verbatim): 'If your filing status is married filing joint, check the box to indicate filing status, enter 2 in the box for the number of exemptions and $18,320 in the amount box. If your filing status is single, married filing separate or head of household, check the box to indicate filing status, enter one in the box for number of exemptions and $9,160 in the amount box. If your filing status is Head of Household, you are allowed an additional exemption of $2,320.' 'Enter the number of dependents claimed on your federal return. Multiply that number by $2,320 \u2026 If you are claimed as a dependent by another taxpayer, enter "0" in the number of dependents box.' ADDITIONAL (verbatim): 'An additional personal exemption of $2,320 will be allowed for each child born in this tax year'; 'An exemption of $2,320 is allowed for the birth of a child that does not result in a live birth (known as a stillbirth)'; disabled veterans \u2014 'honorably discharged \u2026 certified by the United States department of veterans affairs \u2026 to be in receipt of disability compensation at the 100% rate, if the disability is permanent \u2026 an additional Kansas exemption of $2,320 for tax year 2025 and all tax years thereafter' (2025 HB 2231 raised it from $2,250; the codified \xA7 79-32,121(b) still prints $2,250 while \xA7 79-32,121b(b)(2) and KDOR Notice 25-07 carry the $2,320). QSS NOTE: the booklet routes a federal QSS to the Head of Household box, and the form's HOH box carries the $2,320 additional exemption \u2014 this rule follows the form; \xA7 79-32,121b(b)(1) speaks of 'head of household, as defined in 26 U.S.C. \xA7 2(b)', so a preparer may take the stricter view (disclosed). STATUTE: 'a personal exemption of $18,320' (joint), '$9,160' (others), '$2,320 for each dependent'. A federal QSS files as Kansas head of household \u2192 $9,160 + $2,320. Not indexed \u2014 TY2026 identical. [Inputs: filingStatus, ksDependents, ksChildrenBornThisYear, ksStillbirths, ksDisabledVeterans, isClaimedAsDependent (zeroes the dependent count).]`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      mfj: { value: "1832000", type: "money" },
+      other: { value: "916000", type: "money" },
+      perAdditional: { value: "232000", type: "money" }
+      // $2,320
+    },
+    formula: (() => {
+      const personal = iff10(isMfj, money33("1832000"), money33("916000"));
+      const hohExtra = iff10(isKsHoh, money33("232000"), money33("0"));
+      const dependents = iff10(fact36("isClaimedAsDependent"), money33("0"), mulInt9(money33("232000"), fact36("ksDependents")));
+      const bornThisYear = iff10(fact36("isClaimedAsDependent"), money33("0"), mulInt9(money33("232000"), fact36("ksChildrenBornThisYear")));
+      return add7(personal, hohExtra, dependents, bornThisYear, mulInt9(money33("232000"), fact36("ksStillbirths")), mulInt9(money33("232000"), fact36("ksDisabledVeterans")));
+    })()
+  },
+  {
+    id: "us.ks.itemized_deductions",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas itemized deductions (Schedule A) \u2014 100% of medical expenses over 7.5% of federal AGI, 100% of real and personal property taxes (no SALT cap; no income or sales taxes), 100% of qualified residence interest, and 100% of charitable contributions",
+    citation: {
+      source: "K.S.A. 79-32,120 (as amended by 2021 SB 50 and 2024 SB 1); 2025 Kansas Individual Income Tax booklet, Kansas Schedule A instructions pp. 14-15 and the printed 2025 Schedule A lines 1-14",
+      section: "K.S.A. 79-32,120; Kansas Schedule A lines 1-14 \u2192 K-40 line 4",
+      url: BOOKLET_URL2,
+      excerpt: "SCHEDULE A (printed lines): 1 medical and dental expenses; 2 federal AGI (1040 line 11); 3 = 7.5% of line 2 ('Federal limitation'); 4 = 1 \u2212 3, floor 0 ('Kansas allows 100% of the expenses for medical care allowable as deductions in section 213'); 5 state and local REAL ESTATE taxes; 6 state and local PERSONAL PROPERTY taxes (value-based, annual); 7 = 5 + 6 ('Kansas allows 100% of the amount of taxes on real and personal property as provided in section 164(a)' \u2014 verbatim: 'The $40,000 ($20,000 if married filing separate) federal cap on the itemized deduction for state and local taxes \u2026 does not apply for Kansas purposes'; state and local INCOME or SALES taxes are NOT deductible on the Kansas schedule at all); 8a-8c home mortgage interest and points ('Kansas allows 100% of the qualified residence interest paid as provided in section 163(h)'); 9 = interest total; 10-12 gifts by cash, other than cash, carryover ('Kansas allows 100% of the charitable contributions that qualify as deductions in section 170'); 13 = gifts total; 14 = 4 + 7 + 9 + 13 \u2192 K-40 line 4. No overall limitation, no casualty/theft, no miscellaneous deductions. Available whether or not the filer itemized federally ('You may itemize your deductions on your Kansas return even if you did not itemize your deductions on your federal return'). [Inputs: ksMedicalExpenses, ksFederalAgi, ksPropertyTaxes, ksMortgageInterest, ksCharitableContributions.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { medicalFloorPct: { value: "75", type: "int" } },
+    // 7.5%
+    formula: (() => {
+      const floor = rd16({ kind: "mulRate", base: max011(fact36("ksFederalAgi")), rate: { num: "75", den: "1000" }, round: "half-up" });
+      const medical = max011(sub11(rd16(fact36("ksMedicalExpenses")), floor));
+      return add7(medical, rd16(fact36("ksPropertyTaxes")), rd16(fact36("ksMortgageInterest")), rd16(fact36("ksCharitableContributions")));
+    })()
+  },
+  {
+    id: "us.ks.eitc",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas earned income tax credit \u2014 17% of the federal EIC; nonrefundable up to the line 16 tax, the excess refundable (Form K-40 lines 17 and 22)",
+    citation: {
+      source: "K.S.A. 79-32,205; 2025 Kansas Individual Income Tax booklet, line 17 instructions and the 'Earned Income Tax Credit (EITC) Worksheet' p. 8, lines 17 and 22 of Form K-40",
+      section: "K.S.A. 79-32,205; K-40 lines 17, 22; EITC Worksheet",
+      url: BOOKLET_URL2,
+      excerpt: "STATUTE (verbatim): a credit 'against the tax liability of a resident individual \u2026 in an amount equal to \u2026 17% for tax year 2013, and all tax years thereafter' of the federal \xA7 32 credit; 'If the amount of the credit allowed by subsection (a) exceeds the taxpayer's income tax liability imposed under the Kansas income tax act, such excess amount shall be refunded to the taxpayer.' WORKSHEET (verbatim): '1. Federal EITC (from your federal tax return); 2. Kansas EITC (multiply line 1 by 17%); 3. Enter amount from line 16 of Form K-40; 4. Total (subtract line 3 from line 2). If line 4 is a positive figure, enter the amount from line 3 on line 17 of Form K-40. Then enter amount from line 4 on line 22 of Form K-40. If line 4 is a negative figure, enter the amount from line 2 on line 17 of Form K-40. Then enter zero (0) on line 22.' 'This credit is for residents only \u2013 not part-year residents or nonresidents.' Valid SSNs required for the taxpayer, spouse, and dependents. This rule returns the FULL 17% credit; the composer splits it into the line 17 nonrefundable portion (\u2264 line 16) and the line 22 refundable remainder. Whole dollars. [Input: ksFederalEic.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "17", type: "int" } },
+    formula: rd16({ kind: "mulRate", base: max011(fact36("ksFederalEic")), rate: { num: "17", den: "100" }, round: "half-up" })
+  },
+  {
+    id: "us.ks.child_care_credit",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas credit for child and dependent care expenses \u2014 50% of the federal Form 2441 credit allowed, residents only, nonrefundable (Form K-40 line 14)",
+    citation: {
+      source: "K.S.A. 79-32,111c (as amended by 2024 Special Session SB 1: 50% for tax year 2024 and thereafter); 2025 Kansas Individual Income Tax booklet, line 14 instructions p. 8",
+      section: "K.S.A. 79-32,111c; K-40 line 14",
+      url: BOOKLET_URL2,
+      excerpt: "BOOKLET (verbatim): 'This credit is available to residents only - nonresidents and part-year residents are not eligible. Multiply amount of credit allowed on (federal Form 2441) by 50% and enter the result on line 14.' STATUTE: '25% for tax years 2020 through 2023' and '50% for tax year 2024, and all tax years thereafter' of the federal \xA7 21 credit; the credit 'shall not exceed the amount of the tax imposed' (nonrefundable \u2014 the composer caps it at the remaining line 12 tax); 'No credit \u2026 shall be allowed to any individual who fails to provide a valid social security number' for the taxpayer, spouse, and dependents. Not indexed \u2014 TY2026 identical. [Input: ksFederalChildCareCredit (the federal credit ALLOWED, Schedule 3 line 2).]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "50", type: "int" } },
+    formula: rd16({ kind: "mulRate", base: max011(fact36("ksFederalChildCareCredit")), rate: { num: "50", den: "100" }, round: "half-up" })
+  },
+  {
+    id: "us.ks.parameters",
+    version: 1,
+    jurisdiction: "us.ks",
+    title: "Kansas 2025 Form K-40 parameters \u2014 line structure, Schedule S modifications and caps, the other-state credit worksheet, lump-sum tax, penalties, and the SB 269 trigger status",
+    citation: {
+      source: "2025 Kansas Individual Income Tax booklet (K-40, Schedule S, Schedule A, K-210 instructions and forms); K.S.A. 79-32,117; KDOR Notice 25-06; KDOR 2025 Legislative Changes presentation (rev. 11/25/25); web-verified September 2026",
+      section: "Form K-40 lines 1-43; Schedule S Part A lines A1-A27",
+      url: BOOKLET_URL2,
+      excerpt: "STRUCTURE: 1 federal AGI; 2 net modifications (Schedule S line A27, may be negative); 3 KANSAS AGI = 1 \xB1 2; 4 standard (\u2192 us.ks.standard_deduction) OR Kansas itemized (\u2192 us.ks.itemized_deductions) \u2014 free choice regardless of the federal election (MFS spouses must match); 5 exemption allowance (\u2192 us.ks.exemptions); 6 = 4 + 5; 7 TAXABLE INCOME = max0(3 \u2212 6); 8 tax (\u2192 us.ks.income_tax); 9-10 nonresident percentage/tax (Schedule S Part B line B23 \u2014 not composed); 11 Kansas tax on lump-sum distributions = 13% of the federal Form 4972 tax (residents; KPERS lump sums prorated); 12 TOTAL INCOME TAX = 8 + 11; 13 credit for taxes paid to other states \u2014 'Worksheet for Residents' (verbatim): '1. 2025 income tax that was actually paid to the other state (including political subdivisions thereof); 2. Total Kansas income tax (line 12, Form K-40); 3. Total income derived from other state and included in KAGI; 4. KAGI (line 3, Form K-40); 5. Percentage limitation (divide line 3 by line 4); 6. Maximum credit allowable (multiply line 2 by line 5); 7. Credit for taxes paid to the other state. Enter the lesser of line 1 or line 6' (one worksheet per state; the other state's return must be enclosed; states with no income tax \u2192 no entry); 14 child and dependent care credit (\u2192 us.ks.child_care_credit); 15 other credits (Schedule K-24 \u2026 K-89, transcribed); 16 = 12 \u2212 13 \u2212 14 \u2212 15; 17 nonrefundable EITC portion (\u2192 us.ks.eitc, \u2264 line 16); 18 TOTAL TAX BALANCE = max0(16 \u2212 17). PAYMENTS: 19 withholding; 20 estimated payments INCLUDING the 2024 overpayment credited forward; 21 extension payment; 22 refundable EITC remainder; 23 refundable portion of other credits; 24 amended-return payments; 25 credit for tax paid on the K-120S (5.58% entity-level tax, Form K-9); 26 overpayment from the original return (amended, subtracted); 27 = 19 \u2026 25 \u2212 26. SETTLE: 28 underpayment = 18 \u2212 27; 29 interest 0.6667% per month (8% per annum) from the due date; 30 penalty 1% per month or fraction, max 24% (no penalty when 90% was paid by the due date under an extension); 31 K-210 estimated tax penalty (applies when line 18 less withholding and refundable credits is $500 or more; exceptions: payments \u2265 100% of last year's line 19 tax or \u2265 90% of this year's line 18; farmers/fishers two-thirds test); 32 AMOUNT YOU OWE = 28 + 29 + 30 + 31 + checkoffs; 33 overpayment = 27 \u2212 18 (under $5 not refunded \u2014 carried forward or donated); 34 credit forward to 2026 estimates ($1 or more); 35-42 checkoffs (Chickadee, Meals on Wheels, breast cancer research, military emergency relief, hometown heroes, creative arts, school district, historic site); 43 REFUND = 33 \u2212 34 \u2026 42. SCHEDULE S PART A ADDITIONS: A1 non-Kansas state/municipal bond interest (Kansas obligations issued after 12/31/87 exempt); A2 KPERS employee contributions (W-2 box 14); A3 expensing recapture; A4 K-70 scholarship contributions deducted federally; A5 \xA7 163(j) carryforward interest; A6/A7 unqualified first-time-home-buyer / adoption savings withdrawals; A8 other (federal refund for a prior-year NOL carryback, pass-through adjustments, K-60 contributions, 529 nonqualified withdrawals, abortion-expense credits). SUBTRACTIONS: A10 SOCIAL SECURITY \u2014 100% of federally taxable benefits (K.S.A. 79-32,117(c)(xix) as amended: 'For all taxable years beginning after December 31, 2023, amounts received as benefits under the federal social security act that are included in federal adjusted gross income' \u2014 the former $75,000 AGI cliff is gone); A11 KPERS lump sums rolled over; A12 US obligation interest (not FNMA/GNMA/FHLMC); A13 state/local tax refunds; A14 retirement benefits exempt from Kansas tax \u2014 federal civil service and military retirement (incl. TSP), Railroad Retirement, KPERS, Kansas Police & Fire, Kansas teachers' annuities, Highway Patrol, judges, Board of Public Utilities, Board of Regents annuity contracts, Washburn, certain first-class-city pensions, Overland Park police/fire; A15 nonresident military pay/spouse income; A16 Kansas or other-state 529 contributions up to $3,000 per beneficiary ($6,000 MFJ); A17 armed forces recruitment/retention bonuses and service-related student-loan repayments; A18 GILTI; A19 disallowed \xA7 163(j) interest; A20 disallowed \xA7 274 meals; A21 ABLE contributions $3,000/$6,000 per beneficiary; A22 Kansas expensing (K-120EX); A23 first-time home buyer savings $3,000/$6,000; A24 adoption savings $6,000/$12,000; A25 other (KPERS lump-sum contributions, Kansas turnpike bond gains, Native American reservation income, organ donor expenses \u2264 $5,000, identity-fraud compensation). Whole dollars. Due April 15, 2026. FILING THRESHOLDS: KAGI over the standard deduction + exemption allowance (e.g. single under 65 $12,765; MFJ $26,560). TY2026: no rate change (Notice 25-06); 2025 HB 2231 disabled-veteran exemption $2,320 (already in the 2025 form); the 'unborn child' exemption ($2,320 for live births and stillbirths) continues; no 2026 act changed the rates, deduction, or exemptions (HB 2629's higher standard deduction died in committee); NEW for TY2026-2028 (2026 SB 82 \xA7 1, Notice 26-06): a nonrefundable Lockable Gun and Ammunition Storage credit \u2014 25% of the expenditure, at most $250, carryforward allowed \u2014 claimed on line 15 (transcribed); SB 368 health-care-sharing-ministry subtraction and HB 2602 portable-benefit subtraction start TY2027. MFS spouses must both use the tax table or both the worksheet (K.S.A. 79-32,115(g)). NOT ON THIS RETURN: Form K-40H/K-40PT/K-40SVR homestead and property tax refunds (separate claims; K-40SVR uses KAGI), Schedule S Part B nonresident allocation, Schedule K credits' mechanics, Form K-210 arithmetic. Federal conformity: rolling (Kansas AGI starts from federal AGI 'as amended'); OBBBA's below-the-line deductions do not reach Kansas AGI and Kansas grants no equivalent subtraction on Schedule S."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      lumpSumTaxPct: { value: "13", type: "int" },
+      plan529CapPerBeneficiary: { value: "300000", type: "money" },
+      plan529CapPerBeneficiaryMfj: { value: "600000", type: "money" },
+      ableCapPerBeneficiary: { value: "300000", type: "money" },
+      ableCapPerBeneficiaryMfj: { value: "600000", type: "money" },
+      adoptionSavingsCap: { value: "600000", type: "money" },
+      adoptionSavingsCapMfj: { value: "1200000", type: "money" },
+      organDonorExpenseCap: { value: "500000", type: "money" },
+      interestPctPerMonthTimes10000: { value: "6667", type: "int" },
+      // 0.6667%
+      penaltyPctPerMonth: { value: "1", type: "int" },
+      penaltyMaxPct: { value: "24", type: "int" },
+      estimatedTaxPenaltyFloor: { value: "50000", type: "money" },
+      // $500
+      filingThresholdSingle: { value: "1276500", type: "money" },
+      filingThresholdMfj: { value: "2656000", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Kansas Form K-40 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.ks.income_tax, us.ks.standard_deduction, us.ks.exemptions, us.ks.itemized_deductions, us.ks.eitc, and us.ks.child_care_credit"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -45236,6 +45765,7 @@ var stateParameterRules = [
   ...orRules,
   ...okRules,
   ...ctRules,
+  ...ksRules,
   ...otherStateRules
 ];
 
@@ -45245,7 +45775,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus18 = (status) => ({
+var isStatus19 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -45317,7 +45847,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus18("mfj"),
+    cond: isStatus19("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -45416,7 +45946,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus18("mfj"),
+      cond: isStatus19("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -45604,7 +46134,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus19 = (status) => ({
+var isStatus20 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -45660,7 +46190,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus19("mfs"),
+      cond: isStatus20("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -45671,7 +46201,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus19("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus20("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -45691,7 +46221,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus19("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus20("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -45796,7 +46326,7 @@ var isMfs3 = {
   left: fact40("filingStatus"),
   right: { kind: "enum", value: "mfs" }
 };
-var isMfj = {
+var isMfj2 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
@@ -45804,7 +46334,7 @@ var isMfj = {
 };
 var byJoint = (joint, other) => ({
   kind: "if",
-  cond: isMfj,
+  cond: isMfj2,
   then: param24(joint),
   else: param24(other)
 });
@@ -45898,7 +46428,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus20 = (status) => ({
+var isStatus21 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -46037,7 +46567,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus20("mfs"),
+      cond: isStatus21("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -46126,11 +46656,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus20("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus21("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus20("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus21("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -46140,7 +46670,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus21 = (status) => ({
+var isStatus22 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -46188,7 +46718,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus21("mfs") },
+        { kind: "not", arg: isStatus22("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -46203,13 +46733,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus22 = (status) => ({
+var isStatus23 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus22("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus23("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -46240,7 +46770,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus22("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus22("mfj"),
+                    cond: isStatus23("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -46312,7 +46842,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus22("mfj"),
+      cond: isStatus23("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -46478,7 +47008,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add7 = (id, c2) => {
+  const add8 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -46500,20 +47030,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add7("wages", toCents(w.box1));
+    add8("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add7("federalTaxWithheld", toCents(w.box2));
+      add8("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add7("socialSecurityWages", toCents(w.box3));
+      add8("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add7("medicareWages", b5);
+      add8("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add7("federalTaxWithheld", excess);
+          add8("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars2(excess)}; added to withholding`);
         }
       }
@@ -46525,72 +47055,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(r.box4));
+      add8("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add7("wages", taxable3);
-      add7("scheduleRDisabilityIncome", taxable3);
+      add8("wages", taxable3);
+      add8("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars2(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add7("taxableIraDistributions", taxable3);
+      add8("taxableIraDistributions", taxable3);
     else
-      add7("taxablePensionsAndAnnuities", taxable3);
+      add8("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add7("earlyDistributionSubjectToPenalty", taxable3);
+        add8("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars2(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add7("socialSecurityBenefits", toCents(s.box5));
+    add8("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add7("federalTaxWithheld", toCents(s.box6));
+      add8("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(n.box4));
+      add8("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(k.box4));
+      add8("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add7("selfEmploymentNetProfit", net);
+        add8("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars2(seGross)} gross (1099-NEC/K) \u2212 $${dollars2(expenses)} expenses = $${dollars2(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add7("scheduleCNetLoss", -net);
+      add8("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars2(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add7("taxableInterest", toCents(t.box1));
+      add8("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add7("taxableInterest", toCents(t.box3));
+      add8("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars2(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add7("taxExemptInterest", toCents(t.box8));
+      add8("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(t.box4));
+      add8("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -46599,15 +47129,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars2(qualified2)}) exceeds box 1a (total, $${dollars2(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add7("qualifiedDividends", qualified2);
+      add8("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add7("ordinaryDividends", total - qualified2);
+      add8("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add7("__ltProceeds", toCents(d3.box2a));
+      add8("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars2(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(d3.box4));
+      add8("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -46622,24 +47152,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(b.box4));
+      add8("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add7("shortTermCapitalGains", stNet);
+      add8("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add7("shortTermCapitalLoss", -stNet);
+      add8("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add7("longTermCapitalGains", ltNet);
+      add8("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add7("longTermCapitalLoss", -ltNet);
+      add8("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars2(stNet)}, long-term net $${dollars2(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add7("unemploymentCompensation", toCents(g.box1));
+      add8("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add7("federalTaxWithheld", toCents(g.box4));
+      add8("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars2(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -47059,7 +47589,19 @@ var INDIVIDUAL_GROUPS = {
     "ctSsProvisionalExcess",
     "ctTaxableSs",
     "ctPensionAnnuityIncome",
-    "ctIraDistributions"
+    "ctIraDistributions",
+    "ksStdBoxes",
+    "ksDependents",
+    "ksChildrenBornThisYear",
+    "ksStillbirths",
+    "ksDisabledVeterans",
+    "ksMedicalExpenses",
+    "ksFederalAgi",
+    "ksPropertyTaxes",
+    "ksMortgageInterest",
+    "ksCharitableContributions",
+    "ksFederalEic",
+    "ksFederalChildCareCredit"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -47349,7 +47891,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%).",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -47376,7 +47918,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd16 = (c2) => {
+      const rd17 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -47403,11 +47945,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd16(after) + rd16(other);
-      const payments = rd16(withheld) + rd16(refundable) + rd16(extension) + rd16(estimated);
+      const total24 = rd17(after) + rd17(other);
+      const payments = rd17(withheld) + rd17(refundable) + rd17(extension) + rd17(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd16(c2));
+      const d3 = (c2) => fmt2(rd17(c2));
       return ok({
         ok: true,
         asOf,
@@ -47434,7 +47976,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd16(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd17(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

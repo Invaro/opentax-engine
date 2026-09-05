@@ -1,0 +1,12 @@
+{
+  "description": "KS 2025 tax table first row [26-50] -> $2 (5.2% x the $38 midpoint = $1.98).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 38
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "200"
+  }
+}

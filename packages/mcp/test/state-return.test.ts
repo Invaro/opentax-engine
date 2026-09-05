@@ -1418,3 +1418,83 @@ describe("composeCT — 2025 Form CT-1040 (real corpus targets)", () => {
     expect(() => composeStateReturn({ jurisdiction: "ct" as const, filingStatus: "single" }, realPaEval({}))).toThrow(/federalAGI is required/);
   });
 });
+
+describe("composeKS — 2025 Form K-40 (real corpus targets)", () => {
+  it("MFJ retirees: Social Security and KPERS subtracted, 65+ boxes, table tax, refund", () => {
+    // line 3 = 80,000 − 20,000 − 30,000 = 30,000; standard 8,240 + 2 x 700 =
+    // 9,640; exemptions 18,320 -> line 7 = 2,040 -> row [2,001-2,050] midpoint
+    // 2,025.50 x 5.2% = 105.33 -> $105; withholding 500 -> refund 395.
+    const input = {
+      jurisdiction: "ks" as const, filingStatus: "mfj", federalAGI: 80000,
+      taxableSocialSecurity: 20000, ksExemptRetirement: 30000, ksStdBoxes: 2, stateWithholding: 500,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "A10_social_security")).toBe("$20,000");
+    expect(dollars(lines, "3_kansas_agi")).toBe("$30,000");
+    expect(dollars(lines, "4_deduction")).toBe("$9,640");
+    expect(dollars(lines, "5_exemption_allowance")).toBe("$18,320");
+    expect(dollars(lines, "7_taxable_income")).toBe("$2,040");
+    expect(dollars(lines, "8_tax")).toBe("$105");
+    expect(dollars(lines, "33_overpayment")).toBe("$395");
+    expect(dollars(lines, "43_refund")).toBe("$395");
+    expect(notes.some((n) => n.includes("100% exempt since TY2024"))).toBe(true);
+  });
+
+  it("HOH with two dependents: child care credit, EITC split between line 17 and line 22", () => {
+    // standard 6,180; exemptions 9,160 + 2,320 + 2 x 2,320 = 16,120 -> line 7 =
+    // 7,700 -> row [7,651-7,700] midpoint 7,675.50 x 5.2% = 399.13 -> $399;
+    // child care 50% x 600 = 300 -> line 16 = 99; KS EITC 17% x 4,000 = 680 ->
+    // line 17 = 99, line 22 = 581; payments 200 + 581 = 781 -> refund 781.
+    const input = {
+      jurisdiction: "ks" as const, filingStatus: "hoh", federalAGI: 30000, dependents: 2,
+      federalEITC: 4000, ksFederalChildCareCredit: 600, stateWithholding: 200,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "5_exemption_allowance")).toBe("$16,120");
+    expect(dollars(lines, "7_taxable_income")).toBe("$7,700");
+    expect(dollars(lines, "8_tax")).toBe("$399");
+    expect(dollars(lines, "14_child_care_credit")).toBe("$300");
+    expect(dollars(lines, "16_subtotal")).toBe("$99");
+    expect(dollars(lines, "17_eitc_nonrefundable")).toBe("$99");
+    expect(dollars(lines, "22_eitc_refundable")).toBe("$581");
+    expect(dollars(lines, "18_total_tax_balance")).toBe("$0");
+    expect(dollars(lines, "43_refund")).toBe("$781");
+  });
+
+  it("single high earner: Kansas itemized beats standard, worksheet tax, other-state credit, balance due with checkoffs", () => {
+    // itemized 9,000 + 12,000 + 3,000 = 24,000 > 3,605; line 7 = 150,000 −
+    // 24,000 − 9,160 = 116,840 -> worksheet 5.58% x 116,840 = 6,519.67 − 87 =
+    // 6,432.67 -> $6,433; other-state credit = lesser of 2,000 or 6,433 x
+    // 30,000/150,000 = 1,286.60 -> 1,287; line 18 = 5,146; withholding 4,000 ->
+    // underpayment 1,146; checkoffs 10 -> owe 1,156.
+    const input = {
+      jurisdiction: "ks" as const, filingStatus: "single", federalAGI: 150000,
+      ksPropertyTaxes: 9000, ksMortgageInterest: 12000, ksCharitableContributions: 3000,
+      ksOtherStateTaxPaid: 2000, ksOtherStateIncome: 30000, stateWithholding: 4000, ksCheckoffs: 10,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_deduction")).toBe("$24,000");
+    expect(lines["_deduction_method"]).toBe("itemized");
+    expect(dollars(lines, "7_taxable_income")).toBe("$116,840");
+    expect(dollars(lines, "8_tax")).toBe("$6,433");
+    expect(dollars(lines, "13_other_state_credit")).toBe("$1,287");
+    expect(dollars(lines, "18_total_tax_balance")).toBe("$5,146");
+    expect(dollars(lines, "28_underpayment")).toBe("$1,146");
+    expect(dollars(lines, "32_amount_you_owe")).toBe("$1,156");
+    expect(notes.some((n) => n.includes("beat the $3,605 standard deduction"))).toBe(true);
+  });
+
+  it("federal QSS is composed as Kansas head of household; federalAGI is required", () => {
+    // deduction 6,180; exemptions 9,160 + 2,320 (HOH) + 2,320 = 13,800; line 7
+    // = 40,000 − 19,980 = 20,020 -> row [20,001-20,050] midpoint 20,025.50 x
+    // 5.2% = 1,041.33 -> $1,041 (the joint column would give the same here
+    // but the deduction/exemption differ from MFJ's 8,240/18,320).
+    const input = { jurisdiction: "ks" as const, filingStatus: "qss", federalAGI: 40000, dependents: 1 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_deduction")).toBe("$6,180");
+    expect(dollars(lines, "5_exemption_allowance")).toBe("$13,800");
+    expect(dollars(lines, "8_tax")).toBe("$1,041");
+    expect(notes.some((n) => n.includes("check the Head of Household box"))).toBe(true);
+    expect(() => composeStateReturn({ jurisdiction: "ks" as const, filingStatus: "single" }, realPaEval({}))).toThrow(/federalAGI is required/);
+  });
+});

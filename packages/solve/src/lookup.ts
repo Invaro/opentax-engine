@@ -65,6 +65,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.or": "oregon or or-40 portland salem kicker",
   "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief",
   "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport",
+  "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
 };
 
 export function lookupParameters(

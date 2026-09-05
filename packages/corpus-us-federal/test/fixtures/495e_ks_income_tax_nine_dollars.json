@@ -1,0 +1,12 @@
+{
+  "description": "KS taxable income $9: 5.2% x $9 = $0.47 -> $0 (below the first printed row, exact schedule).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 9
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

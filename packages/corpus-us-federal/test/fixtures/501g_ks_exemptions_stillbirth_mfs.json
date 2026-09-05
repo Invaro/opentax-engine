@@ -1,0 +1,12 @@
+{
+  "description": "KS MFS with a certified stillbirth: $9,160 + $2,320 = $11,480.",
+  "facts": {
+    "filingStatus": "mfs",
+    "ksStillbirths": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.exemptions",
+  "expect": {
+    "valueCents": "1148000"
+  }
+}

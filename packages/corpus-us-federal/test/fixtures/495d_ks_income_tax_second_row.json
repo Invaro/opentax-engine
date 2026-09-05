@@ -1,0 +1,12 @@
+{
+  "description": "KS 2025 tax table row [51-100] -> $4 (5.2% x $75.50 = $3.93).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 51
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "400"
+  }
+}

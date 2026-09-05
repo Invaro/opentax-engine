@@ -1,0 +1,12 @@
+{
+  "description": "KS single taxable exactly $23,000: row [22,951-23,000] midpoint $22,975.50 x 5.2% = $1,194.73 -> $1,195.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 23000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "119500"
+  }
+}

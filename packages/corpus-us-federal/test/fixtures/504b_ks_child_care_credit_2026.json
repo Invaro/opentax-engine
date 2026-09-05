@@ -1,0 +1,12 @@
+{
+  "description": "KS child care credit stays 50% for TY2026 (K.S.A. 79-32,111c 'tax year 2024, and all tax years thereafter').",
+  "facts": {
+    "filingStatus": "mfj",
+    "ksFederalChildCareCredit": 1200
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ks.child_care_credit",
+  "expect": {
+    "valueCents": "60000"
+  }
+}

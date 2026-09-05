@@ -1,0 +1,12 @@
+{
+  "description": "KS EITC 17% x $2,000 federal EIC = $340 (full credit; the composer splits nonrefundable/refundable).",
+  "facts": {
+    "filingStatus": "hoh",
+    "ksFederalEic": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.eitc",
+  "expect": {
+    "valueCents": "34000"
+  }
+}

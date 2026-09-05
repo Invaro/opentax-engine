@@ -1,0 +1,12 @@
+{
+  "description": "KS TY2026: Notice 25-06 certified no SB 269 rate reduction \u2014 single $50,000 -> row midpoint $49,975.50 -> $1,196 + 5.58% x $26,975.50 = $2,701.23 -> $2,701.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "270100"
+  }
+}
