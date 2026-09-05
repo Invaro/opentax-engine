@@ -1,0 +1,12 @@
+{
+  "description": "OK TY2026 (HB 2764) single $50,000: 0% to $3,750; 2.5% x $1,150 = $28.75; 3.5% x $2,300 = $80.50; 4.5% x $42,800 = $1,926 -> $2,035.25 -> $2,035.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "203500"
+  }
+}

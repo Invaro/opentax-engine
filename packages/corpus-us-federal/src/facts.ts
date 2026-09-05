@@ -3291,4 +3291,220 @@ export const facts: FactSpec[] = [
       "The 2024 total Oregon personal income tax liability: 2024 OR-40 line 24 tax-before-credits MINUS the Schedule OR-ASC code 802/815 credit for taxes paid to another state (Kicker worksheet Part A — NOT line 31, which is after the exemption and other credits) — us.or.kicker pays 9.863% of it on the 2025 return. Requires the 2024 return filed before the 2025 return. In dollars.",
     default: { value: "0", rationale: "Assumed no 2024 liability absent contrary input (no kicker)" },
   },
+  // ---- Oklahoma (Form 511) ----
+  {
+    id: "okFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Form 511 line 1 = Form 1040 line 11) — keys the $100,000 child care/child tax credit cliff and the Schedule 511-F/511-G proration denominators (us.ok.child_care_child_tax_credit, us.ok.eic), the special 65+ exemption income limits (us.ok.exemptions, after removing Roth conversion income), and the use tax table (us.ok.use_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input" },
+  },
+  {
+    id: "okAgi",
+    type: "money",
+    description:
+      "Oklahoma adjusted gross income (Form 511 line 7) — the proration numerator when it is below federal AGI (Schedules 511-F and 511-G: credit x line 7 / line 1, not more than 100%). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 Oklahoma AGI absent contrary input" },
+  },
+  {
+    id: "okRothConversionIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Income from converting a traditional IRA to a Roth IRA that is included in federal AGI — excluded from federal AGI ONLY for the special 65+ exemption income limits (68 O.S. § 2358(E)(1)(c); Form 511 exemption instructions). In dollars.",
+    default: { value: "0", rationale: "Assumed no Roth conversion income absent contrary input" },
+  },
+  {
+    id: "okBasicExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Count of Oklahoma exemptions with NO income test: 'yourself' + 'spouse' regular boxes, legally-blind boxes, and dependents (Form 511 page 1) — $1,000 each (us.ok.exemptions). A filer claimable as someone's dependent enters 0 for 'yourself'.",
+    default: { value: "0", rationale: "Assumed no exemptions absent contrary input" },
+  },
+  {
+    id: "okSpecialExemptions65",
+    type: "int",
+    min: "0",
+    description:
+      "Count of Oklahoma SPECIAL exemption boxes (taxpayer and/or spouse 65 or older at year end, 0-2) — $1,000 each ONLY when federal AGI (less Roth conversion income) is at or under $15,000 single / $25,000 joint / $12,500 MFS / $19,000 head of household (us.ok.exemptions).",
+    default: { value: "0", rationale: "Assumed no 65-or-older special exemptions absent contrary input" },
+  },
+  {
+    id: "okFederalItemizedTotal",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 17 total itemized deductions (Schedule 511-D line 1) — the starting point for Oklahoma itemized deductions (us.ok.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal itemized deductions absent contrary input" },
+  },
+  {
+    id: "okFederalSaltDeducted",
+    type: "money",
+    min: "0",
+    description:
+      "State and local income OR general sales taxes from federal Schedule A line 5a to the extent actually included in line 5e after the SALT cap (Schedule 511-D line 2) — Oklahoma adds them back (us.ok.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no state/local income or sales tax deducted absent contrary input" },
+  },
+  {
+    id: "okFederalMedical",
+    type: "money",
+    min: "0",
+    description:
+      "Medical and dental expenses deducted on federal Schedule A line 4 (Schedule 511-D lines 4 and 9) — exempt from Oklahoma's $17,000 itemized cap (us.ok.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no medical deduction absent contrary input" },
+  },
+  {
+    id: "okFederalCharity",
+    type: "money",
+    min: "0",
+    description:
+      "Gifts to charity deducted on federal Schedule A line 14 (Schedule 511-D lines 5 and 10) — exempt from Oklahoma's $17,000 itemized cap (us.ok.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no charitable deduction absent contrary input" },
+  },
+  {
+    id: "okGovRetirementYou",
+    type: "money",
+    min: "0",
+    description:
+      "TAXPAYER's Oklahoma-government or federal civil service retirement benefits included in federal AGI (Schedule 511-A line 5 systems: OPERS, TRS, OLERS, firefighters, police, judges, county/municipal systems, US civil service other than CSRS-in-lieu-of-SS) — excluded up to $10,000 per person (us.ok.retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no government retirement income absent contrary input" },
+  },
+  {
+    id: "okGovRetirementSpouse",
+    type: "money",
+    min: "0",
+    description:
+      "SPOUSE's Oklahoma-government or federal civil service retirement benefits included in federal AGI (Schedule 511-A line 5) — the $10,000 limit is per individual, in that person's name (us.ok.retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no spouse government retirement income absent contrary input" },
+  },
+  {
+    id: "okOtherRetirementYou",
+    type: "money",
+    min: "0",
+    description:
+      "TAXPAYER's other qualifying retirement income included in federal AGI (Schedule 511-A line 6: IRC 401 plans, 457 plans, 408 IRAs/SEPs, 403(a)/(b) annuities, 402(e) lump sums) — excluded up to $10,000 per person MINUS the same person's line 5 exclusion (us.ok.retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no other retirement income absent contrary input" },
+  },
+  {
+    id: "okOtherRetirementSpouse",
+    type: "money",
+    min: "0",
+    description:
+      "SPOUSE's other qualifying retirement income included in federal AGI (Schedule 511-A line 6) — same per-person $10,000 combined limit (us.ok.retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no spouse other retirement income absent contrary input" },
+  },
+  {
+    id: "okFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal credit for child and dependent care expenses allowed (Form 2441 / Schedule 3 line 2) — Oklahoma allows 20% of it (us.ok.child_care_child_tax_credit, the greater-of test). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal child care credit absent contrary input" },
+  },
+  {
+    id: "okFederalChildTaxCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal child tax credit PLUS additional child tax credit allowed (Form 1040 line 19 + line 28 from Schedule 8812) — Oklahoma allows 5% of the total (us.ok.child_care_child_tax_credit, the greater-of test). NOTE: line 19 also carries the $500 § 24(h)(4) credit for other dependents; the packet names only the CTC and ACTC — the ODC is part of § 24 (\"the child tax credit allowed under the IRC\"), so include it but disclose when one is present. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal child tax credit absent contrary input" },
+  },
+  {
+    id: "okEicEligible",
+    type: "bool",
+    description:
+      "Filer meets the FEDERAL 2020-law EIC requirements Oklahoma freezes to (68 O.S. § 2357.43): work-valid SSNs, not married filing separately, investment income $3,650 or less, and — with no qualifying child — age 25 to 64 and not a dependent (us.ok.eic_2020_rules). Unattested = $0.",
+    default: { value: false, rationale: "Assumed NOT eligible absent an explicit attestation (conservative: no credit)" },
+  },
+  {
+    id: "okEicQualifyingChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Number of EIC qualifying children under the 2020 federal rules (0, 1, 2, or 3-or-more — the table caps at 3) for us.ok.eic_2020_rules.",
+    default: { value: "0", rationale: "Assumed no qualifying children absent contrary input" },
+  },
+  {
+    id: "okEicEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Total earned income on Form 511-EIC line 15 (wages less excluded Medicaid waiver payments, plus elected nontaxable combat pay, plus net self-employment earnings) for the year being computed — Oklahoma lets the filer use 2025 OR 2024 earned income (us.ok.eic_2020_rules; run once per year and keep the larger). In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input" },
+  },
+  {
+    id: "okEicAgi",
+    type: "money",
+    description:
+      "Federal AGI (Form 1040 line 11) for the SAME year as okEicEarnedIncome — Form 511-EIC line 17: when it reaches the table's phase-out row ($8,800 no children / $19,350 with children; $14,700 / $25,250 married filing jointly) the credit is the SMALLER of the table amounts at earned income and at AGI (us.ok.eic_2020_rules). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 AGI absent contrary input" },
+  },
+  {
+    id: "okEic2020Amount",
+    type: "money",
+    min: "0",
+    description:
+      "The federal earned income credit computed under 2020 rules on Form 511-EIC line 20 (the larger of the 2024 and 2025 columns — each is us.ok.eic_2020_rules) — us.ok.eic pays 5% of it, prorated by Oklahoma AGI over federal AGI. In dollars.",
+    default: { value: "0", rationale: "Assumed no 2020-rule federal EIC absent contrary input" },
+  },
+  {
+    id: "okGrossHouseholdIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Total GROSS household income of everyone in the household, taxable or not (Form 538-S Part 3 line 14: wages incl. nontaxable W-2 amounts, interest, dependents' income, full Social Security incl. Medicare, pensions, alimony, unemployment, EIC received, public assistance, child support, workers' comp, gross rents/business receipts; NOT deferred 401(k)/IRA contributions) — the $20,000/$50,000 sales tax relief limits (us.ok.sales_tax_relief_credit) and the $12,000 property tax relief limit (us.ok.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 gross household income absent contrary input" },
+  },
+  {
+    id: "okStrExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Qualified exemptions for the sales tax relief credit (Form 538-S Box D: yourself, spouse, and each federally-claimed dependent who was an Oklahoma resident all year; a deceased taxpayer/spouse or a TANF recipient does not count) — $40 each (us.ok.sales_tax_relief_credit).",
+    default: { value: "0", rationale: "Assumed no qualified exemptions absent contrary input" },
+  },
+  {
+    id: "okStrHasDependent",
+    type: "bool",
+    description:
+      "Filer can claim an exemption for a dependent — raises the sales tax relief gross household income limit from $20,000 to $50,000 (us.ok.sales_tax_relief_credit).",
+    default: { value: false, rationale: "Assumed no dependent absent contrary input" },
+  },
+  {
+    id: "okStrIs65",
+    type: "bool",
+    description:
+      "Filer or spouse is 65 or older by December 31 of the tax year — raises the sales tax relief gross household income limit to $50,000 (us.ok.sales_tax_relief_credit).",
+    default: { value: false, rationale: "Assumed under 65 absent contrary input" },
+  },
+  {
+    id: "okStrDisabled",
+    type: "bool",
+    description:
+      "Filer or spouse has a physical disability constituting a substantial handicap to employment (proof required with Form 538-S) — raises the sales tax relief gross household income limit to $50,000 (us.ok.sales_tax_relief_credit).",
+    default: { value: false, rationale: "Assumed no qualifying disability absent contrary input" },
+  },
+  {
+    id: "okStrEligible",
+    type: "bool",
+    description:
+      "Filer meets the Form 538-S gates: Oklahoma resident (domiciled) for the ENTIRE year, not an inmate in DOC custody during the year after a felony conviction, received no TANF in any month, not living in Oklahoma under a visa, and the return is filed by the due date (us.ok.sales_tax_relief_credit). Unattested = $0.",
+    default: { value: false, rationale: "Assumed NOT eligible absent an explicit attestation (conservative: no credit)" },
+  },
+  {
+    id: "okPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Ad valorem property taxes paid on the homestead occupied during the year (Form 538-H) — the property tax relief credit is the amount paid, capped at $200 (us.ok.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no property tax paid absent contrary input" },
+  },
+  {
+    id: "okPtrEligible",
+    type: "bool",
+    description:
+      "Filer is 65 or older OR totally disabled, is the head of a household, and was an Oklahoma resident domiciled in the state for the ENTIRE preceding calendar year (Form 538-H / Form 511 line 24) — the property tax relief credit also requires gross household income of $12,000 or less (us.ok.property_tax_relief_credit). Unattested = $0.",
+    default: { value: false, rationale: "Assumed NOT eligible absent an explicit attestation (conservative: no credit)" },
+  },
 ];

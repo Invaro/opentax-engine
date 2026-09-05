@@ -1,0 +1,12 @@
+{
+  "description": "OK TY2026 joint $50,000: $57.50 + $161 + 4.5% x $35,600 = $1,820.50 -> $1,821 (half-up).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "182100"
+  }
+}

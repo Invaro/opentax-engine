@@ -63,6 +63,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.sc": "south carolina sc sc1040 charleston columbia",
   "us.al": "alabama al form 40 birmingham montgomery",
   "us.or": "oregon or or-40 portland salem kicker",
+  "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief",
 };
 
 export function lookupParameters(

@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC footnote: 'at least $15,800 but less than $15,820, no qualifying children, your credit is $1'.",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 0,
+    "okEicEarnedIncome": 15810,
+    "okEicAgi": 15810
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "100"
+  }
+}

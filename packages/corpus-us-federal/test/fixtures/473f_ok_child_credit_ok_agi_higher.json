@@ -1,0 +1,14 @@
+{
+  "description": "OK Oklahoma AGI above federal AGI -> ratio capped at 100%: $200.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalChildCareCredit": 1000,
+    "okFederalAgi": 50000,
+    "okAgi": 55000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.child_care_child_tax_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

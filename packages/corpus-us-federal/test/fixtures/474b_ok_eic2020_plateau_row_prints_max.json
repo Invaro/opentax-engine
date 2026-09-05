@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC table row [7,000-7,050) with no children prints the maximum $538 because it contains the $7,030 earned income amount (the midpoint formula would give $537).",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 0,
+    "okEicEarnedIncome": 7020,
+    "okEicAgi": 7020
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "53800"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [7,500-7,550) joint -> $72: $71.25 anchor + 2.75% x $25 = $71.94 (unrounded anchors chain).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 7500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "7200"
+  }
+}

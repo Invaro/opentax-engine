@@ -1,0 +1,15 @@
+{
+  "description": "OK line 15: greater of 20% x $600 child care = $120 or 5% x $4,400 CTC+ACTC = $220 -> $220 (FAGI $60,000).",
+  "facts": {
+    "filingStatus": "mfj",
+    "okFederalChildCareCredit": 600,
+    "okFederalChildTaxCredit": 4400,
+    "okFederalAgi": 60000,
+    "okAgi": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.child_care_child_tax_credit",
+  "expect": {
+    "valueCents": "22000"
+  }
+}

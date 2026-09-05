@@ -1,0 +1,15 @@
+{
+  "description": "Form 511-EIC line 19: AGI $19,000 is under the $19,350 row -> earned income alone controls: $3,584.",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 1,
+    "okEicEarnedIncome": 15000,
+    "okEicAgi": 19000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "358400"
+  }
+}

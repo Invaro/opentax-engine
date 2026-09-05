@@ -1,0 +1,12 @@
+{
+  "description": "OK use tax estimate at $100,000 federal AGI: 0.056% -> $56.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okFederalAgi": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.use_tax",
+  "expect": {
+    "valueCents": "5600"
+  }
+}

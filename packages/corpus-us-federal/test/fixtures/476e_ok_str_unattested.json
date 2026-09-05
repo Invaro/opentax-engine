@@ -1,0 +1,13 @@
+{
+  "description": "OK Form 538-S gates not attested (full-year resident, no TANF, not an inmate, no visa) -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "okGrossHouseholdIncome": 10000,
+    "okStrExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.sales_tax_relief_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

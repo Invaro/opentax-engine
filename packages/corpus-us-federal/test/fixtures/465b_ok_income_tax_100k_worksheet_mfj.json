@@ -1,0 +1,12 @@
+{
+  "description": "OK joint worksheet anchor '$4,373 plus 0.0475 over $100,000' -> $4,373 at exactly $100,000 (the survey brackets would give $4,395).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "437300"
+  }
+}

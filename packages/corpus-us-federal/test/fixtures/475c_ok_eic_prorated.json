@@ -1,0 +1,14 @@
+{
+  "description": "OK Schedule 511-G proration: $179 x (Oklahoma AGI $20,000 / federal AGI $40,000) = $89.50 -> $90.",
+  "facts": {
+    "filingStatus": "hoh",
+    "okEic2020Amount": 3584,
+    "okAgi": 20000,
+    "okFederalAgi": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic",
+  "expect": {
+    "valueCents": "9000"
+  }
+}

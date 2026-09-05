@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC table starts at $1 of earned income -> $0 with none.",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 2,
+    "okEicEarnedIncome": 0,
+    "okEicAgi": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "0"
+  }
+}

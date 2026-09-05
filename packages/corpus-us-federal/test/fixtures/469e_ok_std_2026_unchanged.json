@@ -1,0 +1,11 @@
+{
+  "description": "OK standard deduction is statutory and unindexed: $12,700 joint for TY2026.",
+  "facts": {
+    "filingStatus": "mfj"
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ok.standard_deduction",
+  "expect": {
+    "valueCents": "1270000"
+  }
+}

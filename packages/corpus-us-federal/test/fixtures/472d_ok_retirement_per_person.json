@@ -1,0 +1,13 @@
+{
+  "description": "OK joint: taxpayer $10,000 government + spouse $7,000 IRA -> $17,000 (each person has their own cap, in their own name).",
+  "facts": {
+    "filingStatus": "mfj",
+    "okGovRetirementYou": 10000,
+    "okOtherRetirementSpouse": 7000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.retirement_exclusion",
+  "expect": {
+    "valueCents": "1700000"
+  }
+}

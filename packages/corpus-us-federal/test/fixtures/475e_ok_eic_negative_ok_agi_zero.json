@@ -1,0 +1,14 @@
+{
+  "description": "OK EIC proration, OAC 710:50-15-90(c)(1): Oklahoma AGI negative (-$1,000) and less than federal AGI (-$500) -> ratio 0% -> $0 (the regulation's own example).",
+  "facts": {
+    "filingStatus": "hoh",
+    "okEic2020Amount": 3584,
+    "okAgi": -1000,
+    "okFederalAgi": -500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic",
+  "expect": {
+    "valueCents": "0"
+  }
+}

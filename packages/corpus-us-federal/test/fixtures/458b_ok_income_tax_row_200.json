@@ -1,0 +1,12 @@
+{
+  "description": "OK 2025 tax table row [200,250) -> $1: 0.25% x $225 = $0.5625 -> $1 (half-up).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

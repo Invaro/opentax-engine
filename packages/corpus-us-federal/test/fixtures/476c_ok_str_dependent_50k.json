@@ -1,0 +1,15 @@
+{
+  "description": "OK Form 538-S: a dependent raises the limit to $50,000 -> $45,000 household income, 3 exemptions -> $120.",
+  "facts": {
+    "filingStatus": "mfj",
+    "okStrEligible": true,
+    "okStrHasDependent": true,
+    "okGrossHouseholdIncome": 45000,
+    "okStrExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.sales_tax_relief_credit",
+  "expect": {
+    "valueCents": "12000"
+  }
+}

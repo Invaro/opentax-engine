@@ -1,0 +1,12 @@
+{
+  "description": "OK head of household $150,000 (joint column worksheet): $4,373 + 4.75% x $50,000 = $6,748.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.income_tax",
+  "expect": {
+    "valueCents": "674800"
+  }
+}

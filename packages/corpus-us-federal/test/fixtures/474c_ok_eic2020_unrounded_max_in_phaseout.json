@@ -1,0 +1,15 @@
+{
+  "description": "2020 EIC table row [10,600-10,650), no children: $537.795 unrounded maximum - 7.65% x ($10,625 - $8,790) = $397.42 -> $397 (a rounded $538 maximum would print $398).",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 0,
+    "okEicEarnedIncome": 10610,
+    "okEicAgi": 10610
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "39700"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "Form 511-EIC's own example: single, one qualifying child, $2,455 earned income -> $842 (34% x $2,475 midpoint = $841.50).",
+  "facts": {
+    "okEicEligible": true,
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 1,
+    "okEicEarnedIncome": 2455,
+    "okEicAgi": 2455
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "84200"
+  }
+}

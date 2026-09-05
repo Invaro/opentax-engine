@@ -1,0 +1,14 @@
+{
+  "description": "OK Schedule 511-F proration: $200 x (Oklahoma AGI $60,000 / federal AGI $80,000) = $150.",
+  "facts": {
+    "filingStatus": "single",
+    "okFederalChildCareCredit": 1000,
+    "okFederalAgi": 80000,
+    "okAgi": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.child_care_child_tax_credit",
+  "expect": {
+    "valueCents": "15000"
+  }
+}

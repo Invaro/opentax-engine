@@ -1,0 +1,14 @@
+{
+  "description": "No okEicEligible attestation (SSNs, age 25-64 when childless, investment income <= $3,650) -> $0, never an overstated credit.",
+  "facts": {
+    "filingStatus": "single",
+    "okEicQualifyingChildren": 1,
+    "okEicEarnedIncome": 15000,
+    "okEicAgi": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.eic_2020_rules",
+  "expect": {
+    "valueCents": "0"
+  }
+}

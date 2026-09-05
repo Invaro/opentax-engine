@@ -1,0 +1,12014 @@
+{
+"source": "2025 Oklahoma Resident Individual Income Tax Packet (Form 511), Tax Table pp. 27-38 and the 'Calculating Tax on Taxable Income of $100,000 or more' worksheets p. 38 (oklahoma.gov/tax, 511-Pkt.pdf), text-extracted with pdftotext; every $50 row, both printed columns",
+"columns": [
+"single or married filing separate",
+"married filing joint or head of household (and qualifying surviving spouse per the form's status list)"
+],
+"over100kAnchors": {
+"singleMfs": 4562,
+"jointHoh": 4373,
+"rate": 0.0475
+},
+"rows": [
+{
+"atLeast": 0,
+"lessThan": 50,
+"singleMfs": 0,
+"jointHoh": 0
+},
+{
+"atLeast": 50,
+"lessThan": 100,
+"singleMfs": 0,
+"jointHoh": 0
+},
+{
+"atLeast": 100,
+"lessThan": 150,
+"singleMfs": 0,
+"jointHoh": 0
+},
+{
+"atLeast": 150,
+"lessThan": 200,
+"singleMfs": 0,
+"jointHoh": 0
+},
+{
+"atLeast": 200,
+"lessThan": 250,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 250,
+"lessThan": 300,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 300,
+"lessThan": 350,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 350,
+"lessThan": 400,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 400,
+"lessThan": 450,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 450,
+"lessThan": 500,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 500,
+"lessThan": 550,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 550,
+"lessThan": 600,
+"singleMfs": 1,
+"jointHoh": 1
+},
+{
+"atLeast": 600,
+"lessThan": 650,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 650,
+"lessThan": 700,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 700,
+"lessThan": 750,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 750,
+"lessThan": 800,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 800,
+"lessThan": 850,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 850,
+"lessThan": 900,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 900,
+"lessThan": 950,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 950,
+"lessThan": 1000,
+"singleMfs": 2,
+"jointHoh": 2
+},
+{
+"atLeast": 1000,
+"lessThan": 1050,
+"singleMfs": 3,
+"jointHoh": 3
+},
+{
+"atLeast": 1050,
+"lessThan": 1100,
+"singleMfs": 3,
+"jointHoh": 3
+},
+{
+"atLeast": 1100,
+"lessThan": 1150,
+"singleMfs": 3,
+"jointHoh": 3
+},
+{
+"atLeast": 1150,
+"lessThan": 1200,
+"singleMfs": 4,
+"jointHoh": 3
+},
+{
+"atLeast": 1200,
+"lessThan": 1250,
+"singleMfs": 4,
+"jointHoh": 3
+},
+{
+"atLeast": 1250,
+"lessThan": 1300,
+"singleMfs": 5,
+"jointHoh": 3
+},
+{
+"atLeast": 1300,
+"lessThan": 1350,
+"singleMfs": 5,
+"jointHoh": 3
+},
+{
+"atLeast": 1350,
+"lessThan": 1400,
+"singleMfs": 5,
+"jointHoh": 3
+},
+{
+"atLeast": 1400,
+"lessThan": 1450,
+"singleMfs": 6,
+"jointHoh": 4
+},
+{
+"atLeast": 1450,
+"lessThan": 1500,
+"singleMfs": 6,
+"jointHoh": 4
+},
+{
+"atLeast": 1500,
+"lessThan": 1550,
+"singleMfs": 6,
+"jointHoh": 4
+},
+{
+"atLeast": 1550,
+"lessThan": 1600,
+"singleMfs": 7,
+"jointHoh": 4
+},
+{
+"atLeast": 1600,
+"lessThan": 1650,
+"singleMfs": 7,
+"jointHoh": 4
+},
+{
+"atLeast": 1650,
+"lessThan": 1700,
+"singleMfs": 8,
+"jointHoh": 4
+},
+{
+"atLeast": 1700,
+"lessThan": 1750,
+"singleMfs": 8,
+"jointHoh": 4
+},
+{
+"atLeast": 1750,
+"lessThan": 1800,
+"singleMfs": 8,
+"jointHoh": 4
+},
+{
+"atLeast": 1800,
+"lessThan": 1850,
+"singleMfs": 9,
+"jointHoh": 5
+},
+{
+"atLeast": 1850,
+"lessThan": 1900,
+"singleMfs": 9,
+"jointHoh": 5
+},
+{
+"atLeast": 1900,
+"lessThan": 1950,
+"singleMfs": 9,
+"jointHoh": 5
+},
+{
+"atLeast": 1950,
+"lessThan": 2000,
+"singleMfs": 10,
+"jointHoh": 5
+},
+{
+"atLeast": 2000,
+"lessThan": 2050,
+"singleMfs": 10,
+"jointHoh": 5
+},
+{
+"atLeast": 2050,
+"lessThan": 2100,
+"singleMfs": 11,
+"jointHoh": 6
+},
+{
+"atLeast": 2100,
+"lessThan": 2150,
+"singleMfs": 11,
+"jointHoh": 6
+},
+{
+"atLeast": 2150,
+"lessThan": 2200,
+"singleMfs": 11,
+"jointHoh": 6
+},
+{
+"atLeast": 2200,
+"lessThan": 2250,
+"singleMfs": 12,
+"jointHoh": 7
+},
+{
+"atLeast": 2250,
+"lessThan": 2300,
+"singleMfs": 12,
+"jointHoh": 7
+},
+{
+"atLeast": 2300,
+"lessThan": 2350,
+"singleMfs": 12,
+"jointHoh": 7
+},
+{
+"atLeast": 2350,
+"lessThan": 2400,
+"singleMfs": 13,
+"jointHoh": 8
+},
+{
+"atLeast": 2400,
+"lessThan": 2450,
+"singleMfs": 13,
+"jointHoh": 8
+},
+{
+"atLeast": 2450,
+"lessThan": 2500,
+"singleMfs": 14,
+"jointHoh": 9
+},
+{
+"atLeast": 2500,
+"lessThan": 2550,
+"singleMfs": 14,
+"jointHoh": 9
+},
+{
+"atLeast": 2550,
+"lessThan": 2600,
+"singleMfs": 15,
+"jointHoh": 9
+},
+{
+"atLeast": 2600,
+"lessThan": 2650,
+"singleMfs": 16,
+"jointHoh": 10
+},
+{
+"atLeast": 2650,
+"lessThan": 2700,
+"singleMfs": 17,
+"jointHoh": 10
+},
+{
+"atLeast": 2700,
+"lessThan": 2750,
+"singleMfs": 18,
+"jointHoh": 10
+},
+{
+"atLeast": 2750,
+"lessThan": 2800,
+"singleMfs": 19,
+"jointHoh": 11
+},
+{
+"atLeast": 2800,
+"lessThan": 2850,
+"singleMfs": 19,
+"jointHoh": 11
+},
+{
+"atLeast": 2850,
+"lessThan": 2900,
+"singleMfs": 20,
+"jointHoh": 12
+},
+{
+"atLeast": 2900,
+"lessThan": 2950,
+"singleMfs": 21,
+"jointHoh": 12
+},
+{
+"atLeast": 2950,
+"lessThan": 3000,
+"singleMfs": 22,
+"jointHoh": 12
+},
+{
+"atLeast": 3000,
+"lessThan": 3050,
+"singleMfs": 23,
+"jointHoh": 13
+},
+{
+"atLeast": 3050,
+"lessThan": 3100,
+"singleMfs": 24,
+"jointHoh": 13
+},
+{
+"atLeast": 3100,
+"lessThan": 3150,
+"singleMfs": 25,
+"jointHoh": 13
+},
+{
+"atLeast": 3150,
+"lessThan": 3200,
+"singleMfs": 26,
+"jointHoh": 14
+},
+{
+"atLeast": 3200,
+"lessThan": 3250,
+"singleMfs": 26,
+"jointHoh": 14
+},
+{
+"atLeast": 3250,
+"lessThan": 3300,
+"singleMfs": 27,
+"jointHoh": 15
+},
+{
+"atLeast": 3300,
+"lessThan": 3350,
+"singleMfs": 28,
+"jointHoh": 15
+},
+{
+"atLeast": 3350,
+"lessThan": 3400,
+"singleMfs": 29,
+"jointHoh": 15
+},
+{
+"atLeast": 3400,
+"lessThan": 3450,
+"singleMfs": 30,
+"jointHoh": 16
+},
+{
+"atLeast": 3450,
+"lessThan": 3500,
+"singleMfs": 31,
+"jointHoh": 16
+},
+{
+"atLeast": 3500,
+"lessThan": 3550,
+"singleMfs": 32,
+"jointHoh": 16
+},
+{
+"atLeast": 3550,
+"lessThan": 3600,
+"singleMfs": 33,
+"jointHoh": 17
+},
+{
+"atLeast": 3600,
+"lessThan": 3650,
+"singleMfs": 33,
+"jointHoh": 17
+},
+{
+"atLeast": 3650,
+"lessThan": 3700,
+"singleMfs": 34,
+"jointHoh": 18
+},
+{
+"atLeast": 3700,
+"lessThan": 3750,
+"singleMfs": 35,
+"jointHoh": 18
+},
+{
+"atLeast": 3750,
+"lessThan": 3800,
+"singleMfs": 36,
+"jointHoh": 18
+},
+{
+"atLeast": 3800,
+"lessThan": 3850,
+"singleMfs": 38,
+"jointHoh": 19
+},
+{
+"atLeast": 3850,
+"lessThan": 3900,
+"singleMfs": 39,
+"jointHoh": 19
+},
+{
+"atLeast": 3900,
+"lessThan": 3950,
+"singleMfs": 40,
+"jointHoh": 19
+},
+{
+"atLeast": 3950,
+"lessThan": 4000,
+"singleMfs": 42,
+"jointHoh": 20
+},
+{
+"atLeast": 4000,
+"lessThan": 4050,
+"singleMfs": 43,
+"jointHoh": 20
+},
+{
+"atLeast": 4050,
+"lessThan": 4100,
+"singleMfs": 45,
+"jointHoh": 21
+},
+{
+"atLeast": 4100,
+"lessThan": 4150,
+"singleMfs": 46,
+"jointHoh": 21
+},
+{
+"atLeast": 4150,
+"lessThan": 4200,
+"singleMfs": 47,
+"jointHoh": 21
+},
+{
+"atLeast": 4200,
+"lessThan": 4250,
+"singleMfs": 49,
+"jointHoh": 22
+},
+{
+"atLeast": 4250,
+"lessThan": 4300,
+"singleMfs": 50,
+"jointHoh": 22
+},
+{
+"atLeast": 4300,
+"lessThan": 4350,
+"singleMfs": 51,
+"jointHoh": 22
+},
+{
+"atLeast": 4350,
+"lessThan": 4400,
+"singleMfs": 53,
+"jointHoh": 23
+},
+{
+"atLeast": 4400,
+"lessThan": 4450,
+"singleMfs": 54,
+"jointHoh": 23
+},
+{
+"atLeast": 4450,
+"lessThan": 4500,
+"singleMfs": 56,
+"jointHoh": 24
+},
+{
+"atLeast": 4500,
+"lessThan": 4550,
+"singleMfs": 57,
+"jointHoh": 24
+},
+{
+"atLeast": 4550,
+"lessThan": 4600,
+"singleMfs": 58,
+"jointHoh": 24
+},
+{
+"atLeast": 4600,
+"lessThan": 4650,
+"singleMfs": 60,
+"jointHoh": 25
+},
+{
+"atLeast": 4650,
+"lessThan": 4700,
+"singleMfs": 61,
+"jointHoh": 25
+},
+{
+"atLeast": 4700,
+"lessThan": 4750,
+"singleMfs": 62,
+"jointHoh": 25
+},
+{
+"atLeast": 4750,
+"lessThan": 4800,
+"singleMfs": 64,
+"jointHoh": 26
+},
+{
+"atLeast": 4800,
+"lessThan": 4850,
+"singleMfs": 65,
+"jointHoh": 26
+},
+{
+"atLeast": 4850,
+"lessThan": 4900,
+"singleMfs": 67,
+"jointHoh": 27
+},
+{
+"atLeast": 4900,
+"lessThan": 4950,
+"singleMfs": 68,
+"jointHoh": 27
+},
+{
+"atLeast": 4950,
+"lessThan": 5000,
+"singleMfs": 70,
+"jointHoh": 27
+},
+{
+"atLeast": 5000,
+"lessThan": 5050,
+"singleMfs": 72,
+"jointHoh": 28
+},
+{
+"atLeast": 5050,
+"lessThan": 5100,
+"singleMfs": 74,
+"jointHoh": 29
+},
+{
+"atLeast": 5100,
+"lessThan": 5150,
+"singleMfs": 76,
+"jointHoh": 30
+},
+{
+"atLeast": 5150,
+"lessThan": 5200,
+"singleMfs": 78,
+"jointHoh": 31
+},
+{
+"atLeast": 5200,
+"lessThan": 5250,
+"singleMfs": 79,
+"jointHoh": 31
+},
+{
+"atLeast": 5250,
+"lessThan": 5300,
+"singleMfs": 81,
+"jointHoh": 32
+},
+{
+"atLeast": 5300,
+"lessThan": 5350,
+"singleMfs": 83,
+"jointHoh": 33
+},
+{
+"atLeast": 5350,
+"lessThan": 5400,
+"singleMfs": 85,
+"jointHoh": 34
+},
+{
+"atLeast": 5400,
+"lessThan": 5450,
+"singleMfs": 87,
+"jointHoh": 35
+},
+{
+"atLeast": 5450,
+"lessThan": 5500,
+"singleMfs": 89,
+"jointHoh": 36
+},
+{
+"atLeast": 5500,
+"lessThan": 5550,
+"singleMfs": 91,
+"jointHoh": 37
+},
+{
+"atLeast": 5550,
+"lessThan": 5600,
+"singleMfs": 93,
+"jointHoh": 38
+},
+{
+"atLeast": 5600,
+"lessThan": 5650,
+"singleMfs": 94,
+"jointHoh": 38
+},
+{
+"atLeast": 5650,
+"lessThan": 5700,
+"singleMfs": 96,
+"jointHoh": 39
+},
+{
+"atLeast": 5700,
+"lessThan": 5750,
+"singleMfs": 98,
+"jointHoh": 40
+},
+{
+"atLeast": 5750,
+"lessThan": 5800,
+"singleMfs": 100,
+"jointHoh": 41
+},
+{
+"atLeast": 5800,
+"lessThan": 5850,
+"singleMfs": 102,
+"jointHoh": 42
+},
+{
+"atLeast": 5850,
+"lessThan": 5900,
+"singleMfs": 104,
+"jointHoh": 43
+},
+{
+"atLeast": 5900,
+"lessThan": 5950,
+"singleMfs": 106,
+"jointHoh": 44
+},
+{
+"atLeast": 5950,
+"lessThan": 6000,
+"singleMfs": 108,
+"jointHoh": 45
+},
+{
+"atLeast": 6000,
+"lessThan": 6050,
+"singleMfs": 109,
+"jointHoh": 45
+},
+{
+"atLeast": 6050,
+"lessThan": 6100,
+"singleMfs": 111,
+"jointHoh": 46
+},
+{
+"atLeast": 6100,
+"lessThan": 6150,
+"singleMfs": 113,
+"jointHoh": 47
+},
+{
+"atLeast": 6150,
+"lessThan": 6200,
+"singleMfs": 115,
+"jointHoh": 48
+},
+{
+"atLeast": 6200,
+"lessThan": 6250,
+"singleMfs": 117,
+"jointHoh": 49
+},
+{
+"atLeast": 6250,
+"lessThan": 6300,
+"singleMfs": 119,
+"jointHoh": 50
+},
+{
+"atLeast": 6300,
+"lessThan": 6350,
+"singleMfs": 121,
+"jointHoh": 51
+},
+{
+"atLeast": 6350,
+"lessThan": 6400,
+"singleMfs": 123,
+"jointHoh": 52
+},
+{
+"atLeast": 6400,
+"lessThan": 6450,
+"singleMfs": 124,
+"jointHoh": 52
+},
+{
+"atLeast": 6450,
+"lessThan": 6500,
+"singleMfs": 126,
+"jointHoh": 53
+},
+{
+"atLeast": 6500,
+"lessThan": 6550,
+"singleMfs": 128,
+"jointHoh": 54
+},
+{
+"atLeast": 6550,
+"lessThan": 6600,
+"singleMfs": 130,
+"jointHoh": 55
+},
+{
+"atLeast": 6600,
+"lessThan": 6650,
+"singleMfs": 132,
+"jointHoh": 56
+},
+{
+"atLeast": 6650,
+"lessThan": 6700,
+"singleMfs": 134,
+"jointHoh": 57
+},
+{
+"atLeast": 6700,
+"lessThan": 6750,
+"singleMfs": 136,
+"jointHoh": 58
+},
+{
+"atLeast": 6750,
+"lessThan": 6800,
+"singleMfs": 138,
+"jointHoh": 59
+},
+{
+"atLeast": 6800,
+"lessThan": 6850,
+"singleMfs": 139,
+"jointHoh": 59
+},
+{
+"atLeast": 6850,
+"lessThan": 6900,
+"singleMfs": 141,
+"jointHoh": 60
+},
+{
+"atLeast": 6900,
+"lessThan": 6950,
+"singleMfs": 143,
+"jointHoh": 61
+},
+{
+"atLeast": 6950,
+"lessThan": 7000,
+"singleMfs": 145,
+"jointHoh": 62
+},
+{
+"atLeast": 7000,
+"lessThan": 7050,
+"singleMfs": 147,
+"jointHoh": 63
+},
+{
+"atLeast": 7050,
+"lessThan": 7100,
+"singleMfs": 149,
+"jointHoh": 64
+},
+{
+"atLeast": 7100,
+"lessThan": 7150,
+"singleMfs": 151,
+"jointHoh": 65
+},
+{
+"atLeast": 7150,
+"lessThan": 7200,
+"singleMfs": 153,
+"jointHoh": 66
+},
+{
+"atLeast": 7200,
+"lessThan": 7250,
+"singleMfs": 155,
+"jointHoh": 66
+},
+{
+"atLeast": 7250,
+"lessThan": 7300,
+"singleMfs": 157,
+"jointHoh": 67
+},
+{
+"atLeast": 7300,
+"lessThan": 7350,
+"singleMfs": 159,
+"jointHoh": 68
+},
+{
+"atLeast": 7350,
+"lessThan": 7400,
+"singleMfs": 162,
+"jointHoh": 69
+},
+{
+"atLeast": 7400,
+"lessThan": 7450,
+"singleMfs": 164,
+"jointHoh": 70
+},
+{
+"atLeast": 7450,
+"lessThan": 7500,
+"singleMfs": 167,
+"jointHoh": 71
+},
+{
+"atLeast": 7500,
+"lessThan": 7550,
+"singleMfs": 169,
+"jointHoh": 72
+},
+{
+"atLeast": 7550,
+"lessThan": 7600,
+"singleMfs": 171,
+"jointHoh": 73
+},
+{
+"atLeast": 7600,
+"lessThan": 7650,
+"singleMfs": 174,
+"jointHoh": 75
+},
+{
+"atLeast": 7650,
+"lessThan": 7700,
+"singleMfs": 176,
+"jointHoh": 76
+},
+{
+"atLeast": 7700,
+"lessThan": 7750,
+"singleMfs": 178,
+"jointHoh": 77
+},
+{
+"atLeast": 7750,
+"lessThan": 7800,
+"singleMfs": 181,
+"jointHoh": 79
+},
+{
+"atLeast": 7800,
+"lessThan": 7850,
+"singleMfs": 183,
+"jointHoh": 80
+},
+{
+"atLeast": 7850,
+"lessThan": 7900,
+"singleMfs": 186,
+"jointHoh": 82
+},
+{
+"atLeast": 7900,
+"lessThan": 7950,
+"singleMfs": 188,
+"jointHoh": 83
+},
+{
+"atLeast": 7950,
+"lessThan": 8000,
+"singleMfs": 190,
+"jointHoh": 84
+},
+{
+"atLeast": 8000,
+"lessThan": 8050,
+"singleMfs": 193,
+"jointHoh": 86
+},
+{
+"atLeast": 8050,
+"lessThan": 8100,
+"singleMfs": 195,
+"jointHoh": 87
+},
+{
+"atLeast": 8100,
+"lessThan": 8150,
+"singleMfs": 197,
+"jointHoh": 88
+},
+{
+"atLeast": 8150,
+"lessThan": 8200,
+"singleMfs": 200,
+"jointHoh": 90
+},
+{
+"atLeast": 8200,
+"lessThan": 8250,
+"singleMfs": 202,
+"jointHoh": 91
+},
+{
+"atLeast": 8250,
+"lessThan": 8300,
+"singleMfs": 205,
+"jointHoh": 93
+},
+{
+"atLeast": 8300,
+"lessThan": 8350,
+"singleMfs": 207,
+"jointHoh": 94
+},
+{
+"atLeast": 8350,
+"lessThan": 8400,
+"singleMfs": 209,
+"jointHoh": 95
+},
+{
+"atLeast": 8400,
+"lessThan": 8450,
+"singleMfs": 212,
+"jointHoh": 97
+},
+{
+"atLeast": 8450,
+"lessThan": 8500,
+"singleMfs": 214,
+"jointHoh": 98
+},
+{
+"atLeast": 8500,
+"lessThan": 8550,
+"singleMfs": 216,
+"jointHoh": 99
+},
+{
+"atLeast": 8550,
+"lessThan": 8600,
+"singleMfs": 219,
+"jointHoh": 101
+},
+{
+"atLeast": 8600,
+"lessThan": 8650,
+"singleMfs": 221,
+"jointHoh": 102
+},
+{
+"atLeast": 8650,
+"lessThan": 8700,
+"singleMfs": 224,
+"jointHoh": 104
+},
+{
+"atLeast": 8700,
+"lessThan": 8750,
+"singleMfs": 226,
+"jointHoh": 105
+},
+{
+"atLeast": 8750,
+"lessThan": 8800,
+"singleMfs": 228,
+"jointHoh": 106
+},
+{
+"atLeast": 8800,
+"lessThan": 8850,
+"singleMfs": 231,
+"jointHoh": 108
+},
+{
+"atLeast": 8850,
+"lessThan": 8900,
+"singleMfs": 233,
+"jointHoh": 109
+},
+{
+"atLeast": 8900,
+"lessThan": 8950,
+"singleMfs": 235,
+"jointHoh": 110
+},
+{
+"atLeast": 8950,
+"lessThan": 9000,
+"singleMfs": 238,
+"jointHoh": 112
+},
+{
+"atLeast": 9000,
+"lessThan": 9050,
+"singleMfs": 240,
+"jointHoh": 113
+},
+{
+"atLeast": 9050,
+"lessThan": 9100,
+"singleMfs": 243,
+"jointHoh": 115
+},
+{
+"atLeast": 9100,
+"lessThan": 9150,
+"singleMfs": 245,
+"jointHoh": 116
+},
+{
+"atLeast": 9150,
+"lessThan": 9200,
+"singleMfs": 247,
+"jointHoh": 117
+},
+{
+"atLeast": 9200,
+"lessThan": 9250,
+"singleMfs": 250,
+"jointHoh": 119
+},
+{
+"atLeast": 9250,
+"lessThan": 9300,
+"singleMfs": 252,
+"jointHoh": 120
+},
+{
+"atLeast": 9300,
+"lessThan": 9350,
+"singleMfs": 254,
+"jointHoh": 121
+},
+{
+"atLeast": 9350,
+"lessThan": 9400,
+"singleMfs": 257,
+"jointHoh": 123
+},
+{
+"atLeast": 9400,
+"lessThan": 9450,
+"singleMfs": 259,
+"jointHoh": 124
+},
+{
+"atLeast": 9450,
+"lessThan": 9500,
+"singleMfs": 262,
+"jointHoh": 126
+},
+{
+"atLeast": 9500,
+"lessThan": 9550,
+"singleMfs": 264,
+"jointHoh": 127
+},
+{
+"atLeast": 9550,
+"lessThan": 9600,
+"singleMfs": 266,
+"jointHoh": 128
+},
+{
+"atLeast": 9600,
+"lessThan": 9650,
+"singleMfs": 269,
+"jointHoh": 130
+},
+{
+"atLeast": 9650,
+"lessThan": 9700,
+"singleMfs": 271,
+"jointHoh": 131
+},
+{
+"atLeast": 9700,
+"lessThan": 9750,
+"singleMfs": 273,
+"jointHoh": 132
+},
+{
+"atLeast": 9750,
+"lessThan": 9800,
+"singleMfs": 276,
+"jointHoh": 134
+},
+{
+"atLeast": 9800,
+"lessThan": 9850,
+"singleMfs": 278,
+"jointHoh": 135
+},
+{
+"atLeast": 9850,
+"lessThan": 9900,
+"singleMfs": 281,
+"jointHoh": 137
+},
+{
+"atLeast": 9900,
+"lessThan": 9950,
+"singleMfs": 283,
+"jointHoh": 139
+},
+{
+"atLeast": 9950,
+"lessThan": 10000,
+"singleMfs": 285,
+"jointHoh": 141
+},
+{
+"atLeast": 10000,
+"lessThan": 10050,
+"singleMfs": 288,
+"jointHoh": 143
+},
+{
+"atLeast": 10050,
+"lessThan": 10100,
+"singleMfs": 290,
+"jointHoh": 145
+},
+{
+"atLeast": 10100,
+"lessThan": 10150,
+"singleMfs": 292,
+"jointHoh": 147
+},
+{
+"atLeast": 10150,
+"lessThan": 10200,
+"singleMfs": 295,
+"jointHoh": 149
+},
+{
+"atLeast": 10200,
+"lessThan": 10250,
+"singleMfs": 297,
+"jointHoh": 150
+},
+{
+"atLeast": 10250,
+"lessThan": 10300,
+"singleMfs": 300,
+"jointHoh": 152
+},
+{
+"atLeast": 10300,
+"lessThan": 10350,
+"singleMfs": 302,
+"jointHoh": 154
+},
+{
+"atLeast": 10350,
+"lessThan": 10400,
+"singleMfs": 304,
+"jointHoh": 156
+},
+{
+"atLeast": 10400,
+"lessThan": 10450,
+"singleMfs": 307,
+"jointHoh": 158
+},
+{
+"atLeast": 10450,
+"lessThan": 10500,
+"singleMfs": 309,
+"jointHoh": 160
+},
+{
+"atLeast": 10500,
+"lessThan": 10550,
+"singleMfs": 311,
+"jointHoh": 162
+},
+{
+"atLeast": 10550,
+"lessThan": 10600,
+"singleMfs": 314,
+"jointHoh": 164
+},
+{
+"atLeast": 10600,
+"lessThan": 10650,
+"singleMfs": 316,
+"jointHoh": 165
+},
+{
+"atLeast": 10650,
+"lessThan": 10700,
+"singleMfs": 319,
+"jointHoh": 167
+},
+{
+"atLeast": 10700,
+"lessThan": 10750,
+"singleMfs": 321,
+"jointHoh": 169
+},
+{
+"atLeast": 10750,
+"lessThan": 10800,
+"singleMfs": 323,
+"jointHoh": 171
+},
+{
+"atLeast": 10800,
+"lessThan": 10850,
+"singleMfs": 326,
+"jointHoh": 173
+},
+{
+"atLeast": 10850,
+"lessThan": 10900,
+"singleMfs": 328,
+"jointHoh": 175
+},
+{
+"atLeast": 10900,
+"lessThan": 10950,
+"singleMfs": 330,
+"jointHoh": 177
+},
+{
+"atLeast": 10950,
+"lessThan": 11000,
+"singleMfs": 333,
+"jointHoh": 179
+},
+{
+"atLeast": 11000,
+"lessThan": 11050,
+"singleMfs": 335,
+"jointHoh": 180
+},
+{
+"atLeast": 11050,
+"lessThan": 11100,
+"singleMfs": 338,
+"jointHoh": 182
+},
+{
+"atLeast": 11100,
+"lessThan": 11150,
+"singleMfs": 340,
+"jointHoh": 184
+},
+{
+"atLeast": 11150,
+"lessThan": 11200,
+"singleMfs": 342,
+"jointHoh": 186
+},
+{
+"atLeast": 11200,
+"lessThan": 11250,
+"singleMfs": 345,
+"jointHoh": 188
+},
+{
+"atLeast": 11250,
+"lessThan": 11300,
+"singleMfs": 347,
+"jointHoh": 190
+},
+{
+"atLeast": 11300,
+"lessThan": 11350,
+"singleMfs": 349,
+"jointHoh": 192
+},
+{
+"atLeast": 11350,
+"lessThan": 11400,
+"singleMfs": 352,
+"jointHoh": 194
+},
+{
+"atLeast": 11400,
+"lessThan": 11450,
+"singleMfs": 354,
+"jointHoh": 195
+},
+{
+"atLeast": 11450,
+"lessThan": 11500,
+"singleMfs": 357,
+"jointHoh": 197
+},
+{
+"atLeast": 11500,
+"lessThan": 11550,
+"singleMfs": 359,
+"jointHoh": 199
+},
+{
+"atLeast": 11550,
+"lessThan": 11600,
+"singleMfs": 361,
+"jointHoh": 201
+},
+{
+"atLeast": 11600,
+"lessThan": 11650,
+"singleMfs": 364,
+"jointHoh": 203
+},
+{
+"atLeast": 11650,
+"lessThan": 11700,
+"singleMfs": 366,
+"jointHoh": 205
+},
+{
+"atLeast": 11700,
+"lessThan": 11750,
+"singleMfs": 368,
+"jointHoh": 207
+},
+{
+"atLeast": 11750,
+"lessThan": 11800,
+"singleMfs": 371,
+"jointHoh": 209
+},
+{
+"atLeast": 11800,
+"lessThan": 11850,
+"singleMfs": 373,
+"jointHoh": 210
+},
+{
+"atLeast": 11850,
+"lessThan": 11900,
+"singleMfs": 376,
+"jointHoh": 212
+},
+{
+"atLeast": 11900,
+"lessThan": 11950,
+"singleMfs": 378,
+"jointHoh": 214
+},
+{
+"atLeast": 11950,
+"lessThan": 12000,
+"singleMfs": 380,
+"jointHoh": 216
+},
+{
+"atLeast": 12000,
+"lessThan": 12050,
+"singleMfs": 383,
+"jointHoh": 218
+},
+{
+"atLeast": 12050,
+"lessThan": 12100,
+"singleMfs": 385,
+"jointHoh": 220
+},
+{
+"atLeast": 12100,
+"lessThan": 12150,
+"singleMfs": 387,
+"jointHoh": 222
+},
+{
+"atLeast": 12150,
+"lessThan": 12200,
+"singleMfs": 390,
+"jointHoh": 224
+},
+{
+"atLeast": 12200,
+"lessThan": 12250,
+"singleMfs": 392,
+"jointHoh": 225
+},
+{
+"atLeast": 12250,
+"lessThan": 12300,
+"singleMfs": 395,
+"jointHoh": 227
+},
+{
+"atLeast": 12300,
+"lessThan": 12350,
+"singleMfs": 397,
+"jointHoh": 229
+},
+{
+"atLeast": 12350,
+"lessThan": 12400,
+"singleMfs": 399,
+"jointHoh": 231
+},
+{
+"atLeast": 12400,
+"lessThan": 12450,
+"singleMfs": 402,
+"jointHoh": 233
+},
+{
+"atLeast": 12450,
+"lessThan": 12500,
+"singleMfs": 404,
+"jointHoh": 235
+},
+{
+"atLeast": 12500,
+"lessThan": 12550,
+"singleMfs": 406,
+"jointHoh": 237
+},
+{
+"atLeast": 12550,
+"lessThan": 12600,
+"singleMfs": 409,
+"jointHoh": 239
+},
+{
+"atLeast": 12600,
+"lessThan": 12650,
+"singleMfs": 411,
+"jointHoh": 240
+},
+{
+"atLeast": 12650,
+"lessThan": 12700,
+"singleMfs": 414,
+"jointHoh": 242
+},
+{
+"atLeast": 12700,
+"lessThan": 12750,
+"singleMfs": 416,
+"jointHoh": 244
+},
+{
+"atLeast": 12750,
+"lessThan": 12800,
+"singleMfs": 418,
+"jointHoh": 246
+},
+{
+"atLeast": 12800,
+"lessThan": 12850,
+"singleMfs": 421,
+"jointHoh": 248
+},
+{
+"atLeast": 12850,
+"lessThan": 12900,
+"singleMfs": 423,
+"jointHoh": 250
+},
+{
+"atLeast": 12900,
+"lessThan": 12950,
+"singleMfs": 425,
+"jointHoh": 252
+},
+{
+"atLeast": 12950,
+"lessThan": 13000,
+"singleMfs": 428,
+"jointHoh": 254
+},
+{
+"atLeast": 13000,
+"lessThan": 13050,
+"singleMfs": 430,
+"jointHoh": 255
+},
+{
+"atLeast": 13050,
+"lessThan": 13100,
+"singleMfs": 433,
+"jointHoh": 257
+},
+{
+"atLeast": 13100,
+"lessThan": 13150,
+"singleMfs": 435,
+"jointHoh": 259
+},
+{
+"atLeast": 13150,
+"lessThan": 13200,
+"singleMfs": 437,
+"jointHoh": 261
+},
+{
+"atLeast": 13200,
+"lessThan": 13250,
+"singleMfs": 440,
+"jointHoh": 263
+},
+{
+"atLeast": 13250,
+"lessThan": 13300,
+"singleMfs": 442,
+"jointHoh": 265
+},
+{
+"atLeast": 13300,
+"lessThan": 13350,
+"singleMfs": 444,
+"jointHoh": 267
+},
+{
+"atLeast": 13350,
+"lessThan": 13400,
+"singleMfs": 447,
+"jointHoh": 269
+},
+{
+"atLeast": 13400,
+"lessThan": 13450,
+"singleMfs": 449,
+"jointHoh": 270
+},
+{
+"atLeast": 13450,
+"lessThan": 13500,
+"singleMfs": 452,
+"jointHoh": 272
+},
+{
+"atLeast": 13500,
+"lessThan": 13550,
+"singleMfs": 454,
+"jointHoh": 274
+},
+{
+"atLeast": 13550,
+"lessThan": 13600,
+"singleMfs": 456,
+"jointHoh": 276
+},
+{
+"atLeast": 13600,
+"lessThan": 13650,
+"singleMfs": 459,
+"jointHoh": 278
+},
+{
+"atLeast": 13650,
+"lessThan": 13700,
+"singleMfs": 461,
+"jointHoh": 280
+},
+{
+"atLeast": 13700,
+"lessThan": 13750,
+"singleMfs": 463,
+"jointHoh": 282
+},
+{
+"atLeast": 13750,
+"lessThan": 13800,
+"singleMfs": 466,
+"jointHoh": 284
+},
+{
+"atLeast": 13800,
+"lessThan": 13850,
+"singleMfs": 468,
+"jointHoh": 285
+},
+{
+"atLeast": 13850,
+"lessThan": 13900,
+"singleMfs": 471,
+"jointHoh": 287
+},
+{
+"atLeast": 13900,
+"lessThan": 13950,
+"singleMfs": 473,
+"jointHoh": 289
+},
+{
+"atLeast": 13950,
+"lessThan": 14000,
+"singleMfs": 475,
+"jointHoh": 291
+},
+{
+"atLeast": 14000,
+"lessThan": 14050,
+"singleMfs": 478,
+"jointHoh": 293
+},
+{
+"atLeast": 14050,
+"lessThan": 14100,
+"singleMfs": 480,
+"jointHoh": 295
+},
+{
+"atLeast": 14100,
+"lessThan": 14150,
+"singleMfs": 482,
+"jointHoh": 297
+},
+{
+"atLeast": 14150,
+"lessThan": 14200,
+"singleMfs": 485,
+"jointHoh": 299
+},
+{
+"atLeast": 14200,
+"lessThan": 14250,
+"singleMfs": 487,
+"jointHoh": 300
+},
+{
+"atLeast": 14250,
+"lessThan": 14300,
+"singleMfs": 490,
+"jointHoh": 302
+},
+{
+"atLeast": 14300,
+"lessThan": 14350,
+"singleMfs": 492,
+"jointHoh": 304
+},
+{
+"atLeast": 14350,
+"lessThan": 14400,
+"singleMfs": 494,
+"jointHoh": 306
+},
+{
+"atLeast": 14400,
+"lessThan": 14450,
+"singleMfs": 497,
+"jointHoh": 308
+},
+{
+"atLeast": 14450,
+"lessThan": 14500,
+"singleMfs": 499,
+"jointHoh": 311
+},
+{
+"atLeast": 14500,
+"lessThan": 14550,
+"singleMfs": 501,
+"jointHoh": 313
+},
+{
+"atLeast": 14550,
+"lessThan": 14600,
+"singleMfs": 504,
+"jointHoh": 315
+},
+{
+"atLeast": 14600,
+"lessThan": 14650,
+"singleMfs": 506,
+"jointHoh": 318
+},
+{
+"atLeast": 14650,
+"lessThan": 14700,
+"singleMfs": 509,
+"jointHoh": 320
+},
+{
+"atLeast": 14700,
+"lessThan": 14750,
+"singleMfs": 511,
+"jointHoh": 322
+},
+{
+"atLeast": 14750,
+"lessThan": 14800,
+"singleMfs": 513,
+"jointHoh": 325
+},
+{
+"atLeast": 14800,
+"lessThan": 14850,
+"singleMfs": 516,
+"jointHoh": 327
+},
+{
+"atLeast": 14850,
+"lessThan": 14900,
+"singleMfs": 518,
+"jointHoh": 330
+},
+{
+"atLeast": 14900,
+"lessThan": 14950,
+"singleMfs": 520,
+"jointHoh": 332
+},
+{
+"atLeast": 14950,
+"lessThan": 15000,
+"singleMfs": 523,
+"jointHoh": 334
+},
+{
+"atLeast": 15000,
+"lessThan": 15050,
+"singleMfs": 525,
+"jointHoh": 337
+},
+{
+"atLeast": 15050,
+"lessThan": 15100,
+"singleMfs": 528,
+"jointHoh": 339
+},
+{
+"atLeast": 15100,
+"lessThan": 15150,
+"singleMfs": 530,
+"jointHoh": 341
+},
+{
+"atLeast": 15150,
+"lessThan": 15200,
+"singleMfs": 532,
+"jointHoh": 344
+},
+{
+"atLeast": 15200,
+"lessThan": 15250,
+"singleMfs": 535,
+"jointHoh": 346
+},
+{
+"atLeast": 15250,
+"lessThan": 15300,
+"singleMfs": 537,
+"jointHoh": 349
+},
+{
+"atLeast": 15300,
+"lessThan": 15350,
+"singleMfs": 539,
+"jointHoh": 351
+},
+{
+"atLeast": 15350,
+"lessThan": 15400,
+"singleMfs": 542,
+"jointHoh": 353
+},
+{
+"atLeast": 15400,
+"lessThan": 15450,
+"singleMfs": 544,
+"jointHoh": 356
+},
+{
+"atLeast": 15450,
+"lessThan": 15500,
+"singleMfs": 547,
+"jointHoh": 358
+},
+{
+"atLeast": 15500,
+"lessThan": 15550,
+"singleMfs": 549,
+"jointHoh": 360
+},
+{
+"atLeast": 15550,
+"lessThan": 15600,
+"singleMfs": 551,
+"jointHoh": 363
+},
+{
+"atLeast": 15600,
+"lessThan": 15650,
+"singleMfs": 554,
+"jointHoh": 365
+},
+{
+"atLeast": 15650,
+"lessThan": 15700,
+"singleMfs": 556,
+"jointHoh": 368
+},
+{
+"atLeast": 15700,
+"lessThan": 15750,
+"singleMfs": 558,
+"jointHoh": 370
+},
+{
+"atLeast": 15750,
+"lessThan": 15800,
+"singleMfs": 561,
+"jointHoh": 372
+},
+{
+"atLeast": 15800,
+"lessThan": 15850,
+"singleMfs": 563,
+"jointHoh": 375
+},
+{
+"atLeast": 15850,
+"lessThan": 15900,
+"singleMfs": 566,
+"jointHoh": 377
+},
+{
+"atLeast": 15900,
+"lessThan": 15950,
+"singleMfs": 568,
+"jointHoh": 379
+},
+{
+"atLeast": 15950,
+"lessThan": 16000,
+"singleMfs": 570,
+"jointHoh": 382
+},
+{
+"atLeast": 16000,
+"lessThan": 16050,
+"singleMfs": 573,
+"jointHoh": 384
+},
+{
+"atLeast": 16050,
+"lessThan": 16100,
+"singleMfs": 575,
+"jointHoh": 387
+},
+{
+"atLeast": 16100,
+"lessThan": 16150,
+"singleMfs": 577,
+"jointHoh": 389
+},
+{
+"atLeast": 16150,
+"lessThan": 16200,
+"singleMfs": 580,
+"jointHoh": 391
+},
+{
+"atLeast": 16200,
+"lessThan": 16250,
+"singleMfs": 582,
+"jointHoh": 394
+},
+{
+"atLeast": 16250,
+"lessThan": 16300,
+"singleMfs": 585,
+"jointHoh": 396
+},
+{
+"atLeast": 16300,
+"lessThan": 16350,
+"singleMfs": 587,
+"jointHoh": 398
+},
+{
+"atLeast": 16350,
+"lessThan": 16400,
+"singleMfs": 589,
+"jointHoh": 401
+},
+{
+"atLeast": 16400,
+"lessThan": 16450,
+"singleMfs": 592,
+"jointHoh": 403
+},
+{
+"atLeast": 16450,
+"lessThan": 16500,
+"singleMfs": 594,
+"jointHoh": 406
+},
+{
+"atLeast": 16500,
+"lessThan": 16550,
+"singleMfs": 596,
+"jointHoh": 408
+},
+{
+"atLeast": 16550,
+"lessThan": 16600,
+"singleMfs": 599,
+"jointHoh": 410
+},
+{
+"atLeast": 16600,
+"lessThan": 16650,
+"singleMfs": 601,
+"jointHoh": 413
+},
+{
+"atLeast": 16650,
+"lessThan": 16700,
+"singleMfs": 604,
+"jointHoh": 415
+},
+{
+"atLeast": 16700,
+"lessThan": 16750,
+"singleMfs": 606,
+"jointHoh": 417
+},
+{
+"atLeast": 16750,
+"lessThan": 16800,
+"singleMfs": 608,
+"jointHoh": 420
+},
+{
+"atLeast": 16800,
+"lessThan": 16850,
+"singleMfs": 611,
+"jointHoh": 422
+},
+{
+"atLeast": 16850,
+"lessThan": 16900,
+"singleMfs": 613,
+"jointHoh": 425
+},
+{
+"atLeast": 16900,
+"lessThan": 16950,
+"singleMfs": 615,
+"jointHoh": 427
+},
+{
+"atLeast": 16950,
+"lessThan": 17000,
+"singleMfs": 618,
+"jointHoh": 429
+},
+{
+"atLeast": 17000,
+"lessThan": 17050,
+"singleMfs": 620,
+"jointHoh": 432
+},
+{
+"atLeast": 17050,
+"lessThan": 17100,
+"singleMfs": 623,
+"jointHoh": 434
+},
+{
+"atLeast": 17100,
+"lessThan": 17150,
+"singleMfs": 625,
+"jointHoh": 436
+},
+{
+"atLeast": 17150,
+"lessThan": 17200,
+"singleMfs": 627,
+"jointHoh": 439
+},
+{
+"atLeast": 17200,
+"lessThan": 17250,
+"singleMfs": 630,
+"jointHoh": 441
+},
+{
+"atLeast": 17250,
+"lessThan": 17300,
+"singleMfs": 632,
+"jointHoh": 444
+},
+{
+"atLeast": 17300,
+"lessThan": 17350,
+"singleMfs": 634,
+"jointHoh": 446
+},
+{
+"atLeast": 17350,
+"lessThan": 17400,
+"singleMfs": 637,
+"jointHoh": 448
+},
+{
+"atLeast": 17400,
+"lessThan": 17450,
+"singleMfs": 639,
+"jointHoh": 451
+},
+{
+"atLeast": 17450,
+"lessThan": 17500,
+"singleMfs": 642,
+"jointHoh": 453
+},
+{
+"atLeast": 17500,
+"lessThan": 17550,
+"singleMfs": 644,
+"jointHoh": 455
+},
+{
+"atLeast": 17550,
+"lessThan": 17600,
+"singleMfs": 646,
+"jointHoh": 458
+},
+{
+"atLeast": 17600,
+"lessThan": 17650,
+"singleMfs": 649,
+"jointHoh": 460
+},
+{
+"atLeast": 17650,
+"lessThan": 17700,
+"singleMfs": 651,
+"jointHoh": 463
+},
+{
+"atLeast": 17700,
+"lessThan": 17750,
+"singleMfs": 653,
+"jointHoh": 465
+},
+{
+"atLeast": 17750,
+"lessThan": 17800,
+"singleMfs": 656,
+"jointHoh": 467
+},
+{
+"atLeast": 17800,
+"lessThan": 17850,
+"singleMfs": 658,
+"jointHoh": 470
+},
+{
+"atLeast": 17850,
+"lessThan": 17900,
+"singleMfs": 661,
+"jointHoh": 472
+},
+{
+"atLeast": 17900,
+"lessThan": 17950,
+"singleMfs": 663,
+"jointHoh": 474
+},
+{
+"atLeast": 17950,
+"lessThan": 18000,
+"singleMfs": 665,
+"jointHoh": 477
+},
+{
+"atLeast": 18000,
+"lessThan": 18050,
+"singleMfs": 668,
+"jointHoh": 479
+},
+{
+"atLeast": 18050,
+"lessThan": 18100,
+"singleMfs": 670,
+"jointHoh": 482
+},
+{
+"atLeast": 18100,
+"lessThan": 18150,
+"singleMfs": 672,
+"jointHoh": 484
+},
+{
+"atLeast": 18150,
+"lessThan": 18200,
+"singleMfs": 675,
+"jointHoh": 486
+},
+{
+"atLeast": 18200,
+"lessThan": 18250,
+"singleMfs": 677,
+"jointHoh": 489
+},
+{
+"atLeast": 18250,
+"lessThan": 18300,
+"singleMfs": 680,
+"jointHoh": 491
+},
+{
+"atLeast": 18300,
+"lessThan": 18350,
+"singleMfs": 682,
+"jointHoh": 493
+},
+{
+"atLeast": 18350,
+"lessThan": 18400,
+"singleMfs": 684,
+"jointHoh": 496
+},
+{
+"atLeast": 18400,
+"lessThan": 18450,
+"singleMfs": 687,
+"jointHoh": 498
+},
+{
+"atLeast": 18450,
+"lessThan": 18500,
+"singleMfs": 689,
+"jointHoh": 501
+},
+{
+"atLeast": 18500,
+"lessThan": 18550,
+"singleMfs": 691,
+"jointHoh": 503
+},
+{
+"atLeast": 18550,
+"lessThan": 18600,
+"singleMfs": 694,
+"jointHoh": 505
+},
+{
+"atLeast": 18600,
+"lessThan": 18650,
+"singleMfs": 696,
+"jointHoh": 508
+},
+{
+"atLeast": 18650,
+"lessThan": 18700,
+"singleMfs": 699,
+"jointHoh": 510
+},
+{
+"atLeast": 18700,
+"lessThan": 18750,
+"singleMfs": 701,
+"jointHoh": 512
+},
+{
+"atLeast": 18750,
+"lessThan": 18800,
+"singleMfs": 703,
+"jointHoh": 515
+},
+{
+"atLeast": 18800,
+"lessThan": 18850,
+"singleMfs": 706,
+"jointHoh": 517
+},
+{
+"atLeast": 18850,
+"lessThan": 18900,
+"singleMfs": 708,
+"jointHoh": 520
+},
+{
+"atLeast": 18900,
+"lessThan": 18950,
+"singleMfs": 710,
+"jointHoh": 522
+},
+{
+"atLeast": 18950,
+"lessThan": 19000,
+"singleMfs": 713,
+"jointHoh": 524
+},
+{
+"atLeast": 19000,
+"lessThan": 19050,
+"singleMfs": 715,
+"jointHoh": 527
+},
+{
+"atLeast": 19050,
+"lessThan": 19100,
+"singleMfs": 718,
+"jointHoh": 529
+},
+{
+"atLeast": 19100,
+"lessThan": 19150,
+"singleMfs": 720,
+"jointHoh": 531
+},
+{
+"atLeast": 19150,
+"lessThan": 19200,
+"singleMfs": 722,
+"jointHoh": 534
+},
+{
+"atLeast": 19200,
+"lessThan": 19250,
+"singleMfs": 725,
+"jointHoh": 536
+},
+{
+"atLeast": 19250,
+"lessThan": 19300,
+"singleMfs": 727,
+"jointHoh": 539
+},
+{
+"atLeast": 19300,
+"lessThan": 19350,
+"singleMfs": 729,
+"jointHoh": 541
+},
+{
+"atLeast": 19350,
+"lessThan": 19400,
+"singleMfs": 732,
+"jointHoh": 543
+},
+{
+"atLeast": 19400,
+"lessThan": 19450,
+"singleMfs": 734,
+"jointHoh": 546
+},
+{
+"atLeast": 19450,
+"lessThan": 19500,
+"singleMfs": 737,
+"jointHoh": 548
+},
+{
+"atLeast": 19500,
+"lessThan": 19550,
+"singleMfs": 739,
+"jointHoh": 550
+},
+{
+"atLeast": 19550,
+"lessThan": 19600,
+"singleMfs": 741,
+"jointHoh": 553
+},
+{
+"atLeast": 19600,
+"lessThan": 19650,
+"singleMfs": 744,
+"jointHoh": 555
+},
+{
+"atLeast": 19650,
+"lessThan": 19700,
+"singleMfs": 746,
+"jointHoh": 558
+},
+{
+"atLeast": 19700,
+"lessThan": 19750,
+"singleMfs": 748,
+"jointHoh": 560
+},
+{
+"atLeast": 19750,
+"lessThan": 19800,
+"singleMfs": 751,
+"jointHoh": 562
+},
+{
+"atLeast": 19800,
+"lessThan": 19850,
+"singleMfs": 753,
+"jointHoh": 565
+},
+{
+"atLeast": 19850,
+"lessThan": 19900,
+"singleMfs": 756,
+"jointHoh": 567
+},
+{
+"atLeast": 19900,
+"lessThan": 19950,
+"singleMfs": 758,
+"jointHoh": 569
+},
+{
+"atLeast": 19950,
+"lessThan": 20000,
+"singleMfs": 760,
+"jointHoh": 572
+},
+{
+"atLeast": 20000,
+"lessThan": 20050,
+"singleMfs": 763,
+"jointHoh": 574
+},
+{
+"atLeast": 20050,
+"lessThan": 20100,
+"singleMfs": 765,
+"jointHoh": 577
+},
+{
+"atLeast": 20100,
+"lessThan": 20150,
+"singleMfs": 767,
+"jointHoh": 579
+},
+{
+"atLeast": 20150,
+"lessThan": 20200,
+"singleMfs": 770,
+"jointHoh": 581
+},
+{
+"atLeast": 20200,
+"lessThan": 20250,
+"singleMfs": 772,
+"jointHoh": 584
+},
+{
+"atLeast": 20250,
+"lessThan": 20300,
+"singleMfs": 775,
+"jointHoh": 586
+},
+{
+"atLeast": 20300,
+"lessThan": 20350,
+"singleMfs": 777,
+"jointHoh": 588
+},
+{
+"atLeast": 20350,
+"lessThan": 20400,
+"singleMfs": 779,
+"jointHoh": 591
+},
+{
+"atLeast": 20400,
+"lessThan": 20450,
+"singleMfs": 782,
+"jointHoh": 593
+},
+{
+"atLeast": 20450,
+"lessThan": 20500,
+"singleMfs": 784,
+"jointHoh": 596
+},
+{
+"atLeast": 20500,
+"lessThan": 20550,
+"singleMfs": 786,
+"jointHoh": 598
+},
+{
+"atLeast": 20550,
+"lessThan": 20600,
+"singleMfs": 789,
+"jointHoh": 600
+},
+{
+"atLeast": 20600,
+"lessThan": 20650,
+"singleMfs": 791,
+"jointHoh": 603
+},
+{
+"atLeast": 20650,
+"lessThan": 20700,
+"singleMfs": 794,
+"jointHoh": 605
+},
+{
+"atLeast": 20700,
+"lessThan": 20750,
+"singleMfs": 796,
+"jointHoh": 607
+},
+{
+"atLeast": 20750,
+"lessThan": 20800,
+"singleMfs": 798,
+"jointHoh": 610
+},
+{
+"atLeast": 20800,
+"lessThan": 20850,
+"singleMfs": 801,
+"jointHoh": 612
+},
+{
+"atLeast": 20850,
+"lessThan": 20900,
+"singleMfs": 803,
+"jointHoh": 615
+},
+{
+"atLeast": 20900,
+"lessThan": 20950,
+"singleMfs": 805,
+"jointHoh": 617
+},
+{
+"atLeast": 20950,
+"lessThan": 21000,
+"singleMfs": 808,
+"jointHoh": 619
+},
+{
+"atLeast": 21000,
+"lessThan": 21050,
+"singleMfs": 810,
+"jointHoh": 622
+},
+{
+"atLeast": 21050,
+"lessThan": 21100,
+"singleMfs": 813,
+"jointHoh": 624
+},
+{
+"atLeast": 21100,
+"lessThan": 21150,
+"singleMfs": 815,
+"jointHoh": 626
+},
+{
+"atLeast": 21150,
+"lessThan": 21200,
+"singleMfs": 817,
+"jointHoh": 629
+},
+{
+"atLeast": 21200,
+"lessThan": 21250,
+"singleMfs": 820,
+"jointHoh": 631
+},
+{
+"atLeast": 21250,
+"lessThan": 21300,
+"singleMfs": 822,
+"jointHoh": 634
+},
+{
+"atLeast": 21300,
+"lessThan": 21350,
+"singleMfs": 824,
+"jointHoh": 636
+},
+{
+"atLeast": 21350,
+"lessThan": 21400,
+"singleMfs": 827,
+"jointHoh": 638
+},
+{
+"atLeast": 21400,
+"lessThan": 21450,
+"singleMfs": 829,
+"jointHoh": 641
+},
+{
+"atLeast": 21450,
+"lessThan": 21500,
+"singleMfs": 832,
+"jointHoh": 643
+},
+{
+"atLeast": 21500,
+"lessThan": 21550,
+"singleMfs": 834,
+"jointHoh": 645
+},
+{
+"atLeast": 21550,
+"lessThan": 21600,
+"singleMfs": 836,
+"jointHoh": 648
+},
+{
+"atLeast": 21600,
+"lessThan": 21650,
+"singleMfs": 839,
+"jointHoh": 650
+},
+{
+"atLeast": 21650,
+"lessThan": 21700,
+"singleMfs": 841,
+"jointHoh": 653
+},
+{
+"atLeast": 21700,
+"lessThan": 21750,
+"singleMfs": 843,
+"jointHoh": 655
+},
+{
+"atLeast": 21750,
+"lessThan": 21800,
+"singleMfs": 846,
+"jointHoh": 657
+},
+{
+"atLeast": 21800,
+"lessThan": 21850,
+"singleMfs": 848,
+"jointHoh": 660
+},
+{
+"atLeast": 21850,
+"lessThan": 21900,
+"singleMfs": 851,
+"jointHoh": 662
+},
+{
+"atLeast": 21900,
+"lessThan": 21950,
+"singleMfs": 853,
+"jointHoh": 664
+},
+{
+"atLeast": 21950,
+"lessThan": 22000,
+"singleMfs": 855,
+"jointHoh": 667
+},
+{
+"atLeast": 22000,
+"lessThan": 22050,
+"singleMfs": 858,
+"jointHoh": 669
+},
+{
+"atLeast": 22050,
+"lessThan": 22100,
+"singleMfs": 860,
+"jointHoh": 672
+},
+{
+"atLeast": 22100,
+"lessThan": 22150,
+"singleMfs": 862,
+"jointHoh": 674
+},
+{
+"atLeast": 22150,
+"lessThan": 22200,
+"singleMfs": 865,
+"jointHoh": 676
+},
+{
+"atLeast": 22200,
+"lessThan": 22250,
+"singleMfs": 867,
+"jointHoh": 679
+},
+{
+"atLeast": 22250,
+"lessThan": 22300,
+"singleMfs": 870,
+"jointHoh": 681
+},
+{
+"atLeast": 22300,
+"lessThan": 22350,
+"singleMfs": 872,
+"jointHoh": 683
+},
+{
+"atLeast": 22350,
+"lessThan": 22400,
+"singleMfs": 874,
+"jointHoh": 686
+},
+{
+"atLeast": 22400,
+"lessThan": 22450,
+"singleMfs": 877,
+"jointHoh": 688
+},
+{
+"atLeast": 22450,
+"lessThan": 22500,
+"singleMfs": 879,
+"jointHoh": 691
+},
+{
+"atLeast": 22500,
+"lessThan": 22550,
+"singleMfs": 881,
+"jointHoh": 693
+},
+{
+"atLeast": 22550,
+"lessThan": 22600,
+"singleMfs": 884,
+"jointHoh": 695
+},
+{
+"atLeast": 22600,
+"lessThan": 22650,
+"singleMfs": 886,
+"jointHoh": 698
+},
+{
+"atLeast": 22650,
+"lessThan": 22700,
+"singleMfs": 889,
+"jointHoh": 700
+},
+{
+"atLeast": 22700,
+"lessThan": 22750,
+"singleMfs": 891,
+"jointHoh": 702
+},
+{
+"atLeast": 22750,
+"lessThan": 22800,
+"singleMfs": 893,
+"jointHoh": 705
+},
+{
+"atLeast": 22800,
+"lessThan": 22850,
+"singleMfs": 896,
+"jointHoh": 707
+},
+{
+"atLeast": 22850,
+"lessThan": 22900,
+"singleMfs": 898,
+"jointHoh": 710
+},
+{
+"atLeast": 22900,
+"lessThan": 22950,
+"singleMfs": 900,
+"jointHoh": 712
+},
+{
+"atLeast": 22950,
+"lessThan": 23000,
+"singleMfs": 903,
+"jointHoh": 714
+},
+{
+"atLeast": 23000,
+"lessThan": 23050,
+"singleMfs": 905,
+"jointHoh": 717
+},
+{
+"atLeast": 23050,
+"lessThan": 23100,
+"singleMfs": 908,
+"jointHoh": 719
+},
+{
+"atLeast": 23100,
+"lessThan": 23150,
+"singleMfs": 910,
+"jointHoh": 721
+},
+{
+"atLeast": 23150,
+"lessThan": 23200,
+"singleMfs": 912,
+"jointHoh": 724
+},
+{
+"atLeast": 23200,
+"lessThan": 23250,
+"singleMfs": 915,
+"jointHoh": 726
+},
+{
+"atLeast": 23250,
+"lessThan": 23300,
+"singleMfs": 917,
+"jointHoh": 729
+},
+{
+"atLeast": 23300,
+"lessThan": 23350,
+"singleMfs": 919,
+"jointHoh": 731
+},
+{
+"atLeast": 23350,
+"lessThan": 23400,
+"singleMfs": 922,
+"jointHoh": 733
+},
+{
+"atLeast": 23400,
+"lessThan": 23450,
+"singleMfs": 924,
+"jointHoh": 736
+},
+{
+"atLeast": 23450,
+"lessThan": 23500,
+"singleMfs": 927,
+"jointHoh": 738
+},
+{
+"atLeast": 23500,
+"lessThan": 23550,
+"singleMfs": 929,
+"jointHoh": 740
+},
+{
+"atLeast": 23550,
+"lessThan": 23600,
+"singleMfs": 931,
+"jointHoh": 743
+},
+{
+"atLeast": 23600,
+"lessThan": 23650,
+"singleMfs": 934,
+"jointHoh": 745
+},
+{
+"atLeast": 23650,
+"lessThan": 23700,
+"singleMfs": 936,
+"jointHoh": 748
+},
+{
+"atLeast": 23700,
+"lessThan": 23750,
+"singleMfs": 938,
+"jointHoh": 750
+},
+{
+"atLeast": 23750,
+"lessThan": 23800,
+"singleMfs": 941,
+"jointHoh": 752
+},
+{
+"atLeast": 23800,
+"lessThan": 23850,
+"singleMfs": 943,
+"jointHoh": 755
+},
+{
+"atLeast": 23850,
+"lessThan": 23900,
+"singleMfs": 946,
+"jointHoh": 757
+},
+{
+"atLeast": 23900,
+"lessThan": 23950,
+"singleMfs": 948,
+"jointHoh": 759
+},
+{
+"atLeast": 23950,
+"lessThan": 24000,
+"singleMfs": 950,
+"jointHoh": 762
+},
+{
+"atLeast": 24000,
+"lessThan": 24050,
+"singleMfs": 953,
+"jointHoh": 764
+},
+{
+"atLeast": 24050,
+"lessThan": 24100,
+"singleMfs": 955,
+"jointHoh": 767
+},
+{
+"atLeast": 24100,
+"lessThan": 24150,
+"singleMfs": 957,
+"jointHoh": 769
+},
+{
+"atLeast": 24150,
+"lessThan": 24200,
+"singleMfs": 960,
+"jointHoh": 771
+},
+{
+"atLeast": 24200,
+"lessThan": 24250,
+"singleMfs": 962,
+"jointHoh": 774
+},
+{
+"atLeast": 24250,
+"lessThan": 24300,
+"singleMfs": 965,
+"jointHoh": 776
+},
+{
+"atLeast": 24300,
+"lessThan": 24350,
+"singleMfs": 967,
+"jointHoh": 778
+},
+{
+"atLeast": 24350,
+"lessThan": 24400,
+"singleMfs": 969,
+"jointHoh": 781
+},
+{
+"atLeast": 24400,
+"lessThan": 24450,
+"singleMfs": 972,
+"jointHoh": 783
+},
+{
+"atLeast": 24450,
+"lessThan": 24500,
+"singleMfs": 974,
+"jointHoh": 786
+},
+{
+"atLeast": 24500,
+"lessThan": 24550,
+"singleMfs": 976,
+"jointHoh": 788
+},
+{
+"atLeast": 24550,
+"lessThan": 24600,
+"singleMfs": 979,
+"jointHoh": 790
+},
+{
+"atLeast": 24600,
+"lessThan": 24650,
+"singleMfs": 981,
+"jointHoh": 793
+},
+{
+"atLeast": 24650,
+"lessThan": 24700,
+"singleMfs": 984,
+"jointHoh": 795
+},
+{
+"atLeast": 24700,
+"lessThan": 24750,
+"singleMfs": 986,
+"jointHoh": 797
+},
+{
+"atLeast": 24750,
+"lessThan": 24800,
+"singleMfs": 988,
+"jointHoh": 800
+},
+{
+"atLeast": 24800,
+"lessThan": 24850,
+"singleMfs": 991,
+"jointHoh": 802
+},
+{
+"atLeast": 24850,
+"lessThan": 24900,
+"singleMfs": 993,
+"jointHoh": 805
+},
+{
+"atLeast": 24900,
+"lessThan": 24950,
+"singleMfs": 995,
+"jointHoh": 807
+},
+{
+"atLeast": 24950,
+"lessThan": 25000,
+"singleMfs": 998,
+"jointHoh": 809
+},
+{
+"atLeast": 25000,
+"lessThan": 25050,
+"singleMfs": 1000,
+"jointHoh": 812
+},
+{
+"atLeast": 25050,
+"lessThan": 25100,
+"singleMfs": 1003,
+"jointHoh": 814
+},
+{
+"atLeast": 25100,
+"lessThan": 25150,
+"singleMfs": 1005,
+"jointHoh": 816
+},
+{
+"atLeast": 25150,
+"lessThan": 25200,
+"singleMfs": 1007,
+"jointHoh": 819
+},
+{
+"atLeast": 25200,
+"lessThan": 25250,
+"singleMfs": 1010,
+"jointHoh": 821
+},
+{
+"atLeast": 25250,
+"lessThan": 25300,
+"singleMfs": 1012,
+"jointHoh": 824
+},
+{
+"atLeast": 25300,
+"lessThan": 25350,
+"singleMfs": 1014,
+"jointHoh": 826
+},
+{
+"atLeast": 25350,
+"lessThan": 25400,
+"singleMfs": 1017,
+"jointHoh": 828
+},
+{
+"atLeast": 25400,
+"lessThan": 25450,
+"singleMfs": 1019,
+"jointHoh": 831
+},
+{
+"atLeast": 25450,
+"lessThan": 25500,
+"singleMfs": 1022,
+"jointHoh": 833
+},
+{
+"atLeast": 25500,
+"lessThan": 25550,
+"singleMfs": 1024,
+"jointHoh": 835
+},
+{
+"atLeast": 25550,
+"lessThan": 25600,
+"singleMfs": 1026,
+"jointHoh": 838
+},
+{
+"atLeast": 25600,
+"lessThan": 25650,
+"singleMfs": 1029,
+"jointHoh": 840
+},
+{
+"atLeast": 25650,
+"lessThan": 25700,
+"singleMfs": 1031,
+"jointHoh": 843
+},
+{
+"atLeast": 25700,
+"lessThan": 25750,
+"singleMfs": 1033,
+"jointHoh": 845
+},
+{
+"atLeast": 25750,
+"lessThan": 25800,
+"singleMfs": 1036,
+"jointHoh": 847
+},
+{
+"atLeast": 25800,
+"lessThan": 25850,
+"singleMfs": 1038,
+"jointHoh": 850
+},
+{
+"atLeast": 25850,
+"lessThan": 25900,
+"singleMfs": 1041,
+"jointHoh": 852
+},
+{
+"atLeast": 25900,
+"lessThan": 25950,
+"singleMfs": 1043,
+"jointHoh": 854
+},
+{
+"atLeast": 25950,
+"lessThan": 26000,
+"singleMfs": 1045,
+"jointHoh": 857
+},
+{
+"atLeast": 26000,
+"lessThan": 26050,
+"singleMfs": 1048,
+"jointHoh": 859
+},
+{
+"atLeast": 26050,
+"lessThan": 26100,
+"singleMfs": 1050,
+"jointHoh": 862
+},
+{
+"atLeast": 26100,
+"lessThan": 26150,
+"singleMfs": 1052,
+"jointHoh": 864
+},
+{
+"atLeast": 26150,
+"lessThan": 26200,
+"singleMfs": 1055,
+"jointHoh": 866
+},
+{
+"atLeast": 26200,
+"lessThan": 26250,
+"singleMfs": 1057,
+"jointHoh": 869
+},
+{
+"atLeast": 26250,
+"lessThan": 26300,
+"singleMfs": 1060,
+"jointHoh": 871
+},
+{
+"atLeast": 26300,
+"lessThan": 26350,
+"singleMfs": 1062,
+"jointHoh": 873
+},
+{
+"atLeast": 26350,
+"lessThan": 26400,
+"singleMfs": 1064,
+"jointHoh": 876
+},
+{
+"atLeast": 26400,
+"lessThan": 26450,
+"singleMfs": 1067,
+"jointHoh": 878
+},
+{
+"atLeast": 26450,
+"lessThan": 26500,
+"singleMfs": 1069,
+"jointHoh": 881
+},
+{
+"atLeast": 26500,
+"lessThan": 26550,
+"singleMfs": 1071,
+"jointHoh": 883
+},
+{
+"atLeast": 26550,
+"lessThan": 26600,
+"singleMfs": 1074,
+"jointHoh": 885
+},
+{
+"atLeast": 26600,
+"lessThan": 26650,
+"singleMfs": 1076,
+"jointHoh": 888
+},
+{
+"atLeast": 26650,
+"lessThan": 26700,
+"singleMfs": 1079,
+"jointHoh": 890
+},
+{
+"atLeast": 26700,
+"lessThan": 26750,
+"singleMfs": 1081,
+"jointHoh": 892
+},
+{
+"atLeast": 26750,
+"lessThan": 26800,
+"singleMfs": 1083,
+"jointHoh": 895
+},
+{
+"atLeast": 26800,
+"lessThan": 26850,
+"singleMfs": 1086,
+"jointHoh": 897
+},
+{
+"atLeast": 26850,
+"lessThan": 26900,
+"singleMfs": 1088,
+"jointHoh": 900
+},
+{
+"atLeast": 26900,
+"lessThan": 26950,
+"singleMfs": 1090,
+"jointHoh": 902
+},
+{
+"atLeast": 26950,
+"lessThan": 27000,
+"singleMfs": 1093,
+"jointHoh": 904
+},
+{
+"atLeast": 27000,
+"lessThan": 27050,
+"singleMfs": 1095,
+"jointHoh": 907
+},
+{
+"atLeast": 27050,
+"lessThan": 27100,
+"singleMfs": 1098,
+"jointHoh": 909
+},
+{
+"atLeast": 27100,
+"lessThan": 27150,
+"singleMfs": 1100,
+"jointHoh": 911
+},
+{
+"atLeast": 27150,
+"lessThan": 27200,
+"singleMfs": 1102,
+"jointHoh": 914
+},
+{
+"atLeast": 27200,
+"lessThan": 27250,
+"singleMfs": 1105,
+"jointHoh": 916
+},
+{
+"atLeast": 27250,
+"lessThan": 27300,
+"singleMfs": 1107,
+"jointHoh": 919
+},
+{
+"atLeast": 27300,
+"lessThan": 27350,
+"singleMfs": 1109,
+"jointHoh": 921
+},
+{
+"atLeast": 27350,
+"lessThan": 27400,
+"singleMfs": 1112,
+"jointHoh": 923
+},
+{
+"atLeast": 27400,
+"lessThan": 27450,
+"singleMfs": 1114,
+"jointHoh": 926
+},
+{
+"atLeast": 27450,
+"lessThan": 27500,
+"singleMfs": 1117,
+"jointHoh": 928
+},
+{
+"atLeast": 27500,
+"lessThan": 27550,
+"singleMfs": 1119,
+"jointHoh": 930
+},
+{
+"atLeast": 27550,
+"lessThan": 27600,
+"singleMfs": 1121,
+"jointHoh": 933
+},
+{
+"atLeast": 27600,
+"lessThan": 27650,
+"singleMfs": 1124,
+"jointHoh": 935
+},
+{
+"atLeast": 27650,
+"lessThan": 27700,
+"singleMfs": 1126,
+"jointHoh": 938
+},
+{
+"atLeast": 27700,
+"lessThan": 27750,
+"singleMfs": 1128,
+"jointHoh": 940
+},
+{
+"atLeast": 27750,
+"lessThan": 27800,
+"singleMfs": 1131,
+"jointHoh": 942
+},
+{
+"atLeast": 27800,
+"lessThan": 27850,
+"singleMfs": 1133,
+"jointHoh": 945
+},
+{
+"atLeast": 27850,
+"lessThan": 27900,
+"singleMfs": 1136,
+"jointHoh": 947
+},
+{
+"atLeast": 27900,
+"lessThan": 27950,
+"singleMfs": 1138,
+"jointHoh": 949
+},
+{
+"atLeast": 27950,
+"lessThan": 28000,
+"singleMfs": 1140,
+"jointHoh": 952
+},
+{
+"atLeast": 28000,
+"lessThan": 28050,
+"singleMfs": 1143,
+"jointHoh": 954
+},
+{
+"atLeast": 28050,
+"lessThan": 28100,
+"singleMfs": 1145,
+"jointHoh": 957
+},
+{
+"atLeast": 28100,
+"lessThan": 28150,
+"singleMfs": 1147,
+"jointHoh": 959
+},
+{
+"atLeast": 28150,
+"lessThan": 28200,
+"singleMfs": 1150,
+"jointHoh": 961
+},
+{
+"atLeast": 28200,
+"lessThan": 28250,
+"singleMfs": 1152,
+"jointHoh": 964
+},
+{
+"atLeast": 28250,
+"lessThan": 28300,
+"singleMfs": 1155,
+"jointHoh": 966
+},
+{
+"atLeast": 28300,
+"lessThan": 28350,
+"singleMfs": 1157,
+"jointHoh": 968
+},
+{
+"atLeast": 28350,
+"lessThan": 28400,
+"singleMfs": 1159,
+"jointHoh": 971
+},
+{
+"atLeast": 28400,
+"lessThan": 28450,
+"singleMfs": 1162,
+"jointHoh": 973
+},
+{
+"atLeast": 28450,
+"lessThan": 28500,
+"singleMfs": 1164,
+"jointHoh": 976
+},
+{
+"atLeast": 28500,
+"lessThan": 28550,
+"singleMfs": 1166,
+"jointHoh": 978
+},
+{
+"atLeast": 28550,
+"lessThan": 28600,
+"singleMfs": 1169,
+"jointHoh": 980
+},
+{
+"atLeast": 28600,
+"lessThan": 28650,
+"singleMfs": 1171,
+"jointHoh": 983
+},
+{
+"atLeast": 28650,
+"lessThan": 28700,
+"singleMfs": 1174,
+"jointHoh": 985
+},
+{
+"atLeast": 28700,
+"lessThan": 28750,
+"singleMfs": 1176,
+"jointHoh": 987
+},
+{
+"atLeast": 28750,
+"lessThan": 28800,
+"singleMfs": 1178,
+"jointHoh": 990
+},
+{
+"atLeast": 28800,
+"lessThan": 28850,
+"singleMfs": 1181,
+"jointHoh": 992
+},
+{
+"atLeast": 28850,
+"lessThan": 28900,
+"singleMfs": 1183,
+"jointHoh": 995
+},
+{
+"atLeast": 28900,
+"lessThan": 28950,
+"singleMfs": 1185,
+"jointHoh": 997
+},
+{
+"atLeast": 28950,
+"lessThan": 29000,
+"singleMfs": 1188,
+"jointHoh": 999
+},
+{
+"atLeast": 29000,
+"lessThan": 29050,
+"singleMfs": 1190,
+"jointHoh": 1002
+},
+{
+"atLeast": 29050,
+"lessThan": 29100,
+"singleMfs": 1193,
+"jointHoh": 1004
+},
+{
+"atLeast": 29100,
+"lessThan": 29150,
+"singleMfs": 1195,
+"jointHoh": 1006
+},
+{
+"atLeast": 29150,
+"lessThan": 29200,
+"singleMfs": 1197,
+"jointHoh": 1009
+},
+{
+"atLeast": 29200,
+"lessThan": 29250,
+"singleMfs": 1200,
+"jointHoh": 1011
+},
+{
+"atLeast": 29250,
+"lessThan": 29300,
+"singleMfs": 1202,
+"jointHoh": 1014
+},
+{
+"atLeast": 29300,
+"lessThan": 29350,
+"singleMfs": 1204,
+"jointHoh": 1016
+},
+{
+"atLeast": 29350,
+"lessThan": 29400,
+"singleMfs": 1207,
+"jointHoh": 1018
+},
+{
+"atLeast": 29400,
+"lessThan": 29450,
+"singleMfs": 1209,
+"jointHoh": 1021
+},
+{
+"atLeast": 29450,
+"lessThan": 29500,
+"singleMfs": 1212,
+"jointHoh": 1023
+},
+{
+"atLeast": 29500,
+"lessThan": 29550,
+"singleMfs": 1214,
+"jointHoh": 1025
+},
+{
+"atLeast": 29550,
+"lessThan": 29600,
+"singleMfs": 1216,
+"jointHoh": 1028
+},
+{
+"atLeast": 29600,
+"lessThan": 29650,
+"singleMfs": 1219,
+"jointHoh": 1030
+},
+{
+"atLeast": 29650,
+"lessThan": 29700,
+"singleMfs": 1221,
+"jointHoh": 1033
+},
+{
+"atLeast": 29700,
+"lessThan": 29750,
+"singleMfs": 1223,
+"jointHoh": 1035
+},
+{
+"atLeast": 29750,
+"lessThan": 29800,
+"singleMfs": 1226,
+"jointHoh": 1037
+},
+{
+"atLeast": 29800,
+"lessThan": 29850,
+"singleMfs": 1228,
+"jointHoh": 1040
+},
+{
+"atLeast": 29850,
+"lessThan": 29900,
+"singleMfs": 1231,
+"jointHoh": 1042
+},
+{
+"atLeast": 29900,
+"lessThan": 29950,
+"singleMfs": 1233,
+"jointHoh": 1044
+},
+{
+"atLeast": 29950,
+"lessThan": 30000,
+"singleMfs": 1235,
+"jointHoh": 1047
+},
+{
+"atLeast": 30000,
+"lessThan": 30050,
+"singleMfs": 1238,
+"jointHoh": 1049
+},
+{
+"atLeast": 30050,
+"lessThan": 30100,
+"singleMfs": 1240,
+"jointHoh": 1052
+},
+{
+"atLeast": 30100,
+"lessThan": 30150,
+"singleMfs": 1242,
+"jointHoh": 1054
+},
+{
+"atLeast": 30150,
+"lessThan": 30200,
+"singleMfs": 1245,
+"jointHoh": 1056
+},
+{
+"atLeast": 30200,
+"lessThan": 30250,
+"singleMfs": 1247,
+"jointHoh": 1059
+},
+{
+"atLeast": 30250,
+"lessThan": 30300,
+"singleMfs": 1250,
+"jointHoh": 1061
+},
+{
+"atLeast": 30300,
+"lessThan": 30350,
+"singleMfs": 1252,
+"jointHoh": 1063
+},
+{
+"atLeast": 30350,
+"lessThan": 30400,
+"singleMfs": 1254,
+"jointHoh": 1066
+},
+{
+"atLeast": 30400,
+"lessThan": 30450,
+"singleMfs": 1257,
+"jointHoh": 1068
+},
+{
+"atLeast": 30450,
+"lessThan": 30500,
+"singleMfs": 1259,
+"jointHoh": 1071
+},
+{
+"atLeast": 30500,
+"lessThan": 30550,
+"singleMfs": 1261,
+"jointHoh": 1073
+},
+{
+"atLeast": 30550,
+"lessThan": 30600,
+"singleMfs": 1264,
+"jointHoh": 1075
+},
+{
+"atLeast": 30600,
+"lessThan": 30650,
+"singleMfs": 1266,
+"jointHoh": 1078
+},
+{
+"atLeast": 30650,
+"lessThan": 30700,
+"singleMfs": 1269,
+"jointHoh": 1080
+},
+{
+"atLeast": 30700,
+"lessThan": 30750,
+"singleMfs": 1271,
+"jointHoh": 1082
+},
+{
+"atLeast": 30750,
+"lessThan": 30800,
+"singleMfs": 1273,
+"jointHoh": 1085
+},
+{
+"atLeast": 30800,
+"lessThan": 30850,
+"singleMfs": 1276,
+"jointHoh": 1087
+},
+{
+"atLeast": 30850,
+"lessThan": 30900,
+"singleMfs": 1278,
+"jointHoh": 1090
+},
+{
+"atLeast": 30900,
+"lessThan": 30950,
+"singleMfs": 1280,
+"jointHoh": 1092
+},
+{
+"atLeast": 30950,
+"lessThan": 31000,
+"singleMfs": 1283,
+"jointHoh": 1094
+},
+{
+"atLeast": 31000,
+"lessThan": 31050,
+"singleMfs": 1285,
+"jointHoh": 1097
+},
+{
+"atLeast": 31050,
+"lessThan": 31100,
+"singleMfs": 1288,
+"jointHoh": 1099
+},
+{
+"atLeast": 31100,
+"lessThan": 31150,
+"singleMfs": 1290,
+"jointHoh": 1101
+},
+{
+"atLeast": 31150,
+"lessThan": 31200,
+"singleMfs": 1292,
+"jointHoh": 1104
+},
+{
+"atLeast": 31200,
+"lessThan": 31250,
+"singleMfs": 1295,
+"jointHoh": 1106
+},
+{
+"atLeast": 31250,
+"lessThan": 31300,
+"singleMfs": 1297,
+"jointHoh": 1109
+},
+{
+"atLeast": 31300,
+"lessThan": 31350,
+"singleMfs": 1299,
+"jointHoh": 1111
+},
+{
+"atLeast": 31350,
+"lessThan": 31400,
+"singleMfs": 1302,
+"jointHoh": 1113
+},
+{
+"atLeast": 31400,
+"lessThan": 31450,
+"singleMfs": 1304,
+"jointHoh": 1116
+},
+{
+"atLeast": 31450,
+"lessThan": 31500,
+"singleMfs": 1307,
+"jointHoh": 1118
+},
+{
+"atLeast": 31500,
+"lessThan": 31550,
+"singleMfs": 1309,
+"jointHoh": 1120
+},
+{
+"atLeast": 31550,
+"lessThan": 31600,
+"singleMfs": 1311,
+"jointHoh": 1123
+},
+{
+"atLeast": 31600,
+"lessThan": 31650,
+"singleMfs": 1314,
+"jointHoh": 1125
+},
+{
+"atLeast": 31650,
+"lessThan": 31700,
+"singleMfs": 1316,
+"jointHoh": 1128
+},
+{
+"atLeast": 31700,
+"lessThan": 31750,
+"singleMfs": 1318,
+"jointHoh": 1130
+},
+{
+"atLeast": 31750,
+"lessThan": 31800,
+"singleMfs": 1321,
+"jointHoh": 1132
+},
+{
+"atLeast": 31800,
+"lessThan": 31850,
+"singleMfs": 1323,
+"jointHoh": 1135
+},
+{
+"atLeast": 31850,
+"lessThan": 31900,
+"singleMfs": 1326,
+"jointHoh": 1137
+},
+{
+"atLeast": 31900,
+"lessThan": 31950,
+"singleMfs": 1328,
+"jointHoh": 1139
+},
+{
+"atLeast": 31950,
+"lessThan": 32000,
+"singleMfs": 1330,
+"jointHoh": 1142
+},
+{
+"atLeast": 32000,
+"lessThan": 32050,
+"singleMfs": 1333,
+"jointHoh": 1144
+},
+{
+"atLeast": 32050,
+"lessThan": 32100,
+"singleMfs": 1335,
+"jointHoh": 1147
+},
+{
+"atLeast": 32100,
+"lessThan": 32150,
+"singleMfs": 1337,
+"jointHoh": 1149
+},
+{
+"atLeast": 32150,
+"lessThan": 32200,
+"singleMfs": 1340,
+"jointHoh": 1151
+},
+{
+"atLeast": 32200,
+"lessThan": 32250,
+"singleMfs": 1342,
+"jointHoh": 1154
+},
+{
+"atLeast": 32250,
+"lessThan": 32300,
+"singleMfs": 1345,
+"jointHoh": 1156
+},
+{
+"atLeast": 32300,
+"lessThan": 32350,
+"singleMfs": 1347,
+"jointHoh": 1158
+},
+{
+"atLeast": 32350,
+"lessThan": 32400,
+"singleMfs": 1349,
+"jointHoh": 1161
+},
+{
+"atLeast": 32400,
+"lessThan": 32450,
+"singleMfs": 1352,
+"jointHoh": 1163
+},
+{
+"atLeast": 32450,
+"lessThan": 32500,
+"singleMfs": 1354,
+"jointHoh": 1166
+},
+{
+"atLeast": 32500,
+"lessThan": 32550,
+"singleMfs": 1356,
+"jointHoh": 1168
+},
+{
+"atLeast": 32550,
+"lessThan": 32600,
+"singleMfs": 1359,
+"jointHoh": 1170
+},
+{
+"atLeast": 32600,
+"lessThan": 32650,
+"singleMfs": 1361,
+"jointHoh": 1173
+},
+{
+"atLeast": 32650,
+"lessThan": 32700,
+"singleMfs": 1364,
+"jointHoh": 1175
+},
+{
+"atLeast": 32700,
+"lessThan": 32750,
+"singleMfs": 1366,
+"jointHoh": 1177
+},
+{
+"atLeast": 32750,
+"lessThan": 32800,
+"singleMfs": 1368,
+"jointHoh": 1180
+},
+{
+"atLeast": 32800,
+"lessThan": 32850,
+"singleMfs": 1371,
+"jointHoh": 1182
+},
+{
+"atLeast": 32850,
+"lessThan": 32900,
+"singleMfs": 1373,
+"jointHoh": 1185
+},
+{
+"atLeast": 32900,
+"lessThan": 32950,
+"singleMfs": 1375,
+"jointHoh": 1187
+},
+{
+"atLeast": 32950,
+"lessThan": 33000,
+"singleMfs": 1378,
+"jointHoh": 1189
+},
+{
+"atLeast": 33000,
+"lessThan": 33050,
+"singleMfs": 1380,
+"jointHoh": 1192
+},
+{
+"atLeast": 33050,
+"lessThan": 33100,
+"singleMfs": 1383,
+"jointHoh": 1194
+},
+{
+"atLeast": 33100,
+"lessThan": 33150,
+"singleMfs": 1385,
+"jointHoh": 1196
+},
+{
+"atLeast": 33150,
+"lessThan": 33200,
+"singleMfs": 1387,
+"jointHoh": 1199
+},
+{
+"atLeast": 33200,
+"lessThan": 33250,
+"singleMfs": 1390,
+"jointHoh": 1201
+},
+{
+"atLeast": 33250,
+"lessThan": 33300,
+"singleMfs": 1392,
+"jointHoh": 1204
+},
+{
+"atLeast": 33300,
+"lessThan": 33350,
+"singleMfs": 1394,
+"jointHoh": 1206
+},
+{
+"atLeast": 33350,
+"lessThan": 33400,
+"singleMfs": 1397,
+"jointHoh": 1208
+},
+{
+"atLeast": 33400,
+"lessThan": 33450,
+"singleMfs": 1399,
+"jointHoh": 1211
+},
+{
+"atLeast": 33450,
+"lessThan": 33500,
+"singleMfs": 1402,
+"jointHoh": 1213
+},
+{
+"atLeast": 33500,
+"lessThan": 33550,
+"singleMfs": 1404,
+"jointHoh": 1215
+},
+{
+"atLeast": 33550,
+"lessThan": 33600,
+"singleMfs": 1406,
+"jointHoh": 1218
+},
+{
+"atLeast": 33600,
+"lessThan": 33650,
+"singleMfs": 1409,
+"jointHoh": 1220
+},
+{
+"atLeast": 33650,
+"lessThan": 33700,
+"singleMfs": 1411,
+"jointHoh": 1223
+},
+{
+"atLeast": 33700,
+"lessThan": 33750,
+"singleMfs": 1413,
+"jointHoh": 1225
+},
+{
+"atLeast": 33750,
+"lessThan": 33800,
+"singleMfs": 1416,
+"jointHoh": 1227
+},
+{
+"atLeast": 33800,
+"lessThan": 33850,
+"singleMfs": 1418,
+"jointHoh": 1230
+},
+{
+"atLeast": 33850,
+"lessThan": 33900,
+"singleMfs": 1421,
+"jointHoh": 1232
+},
+{
+"atLeast": 33900,
+"lessThan": 33950,
+"singleMfs": 1423,
+"jointHoh": 1234
+},
+{
+"atLeast": 33950,
+"lessThan": 34000,
+"singleMfs": 1425,
+"jointHoh": 1237
+},
+{
+"atLeast": 34000,
+"lessThan": 34050,
+"singleMfs": 1428,
+"jointHoh": 1239
+},
+{
+"atLeast": 34050,
+"lessThan": 34100,
+"singleMfs": 1430,
+"jointHoh": 1242
+},
+{
+"atLeast": 34100,
+"lessThan": 34150,
+"singleMfs": 1432,
+"jointHoh": 1244
+},
+{
+"atLeast": 34150,
+"lessThan": 34200,
+"singleMfs": 1435,
+"jointHoh": 1246
+},
+{
+"atLeast": 34200,
+"lessThan": 34250,
+"singleMfs": 1437,
+"jointHoh": 1249
+},
+{
+"atLeast": 34250,
+"lessThan": 34300,
+"singleMfs": 1440,
+"jointHoh": 1251
+},
+{
+"atLeast": 34300,
+"lessThan": 34350,
+"singleMfs": 1442,
+"jointHoh": 1253
+},
+{
+"atLeast": 34350,
+"lessThan": 34400,
+"singleMfs": 1444,
+"jointHoh": 1256
+},
+{
+"atLeast": 34400,
+"lessThan": 34450,
+"singleMfs": 1447,
+"jointHoh": 1258
+},
+{
+"atLeast": 34450,
+"lessThan": 34500,
+"singleMfs": 1449,
+"jointHoh": 1261
+},
+{
+"atLeast": 34500,
+"lessThan": 34550,
+"singleMfs": 1451,
+"jointHoh": 1263
+},
+{
+"atLeast": 34550,
+"lessThan": 34600,
+"singleMfs": 1454,
+"jointHoh": 1265
+},
+{
+"atLeast": 34600,
+"lessThan": 34650,
+"singleMfs": 1456,
+"jointHoh": 1268
+},
+{
+"atLeast": 34650,
+"lessThan": 34700,
+"singleMfs": 1459,
+"jointHoh": 1270
+},
+{
+"atLeast": 34700,
+"lessThan": 34750,
+"singleMfs": 1461,
+"jointHoh": 1272
+},
+{
+"atLeast": 34750,
+"lessThan": 34800,
+"singleMfs": 1463,
+"jointHoh": 1275
+},
+{
+"atLeast": 34800,
+"lessThan": 34850,
+"singleMfs": 1466,
+"jointHoh": 1277
+},
+{
+"atLeast": 34850,
+"lessThan": 34900,
+"singleMfs": 1468,
+"jointHoh": 1280
+},
+{
+"atLeast": 34900,
+"lessThan": 34950,
+"singleMfs": 1470,
+"jointHoh": 1282
+},
+{
+"atLeast": 34950,
+"lessThan": 35000,
+"singleMfs": 1473,
+"jointHoh": 1284
+},
+{
+"atLeast": 35000,
+"lessThan": 35050,
+"singleMfs": 1475,
+"jointHoh": 1287
+},
+{
+"atLeast": 35050,
+"lessThan": 35100,
+"singleMfs": 1478,
+"jointHoh": 1289
+},
+{
+"atLeast": 35100,
+"lessThan": 35150,
+"singleMfs": 1480,
+"jointHoh": 1291
+},
+{
+"atLeast": 35150,
+"lessThan": 35200,
+"singleMfs": 1482,
+"jointHoh": 1294
+},
+{
+"atLeast": 35200,
+"lessThan": 35250,
+"singleMfs": 1485,
+"jointHoh": 1296
+},
+{
+"atLeast": 35250,
+"lessThan": 35300,
+"singleMfs": 1487,
+"jointHoh": 1299
+},
+{
+"atLeast": 35300,
+"lessThan": 35350,
+"singleMfs": 1489,
+"jointHoh": 1301
+},
+{
+"atLeast": 35350,
+"lessThan": 35400,
+"singleMfs": 1492,
+"jointHoh": 1303
+},
+{
+"atLeast": 35400,
+"lessThan": 35450,
+"singleMfs": 1494,
+"jointHoh": 1306
+},
+{
+"atLeast": 35450,
+"lessThan": 35500,
+"singleMfs": 1497,
+"jointHoh": 1308
+},
+{
+"atLeast": 35500,
+"lessThan": 35550,
+"singleMfs": 1499,
+"jointHoh": 1310
+},
+{
+"atLeast": 35550,
+"lessThan": 35600,
+"singleMfs": 1501,
+"jointHoh": 1313
+},
+{
+"atLeast": 35600,
+"lessThan": 35650,
+"singleMfs": 1504,
+"jointHoh": 1315
+},
+{
+"atLeast": 35650,
+"lessThan": 35700,
+"singleMfs": 1506,
+"jointHoh": 1318
+},
+{
+"atLeast": 35700,
+"lessThan": 35750,
+"singleMfs": 1508,
+"jointHoh": 1320
+},
+{
+"atLeast": 35750,
+"lessThan": 35800,
+"singleMfs": 1511,
+"jointHoh": 1322
+},
+{
+"atLeast": 35800,
+"lessThan": 35850,
+"singleMfs": 1513,
+"jointHoh": 1325
+},
+{
+"atLeast": 35850,
+"lessThan": 35900,
+"singleMfs": 1516,
+"jointHoh": 1327
+},
+{
+"atLeast": 35900,
+"lessThan": 35950,
+"singleMfs": 1518,
+"jointHoh": 1329
+},
+{
+"atLeast": 35950,
+"lessThan": 36000,
+"singleMfs": 1520,
+"jointHoh": 1332
+},
+{
+"atLeast": 36000,
+"lessThan": 36050,
+"singleMfs": 1523,
+"jointHoh": 1334
+},
+{
+"atLeast": 36050,
+"lessThan": 36100,
+"singleMfs": 1525,
+"jointHoh": 1337
+},
+{
+"atLeast": 36100,
+"lessThan": 36150,
+"singleMfs": 1527,
+"jointHoh": 1339
+},
+{
+"atLeast": 36150,
+"lessThan": 36200,
+"singleMfs": 1530,
+"jointHoh": 1341
+},
+{
+"atLeast": 36200,
+"lessThan": 36250,
+"singleMfs": 1532,
+"jointHoh": 1344
+},
+{
+"atLeast": 36250,
+"lessThan": 36300,
+"singleMfs": 1535,
+"jointHoh": 1346
+},
+{
+"atLeast": 36300,
+"lessThan": 36350,
+"singleMfs": 1537,
+"jointHoh": 1348
+},
+{
+"atLeast": 36350,
+"lessThan": 36400,
+"singleMfs": 1539,
+"jointHoh": 1351
+},
+{
+"atLeast": 36400,
+"lessThan": 36450,
+"singleMfs": 1542,
+"jointHoh": 1353
+},
+{
+"atLeast": 36450,
+"lessThan": 36500,
+"singleMfs": 1544,
+"jointHoh": 1356
+},
+{
+"atLeast": 36500,
+"lessThan": 36550,
+"singleMfs": 1546,
+"jointHoh": 1358
+},
+{
+"atLeast": 36550,
+"lessThan": 36600,
+"singleMfs": 1549,
+"jointHoh": 1360
+},
+{
+"atLeast": 36600,
+"lessThan": 36650,
+"singleMfs": 1551,
+"jointHoh": 1363
+},
+{
+"atLeast": 36650,
+"lessThan": 36700,
+"singleMfs": 1554,
+"jointHoh": 1365
+},
+{
+"atLeast": 36700,
+"lessThan": 36750,
+"singleMfs": 1556,
+"jointHoh": 1367
+},
+{
+"atLeast": 36750,
+"lessThan": 36800,
+"singleMfs": 1558,
+"jointHoh": 1370
+},
+{
+"atLeast": 36800,
+"lessThan": 36850,
+"singleMfs": 1561,
+"jointHoh": 1372
+},
+{
+"atLeast": 36850,
+"lessThan": 36900,
+"singleMfs": 1563,
+"jointHoh": 1375
+},
+{
+"atLeast": 36900,
+"lessThan": 36950,
+"singleMfs": 1565,
+"jointHoh": 1377
+},
+{
+"atLeast": 36950,
+"lessThan": 37000,
+"singleMfs": 1568,
+"jointHoh": 1379
+},
+{
+"atLeast": 37000,
+"lessThan": 37050,
+"singleMfs": 1570,
+"jointHoh": 1382
+},
+{
+"atLeast": 37050,
+"lessThan": 37100,
+"singleMfs": 1573,
+"jointHoh": 1384
+},
+{
+"atLeast": 37100,
+"lessThan": 37150,
+"singleMfs": 1575,
+"jointHoh": 1386
+},
+{
+"atLeast": 37150,
+"lessThan": 37200,
+"singleMfs": 1577,
+"jointHoh": 1389
+},
+{
+"atLeast": 37200,
+"lessThan": 37250,
+"singleMfs": 1580,
+"jointHoh": 1391
+},
+{
+"atLeast": 37250,
+"lessThan": 37300,
+"singleMfs": 1582,
+"jointHoh": 1394
+},
+{
+"atLeast": 37300,
+"lessThan": 37350,
+"singleMfs": 1584,
+"jointHoh": 1396
+},
+{
+"atLeast": 37350,
+"lessThan": 37400,
+"singleMfs": 1587,
+"jointHoh": 1398
+},
+{
+"atLeast": 37400,
+"lessThan": 37450,
+"singleMfs": 1589,
+"jointHoh": 1401
+},
+{
+"atLeast": 37450,
+"lessThan": 37500,
+"singleMfs": 1592,
+"jointHoh": 1403
+},
+{
+"atLeast": 37500,
+"lessThan": 37550,
+"singleMfs": 1594,
+"jointHoh": 1405
+},
+{
+"atLeast": 37550,
+"lessThan": 37600,
+"singleMfs": 1596,
+"jointHoh": 1408
+},
+{
+"atLeast": 37600,
+"lessThan": 37650,
+"singleMfs": 1599,
+"jointHoh": 1410
+},
+{
+"atLeast": 37650,
+"lessThan": 37700,
+"singleMfs": 1601,
+"jointHoh": 1413
+},
+{
+"atLeast": 37700,
+"lessThan": 37750,
+"singleMfs": 1603,
+"jointHoh": 1415
+},
+{
+"atLeast": 37750,
+"lessThan": 37800,
+"singleMfs": 1606,
+"jointHoh": 1417
+},
+{
+"atLeast": 37800,
+"lessThan": 37850,
+"singleMfs": 1608,
+"jointHoh": 1420
+},
+{
+"atLeast": 37850,
+"lessThan": 37900,
+"singleMfs": 1611,
+"jointHoh": 1422
+},
+{
+"atLeast": 37900,
+"lessThan": 37950,
+"singleMfs": 1613,
+"jointHoh": 1424
+},
+{
+"atLeast": 37950,
+"lessThan": 38000,
+"singleMfs": 1615,
+"jointHoh": 1427
+},
+{
+"atLeast": 38000,
+"lessThan": 38050,
+"singleMfs": 1618,
+"jointHoh": 1429
+},
+{
+"atLeast": 38050,
+"lessThan": 38100,
+"singleMfs": 1620,
+"jointHoh": 1432
+},
+{
+"atLeast": 38100,
+"lessThan": 38150,
+"singleMfs": 1622,
+"jointHoh": 1434
+},
+{
+"atLeast": 38150,
+"lessThan": 38200,
+"singleMfs": 1625,
+"jointHoh": 1436
+},
+{
+"atLeast": 38200,
+"lessThan": 38250,
+"singleMfs": 1627,
+"jointHoh": 1439
+},
+{
+"atLeast": 38250,
+"lessThan": 38300,
+"singleMfs": 1630,
+"jointHoh": 1441
+},
+{
+"atLeast": 38300,
+"lessThan": 38350,
+"singleMfs": 1632,
+"jointHoh": 1443
+},
+{
+"atLeast": 38350,
+"lessThan": 38400,
+"singleMfs": 1634,
+"jointHoh": 1446
+},
+{
+"atLeast": 38400,
+"lessThan": 38450,
+"singleMfs": 1637,
+"jointHoh": 1448
+},
+{
+"atLeast": 38450,
+"lessThan": 38500,
+"singleMfs": 1639,
+"jointHoh": 1451
+},
+{
+"atLeast": 38500,
+"lessThan": 38550,
+"singleMfs": 1641,
+"jointHoh": 1453
+},
+{
+"atLeast": 38550,
+"lessThan": 38600,
+"singleMfs": 1644,
+"jointHoh": 1455
+},
+{
+"atLeast": 38600,
+"lessThan": 38650,
+"singleMfs": 1646,
+"jointHoh": 1458
+},
+{
+"atLeast": 38650,
+"lessThan": 38700,
+"singleMfs": 1649,
+"jointHoh": 1460
+},
+{
+"atLeast": 38700,
+"lessThan": 38750,
+"singleMfs": 1651,
+"jointHoh": 1462
+},
+{
+"atLeast": 38750,
+"lessThan": 38800,
+"singleMfs": 1653,
+"jointHoh": 1465
+},
+{
+"atLeast": 38800,
+"lessThan": 38850,
+"singleMfs": 1656,
+"jointHoh": 1467
+},
+{
+"atLeast": 38850,
+"lessThan": 38900,
+"singleMfs": 1658,
+"jointHoh": 1470
+},
+{
+"atLeast": 38900,
+"lessThan": 38950,
+"singleMfs": 1660,
+"jointHoh": 1472
+},
+{
+"atLeast": 38950,
+"lessThan": 39000,
+"singleMfs": 1663,
+"jointHoh": 1474
+},
+{
+"atLeast": 39000,
+"lessThan": 39050,
+"singleMfs": 1665,
+"jointHoh": 1477
+},
+{
+"atLeast": 39050,
+"lessThan": 39100,
+"singleMfs": 1668,
+"jointHoh": 1479
+},
+{
+"atLeast": 39100,
+"lessThan": 39150,
+"singleMfs": 1670,
+"jointHoh": 1481
+},
+{
+"atLeast": 39150,
+"lessThan": 39200,
+"singleMfs": 1672,
+"jointHoh": 1484
+},
+{
+"atLeast": 39200,
+"lessThan": 39250,
+"singleMfs": 1675,
+"jointHoh": 1486
+},
+{
+"atLeast": 39250,
+"lessThan": 39300,
+"singleMfs": 1677,
+"jointHoh": 1489
+},
+{
+"atLeast": 39300,
+"lessThan": 39350,
+"singleMfs": 1679,
+"jointHoh": 1491
+},
+{
+"atLeast": 39350,
+"lessThan": 39400,
+"singleMfs": 1682,
+"jointHoh": 1493
+},
+{
+"atLeast": 39400,
+"lessThan": 39450,
+"singleMfs": 1684,
+"jointHoh": 1496
+},
+{
+"atLeast": 39450,
+"lessThan": 39500,
+"singleMfs": 1687,
+"jointHoh": 1498
+},
+{
+"atLeast": 39500,
+"lessThan": 39550,
+"singleMfs": 1689,
+"jointHoh": 1500
+},
+{
+"atLeast": 39550,
+"lessThan": 39600,
+"singleMfs": 1691,
+"jointHoh": 1503
+},
+{
+"atLeast": 39600,
+"lessThan": 39650,
+"singleMfs": 1694,
+"jointHoh": 1505
+},
+{
+"atLeast": 39650,
+"lessThan": 39700,
+"singleMfs": 1696,
+"jointHoh": 1508
+},
+{
+"atLeast": 39700,
+"lessThan": 39750,
+"singleMfs": 1698,
+"jointHoh": 1510
+},
+{
+"atLeast": 39750,
+"lessThan": 39800,
+"singleMfs": 1701,
+"jointHoh": 1512
+},
+{
+"atLeast": 39800,
+"lessThan": 39850,
+"singleMfs": 1703,
+"jointHoh": 1515
+},
+{
+"atLeast": 39850,
+"lessThan": 39900,
+"singleMfs": 1706,
+"jointHoh": 1517
+},
+{
+"atLeast": 39900,
+"lessThan": 39950,
+"singleMfs": 1708,
+"jointHoh": 1519
+},
+{
+"atLeast": 39950,
+"lessThan": 40000,
+"singleMfs": 1710,
+"jointHoh": 1522
+},
+{
+"atLeast": 40000,
+"lessThan": 40050,
+"singleMfs": 1713,
+"jointHoh": 1524
+},
+{
+"atLeast": 40050,
+"lessThan": 40100,
+"singleMfs": 1715,
+"jointHoh": 1527
+},
+{
+"atLeast": 40100,
+"lessThan": 40150,
+"singleMfs": 1717,
+"jointHoh": 1529
+},
+{
+"atLeast": 40150,
+"lessThan": 40200,
+"singleMfs": 1720,
+"jointHoh": 1531
+},
+{
+"atLeast": 40200,
+"lessThan": 40250,
+"singleMfs": 1722,
+"jointHoh": 1534
+},
+{
+"atLeast": 40250,
+"lessThan": 40300,
+"singleMfs": 1725,
+"jointHoh": 1536
+},
+{
+"atLeast": 40300,
+"lessThan": 40350,
+"singleMfs": 1727,
+"jointHoh": 1538
+},
+{
+"atLeast": 40350,
+"lessThan": 40400,
+"singleMfs": 1729,
+"jointHoh": 1541
+},
+{
+"atLeast": 40400,
+"lessThan": 40450,
+"singleMfs": 1732,
+"jointHoh": 1543
+},
+{
+"atLeast": 40450,
+"lessThan": 40500,
+"singleMfs": 1734,
+"jointHoh": 1546
+},
+{
+"atLeast": 40500,
+"lessThan": 40550,
+"singleMfs": 1736,
+"jointHoh": 1548
+},
+{
+"atLeast": 40550,
+"lessThan": 40600,
+"singleMfs": 1739,
+"jointHoh": 1550
+},
+{
+"atLeast": 40600,
+"lessThan": 40650,
+"singleMfs": 1741,
+"jointHoh": 1553
+},
+{
+"atLeast": 40650,
+"lessThan": 40700,
+"singleMfs": 1744,
+"jointHoh": 1555
+},
+{
+"atLeast": 40700,
+"lessThan": 40750,
+"singleMfs": 1746,
+"jointHoh": 1557
+},
+{
+"atLeast": 40750,
+"lessThan": 40800,
+"singleMfs": 1748,
+"jointHoh": 1560
+},
+{
+"atLeast": 40800,
+"lessThan": 40850,
+"singleMfs": 1751,
+"jointHoh": 1562
+},
+{
+"atLeast": 40850,
+"lessThan": 40900,
+"singleMfs": 1753,
+"jointHoh": 1565
+},
+{
+"atLeast": 40900,
+"lessThan": 40950,
+"singleMfs": 1755,
+"jointHoh": 1567
+},
+{
+"atLeast": 40950,
+"lessThan": 41000,
+"singleMfs": 1758,
+"jointHoh": 1569
+},
+{
+"atLeast": 41000,
+"lessThan": 41050,
+"singleMfs": 1760,
+"jointHoh": 1572
+},
+{
+"atLeast": 41050,
+"lessThan": 41100,
+"singleMfs": 1763,
+"jointHoh": 1574
+},
+{
+"atLeast": 41100,
+"lessThan": 41150,
+"singleMfs": 1765,
+"jointHoh": 1576
+},
+{
+"atLeast": 41150,
+"lessThan": 41200,
+"singleMfs": 1767,
+"jointHoh": 1579
+},
+{
+"atLeast": 41200,
+"lessThan": 41250,
+"singleMfs": 1770,
+"jointHoh": 1581
+},
+{
+"atLeast": 41250,
+"lessThan": 41300,
+"singleMfs": 1772,
+"jointHoh": 1584
+},
+{
+"atLeast": 41300,
+"lessThan": 41350,
+"singleMfs": 1774,
+"jointHoh": 1586
+},
+{
+"atLeast": 41350,
+"lessThan": 41400,
+"singleMfs": 1777,
+"jointHoh": 1588
+},
+{
+"atLeast": 41400,
+"lessThan": 41450,
+"singleMfs": 1779,
+"jointHoh": 1591
+},
+{
+"atLeast": 41450,
+"lessThan": 41500,
+"singleMfs": 1782,
+"jointHoh": 1593
+},
+{
+"atLeast": 41500,
+"lessThan": 41550,
+"singleMfs": 1784,
+"jointHoh": 1595
+},
+{
+"atLeast": 41550,
+"lessThan": 41600,
+"singleMfs": 1786,
+"jointHoh": 1598
+},
+{
+"atLeast": 41600,
+"lessThan": 41650,
+"singleMfs": 1789,
+"jointHoh": 1600
+},
+{
+"atLeast": 41650,
+"lessThan": 41700,
+"singleMfs": 1791,
+"jointHoh": 1603
+},
+{
+"atLeast": 41700,
+"lessThan": 41750,
+"singleMfs": 1793,
+"jointHoh": 1605
+},
+{
+"atLeast": 41750,
+"lessThan": 41800,
+"singleMfs": 1796,
+"jointHoh": 1607
+},
+{
+"atLeast": 41800,
+"lessThan": 41850,
+"singleMfs": 1798,
+"jointHoh": 1610
+},
+{
+"atLeast": 41850,
+"lessThan": 41900,
+"singleMfs": 1801,
+"jointHoh": 1612
+},
+{
+"atLeast": 41900,
+"lessThan": 41950,
+"singleMfs": 1803,
+"jointHoh": 1614
+},
+{
+"atLeast": 41950,
+"lessThan": 42000,
+"singleMfs": 1805,
+"jointHoh": 1617
+},
+{
+"atLeast": 42000,
+"lessThan": 42050,
+"singleMfs": 1808,
+"jointHoh": 1619
+},
+{
+"atLeast": 42050,
+"lessThan": 42100,
+"singleMfs": 1810,
+"jointHoh": 1622
+},
+{
+"atLeast": 42100,
+"lessThan": 42150,
+"singleMfs": 1812,
+"jointHoh": 1624
+},
+{
+"atLeast": 42150,
+"lessThan": 42200,
+"singleMfs": 1815,
+"jointHoh": 1626
+},
+{
+"atLeast": 42200,
+"lessThan": 42250,
+"singleMfs": 1817,
+"jointHoh": 1629
+},
+{
+"atLeast": 42250,
+"lessThan": 42300,
+"singleMfs": 1820,
+"jointHoh": 1631
+},
+{
+"atLeast": 42300,
+"lessThan": 42350,
+"singleMfs": 1822,
+"jointHoh": 1633
+},
+{
+"atLeast": 42350,
+"lessThan": 42400,
+"singleMfs": 1824,
+"jointHoh": 1636
+},
+{
+"atLeast": 42400,
+"lessThan": 42450,
+"singleMfs": 1827,
+"jointHoh": 1638
+},
+{
+"atLeast": 42450,
+"lessThan": 42500,
+"singleMfs": 1829,
+"jointHoh": 1641
+},
+{
+"atLeast": 42500,
+"lessThan": 42550,
+"singleMfs": 1831,
+"jointHoh": 1643
+},
+{
+"atLeast": 42550,
+"lessThan": 42600,
+"singleMfs": 1834,
+"jointHoh": 1645
+},
+{
+"atLeast": 42600,
+"lessThan": 42650,
+"singleMfs": 1836,
+"jointHoh": 1648
+},
+{
+"atLeast": 42650,
+"lessThan": 42700,
+"singleMfs": 1839,
+"jointHoh": 1650
+},
+{
+"atLeast": 42700,
+"lessThan": 42750,
+"singleMfs": 1841,
+"jointHoh": 1652
+},
+{
+"atLeast": 42750,
+"lessThan": 42800,
+"singleMfs": 1843,
+"jointHoh": 1655
+},
+{
+"atLeast": 42800,
+"lessThan": 42850,
+"singleMfs": 1846,
+"jointHoh": 1657
+},
+{
+"atLeast": 42850,
+"lessThan": 42900,
+"singleMfs": 1848,
+"jointHoh": 1660
+},
+{
+"atLeast": 42900,
+"lessThan": 42950,
+"singleMfs": 1850,
+"jointHoh": 1662
+},
+{
+"atLeast": 42950,
+"lessThan": 43000,
+"singleMfs": 1853,
+"jointHoh": 1664
+},
+{
+"atLeast": 43000,
+"lessThan": 43050,
+"singleMfs": 1855,
+"jointHoh": 1667
+},
+{
+"atLeast": 43050,
+"lessThan": 43100,
+"singleMfs": 1858,
+"jointHoh": 1669
+},
+{
+"atLeast": 43100,
+"lessThan": 43150,
+"singleMfs": 1860,
+"jointHoh": 1671
+},
+{
+"atLeast": 43150,
+"lessThan": 43200,
+"singleMfs": 1862,
+"jointHoh": 1674
+},
+{
+"atLeast": 43200,
+"lessThan": 43250,
+"singleMfs": 1865,
+"jointHoh": 1676
+},
+{
+"atLeast": 43250,
+"lessThan": 43300,
+"singleMfs": 1867,
+"jointHoh": 1679
+},
+{
+"atLeast": 43300,
+"lessThan": 43350,
+"singleMfs": 1869,
+"jointHoh": 1681
+},
+{
+"atLeast": 43350,
+"lessThan": 43400,
+"singleMfs": 1872,
+"jointHoh": 1683
+},
+{
+"atLeast": 43400,
+"lessThan": 43450,
+"singleMfs": 1874,
+"jointHoh": 1686
+},
+{
+"atLeast": 43450,
+"lessThan": 43500,
+"singleMfs": 1877,
+"jointHoh": 1688
+},
+{
+"atLeast": 43500,
+"lessThan": 43550,
+"singleMfs": 1879,
+"jointHoh": 1690
+},
+{
+"atLeast": 43550,
+"lessThan": 43600,
+"singleMfs": 1881,
+"jointHoh": 1693
+},
+{
+"atLeast": 43600,
+"lessThan": 43650,
+"singleMfs": 1884,
+"jointHoh": 1695
+},
+{
+"atLeast": 43650,
+"lessThan": 43700,
+"singleMfs": 1886,
+"jointHoh": 1698
+},
+{
+"atLeast": 43700,
+"lessThan": 43750,
+"singleMfs": 1888,
+"jointHoh": 1700
+},
+{
+"atLeast": 43750,
+"lessThan": 43800,
+"singleMfs": 1891,
+"jointHoh": 1702
+},
+{
+"atLeast": 43800,
+"lessThan": 43850,
+"singleMfs": 1893,
+"jointHoh": 1705
+},
+{
+"atLeast": 43850,
+"lessThan": 43900,
+"singleMfs": 1896,
+"jointHoh": 1707
+},
+{
+"atLeast": 43900,
+"lessThan": 43950,
+"singleMfs": 1898,
+"jointHoh": 1709
+},
+{
+"atLeast": 43950,
+"lessThan": 44000,
+"singleMfs": 1900,
+"jointHoh": 1712
+},
+{
+"atLeast": 44000,
+"lessThan": 44050,
+"singleMfs": 1903,
+"jointHoh": 1714
+},
+{
+"atLeast": 44050,
+"lessThan": 44100,
+"singleMfs": 1905,
+"jointHoh": 1717
+},
+{
+"atLeast": 44100,
+"lessThan": 44150,
+"singleMfs": 1907,
+"jointHoh": 1719
+},
+{
+"atLeast": 44150,
+"lessThan": 44200,
+"singleMfs": 1910,
+"jointHoh": 1721
+},
+{
+"atLeast": 44200,
+"lessThan": 44250,
+"singleMfs": 1912,
+"jointHoh": 1724
+},
+{
+"atLeast": 44250,
+"lessThan": 44300,
+"singleMfs": 1915,
+"jointHoh": 1726
+},
+{
+"atLeast": 44300,
+"lessThan": 44350,
+"singleMfs": 1917,
+"jointHoh": 1728
+},
+{
+"atLeast": 44350,
+"lessThan": 44400,
+"singleMfs": 1919,
+"jointHoh": 1731
+},
+{
+"atLeast": 44400,
+"lessThan": 44450,
+"singleMfs": 1922,
+"jointHoh": 1733
+},
+{
+"atLeast": 44450,
+"lessThan": 44500,
+"singleMfs": 1924,
+"jointHoh": 1736
+},
+{
+"atLeast": 44500,
+"lessThan": 44550,
+"singleMfs": 1926,
+"jointHoh": 1738
+},
+{
+"atLeast": 44550,
+"lessThan": 44600,
+"singleMfs": 1929,
+"jointHoh": 1740
+},
+{
+"atLeast": 44600,
+"lessThan": 44650,
+"singleMfs": 1931,
+"jointHoh": 1743
+},
+{
+"atLeast": 44650,
+"lessThan": 44700,
+"singleMfs": 1934,
+"jointHoh": 1745
+},
+{
+"atLeast": 44700,
+"lessThan": 44750,
+"singleMfs": 1936,
+"jointHoh": 1747
+},
+{
+"atLeast": 44750,
+"lessThan": 44800,
+"singleMfs": 1938,
+"jointHoh": 1750
+},
+{
+"atLeast": 44800,
+"lessThan": 44850,
+"singleMfs": 1941,
+"jointHoh": 1752
+},
+{
+"atLeast": 44850,
+"lessThan": 44900,
+"singleMfs": 1943,
+"jointHoh": 1755
+},
+{
+"atLeast": 44900,
+"lessThan": 44950,
+"singleMfs": 1945,
+"jointHoh": 1757
+},
+{
+"atLeast": 44950,
+"lessThan": 45000,
+"singleMfs": 1948,
+"jointHoh": 1759
+},
+{
+"atLeast": 45000,
+"lessThan": 45050,
+"singleMfs": 1950,
+"jointHoh": 1762
+},
+{
+"atLeast": 45050,
+"lessThan": 45100,
+"singleMfs": 1953,
+"jointHoh": 1764
+},
+{
+"atLeast": 45100,
+"lessThan": 45150,
+"singleMfs": 1955,
+"jointHoh": 1766
+},
+{
+"atLeast": 45150,
+"lessThan": 45200,
+"singleMfs": 1957,
+"jointHoh": 1769
+},
+{
+"atLeast": 45200,
+"lessThan": 45250,
+"singleMfs": 1960,
+"jointHoh": 1771
+},
+{
+"atLeast": 45250,
+"lessThan": 45300,
+"singleMfs": 1962,
+"jointHoh": 1774
+},
+{
+"atLeast": 45300,
+"lessThan": 45350,
+"singleMfs": 1964,
+"jointHoh": 1776
+},
+{
+"atLeast": 45350,
+"lessThan": 45400,
+"singleMfs": 1967,
+"jointHoh": 1778
+},
+{
+"atLeast": 45400,
+"lessThan": 45450,
+"singleMfs": 1969,
+"jointHoh": 1781
+},
+{
+"atLeast": 45450,
+"lessThan": 45500,
+"singleMfs": 1972,
+"jointHoh": 1783
+},
+{
+"atLeast": 45500,
+"lessThan": 45550,
+"singleMfs": 1974,
+"jointHoh": 1785
+},
+{
+"atLeast": 45550,
+"lessThan": 45600,
+"singleMfs": 1976,
+"jointHoh": 1788
+},
+{
+"atLeast": 45600,
+"lessThan": 45650,
+"singleMfs": 1979,
+"jointHoh": 1790
+},
+{
+"atLeast": 45650,
+"lessThan": 45700,
+"singleMfs": 1981,
+"jointHoh": 1793
+},
+{
+"atLeast": 45700,
+"lessThan": 45750,
+"singleMfs": 1983,
+"jointHoh": 1795
+},
+{
+"atLeast": 45750,
+"lessThan": 45800,
+"singleMfs": 1986,
+"jointHoh": 1797
+},
+{
+"atLeast": 45800,
+"lessThan": 45850,
+"singleMfs": 1988,
+"jointHoh": 1800
+},
+{
+"atLeast": 45850,
+"lessThan": 45900,
+"singleMfs": 1991,
+"jointHoh": 1802
+},
+{
+"atLeast": 45900,
+"lessThan": 45950,
+"singleMfs": 1993,
+"jointHoh": 1804
+},
+{
+"atLeast": 45950,
+"lessThan": 46000,
+"singleMfs": 1995,
+"jointHoh": 1807
+},
+{
+"atLeast": 46000,
+"lessThan": 46050,
+"singleMfs": 1998,
+"jointHoh": 1809
+},
+{
+"atLeast": 46050,
+"lessThan": 46100,
+"singleMfs": 2000,
+"jointHoh": 1812
+},
+{
+"atLeast": 46100,
+"lessThan": 46150,
+"singleMfs": 2002,
+"jointHoh": 1814
+},
+{
+"atLeast": 46150,
+"lessThan": 46200,
+"singleMfs": 2005,
+"jointHoh": 1816
+},
+{
+"atLeast": 46200,
+"lessThan": 46250,
+"singleMfs": 2007,
+"jointHoh": 1819
+},
+{
+"atLeast": 46250,
+"lessThan": 46300,
+"singleMfs": 2010,
+"jointHoh": 1821
+},
+{
+"atLeast": 46300,
+"lessThan": 46350,
+"singleMfs": 2012,
+"jointHoh": 1823
+},
+{
+"atLeast": 46350,
+"lessThan": 46400,
+"singleMfs": 2014,
+"jointHoh": 1826
+},
+{
+"atLeast": 46400,
+"lessThan": 46450,
+"singleMfs": 2017,
+"jointHoh": 1828
+},
+{
+"atLeast": 46450,
+"lessThan": 46500,
+"singleMfs": 2019,
+"jointHoh": 1831
+},
+{
+"atLeast": 46500,
+"lessThan": 46550,
+"singleMfs": 2021,
+"jointHoh": 1833
+},
+{
+"atLeast": 46550,
+"lessThan": 46600,
+"singleMfs": 2024,
+"jointHoh": 1835
+},
+{
+"atLeast": 46600,
+"lessThan": 46650,
+"singleMfs": 2026,
+"jointHoh": 1838
+},
+{
+"atLeast": 46650,
+"lessThan": 46700,
+"singleMfs": 2029,
+"jointHoh": 1840
+},
+{
+"atLeast": 46700,
+"lessThan": 46750,
+"singleMfs": 2031,
+"jointHoh": 1842
+},
+{
+"atLeast": 46750,
+"lessThan": 46800,
+"singleMfs": 2033,
+"jointHoh": 1845
+},
+{
+"atLeast": 46800,
+"lessThan": 46850,
+"singleMfs": 2036,
+"jointHoh": 1847
+},
+{
+"atLeast": 46850,
+"lessThan": 46900,
+"singleMfs": 2038,
+"jointHoh": 1850
+},
+{
+"atLeast": 46900,
+"lessThan": 46950,
+"singleMfs": 2040,
+"jointHoh": 1852
+},
+{
+"atLeast": 46950,
+"lessThan": 47000,
+"singleMfs": 2043,
+"jointHoh": 1854
+},
+{
+"atLeast": 47000,
+"lessThan": 47050,
+"singleMfs": 2045,
+"jointHoh": 1857
+},
+{
+"atLeast": 47050,
+"lessThan": 47100,
+"singleMfs": 2048,
+"jointHoh": 1859
+},
+{
+"atLeast": 47100,
+"lessThan": 47150,
+"singleMfs": 2050,
+"jointHoh": 1861
+},
+{
+"atLeast": 47150,
+"lessThan": 47200,
+"singleMfs": 2052,
+"jointHoh": 1864
+},
+{
+"atLeast": 47200,
+"lessThan": 47250,
+"singleMfs": 2055,
+"jointHoh": 1866
+},
+{
+"atLeast": 47250,
+"lessThan": 47300,
+"singleMfs": 2057,
+"jointHoh": 1869
+},
+{
+"atLeast": 47300,
+"lessThan": 47350,
+"singleMfs": 2059,
+"jointHoh": 1871
+},
+{
+"atLeast": 47350,
+"lessThan": 47400,
+"singleMfs": 2062,
+"jointHoh": 1873
+},
+{
+"atLeast": 47400,
+"lessThan": 47450,
+"singleMfs": 2064,
+"jointHoh": 1876
+},
+{
+"atLeast": 47450,
+"lessThan": 47500,
+"singleMfs": 2067,
+"jointHoh": 1878
+},
+{
+"atLeast": 47500,
+"lessThan": 47550,
+"singleMfs": 2069,
+"jointHoh": 1880
+},
+{
+"atLeast": 47550,
+"lessThan": 47600,
+"singleMfs": 2071,
+"jointHoh": 1883
+},
+{
+"atLeast": 47600,
+"lessThan": 47650,
+"singleMfs": 2074,
+"jointHoh": 1885
+},
+{
+"atLeast": 47650,
+"lessThan": 47700,
+"singleMfs": 2076,
+"jointHoh": 1888
+},
+{
+"atLeast": 47700,
+"lessThan": 47750,
+"singleMfs": 2078,
+"jointHoh": 1890
+},
+{
+"atLeast": 47750,
+"lessThan": 47800,
+"singleMfs": 2081,
+"jointHoh": 1892
+},
+{
+"atLeast": 47800,
+"lessThan": 47850,
+"singleMfs": 2083,
+"jointHoh": 1895
+},
+{
+"atLeast": 47850,
+"lessThan": 47900,
+"singleMfs": 2086,
+"jointHoh": 1897
+},
+{
+"atLeast": 47900,
+"lessThan": 47950,
+"singleMfs": 2088,
+"jointHoh": 1899
+},
+{
+"atLeast": 47950,
+"lessThan": 48000,
+"singleMfs": 2090,
+"jointHoh": 1902
+},
+{
+"atLeast": 48000,
+"lessThan": 48050,
+"singleMfs": 2093,
+"jointHoh": 1904
+},
+{
+"atLeast": 48050,
+"lessThan": 48100,
+"singleMfs": 2095,
+"jointHoh": 1907
+},
+{
+"atLeast": 48100,
+"lessThan": 48150,
+"singleMfs": 2097,
+"jointHoh": 1909
+},
+{
+"atLeast": 48150,
+"lessThan": 48200,
+"singleMfs": 2100,
+"jointHoh": 1911
+},
+{
+"atLeast": 48200,
+"lessThan": 48250,
+"singleMfs": 2102,
+"jointHoh": 1914
+},
+{
+"atLeast": 48250,
+"lessThan": 48300,
+"singleMfs": 2105,
+"jointHoh": 1916
+},
+{
+"atLeast": 48300,
+"lessThan": 48350,
+"singleMfs": 2107,
+"jointHoh": 1918
+},
+{
+"atLeast": 48350,
+"lessThan": 48400,
+"singleMfs": 2109,
+"jointHoh": 1921
+},
+{
+"atLeast": 48400,
+"lessThan": 48450,
+"singleMfs": 2112,
+"jointHoh": 1923
+},
+{
+"atLeast": 48450,
+"lessThan": 48500,
+"singleMfs": 2114,
+"jointHoh": 1926
+},
+{
+"atLeast": 48500,
+"lessThan": 48550,
+"singleMfs": 2116,
+"jointHoh": 1928
+},
+{
+"atLeast": 48550,
+"lessThan": 48600,
+"singleMfs": 2119,
+"jointHoh": 1930
+},
+{
+"atLeast": 48600,
+"lessThan": 48650,
+"singleMfs": 2121,
+"jointHoh": 1933
+},
+{
+"atLeast": 48650,
+"lessThan": 48700,
+"singleMfs": 2124,
+"jointHoh": 1935
+},
+{
+"atLeast": 48700,
+"lessThan": 48750,
+"singleMfs": 2126,
+"jointHoh": 1937
+},
+{
+"atLeast": 48750,
+"lessThan": 48800,
+"singleMfs": 2128,
+"jointHoh": 1940
+},
+{
+"atLeast": 48800,
+"lessThan": 48850,
+"singleMfs": 2131,
+"jointHoh": 1942
+},
+{
+"atLeast": 48850,
+"lessThan": 48900,
+"singleMfs": 2133,
+"jointHoh": 1945
+},
+{
+"atLeast": 48900,
+"lessThan": 48950,
+"singleMfs": 2135,
+"jointHoh": 1947
+},
+{
+"atLeast": 48950,
+"lessThan": 49000,
+"singleMfs": 2138,
+"jointHoh": 1949
+},
+{
+"atLeast": 49000,
+"lessThan": 49050,
+"singleMfs": 2140,
+"jointHoh": 1952
+},
+{
+"atLeast": 49050,
+"lessThan": 49100,
+"singleMfs": 2143,
+"jointHoh": 1954
+},
+{
+"atLeast": 49100,
+"lessThan": 49150,
+"singleMfs": 2145,
+"jointHoh": 1956
+},
+{
+"atLeast": 49150,
+"lessThan": 49200,
+"singleMfs": 2147,
+"jointHoh": 1959
+},
+{
+"atLeast": 49200,
+"lessThan": 49250,
+"singleMfs": 2150,
+"jointHoh": 1961
+},
+{
+"atLeast": 49250,
+"lessThan": 49300,
+"singleMfs": 2152,
+"jointHoh": 1964
+},
+{
+"atLeast": 49300,
+"lessThan": 49350,
+"singleMfs": 2154,
+"jointHoh": 1966
+},
+{
+"atLeast": 49350,
+"lessThan": 49400,
+"singleMfs": 2157,
+"jointHoh": 1968
+},
+{
+"atLeast": 49400,
+"lessThan": 49450,
+"singleMfs": 2159,
+"jointHoh": 1971
+},
+{
+"atLeast": 49450,
+"lessThan": 49500,
+"singleMfs": 2162,
+"jointHoh": 1973
+},
+{
+"atLeast": 49500,
+"lessThan": 49550,
+"singleMfs": 2164,
+"jointHoh": 1975
+},
+{
+"atLeast": 49550,
+"lessThan": 49600,
+"singleMfs": 2166,
+"jointHoh": 1978
+},
+{
+"atLeast": 49600,
+"lessThan": 49650,
+"singleMfs": 2169,
+"jointHoh": 1980
+},
+{
+"atLeast": 49650,
+"lessThan": 49700,
+"singleMfs": 2171,
+"jointHoh": 1983
+},
+{
+"atLeast": 49700,
+"lessThan": 49750,
+"singleMfs": 2173,
+"jointHoh": 1985
+},
+{
+"atLeast": 49750,
+"lessThan": 49800,
+"singleMfs": 2176,
+"jointHoh": 1987
+},
+{
+"atLeast": 49800,
+"lessThan": 49850,
+"singleMfs": 2178,
+"jointHoh": 1990
+},
+{
+"atLeast": 49850,
+"lessThan": 49900,
+"singleMfs": 2181,
+"jointHoh": 1992
+},
+{
+"atLeast": 49900,
+"lessThan": 49950,
+"singleMfs": 2183,
+"jointHoh": 1994
+},
+{
+"atLeast": 49950,
+"lessThan": 50000,
+"singleMfs": 2185,
+"jointHoh": 1997
+},
+{
+"atLeast": 50000,
+"lessThan": 50050,
+"singleMfs": 2188,
+"jointHoh": 1999
+},
+{
+"atLeast": 50050,
+"lessThan": 50100,
+"singleMfs": 2190,
+"jointHoh": 2002
+},
+{
+"atLeast": 50100,
+"lessThan": 50150,
+"singleMfs": 2192,
+"jointHoh": 2004
+},
+{
+"atLeast": 50150,
+"lessThan": 50200,
+"singleMfs": 2195,
+"jointHoh": 2006
+},
+{
+"atLeast": 50200,
+"lessThan": 50250,
+"singleMfs": 2197,
+"jointHoh": 2009
+},
+{
+"atLeast": 50250,
+"lessThan": 50300,
+"singleMfs": 2200,
+"jointHoh": 2011
+},
+{
+"atLeast": 50300,
+"lessThan": 50350,
+"singleMfs": 2202,
+"jointHoh": 2013
+},
+{
+"atLeast": 50350,
+"lessThan": 50400,
+"singleMfs": 2204,
+"jointHoh": 2016
+},
+{
+"atLeast": 50400,
+"lessThan": 50450,
+"singleMfs": 2207,
+"jointHoh": 2018
+},
+{
+"atLeast": 50450,
+"lessThan": 50500,
+"singleMfs": 2209,
+"jointHoh": 2021
+},
+{
+"atLeast": 50500,
+"lessThan": 50550,
+"singleMfs": 2211,
+"jointHoh": 2023
+},
+{
+"atLeast": 50550,
+"lessThan": 50600,
+"singleMfs": 2214,
+"jointHoh": 2025
+},
+{
+"atLeast": 50600,
+"lessThan": 50650,
+"singleMfs": 2216,
+"jointHoh": 2028
+},
+{
+"atLeast": 50650,
+"lessThan": 50700,
+"singleMfs": 2219,
+"jointHoh": 2030
+},
+{
+"atLeast": 50700,
+"lessThan": 50750,
+"singleMfs": 2221,
+"jointHoh": 2032
+},
+{
+"atLeast": 50750,
+"lessThan": 50800,
+"singleMfs": 2223,
+"jointHoh": 2035
+},
+{
+"atLeast": 50800,
+"lessThan": 50850,
+"singleMfs": 2226,
+"jointHoh": 2037
+},
+{
+"atLeast": 50850,
+"lessThan": 50900,
+"singleMfs": 2228,
+"jointHoh": 2040
+},
+{
+"atLeast": 50900,
+"lessThan": 50950,
+"singleMfs": 2230,
+"jointHoh": 2042
+},
+{
+"atLeast": 50950,
+"lessThan": 51000,
+"singleMfs": 2233,
+"jointHoh": 2044
+},
+{
+"atLeast": 51000,
+"lessThan": 51050,
+"singleMfs": 2235,
+"jointHoh": 2047
+},
+{
+"atLeast": 51050,
+"lessThan": 51100,
+"singleMfs": 2238,
+"jointHoh": 2049
+},
+{
+"atLeast": 51100,
+"lessThan": 51150,
+"singleMfs": 2240,
+"jointHoh": 2051
+},
+{
+"atLeast": 51150,
+"lessThan": 51200,
+"singleMfs": 2242,
+"jointHoh": 2054
+},
+{
+"atLeast": 51200,
+"lessThan": 51250,
+"singleMfs": 2245,
+"jointHoh": 2056
+},
+{
+"atLeast": 51250,
+"lessThan": 51300,
+"singleMfs": 2247,
+"jointHoh": 2059
+},
+{
+"atLeast": 51300,
+"lessThan": 51350,
+"singleMfs": 2249,
+"jointHoh": 2061
+},
+{
+"atLeast": 51350,
+"lessThan": 51400,
+"singleMfs": 2252,
+"jointHoh": 2063
+},
+{
+"atLeast": 51400,
+"lessThan": 51450,
+"singleMfs": 2254,
+"jointHoh": 2066
+},
+{
+"atLeast": 51450,
+"lessThan": 51500,
+"singleMfs": 2257,
+"jointHoh": 2068
+},
+{
+"atLeast": 51500,
+"lessThan": 51550,
+"singleMfs": 2259,
+"jointHoh": 2070
+},
+{
+"atLeast": 51550,
+"lessThan": 51600,
+"singleMfs": 2261,
+"jointHoh": 2073
+},
+{
+"atLeast": 51600,
+"lessThan": 51650,
+"singleMfs": 2264,
+"jointHoh": 2075
+},
+{
+"atLeast": 51650,
+"lessThan": 51700,
+"singleMfs": 2266,
+"jointHoh": 2078
+},
+{
+"atLeast": 51700,
+"lessThan": 51750,
+"singleMfs": 2268,
+"jointHoh": 2080
+},
+{
+"atLeast": 51750,
+"lessThan": 51800,
+"singleMfs": 2271,
+"jointHoh": 2082
+},
+{
+"atLeast": 51800,
+"lessThan": 51850,
+"singleMfs": 2273,
+"jointHoh": 2085
+},
+{
+"atLeast": 51850,
+"lessThan": 51900,
+"singleMfs": 2276,
+"jointHoh": 2087
+},
+{
+"atLeast": 51900,
+"lessThan": 51950,
+"singleMfs": 2278,
+"jointHoh": 2089
+},
+{
+"atLeast": 51950,
+"lessThan": 52000,
+"singleMfs": 2280,
+"jointHoh": 2092
+},
+{
+"atLeast": 52000,
+"lessThan": 52050,
+"singleMfs": 2283,
+"jointHoh": 2094
+},
+{
+"atLeast": 52050,
+"lessThan": 52100,
+"singleMfs": 2285,
+"jointHoh": 2097
+},
+{
+"atLeast": 52100,
+"lessThan": 52150,
+"singleMfs": 2287,
+"jointHoh": 2099
+},
+{
+"atLeast": 52150,
+"lessThan": 52200,
+"singleMfs": 2290,
+"jointHoh": 2101
+},
+{
+"atLeast": 52200,
+"lessThan": 52250,
+"singleMfs": 2292,
+"jointHoh": 2104
+},
+{
+"atLeast": 52250,
+"lessThan": 52300,
+"singleMfs": 2295,
+"jointHoh": 2106
+},
+{
+"atLeast": 52300,
+"lessThan": 52350,
+"singleMfs": 2297,
+"jointHoh": 2108
+},
+{
+"atLeast": 52350,
+"lessThan": 52400,
+"singleMfs": 2299,
+"jointHoh": 2111
+},
+{
+"atLeast": 52400,
+"lessThan": 52450,
+"singleMfs": 2302,
+"jointHoh": 2113
+},
+{
+"atLeast": 52450,
+"lessThan": 52500,
+"singleMfs": 2304,
+"jointHoh": 2116
+},
+{
+"atLeast": 52500,
+"lessThan": 52550,
+"singleMfs": 2306,
+"jointHoh": 2118
+},
+{
+"atLeast": 52550,
+"lessThan": 52600,
+"singleMfs": 2309,
+"jointHoh": 2120
+},
+{
+"atLeast": 52600,
+"lessThan": 52650,
+"singleMfs": 2311,
+"jointHoh": 2123
+},
+{
+"atLeast": 52650,
+"lessThan": 52700,
+"singleMfs": 2314,
+"jointHoh": 2125
+},
+{
+"atLeast": 52700,
+"lessThan": 52750,
+"singleMfs": 2316,
+"jointHoh": 2127
+},
+{
+"atLeast": 52750,
+"lessThan": 52800,
+"singleMfs": 2318,
+"jointHoh": 2130
+},
+{
+"atLeast": 52800,
+"lessThan": 52850,
+"singleMfs": 2321,
+"jointHoh": 2132
+},
+{
+"atLeast": 52850,
+"lessThan": 52900,
+"singleMfs": 2323,
+"jointHoh": 2135
+},
+{
+"atLeast": 52900,
+"lessThan": 52950,
+"singleMfs": 2325,
+"jointHoh": 2137
+},
+{
+"atLeast": 52950,
+"lessThan": 53000,
+"singleMfs": 2328,
+"jointHoh": 2139
+},
+{
+"atLeast": 53000,
+"lessThan": 53050,
+"singleMfs": 2330,
+"jointHoh": 2142
+},
+{
+"atLeast": 53050,
+"lessThan": 53100,
+"singleMfs": 2333,
+"jointHoh": 2144
+},
+{
+"atLeast": 53100,
+"lessThan": 53150,
+"singleMfs": 2335,
+"jointHoh": 2146
+},
+{
+"atLeast": 53150,
+"lessThan": 53200,
+"singleMfs": 2337,
+"jointHoh": 2149
+},
+{
+"atLeast": 53200,
+"lessThan": 53250,
+"singleMfs": 2340,
+"jointHoh": 2151
+},
+{
+"atLeast": 53250,
+"lessThan": 53300,
+"singleMfs": 2342,
+"jointHoh": 2154
+},
+{
+"atLeast": 53300,
+"lessThan": 53350,
+"singleMfs": 2344,
+"jointHoh": 2156
+},
+{
+"atLeast": 53350,
+"lessThan": 53400,
+"singleMfs": 2347,
+"jointHoh": 2158
+},
+{
+"atLeast": 53400,
+"lessThan": 53450,
+"singleMfs": 2349,
+"jointHoh": 2161
+},
+{
+"atLeast": 53450,
+"lessThan": 53500,
+"singleMfs": 2352,
+"jointHoh": 2163
+},
+{
+"atLeast": 53500,
+"lessThan": 53550,
+"singleMfs": 2354,
+"jointHoh": 2165
+},
+{
+"atLeast": 53550,
+"lessThan": 53600,
+"singleMfs": 2356,
+"jointHoh": 2168
+},
+{
+"atLeast": 53600,
+"lessThan": 53650,
+"singleMfs": 2359,
+"jointHoh": 2170
+},
+{
+"atLeast": 53650,
+"lessThan": 53700,
+"singleMfs": 2361,
+"jointHoh": 2173
+},
+{
+"atLeast": 53700,
+"lessThan": 53750,
+"singleMfs": 2363,
+"jointHoh": 2175
+},
+{
+"atLeast": 53750,
+"lessThan": 53800,
+"singleMfs": 2366,
+"jointHoh": 2177
+},
+{
+"atLeast": 53800,
+"lessThan": 53850,
+"singleMfs": 2368,
+"jointHoh": 2180
+},
+{
+"atLeast": 53850,
+"lessThan": 53900,
+"singleMfs": 2371,
+"jointHoh": 2182
+},
+{
+"atLeast": 53900,
+"lessThan": 53950,
+"singleMfs": 2373,
+"jointHoh": 2184
+},
+{
+"atLeast": 53950,
+"lessThan": 54000,
+"singleMfs": 2375,
+"jointHoh": 2187
+},
+{
+"atLeast": 54000,
+"lessThan": 54050,
+"singleMfs": 2378,
+"jointHoh": 2189
+},
+{
+"atLeast": 54050,
+"lessThan": 54100,
+"singleMfs": 2380,
+"jointHoh": 2192
+},
+{
+"atLeast": 54100,
+"lessThan": 54150,
+"singleMfs": 2382,
+"jointHoh": 2194
+},
+{
+"atLeast": 54150,
+"lessThan": 54200,
+"singleMfs": 2385,
+"jointHoh": 2196
+},
+{
+"atLeast": 54200,
+"lessThan": 54250,
+"singleMfs": 2387,
+"jointHoh": 2199
+},
+{
+"atLeast": 54250,
+"lessThan": 54300,
+"singleMfs": 2390,
+"jointHoh": 2201
+},
+{
+"atLeast": 54300,
+"lessThan": 54350,
+"singleMfs": 2392,
+"jointHoh": 2203
+},
+{
+"atLeast": 54350,
+"lessThan": 54400,
+"singleMfs": 2394,
+"jointHoh": 2206
+},
+{
+"atLeast": 54400,
+"lessThan": 54450,
+"singleMfs": 2397,
+"jointHoh": 2208
+},
+{
+"atLeast": 54450,
+"lessThan": 54500,
+"singleMfs": 2399,
+"jointHoh": 2211
+},
+{
+"atLeast": 54500,
+"lessThan": 54550,
+"singleMfs": 2401,
+"jointHoh": 2213
+},
+{
+"atLeast": 54550,
+"lessThan": 54600,
+"singleMfs": 2404,
+"jointHoh": 2215
+},
+{
+"atLeast": 54600,
+"lessThan": 54650,
+"singleMfs": 2406,
+"jointHoh": 2218
+},
+{
+"atLeast": 54650,
+"lessThan": 54700,
+"singleMfs": 2409,
+"jointHoh": 2220
+},
+{
+"atLeast": 54700,
+"lessThan": 54750,
+"singleMfs": 2411,
+"jointHoh": 2222
+},
+{
+"atLeast": 54750,
+"lessThan": 54800,
+"singleMfs": 2413,
+"jointHoh": 2225
+},
+{
+"atLeast": 54800,
+"lessThan": 54850,
+"singleMfs": 2416,
+"jointHoh": 2227
+},
+{
+"atLeast": 54850,
+"lessThan": 54900,
+"singleMfs": 2418,
+"jointHoh": 2230
+},
+{
+"atLeast": 54900,
+"lessThan": 54950,
+"singleMfs": 2420,
+"jointHoh": 2232
+},
+{
+"atLeast": 54950,
+"lessThan": 55000,
+"singleMfs": 2423,
+"jointHoh": 2234
+},
+{
+"atLeast": 55000,
+"lessThan": 55050,
+"singleMfs": 2425,
+"jointHoh": 2237
+},
+{
+"atLeast": 55050,
+"lessThan": 55100,
+"singleMfs": 2428,
+"jointHoh": 2239
+},
+{
+"atLeast": 55100,
+"lessThan": 55150,
+"singleMfs": 2430,
+"jointHoh": 2241
+},
+{
+"atLeast": 55150,
+"lessThan": 55200,
+"singleMfs": 2432,
+"jointHoh": 2244
+},
+{
+"atLeast": 55200,
+"lessThan": 55250,
+"singleMfs": 2435,
+"jointHoh": 2246
+},
+{
+"atLeast": 55250,
+"lessThan": 55300,
+"singleMfs": 2437,
+"jointHoh": 2249
+},
+{
+"atLeast": 55300,
+"lessThan": 55350,
+"singleMfs": 2439,
+"jointHoh": 2251
+},
+{
+"atLeast": 55350,
+"lessThan": 55400,
+"singleMfs": 2442,
+"jointHoh": 2253
+},
+{
+"atLeast": 55400,
+"lessThan": 55450,
+"singleMfs": 2444,
+"jointHoh": 2256
+},
+{
+"atLeast": 55450,
+"lessThan": 55500,
+"singleMfs": 2447,
+"jointHoh": 2258
+},
+{
+"atLeast": 55500,
+"lessThan": 55550,
+"singleMfs": 2449,
+"jointHoh": 2260
+},
+{
+"atLeast": 55550,
+"lessThan": 55600,
+"singleMfs": 2451,
+"jointHoh": 2263
+},
+{
+"atLeast": 55600,
+"lessThan": 55650,
+"singleMfs": 2454,
+"jointHoh": 2265
+},
+{
+"atLeast": 55650,
+"lessThan": 55700,
+"singleMfs": 2456,
+"jointHoh": 2268
+},
+{
+"atLeast": 55700,
+"lessThan": 55750,
+"singleMfs": 2458,
+"jointHoh": 2270
+},
+{
+"atLeast": 55750,
+"lessThan": 55800,
+"singleMfs": 2461,
+"jointHoh": 2272
+},
+{
+"atLeast": 55800,
+"lessThan": 55850,
+"singleMfs": 2463,
+"jointHoh": 2275
+},
+{
+"atLeast": 55850,
+"lessThan": 55900,
+"singleMfs": 2466,
+"jointHoh": 2277
+},
+{
+"atLeast": 55900,
+"lessThan": 55950,
+"singleMfs": 2468,
+"jointHoh": 2279
+},
+{
+"atLeast": 55950,
+"lessThan": 56000,
+"singleMfs": 2470,
+"jointHoh": 2282
+},
+{
+"atLeast": 56000,
+"lessThan": 56050,
+"singleMfs": 2473,
+"jointHoh": 2284
+},
+{
+"atLeast": 56050,
+"lessThan": 56100,
+"singleMfs": 2475,
+"jointHoh": 2287
+},
+{
+"atLeast": 56100,
+"lessThan": 56150,
+"singleMfs": 2477,
+"jointHoh": 2289
+},
+{
+"atLeast": 56150,
+"lessThan": 56200,
+"singleMfs": 2480,
+"jointHoh": 2291
+},
+{
+"atLeast": 56200,
+"lessThan": 56250,
+"singleMfs": 2482,
+"jointHoh": 2294
+},
+{
+"atLeast": 56250,
+"lessThan": 56300,
+"singleMfs": 2485,
+"jointHoh": 2296
+},
+{
+"atLeast": 56300,
+"lessThan": 56350,
+"singleMfs": 2487,
+"jointHoh": 2298
+},
+{
+"atLeast": 56350,
+"lessThan": 56400,
+"singleMfs": 2489,
+"jointHoh": 2301
+},
+{
+"atLeast": 56400,
+"lessThan": 56450,
+"singleMfs": 2492,
+"jointHoh": 2303
+},
+{
+"atLeast": 56450,
+"lessThan": 56500,
+"singleMfs": 2494,
+"jointHoh": 2306
+},
+{
+"atLeast": 56500,
+"lessThan": 56550,
+"singleMfs": 2496,
+"jointHoh": 2308
+},
+{
+"atLeast": 56550,
+"lessThan": 56600,
+"singleMfs": 2499,
+"jointHoh": 2310
+},
+{
+"atLeast": 56600,
+"lessThan": 56650,
+"singleMfs": 2501,
+"jointHoh": 2313
+},
+{
+"atLeast": 56650,
+"lessThan": 56700,
+"singleMfs": 2504,
+"jointHoh": 2315
+},
+{
+"atLeast": 56700,
+"lessThan": 56750,
+"singleMfs": 2506,
+"jointHoh": 2317
+},
+{
+"atLeast": 56750,
+"lessThan": 56800,
+"singleMfs": 2508,
+"jointHoh": 2320
+},
+{
+"atLeast": 56800,
+"lessThan": 56850,
+"singleMfs": 2511,
+"jointHoh": 2322
+},
+{
+"atLeast": 56850,
+"lessThan": 56900,
+"singleMfs": 2513,
+"jointHoh": 2325
+},
+{
+"atLeast": 56900,
+"lessThan": 56950,
+"singleMfs": 2515,
+"jointHoh": 2327
+},
+{
+"atLeast": 56950,
+"lessThan": 57000,
+"singleMfs": 2518,
+"jointHoh": 2329
+},
+{
+"atLeast": 57000,
+"lessThan": 57050,
+"singleMfs": 2520,
+"jointHoh": 2332
+},
+{
+"atLeast": 57050,
+"lessThan": 57100,
+"singleMfs": 2523,
+"jointHoh": 2334
+},
+{
+"atLeast": 57100,
+"lessThan": 57150,
+"singleMfs": 2525,
+"jointHoh": 2336
+},
+{
+"atLeast": 57150,
+"lessThan": 57200,
+"singleMfs": 2527,
+"jointHoh": 2339
+},
+{
+"atLeast": 57200,
+"lessThan": 57250,
+"singleMfs": 2530,
+"jointHoh": 2341
+},
+{
+"atLeast": 57250,
+"lessThan": 57300,
+"singleMfs": 2532,
+"jointHoh": 2344
+},
+{
+"atLeast": 57300,
+"lessThan": 57350,
+"singleMfs": 2534,
+"jointHoh": 2346
+},
+{
+"atLeast": 57350,
+"lessThan": 57400,
+"singleMfs": 2537,
+"jointHoh": 2348
+},
+{
+"atLeast": 57400,
+"lessThan": 57450,
+"singleMfs": 2539,
+"jointHoh": 2351
+},
+{
+"atLeast": 57450,
+"lessThan": 57500,
+"singleMfs": 2542,
+"jointHoh": 2353
+},
+{
+"atLeast": 57500,
+"lessThan": 57550,
+"singleMfs": 2544,
+"jointHoh": 2355
+},
+{
+"atLeast": 57550,
+"lessThan": 57600,
+"singleMfs": 2546,
+"jointHoh": 2358
+},
+{
+"atLeast": 57600,
+"lessThan": 57650,
+"singleMfs": 2549,
+"jointHoh": 2360
+},
+{
+"atLeast": 57650,
+"lessThan": 57700,
+"singleMfs": 2551,
+"jointHoh": 2363
+},
+{
+"atLeast": 57700,
+"lessThan": 57750,
+"singleMfs": 2553,
+"jointHoh": 2365
+},
+{
+"atLeast": 57750,
+"lessThan": 57800,
+"singleMfs": 2556,
+"jointHoh": 2367
+},
+{
+"atLeast": 57800,
+"lessThan": 57850,
+"singleMfs": 2558,
+"jointHoh": 2370
+},
+{
+"atLeast": 57850,
+"lessThan": 57900,
+"singleMfs": 2561,
+"jointHoh": 2372
+},
+{
+"atLeast": 57900,
+"lessThan": 57950,
+"singleMfs": 2563,
+"jointHoh": 2374
+},
+{
+"atLeast": 57950,
+"lessThan": 58000,
+"singleMfs": 2565,
+"jointHoh": 2377
+},
+{
+"atLeast": 58000,
+"lessThan": 58050,
+"singleMfs": 2568,
+"jointHoh": 2379
+},
+{
+"atLeast": 58050,
+"lessThan": 58100,
+"singleMfs": 2570,
+"jointHoh": 2382
+},
+{
+"atLeast": 58100,
+"lessThan": 58150,
+"singleMfs": 2572,
+"jointHoh": 2384
+},
+{
+"atLeast": 58150,
+"lessThan": 58200,
+"singleMfs": 2575,
+"jointHoh": 2386
+},
+{
+"atLeast": 58200,
+"lessThan": 58250,
+"singleMfs": 2577,
+"jointHoh": 2389
+},
+{
+"atLeast": 58250,
+"lessThan": 58300,
+"singleMfs": 2580,
+"jointHoh": 2391
+},
+{
+"atLeast": 58300,
+"lessThan": 58350,
+"singleMfs": 2582,
+"jointHoh": 2393
+},
+{
+"atLeast": 58350,
+"lessThan": 58400,
+"singleMfs": 2584,
+"jointHoh": 2396
+},
+{
+"atLeast": 58400,
+"lessThan": 58450,
+"singleMfs": 2587,
+"jointHoh": 2398
+},
+{
+"atLeast": 58450,
+"lessThan": 58500,
+"singleMfs": 2589,
+"jointHoh": 2401
+},
+{
+"atLeast": 58500,
+"lessThan": 58550,
+"singleMfs": 2591,
+"jointHoh": 2403
+},
+{
+"atLeast": 58550,
+"lessThan": 58600,
+"singleMfs": 2594,
+"jointHoh": 2405
+},
+{
+"atLeast": 58600,
+"lessThan": 58650,
+"singleMfs": 2596,
+"jointHoh": 2408
+},
+{
+"atLeast": 58650,
+"lessThan": 58700,
+"singleMfs": 2599,
+"jointHoh": 2410
+},
+{
+"atLeast": 58700,
+"lessThan": 58750,
+"singleMfs": 2601,
+"jointHoh": 2412
+},
+{
+"atLeast": 58750,
+"lessThan": 58800,
+"singleMfs": 2603,
+"jointHoh": 2415
+},
+{
+"atLeast": 58800,
+"lessThan": 58850,
+"singleMfs": 2606,
+"jointHoh": 2417
+},
+{
+"atLeast": 58850,
+"lessThan": 58900,
+"singleMfs": 2608,
+"jointHoh": 2420
+},
+{
+"atLeast": 58900,
+"lessThan": 58950,
+"singleMfs": 2610,
+"jointHoh": 2422
+},
+{
+"atLeast": 58950,
+"lessThan": 59000,
+"singleMfs": 2613,
+"jointHoh": 2424
+},
+{
+"atLeast": 59000,
+"lessThan": 59050,
+"singleMfs": 2615,
+"jointHoh": 2427
+},
+{
+"atLeast": 59050,
+"lessThan": 59100,
+"singleMfs": 2618,
+"jointHoh": 2429
+},
+{
+"atLeast": 59100,
+"lessThan": 59150,
+"singleMfs": 2620,
+"jointHoh": 2431
+},
+{
+"atLeast": 59150,
+"lessThan": 59200,
+"singleMfs": 2622,
+"jointHoh": 2434
+},
+{
+"atLeast": 59200,
+"lessThan": 59250,
+"singleMfs": 2625,
+"jointHoh": 2436
+},
+{
+"atLeast": 59250,
+"lessThan": 59300,
+"singleMfs": 2627,
+"jointHoh": 2439
+},
+{
+"atLeast": 59300,
+"lessThan": 59350,
+"singleMfs": 2629,
+"jointHoh": 2441
+},
+{
+"atLeast": 59350,
+"lessThan": 59400,
+"singleMfs": 2632,
+"jointHoh": 2443
+},
+{
+"atLeast": 59400,
+"lessThan": 59450,
+"singleMfs": 2634,
+"jointHoh": 2446
+},
+{
+"atLeast": 59450,
+"lessThan": 59500,
+"singleMfs": 2637,
+"jointHoh": 2448
+},
+{
+"atLeast": 59500,
+"lessThan": 59550,
+"singleMfs": 2639,
+"jointHoh": 2450
+},
+{
+"atLeast": 59550,
+"lessThan": 59600,
+"singleMfs": 2641,
+"jointHoh": 2453
+},
+{
+"atLeast": 59600,
+"lessThan": 59650,
+"singleMfs": 2644,
+"jointHoh": 2455
+},
+{
+"atLeast": 59650,
+"lessThan": 59700,
+"singleMfs": 2646,
+"jointHoh": 2458
+},
+{
+"atLeast": 59700,
+"lessThan": 59750,
+"singleMfs": 2648,
+"jointHoh": 2460
+},
+{
+"atLeast": 59750,
+"lessThan": 59800,
+"singleMfs": 2651,
+"jointHoh": 2462
+},
+{
+"atLeast": 59800,
+"lessThan": 59850,
+"singleMfs": 2653,
+"jointHoh": 2465
+},
+{
+"atLeast": 59850,
+"lessThan": 59900,
+"singleMfs": 2656,
+"jointHoh": 2467
+},
+{
+"atLeast": 59900,
+"lessThan": 59950,
+"singleMfs": 2658,
+"jointHoh": 2469
+},
+{
+"atLeast": 59950,
+"lessThan": 60000,
+"singleMfs": 2660,
+"jointHoh": 2472
+},
+{
+"atLeast": 60000,
+"lessThan": 60050,
+"singleMfs": 2663,
+"jointHoh": 2474
+},
+{
+"atLeast": 60050,
+"lessThan": 60100,
+"singleMfs": 2665,
+"jointHoh": 2477
+},
+{
+"atLeast": 60100,
+"lessThan": 60150,
+"singleMfs": 2667,
+"jointHoh": 2479
+},
+{
+"atLeast": 60150,
+"lessThan": 60200,
+"singleMfs": 2670,
+"jointHoh": 2481
+},
+{
+"atLeast": 60200,
+"lessThan": 60250,
+"singleMfs": 2672,
+"jointHoh": 2484
+},
+{
+"atLeast": 60250,
+"lessThan": 60300,
+"singleMfs": 2675,
+"jointHoh": 2486
+},
+{
+"atLeast": 60300,
+"lessThan": 60350,
+"singleMfs": 2677,
+"jointHoh": 2488
+},
+{
+"atLeast": 60350,
+"lessThan": 60400,
+"singleMfs": 2679,
+"jointHoh": 2491
+},
+{
+"atLeast": 60400,
+"lessThan": 60450,
+"singleMfs": 2682,
+"jointHoh": 2493
+},
+{
+"atLeast": 60450,
+"lessThan": 60500,
+"singleMfs": 2684,
+"jointHoh": 2496
+},
+{
+"atLeast": 60500,
+"lessThan": 60550,
+"singleMfs": 2686,
+"jointHoh": 2498
+},
+{
+"atLeast": 60550,
+"lessThan": 60600,
+"singleMfs": 2689,
+"jointHoh": 2500
+},
+{
+"atLeast": 60600,
+"lessThan": 60650,
+"singleMfs": 2691,
+"jointHoh": 2503
+},
+{
+"atLeast": 60650,
+"lessThan": 60700,
+"singleMfs": 2694,
+"jointHoh": 2505
+},
+{
+"atLeast": 60700,
+"lessThan": 60750,
+"singleMfs": 2696,
+"jointHoh": 2507
+},
+{
+"atLeast": 60750,
+"lessThan": 60800,
+"singleMfs": 2698,
+"jointHoh": 2510
+},
+{
+"atLeast": 60800,
+"lessThan": 60850,
+"singleMfs": 2701,
+"jointHoh": 2512
+},
+{
+"atLeast": 60850,
+"lessThan": 60900,
+"singleMfs": 2703,
+"jointHoh": 2515
+},
+{
+"atLeast": 60900,
+"lessThan": 60950,
+"singleMfs": 2705,
+"jointHoh": 2517
+},
+{
+"atLeast": 60950,
+"lessThan": 61000,
+"singleMfs": 2708,
+"jointHoh": 2519
+},
+{
+"atLeast": 61000,
+"lessThan": 61050,
+"singleMfs": 2710,
+"jointHoh": 2522
+},
+{
+"atLeast": 61050,
+"lessThan": 61100,
+"singleMfs": 2713,
+"jointHoh": 2524
+},
+{
+"atLeast": 61100,
+"lessThan": 61150,
+"singleMfs": 2715,
+"jointHoh": 2526
+},
+{
+"atLeast": 61150,
+"lessThan": 61200,
+"singleMfs": 2717,
+"jointHoh": 2529
+},
+{
+"atLeast": 61200,
+"lessThan": 61250,
+"singleMfs": 2720,
+"jointHoh": 2531
+},
+{
+"atLeast": 61250,
+"lessThan": 61300,
+"singleMfs": 2722,
+"jointHoh": 2534
+},
+{
+"atLeast": 61300,
+"lessThan": 61350,
+"singleMfs": 2724,
+"jointHoh": 2536
+},
+{
+"atLeast": 61350,
+"lessThan": 61400,
+"singleMfs": 2727,
+"jointHoh": 2538
+},
+{
+"atLeast": 61400,
+"lessThan": 61450,
+"singleMfs": 2729,
+"jointHoh": 2541
+},
+{
+"atLeast": 61450,
+"lessThan": 61500,
+"singleMfs": 2732,
+"jointHoh": 2543
+},
+{
+"atLeast": 61500,
+"lessThan": 61550,
+"singleMfs": 2734,
+"jointHoh": 2545
+},
+{
+"atLeast": 61550,
+"lessThan": 61600,
+"singleMfs": 2736,
+"jointHoh": 2548
+},
+{
+"atLeast": 61600,
+"lessThan": 61650,
+"singleMfs": 2739,
+"jointHoh": 2550
+},
+{
+"atLeast": 61650,
+"lessThan": 61700,
+"singleMfs": 2741,
+"jointHoh": 2553
+},
+{
+"atLeast": 61700,
+"lessThan": 61750,
+"singleMfs": 2743,
+"jointHoh": 2555
+},
+{
+"atLeast": 61750,
+"lessThan": 61800,
+"singleMfs": 2746,
+"jointHoh": 2557
+},
+{
+"atLeast": 61800,
+"lessThan": 61850,
+"singleMfs": 2748,
+"jointHoh": 2560
+},
+{
+"atLeast": 61850,
+"lessThan": 61900,
+"singleMfs": 2751,
+"jointHoh": 2562
+},
+{
+"atLeast": 61900,
+"lessThan": 61950,
+"singleMfs": 2753,
+"jointHoh": 2564
+},
+{
+"atLeast": 61950,
+"lessThan": 62000,
+"singleMfs": 2755,
+"jointHoh": 2567
+},
+{
+"atLeast": 62000,
+"lessThan": 62050,
+"singleMfs": 2758,
+"jointHoh": 2569
+},
+{
+"atLeast": 62050,
+"lessThan": 62100,
+"singleMfs": 2760,
+"jointHoh": 2572
+},
+{
+"atLeast": 62100,
+"lessThan": 62150,
+"singleMfs": 2762,
+"jointHoh": 2574
+},
+{
+"atLeast": 62150,
+"lessThan": 62200,
+"singleMfs": 2765,
+"jointHoh": 2576
+},
+{
+"atLeast": 62200,
+"lessThan": 62250,
+"singleMfs": 2767,
+"jointHoh": 2579
+},
+{
+"atLeast": 62250,
+"lessThan": 62300,
+"singleMfs": 2770,
+"jointHoh": 2581
+},
+{
+"atLeast": 62300,
+"lessThan": 62350,
+"singleMfs": 2772,
+"jointHoh": 2583
+},
+{
+"atLeast": 62350,
+"lessThan": 62400,
+"singleMfs": 2774,
+"jointHoh": 2586
+},
+{
+"atLeast": 62400,
+"lessThan": 62450,
+"singleMfs": 2777,
+"jointHoh": 2588
+},
+{
+"atLeast": 62450,
+"lessThan": 62500,
+"singleMfs": 2779,
+"jointHoh": 2591
+},
+{
+"atLeast": 62500,
+"lessThan": 62550,
+"singleMfs": 2781,
+"jointHoh": 2593
+},
+{
+"atLeast": 62550,
+"lessThan": 62600,
+"singleMfs": 2784,
+"jointHoh": 2595
+},
+{
+"atLeast": 62600,
+"lessThan": 62650,
+"singleMfs": 2786,
+"jointHoh": 2598
+},
+{
+"atLeast": 62650,
+"lessThan": 62700,
+"singleMfs": 2789,
+"jointHoh": 2600
+},
+{
+"atLeast": 62700,
+"lessThan": 62750,
+"singleMfs": 2791,
+"jointHoh": 2602
+},
+{
+"atLeast": 62750,
+"lessThan": 62800,
+"singleMfs": 2793,
+"jointHoh": 2605
+},
+{
+"atLeast": 62800,
+"lessThan": 62850,
+"singleMfs": 2796,
+"jointHoh": 2607
+},
+{
+"atLeast": 62850,
+"lessThan": 62900,
+"singleMfs": 2798,
+"jointHoh": 2610
+},
+{
+"atLeast": 62900,
+"lessThan": 62950,
+"singleMfs": 2800,
+"jointHoh": 2612
+},
+{
+"atLeast": 62950,
+"lessThan": 63000,
+"singleMfs": 2803,
+"jointHoh": 2614
+},
+{
+"atLeast": 63000,
+"lessThan": 63050,
+"singleMfs": 2805,
+"jointHoh": 2617
+},
+{
+"atLeast": 63050,
+"lessThan": 63100,
+"singleMfs": 2808,
+"jointHoh": 2619
+},
+{
+"atLeast": 63100,
+"lessThan": 63150,
+"singleMfs": 2810,
+"jointHoh": 2621
+},
+{
+"atLeast": 63150,
+"lessThan": 63200,
+"singleMfs": 2812,
+"jointHoh": 2624
+},
+{
+"atLeast": 63200,
+"lessThan": 63250,
+"singleMfs": 2815,
+"jointHoh": 2626
+},
+{
+"atLeast": 63250,
+"lessThan": 63300,
+"singleMfs": 2817,
+"jointHoh": 2629
+},
+{
+"atLeast": 63300,
+"lessThan": 63350,
+"singleMfs": 2819,
+"jointHoh": 2631
+},
+{
+"atLeast": 63350,
+"lessThan": 63400,
+"singleMfs": 2822,
+"jointHoh": 2633
+},
+{
+"atLeast": 63400,
+"lessThan": 63450,
+"singleMfs": 2824,
+"jointHoh": 2636
+},
+{
+"atLeast": 63450,
+"lessThan": 63500,
+"singleMfs": 2827,
+"jointHoh": 2638
+},
+{
+"atLeast": 63500,
+"lessThan": 63550,
+"singleMfs": 2829,
+"jointHoh": 2640
+},
+{
+"atLeast": 63550,
+"lessThan": 63600,
+"singleMfs": 2831,
+"jointHoh": 2643
+},
+{
+"atLeast": 63600,
+"lessThan": 63650,
+"singleMfs": 2834,
+"jointHoh": 2645
+},
+{
+"atLeast": 63650,
+"lessThan": 63700,
+"singleMfs": 2836,
+"jointHoh": 2648
+},
+{
+"atLeast": 63700,
+"lessThan": 63750,
+"singleMfs": 2838,
+"jointHoh": 2650
+},
+{
+"atLeast": 63750,
+"lessThan": 63800,
+"singleMfs": 2841,
+"jointHoh": 2652
+},
+{
+"atLeast": 63800,
+"lessThan": 63850,
+"singleMfs": 2843,
+"jointHoh": 2655
+},
+{
+"atLeast": 63850,
+"lessThan": 63900,
+"singleMfs": 2846,
+"jointHoh": 2657
+},
+{
+"atLeast": 63900,
+"lessThan": 63950,
+"singleMfs": 2848,
+"jointHoh": 2659
+},
+{
+"atLeast": 63950,
+"lessThan": 64000,
+"singleMfs": 2850,
+"jointHoh": 2662
+},
+{
+"atLeast": 64000,
+"lessThan": 64050,
+"singleMfs": 2853,
+"jointHoh": 2664
+},
+{
+"atLeast": 64050,
+"lessThan": 64100,
+"singleMfs": 2855,
+"jointHoh": 2667
+},
+{
+"atLeast": 64100,
+"lessThan": 64150,
+"singleMfs": 2857,
+"jointHoh": 2669
+},
+{
+"atLeast": 64150,
+"lessThan": 64200,
+"singleMfs": 2860,
+"jointHoh": 2671
+},
+{
+"atLeast": 64200,
+"lessThan": 64250,
+"singleMfs": 2862,
+"jointHoh": 2674
+},
+{
+"atLeast": 64250,
+"lessThan": 64300,
+"singleMfs": 2865,
+"jointHoh": 2676
+},
+{
+"atLeast": 64300,
+"lessThan": 64350,
+"singleMfs": 2867,
+"jointHoh": 2678
+},
+{
+"atLeast": 64350,
+"lessThan": 64400,
+"singleMfs": 2869,
+"jointHoh": 2681
+},
+{
+"atLeast": 64400,
+"lessThan": 64450,
+"singleMfs": 2872,
+"jointHoh": 2683
+},
+{
+"atLeast": 64450,
+"lessThan": 64500,
+"singleMfs": 2874,
+"jointHoh": 2686
+},
+{
+"atLeast": 64500,
+"lessThan": 64550,
+"singleMfs": 2876,
+"jointHoh": 2688
+},
+{
+"atLeast": 64550,
+"lessThan": 64600,
+"singleMfs": 2879,
+"jointHoh": 2690
+},
+{
+"atLeast": 64600,
+"lessThan": 64650,
+"singleMfs": 2881,
+"jointHoh": 2693
+},
+{
+"atLeast": 64650,
+"lessThan": 64700,
+"singleMfs": 2884,
+"jointHoh": 2695
+},
+{
+"atLeast": 64700,
+"lessThan": 64750,
+"singleMfs": 2886,
+"jointHoh": 2697
+},
+{
+"atLeast": 64750,
+"lessThan": 64800,
+"singleMfs": 2888,
+"jointHoh": 2700
+},
+{
+"atLeast": 64800,
+"lessThan": 64850,
+"singleMfs": 2891,
+"jointHoh": 2702
+},
+{
+"atLeast": 64850,
+"lessThan": 64900,
+"singleMfs": 2893,
+"jointHoh": 2705
+},
+{
+"atLeast": 64900,
+"lessThan": 64950,
+"singleMfs": 2895,
+"jointHoh": 2707
+},
+{
+"atLeast": 64950,
+"lessThan": 65000,
+"singleMfs": 2898,
+"jointHoh": 2709
+},
+{
+"atLeast": 65000,
+"lessThan": 65050,
+"singleMfs": 2900,
+"jointHoh": 2712
+},
+{
+"atLeast": 65050,
+"lessThan": 65100,
+"singleMfs": 2903,
+"jointHoh": 2714
+},
+{
+"atLeast": 65100,
+"lessThan": 65150,
+"singleMfs": 2905,
+"jointHoh": 2716
+},
+{
+"atLeast": 65150,
+"lessThan": 65200,
+"singleMfs": 2907,
+"jointHoh": 2719
+},
+{
+"atLeast": 65200,
+"lessThan": 65250,
+"singleMfs": 2910,
+"jointHoh": 2721
+},
+{
+"atLeast": 65250,
+"lessThan": 65300,
+"singleMfs": 2912,
+"jointHoh": 2724
+},
+{
+"atLeast": 65300,
+"lessThan": 65350,
+"singleMfs": 2914,
+"jointHoh": 2726
+},
+{
+"atLeast": 65350,
+"lessThan": 65400,
+"singleMfs": 2917,
+"jointHoh": 2728
+},
+{
+"atLeast": 65400,
+"lessThan": 65450,
+"singleMfs": 2919,
+"jointHoh": 2731
+},
+{
+"atLeast": 65450,
+"lessThan": 65500,
+"singleMfs": 2922,
+"jointHoh": 2733
+},
+{
+"atLeast": 65500,
+"lessThan": 65550,
+"singleMfs": 2924,
+"jointHoh": 2735
+},
+{
+"atLeast": 65550,
+"lessThan": 65600,
+"singleMfs": 2926,
+"jointHoh": 2738
+},
+{
+"atLeast": 65600,
+"lessThan": 65650,
+"singleMfs": 2929,
+"jointHoh": 2740
+},
+{
+"atLeast": 65650,
+"lessThan": 65700,
+"singleMfs": 2931,
+"jointHoh": 2743
+},
+{
+"atLeast": 65700,
+"lessThan": 65750,
+"singleMfs": 2933,
+"jointHoh": 2745
+},
+{
+"atLeast": 65750,
+"lessThan": 65800,
+"singleMfs": 2936,
+"jointHoh": 2747
+},
+{
+"atLeast": 65800,
+"lessThan": 65850,
+"singleMfs": 2938,
+"jointHoh": 2750
+},
+{
+"atLeast": 65850,
+"lessThan": 65900,
+"singleMfs": 2941,
+"jointHoh": 2752
+},
+{
+"atLeast": 65900,
+"lessThan": 65950,
+"singleMfs": 2943,
+"jointHoh": 2754
+},
+{
+"atLeast": 65950,
+"lessThan": 66000,
+"singleMfs": 2945,
+"jointHoh": 2757
+},
+{
+"atLeast": 66000,
+"lessThan": 66050,
+"singleMfs": 2948,
+"jointHoh": 2759
+},
+{
+"atLeast": 66050,
+"lessThan": 66100,
+"singleMfs": 2950,
+"jointHoh": 2762
+},
+{
+"atLeast": 66100,
+"lessThan": 66150,
+"singleMfs": 2952,
+"jointHoh": 2764
+},
+{
+"atLeast": 66150,
+"lessThan": 66200,
+"singleMfs": 2955,
+"jointHoh": 2766
+},
+{
+"atLeast": 66200,
+"lessThan": 66250,
+"singleMfs": 2957,
+"jointHoh": 2769
+},
+{
+"atLeast": 66250,
+"lessThan": 66300,
+"singleMfs": 2960,
+"jointHoh": 2771
+},
+{
+"atLeast": 66300,
+"lessThan": 66350,
+"singleMfs": 2962,
+"jointHoh": 2773
+},
+{
+"atLeast": 66350,
+"lessThan": 66400,
+"singleMfs": 2964,
+"jointHoh": 2776
+},
+{
+"atLeast": 66400,
+"lessThan": 66450,
+"singleMfs": 2967,
+"jointHoh": 2778
+},
+{
+"atLeast": 66450,
+"lessThan": 66500,
+"singleMfs": 2969,
+"jointHoh": 2781
+},
+{
+"atLeast": 66500,
+"lessThan": 66550,
+"singleMfs": 2971,
+"jointHoh": 2783
+},
+{
+"atLeast": 66550,
+"lessThan": 66600,
+"singleMfs": 2974,
+"jointHoh": 2785
+},
+{
+"atLeast": 66600,
+"lessThan": 66650,
+"singleMfs": 2976,
+"jointHoh": 2788
+},
+{
+"atLeast": 66650,
+"lessThan": 66700,
+"singleMfs": 2979,
+"jointHoh": 2790
+},
+{
+"atLeast": 66700,
+"lessThan": 66750,
+"singleMfs": 2981,
+"jointHoh": 2792
+},
+{
+"atLeast": 66750,
+"lessThan": 66800,
+"singleMfs": 2983,
+"jointHoh": 2795
+},
+{
+"atLeast": 66800,
+"lessThan": 66850,
+"singleMfs": 2986,
+"jointHoh": 2797
+},
+{
+"atLeast": 66850,
+"lessThan": 66900,
+"singleMfs": 2988,
+"jointHoh": 2800
+},
+{
+"atLeast": 66900,
+"lessThan": 66950,
+"singleMfs": 2990,
+"jointHoh": 2802
+},
+{
+"atLeast": 66950,
+"lessThan": 67000,
+"singleMfs": 2993,
+"jointHoh": 2804
+},
+{
+"atLeast": 67000,
+"lessThan": 67050,
+"singleMfs": 2995,
+"jointHoh": 2807
+},
+{
+"atLeast": 67050,
+"lessThan": 67100,
+"singleMfs": 2998,
+"jointHoh": 2809
+},
+{
+"atLeast": 67100,
+"lessThan": 67150,
+"singleMfs": 3000,
+"jointHoh": 2811
+},
+{
+"atLeast": 67150,
+"lessThan": 67200,
+"singleMfs": 3002,
+"jointHoh": 2814
+},
+{
+"atLeast": 67200,
+"lessThan": 67250,
+"singleMfs": 3005,
+"jointHoh": 2816
+},
+{
+"atLeast": 67250,
+"lessThan": 67300,
+"singleMfs": 3007,
+"jointHoh": 2819
+},
+{
+"atLeast": 67300,
+"lessThan": 67350,
+"singleMfs": 3009,
+"jointHoh": 2821
+},
+{
+"atLeast": 67350,
+"lessThan": 67400,
+"singleMfs": 3012,
+"jointHoh": 2823
+},
+{
+"atLeast": 67400,
+"lessThan": 67450,
+"singleMfs": 3014,
+"jointHoh": 2826
+},
+{
+"atLeast": 67450,
+"lessThan": 67500,
+"singleMfs": 3017,
+"jointHoh": 2828
+},
+{
+"atLeast": 67500,
+"lessThan": 67550,
+"singleMfs": 3019,
+"jointHoh": 2830
+},
+{
+"atLeast": 67550,
+"lessThan": 67600,
+"singleMfs": 3021,
+"jointHoh": 2833
+},
+{
+"atLeast": 67600,
+"lessThan": 67650,
+"singleMfs": 3024,
+"jointHoh": 2835
+},
+{
+"atLeast": 67650,
+"lessThan": 67700,
+"singleMfs": 3026,
+"jointHoh": 2838
+},
+{
+"atLeast": 67700,
+"lessThan": 67750,
+"singleMfs": 3028,
+"jointHoh": 2840
+},
+{
+"atLeast": 67750,
+"lessThan": 67800,
+"singleMfs": 3031,
+"jointHoh": 2842
+},
+{
+"atLeast": 67800,
+"lessThan": 67850,
+"singleMfs": 3033,
+"jointHoh": 2845
+},
+{
+"atLeast": 67850,
+"lessThan": 67900,
+"singleMfs": 3036,
+"jointHoh": 2847
+},
+{
+"atLeast": 67900,
+"lessThan": 67950,
+"singleMfs": 3038,
+"jointHoh": 2849
+},
+{
+"atLeast": 67950,
+"lessThan": 68000,
+"singleMfs": 3040,
+"jointHoh": 2852
+},
+{
+"atLeast": 68000,
+"lessThan": 68050,
+"singleMfs": 3043,
+"jointHoh": 2854
+},
+{
+"atLeast": 68050,
+"lessThan": 68100,
+"singleMfs": 3045,
+"jointHoh": 2857
+},
+{
+"atLeast": 68100,
+"lessThan": 68150,
+"singleMfs": 3047,
+"jointHoh": 2859
+},
+{
+"atLeast": 68150,
+"lessThan": 68200,
+"singleMfs": 3050,
+"jointHoh": 2861
+},
+{
+"atLeast": 68200,
+"lessThan": 68250,
+"singleMfs": 3052,
+"jointHoh": 2864
+},
+{
+"atLeast": 68250,
+"lessThan": 68300,
+"singleMfs": 3055,
+"jointHoh": 2866
+},
+{
+"atLeast": 68300,
+"lessThan": 68350,
+"singleMfs": 3057,
+"jointHoh": 2868
+},
+{
+"atLeast": 68350,
+"lessThan": 68400,
+"singleMfs": 3059,
+"jointHoh": 2871
+},
+{
+"atLeast": 68400,
+"lessThan": 68450,
+"singleMfs": 3062,
+"jointHoh": 2873
+},
+{
+"atLeast": 68450,
+"lessThan": 68500,
+"singleMfs": 3064,
+"jointHoh": 2876
+},
+{
+"atLeast": 68500,
+"lessThan": 68550,
+"singleMfs": 3066,
+"jointHoh": 2878
+},
+{
+"atLeast": 68550,
+"lessThan": 68600,
+"singleMfs": 3069,
+"jointHoh": 2880
+},
+{
+"atLeast": 68600,
+"lessThan": 68650,
+"singleMfs": 3071,
+"jointHoh": 2883
+},
+{
+"atLeast": 68650,
+"lessThan": 68700,
+"singleMfs": 3074,
+"jointHoh": 2885
+},
+{
+"atLeast": 68700,
+"lessThan": 68750,
+"singleMfs": 3076,
+"jointHoh": 2887
+},
+{
+"atLeast": 68750,
+"lessThan": 68800,
+"singleMfs": 3078,
+"jointHoh": 2890
+},
+{
+"atLeast": 68800,
+"lessThan": 68850,
+"singleMfs": 3081,
+"jointHoh": 2892
+},
+{
+"atLeast": 68850,
+"lessThan": 68900,
+"singleMfs": 3083,
+"jointHoh": 2895
+},
+{
+"atLeast": 68900,
+"lessThan": 68950,
+"singleMfs": 3085,
+"jointHoh": 2897
+},
+{
+"atLeast": 68950,
+"lessThan": 69000,
+"singleMfs": 3088,
+"jointHoh": 2899
+},
+{
+"atLeast": 69000,
+"lessThan": 69050,
+"singleMfs": 3090,
+"jointHoh": 2902
+},
+{
+"atLeast": 69050,
+"lessThan": 69100,
+"singleMfs": 3093,
+"jointHoh": 2904
+},
+{
+"atLeast": 69100,
+"lessThan": 69150,
+"singleMfs": 3095,
+"jointHoh": 2906
+},
+{
+"atLeast": 69150,
+"lessThan": 69200,
+"singleMfs": 3097,
+"jointHoh": 2909
+},
+{
+"atLeast": 69200,
+"lessThan": 69250,
+"singleMfs": 3100,
+"jointHoh": 2911
+},
+{
+"atLeast": 69250,
+"lessThan": 69300,
+"singleMfs": 3102,
+"jointHoh": 2914
+},
+{
+"atLeast": 69300,
+"lessThan": 69350,
+"singleMfs": 3104,
+"jointHoh": 2916
+},
+{
+"atLeast": 69350,
+"lessThan": 69400,
+"singleMfs": 3107,
+"jointHoh": 2918
+},
+{
+"atLeast": 69400,
+"lessThan": 69450,
+"singleMfs": 3109,
+"jointHoh": 2921
+},
+{
+"atLeast": 69450,
+"lessThan": 69500,
+"singleMfs": 3112,
+"jointHoh": 2923
+},
+{
+"atLeast": 69500,
+"lessThan": 69550,
+"singleMfs": 3114,
+"jointHoh": 2925
+},
+{
+"atLeast": 69550,
+"lessThan": 69600,
+"singleMfs": 3116,
+"jointHoh": 2928
+},
+{
+"atLeast": 69600,
+"lessThan": 69650,
+"singleMfs": 3119,
+"jointHoh": 2930
+},
+{
+"atLeast": 69650,
+"lessThan": 69700,
+"singleMfs": 3121,
+"jointHoh": 2933
+},
+{
+"atLeast": 69700,
+"lessThan": 69750,
+"singleMfs": 3123,
+"jointHoh": 2935
+},
+{
+"atLeast": 69750,
+"lessThan": 69800,
+"singleMfs": 3126,
+"jointHoh": 2937
+},
+{
+"atLeast": 69800,
+"lessThan": 69850,
+"singleMfs": 3128,
+"jointHoh": 2940
+},
+{
+"atLeast": 69850,
+"lessThan": 69900,
+"singleMfs": 3131,
+"jointHoh": 2942
+},
+{
+"atLeast": 69900,
+"lessThan": 69950,
+"singleMfs": 3133,
+"jointHoh": 2944
+},
+{
+"atLeast": 69950,
+"lessThan": 70000,
+"singleMfs": 3135,
+"jointHoh": 2947
+},
+{
+"atLeast": 70000,
+"lessThan": 70050,
+"singleMfs": 3138,
+"jointHoh": 2949
+},
+{
+"atLeast": 70050,
+"lessThan": 70100,
+"singleMfs": 3140,
+"jointHoh": 2952
+},
+{
+"atLeast": 70100,
+"lessThan": 70150,
+"singleMfs": 3142,
+"jointHoh": 2954
+},
+{
+"atLeast": 70150,
+"lessThan": 70200,
+"singleMfs": 3145,
+"jointHoh": 2956
+},
+{
+"atLeast": 70200,
+"lessThan": 70250,
+"singleMfs": 3147,
+"jointHoh": 2959
+},
+{
+"atLeast": 70250,
+"lessThan": 70300,
+"singleMfs": 3150,
+"jointHoh": 2961
+},
+{
+"atLeast": 70300,
+"lessThan": 70350,
+"singleMfs": 3152,
+"jointHoh": 2963
+},
+{
+"atLeast": 70350,
+"lessThan": 70400,
+"singleMfs": 3154,
+"jointHoh": 2966
+},
+{
+"atLeast": 70400,
+"lessThan": 70450,
+"singleMfs": 3157,
+"jointHoh": 2968
+},
+{
+"atLeast": 70450,
+"lessThan": 70500,
+"singleMfs": 3159,
+"jointHoh": 2971
+},
+{
+"atLeast": 70500,
+"lessThan": 70550,
+"singleMfs": 3161,
+"jointHoh": 2973
+},
+{
+"atLeast": 70550,
+"lessThan": 70600,
+"singleMfs": 3164,
+"jointHoh": 2975
+},
+{
+"atLeast": 70600,
+"lessThan": 70650,
+"singleMfs": 3166,
+"jointHoh": 2978
+},
+{
+"atLeast": 70650,
+"lessThan": 70700,
+"singleMfs": 3169,
+"jointHoh": 2980
+},
+{
+"atLeast": 70700,
+"lessThan": 70750,
+"singleMfs": 3171,
+"jointHoh": 2982
+},
+{
+"atLeast": 70750,
+"lessThan": 70800,
+"singleMfs": 3173,
+"jointHoh": 2985
+},
+{
+"atLeast": 70800,
+"lessThan": 70850,
+"singleMfs": 3176,
+"jointHoh": 2987
+},
+{
+"atLeast": 70850,
+"lessThan": 70900,
+"singleMfs": 3178,
+"jointHoh": 2990
+},
+{
+"atLeast": 70900,
+"lessThan": 70950,
+"singleMfs": 3180,
+"jointHoh": 2992
+},
+{
+"atLeast": 70950,
+"lessThan": 71000,
+"singleMfs": 3183,
+"jointHoh": 2994
+},
+{
+"atLeast": 71000,
+"lessThan": 71050,
+"singleMfs": 3185,
+"jointHoh": 2997
+},
+{
+"atLeast": 71050,
+"lessThan": 71100,
+"singleMfs": 3188,
+"jointHoh": 2999
+},
+{
+"atLeast": 71100,
+"lessThan": 71150,
+"singleMfs": 3190,
+"jointHoh": 3001
+},
+{
+"atLeast": 71150,
+"lessThan": 71200,
+"singleMfs": 3192,
+"jointHoh": 3004
+},
+{
+"atLeast": 71200,
+"lessThan": 71250,
+"singleMfs": 3195,
+"jointHoh": 3006
+},
+{
+"atLeast": 71250,
+"lessThan": 71300,
+"singleMfs": 3197,
+"jointHoh": 3009
+},
+{
+"atLeast": 71300,
+"lessThan": 71350,
+"singleMfs": 3199,
+"jointHoh": 3011
+},
+{
+"atLeast": 71350,
+"lessThan": 71400,
+"singleMfs": 3202,
+"jointHoh": 3013
+},
+{
+"atLeast": 71400,
+"lessThan": 71450,
+"singleMfs": 3204,
+"jointHoh": 3016
+},
+{
+"atLeast": 71450,
+"lessThan": 71500,
+"singleMfs": 3207,
+"jointHoh": 3018
+},
+{
+"atLeast": 71500,
+"lessThan": 71550,
+"singleMfs": 3209,
+"jointHoh": 3020
+},
+{
+"atLeast": 71550,
+"lessThan": 71600,
+"singleMfs": 3211,
+"jointHoh": 3023
+},
+{
+"atLeast": 71600,
+"lessThan": 71650,
+"singleMfs": 3214,
+"jointHoh": 3025
+},
+{
+"atLeast": 71650,
+"lessThan": 71700,
+"singleMfs": 3216,
+"jointHoh": 3028
+},
+{
+"atLeast": 71700,
+"lessThan": 71750,
+"singleMfs": 3218,
+"jointHoh": 3030
+},
+{
+"atLeast": 71750,
+"lessThan": 71800,
+"singleMfs": 3221,
+"jointHoh": 3032
+},
+{
+"atLeast": 71800,
+"lessThan": 71850,
+"singleMfs": 3223,
+"jointHoh": 3035
+},
+{
+"atLeast": 71850,
+"lessThan": 71900,
+"singleMfs": 3226,
+"jointHoh": 3037
+},
+{
+"atLeast": 71900,
+"lessThan": 71950,
+"singleMfs": 3228,
+"jointHoh": 3039
+},
+{
+"atLeast": 71950,
+"lessThan": 72000,
+"singleMfs": 3230,
+"jointHoh": 3042
+},
+{
+"atLeast": 72000,
+"lessThan": 72050,
+"singleMfs": 3233,
+"jointHoh": 3044
+},
+{
+"atLeast": 72050,
+"lessThan": 72100,
+"singleMfs": 3235,
+"jointHoh": 3047
+},
+{
+"atLeast": 72100,
+"lessThan": 72150,
+"singleMfs": 3237,
+"jointHoh": 3049
+},
+{
+"atLeast": 72150,
+"lessThan": 72200,
+"singleMfs": 3240,
+"jointHoh": 3051
+},
+{
+"atLeast": 72200,
+"lessThan": 72250,
+"singleMfs": 3242,
+"jointHoh": 3054
+},
+{
+"atLeast": 72250,
+"lessThan": 72300,
+"singleMfs": 3245,
+"jointHoh": 3056
+},
+{
+"atLeast": 72300,
+"lessThan": 72350,
+"singleMfs": 3247,
+"jointHoh": 3058
+},
+{
+"atLeast": 72350,
+"lessThan": 72400,
+"singleMfs": 3249,
+"jointHoh": 3061
+},
+{
+"atLeast": 72400,
+"lessThan": 72450,
+"singleMfs": 3252,
+"jointHoh": 3063
+},
+{
+"atLeast": 72450,
+"lessThan": 72500,
+"singleMfs": 3254,
+"jointHoh": 3066
+},
+{
+"atLeast": 72500,
+"lessThan": 72550,
+"singleMfs": 3256,
+"jointHoh": 3068
+},
+{
+"atLeast": 72550,
+"lessThan": 72600,
+"singleMfs": 3259,
+"jointHoh": 3070
+},
+{
+"atLeast": 72600,
+"lessThan": 72650,
+"singleMfs": 3261,
+"jointHoh": 3073
+},
+{
+"atLeast": 72650,
+"lessThan": 72700,
+"singleMfs": 3264,
+"jointHoh": 3075
+},
+{
+"atLeast": 72700,
+"lessThan": 72750,
+"singleMfs": 3266,
+"jointHoh": 3077
+},
+{
+"atLeast": 72750,
+"lessThan": 72800,
+"singleMfs": 3268,
+"jointHoh": 3080
+},
+{
+"atLeast": 72800,
+"lessThan": 72850,
+"singleMfs": 3271,
+"jointHoh": 3082
+},
+{
+"atLeast": 72850,
+"lessThan": 72900,
+"singleMfs": 3273,
+"jointHoh": 3085
+},
+{
+"atLeast": 72900,
+"lessThan": 72950,
+"singleMfs": 3275,
+"jointHoh": 3087
+},
+{
+"atLeast": 72950,
+"lessThan": 73000,
+"singleMfs": 3278,
+"jointHoh": 3089
+},
+{
+"atLeast": 73000,
+"lessThan": 73050,
+"singleMfs": 3280,
+"jointHoh": 3092
+},
+{
+"atLeast": 73050,
+"lessThan": 73100,
+"singleMfs": 3283,
+"jointHoh": 3094
+},
+{
+"atLeast": 73100,
+"lessThan": 73150,
+"singleMfs": 3285,
+"jointHoh": 3096
+},
+{
+"atLeast": 73150,
+"lessThan": 73200,
+"singleMfs": 3287,
+"jointHoh": 3099
+},
+{
+"atLeast": 73200,
+"lessThan": 73250,
+"singleMfs": 3290,
+"jointHoh": 3101
+},
+{
+"atLeast": 73250,
+"lessThan": 73300,
+"singleMfs": 3292,
+"jointHoh": 3104
+},
+{
+"atLeast": 73300,
+"lessThan": 73350,
+"singleMfs": 3294,
+"jointHoh": 3106
+},
+{
+"atLeast": 73350,
+"lessThan": 73400,
+"singleMfs": 3297,
+"jointHoh": 3108
+},
+{
+"atLeast": 73400,
+"lessThan": 73450,
+"singleMfs": 3299,
+"jointHoh": 3111
+},
+{
+"atLeast": 73450,
+"lessThan": 73500,
+"singleMfs": 3302,
+"jointHoh": 3113
+},
+{
+"atLeast": 73500,
+"lessThan": 73550,
+"singleMfs": 3304,
+"jointHoh": 3115
+},
+{
+"atLeast": 73550,
+"lessThan": 73600,
+"singleMfs": 3306,
+"jointHoh": 3118
+},
+{
+"atLeast": 73600,
+"lessThan": 73650,
+"singleMfs": 3309,
+"jointHoh": 3120
+},
+{
+"atLeast": 73650,
+"lessThan": 73700,
+"singleMfs": 3311,
+"jointHoh": 3123
+},
+{
+"atLeast": 73700,
+"lessThan": 73750,
+"singleMfs": 3313,
+"jointHoh": 3125
+},
+{
+"atLeast": 73750,
+"lessThan": 73800,
+"singleMfs": 3316,
+"jointHoh": 3127
+},
+{
+"atLeast": 73800,
+"lessThan": 73850,
+"singleMfs": 3318,
+"jointHoh": 3130
+},
+{
+"atLeast": 73850,
+"lessThan": 73900,
+"singleMfs": 3321,
+"jointHoh": 3132
+},
+{
+"atLeast": 73900,
+"lessThan": 73950,
+"singleMfs": 3323,
+"jointHoh": 3134
+},
+{
+"atLeast": 73950,
+"lessThan": 74000,
+"singleMfs": 3325,
+"jointHoh": 3137
+},
+{
+"atLeast": 74000,
+"lessThan": 74050,
+"singleMfs": 3328,
+"jointHoh": 3139
+},
+{
+"atLeast": 74050,
+"lessThan": 74100,
+"singleMfs": 3330,
+"jointHoh": 3142
+},
+{
+"atLeast": 74100,
+"lessThan": 74150,
+"singleMfs": 3332,
+"jointHoh": 3144
+},
+{
+"atLeast": 74150,
+"lessThan": 74200,
+"singleMfs": 3335,
+"jointHoh": 3146
+},
+{
+"atLeast": 74200,
+"lessThan": 74250,
+"singleMfs": 3337,
+"jointHoh": 3149
+},
+{
+"atLeast": 74250,
+"lessThan": 74300,
+"singleMfs": 3340,
+"jointHoh": 3151
+},
+{
+"atLeast": 74300,
+"lessThan": 74350,
+"singleMfs": 3342,
+"jointHoh": 3153
+},
+{
+"atLeast": 74350,
+"lessThan": 74400,
+"singleMfs": 3344,
+"jointHoh": 3156
+},
+{
+"atLeast": 74400,
+"lessThan": 74450,
+"singleMfs": 3347,
+"jointHoh": 3158
+},
+{
+"atLeast": 74450,
+"lessThan": 74500,
+"singleMfs": 3349,
+"jointHoh": 3161
+},
+{
+"atLeast": 74500,
+"lessThan": 74550,
+"singleMfs": 3351,
+"jointHoh": 3163
+},
+{
+"atLeast": 74550,
+"lessThan": 74600,
+"singleMfs": 3354,
+"jointHoh": 3165
+},
+{
+"atLeast": 74600,
+"lessThan": 74650,
+"singleMfs": 3356,
+"jointHoh": 3168
+},
+{
+"atLeast": 74650,
+"lessThan": 74700,
+"singleMfs": 3359,
+"jointHoh": 3170
+},
+{
+"atLeast": 74700,
+"lessThan": 74750,
+"singleMfs": 3361,
+"jointHoh": 3172
+},
+{
+"atLeast": 74750,
+"lessThan": 74800,
+"singleMfs": 3363,
+"jointHoh": 3175
+},
+{
+"atLeast": 74800,
+"lessThan": 74850,
+"singleMfs": 3366,
+"jointHoh": 3177
+},
+{
+"atLeast": 74850,
+"lessThan": 74900,
+"singleMfs": 3368,
+"jointHoh": 3180
+},
+{
+"atLeast": 74900,
+"lessThan": 74950,
+"singleMfs": 3370,
+"jointHoh": 3182
+},
+{
+"atLeast": 74950,
+"lessThan": 75000,
+"singleMfs": 3373,
+"jointHoh": 3184
+},
+{
+"atLeast": 75000,
+"lessThan": 75050,
+"singleMfs": 3375,
+"jointHoh": 3187
+},
+{
+"atLeast": 75050,
+"lessThan": 75100,
+"singleMfs": 3378,
+"jointHoh": 3189
+},
+{
+"atLeast": 75100,
+"lessThan": 75150,
+"singleMfs": 3380,
+"jointHoh": 3191
+},
+{
+"atLeast": 75150,
+"lessThan": 75200,
+"singleMfs": 3382,
+"jointHoh": 3194
+},
+{
+"atLeast": 75200,
+"lessThan": 75250,
+"singleMfs": 3385,
+"jointHoh": 3196
+},
+{
+"atLeast": 75250,
+"lessThan": 75300,
+"singleMfs": 3387,
+"jointHoh": 3199
+},
+{
+"atLeast": 75300,
+"lessThan": 75350,
+"singleMfs": 3389,
+"jointHoh": 3201
+},
+{
+"atLeast": 75350,
+"lessThan": 75400,
+"singleMfs": 3392,
+"jointHoh": 3203
+},
+{
+"atLeast": 75400,
+"lessThan": 75450,
+"singleMfs": 3394,
+"jointHoh": 3206
+},
+{
+"atLeast": 75450,
+"lessThan": 75500,
+"singleMfs": 3397,
+"jointHoh": 3208
+},
+{
+"atLeast": 75500,
+"lessThan": 75550,
+"singleMfs": 3399,
+"jointHoh": 3210
+},
+{
+"atLeast": 75550,
+"lessThan": 75600,
+"singleMfs": 3401,
+"jointHoh": 3213
+},
+{
+"atLeast": 75600,
+"lessThan": 75650,
+"singleMfs": 3404,
+"jointHoh": 3215
+},
+{
+"atLeast": 75650,
+"lessThan": 75700,
+"singleMfs": 3406,
+"jointHoh": 3218
+},
+{
+"atLeast": 75700,
+"lessThan": 75750,
+"singleMfs": 3408,
+"jointHoh": 3220
+},
+{
+"atLeast": 75750,
+"lessThan": 75800,
+"singleMfs": 3411,
+"jointHoh": 3222
+},
+{
+"atLeast": 75800,
+"lessThan": 75850,
+"singleMfs": 3413,
+"jointHoh": 3225
+},
+{
+"atLeast": 75850,
+"lessThan": 75900,
+"singleMfs": 3416,
+"jointHoh": 3227
+},
+{
+"atLeast": 75900,
+"lessThan": 75950,
+"singleMfs": 3418,
+"jointHoh": 3229
+},
+{
+"atLeast": 75950,
+"lessThan": 76000,
+"singleMfs": 3420,
+"jointHoh": 3232
+},
+{
+"atLeast": 76000,
+"lessThan": 76050,
+"singleMfs": 3423,
+"jointHoh": 3234
+},
+{
+"atLeast": 76050,
+"lessThan": 76100,
+"singleMfs": 3425,
+"jointHoh": 3237
+},
+{
+"atLeast": 76100,
+"lessThan": 76150,
+"singleMfs": 3427,
+"jointHoh": 3239
+},
+{
+"atLeast": 76150,
+"lessThan": 76200,
+"singleMfs": 3430,
+"jointHoh": 3241
+},
+{
+"atLeast": 76200,
+"lessThan": 76250,
+"singleMfs": 3432,
+"jointHoh": 3244
+},
+{
+"atLeast": 76250,
+"lessThan": 76300,
+"singleMfs": 3435,
+"jointHoh": 3246
+},
+{
+"atLeast": 76300,
+"lessThan": 76350,
+"singleMfs": 3437,
+"jointHoh": 3248
+},
+{
+"atLeast": 76350,
+"lessThan": 76400,
+"singleMfs": 3439,
+"jointHoh": 3251
+},
+{
+"atLeast": 76400,
+"lessThan": 76450,
+"singleMfs": 3442,
+"jointHoh": 3253
+},
+{
+"atLeast": 76450,
+"lessThan": 76500,
+"singleMfs": 3444,
+"jointHoh": 3256
+},
+{
+"atLeast": 76500,
+"lessThan": 76550,
+"singleMfs": 3446,
+"jointHoh": 3258
+},
+{
+"atLeast": 76550,
+"lessThan": 76600,
+"singleMfs": 3449,
+"jointHoh": 3260
+},
+{
+"atLeast": 76600,
+"lessThan": 76650,
+"singleMfs": 3451,
+"jointHoh": 3263
+},
+{
+"atLeast": 76650,
+"lessThan": 76700,
+"singleMfs": 3454,
+"jointHoh": 3265
+},
+{
+"atLeast": 76700,
+"lessThan": 76750,
+"singleMfs": 3456,
+"jointHoh": 3267
+},
+{
+"atLeast": 76750,
+"lessThan": 76800,
+"singleMfs": 3458,
+"jointHoh": 3270
+},
+{
+"atLeast": 76800,
+"lessThan": 76850,
+"singleMfs": 3461,
+"jointHoh": 3272
+},
+{
+"atLeast": 76850,
+"lessThan": 76900,
+"singleMfs": 3463,
+"jointHoh": 3275
+},
+{
+"atLeast": 76900,
+"lessThan": 76950,
+"singleMfs": 3465,
+"jointHoh": 3277
+},
+{
+"atLeast": 76950,
+"lessThan": 77000,
+"singleMfs": 3468,
+"jointHoh": 3279
+},
+{
+"atLeast": 77000,
+"lessThan": 77050,
+"singleMfs": 3470,
+"jointHoh": 3282
+},
+{
+"atLeast": 77050,
+"lessThan": 77100,
+"singleMfs": 3473,
+"jointHoh": 3284
+},
+{
+"atLeast": 77100,
+"lessThan": 77150,
+"singleMfs": 3475,
+"jointHoh": 3286
+},
+{
+"atLeast": 77150,
+"lessThan": 77200,
+"singleMfs": 3477,
+"jointHoh": 3289
+},
+{
+"atLeast": 77200,
+"lessThan": 77250,
+"singleMfs": 3480,
+"jointHoh": 3291
+},
+{
+"atLeast": 77250,
+"lessThan": 77300,
+"singleMfs": 3482,
+"jointHoh": 3294
+},
+{
+"atLeast": 77300,
+"lessThan": 77350,
+"singleMfs": 3484,
+"jointHoh": 3296
+},
+{
+"atLeast": 77350,
+"lessThan": 77400,
+"singleMfs": 3487,
+"jointHoh": 3298
+},
+{
+"atLeast": 77400,
+"lessThan": 77450,
+"singleMfs": 3489,
+"jointHoh": 3301
+},
+{
+"atLeast": 77450,
+"lessThan": 77500,
+"singleMfs": 3492,
+"jointHoh": 3303
+},
+{
+"atLeast": 77500,
+"lessThan": 77550,
+"singleMfs": 3494,
+"jointHoh": 3305
+},
+{
+"atLeast": 77550,
+"lessThan": 77600,
+"singleMfs": 3496,
+"jointHoh": 3308
+},
+{
+"atLeast": 77600,
+"lessThan": 77650,
+"singleMfs": 3499,
+"jointHoh": 3310
+},
+{
+"atLeast": 77650,
+"lessThan": 77700,
+"singleMfs": 3501,
+"jointHoh": 3313
+},
+{
+"atLeast": 77700,
+"lessThan": 77750,
+"singleMfs": 3503,
+"jointHoh": 3315
+},
+{
+"atLeast": 77750,
+"lessThan": 77800,
+"singleMfs": 3506,
+"jointHoh": 3317
+},
+{
+"atLeast": 77800,
+"lessThan": 77850,
+"singleMfs": 3508,
+"jointHoh": 3320
+},
+{
+"atLeast": 77850,
+"lessThan": 77900,
+"singleMfs": 3511,
+"jointHoh": 3322
+},
+{
+"atLeast": 77900,
+"lessThan": 77950,
+"singleMfs": 3513,
+"jointHoh": 3324
+},
+{
+"atLeast": 77950,
+"lessThan": 78000,
+"singleMfs": 3515,
+"jointHoh": 3327
+},
+{
+"atLeast": 78000,
+"lessThan": 78050,
+"singleMfs": 3518,
+"jointHoh": 3329
+},
+{
+"atLeast": 78050,
+"lessThan": 78100,
+"singleMfs": 3520,
+"jointHoh": 3332
+},
+{
+"atLeast": 78100,
+"lessThan": 78150,
+"singleMfs": 3522,
+"jointHoh": 3334
+},
+{
+"atLeast": 78150,
+"lessThan": 78200,
+"singleMfs": 3525,
+"jointHoh": 3336
+},
+{
+"atLeast": 78200,
+"lessThan": 78250,
+"singleMfs": 3527,
+"jointHoh": 3339
+},
+{
+"atLeast": 78250,
+"lessThan": 78300,
+"singleMfs": 3530,
+"jointHoh": 3341
+},
+{
+"atLeast": 78300,
+"lessThan": 78350,
+"singleMfs": 3532,
+"jointHoh": 3343
+},
+{
+"atLeast": 78350,
+"lessThan": 78400,
+"singleMfs": 3534,
+"jointHoh": 3346
+},
+{
+"atLeast": 78400,
+"lessThan": 78450,
+"singleMfs": 3537,
+"jointHoh": 3348
+},
+{
+"atLeast": 78450,
+"lessThan": 78500,
+"singleMfs": 3539,
+"jointHoh": 3351
+},
+{
+"atLeast": 78500,
+"lessThan": 78550,
+"singleMfs": 3541,
+"jointHoh": 3353
+},
+{
+"atLeast": 78550,
+"lessThan": 78600,
+"singleMfs": 3544,
+"jointHoh": 3355
+},
+{
+"atLeast": 78600,
+"lessThan": 78650,
+"singleMfs": 3546,
+"jointHoh": 3358
+},
+{
+"atLeast": 78650,
+"lessThan": 78700,
+"singleMfs": 3549,
+"jointHoh": 3360
+},
+{
+"atLeast": 78700,
+"lessThan": 78750,
+"singleMfs": 3551,
+"jointHoh": 3362
+},
+{
+"atLeast": 78750,
+"lessThan": 78800,
+"singleMfs": 3553,
+"jointHoh": 3365
+},
+{
+"atLeast": 78800,
+"lessThan": 78850,
+"singleMfs": 3556,
+"jointHoh": 3367
+},
+{
+"atLeast": 78850,
+"lessThan": 78900,
+"singleMfs": 3558,
+"jointHoh": 3370
+},
+{
+"atLeast": 78900,
+"lessThan": 78950,
+"singleMfs": 3560,
+"jointHoh": 3372
+},
+{
+"atLeast": 78950,
+"lessThan": 79000,
+"singleMfs": 3563,
+"jointHoh": 3374
+},
+{
+"atLeast": 79000,
+"lessThan": 79050,
+"singleMfs": 3565,
+"jointHoh": 3377
+},
+{
+"atLeast": 79050,
+"lessThan": 79100,
+"singleMfs": 3568,
+"jointHoh": 3379
+},
+{
+"atLeast": 79100,
+"lessThan": 79150,
+"singleMfs": 3570,
+"jointHoh": 3381
+},
+{
+"atLeast": 79150,
+"lessThan": 79200,
+"singleMfs": 3572,
+"jointHoh": 3384
+},
+{
+"atLeast": 79200,
+"lessThan": 79250,
+"singleMfs": 3575,
+"jointHoh": 3386
+},
+{
+"atLeast": 79250,
+"lessThan": 79300,
+"singleMfs": 3577,
+"jointHoh": 3389
+},
+{
+"atLeast": 79300,
+"lessThan": 79350,
+"singleMfs": 3579,
+"jointHoh": 3391
+},
+{
+"atLeast": 79350,
+"lessThan": 79400,
+"singleMfs": 3582,
+"jointHoh": 3393
+},
+{
+"atLeast": 79400,
+"lessThan": 79450,
+"singleMfs": 3584,
+"jointHoh": 3396
+},
+{
+"atLeast": 79450,
+"lessThan": 79500,
+"singleMfs": 3587,
+"jointHoh": 3398
+},
+{
+"atLeast": 79500,
+"lessThan": 79550,
+"singleMfs": 3589,
+"jointHoh": 3400
+},
+{
+"atLeast": 79550,
+"lessThan": 79600,
+"singleMfs": 3591,
+"jointHoh": 3403
+},
+{
+"atLeast": 79600,
+"lessThan": 79650,
+"singleMfs": 3594,
+"jointHoh": 3405
+},
+{
+"atLeast": 79650,
+"lessThan": 79700,
+"singleMfs": 3596,
+"jointHoh": 3408
+},
+{
+"atLeast": 79700,
+"lessThan": 79750,
+"singleMfs": 3598,
+"jointHoh": 3410
+},
+{
+"atLeast": 79750,
+"lessThan": 79800,
+"singleMfs": 3601,
+"jointHoh": 3412
+},
+{
+"atLeast": 79800,
+"lessThan": 79850,
+"singleMfs": 3603,
+"jointHoh": 3415
+},
+{
+"atLeast": 79850,
+"lessThan": 79900,
+"singleMfs": 3606,
+"jointHoh": 3417
+},
+{
+"atLeast": 79900,
+"lessThan": 79950,
+"singleMfs": 3608,
+"jointHoh": 3419
+},
+{
+"atLeast": 79950,
+"lessThan": 80000,
+"singleMfs": 3610,
+"jointHoh": 3422
+},
+{
+"atLeast": 80000,
+"lessThan": 80050,
+"singleMfs": 3613,
+"jointHoh": 3424
+},
+{
+"atLeast": 80050,
+"lessThan": 80100,
+"singleMfs": 3615,
+"jointHoh": 3427
+},
+{
+"atLeast": 80100,
+"lessThan": 80150,
+"singleMfs": 3617,
+"jointHoh": 3429
+},
+{
+"atLeast": 80150,
+"lessThan": 80200,
+"singleMfs": 3620,
+"jointHoh": 3431
+},
+{
+"atLeast": 80200,
+"lessThan": 80250,
+"singleMfs": 3622,
+"jointHoh": 3434
+},
+{
+"atLeast": 80250,
+"lessThan": 80300,
+"singleMfs": 3625,
+"jointHoh": 3436
+},
+{
+"atLeast": 80300,
+"lessThan": 80350,
+"singleMfs": 3627,
+"jointHoh": 3438
+},
+{
+"atLeast": 80350,
+"lessThan": 80400,
+"singleMfs": 3629,
+"jointHoh": 3441
+},
+{
+"atLeast": 80400,
+"lessThan": 80450,
+"singleMfs": 3632,
+"jointHoh": 3443
+},
+{
+"atLeast": 80450,
+"lessThan": 80500,
+"singleMfs": 3634,
+"jointHoh": 3446
+},
+{
+"atLeast": 80500,
+"lessThan": 80550,
+"singleMfs": 3636,
+"jointHoh": 3448
+},
+{
+"atLeast": 80550,
+"lessThan": 80600,
+"singleMfs": 3639,
+"jointHoh": 3450
+},
+{
+"atLeast": 80600,
+"lessThan": 80650,
+"singleMfs": 3641,
+"jointHoh": 3453
+},
+{
+"atLeast": 80650,
+"lessThan": 80700,
+"singleMfs": 3644,
+"jointHoh": 3455
+},
+{
+"atLeast": 80700,
+"lessThan": 80750,
+"singleMfs": 3646,
+"jointHoh": 3457
+},
+{
+"atLeast": 80750,
+"lessThan": 80800,
+"singleMfs": 3648,
+"jointHoh": 3460
+},
+{
+"atLeast": 80800,
+"lessThan": 80850,
+"singleMfs": 3651,
+"jointHoh": 3462
+},
+{
+"atLeast": 80850,
+"lessThan": 80900,
+"singleMfs": 3653,
+"jointHoh": 3465
+},
+{
+"atLeast": 80900,
+"lessThan": 80950,
+"singleMfs": 3655,
+"jointHoh": 3467
+},
+{
+"atLeast": 80950,
+"lessThan": 81000,
+"singleMfs": 3658,
+"jointHoh": 3469
+},
+{
+"atLeast": 81000,
+"lessThan": 81050,
+"singleMfs": 3660,
+"jointHoh": 3472
+},
+{
+"atLeast": 81050,
+"lessThan": 81100,
+"singleMfs": 3663,
+"jointHoh": 3474
+},
+{
+"atLeast": 81100,
+"lessThan": 81150,
+"singleMfs": 3665,
+"jointHoh": 3476
+},
+{
+"atLeast": 81150,
+"lessThan": 81200,
+"singleMfs": 3667,
+"jointHoh": 3479
+},
+{
+"atLeast": 81200,
+"lessThan": 81250,
+"singleMfs": 3670,
+"jointHoh": 3481
+},
+{
+"atLeast": 81250,
+"lessThan": 81300,
+"singleMfs": 3672,
+"jointHoh": 3484
+},
+{
+"atLeast": 81300,
+"lessThan": 81350,
+"singleMfs": 3674,
+"jointHoh": 3486
+},
+{
+"atLeast": 81350,
+"lessThan": 81400,
+"singleMfs": 3677,
+"jointHoh": 3488
+},
+{
+"atLeast": 81400,
+"lessThan": 81450,
+"singleMfs": 3679,
+"jointHoh": 3491
+},
+{
+"atLeast": 81450,
+"lessThan": 81500,
+"singleMfs": 3682,
+"jointHoh": 3493
+},
+{
+"atLeast": 81500,
+"lessThan": 81550,
+"singleMfs": 3684,
+"jointHoh": 3495
+},
+{
+"atLeast": 81550,
+"lessThan": 81600,
+"singleMfs": 3686,
+"jointHoh": 3498
+},
+{
+"atLeast": 81600,
+"lessThan": 81650,
+"singleMfs": 3689,
+"jointHoh": 3500
+},
+{
+"atLeast": 81650,
+"lessThan": 81700,
+"singleMfs": 3691,
+"jointHoh": 3503
+},
+{
+"atLeast": 81700,
+"lessThan": 81750,
+"singleMfs": 3693,
+"jointHoh": 3505
+},
+{
+"atLeast": 81750,
+"lessThan": 81800,
+"singleMfs": 3696,
+"jointHoh": 3507
+},
+{
+"atLeast": 81800,
+"lessThan": 81850,
+"singleMfs": 3698,
+"jointHoh": 3510
+},
+{
+"atLeast": 81850,
+"lessThan": 81900,
+"singleMfs": 3701,
+"jointHoh": 3512
+},
+{
+"atLeast": 81900,
+"lessThan": 81950,
+"singleMfs": 3703,
+"jointHoh": 3514
+},
+{
+"atLeast": 81950,
+"lessThan": 82000,
+"singleMfs": 3705,
+"jointHoh": 3517
+},
+{
+"atLeast": 82000,
+"lessThan": 82050,
+"singleMfs": 3708,
+"jointHoh": 3519
+},
+{
+"atLeast": 82050,
+"lessThan": 82100,
+"singleMfs": 3710,
+"jointHoh": 3522
+},
+{
+"atLeast": 82100,
+"lessThan": 82150,
+"singleMfs": 3712,
+"jointHoh": 3524
+},
+{
+"atLeast": 82150,
+"lessThan": 82200,
+"singleMfs": 3715,
+"jointHoh": 3526
+},
+{
+"atLeast": 82200,
+"lessThan": 82250,
+"singleMfs": 3717,
+"jointHoh": 3529
+},
+{
+"atLeast": 82250,
+"lessThan": 82300,
+"singleMfs": 3720,
+"jointHoh": 3531
+},
+{
+"atLeast": 82300,
+"lessThan": 82350,
+"singleMfs": 3722,
+"jointHoh": 3533
+},
+{
+"atLeast": 82350,
+"lessThan": 82400,
+"singleMfs": 3724,
+"jointHoh": 3536
+},
+{
+"atLeast": 82400,
+"lessThan": 82450,
+"singleMfs": 3727,
+"jointHoh": 3538
+},
+{
+"atLeast": 82450,
+"lessThan": 82500,
+"singleMfs": 3729,
+"jointHoh": 3541
+},
+{
+"atLeast": 82500,
+"lessThan": 82550,
+"singleMfs": 3731,
+"jointHoh": 3543
+},
+{
+"atLeast": 82550,
+"lessThan": 82600,
+"singleMfs": 3734,
+"jointHoh": 3545
+},
+{
+"atLeast": 82600,
+"lessThan": 82650,
+"singleMfs": 3736,
+"jointHoh": 3548
+},
+{
+"atLeast": 82650,
+"lessThan": 82700,
+"singleMfs": 3739,
+"jointHoh": 3550
+},
+{
+"atLeast": 82700,
+"lessThan": 82750,
+"singleMfs": 3741,
+"jointHoh": 3552
+},
+{
+"atLeast": 82750,
+"lessThan": 82800,
+"singleMfs": 3743,
+"jointHoh": 3555
+},
+{
+"atLeast": 82800,
+"lessThan": 82850,
+"singleMfs": 3746,
+"jointHoh": 3557
+},
+{
+"atLeast": 82850,
+"lessThan": 82900,
+"singleMfs": 3748,
+"jointHoh": 3560
+},
+{
+"atLeast": 82900,
+"lessThan": 82950,
+"singleMfs": 3750,
+"jointHoh": 3562
+},
+{
+"atLeast": 82950,
+"lessThan": 83000,
+"singleMfs": 3753,
+"jointHoh": 3564
+},
+{
+"atLeast": 83000,
+"lessThan": 83050,
+"singleMfs": 3755,
+"jointHoh": 3567
+},
+{
+"atLeast": 83050,
+"lessThan": 83100,
+"singleMfs": 3758,
+"jointHoh": 3569
+},
+{
+"atLeast": 83100,
+"lessThan": 83150,
+"singleMfs": 3760,
+"jointHoh": 3571
+},
+{
+"atLeast": 83150,
+"lessThan": 83200,
+"singleMfs": 3762,
+"jointHoh": 3574
+},
+{
+"atLeast": 83200,
+"lessThan": 83250,
+"singleMfs": 3765,
+"jointHoh": 3576
+},
+{
+"atLeast": 83250,
+"lessThan": 83300,
+"singleMfs": 3767,
+"jointHoh": 3579
+},
+{
+"atLeast": 83300,
+"lessThan": 83350,
+"singleMfs": 3769,
+"jointHoh": 3581
+},
+{
+"atLeast": 83350,
+"lessThan": 83400,
+"singleMfs": 3772,
+"jointHoh": 3583
+},
+{
+"atLeast": 83400,
+"lessThan": 83450,
+"singleMfs": 3774,
+"jointHoh": 3586
+},
+{
+"atLeast": 83450,
+"lessThan": 83500,
+"singleMfs": 3777,
+"jointHoh": 3588
+},
+{
+"atLeast": 83500,
+"lessThan": 83550,
+"singleMfs": 3779,
+"jointHoh": 3590
+},
+{
+"atLeast": 83550,
+"lessThan": 83600,
+"singleMfs": 3781,
+"jointHoh": 3593
+},
+{
+"atLeast": 83600,
+"lessThan": 83650,
+"singleMfs": 3784,
+"jointHoh": 3595
+},
+{
+"atLeast": 83650,
+"lessThan": 83700,
+"singleMfs": 3786,
+"jointHoh": 3598
+},
+{
+"atLeast": 83700,
+"lessThan": 83750,
+"singleMfs": 3788,
+"jointHoh": 3600
+},
+{
+"atLeast": 83750,
+"lessThan": 83800,
+"singleMfs": 3791,
+"jointHoh": 3602
+},
+{
+"atLeast": 83800,
+"lessThan": 83850,
+"singleMfs": 3793,
+"jointHoh": 3605
+},
+{
+"atLeast": 83850,
+"lessThan": 83900,
+"singleMfs": 3796,
+"jointHoh": 3607
+},
+{
+"atLeast": 83900,
+"lessThan": 83950,
+"singleMfs": 3798,
+"jointHoh": 3609
+},
+{
+"atLeast": 83950,
+"lessThan": 84000,
+"singleMfs": 3800,
+"jointHoh": 3612
+},
+{
+"atLeast": 84000,
+"lessThan": 84050,
+"singleMfs": 3803,
+"jointHoh": 3614
+},
+{
+"atLeast": 84050,
+"lessThan": 84100,
+"singleMfs": 3805,
+"jointHoh": 3617
+},
+{
+"atLeast": 84100,
+"lessThan": 84150,
+"singleMfs": 3807,
+"jointHoh": 3619
+},
+{
+"atLeast": 84150,
+"lessThan": 84200,
+"singleMfs": 3810,
+"jointHoh": 3621
+},
+{
+"atLeast": 84200,
+"lessThan": 84250,
+"singleMfs": 3812,
+"jointHoh": 3624
+},
+{
+"atLeast": 84250,
+"lessThan": 84300,
+"singleMfs": 3815,
+"jointHoh": 3626
+},
+{
+"atLeast": 84300,
+"lessThan": 84350,
+"singleMfs": 3817,
+"jointHoh": 3628
+},
+{
+"atLeast": 84350,
+"lessThan": 84400,
+"singleMfs": 3819,
+"jointHoh": 3631
+},
+{
+"atLeast": 84400,
+"lessThan": 84450,
+"singleMfs": 3822,
+"jointHoh": 3633
+},
+{
+"atLeast": 84450,
+"lessThan": 84500,
+"singleMfs": 3824,
+"jointHoh": 3636
+},
+{
+"atLeast": 84500,
+"lessThan": 84550,
+"singleMfs": 3826,
+"jointHoh": 3638
+},
+{
+"atLeast": 84550,
+"lessThan": 84600,
+"singleMfs": 3829,
+"jointHoh": 3640
+},
+{
+"atLeast": 84600,
+"lessThan": 84650,
+"singleMfs": 3831,
+"jointHoh": 3643
+},
+{
+"atLeast": 84650,
+"lessThan": 84700,
+"singleMfs": 3834,
+"jointHoh": 3645
+},
+{
+"atLeast": 84700,
+"lessThan": 84750,
+"singleMfs": 3836,
+"jointHoh": 3647
+},
+{
+"atLeast": 84750,
+"lessThan": 84800,
+"singleMfs": 3838,
+"jointHoh": 3650
+},
+{
+"atLeast": 84800,
+"lessThan": 84850,
+"singleMfs": 3841,
+"jointHoh": 3652
+},
+{
+"atLeast": 84850,
+"lessThan": 84900,
+"singleMfs": 3843,
+"jointHoh": 3655
+},
+{
+"atLeast": 84900,
+"lessThan": 84950,
+"singleMfs": 3845,
+"jointHoh": 3657
+},
+{
+"atLeast": 84950,
+"lessThan": 85000,
+"singleMfs": 3848,
+"jointHoh": 3659
+},
+{
+"atLeast": 85000,
+"lessThan": 85050,
+"singleMfs": 3850,
+"jointHoh": 3662
+},
+{
+"atLeast": 85050,
+"lessThan": 85100,
+"singleMfs": 3853,
+"jointHoh": 3664
+},
+{
+"atLeast": 85100,
+"lessThan": 85150,
+"singleMfs": 3855,
+"jointHoh": 3666
+},
+{
+"atLeast": 85150,
+"lessThan": 85200,
+"singleMfs": 3857,
+"jointHoh": 3669
+},
+{
+"atLeast": 85200,
+"lessThan": 85250,
+"singleMfs": 3860,
+"jointHoh": 3671
+},
+{
+"atLeast": 85250,
+"lessThan": 85300,
+"singleMfs": 3862,
+"jointHoh": 3674
+},
+{
+"atLeast": 85300,
+"lessThan": 85350,
+"singleMfs": 3864,
+"jointHoh": 3676
+},
+{
+"atLeast": 85350,
+"lessThan": 85400,
+"singleMfs": 3867,
+"jointHoh": 3678
+},
+{
+"atLeast": 85400,
+"lessThan": 85450,
+"singleMfs": 3869,
+"jointHoh": 3681
+},
+{
+"atLeast": 85450,
+"lessThan": 85500,
+"singleMfs": 3872,
+"jointHoh": 3683
+},
+{
+"atLeast": 85500,
+"lessThan": 85550,
+"singleMfs": 3874,
+"jointHoh": 3685
+},
+{
+"atLeast": 85550,
+"lessThan": 85600,
+"singleMfs": 3876,
+"jointHoh": 3688
+},
+{
+"atLeast": 85600,
+"lessThan": 85650,
+"singleMfs": 3879,
+"jointHoh": 3690
+},
+{
+"atLeast": 85650,
+"lessThan": 85700,
+"singleMfs": 3881,
+"jointHoh": 3693
+},
+{
+"atLeast": 85700,
+"lessThan": 85750,
+"singleMfs": 3883,
+"jointHoh": 3695
+},
+{
+"atLeast": 85750,
+"lessThan": 85800,
+"singleMfs": 3886,
+"jointHoh": 3697
+},
+{
+"atLeast": 85800,
+"lessThan": 85850,
+"singleMfs": 3888,
+"jointHoh": 3700
+},
+{
+"atLeast": 85850,
+"lessThan": 85900,
+"singleMfs": 3891,
+"jointHoh": 3702
+},
+{
+"atLeast": 85900,
+"lessThan": 85950,
+"singleMfs": 3893,
+"jointHoh": 3704
+},
+{
+"atLeast": 85950,
+"lessThan": 86000,
+"singleMfs": 3895,
+"jointHoh": 3707
+},
+{
+"atLeast": 86000,
+"lessThan": 86050,
+"singleMfs": 3898,
+"jointHoh": 3709
+},
+{
+"atLeast": 86050,
+"lessThan": 86100,
+"singleMfs": 3900,
+"jointHoh": 3712
+},
+{
+"atLeast": 86100,
+"lessThan": 86150,
+"singleMfs": 3902,
+"jointHoh": 3714
+},
+{
+"atLeast": 86150,
+"lessThan": 86200,
+"singleMfs": 3905,
+"jointHoh": 3716
+},
+{
+"atLeast": 86200,
+"lessThan": 86250,
+"singleMfs": 3907,
+"jointHoh": 3719
+},
+{
+"atLeast": 86250,
+"lessThan": 86300,
+"singleMfs": 3910,
+"jointHoh": 3721
+},
+{
+"atLeast": 86300,
+"lessThan": 86350,
+"singleMfs": 3912,
+"jointHoh": 3723
+},
+{
+"atLeast": 86350,
+"lessThan": 86400,
+"singleMfs": 3914,
+"jointHoh": 3726
+},
+{
+"atLeast": 86400,
+"lessThan": 86450,
+"singleMfs": 3917,
+"jointHoh": 3728
+},
+{
+"atLeast": 86450,
+"lessThan": 86500,
+"singleMfs": 3919,
+"jointHoh": 3731
+},
+{
+"atLeast": 86500,
+"lessThan": 86550,
+"singleMfs": 3921,
+"jointHoh": 3733
+},
+{
+"atLeast": 86550,
+"lessThan": 86600,
+"singleMfs": 3924,
+"jointHoh": 3735
+},
+{
+"atLeast": 86600,
+"lessThan": 86650,
+"singleMfs": 3926,
+"jointHoh": 3738
+},
+{
+"atLeast": 86650,
+"lessThan": 86700,
+"singleMfs": 3929,
+"jointHoh": 3740
+},
+{
+"atLeast": 86700,
+"lessThan": 86750,
+"singleMfs": 3931,
+"jointHoh": 3742
+},
+{
+"atLeast": 86750,
+"lessThan": 86800,
+"singleMfs": 3933,
+"jointHoh": 3745
+},
+{
+"atLeast": 86800,
+"lessThan": 86850,
+"singleMfs": 3936,
+"jointHoh": 3747
+},
+{
+"atLeast": 86850,
+"lessThan": 86900,
+"singleMfs": 3938,
+"jointHoh": 3750
+},
+{
+"atLeast": 86900,
+"lessThan": 86950,
+"singleMfs": 3940,
+"jointHoh": 3752
+},
+{
+"atLeast": 86950,
+"lessThan": 87000,
+"singleMfs": 3943,
+"jointHoh": 3754
+},
+{
+"atLeast": 87000,
+"lessThan": 87050,
+"singleMfs": 3945,
+"jointHoh": 3757
+},
+{
+"atLeast": 87050,
+"lessThan": 87100,
+"singleMfs": 3948,
+"jointHoh": 3759
+},
+{
+"atLeast": 87100,
+"lessThan": 87150,
+"singleMfs": 3950,
+"jointHoh": 3761
+},
+{
+"atLeast": 87150,
+"lessThan": 87200,
+"singleMfs": 3952,
+"jointHoh": 3764
+},
+{
+"atLeast": 87200,
+"lessThan": 87250,
+"singleMfs": 3955,
+"jointHoh": 3766
+},
+{
+"atLeast": 87250,
+"lessThan": 87300,
+"singleMfs": 3957,
+"jointHoh": 3769
+},
+{
+"atLeast": 87300,
+"lessThan": 87350,
+"singleMfs": 3959,
+"jointHoh": 3771
+},
+{
+"atLeast": 87350,
+"lessThan": 87400,
+"singleMfs": 3962,
+"jointHoh": 3773
+},
+{
+"atLeast": 87400,
+"lessThan": 87450,
+"singleMfs": 3964,
+"jointHoh": 3776
+},
+{
+"atLeast": 87450,
+"lessThan": 87500,
+"singleMfs": 3967,
+"jointHoh": 3778
+},
+{
+"atLeast": 87500,
+"lessThan": 87550,
+"singleMfs": 3969,
+"jointHoh": 3780
+},
+{
+"atLeast": 87550,
+"lessThan": 87600,
+"singleMfs": 3971,
+"jointHoh": 3783
+},
+{
+"atLeast": 87600,
+"lessThan": 87650,
+"singleMfs": 3974,
+"jointHoh": 3785
+},
+{
+"atLeast": 87650,
+"lessThan": 87700,
+"singleMfs": 3976,
+"jointHoh": 3788
+},
+{
+"atLeast": 87700,
+"lessThan": 87750,
+"singleMfs": 3978,
+"jointHoh": 3790
+},
+{
+"atLeast": 87750,
+"lessThan": 87800,
+"singleMfs": 3981,
+"jointHoh": 3792
+},
+{
+"atLeast": 87800,
+"lessThan": 87850,
+"singleMfs": 3983,
+"jointHoh": 3795
+},
+{
+"atLeast": 87850,
+"lessThan": 87900,
+"singleMfs": 3986,
+"jointHoh": 3797
+},
+{
+"atLeast": 87900,
+"lessThan": 87950,
+"singleMfs": 3988,
+"jointHoh": 3799
+},
+{
+"atLeast": 87950,
+"lessThan": 88000,
+"singleMfs": 3990,
+"jointHoh": 3802
+},
+{
+"atLeast": 88000,
+"lessThan": 88050,
+"singleMfs": 3993,
+"jointHoh": 3804
+},
+{
+"atLeast": 88050,
+"lessThan": 88100,
+"singleMfs": 3995,
+"jointHoh": 3807
+},
+{
+"atLeast": 88100,
+"lessThan": 88150,
+"singleMfs": 3997,
+"jointHoh": 3809
+},
+{
+"atLeast": 88150,
+"lessThan": 88200,
+"singleMfs": 4000,
+"jointHoh": 3811
+},
+{
+"atLeast": 88200,
+"lessThan": 88250,
+"singleMfs": 4002,
+"jointHoh": 3814
+},
+{
+"atLeast": 88250,
+"lessThan": 88300,
+"singleMfs": 4005,
+"jointHoh": 3816
+},
+{
+"atLeast": 88300,
+"lessThan": 88350,
+"singleMfs": 4007,
+"jointHoh": 3818
+},
+{
+"atLeast": 88350,
+"lessThan": 88400,
+"singleMfs": 4009,
+"jointHoh": 3821
+},
+{
+"atLeast": 88400,
+"lessThan": 88450,
+"singleMfs": 4012,
+"jointHoh": 3823
+},
+{
+"atLeast": 88450,
+"lessThan": 88500,
+"singleMfs": 4014,
+"jointHoh": 3826
+},
+{
+"atLeast": 88500,
+"lessThan": 88550,
+"singleMfs": 4016,
+"jointHoh": 3828
+},
+{
+"atLeast": 88550,
+"lessThan": 88600,
+"singleMfs": 4019,
+"jointHoh": 3830
+},
+{
+"atLeast": 88600,
+"lessThan": 88650,
+"singleMfs": 4021,
+"jointHoh": 3833
+},
+{
+"atLeast": 88650,
+"lessThan": 88700,
+"singleMfs": 4024,
+"jointHoh": 3835
+},
+{
+"atLeast": 88700,
+"lessThan": 88750,
+"singleMfs": 4026,
+"jointHoh": 3837
+},
+{
+"atLeast": 88750,
+"lessThan": 88800,
+"singleMfs": 4028,
+"jointHoh": 3840
+},
+{
+"atLeast": 88800,
+"lessThan": 88850,
+"singleMfs": 4031,
+"jointHoh": 3842
+},
+{
+"atLeast": 88850,
+"lessThan": 88900,
+"singleMfs": 4033,
+"jointHoh": 3845
+},
+{
+"atLeast": 88900,
+"lessThan": 88950,
+"singleMfs": 4035,
+"jointHoh": 3847
+},
+{
+"atLeast": 88950,
+"lessThan": 89000,
+"singleMfs": 4038,
+"jointHoh": 3849
+},
+{
+"atLeast": 89000,
+"lessThan": 89050,
+"singleMfs": 4040,
+"jointHoh": 3852
+},
+{
+"atLeast": 89050,
+"lessThan": 89100,
+"singleMfs": 4043,
+"jointHoh": 3854
+},
+{
+"atLeast": 89100,
+"lessThan": 89150,
+"singleMfs": 4045,
+"jointHoh": 3856
+},
+{
+"atLeast": 89150,
+"lessThan": 89200,
+"singleMfs": 4047,
+"jointHoh": 3859
+},
+{
+"atLeast": 89200,
+"lessThan": 89250,
+"singleMfs": 4050,
+"jointHoh": 3861
+},
+{
+"atLeast": 89250,
+"lessThan": 89300,
+"singleMfs": 4052,
+"jointHoh": 3864
+},
+{
+"atLeast": 89300,
+"lessThan": 89350,
+"singleMfs": 4054,
+"jointHoh": 3866
+},
+{
+"atLeast": 89350,
+"lessThan": 89400,
+"singleMfs": 4057,
+"jointHoh": 3868
+},
+{
+"atLeast": 89400,
+"lessThan": 89450,
+"singleMfs": 4059,
+"jointHoh": 3871
+},
+{
+"atLeast": 89450,
+"lessThan": 89500,
+"singleMfs": 4062,
+"jointHoh": 3873
+},
+{
+"atLeast": 89500,
+"lessThan": 89550,
+"singleMfs": 4064,
+"jointHoh": 3875
+},
+{
+"atLeast": 89550,
+"lessThan": 89600,
+"singleMfs": 4066,
+"jointHoh": 3878
+},
+{
+"atLeast": 89600,
+"lessThan": 89650,
+"singleMfs": 4069,
+"jointHoh": 3880
+},
+{
+"atLeast": 89650,
+"lessThan": 89700,
+"singleMfs": 4071,
+"jointHoh": 3883
+},
+{
+"atLeast": 89700,
+"lessThan": 89750,
+"singleMfs": 4073,
+"jointHoh": 3885
+},
+{
+"atLeast": 89750,
+"lessThan": 89800,
+"singleMfs": 4076,
+"jointHoh": 3887
+},
+{
+"atLeast": 89800,
+"lessThan": 89850,
+"singleMfs": 4078,
+"jointHoh": 3890
+},
+{
+"atLeast": 89850,
+"lessThan": 89900,
+"singleMfs": 4081,
+"jointHoh": 3892
+},
+{
+"atLeast": 89900,
+"lessThan": 89950,
+"singleMfs": 4083,
+"jointHoh": 3894
+},
+{
+"atLeast": 89950,
+"lessThan": 90000,
+"singleMfs": 4085,
+"jointHoh": 3897
+},
+{
+"atLeast": 90000,
+"lessThan": 90050,
+"singleMfs": 4088,
+"jointHoh": 3899
+},
+{
+"atLeast": 90050,
+"lessThan": 90100,
+"singleMfs": 4090,
+"jointHoh": 3902
+},
+{
+"atLeast": 90100,
+"lessThan": 90150,
+"singleMfs": 4092,
+"jointHoh": 3904
+},
+{
+"atLeast": 90150,
+"lessThan": 90200,
+"singleMfs": 4095,
+"jointHoh": 3906
+},
+{
+"atLeast": 90200,
+"lessThan": 90250,
+"singleMfs": 4097,
+"jointHoh": 3909
+},
+{
+"atLeast": 90250,
+"lessThan": 90300,
+"singleMfs": 4100,
+"jointHoh": 3911
+},
+{
+"atLeast": 90300,
+"lessThan": 90350,
+"singleMfs": 4102,
+"jointHoh": 3913
+},
+{
+"atLeast": 90350,
+"lessThan": 90400,
+"singleMfs": 4104,
+"jointHoh": 3916
+},
+{
+"atLeast": 90400,
+"lessThan": 90450,
+"singleMfs": 4107,
+"jointHoh": 3918
+},
+{
+"atLeast": 90450,
+"lessThan": 90500,
+"singleMfs": 4109,
+"jointHoh": 3921
+},
+{
+"atLeast": 90500,
+"lessThan": 90550,
+"singleMfs": 4111,
+"jointHoh": 3923
+},
+{
+"atLeast": 90550,
+"lessThan": 90600,
+"singleMfs": 4114,
+"jointHoh": 3925
+},
+{
+"atLeast": 90600,
+"lessThan": 90650,
+"singleMfs": 4116,
+"jointHoh": 3928
+},
+{
+"atLeast": 90650,
+"lessThan": 90700,
+"singleMfs": 4119,
+"jointHoh": 3930
+},
+{
+"atLeast": 90700,
+"lessThan": 90750,
+"singleMfs": 4121,
+"jointHoh": 3932
+},
+{
+"atLeast": 90750,
+"lessThan": 90800,
+"singleMfs": 4123,
+"jointHoh": 3935
+},
+{
+"atLeast": 90800,
+"lessThan": 90850,
+"singleMfs": 4126,
+"jointHoh": 3937
+},
+{
+"atLeast": 90850,
+"lessThan": 90900,
+"singleMfs": 4128,
+"jointHoh": 3940
+},
+{
+"atLeast": 90900,
+"lessThan": 90950,
+"singleMfs": 4130,
+"jointHoh": 3942
+},
+{
+"atLeast": 90950,
+"lessThan": 91000,
+"singleMfs": 4133,
+"jointHoh": 3944
+},
+{
+"atLeast": 91000,
+"lessThan": 91050,
+"singleMfs": 4135,
+"jointHoh": 3947
+},
+{
+"atLeast": 91050,
+"lessThan": 91100,
+"singleMfs": 4138,
+"jointHoh": 3949
+},
+{
+"atLeast": 91100,
+"lessThan": 91150,
+"singleMfs": 4140,
+"jointHoh": 3951
+},
+{
+"atLeast": 91150,
+"lessThan": 91200,
+"singleMfs": 4142,
+"jointHoh": 3954
+},
+{
+"atLeast": 91200,
+"lessThan": 91250,
+"singleMfs": 4145,
+"jointHoh": 3956
+},
+{
+"atLeast": 91250,
+"lessThan": 91300,
+"singleMfs": 4147,
+"jointHoh": 3959
+},
+{
+"atLeast": 91300,
+"lessThan": 91350,
+"singleMfs": 4149,
+"jointHoh": 3961
+},
+{
+"atLeast": 91350,
+"lessThan": 91400,
+"singleMfs": 4152,
+"jointHoh": 3963
+},
+{
+"atLeast": 91400,
+"lessThan": 91450,
+"singleMfs": 4154,
+"jointHoh": 3966
+},
+{
+"atLeast": 91450,
+"lessThan": 91500,
+"singleMfs": 4157,
+"jointHoh": 3968
+},
+{
+"atLeast": 91500,
+"lessThan": 91550,
+"singleMfs": 4159,
+"jointHoh": 3970
+},
+{
+"atLeast": 91550,
+"lessThan": 91600,
+"singleMfs": 4161,
+"jointHoh": 3973
+},
+{
+"atLeast": 91600,
+"lessThan": 91650,
+"singleMfs": 4164,
+"jointHoh": 3975
+},
+{
+"atLeast": 91650,
+"lessThan": 91700,
+"singleMfs": 4166,
+"jointHoh": 3978
+},
+{
+"atLeast": 91700,
+"lessThan": 91750,
+"singleMfs": 4168,
+"jointHoh": 3980
+},
+{
+"atLeast": 91750,
+"lessThan": 91800,
+"singleMfs": 4171,
+"jointHoh": 3982
+},
+{
+"atLeast": 91800,
+"lessThan": 91850,
+"singleMfs": 4173,
+"jointHoh": 3985
+},
+{
+"atLeast": 91850,
+"lessThan": 91900,
+"singleMfs": 4176,
+"jointHoh": 3987
+},
+{
+"atLeast": 91900,
+"lessThan": 91950,
+"singleMfs": 4178,
+"jointHoh": 3989
+},
+{
+"atLeast": 91950,
+"lessThan": 92000,
+"singleMfs": 4180,
+"jointHoh": 3992
+},
+{
+"atLeast": 92000,
+"lessThan": 92050,
+"singleMfs": 4183,
+"jointHoh": 3994
+},
+{
+"atLeast": 92050,
+"lessThan": 92100,
+"singleMfs": 4185,
+"jointHoh": 3997
+},
+{
+"atLeast": 92100,
+"lessThan": 92150,
+"singleMfs": 4187,
+"jointHoh": 3999
+},
+{
+"atLeast": 92150,
+"lessThan": 92200,
+"singleMfs": 4190,
+"jointHoh": 4001
+},
+{
+"atLeast": 92200,
+"lessThan": 92250,
+"singleMfs": 4192,
+"jointHoh": 4004
+},
+{
+"atLeast": 92250,
+"lessThan": 92300,
+"singleMfs": 4195,
+"jointHoh": 4006
+},
+{
+"atLeast": 92300,
+"lessThan": 92350,
+"singleMfs": 4197,
+"jointHoh": 4008
+},
+{
+"atLeast": 92350,
+"lessThan": 92400,
+"singleMfs": 4199,
+"jointHoh": 4011
+},
+{
+"atLeast": 92400,
+"lessThan": 92450,
+"singleMfs": 4202,
+"jointHoh": 4013
+},
+{
+"atLeast": 92450,
+"lessThan": 92500,
+"singleMfs": 4204,
+"jointHoh": 4016
+},
+{
+"atLeast": 92500,
+"lessThan": 92550,
+"singleMfs": 4206,
+"jointHoh": 4018
+},
+{
+"atLeast": 92550,
+"lessThan": 92600,
+"singleMfs": 4209,
+"jointHoh": 4020
+},
+{
+"atLeast": 92600,
+"lessThan": 92650,
+"singleMfs": 4211,
+"jointHoh": 4023
+},
+{
+"atLeast": 92650,
+"lessThan": 92700,
+"singleMfs": 4214,
+"jointHoh": 4025
+},
+{
+"atLeast": 92700,
+"lessThan": 92750,
+"singleMfs": 4216,
+"jointHoh": 4027
+},
+{
+"atLeast": 92750,
+"lessThan": 92800,
+"singleMfs": 4218,
+"jointHoh": 4030
+},
+{
+"atLeast": 92800,
+"lessThan": 92850,
+"singleMfs": 4221,
+"jointHoh": 4032
+},
+{
+"atLeast": 92850,
+"lessThan": 92900,
+"singleMfs": 4223,
+"jointHoh": 4035
+},
+{
+"atLeast": 92900,
+"lessThan": 92950,
+"singleMfs": 4225,
+"jointHoh": 4037
+},
+{
+"atLeast": 92950,
+"lessThan": 93000,
+"singleMfs": 4228,
+"jointHoh": 4039
+},
+{
+"atLeast": 93000,
+"lessThan": 93050,
+"singleMfs": 4230,
+"jointHoh": 4042
+},
+{
+"atLeast": 93050,
+"lessThan": 93100,
+"singleMfs": 4233,
+"jointHoh": 4044
+},
+{
+"atLeast": 93100,
+"lessThan": 93150,
+"singleMfs": 4235,
+"jointHoh": 4046
+},
+{
+"atLeast": 93150,
+"lessThan": 93200,
+"singleMfs": 4237,
+"jointHoh": 4049
+},
+{
+"atLeast": 93200,
+"lessThan": 93250,
+"singleMfs": 4240,
+"jointHoh": 4051
+},
+{
+"atLeast": 93250,
+"lessThan": 93300,
+"singleMfs": 4242,
+"jointHoh": 4054
+},
+{
+"atLeast": 93300,
+"lessThan": 93350,
+"singleMfs": 4244,
+"jointHoh": 4056
+},
+{
+"atLeast": 93350,
+"lessThan": 93400,
+"singleMfs": 4247,
+"jointHoh": 4058
+},
+{
+"atLeast": 93400,
+"lessThan": 93450,
+"singleMfs": 4249,
+"jointHoh": 4061
+},
+{
+"atLeast": 93450,
+"lessThan": 93500,
+"singleMfs": 4252,
+"jointHoh": 4063
+},
+{
+"atLeast": 93500,
+"lessThan": 93550,
+"singleMfs": 4254,
+"jointHoh": 4065
+},
+{
+"atLeast": 93550,
+"lessThan": 93600,
+"singleMfs": 4256,
+"jointHoh": 4068
+},
+{
+"atLeast": 93600,
+"lessThan": 93650,
+"singleMfs": 4259,
+"jointHoh": 4070
+},
+{
+"atLeast": 93650,
+"lessThan": 93700,
+"singleMfs": 4261,
+"jointHoh": 4073
+},
+{
+"atLeast": 93700,
+"lessThan": 93750,
+"singleMfs": 4263,
+"jointHoh": 4075
+},
+{
+"atLeast": 93750,
+"lessThan": 93800,
+"singleMfs": 4266,
+"jointHoh": 4077
+},
+{
+"atLeast": 93800,
+"lessThan": 93850,
+"singleMfs": 4268,
+"jointHoh": 4080
+},
+{
+"atLeast": 93850,
+"lessThan": 93900,
+"singleMfs": 4271,
+"jointHoh": 4082
+},
+{
+"atLeast": 93900,
+"lessThan": 93950,
+"singleMfs": 4273,
+"jointHoh": 4084
+},
+{
+"atLeast": 93950,
+"lessThan": 94000,
+"singleMfs": 4275,
+"jointHoh": 4087
+},
+{
+"atLeast": 94000,
+"lessThan": 94050,
+"singleMfs": 4278,
+"jointHoh": 4089
+},
+{
+"atLeast": 94050,
+"lessThan": 94100,
+"singleMfs": 4280,
+"jointHoh": 4092
+},
+{
+"atLeast": 94100,
+"lessThan": 94150,
+"singleMfs": 4282,
+"jointHoh": 4094
+},
+{
+"atLeast": 94150,
+"lessThan": 94200,
+"singleMfs": 4285,
+"jointHoh": 4096
+},
+{
+"atLeast": 94200,
+"lessThan": 94250,
+"singleMfs": 4287,
+"jointHoh": 4099
+},
+{
+"atLeast": 94250,
+"lessThan": 94300,
+"singleMfs": 4290,
+"jointHoh": 4101
+},
+{
+"atLeast": 94300,
+"lessThan": 94350,
+"singleMfs": 4292,
+"jointHoh": 4103
+},
+{
+"atLeast": 94350,
+"lessThan": 94400,
+"singleMfs": 4294,
+"jointHoh": 4106
+},
+{
+"atLeast": 94400,
+"lessThan": 94450,
+"singleMfs": 4297,
+"jointHoh": 4108
+},
+{
+"atLeast": 94450,
+"lessThan": 94500,
+"singleMfs": 4299,
+"jointHoh": 4111
+},
+{
+"atLeast": 94500,
+"lessThan": 94550,
+"singleMfs": 4301,
+"jointHoh": 4113
+},
+{
+"atLeast": 94550,
+"lessThan": 94600,
+"singleMfs": 4304,
+"jointHoh": 4115
+},
+{
+"atLeast": 94600,
+"lessThan": 94650,
+"singleMfs": 4306,
+"jointHoh": 4118
+},
+{
+"atLeast": 94650,
+"lessThan": 94700,
+"singleMfs": 4309,
+"jointHoh": 4120
+},
+{
+"atLeast": 94700,
+"lessThan": 94750,
+"singleMfs": 4311,
+"jointHoh": 4122
+},
+{
+"atLeast": 94750,
+"lessThan": 94800,
+"singleMfs": 4313,
+"jointHoh": 4125
+},
+{
+"atLeast": 94800,
+"lessThan": 94850,
+"singleMfs": 4316,
+"jointHoh": 4127
+},
+{
+"atLeast": 94850,
+"lessThan": 94900,
+"singleMfs": 4318,
+"jointHoh": 4130
+},
+{
+"atLeast": 94900,
+"lessThan": 94950,
+"singleMfs": 4320,
+"jointHoh": 4132
+},
+{
+"atLeast": 94950,
+"lessThan": 95000,
+"singleMfs": 4323,
+"jointHoh": 4134
+},
+{
+"atLeast": 95000,
+"lessThan": 95050,
+"singleMfs": 4325,
+"jointHoh": 4137
+},
+{
+"atLeast": 95050,
+"lessThan": 95100,
+"singleMfs": 4328,
+"jointHoh": 4139
+},
+{
+"atLeast": 95100,
+"lessThan": 95150,
+"singleMfs": 4330,
+"jointHoh": 4141
+},
+{
+"atLeast": 95150,
+"lessThan": 95200,
+"singleMfs": 4332,
+"jointHoh": 4144
+},
+{
+"atLeast": 95200,
+"lessThan": 95250,
+"singleMfs": 4335,
+"jointHoh": 4146
+},
+{
+"atLeast": 95250,
+"lessThan": 95300,
+"singleMfs": 4337,
+"jointHoh": 4149
+},
+{
+"atLeast": 95300,
+"lessThan": 95350,
+"singleMfs": 4339,
+"jointHoh": 4151
+},
+{
+"atLeast": 95350,
+"lessThan": 95400,
+"singleMfs": 4342,
+"jointHoh": 4153
+},
+{
+"atLeast": 95400,
+"lessThan": 95450,
+"singleMfs": 4344,
+"jointHoh": 4156
+},
+{
+"atLeast": 95450,
+"lessThan": 95500,
+"singleMfs": 4347,
+"jointHoh": 4158
+},
+{
+"atLeast": 95500,
+"lessThan": 95550,
+"singleMfs": 4349,
+"jointHoh": 4160
+},
+{
+"atLeast": 95550,
+"lessThan": 95600,
+"singleMfs": 4351,
+"jointHoh": 4163
+},
+{
+"atLeast": 95600,
+"lessThan": 95650,
+"singleMfs": 4354,
+"jointHoh": 4165
+},
+{
+"atLeast": 95650,
+"lessThan": 95700,
+"singleMfs": 4356,
+"jointHoh": 4168
+},
+{
+"atLeast": 95700,
+"lessThan": 95750,
+"singleMfs": 4358,
+"jointHoh": 4170
+},
+{
+"atLeast": 95750,
+"lessThan": 95800,
+"singleMfs": 4361,
+"jointHoh": 4172
+},
+{
+"atLeast": 95800,
+"lessThan": 95850,
+"singleMfs": 4363,
+"jointHoh": 4175
+},
+{
+"atLeast": 95850,
+"lessThan": 95900,
+"singleMfs": 4366,
+"jointHoh": 4177
+},
+{
+"atLeast": 95900,
+"lessThan": 95950,
+"singleMfs": 4368,
+"jointHoh": 4179
+},
+{
+"atLeast": 95950,
+"lessThan": 96000,
+"singleMfs": 4370,
+"jointHoh": 4182
+},
+{
+"atLeast": 96000,
+"lessThan": 96050,
+"singleMfs": 4373,
+"jointHoh": 4184
+},
+{
+"atLeast": 96050,
+"lessThan": 96100,
+"singleMfs": 4375,
+"jointHoh": 4187
+},
+{
+"atLeast": 96100,
+"lessThan": 96150,
+"singleMfs": 4377,
+"jointHoh": 4189
+},
+{
+"atLeast": 96150,
+"lessThan": 96200,
+"singleMfs": 4380,
+"jointHoh": 4191
+},
+{
+"atLeast": 96200,
+"lessThan": 96250,
+"singleMfs": 4382,
+"jointHoh": 4194
+},
+{
+"atLeast": 96250,
+"lessThan": 96300,
+"singleMfs": 4385,
+"jointHoh": 4196
+},
+{
+"atLeast": 96300,
+"lessThan": 96350,
+"singleMfs": 4387,
+"jointHoh": 4198
+},
+{
+"atLeast": 96350,
+"lessThan": 96400,
+"singleMfs": 4389,
+"jointHoh": 4201
+},
+{
+"atLeast": 96400,
+"lessThan": 96450,
+"singleMfs": 4392,
+"jointHoh": 4203
+},
+{
+"atLeast": 96450,
+"lessThan": 96500,
+"singleMfs": 4394,
+"jointHoh": 4206
+},
+{
+"atLeast": 96500,
+"lessThan": 96550,
+"singleMfs": 4396,
+"jointHoh": 4208
+},
+{
+"atLeast": 96550,
+"lessThan": 96600,
+"singleMfs": 4399,
+"jointHoh": 4210
+},
+{
+"atLeast": 96600,
+"lessThan": 96650,
+"singleMfs": 4401,
+"jointHoh": 4213
+},
+{
+"atLeast": 96650,
+"lessThan": 96700,
+"singleMfs": 4404,
+"jointHoh": 4215
+},
+{
+"atLeast": 96700,
+"lessThan": 96750,
+"singleMfs": 4406,
+"jointHoh": 4217
+},
+{
+"atLeast": 96750,
+"lessThan": 96800,
+"singleMfs": 4408,
+"jointHoh": 4220
+},
+{
+"atLeast": 96800,
+"lessThan": 96850,
+"singleMfs": 4411,
+"jointHoh": 4222
+},
+{
+"atLeast": 96850,
+"lessThan": 96900,
+"singleMfs": 4413,
+"jointHoh": 4225
+},
+{
+"atLeast": 96900,
+"lessThan": 96950,
+"singleMfs": 4415,
+"jointHoh": 4227
+},
+{
+"atLeast": 96950,
+"lessThan": 97000,
+"singleMfs": 4418,
+"jointHoh": 4229
+},
+{
+"atLeast": 97000,
+"lessThan": 97050,
+"singleMfs": 4420,
+"jointHoh": 4232
+},
+{
+"atLeast": 97050,
+"lessThan": 97100,
+"singleMfs": 4423,
+"jointHoh": 4234
+},
+{
+"atLeast": 97100,
+"lessThan": 97150,
+"singleMfs": 4425,
+"jointHoh": 4236
+},
+{
+"atLeast": 97150,
+"lessThan": 97200,
+"singleMfs": 4427,
+"jointHoh": 4239
+},
+{
+"atLeast": 97200,
+"lessThan": 97250,
+"singleMfs": 4430,
+"jointHoh": 4241
+},
+{
+"atLeast": 97250,
+"lessThan": 97300,
+"singleMfs": 4432,
+"jointHoh": 4244
+},
+{
+"atLeast": 97300,
+"lessThan": 97350,
+"singleMfs": 4434,
+"jointHoh": 4246
+},
+{
+"atLeast": 97350,
+"lessThan": 97400,
+"singleMfs": 4437,
+"jointHoh": 4248
+},
+{
+"atLeast": 97400,
+"lessThan": 97450,
+"singleMfs": 4439,
+"jointHoh": 4251
+},
+{
+"atLeast": 97450,
+"lessThan": 97500,
+"singleMfs": 4442,
+"jointHoh": 4253
+},
+{
+"atLeast": 97500,
+"lessThan": 97550,
+"singleMfs": 4444,
+"jointHoh": 4255
+},
+{
+"atLeast": 97550,
+"lessThan": 97600,
+"singleMfs": 4446,
+"jointHoh": 4258
+},
+{
+"atLeast": 97600,
+"lessThan": 97650,
+"singleMfs": 4449,
+"jointHoh": 4260
+},
+{
+"atLeast": 97650,
+"lessThan": 97700,
+"singleMfs": 4451,
+"jointHoh": 4263
+},
+{
+"atLeast": 97700,
+"lessThan": 97750,
+"singleMfs": 4453,
+"jointHoh": 4265
+},
+{
+"atLeast": 97750,
+"lessThan": 97800,
+"singleMfs": 4456,
+"jointHoh": 4267
+},
+{
+"atLeast": 97800,
+"lessThan": 97850,
+"singleMfs": 4458,
+"jointHoh": 4270
+},
+{
+"atLeast": 97850,
+"lessThan": 97900,
+"singleMfs": 4461,
+"jointHoh": 4272
+},
+{
+"atLeast": 97900,
+"lessThan": 97950,
+"singleMfs": 4463,
+"jointHoh": 4274
+},
+{
+"atLeast": 97950,
+"lessThan": 98000,
+"singleMfs": 4465,
+"jointHoh": 4277
+},
+{
+"atLeast": 98000,
+"lessThan": 98050,
+"singleMfs": 4468,
+"jointHoh": 4279
+},
+{
+"atLeast": 98050,
+"lessThan": 98100,
+"singleMfs": 4470,
+"jointHoh": 4282
+},
+{
+"atLeast": 98100,
+"lessThan": 98150,
+"singleMfs": 4472,
+"jointHoh": 4284
+},
+{
+"atLeast": 98150,
+"lessThan": 98200,
+"singleMfs": 4475,
+"jointHoh": 4286
+},
+{
+"atLeast": 98200,
+"lessThan": 98250,
+"singleMfs": 4477,
+"jointHoh": 4289
+},
+{
+"atLeast": 98250,
+"lessThan": 98300,
+"singleMfs": 4480,
+"jointHoh": 4291
+},
+{
+"atLeast": 98300,
+"lessThan": 98350,
+"singleMfs": 4482,
+"jointHoh": 4293
+},
+{
+"atLeast": 98350,
+"lessThan": 98400,
+"singleMfs": 4484,
+"jointHoh": 4296
+},
+{
+"atLeast": 98400,
+"lessThan": 98450,
+"singleMfs": 4487,
+"jointHoh": 4298
+},
+{
+"atLeast": 98450,
+"lessThan": 98500,
+"singleMfs": 4489,
+"jointHoh": 4301
+},
+{
+"atLeast": 98500,
+"lessThan": 98550,
+"singleMfs": 4491,
+"jointHoh": 4303
+},
+{
+"atLeast": 98550,
+"lessThan": 98600,
+"singleMfs": 4494,
+"jointHoh": 4305
+},
+{
+"atLeast": 98600,
+"lessThan": 98650,
+"singleMfs": 4496,
+"jointHoh": 4308
+},
+{
+"atLeast": 98650,
+"lessThan": 98700,
+"singleMfs": 4499,
+"jointHoh": 4310
+},
+{
+"atLeast": 98700,
+"lessThan": 98750,
+"singleMfs": 4501,
+"jointHoh": 4312
+},
+{
+"atLeast": 98750,
+"lessThan": 98800,
+"singleMfs": 4503,
+"jointHoh": 4315
+},
+{
+"atLeast": 98800,
+"lessThan": 98850,
+"singleMfs": 4506,
+"jointHoh": 4317
+},
+{
+"atLeast": 98850,
+"lessThan": 98900,
+"singleMfs": 4508,
+"jointHoh": 4320
+},
+{
+"atLeast": 98900,
+"lessThan": 98950,
+"singleMfs": 4510,
+"jointHoh": 4322
+},
+{
+"atLeast": 98950,
+"lessThan": 99000,
+"singleMfs": 4513,
+"jointHoh": 4324
+},
+{
+"atLeast": 99000,
+"lessThan": 99050,
+"singleMfs": 4515,
+"jointHoh": 4327
+},
+{
+"atLeast": 99050,
+"lessThan": 99100,
+"singleMfs": 4518,
+"jointHoh": 4329
+},
+{
+"atLeast": 99100,
+"lessThan": 99150,
+"singleMfs": 4520,
+"jointHoh": 4331
+},
+{
+"atLeast": 99150,
+"lessThan": 99200,
+"singleMfs": 4522,
+"jointHoh": 4334
+},
+{
+"atLeast": 99200,
+"lessThan": 99250,
+"singleMfs": 4525,
+"jointHoh": 4336
+},
+{
+"atLeast": 99250,
+"lessThan": 99300,
+"singleMfs": 4527,
+"jointHoh": 4339
+},
+{
+"atLeast": 99300,
+"lessThan": 99350,
+"singleMfs": 4529,
+"jointHoh": 4341
+},
+{
+"atLeast": 99350,
+"lessThan": 99400,
+"singleMfs": 4532,
+"jointHoh": 4343
+},
+{
+"atLeast": 99400,
+"lessThan": 99450,
+"singleMfs": 4534,
+"jointHoh": 4346
+},
+{
+"atLeast": 99450,
+"lessThan": 99500,
+"singleMfs": 4537,
+"jointHoh": 4348
+},
+{
+"atLeast": 99500,
+"lessThan": 99550,
+"singleMfs": 4539,
+"jointHoh": 4350
+},
+{
+"atLeast": 99550,
+"lessThan": 99600,
+"singleMfs": 4541,
+"jointHoh": 4353
+},
+{
+"atLeast": 99600,
+"lessThan": 99650,
+"singleMfs": 4544,
+"jointHoh": 4355
+},
+{
+"atLeast": 99650,
+"lessThan": 99700,
+"singleMfs": 4546,
+"jointHoh": 4358
+},
+{
+"atLeast": 99700,
+"lessThan": 99750,
+"singleMfs": 4548,
+"jointHoh": 4360
+},
+{
+"atLeast": 99750,
+"lessThan": 99800,
+"singleMfs": 4551,
+"jointHoh": 4362
+},
+{
+"atLeast": 99800,
+"lessThan": 99850,
+"singleMfs": 4553,
+"jointHoh": 4365
+},
+{
+"atLeast": 99850,
+"lessThan": 99900,
+"singleMfs": 4556,
+"jointHoh": 4367
+},
+{
+"atLeast": 99900,
+"lessThan": 99950,
+"singleMfs": 4558,
+"jointHoh": 4369
+},
+{
+"atLeast": 99950,
+"lessThan": 100000,
+"singleMfs": 4560,
+"jointHoh": 4372
+}
+]
+}

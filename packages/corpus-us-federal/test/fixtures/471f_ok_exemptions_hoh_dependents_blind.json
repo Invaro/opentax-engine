@@ -1,0 +1,14 @@
+{
+  "description": "OK head of household FAGI $19,000: 3 basic (self + dependent + blind) + 1 special -> $4,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "okBasicExemptions": 3,
+    "okSpecialExemptions65": 1,
+    "okFederalAgi": 19000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "400000"
+  }
+}
