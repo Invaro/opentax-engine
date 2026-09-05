@@ -1,0 +1,12 @@
+{
+  "description": "CT Table A HOH AGI $45,500: over $38,000 by $7,500 -> 8 steps -> $19,000 - $8,000 = $11,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "ctAgi": 45500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.personal_exemption",
+  "expect": {
+    "valueCents": "1100000"
+  }
+}

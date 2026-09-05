@@ -1,0 +1,13 @@
+{
+  "description": "CT property tax credit: single AGI $65,000 -> over $49,500 by $15,500 -> 2 steps x 15% = .30 -> $300 x .70 = $210.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 65000,
+    "ctPropertyTaxPaid": 900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.property_tax_credit",
+  "expect": {
+    "valueCents": "21000"
+  }
+}

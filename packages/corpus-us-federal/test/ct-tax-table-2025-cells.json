@@ -1,0 +1,325 @@
+{
+ "source": "DRS '2025 Connecticut Income Tax Tables' (portal.ct.gov/-/media/drs/forms/2025/income/2025-income-tax-tables.pdf, 10pp, Microsoft Print-To-PDF with no text layer) \u2014 rows transcribed by eye from 110-200 dpi renders by two independent readers; columns Single / Married Filing Jointly (also QSS) / Married Filing Separately / Head of Household; each row is 'More Than lo / Less Than or Equal To lo + 50'",
+ "rows": [
+  {
+   "moreThan": 12000,
+   "lessThanOrEqual": 12050,
+   "single": 0,
+   "mfj": 0,
+   "mfs": 0,
+   "hoh": 0
+  },
+  {
+   "moreThan": 12100,
+   "lessThanOrEqual": 12150,
+   "single": 0,
+   "mfj": 0,
+   "mfs": 1,
+   "hoh": 0
+  },
+  {
+   "moreThan": 13000,
+   "lessThanOrEqual": 13050,
+   "single": 0,
+   "mfj": 0,
+   "mfs": 5,
+   "hoh": 0
+  },
+  {
+   "moreThan": 15000,
+   "lessThanOrEqual": 15050,
+   "single": 0,
+   "mfj": 0,
+   "mfs": 18,
+   "hoh": 0
+  },
+  {
+   "moreThan": 15050,
+   "lessThanOrEqual": 15100,
+   "single": 0,
+   "mfj": 0,
+   "mfs": 18,
+   "hoh": 0
+  },
+  {
+   "moreThan": 16300,
+   "lessThanOrEqual": 16350,
+   "single": 7,
+   "mfj": 0,
+   "mfs": 35,
+   "hoh": 0
+  },
+  {
+   "moreThan": 18000,
+   "lessThanOrEqual": 18050,
+   "single": 15,
+   "mfj": 0,
+   "mfs": 72,
+   "hoh": 0
+  },
+  {
+   "moreThan": 19000,
+   "lessThanOrEqual": 19050,
+   "single": 24,
+   "mfj": 0,
+   "mfs": 91,
+   "hoh": 0
+  },
+  {
+   "moreThan": 19100,
+   "lessThanOrEqual": 19150,
+   "single": 25,
+   "mfj": 0,
+   "mfs": 93,
+   "hoh": 1
+  },
+  {
+   "moreThan": 20000,
+   "lessThanOrEqual": 20050,
+   "single": 40,
+   "mfj": 0,
+   "mfs": 112,
+   "hoh": 5
+  },
+  {
+   "moreThan": 20950,
+   "lessThanOrEqual": 21000,
+   "single": 60,
+   "mfj": 0,
+   "mfs": 135,
+   "hoh": 10
+  },
+  {
+   "moreThan": 24000,
+   "lessThanOrEqual": 24050,
+   "single": 117,
+   "mfj": 0,
+   "mfs": 286,
+   "hoh": 30
+  },
+  {
+   "moreThan": 30000,
+   "lessThanOrEqual": 30050,
+   "single": 400,
+   "mfj": 36,
+   "mfs": 789,
+   "hoh": 143
+  },
+  {
+   "moreThan": 33000,
+   "lessThanOrEqual": 33050,
+   "single": 660,
+   "mfj": 108,
+   "mfs": 1032,
+   "hoh": 182
+  },
+  {
+   "moreThan": 39000,
+   "lessThanOrEqual": 39050,
+   "single": 1153,
+   "mfj": 195,
+   "mfs": 1356,
+   "hoh": 502
+  },
+  {
+   "moreThan": 44000,
+   "lessThanOrEqual": 44050,
+   "single": 1558,
+   "mfj": 341,
+   "mfs": 1558,
+   "hoh": 895
+  },
+  {
+   "moreThan": 48000,
+   "lessThanOrEqual": 48050,
+   "single": 1720,
+   "mfj": 532,
+   "mfs": 1739,
+   "hoh": 1261
+  },
+  {
+   "moreThan": 50000,
+   "lessThanOrEqual": 50050,
+   "single": 1801,
+   "mfj": 693,
+   "mfs": 1901,
+   "hoh": 1423
+  },
+  {
+   "moreThan": 51950,
+   "lessThanOrEqual": 52000,
+   "single": 1898,
+   "mfj": 836,
+   "mfs": 2091,
+   "hoh": 1542
+  },
+  {
+   "moreThan": 52000,
+   "lessThanOrEqual": 52050,
+   "single": 1900,
+   "mfj": 888,
+   "mfs": 2115,
+   "hoh": 1585
+  },
+  {
+   "moreThan": 54000,
+   "lessThanOrEqual": 54050,
+   "single": 1999,
+   "mfj": 1050,
+   "mfs": 2271,
+   "hoh": 1747
+  },
+  {
+   "moreThan": 56000,
+   "lessThanOrEqual": 56050,
+   "single": 2098,
+   "mfj": 1212,
+   "mfs": 2406,
+   "hoh": 1909
+  },
+  {
+   "moreThan": 56950,
+   "lessThanOrEqual": 57000,
+   "single": 2168,
+   "mfj": 1250,
+   "mfs": 2459,
+   "hoh": 1947
+  },
+  {
+   "moreThan": 57000,
+   "lessThanOrEqual": 57050,
+   "single": 2170,
+   "mfj": 1293,
+   "mfs": 2461,
+   "hoh": 1950
+  },
+  {
+   "moreThan": 60000,
+   "lessThanOrEqual": 60050,
+   "single": 2345,
+   "mfj": 1536,
+   "mfs": 2651,
+   "hoh": 2071
+  },
+  {
+   "moreThan": 64500,
+   "lessThanOrEqual": 64550,
+   "single": 2849,
+   "mfj": 1880,
+   "mfs": 2949,
+   "hoh": 2253
+  },
+  {
+   "moreThan": 65000,
+   "lessThanOrEqual": 65050,
+   "single": 2876,
+   "mfj": 1941,
+   "mfs": 2976,
+   "hoh": 2274
+  },
+  {
+   "moreThan": 71000,
+   "lessThanOrEqual": 71050,
+   "single": 3231,
+   "mfj": 2427,
+   "mfs": 3381,
+   "hoh": 2517
+  },
+  {
+   "moreThan": 78000,
+   "lessThanOrEqual": 78050,
+   "single": 3666,
+   "mfj": 2710,
+   "mfs": 3791,
+   "hoh": 3080
+  },
+  {
+   "moreThan": 78500,
+   "lessThanOrEqual": 78550,
+   "single": 3694,
+   "mfj": 2730,
+   "mfs": 3819,
+   "hoh": 3174
+  },
+  {
+   "moreThan": 84000,
+   "lessThanOrEqual": 84050,
+   "single": 4021,
+   "mfj": 2953,
+   "mfs": 4121,
+   "hoh": 3501
+  },
+  {
+   "moreThan": 93000,
+   "lessThanOrEqual": 93050,
+   "single": 4566,
+   "mfj": 3318,
+   "mfs": 4616,
+   "hoh": 4076
+  },
+  {
+   "moreThan": 96000,
+   "lessThanOrEqual": 96050,
+   "single": 4731,
+   "mfj": 3477,
+   "mfs": 4781,
+   "hoh": 4281
+  },
+  {
+   "moreThan": 97500,
+   "lessThanOrEqual": 97550,
+   "single": 4839,
+   "mfj": 3655,
+   "mfs": 4864,
+   "hoh": 4364
+  },
+  {
+   "moreThan": 99000,
+   "lessThanOrEqual": 99050,
+   "single": 4921,
+   "mfj": 3837,
+   "mfs": 4946,
+   "hoh": 4486
+  },
+  {
+   "moreThan": 100000,
+   "lessThanOrEqual": 100050,
+   "single": 4977,
+   "mfj": 3961,
+   "mfs": 5002,
+   "hoh": 4541
+  },
+  {
+   "moreThan": 100500,
+   "lessThanOrEqual": 100550,
+   "single": 5007,
+   "mfj": 4079,
+   "mfs": 5032,
+   "hoh": 4569
+  },
+  {
+   "moreThan": 101850,
+   "lessThanOrEqual": 101900,
+   "single": 5113,
+   "mfj": 4153,
+   "mfs": 5113,
+   "hoh": 4643
+  },
+  {
+   "moreThan": 101900,
+   "lessThanOrEqual": 101950,
+   "single": 5116,
+   "mfj": 4156,
+   "mfs": 5116,
+   "hoh": 4646
+  },
+  {
+   "moreThan": 101950,
+   "lessThanOrEqual": 102000,
+   "single": 5119,
+   "mfj": 4159,
+   "mfs": 5119,
+   "hoh": 4649
+  }
+ ]
+}

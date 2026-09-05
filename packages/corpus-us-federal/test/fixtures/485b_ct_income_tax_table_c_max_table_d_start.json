@@ -1,0 +1,12 @@
+{
+  "description": "CT single AGI $150,000: $4,750 + 6% x $50,000 = $7,750; Table C max $250; Table D over $105,000 by $45,000 -> 9 x $25 = $225 -> $8,225.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "822500"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "DRS 2025 tax table row $100,000-$100,050 HOH -> $4,541 ($3,200 + 5.5% x $20,025 + $240 add-back).",
+  "facts": {
+    "filingStatus": "hoh",
+    "ctAgi": 100010,
+    "ctUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "454100"
+  }
+}

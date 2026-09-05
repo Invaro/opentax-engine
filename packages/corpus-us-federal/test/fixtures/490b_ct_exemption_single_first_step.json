@@ -1,0 +1,12 @@
+{
+  "description": "CT Table A single AGI $30,000.01 exceeds $30,000 by a fraction -> reduced $1,000 -> $14,000.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": "30000.01"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.personal_exemption",
+  "expect": {
+    "valueCents": "1400000"
+  }
+}

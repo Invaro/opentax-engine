@@ -1,0 +1,15 @@
+{
+  "description": "CT Social Security: MFJ FAGI $99,999 (under $100,000) -> full $20,000 subtracted.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctFederalAgi": 99999,
+    "ctTaxableSs": 20000,
+    "ctSsTotalBenefits": 30000,
+    "ctSsProvisionalExcess": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.social_security_adjustment",
+  "expect": {
+    "valueCents": "2000000"
+  }
+}

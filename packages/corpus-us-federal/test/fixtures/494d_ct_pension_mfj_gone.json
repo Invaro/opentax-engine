@@ -1,0 +1,13 @@
+{
+  "description": "CT pension/annuity subtraction, MFJ FAGI $150,000 -> 0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctFederalAgi": 150000,
+    "ctPensionAnnuityIncome": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.pension_annuity_subtraction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "CT single AGI $70,000: no exemption; Table B $2,000 + 5.5% x $20,000 = $3,100; Table C add-back over $56,500 by $13,500 -> 3 steps x $25 = $75; Table E .00 -> $3,175.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 70000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "317500"
+  }
+}

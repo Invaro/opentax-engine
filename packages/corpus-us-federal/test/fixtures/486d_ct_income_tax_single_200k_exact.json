@@ -1,0 +1,12 @@
+{
+  "description": "CT single AGI exactly $200,000: $4,750 + 6% x $100,000 = $10,750; Table C $250; Table D phase 1 capped $250, phase 2 not yet started -> $11,250.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "1125000"
+  }
+}

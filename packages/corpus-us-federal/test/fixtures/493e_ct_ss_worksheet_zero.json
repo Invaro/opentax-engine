@@ -1,0 +1,15 @@
+{
+  "description": "CT Social Security worksheet: D ($2,000) >= E ($1,500) -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalAgi": 90000,
+    "ctTaxableSs": 1500,
+    "ctSsTotalBenefits": 8000,
+    "ctSsProvisionalExcess": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.social_security_adjustment",
+  "expect": {
+    "valueCents": "0"
+  }
+}

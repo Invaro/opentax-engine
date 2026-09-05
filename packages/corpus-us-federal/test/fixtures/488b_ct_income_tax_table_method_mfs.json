@@ -1,0 +1,13 @@
+{
+  "description": "DRS 2025 tax table row $18,000-$18,050 MFS -> $72 (exact: taxable $6,025 x 2% = $120.50 x (1 - .40) = $72.30).",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctAgi": 18025,
+    "ctUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "7200"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "Above $102,000 there is no table row \u2014 ctUseTaxTable falls back to the schedule: single $102,001 -> $4,750 + 6% x $2,001 = $4,870 + $250 = $5,120.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 102001,
+    "ctUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "512000"
+  }
+}

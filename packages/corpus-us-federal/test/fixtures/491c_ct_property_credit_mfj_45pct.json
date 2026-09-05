@@ -1,0 +1,13 @@
+{
+  "description": "CT property tax credit: MFJ AGI $100,500 -> over $70,500 by $30,000 -> exactly 3 steps -> .45 -> $300 x .55 = $165.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctAgi": 100500,
+    "ctPropertyTaxPaid": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.property_tax_credit",
+  "expect": {
+    "valueCents": "16500"
+  }
+}

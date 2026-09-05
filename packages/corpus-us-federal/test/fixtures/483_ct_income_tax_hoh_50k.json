@@ -1,0 +1,12 @@
+{
+  "description": "CT HOH AGI $50,000: exemption $19,000 - 12 x $1,000 = $7,000; taxable $43,000 -> $320 + 4.5% x $27,000 = $1,535; Table E .10 -> $153.50 -> $154 -> $1,381.",
+  "facts": {
+    "filingStatus": "hoh",
+    "ctAgi": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "138100"
+  }
+}

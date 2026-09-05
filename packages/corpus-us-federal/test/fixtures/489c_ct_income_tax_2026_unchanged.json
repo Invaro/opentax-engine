@@ -1,0 +1,12 @@
+{
+  "description": "CT TY2026: no 2025/2026 act changed \u00a7\u00a7 12-700/702/703 \u2014 single $40,000 is still $1,192.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 40000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "119200"
+  }
+}

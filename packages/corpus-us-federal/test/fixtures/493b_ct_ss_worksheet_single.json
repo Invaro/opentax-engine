@@ -1,0 +1,15 @@
+{
+  "description": "CT Social Security worksheet: single FAGI $80,000; A $20,000, B $30,000 -> C $20,000 x 25% = $5,000; E $17,000 -> F $12,000.",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalAgi": 80000,
+    "ctTaxableSs": 17000,
+    "ctSsTotalBenefits": 20000,
+    "ctSsProvisionalExcess": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.social_security_adjustment",
+  "expect": {
+    "valueCents": "1200000"
+  }
+}

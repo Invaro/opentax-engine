@@ -1,0 +1,14 @@
+{
+  "description": "CT EITC proration rounds once: $125 federal EIC -> line 10 $50 x .2499 = $12.495 -> $12 (rounding to cents first would give $13).",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctFederalEic": 125,
+    "ctEitcSeparateFagi": 2499,
+    "ctEitcJointFagi": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.eitc",
+  "expect": {
+    "valueCents": "1200"
+  }
+}
