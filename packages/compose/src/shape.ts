@@ -8,11 +8,11 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -532,4 +532,38 @@ const okShape = {
   // nonrefundableCredits (capped at the remaining tax).
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape };
+
+const ctShape = {
+  ctMilitaryRetirement: usd.optional().describe("CT Schedule 1 line 44: military retirement pay included in federal AGI (retired armed forces / National Guard member or survivor-option beneficiary; NOT a former spouse's court-ordered share) — 100% subtracted; also excluded from ctPensionAnnuityIncome"),
+  ctTeachersRetirement: usd.optional().describe("CT Schedule 1 line 45: income from the Connecticut Teachers' Retirement System (Form 1099-R from the Teachers' Retirement Board) — the composer subtracts 50%; a teacher under the pension AGI threshold may instead include it in ctPensionAnnuityIncome (never both)"),
+  ctRailroadRetirement: usd.optional().describe("CT Schedule 1 line 43: Tier 1 and Tier 2 Railroad Retirement benefits, supplemental annuities, and RRB unemployment/sickness benefits included in federal AGI (excluding any Tier 1 already covered by the line 41 Social Security adjustment) — subtracted; also excluded from ctPensionAnnuityIncome"),
+  ctSsTotalBenefits: usd.optional().describe("federal Social Security Benefits Worksheet line 1 (total benefits, SSA-1099 box 5) — with taxableSocialSecurity and ctSsProvisionalExcess the composer runs the CT Social Security Benefit Adjustment Worksheet (line 41) when federal AGI is at or above $75,000 (single/MFS) or $100,000 (MFJ/QSS/HOH); below the threshold the full taxable amount is subtracted automatically"),
+  ctSsProvisionalExcess: usd.optional().describe("federal Social Security Benefits Worksheet line 9 (provisional income over the $25,000/$32,000 base) — or line 7 for a married-filing-separately filer who lived with the spouse — CT worksheet line B"),
+  ctPensionAnnuityIncome: usd.optional().describe("Form 1040 line 5b taxable pensions and annuities MINUS military retirement pay, Railroad Retirement, and Connecticut teachers' retirement (the composer runs the Pension and Annuity Worksheet: 100% of this + 75% of ctIraDistributions in TY2025, × the federal-AGI phase-out decimal → Schedule 1 line 48b)"),
+  ctIraDistributions: usd.optional().describe("Form 1040 line 4b taxable IRA distributions other than Roth — 75% (TY2025) / 100% (TY2026) enters the pension and annuity subtraction"),
+  ctChetContributions: usd.optional().describe("CT Schedule 1 line 48: contributions to Connecticut Higher Education Trust (CHET) 529 accounts made during the year plus allowed carryforward — the composer caps at $5,000 ($10,000 MFJ/QSS); the excess carries forward five years"),
+  ctAbleContributions: usd.optional().describe("CT Schedule 1 line 48d: contributions to ABLE accounts — the composer caps at $5,000 ($10,000 MFJ/QSS)"),
+  ctUseTaxTable: z.boolean().optional().describe("compute line 6 the way the DRS printed tax tables do (CT AGI ≤ $102,000: schedule at the $50 row midpoint, one rounding) instead of the Tax Calculation Schedule's line-level rounding — both are allowed by the form; default is the schedule"),
+  ctOtherJurisdictionIncome: usd.optional().describe("CT Schedule 2 line 53: income included in Connecticut AGI that was also taxed by ONE qualifying jurisdiction (another state, DC, or their political subdivisions — from the Schedule 2 Worksheet column 2); the composer computes lines 54-58 (ratio to four decimals ≤ 1.0000 × (line 6 − line 11), limited to the tax actually paid). Attach the other return."),
+  ctOtherJurisdictionTaxPaid: usd.optional().describe("CT Schedule 2 line 57: income tax actually paid to that qualifying jurisdiction"),
+  ctAmt: usd.optional().describe("CT-1040 line 9: Connecticut alternative minimum tax from Form CT-6251 line 23 (required when federal AMT was paid — agent-computed, transcribed)"),
+  ctPropertyTaxResidence: usd.optional().describe("CT Schedule 3 line 60: property tax paid in the year to a Connecticut town on the PRIMARY RESIDENCE (bills due and paid in the year, incl. prepaid installments; no late payments, interest or fees)"),
+  ctPropertyTaxAuto1: usd.optional().describe("CT Schedule 3 line 61: property tax paid on one privately owned or leased (term over one year) motor vehicle"),
+  ctPropertyTaxAuto2: usd.optional().describe("CT Schedule 3 line 62: a second vehicle — MFJ / QSS ONLY (the composer ignores it for other statuses with a note)"),
+  ctClaimOfRightCredit: usd.optional().describe("CT-1040 line 20b: claim of right credit from Form CT-1040 CRC line 6 (repayment over $3,000 under IRC § 1341; refundable)"),
+  ctPteCredit: usd.optional().describe("CT-1040 line 20c: pass-through entity tax credit from Schedule CT-PE line 1 (refundable; attach the schedule)"),
+  ctHistoricHomesCredit: usd.optional().describe("CT-1040 line 20d: Historic Homes Rehabilitation Tax Credit voucher amount (refundable)"),
+  ctEitcQualifyingChild: z.boolean().optional().describe("at least one qualifying child listed on federal Schedule EIC (Schedule CT-EITC lines 4-5) — adds the flat $250 to the 40% Connecticut EITC (PA 25-168, TY2025+)"),
+  ctEitcJointFagi: usd.optional().describe("Schedule CT-EITC line 13: the JOINT federal AGI when the filer filed jointly federally but must file married-filing-separately for Connecticut — the composer prorates the 40% credit by federalAGI (this spouse's separate AGI, line 12) ÷ this amount to four decimals"),
+  ctAppliedToNextYear: usd.optional().describe("CT-1040 line 23: overpayment applied to 2026 estimated tax (irrevocable)"),
+  ctChetRefundContribution: usd.optional().describe("CT-1040 line 24: overpayment contributed to CHET accounts from Schedule CT-CHET line 4 (irrevocable)"),
+  ctCharityContributions: usd.optional().describe("CT-1040 line 24a: contributions of the refund to designated charities from Schedule 5 line 70 (limited to the refund; irrevocable)"),
+  ctLate: z.boolean().optional().describe("return/payment is late — the composer applies the 10% late payment penalty to line 26 (line 27); pass ctLateInterest for line 28"),
+  ctLateInterest: usd.optional().describe("CT-1040 line 28: late payment interest — 1% of line 26 per month or fraction of a month from the due date (agent-computed)"),
+  ctUnderpaymentInterest: usd.optional().describe("CT-1040 line 29: interest on underpayment of estimated tax from Form CT-2210 (applies when line 14 less withholding and PE credit is $1,000 or more; leave blank to let DRS bill it)"),
+  // Schedule 1 additions use the shared `additions` (line 38 total); the other
+  // subtraction lines (39, 40, 42, 46, 47, 48a, 48c, 49) use the shared
+  // `subtractions`; Schedule CT-IT credits use the shared nonrefundableCredits.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape };

@@ -1,0 +1,14 @@
+{
+  "description": "CT EITC proration to four decimals: $1 / $3 = .3333 -> $400 x .3333 = $133.32 -> $133.",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctFederalEic": 1000,
+    "ctEitcSeparateFagi": 1,
+    "ctEitcJointFagi": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.eitc",
+  "expect": {
+    "valueCents": "13300"
+  }
+}

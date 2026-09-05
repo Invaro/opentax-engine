@@ -1,0 +1,12 @@
+{
+  "description": "CT MFJ AGI $22,500 is under the $24,000 exemption -> $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctAgi": 22500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

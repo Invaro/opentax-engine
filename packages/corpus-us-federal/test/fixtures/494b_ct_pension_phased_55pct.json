@@ -1,0 +1,14 @@
+{
+  "description": "CT pension/annuity subtraction, single FAGI $80,000 (.55): ($10,000 + 75% x $4,000) x .55 = $7,150.",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalAgi": 80000,
+    "ctPensionAnnuityIncome": 10000,
+    "ctIraDistributions": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.pension_annuity_subtraction",
+  "expect": {
+    "valueCents": "715000"
+  }
+}

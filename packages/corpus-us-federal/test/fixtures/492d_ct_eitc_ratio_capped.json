@@ -1,0 +1,14 @@
+{
+  "description": "CT EITC proration: separate AGI at or above the joint AGI -> 1.0000 -> $1,200.",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctFederalEic": 3000,
+    "ctEitcSeparateFagi": 50000,
+    "ctEitcJointFagi": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.eitc",
+  "expect": {
+    "valueCents": "120000"
+  }
+}

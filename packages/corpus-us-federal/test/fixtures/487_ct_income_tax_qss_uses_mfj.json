@@ -1,0 +1,12 @@
+{
+  "description": "CT qualifying surviving spouse uses the MFJ column of every table: AGI $60,000 -> $1,494.",
+  "facts": {
+    "filingStatus": "qss",
+    "ctAgi": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "149400"
+  }
+}

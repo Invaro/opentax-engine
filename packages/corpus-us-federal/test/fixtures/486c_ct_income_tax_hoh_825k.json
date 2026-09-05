@@ -1,0 +1,12 @@
+{
+  "description": "CT HOH AGI $825,000: Table B $51,748 (booklet example); Table C $400; Table D $400 + $4,200 + 4 x $80 = $4,920 -> $57,068.",
+  "facts": {
+    "filingStatus": "hoh",
+    "ctAgi": 825000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "5706800"
+  }
+}

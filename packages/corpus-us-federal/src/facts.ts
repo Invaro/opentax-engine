@@ -3507,4 +3507,102 @@ export const facts: FactSpec[] = [
       "Filer is 65 or older OR totally disabled, is the head of a household, and was an Oklahoma resident domiciled in the state for the ENTIRE preceding calendar year (Form 538-H / Form 511 line 24) — the property tax relief credit also requires gross household income of $12,000 or less (us.ok.property_tax_relief_credit). Unattested = $0.",
     default: { value: false, rationale: "Assumed NOT eligible absent an explicit attestation (conservative: no credit)" },
   },
+  // ---- Connecticut (Form CT-1040) ----
+  {
+    id: "ctAgi",
+    type: "money",
+    description:
+      "Connecticut adjusted gross income (Form CT-1040 line 5 = federal AGI + Schedule 1 additions − subtractions) — the single key to the whole Tax Calculation Schedule: Table A exemption, Table B rates, the Table C 2% add-back, Table D recapture, and the Table E credit percentage (us.ct.income_tax, us.ct.personal_exemption), and to the property tax credit phase-out (us.ct.property_tax_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 Connecticut AGI absent contrary input" },
+  },
+  {
+    id: "ctUseTaxTable",
+    type: "bool",
+    description:
+      "Use the DRS printed tax tables' method (Connecticut AGI at or under $102,000: the schedule evaluated at the $50 row midpoint, rounded once) instead of the Tax Calculation Schedule with its line-level whole-dollar rounding — Form CT-1040 line 6 allows either (us.ct.income_tax). Above $102,000 the schedule is used regardless.",
+    default: { value: false, rationale: "The Tax Calculation Schedule (the statutory computation, valid at every income) is the default" },
+  },
+  {
+    id: "ctPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Qualifying Connecticut property tax paid during the year on the primary residence and eligible motor vehicle(s) (Schedule 3 line 63: one vehicle for single/MFS/HOH, two for MFJ/QSS; bills due and paid in the year; no late payments, interest, or fees) — us.ct.property_tax_credit caps it at $300 and phases it out by Connecticut AGI. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualifying property tax paid absent contrary input" },
+  },
+  {
+    id: "ctFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "Federal earned income credit claimed and allowed (Form 1040 line 27a; Schedule CT-EITC line 8) — us.ct.eitc pays 40% of it plus $250 with a qualifying child. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" },
+  },
+  {
+    id: "ctEitcQualifyingChild",
+    type: "bool",
+    description:
+      "Filer listed at least one qualifying child on federal Schedule EIC (Schedule CT-EITC lines 4-5) — adds the flat $250 (PA 25-168 § 371, TY2025+) to the Connecticut EITC (us.ct.eitc).",
+    default: { value: false, rationale: "Assumed no qualifying child absent contrary input" },
+  },
+  {
+    id: "ctEitcSeparateFagi",
+    type: "money",
+    description:
+      "For a joint FEDERAL filer who must file married-filing-separately for Connecticut: this spouse's separate federal AGI (Schedule CT-EITC line 12) — the 40% credit is multiplied by separate ÷ joint federal AGI to four decimals, not more than 1.0000 (us.ct.eitc). Leave 0 (with ctEitcJointFagi 0) when no proration applies. In dollars.",
+    default: { value: "0", rationale: "Assumed no separate-for-Connecticut proration absent contrary input" },
+  },
+  {
+    id: "ctEitcJointFagi",
+    type: "money",
+    description:
+      "The joint federal AGI (Form 1040 line 11; Schedule CT-EITC line 13) when the Connecticut return is married filing separately but the federal return was joint — the proration denominator (us.ct.eitc). 0 = no proration. In dollars.",
+    default: { value: "0", rationale: "Assumed no separate-for-Connecticut proration absent contrary input" },
+  },
+  {
+    id: "ctFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Form CT-1040 line 1 = federal Form 1040 line 11a, as the 2025 CT form prints it) — keys the Social Security adjustment thresholds ($75,000 single/MFS; $100,000 MFJ/QSS/HOH) and the pension/annuity/IRA phase-out (us.ct.social_security_adjustment, us.ct.pension_annuity_subtraction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input" },
+  },
+  {
+    id: "ctSsTotalBenefits",
+    type: "money",
+    min: "0",
+    description:
+      "Total Social Security benefits received (federal Social Security Benefits Worksheet line 1 = Form SSA-1099 box 5 total) — line A of the Connecticut Social Security Benefit Adjustment Worksheet (us.ct.social_security_adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed no Social Security benefits absent contrary input" },
+  },
+  {
+    id: "ctSsProvisionalExcess",
+    type: "money",
+    description:
+      "Federal Social Security Benefits Worksheet line 9 — the excess of provisional income over the § 86(c) base amount ($25,000 / $32,000) — or line 7 for a married-filing-separately filer who lived with the spouse (line B of the Connecticut worksheet; us.ct.social_security_adjustment). May be zero or negative (then no adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed no provisional-income excess absent contrary input" },
+  },
+  {
+    id: "ctTaxableSs",
+    type: "money",
+    min: "0",
+    description:
+      "Federally taxable Social Security benefits (Form 1040 line 6b; federal worksheet line 18) — line E of the Connecticut worksheet; fully subtracted below the AGI threshold (us.ct.social_security_adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed no taxable Social Security absent contrary input" },
+  },
+  {
+    id: "ctPensionAnnuityIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Taxable pensions and annuities (Form 1040 line 5b) MINUS military retirement pay, Tier 1/Tier 2 Railroad Retirement, and Connecticut Teachers' Retirement income (each subtracted on its own Schedule 1 line) — the 100% component of the Pension and Annuity Worksheet line 2 (us.ct.pension_annuity_subtraction). Exclude disability pensions before minimum retirement age and corrective distributions. In dollars.",
+    default: { value: "0", rationale: "Assumed no pension or annuity income absent contrary input" },
+  },
+  {
+    id: "ctIraDistributions",
+    type: "money",
+    min: "0",
+    description:
+      "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
+  },
 ];

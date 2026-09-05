@@ -1,0 +1,12 @@
+{
+  "description": "CT single AGI $28,000: exemption $15,000 -> taxable $13,000 -> Table B $335 (the booklet's own example); Table E .15 -> $50.25 -> $50 -> $285.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 28000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "28500"
+  }
+}

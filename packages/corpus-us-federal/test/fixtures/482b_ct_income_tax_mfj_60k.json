@@ -1,0 +1,12 @@
+{
+  "description": "CT MFJ AGI $60,000: exemption $24,000 - 12 x $1,000 = $12,000; taxable $48,000 -> $400 + 4.5% x $28,000 = $1,660; Table E .10 -> $166 -> $1,494.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctAgi": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "149400"
+  }
+}

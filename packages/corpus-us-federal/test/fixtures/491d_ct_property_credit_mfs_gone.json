@@ -1,0 +1,13 @@
+{
+  "description": "CT property tax credit: MFS AGI $65,250.01 -> 7 steps of $5,000 -> decimal 1.00 -> $0.",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctAgi": "65250.01",
+    "ctPropertyTaxPaid": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.property_tax_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

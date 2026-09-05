@@ -1,0 +1,11 @@
+{
+  "description": "CT parameters rule is lookup-only: evaluating it refuses (NOT_MODELED).",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.parameters",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

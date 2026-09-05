@@ -1,0 +1,12 @@
+{
+  "description": "CT single AGI $525,000: Table B $32,998 (booklet example, $25,000 x .0699 = $1,748 rounded); Table C $250; Table D $250 + $2,700 + 5 x $50 = $3,200 -> $36,448.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 525000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "3644800"
+  }
+}

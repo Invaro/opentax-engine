@@ -1,0 +1,12 @@
+{
+  "description": "CT EITC: 40% x $2,000 federal EIC = $800 (no qualifying child).",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalEic": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.eitc",
+  "expect": {
+    "valueCents": "80000"
+  }
+}

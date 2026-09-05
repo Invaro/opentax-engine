@@ -1,0 +1,14 @@
+{
+  "description": "CT pension/annuity subtraction, single FAGI $70,000: 100% x $20,000 pension + 75% x $8,000 IRA = $26,000 (phase-out decimal 1).",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalAgi": 70000,
+    "ctPensionAnnuityIncome": 20000,
+    "ctIraDistributions": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.pension_annuity_subtraction",
+  "expect": {
+    "valueCents": "2600000"
+  }
+}

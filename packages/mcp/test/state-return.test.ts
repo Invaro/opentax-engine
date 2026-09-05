@@ -1327,3 +1327,94 @@ describe("composeOK — 2025 Form 511 (real corpus targets)", () => {
     expect(() => composeStateReturn({ jurisdiction: "ok" as const, filingStatus: "mfj" }, realPaEval({}))).toThrow(/federalAGI is required/);
   });
 });
+
+describe("composeCT — 2025 Form CT-1040 (real corpus targets)", () => {
+  it("single with property tax credit: Tables B/C/E on CT AGI, Schedule 3 phase-out, refund", () => {
+    // AGI 60,000: no exemption; Table B 2,000 + 5.5% x 10,000 = 2,550; Table C
+    // one step $25; Table E .10 -> 257.50 -> 258 -> line 6 = 2,317. Property
+    // tax 3,000 + 400 -> $300 cap x (1 - .30) = 210 (AGI over 49,500 by
+    // 10,500 -> 2 steps). Line 12 = 2,107; withholding 2,500 -> refund 393.
+    const input = {
+      jurisdiction: "ct" as const, filingStatus: "single", federalAGI: 60000,
+      ctPropertyTaxResidence: 3000, ctPropertyTaxAuto1: 400, stateWithholding: 2500, useTax: 0,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "5_connecticut_agi")).toBe("$60,000");
+    expect(dollars(lines, "6_income_tax")).toBe("$2,317");
+    expect(dollars(lines, "68_schedule3_credit")).toBe("$210");
+    expect(dollars(lines, "11_property_tax_credit")).toBe("$210");
+    expect(dollars(lines, "14_connecticut_income_tax")).toBe("$2,107");
+    expect(dollars(lines, "22_overpayment")).toBe("$393");
+    expect(dollars(lines, "25_refund")).toBe("$393");
+    expect(notes.some((n) => n.includes("capped at $300"))).toBe(true);
+  });
+
+  it("MFJ retirees with Social Security, pension, teachers' retirement, EITC add-on, and an other-jurisdiction credit", () => {
+    // FAGI 90,000 (< 100,000): SS 12,000 subtracted in full; pension 20,000 x
+    // 1.00 = 20,000; teachers 10,000 -> 5,000 -> line 4 = 37,000; CT AGI 53,000.
+    // Exemption 24,000 - 5 x 1,000 = 19,000; taxable 34,000 -> 400 + 4.5% x
+    // 14,000 = 1,030; Table E .10 -> 103 -> line 6 = 927. Property 250 (AGI
+    // 53,000 <= 70,500 -> decimal 0) -> 250. Schedule 2: 10,000 / 53,000 =
+    // .1887 x (927 - 250 = 677) = 127.75 -> 128 <= 500 paid -> line 7 = 128.
+    // Line 8 = 799; line 11 = 250; line 12 = 549. EITC 40% x 1,500 = 600 +
+    // 250 = 850. Payments 1,000 + 850 = 1,850 -> refund 1,301.
+    const input = {
+      jurisdiction: "ct" as const, filingStatus: "mfj", federalAGI: 90000,
+      taxableSocialSecurity: 12000, ctSsTotalBenefits: 20000, ctSsProvisionalExcess: 30000,
+      ctPensionAnnuityIncome: 20000, ctTeachersRetirement: 10000,
+      ctPropertyTaxResidence: 250, ctOtherJurisdictionIncome: 10000, ctOtherJurisdictionTaxPaid: 500,
+      federalEITC: 1500, ctEitcQualifyingChild: true, stateWithholding: 1000, useTax: 0,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "41_social_security_adjustment")).toBe("$12,000");
+    expect(dollars(lines, "48b_pension_annuity_subtraction")).toBe("$20,000");
+    expect(dollars(lines, "45_teachers_retirement_50pct")).toBe("$5,000");
+    expect(dollars(lines, "5_connecticut_agi")).toBe("$53,000");
+    expect(dollars(lines, "6_income_tax")).toBe("$927");
+    expect(dollars(lines, "7_other_jurisdiction_credit")).toBe("$128");
+    expect(dollars(lines, "11_property_tax_credit")).toBe("$250");
+    expect(dollars(lines, "12_tax_after_property_credit")).toBe("$549");
+    expect(dollars(lines, "20a_earned_income_tax_credit")).toBe("$850");
+    expect(dollars(lines, "22_overpayment")).toBe("$1,301");
+    expect(notes.some((n) => n.includes("$250 qualifying-child add-on"))).toBe(true);
+    expect(notes.some((n) => n.includes("subtracted in full (federal AGI under $100,000)"))).toBe(true);
+  });
+
+  it("HOH high earner: recapture, phased-out property credit, AMT, late penalty", () => {
+    // AGI 200,000: Table B 7,600 + 6% x 40,000 = 10,000; Table C max 400;
+    // Table D over 168,000 by 32,000 -> 4 x 40 = 160; Table E 0 -> 10,560.
+    // AMT 100 -> line 10 10,660; property credit decimal 1.00 -> 0; use tax 40
+    // -> line 17 10,700; withholding 9,000 -> due 1,700; late penalty 10% =
+    // 170 -> total 1,870.
+    const input = {
+      jurisdiction: "ct" as const, filingStatus: "hoh", federalAGI: 200000,
+      ctAmt: 100, ctPropertyTaxResidence: 3000, useTax: 40, stateWithholding: 9000, ctLate: true,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_income_tax")).toBe("$10,560");
+    expect(dollars(lines, "10_total")).toBe("$10,660");
+    expect(lines["11_property_tax_credit"]).toBeUndefined();
+    expect(dollars(lines, "17_total_tax")).toBe("$10,700");
+    expect(dollars(lines, "26_tax_due")).toBe("$1,700");
+    expect(dollars(lines, "27_late_penalty")).toBe("$170");
+    expect(dollars(lines, "30_total_amount_due")).toBe("$1,870");
+    expect(notes.some((n) => n.includes("past the phase-out"))).toBe(true);
+  });
+
+  it("MFS for Connecticut with a joint federal return: EITC prorated to four decimals, second vehicle ignored; federalAGI required", () => {
+    // AGI 30,000 MFS -> line 6 = 747 (fixture 484); property 200 (auto 2
+    // ignored) -> 200; line 12 = 547. EITC 40% x 3,000 = 1,200 x (30,000 /
+    // 50,000 = .6000) = 720 -> overpayment 720 - 547 = 173.
+    const input = {
+      jurisdiction: "ct" as const, filingStatus: "mfs", federalAGI: 30000,
+      ctPropertyTaxAuto1: 200, ctPropertyTaxAuto2: 200, federalEITC: 3000, ctEitcJointFagi: 50000, useTax: 0,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_income_tax")).toBe("$747");
+    expect(dollars(lines, "11_property_tax_credit")).toBe("$200");
+    expect(dollars(lines, "20a_earned_income_tax_credit")).toBe("$720");
+    expect(dollars(lines, "22_overpayment")).toBe("$173");
+    expect(notes.some((n) => n.includes("second vehicle $200 IGNORED"))).toBe(true);
+    expect(() => composeStateReturn({ jurisdiction: "ct" as const, filingStatus: "single" }, realPaEval({}))).toThrow(/federalAGI is required/);
+  });
+});

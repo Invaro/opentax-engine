@@ -1,0 +1,13 @@
+{
+  "description": "DRS 2025 tax table last row $101,950-$102,000 single -> $5,119.",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 102000,
+    "ctUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "511900"
+  }
+}

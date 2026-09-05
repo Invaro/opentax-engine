@@ -1,0 +1,12 @@
+{
+  "description": "CT MFJ AGI $1,100,000: Table B $69,490 (booklet example); Table C $500; Table D $500 + $5,400 + 9 x $100 = $6,800 -> $76,790.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctAgi": 1100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "7679000"
+  }
+}

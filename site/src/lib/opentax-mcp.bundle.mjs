@@ -5449,8 +5449,8 @@ var require_contains = __commonJS({
     var codegen_1 = require_codegen();
     var util_1 = require_util();
     var error2 = {
-      message: ({ params: { min: min3, max: max2 } }) => max2 === void 0 ? (0, codegen_1.str)`must contain at least ${min3} valid item(s)` : (0, codegen_1.str)`must contain at least ${min3} and no more than ${max2} valid item(s)`,
-      params: ({ params: { min: min3, max: max2 } }) => max2 === void 0 ? (0, codegen_1._)`{minContains: ${min3}}` : (0, codegen_1._)`{minContains: ${min3}, maxContains: ${max2}}`
+      message: ({ params: { min: min4, max: max2 } }) => max2 === void 0 ? (0, codegen_1.str)`must contain at least ${min4} valid item(s)` : (0, codegen_1.str)`must contain at least ${min4} and no more than ${max2} valid item(s)`,
+      params: ({ params: { min: min4, max: max2 } }) => max2 === void 0 ? (0, codegen_1._)`{minContains: ${min4}}` : (0, codegen_1._)`{minContains: ${min4}, maxContains: ${max2}}`
     };
     var def = {
       keyword: "contains",
@@ -5461,28 +5461,28 @@ var require_contains = __commonJS({
       error: error2,
       code(cxt) {
         const { gen, schema, parentSchema, data, it } = cxt;
-        let min3;
+        let min4;
         let max2;
         const { minContains, maxContains } = parentSchema;
         if (it.opts.next) {
-          min3 = minContains === void 0 ? 1 : minContains;
+          min4 = minContains === void 0 ? 1 : minContains;
           max2 = maxContains;
         } else {
-          min3 = 1;
+          min4 = 1;
         }
         const len = gen.const("len", (0, codegen_1._)`${data}.length`);
-        cxt.setParams({ min: min3, max: max2 });
-        if (max2 === void 0 && min3 === 0) {
+        cxt.setParams({ min: min4, max: max2 });
+        if (max2 === void 0 && min4 === 0) {
           (0, util_1.checkStrictMode)(it, `"minContains" == 0 without "maxContains": "contains" keyword ignored`);
           return;
         }
-        if (max2 !== void 0 && min3 > max2) {
+        if (max2 !== void 0 && min4 > max2) {
           (0, util_1.checkStrictMode)(it, `"minContains" > "maxContains" is always invalid`);
           cxt.fail();
           return;
         }
         if ((0, util_1.alwaysValidSchema)(it, schema)) {
-          let cond = (0, codegen_1._)`${len} >= ${min3}`;
+          let cond = (0, codegen_1._)`${len} >= ${min4}`;
           if (max2 !== void 0)
             cond = (0, codegen_1._)`${cond} && ${len} <= ${max2}`;
           cxt.pass(cond);
@@ -5490,9 +5490,9 @@ var require_contains = __commonJS({
         }
         it.items = true;
         const valid = gen.name("valid");
-        if (max2 === void 0 && min3 === 1) {
+        if (max2 === void 0 && min4 === 1) {
           validateItems(valid, () => gen.if(valid, () => gen.break()));
-        } else if (min3 === 0) {
+        } else if (min4 === 0) {
           gen.let(valid, true);
           if (max2 !== void 0)
             gen.if((0, codegen_1._)`${data}.length > 0`, validateItemsWithCount);
@@ -5520,13 +5520,13 @@ var require_contains = __commonJS({
         function checkLimits(count) {
           gen.code((0, codegen_1._)`${count}++`);
           if (max2 === void 0) {
-            gen.if((0, codegen_1._)`${count} >= ${min3}`, () => gen.assign(valid, true).break());
+            gen.if((0, codegen_1._)`${count} >= ${min4}`, () => gen.assign(valid, true).break());
           } else {
             gen.if((0, codegen_1._)`${count} > ${max2}`, () => gen.assign(valid, false).break());
-            if (min3 === 1)
+            if (min4 === 1)
               gen.assign(valid, true);
             else
-              gen.if((0, codegen_1._)`${count} >= ${min3}`, () => gen.assign(valid, true));
+              gen.if((0, codegen_1._)`${count} >= ${min4}`, () => gen.assign(valid, true));
           }
         }
       }
@@ -6772,7 +6772,7 @@ var require_formats = __commonJS({
         if (!matches)
           return false;
         const hr = +matches[1];
-        const min3 = +matches[2];
+        const min4 = +matches[2];
         const sec = +matches[3];
         const tz = matches[4];
         const tzSign = matches[5] === "-" ? -1 : 1;
@@ -6780,9 +6780,9 @@ var require_formats = __commonJS({
         const tzM = +(matches[7] || 0);
         if (tzH > 23 || tzM > 59 || strictTimeZone && !tz)
           return false;
-        if (hr <= 23 && min3 <= 59 && sec < 60)
+        if (hr <= 23 && min4 <= 59 && sec < 60)
           return true;
-        const utcMin = min3 - tzM * tzSign;
+        const utcMin = min4 - tzM * tzSign;
         const utcHr = hr - tzH * tzSign - (utcMin < 0 ? 1 : 0);
         return (utcHr === 23 || utcHr === -1) && (utcMin === 59 || utcMin === -1) && sec < 61;
       };
@@ -7263,8 +7263,8 @@ var ZodError = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub10) => {
-      this.issues = [...this.issues, sub10];
+    this.addIssue = (sub11) => {
+      this.issues = [...this.issues, sub11];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -7331,13 +7331,13 @@ var ZodError = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub10 of this.issues) {
-      if (sub10.path.length > 0) {
-        const firstEl = sub10.path[0];
+    for (const sub11 of this.issues) {
+      if (sub11.path.length > 0) {
+        const firstEl = sub11.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub10));
+        fieldErrors[firstEl].push(mapper(sub11));
       } else {
-        formErrors.push(mapper(sub10));
+        formErrors.push(mapper(sub11));
       }
     }
     return { formErrors, fieldErrors };
@@ -8523,14 +8523,14 @@ var ZodString = class _ZodString2 extends ZodType {
     return !!this._def.checks.find((ch) => ch.kind === "base64url");
   }
   get minLength() {
-    let min3 = null;
+    let min4 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min3 === null || ch.value > min3)
-          min3 = ch.value;
+        if (min4 === null || ch.value > min4)
+          min4 = ch.value;
       }
     }
-    return min3;
+    return min4;
   }
   get maxLength() {
     let max2 = null;
@@ -8744,14 +8744,14 @@ var ZodNumber = class _ZodNumber extends ZodType {
     });
   }
   get minValue() {
-    let min3 = null;
+    let min4 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min3 === null || ch.value > min3)
-          min3 = ch.value;
+        if (min4 === null || ch.value > min4)
+          min4 = ch.value;
       }
     }
-    return min3;
+    return min4;
   }
   get maxValue() {
     let max2 = null;
@@ -8768,19 +8768,19 @@ var ZodNumber = class _ZodNumber extends ZodType {
   }
   get isFinite() {
     let max2 = null;
-    let min3 = null;
+    let min4 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "finite" || ch.kind === "int" || ch.kind === "multipleOf") {
         return true;
       } else if (ch.kind === "min") {
-        if (min3 === null || ch.value > min3)
-          min3 = ch.value;
+        if (min4 === null || ch.value > min4)
+          min4 = ch.value;
       } else if (ch.kind === "max") {
         if (max2 === null || ch.value < max2)
           max2 = ch.value;
       }
     }
-    return Number.isFinite(min3) && Number.isFinite(max2);
+    return Number.isFinite(min4) && Number.isFinite(max2);
   }
 };
 ZodNumber.create = (params) => {
@@ -8935,14 +8935,14 @@ var ZodBigInt = class _ZodBigInt extends ZodType {
     });
   }
   get minValue() {
-    let min3 = null;
+    let min4 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min3 === null || ch.value > min3)
-          min3 = ch.value;
+        if (min4 === null || ch.value > min4)
+          min4 = ch.value;
       }
     }
-    return min3;
+    return min4;
   }
   get maxValue() {
     let max2 = null;
@@ -9069,14 +9069,14 @@ var ZodDate = class _ZodDate extends ZodType {
     });
   }
   get minDate() {
-    let min3 = null;
+    let min4 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min3 === null || ch.value > min3)
-          min3 = ch.value;
+        if (min4 === null || ch.value > min4)
+          min4 = ch.value;
       }
     }
-    return min3 != null ? new Date(min3) : null;
+    return min4 != null ? new Date(min4) : null;
   }
   get maxDate() {
     let max2 = null;
@@ -11636,12 +11636,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub10 of error2.issues) {
-    if (sub10.path.length > 0) {
-      fieldErrors[sub10.path[0]] = fieldErrors[sub10.path[0]] || [];
-      fieldErrors[sub10.path[0]].push(mapper(sub10));
+  for (const sub11 of error2.issues) {
+    if (sub11.path.length > 0) {
+      fieldErrors[sub11.path[0]] = fieldErrors[sub11.path[0]] || [];
+      fieldErrors[sub11.path[0]].push(mapper(sub11));
     } else {
-      formErrors.push(mapper(sub10));
+      formErrors.push(mapper(sub11));
     }
   }
   return { formErrors, fieldErrors };
@@ -22414,7 +22414,8 @@ var JURISDICTION_NAMES = {
   "us.sc": "south carolina sc sc1040 charleston columbia",
   "us.al": "alabama al form 40 birmingham montgomery",
   "us.or": "oregon or or-40 portland salem kicker",
-  "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief"
+  "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief",
+  "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -24808,6 +24809,182 @@ function composeOK(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/ct.js
+function composeCT(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  const jointColumn = isJoint(input) || fs === "qss";
+  const fagi = rd(c(input.federalAGI));
+  const l1 = fagi;
+  const l2 = rd(c(input.additions));
+  if (l2 > 0n)
+    notes.push(`CT line 2: Schedule 1 additions ${fmtD(l2)} (non-Connecticut municipal interest and exempt-interest dividends, Form 4972 lump sums, 100% of \xA7 168(k) bonus depreciation, 80% of \xA7 179, Connecticut tax deducted above the line \u2014 transcribed)`);
+  const l3 = l1 + l2;
+  const other = rd(c(input.subtractions));
+  const l43 = rd(c(input.ctRailroadRetirement));
+  const l44 = rd(c(input.ctMilitaryRetirement));
+  if (l44 > 0n)
+    notes.push(`CT Schedule 1 line 44: military retirement pay ${fmtD(l44)} subtracted in full (\xA7 12-701(a)(20)(B)(xvi))`);
+  const teachers = rd(c(input.ctTeachersRetirement));
+  const l45 = rd(teachers / 2n);
+  if (teachers > 0n)
+    notes.push(`CT Schedule 1 line 45: 50% of Connecticut Teachers' Retirement income ${fmtD(teachers)} \u2192 ${fmtD(l45)} (a teacher under the pension AGI threshold may instead take the line 48b pension subtraction on the full amount \u2014 never both)`);
+  const taxableSs = rd(c(input.taxableSocialSecurity));
+  let l41 = 0n;
+  if (taxableSs > 0n) {
+    l41 = rd(evalStateTax("us.ct.social_security_adjustment", 0n, {
+      ctFederalAgi: fagi,
+      ctTaxableSs: taxableSs,
+      ctSsTotalBenefits: rd(c(input.ctSsTotalBenefits)),
+      ctSsProvisionalExcess: rd(c(input.ctSsProvisionalExcess))
+    }));
+    const threshold2 = fs === "single" || fs === "mfs" ? 7500000n : 10000000n;
+    if (fagi < threshold2)
+      notes.push(`CT Schedule 1 line 41: taxable Social Security ${fmtD(taxableSs)} subtracted in full (federal AGI under ${fmtD(threshold2)})`);
+    else if (l41 > 0n)
+      notes.push(`CT Schedule 1 line 41: Social Security benefit adjustment ${fmtD(l41)} (worksheet: taxable benefits less 25% of the lesser of total benefits or the \xA7 86(b)(1) excess${c(input.ctSsTotalBenefits) === 0n ? " \u2014 ctSsTotalBenefits was not supplied, so the worksheet ran with $0 benefits" : ""})`);
+    else
+      notes.push("CT Schedule 1 line 41: Social Security benefit adjustment $0 \u2014 25% of the lesser of total benefits or the provisional-income excess equals or exceeds the taxable benefits (or the worksheet inputs were not supplied)");
+  }
+  const chetRaw = rd(c(input.ctChetContributions));
+  const chetCap = jointColumn ? 1000000n : 500000n;
+  const l48 = min2(chetRaw, chetCap);
+  if (chetRaw > l48)
+    notes.push(`CT Schedule 1 line 48: CHET contributions ${fmtD(chetRaw)} capped at ${fmtD(chetCap)} (excess carries forward five years)`);
+  const pension = rd(c(input.ctPensionAnnuityIncome));
+  const ira = rd(c(input.ctIraDistributions));
+  let l48b = 0n;
+  if (pension + ira > 0n) {
+    l48b = rd(evalStateTax("us.ct.pension_annuity_subtraction", 0n, { ctFederalAgi: fagi, ctPensionAnnuityIncome: pension, ctIraDistributions: ira }));
+    notes.push(`CT Schedule 1 line 48b: pension and annuity subtraction ${fmtD(l48b)} (100% of pensions/annuities ${fmtD(pension)} + the IRA percentage of ${fmtD(ira)}, \xD7 the federal-AGI phase-out decimal \u2014 $75,000-$100,000 single/MFS/HOH, $100,000-$150,000 MFJ/QSS)`);
+  }
+  const ableRaw = rd(c(input.ctAbleContributions));
+  const l48d = min2(ableRaw, chetCap);
+  if (ableRaw > l48d)
+    notes.push(`CT Schedule 1 line 48d: ABLE contributions ${fmtD(ableRaw)} capped at ${fmtD(chetCap)}`);
+  const l4 = other + l41 + l43 + l44 + l45 + l48 + l48b + l48d;
+  const l5 = l3 - l4;
+  const useTable = input.ctUseTaxTable === true;
+  const l6 = rd(evalStateTax("us.ct.income_tax", 0n, { ctAgi: l5, ctUseTaxTable: useTable }));
+  notes.push(`CT line 6: ${fmtD(l6)} from the Tax Calculation Schedule on Connecticut AGI ${fmtD(l5)} (Table A exemption, Table B rates, Table C 2% add-back, Table D recapture, Table E credit percentage${useTable ? " \u2014 DRS tax-table midpoint method" : ""})`);
+  const auto2 = rd(c(input.ctPropertyTaxAuto2));
+  if (auto2 > 0n && !jointColumn)
+    notes.push(`CT Schedule 3 line 62: second vehicle ${fmtD(auto2)} IGNORED \u2014 only married filing jointly or qualifying surviving spouse may claim two vehicles`);
+  const l63 = rd(c(input.ctPropertyTaxResidence)) + rd(c(input.ctPropertyTaxAuto1)) + (jointColumn ? auto2 : 0n);
+  const l11raw = l63 > 0n ? rd(evalStateTax("us.ct.property_tax_credit", 0n, { ctAgi: l5, ctPropertyTaxPaid: l63 })) : 0n;
+  let l7 = 0n;
+  const ojIncome = rd(c(input.ctOtherJurisdictionIncome));
+  const ojPaid = rd(c(input.ctOtherJurisdictionTaxPaid));
+  if (ojIncome > 0n && ojPaid > 0n) {
+    const l51 = l5;
+    const l55 = max02(l6 - l11raw);
+    const ratio4 = l51 <= 0n || ojIncome >= l51 ? 10000n : (ojIncome * 10000n + l51 / 2n) / l51;
+    const l56 = rd(l55 * ratio4 / 10000n);
+    l7 = min2(l56, ojPaid);
+    notes.push(`CT line 7: credit for taxes paid to a qualifying jurisdiction ${fmtD(l7)} (Schedule 2: ${fmtD(ojIncome)} \xF7 ${fmtD(l51)} = ${(Number(ratio4) / 1e4).toFixed(4)} \xD7 (line 6 \u2212 line 11 ${fmtD(l55)}) = ${fmtD(l56)}, limited to the ${fmtD(ojPaid)} paid; attach the other jurisdiction's return)`);
+  }
+  const l8 = max02(l6 - l7);
+  const l9 = rd(c(input.ctAmt));
+  if (l9 > 0n)
+    notes.push(`CT line 9: Connecticut alternative minimum tax ${fmtD(l9)} (Form CT-6251 \u2014 transcribed)`);
+  const l10 = l8 + l9;
+  const l11 = l10 > 0n ? min2(l11raw, l10) : 0n;
+  if (l63 > 0n) {
+    if (l10 === 0n)
+      notes.push("CT line 11: property tax credit skipped \u2014 line 10 is $0 (Schedule 3 is not completed)");
+    else if (l11 === 0n)
+      notes.push(`CT line 11: property tax credit $0 \u2014 Connecticut AGI ${fmtD(l5)} is past the phase-out (decimal 1.00)`);
+    else
+      notes.push(`CT line 11: property tax credit ${fmtD(l11)} (Schedule 3: ${fmtD(l63)} paid, capped at $300, reduced by the AGI decimal${l11 < l11raw ? `, limited to the line 10 tax` : ""}; nonrefundable, no carryforward)`);
+  }
+  const l12 = max02(l10 - l11);
+  const l13 = min2(rd(c(input.nonrefundableCredits)), l12);
+  if (l13 > 0n)
+    notes.push(`CT line 13: Schedule CT-IT credits ${fmtD(l13)} (capped at line 12)`);
+  const l14 = max02(l12 - l13);
+  const l15 = rd(c(input.useTax));
+  if (l15 === 0n)
+    notes.push("CT line 15: individual use tax $0 \u2014 the form requires an explicit '0' when none is due (Schedule 4: 1% / 6.35% / 7.75% / 2.99%)");
+  const l16 = l14 + l15;
+  const l17 = l16;
+  const l18 = rd(c(input.stateWithholding)) + rd(c(input.spouseStateWithholding));
+  const l19 = rd(c(input.estimatedPayments)) + rd(c(input.priorYearOverpaymentCredited));
+  const l20 = rd(c(input.extensionPayment));
+  const fedEic = rd(c(input.federalEITC));
+  let l20a = 0n;
+  if (fedEic > 0n) {
+    const jointFagi = rd(c(input.ctEitcJointFagi));
+    l20a = rd(evalStateTax("us.ct.eitc", 0n, {
+      ctFederalEic: fedEic,
+      ctEitcQualifyingChild: input.ctEitcQualifyingChild === true,
+      ctEitcSeparateFagi: jointFagi > 0n ? fagi : 0n,
+      ctEitcJointFagi: jointFagi
+    }));
+    notes.push(`CT line 20a: Connecticut EITC ${fmtD(l20a)} (40% of the ${fmtD(fedEic)} federal EIC${input.ctEitcQualifyingChild === true ? " + the $250 qualifying-child add-on (PA 25-168)" : ""}${jointFagi > 0n ? `, prorated by separate \xF7 joint federal AGI ${fmtD(fagi)} \xF7 ${fmtD(jointFagi)}` : ""}; refundable; Schedule CT-EITC attached; full-year residents only)`);
+  }
+  const l20b = rd(c(input.ctClaimOfRightCredit));
+  const l20c = rd(c(input.ctPteCredit));
+  const l20d = rd(c(input.ctHistoricHomesCredit));
+  const l21 = l18 + l19 + l20 + l20a + l20b + l20c + l20d;
+  const l22 = max02(l21 - l17);
+  const l23 = min2(rd(c(input.ctAppliedToNextYear)), l22);
+  const l24 = min2(rd(c(input.ctChetRefundContribution)), l22 - l23);
+  const l24a = min2(rd(c(input.ctCharityContributions)), l22 - l23 - l24);
+  const l25 = max02(l22 - l23 - l24 - l24a);
+  const l26 = max02(l17 - l21);
+  const l27 = input.ctLate === true && l26 > 0n ? rd(l26 / 10n) : 0n;
+  if (l27 > 0n)
+    notes.push(`CT line 27: late payment penalty 10% of the ${fmtD(l26)} due = ${fmtD(l27)}`);
+  const l28 = rd(c(input.ctLateInterest));
+  const l29 = rd(c(input.ctUnderpaymentInterest));
+  const l30 = l26 + l27 + l28 + l29;
+  notes.push("CT scope: Form CT-1040 is the full-year RESIDENT return \u2014 part-year and nonresident filers use Form CT-1040NR/PY (not composed); Connecticut has no local income taxes; Schedule 2 is composed for ONE qualifying jurisdiction (add further columns by hand); Form CT-6251, Schedule CT-IT, Schedule CT-PE, and Form CT-2210 amounts are transcribed inputs");
+  return {
+    "1_federal_agi": fmtD(l1),
+    ...l2 !== 0n ? { "2_additions": fmtD(l2) } : {},
+    "3_total": fmtD(l3),
+    ...l4 !== 0n ? { "4_subtractions": fmtD(l4) } : {},
+    ...l41 !== 0n ? { "41_social_security_adjustment": fmtD(l41) } : {},
+    ...l43 !== 0n ? { "43_railroad_retirement": fmtD(l43) } : {},
+    ...l44 !== 0n ? { "44_military_retirement": fmtD(l44) } : {},
+    ...l45 !== 0n ? { "45_teachers_retirement_50pct": fmtD(l45) } : {},
+    ...l48 !== 0n ? { "48_chet_contributions": fmtD(l48) } : {},
+    ...l48b !== 0n ? { "48b_pension_annuity_subtraction": fmtD(l48b) } : {},
+    ...l48d !== 0n ? { "48d_able_contributions": fmtD(l48d) } : {},
+    "5_connecticut_agi": fmtD(l5),
+    "6_income_tax": fmtD(l6),
+    ...l7 !== 0n ? { "7_other_jurisdiction_credit": fmtD(l7) } : {},
+    "8_tax_after_credit": fmtD(l8),
+    ...l9 !== 0n ? { "9_alternative_minimum_tax": fmtD(l9) } : {},
+    "10_total": fmtD(l10),
+    ...l11raw !== 0n ? { "68_schedule3_credit": fmtD(l11raw) } : {},
+    ...l11 !== 0n ? { "11_property_tax_credit": fmtD(l11) } : {},
+    "12_tax_after_property_credit": fmtD(l12),
+    ...l13 !== 0n ? { "13_allowable_credits": fmtD(l13) } : {},
+    "14_connecticut_income_tax": fmtD(l14),
+    "15_use_tax": fmtD(l15),
+    "16_total_tax": fmtD(l16),
+    "17_total_tax": fmtD(l17),
+    "18_withholding": fmtD(l18),
+    ...l19 !== 0n ? { "19_estimated_payments": fmtD(l19) } : {},
+    ...l20 !== 0n ? { "20_extension_payment": fmtD(l20) } : {},
+    ...l20a !== 0n ? { "20a_earned_income_tax_credit": fmtD(l20a) } : {},
+    ...l20b !== 0n ? { "20b_claim_of_right_credit": fmtD(l20b) } : {},
+    ...l20c !== 0n ? { "20c_pass_through_entity_credit": fmtD(l20c) } : {},
+    ...l20d !== 0n ? { "20d_historic_homes_credit": fmtD(l20d) } : {},
+    "21_total_payments_and_refundable_credits": fmtD(l21),
+    "22_overpayment": fmtD(l22),
+    ...l23 !== 0n ? { "23_applied_to_2026_estimated_tax": fmtD(l23) } : {},
+    ...l24 !== 0n ? { "24_chet_contribution": fmtD(l24) } : {},
+    ...l24a !== 0n ? { "24a_charity_contributions": fmtD(l24a) } : {},
+    "25_refund": fmtD(l25),
+    "26_tax_due": fmtD(l26),
+    ...l27 !== 0n ? { "27_late_penalty": fmtD(l27) } : {},
+    ...l28 !== 0n ? { "28_late_interest": fmtD(l28) } : {},
+    ...l29 !== 0n ? { "29_underpayment_interest": fmtD(l29) } : {},
+    "30_total_amount_due": fmtD(l30)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -25197,11 +25374,11 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -25698,7 +25875,39 @@ var okShape = {
   // 511-B uses the shared `additions`; Form 511-CR credits use the shared
   // nonrefundableCredits (capped at the remaining tax).
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape };
+var ctShape = {
+  ctMilitaryRetirement: usd.optional().describe("CT Schedule 1 line 44: military retirement pay included in federal AGI (retired armed forces / National Guard member or survivor-option beneficiary; NOT a former spouse's court-ordered share) \u2014 100% subtracted; also excluded from ctPensionAnnuityIncome"),
+  ctTeachersRetirement: usd.optional().describe("CT Schedule 1 line 45: income from the Connecticut Teachers' Retirement System (Form 1099-R from the Teachers' Retirement Board) \u2014 the composer subtracts 50%; a teacher under the pension AGI threshold may instead include it in ctPensionAnnuityIncome (never both)"),
+  ctRailroadRetirement: usd.optional().describe("CT Schedule 1 line 43: Tier 1 and Tier 2 Railroad Retirement benefits, supplemental annuities, and RRB unemployment/sickness benefits included in federal AGI (excluding any Tier 1 already covered by the line 41 Social Security adjustment) \u2014 subtracted; also excluded from ctPensionAnnuityIncome"),
+  ctSsTotalBenefits: usd.optional().describe("federal Social Security Benefits Worksheet line 1 (total benefits, SSA-1099 box 5) \u2014 with taxableSocialSecurity and ctSsProvisionalExcess the composer runs the CT Social Security Benefit Adjustment Worksheet (line 41) when federal AGI is at or above $75,000 (single/MFS) or $100,000 (MFJ/QSS/HOH); below the threshold the full taxable amount is subtracted automatically"),
+  ctSsProvisionalExcess: usd.optional().describe("federal Social Security Benefits Worksheet line 9 (provisional income over the $25,000/$32,000 base) \u2014 or line 7 for a married-filing-separately filer who lived with the spouse \u2014 CT worksheet line B"),
+  ctPensionAnnuityIncome: usd.optional().describe("Form 1040 line 5b taxable pensions and annuities MINUS military retirement pay, Railroad Retirement, and Connecticut teachers' retirement (the composer runs the Pension and Annuity Worksheet: 100% of this + 75% of ctIraDistributions in TY2025, \xD7 the federal-AGI phase-out decimal \u2192 Schedule 1 line 48b)"),
+  ctIraDistributions: usd.optional().describe("Form 1040 line 4b taxable IRA distributions other than Roth \u2014 75% (TY2025) / 100% (TY2026) enters the pension and annuity subtraction"),
+  ctChetContributions: usd.optional().describe("CT Schedule 1 line 48: contributions to Connecticut Higher Education Trust (CHET) 529 accounts made during the year plus allowed carryforward \u2014 the composer caps at $5,000 ($10,000 MFJ/QSS); the excess carries forward five years"),
+  ctAbleContributions: usd.optional().describe("CT Schedule 1 line 48d: contributions to ABLE accounts \u2014 the composer caps at $5,000 ($10,000 MFJ/QSS)"),
+  ctUseTaxTable: external_exports.boolean().optional().describe("compute line 6 the way the DRS printed tax tables do (CT AGI \u2264 $102,000: schedule at the $50 row midpoint, one rounding) instead of the Tax Calculation Schedule's line-level rounding \u2014 both are allowed by the form; default is the schedule"),
+  ctOtherJurisdictionIncome: usd.optional().describe("CT Schedule 2 line 53: income included in Connecticut AGI that was also taxed by ONE qualifying jurisdiction (another state, DC, or their political subdivisions \u2014 from the Schedule 2 Worksheet column 2); the composer computes lines 54-58 (ratio to four decimals \u2264 1.0000 \xD7 (line 6 \u2212 line 11), limited to the tax actually paid). Attach the other return."),
+  ctOtherJurisdictionTaxPaid: usd.optional().describe("CT Schedule 2 line 57: income tax actually paid to that qualifying jurisdiction"),
+  ctAmt: usd.optional().describe("CT-1040 line 9: Connecticut alternative minimum tax from Form CT-6251 line 23 (required when federal AMT was paid \u2014 agent-computed, transcribed)"),
+  ctPropertyTaxResidence: usd.optional().describe("CT Schedule 3 line 60: property tax paid in the year to a Connecticut town on the PRIMARY RESIDENCE (bills due and paid in the year, incl. prepaid installments; no late payments, interest or fees)"),
+  ctPropertyTaxAuto1: usd.optional().describe("CT Schedule 3 line 61: property tax paid on one privately owned or leased (term over one year) motor vehicle"),
+  ctPropertyTaxAuto2: usd.optional().describe("CT Schedule 3 line 62: a second vehicle \u2014 MFJ / QSS ONLY (the composer ignores it for other statuses with a note)"),
+  ctClaimOfRightCredit: usd.optional().describe("CT-1040 line 20b: claim of right credit from Form CT-1040 CRC line 6 (repayment over $3,000 under IRC \xA7 1341; refundable)"),
+  ctPteCredit: usd.optional().describe("CT-1040 line 20c: pass-through entity tax credit from Schedule CT-PE line 1 (refundable; attach the schedule)"),
+  ctHistoricHomesCredit: usd.optional().describe("CT-1040 line 20d: Historic Homes Rehabilitation Tax Credit voucher amount (refundable)"),
+  ctEitcQualifyingChild: external_exports.boolean().optional().describe("at least one qualifying child listed on federal Schedule EIC (Schedule CT-EITC lines 4-5) \u2014 adds the flat $250 to the 40% Connecticut EITC (PA 25-168, TY2025+)"),
+  ctEitcJointFagi: usd.optional().describe("Schedule CT-EITC line 13: the JOINT federal AGI when the filer filed jointly federally but must file married-filing-separately for Connecticut \u2014 the composer prorates the 40% credit by federalAGI (this spouse's separate AGI, line 12) \xF7 this amount to four decimals"),
+  ctAppliedToNextYear: usd.optional().describe("CT-1040 line 23: overpayment applied to 2026 estimated tax (irrevocable)"),
+  ctChetRefundContribution: usd.optional().describe("CT-1040 line 24: overpayment contributed to CHET accounts from Schedule CT-CHET line 4 (irrevocable)"),
+  ctCharityContributions: usd.optional().describe("CT-1040 line 24a: contributions of the refund to designated charities from Schedule 5 line 70 (limited to the refund; irrevocable)"),
+  ctLate: external_exports.boolean().optional().describe("return/payment is late \u2014 the composer applies the 10% late payment penalty to line 26 (line 27); pass ctLateInterest for line 28"),
+  ctLateInterest: usd.optional().describe("CT-1040 line 28: late payment interest \u2014 1% of line 26 per month or fraction of a month from the due date (agent-computed)"),
+  ctUnderpaymentInterest: usd.optional().describe("CT-1040 line 29: interest on underpayment of estimated tax from Form CT-2210 (applies when line 14 less withholding and PE credit is $1,000 or more; leave blank to let DRS bill it)")
+  // Schedule 1 additions use the shared `additions` (line 38 total); the other
+  // subtraction lines (39, 40, 42, 46, 47, 48a, 48c, 49) use the shared
+  // `subtractions`; Schedule CT-IT credits use the shared nonrefundableCredits.
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -25728,7 +25937,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -25762,6 +25971,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeOR(input, evalStateTax, notes), notes };
   if (j === "ok")
     return { lines: composeOK(input, evalStateTax, notes), notes };
+  if (j === "ct")
+    return { lines: composeCT(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -29077,6 +29288,91 @@ var facts = [
     type: "bool",
     description: "Filer is 65 or older OR totally disabled, is the head of a household, and was an Oklahoma resident domiciled in the state for the ENTIRE preceding calendar year (Form 538-H / Form 511 line 24) \u2014 the property tax relief credit also requires gross household income of $12,000 or less (us.ok.property_tax_relief_credit). Unattested = $0.",
     default: { value: false, rationale: "Assumed NOT eligible absent an explicit attestation (conservative: no credit)" }
+  },
+  // ---- Connecticut (Form CT-1040) ----
+  {
+    id: "ctAgi",
+    type: "money",
+    description: "Connecticut adjusted gross income (Form CT-1040 line 5 = federal AGI + Schedule 1 additions \u2212 subtractions) \u2014 the single key to the whole Tax Calculation Schedule: Table A exemption, Table B rates, the Table C 2% add-back, Table D recapture, and the Table E credit percentage (us.ct.income_tax, us.ct.personal_exemption), and to the property tax credit phase-out (us.ct.property_tax_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 Connecticut AGI absent contrary input" }
+  },
+  {
+    id: "ctUseTaxTable",
+    type: "bool",
+    description: "Use the DRS printed tax tables' method (Connecticut AGI at or under $102,000: the schedule evaluated at the $50 row midpoint, rounded once) instead of the Tax Calculation Schedule with its line-level whole-dollar rounding \u2014 Form CT-1040 line 6 allows either (us.ct.income_tax). Above $102,000 the schedule is used regardless.",
+    default: { value: false, rationale: "The Tax Calculation Schedule (the statutory computation, valid at every income) is the default" }
+  },
+  {
+    id: "ctPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description: "Qualifying Connecticut property tax paid during the year on the primary residence and eligible motor vehicle(s) (Schedule 3 line 63: one vehicle for single/MFS/HOH, two for MFJ/QSS; bills due and paid in the year; no late payments, interest, or fees) \u2014 us.ct.property_tax_credit caps it at $300 and phases it out by Connecticut AGI. In dollars.",
+    default: { value: "0", rationale: "Assumed no qualifying property tax paid absent contrary input" }
+  },
+  {
+    id: "ctFederalEic",
+    type: "money",
+    min: "0",
+    description: "Federal earned income credit claimed and allowed (Form 1040 line 27a; Schedule CT-EITC line 8) \u2014 us.ct.eitc pays 40% of it plus $250 with a qualifying child. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" }
+  },
+  {
+    id: "ctEitcQualifyingChild",
+    type: "bool",
+    description: "Filer listed at least one qualifying child on federal Schedule EIC (Schedule CT-EITC lines 4-5) \u2014 adds the flat $250 (PA 25-168 \xA7 371, TY2025+) to the Connecticut EITC (us.ct.eitc).",
+    default: { value: false, rationale: "Assumed no qualifying child absent contrary input" }
+  },
+  {
+    id: "ctEitcSeparateFagi",
+    type: "money",
+    description: "For a joint FEDERAL filer who must file married-filing-separately for Connecticut: this spouse's separate federal AGI (Schedule CT-EITC line 12) \u2014 the 40% credit is multiplied by separate \xF7 joint federal AGI to four decimals, not more than 1.0000 (us.ct.eitc). Leave 0 (with ctEitcJointFagi 0) when no proration applies. In dollars.",
+    default: { value: "0", rationale: "Assumed no separate-for-Connecticut proration absent contrary input" }
+  },
+  {
+    id: "ctEitcJointFagi",
+    type: "money",
+    description: "The joint federal AGI (Form 1040 line 11; Schedule CT-EITC line 13) when the Connecticut return is married filing separately but the federal return was joint \u2014 the proration denominator (us.ct.eitc). 0 = no proration. In dollars.",
+    default: { value: "0", rationale: "Assumed no separate-for-Connecticut proration absent contrary input" }
+  },
+  {
+    id: "ctFederalAgi",
+    type: "money",
+    description: "Federal adjusted gross income (Form CT-1040 line 1 = federal Form 1040 line 11a, as the 2025 CT form prints it) \u2014 keys the Social Security adjustment thresholds ($75,000 single/MFS; $100,000 MFJ/QSS/HOH) and the pension/annuity/IRA phase-out (us.ct.social_security_adjustment, us.ct.pension_annuity_subtraction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input" }
+  },
+  {
+    id: "ctSsTotalBenefits",
+    type: "money",
+    min: "0",
+    description: "Total Social Security benefits received (federal Social Security Benefits Worksheet line 1 = Form SSA-1099 box 5 total) \u2014 line A of the Connecticut Social Security Benefit Adjustment Worksheet (us.ct.social_security_adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed no Social Security benefits absent contrary input" }
+  },
+  {
+    id: "ctSsProvisionalExcess",
+    type: "money",
+    description: "Federal Social Security Benefits Worksheet line 9 \u2014 the excess of provisional income over the \xA7 86(c) base amount ($25,000 / $32,000) \u2014 or line 7 for a married-filing-separately filer who lived with the spouse (line B of the Connecticut worksheet; us.ct.social_security_adjustment). May be zero or negative (then no adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed no provisional-income excess absent contrary input" }
+  },
+  {
+    id: "ctTaxableSs",
+    type: "money",
+    min: "0",
+    description: "Federally taxable Social Security benefits (Form 1040 line 6b; federal worksheet line 18) \u2014 line E of the Connecticut worksheet; fully subtracted below the AGI threshold (us.ct.social_security_adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed no taxable Social Security absent contrary input" }
+  },
+  {
+    id: "ctPensionAnnuityIncome",
+    type: "money",
+    min: "0",
+    description: "Taxable pensions and annuities (Form 1040 line 5b) MINUS military retirement pay, Tier 1/Tier 2 Railroad Retirement, and Connecticut Teachers' Retirement income (each subtracted on its own Schedule 1 line) \u2014 the 100% component of the Pension and Annuity Worksheet line 2 (us.ct.pension_annuity_subtraction). Exclude disability pensions before minimum retirement age and corrective distributions. In dollars.",
+    default: { value: "0", rationale: "Assumed no pension or annuity income absent contrary input" }
+  },
+  {
+    id: "ctIraDistributions",
+    type: "money",
+    min: "0",
+    description: "Taxable IRA distributions other than Roth (Form 1040 line 4b) \u2014 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" }
   }
 ];
 
@@ -29438,7 +29734,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt11 = (cents) => ({
+  const lt12 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -29457,22 +29753,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt11("500"),
+    cond: lt12("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt11("1500"),
+      cond: lt12("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt11("2500"),
+        cond: lt12("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt11("300000"),
+          cond: lt12("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -29693,7 +29989,7 @@ function amtRule(version2, from, to, year, p, cg, source, amountsNote) {
       }
     }
   };
-  const exemption2 = {
+  const exemption3 = {
     kind: "if",
     cond: fact3("isSubjectToKiddieTax"),
     then: {
@@ -29706,7 +30002,7 @@ function amtRule(version2, from, to, year, p, cg, source, amountsNote) {
     },
     else: exemptionPhased
   };
-  const base = { kind: "max0", arg: { kind: "sub", left: amti, right: exemption2 } };
+  const base = { kind: "max0", arg: { kind: "sub", left: amti, right: exemption3 } };
   const prefRegular = { kind: "sub", left: taxable2, right: regOrdinary };
   const amtOrdinary = { kind: "max0", arg: { kind: "sub", left: base, right: prefRegular } };
   const break28 = {
@@ -35681,10 +35977,10 @@ var annualAt = (n) => ({
   base: { kind: "mulRate", base: cost, rate: { num: "1", den: n }, round: "half-up" },
   count: months
 });
-var ladder = (on, bands, last) => {
+var ladder = (on, bands2, last) => {
   let expr = annualAt(last);
-  for (let i = bands.length - 1; i >= 0; i--) {
-    const [limit, n] = bands[i];
+  for (let i = bands2.length - 1; i >= 0; i--) {
+    const [limit, n] = bands2[i];
     expr = {
       kind: "if",
       cond: { kind: "cmp", op: "le", left: on, right: int2(limit) },
@@ -37286,13 +37582,13 @@ var caRules = [
           { when: "mfs", value: { kind: "param", name: mfs } }
         ]
       });
-      const exemption2 = byStatus("exemptSingleHoh", "exemptMfj", "exemptMfs");
+      const exemption3 = byStatus("exemptSingleHoh", "exemptMfj", "exemptMfs");
       const threshold2 = byStatus("threshSingleHoh", "threshMfj", "threshMfs");
       const exemptionPhased = {
         kind: "max0",
         arg: {
           kind: "sub",
-          left: exemption2,
+          left: exemption3,
           right: {
             kind: "mulRate",
             base: { kind: "max0", arg: { kind: "sub", left: fact36("caAmti"), right: threshold2 } },
@@ -42140,7 +42436,7 @@ var okRules = [
     },
     formula: (() => {
       const agi2 = max09(fact36("okFederalAgi"));
-      const bands = [
+      const bands2 = [
         ["209000", "100"],
         ["467000", "200"],
         ["642000", "300"],
@@ -42173,8 +42469,8 @@ var okRules = [
         ["5467000", "3000"]
       ];
       let expr = rd14({ kind: "mulRate", base: agi2, rate: { num: "56", den: "100000" }, round: "half-up" });
-      for (let i = bands.length - 1; i >= 0; i--)
-        expr = iff8(lt10(agi2, money33(bands[i][0])), money33(bands[i][1]), expr);
+      for (let i = bands2.length - 1; i >= 0; i--)
+        expr = iff8(lt10(agi2, money33(bands2[i][0])), money33(bands2[i][1]), expr);
       return iff8(lt10(fact36("okFederalAgi"), money33("0")), money33("0"), expr);
     })()
   },
@@ -42216,6 +42512,524 @@ var okRules = [
     formula: {
       kind: "unsupported",
       reason: "parameters-only rule: Oklahoma Form 511 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.ok.income_tax, us.ok.standard_deduction, us.ok.itemized_deductions, us.ok.exemptions, us.ok.retirement_exclusion, us.ok.child_care_child_tax_credit, us.ok.eic_2020_rules, us.ok.eic, us.ok.sales_tax_relief_credit, us.ok.property_tax_relief_credit, and us.ok.use_tax"
+    }
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-ct.js
+var rd15 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp2 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt11 = (l, r) => cmp2("lt", l, r);
+var le8 = (l, r) => cmp2("le", l, r);
+var ge2 = (l, r) => cmp2("ge", l, r);
+var gt2 = (l, r) => cmp2("gt", l, r);
+var iff9 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add6 = (...args) => ({ kind: "add", args });
+var sub10 = (left, right) => ({ kind: "sub", left, right });
+var min3 = (...args) => ({ kind: "min", args });
+var max010 = (arg) => ({ kind: "max0", arg });
+var mulInt8 = (base, count) => ({ kind: "mulInt", base, count });
+var int5 = (value) => ({ kind: "int", value });
+var isStatus17 = (v) => cmp2("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var stepsOver = (agi2, startCents, unitCents, maxUnits) => {
+  const units = { kind: "stepUnits", value: max010(sub10(agi2, money33(startCents))), unitCents, mode: "ceil" };
+  return iff9(gt2(units, int5(maxUnits)), int5(maxUnits), units);
+};
+var times2 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled2 = (n, denCents) => times2({ kind: "mulDiv", a: n, b: money33("1"), c: money33(denCents), round: "half-up" }, "100");
+var scaledSchedule2 = (base, rows) => add6(...rows.map((r, i) => {
+  const excess = sub10(base, money33(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money33("0"), hi: money33(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max010(excess);
+  return times2(portion, r.rateNum);
+}));
+var bands = (agi2, rows, beyond, wrap) => {
+  let expr = beyond;
+  for (let i = rows.length - 1; i >= 0; i--)
+    expr = iff9(le8(agi2, money33(rows[i][0])), wrap(rows[i][1]), expr);
+  return expr;
+};
+var statusOf = (single, mfj, mfs, hoh) => iff9({ kind: "or", args: [isStatus17("mfj"), isStatus17("qss")] }, mfj, iff9(isStatus17("mfs"), mfs, iff9(isStatus17("hoh"), hoh, single)));
+var EXEMPTION3 = {
+  single: { amount: "1500000", phaseStart: "3000000" },
+  // $15,000, reduced $1,000 per $1,000 over $30,000
+  mfj: { amount: "2400000", phaseStart: "4800000" },
+  // $24,000 over $48,000 (also QSS)
+  mfs: { amount: "1200000", phaseStart: "2400000" },
+  // $12,000 over $24,000
+  hoh: { amount: "1900000", phaseStart: "3800000" }
+  // $19,000 over $38,000
+};
+var exemptionFor = (agi2, s) => max010(sub10(money33(EXEMPTION3[s].amount), mulInt8(money33("100000"), stepsOver(agi2, EXEMPTION3[s].phaseStart, "100000", String(BigInt(EXEMPTION3[s].amount) / 100000n)))));
+var exemption2 = (agi2) => statusOf(exemptionFor(agi2, "single"), exemptionFor(agi2, "mfj"), exemptionFor(agi2, "mfs"), exemptionFor(agi2, "hoh"));
+var SCHED = {
+  single: [
+    { thresholdCents: "0", rateNum: "200" },
+    { thresholdCents: "1000000", rateNum: "450" },
+    { thresholdCents: "5000000", rateNum: "550" },
+    { thresholdCents: "10000000", rateNum: "600" },
+    { thresholdCents: "20000000", rateNum: "650" },
+    { thresholdCents: "25000000", rateNum: "690" },
+    { thresholdCents: "50000000", rateNum: "699" }
+  ],
+  mfj: [
+    { thresholdCents: "0", rateNum: "200" },
+    { thresholdCents: "2000000", rateNum: "450" },
+    { thresholdCents: "10000000", rateNum: "550" },
+    { thresholdCents: "20000000", rateNum: "600" },
+    { thresholdCents: "40000000", rateNum: "650" },
+    { thresholdCents: "50000000", rateNum: "690" },
+    { thresholdCents: "100000000", rateNum: "699" }
+  ],
+  mfs: [
+    { thresholdCents: "0", rateNum: "200" },
+    { thresholdCents: "1000000", rateNum: "450" },
+    { thresholdCents: "5000000", rateNum: "550" },
+    { thresholdCents: "10000000", rateNum: "600" },
+    { thresholdCents: "20000000", rateNum: "650" },
+    { thresholdCents: "25000000", rateNum: "690" },
+    { thresholdCents: "50000000", rateNum: "699" }
+  ],
+  hoh: [
+    { thresholdCents: "0", rateNum: "200" },
+    { thresholdCents: "1600000", rateNum: "450" },
+    { thresholdCents: "8000000", rateNum: "550" },
+    { thresholdCents: "16000000", rateNum: "600" },
+    { thresholdCents: "32000000", rateNum: "650" },
+    { thresholdCents: "40000000", rateNum: "690" },
+    { thresholdCents: "80000000", rateNum: "699" }
+  ]
+};
+var ADDBACK = {
+  single: { startCents: "5650000", unitCents: "500000", perStepCents: "2500" },
+  // $25 per $5,000 over $56,500, max $250
+  mfj: { startCents: "10050000", unitCents: "500000", perStepCents: "5000" },
+  // $50 per $5,000 over $100,500, max $500
+  mfs: { startCents: "5025000", unitCents: "250000", perStepCents: "2500" },
+  // $25 per $2,500 over $50,250, max $250
+  hoh: { startCents: "7850000", unitCents: "400000", perStepCents: "4000" }
+  // $40 per $4,000 over $78,500, max $400
+};
+var addbackFor = (agi2, s) => mulInt8(money33(ADDBACK[s].perStepCents), stepsOver(agi2, ADDBACK[s].startCents, ADDBACK[s].unitCents, "10"));
+var RECAPTURE = {
+  single: [
+    { startCents: "10500000", unitCents: "500000", perStepCents: "2500", maxUnits: "10" },
+    // $25 per $5,000 over $105,000, max $250
+    { startCents: "20000000", unitCents: "500000", perStepCents: "9000", maxUnits: "30" },
+    // $90 per $5,000 over $200,000, max $2,700
+    { startCents: "50000000", unitCents: "500000", perStepCents: "5000", maxUnits: "9" }
+    // $50 per $5,000 over $500,000, max $450
+  ],
+  mfj: [
+    { startCents: "21000000", unitCents: "1000000", perStepCents: "5000", maxUnits: "10" },
+    // $50 per $10,000 over $210,000, max $500
+    { startCents: "40000000", unitCents: "1000000", perStepCents: "18000", maxUnits: "30" },
+    // $180 per $10,000 over $400,000, max $5,400
+    { startCents: "100000000", unitCents: "1000000", perStepCents: "10000", maxUnits: "9" }
+    // $100 per $10,000 over $1,000,000, max $900
+  ],
+  mfs: [
+    { startCents: "10500000", unitCents: "500000", perStepCents: "2500", maxUnits: "10" },
+    { startCents: "20000000", unitCents: "500000", perStepCents: "9000", maxUnits: "30" },
+    { startCents: "50000000", unitCents: "500000", perStepCents: "5000", maxUnits: "9" }
+  ],
+  hoh: [
+    { startCents: "16800000", unitCents: "800000", perStepCents: "4000", maxUnits: "10" },
+    // $40 per $8,000 over $168,000, max $400
+    { startCents: "32000000", unitCents: "800000", perStepCents: "14000", maxUnits: "30" },
+    // $140 per $8,000 over $320,000, max $4,200
+    { startCents: "80000000", unitCents: "800000", perStepCents: "8000", maxUnits: "9" }
+    // $80 per $8,000 over $800,000, max $720
+  ]
+};
+var recaptureFor = (agi2, s) => add6(...RECAPTURE[s].map((p) => mulInt8(money33(p.perStepCents), stepsOver(agi2, p.startCents, p.unitCents, p.maxUnits))));
+var CREDIT_PCT = {
+  single: [
+    ["1880000", "75"],
+    ["1930000", "70"],
+    ["1980000", "65"],
+    ["2030000", "60"],
+    ["2080000", "55"],
+    ["2130000", "50"],
+    ["2180000", "45"],
+    ["2230000", "40"],
+    ["2500000", "35"],
+    ["2550000", "30"],
+    ["2600000", "25"],
+    ["2650000", "20"],
+    ["3130000", "15"],
+    ["3180000", "14"],
+    ["3230000", "13"],
+    ["3280000", "12"],
+    ["3330000", "11"],
+    ["6000000", "10"],
+    ["6050000", "9"],
+    ["6100000", "8"],
+    ["6150000", "7"],
+    ["6200000", "6"],
+    ["6250000", "5"],
+    ["6300000", "4"],
+    ["6350000", "3"],
+    ["6400000", "2"],
+    ["6450000", "1"]
+  ],
+  mfj: [
+    ["3000000", "75"],
+    ["3050000", "70"],
+    ["3100000", "65"],
+    ["3150000", "60"],
+    ["3200000", "55"],
+    ["3250000", "50"],
+    ["3300000", "45"],
+    ["3350000", "40"],
+    ["4000000", "35"],
+    ["4050000", "30"],
+    ["4100000", "25"],
+    ["4150000", "20"],
+    ["5000000", "15"],
+    ["5050000", "14"],
+    ["5100000", "13"],
+    ["5150000", "12"],
+    ["5200000", "11"],
+    ["9600000", "10"],
+    ["9650000", "9"],
+    ["9700000", "8"],
+    ["9750000", "7"],
+    ["9800000", "6"],
+    ["9850000", "5"],
+    ["9900000", "4"],
+    ["9950000", "3"],
+    ["10000000", "2"],
+    ["10050000", "1"]
+  ],
+  mfs: [
+    ["1500000", "75"],
+    ["1550000", "70"],
+    ["1600000", "65"],
+    ["1650000", "60"],
+    ["1700000", "55"],
+    ["1750000", "50"],
+    ["1800000", "45"],
+    ["1850000", "40"],
+    ["2000000", "35"],
+    ["2050000", "30"],
+    ["2100000", "25"],
+    ["2150000", "20"],
+    ["2500000", "15"],
+    ["2550000", "14"],
+    ["2600000", "13"],
+    ["2650000", "12"],
+    ["2700000", "11"],
+    ["4800000", "10"],
+    ["4850000", "9"],
+    ["4900000", "8"],
+    ["4950000", "7"],
+    ["5000000", "6"],
+    ["5050000", "5"],
+    ["5100000", "4"],
+    ["5150000", "3"],
+    ["5200000", "2"],
+    ["5250000", "1"]
+  ],
+  hoh: [
+    ["2400000", "75"],
+    ["2450000", "70"],
+    ["2500000", "65"],
+    ["2550000", "60"],
+    ["2600000", "55"],
+    ["2650000", "50"],
+    ["2700000", "45"],
+    ["2750000", "40"],
+    ["3400000", "35"],
+    ["3450000", "30"],
+    ["3500000", "25"],
+    ["3550000", "20"],
+    ["4400000", "15"],
+    ["4450000", "14"],
+    ["4500000", "13"],
+    ["4550000", "12"],
+    ["4600000", "11"],
+    ["7400000", "10"],
+    ["7450000", "9"],
+    ["7500000", "8"],
+    ["7550000", "7"],
+    ["7600000", "6"],
+    ["7650000", "5"],
+    ["7700000", "4"],
+    ["7750000", "3"],
+    ["7800000", "2"],
+    ["7850000", "1"]
+  ]
+};
+var creditPctFor = (agi2, s) => bands(agi2, CREDIT_PCT[s], int5("0"), (v) => int5(v));
+var tcsFor = (agi2, s, method) => {
+  const taxable3 = max010(sub10(agi2, exemptionFor(agi2, s)));
+  const scaledTax = scaledSchedule2(taxable3, SCHED[s]);
+  const cAndD = add6(addbackFor(agi2, s), recaptureFor(agi2, s));
+  const pct3 = creditPctFor(agi2, s);
+  if (method === "schedule") {
+    const line4 = dollarsFromScaled2(scaledTax, "1000000");
+    const line7 = add6(line4, cAndD);
+    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct3), c: money33("100"), round: "half-up" });
+    return sub10(line7, line92);
+  }
+  const totalScaled = add6(scaledTax, times2(cAndD, "10000"));
+  const keep = sub10(int5("100"), pct3);
+  const scaledAfterCredit = mulInt8(totalScaled, keep);
+  return dollarsFromScaled2(scaledAfterCredit, "100000000");
+};
+var tcs = (agi2, method) => statusOf(tcsFor(agi2, "single", method), tcsFor(agi2, "mfj", method), tcsFor(agi2, "mfs", method), tcsFor(agi2, "hoh", method));
+var BOOKLET_URL = "https://portal.ct.gov/-/media/drs/forms/2025/income/2025-ct-1040-instructions_1225.pdf";
+var PENSION_PHASEOUT_OTHER = [
+  ["7499999", "1000"],
+  ["7749999", "850"],
+  ["7999999", "700"],
+  ["8249999", "550"],
+  ["8499999", "400"],
+  ["8749999", "250"],
+  ["8999999", "100"],
+  ["9499999", "50"],
+  ["9999999", "25"]
+];
+var PENSION_PHASEOUT_MFJ = [
+  ["9999999", "1000"],
+  ["10499999", "850"],
+  ["10999999", "700"],
+  ["11499999", "550"],
+  ["11999999", "400"],
+  ["12499999", "250"],
+  ["12999999", "100"],
+  ["13999999", "50"],
+  ["14999999", "25"]
+];
+var pensionRule = (version2, iraPct, from, to, iraText) => ({
+  id: "us.ct.pension_annuity_subtraction",
+  version: version2,
+  jurisdiction: "us.ct",
+  title: `Connecticut pension and annuity subtraction \u2014 100% of pensions/annuities and ${iraPct}% of IRA distributions, phased out by federal AGI from $75,000 to $100,000 (single/MFS/HOH) or $100,000 to $150,000 (MFJ) (Schedule 1 line 48b)`,
+  citation: {
+    source: `Conn. Gen. Stat. \xA7 12-701(a)(20)(B)(xxi), (xxii) (pension and annuity schedules) and (xxviii)-(xxix) (IRA distributions: single/MFS/HOH and MFJ); 2025 Form CT-1040 instructions, Line 48b p. 10 and the Pension and Annuity Worksheet / Phase-Out Table pp. 24-25`,
+    section: "\xA7 12-701(a)(20)(B)(xxi)-(xxii), (xxviii)-(xxix); Schedule 1 line 48b",
+    url: BOOKLET_URL,
+    excerpt: `WORKSHEET (pp. 24-25, verbatim structure): line 1 federal AGI; if under $75,000 (single, MFS, HOH) or under $100,000 (MFJ) the FULL amount is subtracted without the worksheet ('enter as a subtraction modification ${iraPct}% of the amount of such [IRA] distribution, reported on federal Form 1040, Line 4b' and 'the amount of pension and annuity reported on federal Form 1040, Line 5b. From the amount on Line 5b, subtract military retirement pay, Tier 1 and Tier 2 railroad retirement benefits, and Connecticut teachers' retirement pay'); otherwise line 2 = ${iraPct}% of the IRA amount (line 4b, other than Roth) + 100% of pensions/annuities (line 5b less military/RRB/teachers), line 3 = the phase-out decimal, line 4 = line 2 \xD7 line 3 \u2192 Schedule 1 line 48b. PHASE-OUT TABLE (verbatim, by federal AGI): single/MFS/HOH \u2014 $0-$74,999 1; $75,000-$77,499 .85; $77,500-$79,999 .70; $80,000-$82,499 .55; $82,500-$84,999 .40; $85,000-$87,499 .25; $87,500-$89,999 .10; $90,000-$94,999 .05; $95,000-$99,999 .025; $100,000 and up 0. MFJ \u2014 $0-$99,999 1; $100,000-$104,999 .85; $105,000-$109,999 .70; $110,000-$114,999 .55; $115,000-$119,999 .40; $120,000-$124,999 .25; $125,000-$129,999 .10; $130,000-$139,999 .05; $140,000-$149,999 .025; $150,000 and up 0. STATUTE (the MFJ schedule is the parallel clause (xxix)): ${iraText} Excluded from line 5b before the subtraction: military retirement pay (line 44, 100%), Tier 1/2 Railroad Retirement (line 43), Connecticut teachers' retirement (line 45 takes 50% instead \u2014 a teacher whose AGI is under the threshold may instead take the pension subtraction, never both). Not included at all: disability pensions before minimum retirement age, corrective distributions, Roth IRA distributions. QSS follows MFJ. Whole-dollar result. [Inputs: ctFederalAgi, ctPensionAnnuityIncome, ctIraDistributions, filingStatus.]`
+  },
+  effectiveFrom: from,
+  effectiveTo: to,
+  output: { type: "money" },
+  parameters: {
+    iraPct: { value: iraPct, type: "int" },
+    phaseoutStartOther: { value: "7500000", type: "money" },
+    phaseoutEndOther: { value: "10000000", type: "money" },
+    phaseoutStartMfj: { value: "10000000", type: "money" },
+    phaseoutEndMfj: { value: "15000000", type: "money" }
+  },
+  formula: (() => {
+    const fagi = fact36("ctFederalAgi");
+    const line2 = add6(max010(fact36("ctPensionAnnuityIncome")), { kind: "mulRate", base: max010(fact36("ctIraDistributions")), rate: { num: iraPct, den: "100" }, round: "half-up" });
+    const perMille = (rows) => bands(fagi, rows, int5("0"), (v) => int5(v));
+    const pm = iff9({ kind: "or", args: [isStatus17("mfj"), isStatus17("qss")] }, perMille(PENSION_PHASEOUT_MFJ), perMille(PENSION_PHASEOUT_OTHER));
+    return rd15({ kind: "mulDiv", a: line2, b: mulInt8(money33("1"), pm), c: money33("1000"), round: "half-up" });
+  })()
+});
+var ctRules = [
+  {
+    id: "us.ct.personal_exemption",
+    version: 1,
+    jurisdiction: "us.ct",
+    title: "Connecticut personal exemption (Table A) \u2014 $15,000 single / $24,000 MFJ-QSS / $12,000 MFS / $19,000 HOH, reduced $1,000 for each $1,000 or fraction of Connecticut AGI over $30,000 / $48,000 / $24,000 / $38,000",
+    citation: {
+      source: "Conn. Gen. Stat. \xA7 12-702(a)-(c); 2025 Form CT-1040 instructions, Tax Calculation Schedule Table A p. 19",
+      section: "\xA7 12-702; Tax Calculation Schedule line 2 / Table A",
+      url: BOOKLET_URL,
+      excerpt: "STATUTE (verbatim, single, \xA7 12-702(a)(2)(I)): 'fifteen thousand dollars. In the case of any such taxpayer whose Connecticut adjusted gross income for the taxable year exceeds thirty thousand dollars, the exemption amount shall be reduced by one thousand dollars for each one thousand dollars, or fraction thereof, by which the taxpayer's Connecticut adjusted gross income for the taxable year exceeds said amount. In no event shall the reduction exceed one hundred per cent of the exemption.' MFS (\xA7 12-702(a)(1)): $12,000, reduced over $24,000; HOH (\xA7 12-702(b)): $19,000, reduced over $38,000; MFJ and surviving spouse (\xA7 12-702(c)): $24,000, reduced over $48,000. TABLE A (booklet p. 19) prints the same steps in 'More Than / Less Than or Equal To' rows: single $0-$30,000 \u2192 $15,000, $30,000-$31,000 \u2192 $14,000 \u2026 $44,000 and up \u2192 $0; MFJ/QSS $48,000 \u2192 $24,000 \u2026 $71,000 and up \u2192 $0; MFS $24,000 \u2192 $12,000 \u2026 $35,000 and up \u2192 $0; HOH $38,000 \u2192 $19,000 \u2026 $56,000 and up \u2192 $0. Keyed to CONNECTICUT AGI (Form CT-1040 line 5), not federal AGI. Not indexed \u2014 identical for 2026. [Inputs: ctAgi, filingStatus.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      single: { value: "1500000", type: "money" },
+      mfjQss: { value: "2400000", type: "money" },
+      mfs: { value: "1200000", type: "money" },
+      hoh: { value: "1900000", type: "money" },
+      phaseStartSingle: { value: "3000000", type: "money" },
+      phaseStartMfj: { value: "4800000", type: "money" },
+      phaseStartMfs: { value: "2400000", type: "money" },
+      phaseStartHoh: { value: "3800000", type: "money" }
+    },
+    formula: exemption2(fact36("ctAgi"))
+  },
+  {
+    id: "us.ct.income_tax",
+    version: 1,
+    jurisdiction: "us.ct",
+    title: "Connecticut income tax \u2014 the Tax Calculation Schedule on Connecticut AGI: Table A exemption, Table B rates 2%/4.5%/5.5%/6%/6.5%/6.9%/6.99%, Table C 2% phase-out add-back, Table D recapture, Table E personal credit percentage (Form CT-1040 line 6)",
+    citation: {
+      source: "Conn. Gen. Stat. \xA7 12-700(a)(10) (rates, 2% phase-out, recapture \u2014 TY2024+), \xA7 12-702 (exemptions), \xA7 12-703 (credits); 2025 Form CT-1040 instructions, Tax Calculation Schedule and Tables A-E pp. 19-23; DRS 2025 Connecticut Income Tax Tables (10pp, CT AGI to $102,000)",
+      section: "\xA7\xA7 12-700(a)(10), 12-702, 12-703; Form CT-1040 line 6; Tax Calculation Schedule lines 1-10",
+      url: BOOKLET_URL,
+      excerpt: `SCHEDULE (p. 19, verbatim): '1. Enter Connecticut adjusted gross income (AGI) from Form CT-1040, Line 5. 2. Enter the exemption amount from Table A, Personal Exemptions. 3. Connecticut Taxable Income: Subtract Line 2 from Line 1. If less than zero, enter "0." 4. Enter amount from Table B, Initial Tax Calculation. 5. Enter amount from Table C, 2% Tax Rate Phase-Out Add-Back. 6. Enter amount from Table D, Tax Recapture. 7. Add Lines 4, 5, and 6. 8. Enter the decimal amount from Table E, Personal Tax Credits. 9. Multiply amount on Line 7 by the decimal amount on Line 8. 10. Connecticut Income Tax: Subtract Line 9 from Line 7.' NO TAX when Connecticut AGI is at or under $12,000 MFS / $15,000 single / $19,000 HOH / $24,000 MFJ-QSS (line 6 instructions). TABLE B (\xA7 12-700(a)(10), verbatim single/MFS): 'Not over $10,000 2.0%; Over $10,000 but not over $50,000 $200.00, plus 4.5% of the excess over $10,000; Over $50,000 but not over $100,000 $2,000, plus 5.5% \u2026; Over $100,000 but not over $200,000 $4,750, plus 6.0% \u2026; Over $200,000 but not over $250,000 $10,750, plus 6.5% \u2026; Over $250,000 but not over $500,000 $14,000, plus 6.9% \u2026; Over $500,000 $31,250, plus 6.99% of the excess over $500,000.' MFJ/QSS: $20,000 2.0%; $400 + 4.5% to $100,000; $4,000 + 5.5% to $200,000; $9,500 + 6.0% to $400,000; $21,500 + 6.5% to $500,000; $28,000 + 6.9% to $1,000,000; $62,500 + 6.99% over $1,000,000. HOH: $16,000 2.0%; $320 + 4.5% to $80,000; $3,200 + 5.5% to $160,000; $7,600 + 6.0% to $320,000; $17,200 + 6.5% to $400,000; $22,400 + 6.9% to $800,000; $50,000 + 6.99% over $800,000. Printed examples: single $13,000 \u2192 $335; $525,000 \u2192 $32,998 ('$25,000 x .0699 = $1,748' \u2014 line 4 is rounded to whole dollars); MFJ $22,500 \u2192 $513; $1,100,000 \u2192 $69,490; HOH $20,000 \u2192 $500; $825,000 \u2192 $51,748. TABLE C (\xA7 12-700(a)(10)(ii), verbatim single): 'for each taxpayer whose Connecticut adjusted gross income exceeds fifty-six thousand five hundred dollars, the amount of the taxpayer's Connecticut taxable income to which the two-per-cent tax rate applies shall be reduced by one thousand dollars for each five thousand dollars, or fraction thereof' \u2014 i.e. $25 (2.5% \xD7 $1,000) per step, max $250 (printed: $56,500-$61,500 \u2192 $25 \u2026 $101,500 and up \u2192 $250); MFJ/QSS $2,000 per $5,000 over $100,500 \u2192 $50 per step, max $500 ($145,500 and up); MFS $25 per $2,500 over $50,250, max $250 ($72,750 and up); HOH $1,600 per $4,000 over $78,500 \u2192 $40 per step, max $400 ($114,500 and up). TABLE D recapture (\xA7 12-700(a)(10)(iii)-(v), verbatim single/MFS): 'twenty-five dollars for each five thousand dollars, or fraction thereof, by which the taxpayer's Connecticut adjusted gross income exceeds one hundred five thousand dollars, up to a maximum payment of two hundred fifty dollars', plus 'ninety dollars for each five thousand dollars \u2026 exceeds two hundred thousand dollars, up to \u2026 two thousand seven hundred dollars', plus 'fifty dollars for each five thousand dollars \u2026 exceeds five hundred thousand dollars, up to \u2026 four hundred fifty dollars' (printed: $105,000-$110,000 \u2192 $25 \u2026 $540,000 and up \u2192 $3,400); MFJ/QSS $50 per $10,000 over $210,000 (max $500) + $180 per $10,000 over $400,000 (max $5,400) + $100 per $10,000 over $1,000,000 (max $900) \u2192 $6,800 at $1,080,000 and up; HOH $40 per $8,000 over $168,000 (max $400) + $140 per $8,000 over $320,000 (max $4,200) + $80 per $8,000 over $800,000 (max $720) \u2192 $5,320 at $864,000 and up. TABLE E (\xA7 12-703, 27 rows per status, 'More Than / Less Than or Equal To' AGI): single .75 to $18,800, then .70/.65/.60/.55/.50/.45/.40 in $500 steps to $22,300, .35 to $25,000, .30/.25/.20 to $26,500, .15 to $31,300, .14/.13/.12/.11 to $33,300, .10 to $60,000, then .09 \u2026 .01 in $500 steps to $64,500, .00 above; MFJ/QSS .75 to $30,000 \u2026 .10 $52,000-$96,000 \u2026 .01 to $100,500; MFS .75 to $15,000 \u2026 .10 $27,000-$48,000 \u2026 .01 to $52,500; HOH .75 to $24,000 \u2026 .10 $46,000-$74,000 \u2026 .01 to $78,500 \u2014 every row encoded. ROUNDING: line 4 and line 9 whole dollars (the form's boxes and the printed example). TAX TABLES (DRS, CT AGI \u2264 $102,000, 'ALL EXEMPTIONS AND CREDITS ARE INCLUDED', columns Single / Married Filing Jointly [*also QSS] / Married Filing Separately / Head of Household, $50 rows): 'you may use the Tax Tables' \u2014 decoded as the whole schedule evaluated at the ROW MIDPOINT in exact arithmetic with ONE final half-up rounding (verified cells: single $18,000-$18,050 \u2192 $15; MFS \u2192 $72; $100,000-$100,050 \u2192 $4,977 / $3,961 / $5,002 / $4,541; $12,100-$12,150 MFS \u2192 $1). ctUseTaxTable=true selects that method (AGI over $102,000 falls back to the schedule). Not indexed \u2014 TY2026 identical (no 2026 act changed \xA7\xA7 12-700/702/703). Statuses: MFS shares the single rate schedule but has its own Tables A, C, D(=single), E; QSS = MFJ everywhere. [Inputs: ctAgi, filingStatus, ctUseTaxTable.]`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      noTaxAgiSingle: { value: "1500000", type: "money" },
+      noTaxAgiMfjQss: { value: "2400000", type: "money" },
+      noTaxAgiMfs: { value: "1200000", type: "money" },
+      noTaxAgiHoh: { value: "1900000", type: "money" },
+      topRateBps: { value: "699", type: "int" },
+      topBracketSingleMfs: { value: "50000000", type: "money" },
+      topBracketMfjQss: { value: "100000000", type: "money" },
+      topBracketHoh: { value: "80000000", type: "money" },
+      addbackMaxSingleMfs: { value: "25000", type: "money" },
+      addbackMaxMfj: { value: "50000", type: "money" },
+      addbackMaxHoh: { value: "40000", type: "money" },
+      recaptureMaxSingleMfs: { value: "340000", type: "money" },
+      recaptureMaxMfj: { value: "680000", type: "money" },
+      recaptureMaxHoh: { value: "532000", type: "money" },
+      taxTableTop: { value: "10200000", type: "money" }
+    },
+    formula: (() => {
+      const agi2 = fact36("ctAgi");
+      const mid = max010(sub10(mulInt8(money33("5000"), { kind: "stepUnits", value: max010(agi2), unitCents: "5000", mode: "ceil" }), money33("2500")));
+      const tableMethod = iff9(le8(agi2, money33("10200000")), tcs(mid, "table"), tcs(agi2, "schedule"));
+      return max010(iff9(fact36("ctUseTaxTable"), tableMethod, tcs(agi2, "schedule")));
+    })()
+  },
+  {
+    id: "us.ct.property_tax_credit",
+    version: 1,
+    jurisdiction: "us.ct",
+    title: "Connecticut property tax credit \u2014 up to $300 of property tax paid on the primary residence and/or motor vehicle(s), reduced 15% for each $10,000 ($5,000 MFS) or fraction of Connecticut AGI over $49,500 single / $70,500 MFJ-QSS / $35,250 MFS / $54,500 HOH; nonrefundable (Form CT-1040 line 11 / Schedule 3)",
+    citation: {
+      source: "Conn. Gen. Stat. \xA7 12-704c(a)-(c); 2025 Form CT-1040 instructions, Schedule 3 pp. 14-15 and the Property Tax Credit Table p. 27",
+      section: "\xA7 12-704c; Form CT-1040 line 11; Schedule 3 lines 60-68",
+      url: BOOKLET_URL,
+      excerpt: "SCHEDULE 3 (printed lines): 60 primary residence; 61 auto 1; 62 auto 2 ('Married filing jointly or qualifying surviving spouse only'); 63 total; 64 'Maximum property tax credit allowed' $300; 65 lesser of 63 or 64; 66 the decimal from the Property Tax Credit Table (0 when AGI is at or under $49,500 single / $70,500 MFJ-QSS / $35,250 MFS / $54,500 HOH); 67 = 65 \xD7 66; 68 = 65 \u2212 67 \u2192 line 11. STATUTE (\xA7 12-704c(c), verbatim single): 'whose Connecticut adjusted gross income exceeds forty-nine thousand five hundred dollars, the amount of the credit shall be reduced by fifteen per cent for each ten thousand dollars, or fraction thereof, by which the taxpayer's Connecticut adjusted gross income exceeds said amount'; MFS: over $35,250, 15% per $5,000 or fraction; HOH: over $54,500, 15% per $10,000; MFJ: over $70,500, 15% per $10,000. PRINTED TABLE (verbatim single): $0-$49,500 \u2192 0; $49,500-$59,500 \u2192 .15; -$69,500 \u2192 .30; -$79,500 \u2192 .45; -$89,500 \u2192 .60; -$99,500 \u2192 .75; -$109,500 \u2192 .90; $109,500 and up \u2192 1.00 (MFJ/QSS $70,500 \u2192 $130,500 and up 1.00; MFS $35,250 in $5,000 steps \u2192 $65,250 and up 1.00; HOH $54,500 \u2192 $114,500 and up 1.00). CAP (\xA7 12-704c(b)(1)(C)): $300 for TY2022 and after, 'in the aggregate' per return regardless of status. ELIGIBLE (2025, all residents \u2014 the 2017-2021 age-65/dependent restriction expired): qualifying property tax bills due and paid during 2025 on the primary residence and a privately owned or leased motor vehicle (one vehicle for single/MFS/HOH, two for MFJ/QSS; lease term over one year); late payments, interest, and fees do not count. NONREFUNDABLE: 'cannot exceed \u2026 the amount of tax entered on Form CT-1040, Line 10' and 'may not carry this credit forward' \u2014 the composer caps it. Keyed to CONNECTICUT AGI (line 5). Not indexed \u2014 TY2026 identical. [Inputs: ctPropertyTaxPaid (Schedule 3 line 63 qualifying total), ctAgi, filingStatus.]"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      maxCredit: { value: "30000", type: "money" },
+      // $300
+      phaseStartSingle: { value: "4950000", type: "money" },
+      phaseStartMfjQss: { value: "7050000", type: "money" },
+      phaseStartMfs: { value: "3525000", type: "money" },
+      phaseStartHoh: { value: "5450000", type: "money" },
+      reductionPctPerStep: { value: "15", type: "int" }
+    },
+    formula: (() => {
+      const agi2 = fact36("ctAgi");
+      const steps = (start, unit) => stepsOver(agi2, start, unit, "7");
+      const stepCount = statusOf(steps("4950000", "1000000"), steps("7050000", "1000000"), steps("3525000", "500000"), steps("5450000", "1000000"));
+      const line65 = min3(rd15(max010(fact36("ctPropertyTaxPaid"))), money33("30000"));
+      const decimalPct = min3(mulInt8(money33("15"), stepCount), money33("100"));
+      const line67 = rd15({ kind: "mulDiv", a: line65, b: decimalPct, c: money33("100"), round: "half-up" });
+      return sub10(line65, line67);
+    })()
+  },
+  {
+    id: "us.ct.eitc",
+    version: 1,
+    jurisdiction: "us.ct",
+    title: "Connecticut earned income tax credit \u2014 40% of the federal EIC (prorated by separate \xF7 joint federal AGI when a joint federal filer must file separately for Connecticut) plus a flat $250 with at least one qualifying child (PA 25-168); refundable (Form CT-1040 line 20a / Schedule CT-EITC)",
+    citation: {
+      source: "Conn. Gen. Stat. \xA7 12-704e as amended by 2025 Conn. Acts 25-168, \xA7 371 (the $250 increase, tax years beginning on or after January 1, 2025); 2025 Schedule CT-EITC lines 1-16 and its instructions pp. 16-17; OLR 2025-R-0093 'Acts Affecting Taxes' p. 6",
+      section: "\xA7 12-704e(a)-(c); PA 25-168 \xA7 371; Schedule CT-EITC",
+      url: "https://portal.ct.gov/-/media/drs/forms/2025/income/schedule-ct-eitc_1225.pdf",
+      excerpt: `STATUTE (\xA7 12-704e(a), verbatim): 'a credit \u2026 in an amount equal to the applicable percentage of the earned income credit claimed and allowed for the same taxable year under Section 32 of the Internal Revenue Code \u2026 "applicable percentage" means \u2026 (3) forty per cent for taxable years commencing on or after January 1, 2023.' (b): 'If the amount of the credit \u2026 exceeds the taxpayer's liability \u2026 the Commissioner \u2026 shall refund the amount of such excess, without interest.' (c): a joint federal filer required to file separately for Connecticut receives the credit 'multiplied by a fraction, the numerator of which is such individual's federal adjusted gross income \u2026 and the denominator of which is the federal adjusted gross income reported on the joint return'. PA 25-168 \xA7 371 (OLR, verbatim): 'increases the credit's amount by $250 for eligible taxpayers with at least one qualifying child for federal income tax purposes \u2026 applicable to tax years beginning on or after January 1, 2025.' SCHEDULE CT-EITC (printed): 1 claimed the 2025 federal EIC (else stop); 2 investment income over $11,950 \u2192 stop (the federal \xA7 32(i) limit); 4-5 qualifying children listed; 8 federal EIC (1040 line 27a); 9 rate '40% (.40)'; 10 = 8 \xD7 9; 11-14 the MFS-for-Connecticut proration ('Divide Line 12 by Line 13. If Line 12 is equal to or greater than Line 13, enter 1.0000' \u2014 four decimals); 15 = 10 \xD7 14; 15a 'If you list a qualifying child on Line 5, enter $250. Otherwise, enter $0'; 16 = 10 + 15a, or 15 + 15a \u2192 Form CT-1040 line 20a (Part 3 payments \u2014 REFUNDABLE). The $250 is NOT prorated and does not vary with the number of children. Full-year residents only (part-year/nonresidents 'do not qualify \u2026 and must file Form CT-1040NR/PY'); valid SSNs required by the due date (no amended claim after obtaining one). Whole dollars. TY2026: 40% + $250 continue (no 2026 act changed \xA7 12-704e). [Inputs: ctFederalEic, ctEitcQualifyingChild, ctEitcSeparateFagi and ctEitcJointFagi (both 0 = no proration).]`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      pct: { value: "40", type: "int" },
+      childAddOn: { value: "25000", type: "money" },
+      // $250
+      investmentIncomeLimit2025: { value: "1195000", type: "money" }
+    },
+    formula: (() => {
+      const line10 = rd15({ kind: "mulRate", base: max010(fact36("ctFederalEic")), rate: { num: "40", den: "100" }, round: "half-up" });
+      const sep = fact36("ctEitcSeparateFagi");
+      const joint = fact36("ctEitcJointFagi");
+      const ratio4 = iff9(ge2(sep, joint), int5("10000"), {
+        kind: "stepUnits",
+        value: { kind: "mulDiv", a: max010(sep), b: money33("10000"), c: joint, round: "half-up" },
+        unitCents: "1",
+        mode: "floor"
+      });
+      const line15 = rd15({ kind: "mulDiv", a: line10, b: mulInt8(money33("1"), ratio4), c: money33("10000"), round: "floor" });
+      const base = iff9(gt2(joint, money33("0")), line15, line10);
+      return add6(base, iff9(fact36("ctEitcQualifyingChild"), money33("25000"), money33("0")));
+    })()
+  },
+  {
+    id: "us.ct.social_security_adjustment",
+    version: 1,
+    jurisdiction: "us.ct",
+    title: "Connecticut Social Security benefit adjustment \u2014 all federally taxable benefits subtracted when federal AGI is under $75,000 (single/MFS) or $100,000 (MFJ/QSS/HOH); otherwise taxable benefits minus 25% of the lesser of total benefits or the \xA7 86(b)(1) excess (Schedule 1 line 41)",
+    citation: {
+      source: "Conn. Gen. Stat. \xA7 12-701(a)(20)(B)(x)(III)-(IV) (TY2019+); 2025 Form CT-1040 instructions, Line 41 p. 8 and the Social Security Benefit Adjustment Worksheet p. 24",
+      section: "\xA7 12-701(a)(20)(B)(x); Schedule 1 line 41",
+      url: BOOKLET_URL,
+      excerpt: `BOOKLET (verbatim): 'Your Social Security benefits are fully exempt from Connecticut income tax if your required filing status is single or married filing separately and the amount reported on Form CT-1040, Line 1, is less than $75,000; or married filing jointly, qualifying surviving spouse, or head of household and the amount reported on Form CT-1040, Line 1, is less than $100,000. If this is the case, enter on Line 41 the amount of federally taxable Social Security benefits reported on federal Form 1040, Line 6b.' WORKSHEET (p. 24, at or above the threshold): 'A. Enter the amount reported on your 2025 federal Social Security Benefits Worksheet, Line 1 [total benefits]. If Line A is zero or less, stop here and enter "0" on Line 41. B. Enter the amount reported on your 2025 federal Social Security Benefits Worksheet, Line 9 [the excess of provisional income over the base amount]. However, if filing separately and you lived with your spouse at any time during 2025, enter the amount reported on Line 7. If Line B is zero or less, stop here. C. Enter the lesser of Line A or Line B. D. Multiply Line C by 25% (.25). E. Taxable amount of Social Security benefits reported on your 2025 federal Social Security Benefits Worksheet, Line 18. F. Social Security Benefit Adjustment - Subtract Line D from Line E \u2026 If Line D is greater than or equal to Line E, enter "0."' STATUTE (\xA7 12-701(a)(20)(B)(x)(IV), verbatim): 'an amount equal to the difference between the amount of Social Security benefits includable for federal income tax purposes and the lesser of twenty-five per cent of the Social Security benefits received during the taxable year, or twenty-five per cent of the excess described in Section 86(b)(1) of the Internal Revenue Code'. Keyed to FEDERAL AGI (line 1); thresholds not indexed (TY2026 identical). Tier 1 Railroad Retirement already subtracted here is not repeated on line 43. [Inputs: ctFederalAgi, ctSsTotalBenefits (worksheet line A), ctSsProvisionalExcess (worksheet line B), ctTaxableSs (worksheet line E = 1040 line 6b), filingStatus.]`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      thresholdSingleMfs: { value: "7500000", type: "money" },
+      thresholdMfjQssHoh: { value: "10000000", type: "money" },
+      pct: { value: "25", type: "int" }
+    },
+    formula: (() => {
+      const fagi = fact36("ctFederalAgi");
+      const taxable3 = max010(fact36("ctTaxableSs"));
+      const threshold2 = iff9({ kind: "or", args: [isStatus17("single"), isStatus17("mfs")] }, money33("7500000"), money33("10000000"));
+      const a = fact36("ctSsTotalBenefits");
+      const b = fact36("ctSsProvisionalExcess");
+      const d3 = rd15({ kind: "mulRate", base: min3(a, b), rate: { num: "25", den: "100" }, round: "half-up" });
+      const worksheet = iff9({ kind: "or", args: [le8(a, money33("0")), le8(b, money33("0"))] }, money33("0"), max010(sub10(taxable3, d3)));
+      return iff9(lt11(fagi, threshold2), taxable3, worksheet);
+    })()
+  },
+  pensionRule(1, "75", "2025-01-01", "2026-01-01", "\xA7 12-701(a)(20)(B)(xxviii) (verbatim): '(II) for the taxable year commencing January 1, 2025, seventy-five per cent of any distribution from an individual retirement account other than a Roth individual retirement account, and (III) for the taxable year commencing January 1, 2026, and each taxable year thereafter, any distribution from an individual retirement account other than a Roth individual retirement account.' Pensions and annuities: \xA7 12-701(a)(20)(B)(xxi)-(xxii) 'any pension or annuity income for the taxable year commencing on or after January 1, 2024, and each taxable year thereafter, in accordance with the following schedule' (the same phase-out schedule)."),
+  pensionRule(2, "100", "2026-01-01", "2027-01-01", "\xA7 12-701(a)(20)(B)(xxviii)(III) (verbatim): 'for the taxable year commencing January 1, 2026, and each taxable year thereafter, any distribution from an individual retirement account other than a Roth individual retirement account' \u2014 the IRA percentage rises from 75% (TY2025) to 100%; the phase-out schedule and the 100% pension/annuity treatment (\xA7 12-701(a)(20)(B)(xxi)-(xxii)) are unchanged. Re-verify against the 2026 booklet's worksheet when it publishes (~January 2027)."),
+  {
+    id: "us.ct.parameters",
+    version: 1,
+    jurisdiction: "us.ct",
+    title: "Connecticut 2025 Form CT-1040 parameters \u2014 line structure, Schedule 1 modifications, Schedule 2 other-jurisdiction credit mechanics, CHET/ABLE caps, use tax rates, penalties, and TY2026 changes",
+    citation: {
+      source: "2025 Form CT-1040 (4pp, Rev. 12/25) and instructions (28pp); Conn. Gen. Stat. chapter 229; OLR 2025-R-0093; DRS 2026 State Tax Developments page; web-verified September 2026",
+      section: "Form CT-1040 lines 1-30; Schedules 1-5",
+      url: BOOKLET_URL,
+      excerpt: `STRUCTURE: 1 federal AGI (1040 line 11); 2 additions (Schedule 1 line 38: 31 non-Connecticut state/municipal bond interest; 32 non-Connecticut exempt-interest dividends; 33 lump-sum distributions taxed on Form 4972; 34 fiduciary adjustment (positive); 35 loss on sale of Connecticut bonds; 36 100% of \xA7 168(k) bonus depreciation; 36a 80% of the \xA7 179 deduction; 37 other incl. Connecticut income tax deducted federally above the line); 3 = 1 + 2; 4 subtractions (Schedule 1 line 50: 39 US obligation interest [not Fannie/Ginnie/Freddie]; 40 US-obligation mutual fund dividends; 41 SOCIAL SECURITY adjustment (\u2192 us.ct.social_security_adjustment); 42 taxable state/local income tax refunds (Schedule 1 line 1); 43 Tier 1 and Tier 2 Railroad Retirement and RRB unemployment/sickness; 44 MILITARY RETIREMENT PAY 100% (\xA7 12-701(a)(20)(B)(xvi) \u2014 armed forces or National Guard retirees and survivor-option beneficiaries; NOT a former spouse's court-ordered share); 45 50% of Connecticut Teachers' Retirement System income (\xA7 12-701(a)(20)(B)(xix); or the pension subtraction instead when under the AGI threshold \u2014 never both); 46 fiduciary adjustment (negative); 47 gain on sale of Connecticut bonds; 48 CHET contributions \u2014 'the lesser of (1) the amount of contributions to all CHET accounts during the taxable year; or (2)(A) $5,000 for each individual taxpayer (\u2026 single, head of household, filing separately, or (B) $10,000 for \u2026 filing jointly or qualifying surviving spouse', excess carried forward five years, current-year contributions used before carryovers; 48a 25% of \xA7 168(k) bonus depreciation added back in the four preceding years; 48b PENSION/ANNUITY (\u2192 us.ct.pension_annuity_subtraction); 48c cannabis-licensee (Chapter 420f/420h) business expenses; 48d ABLE contributions, same $5,000/$10,000 caps; 49 other incl. Mashantucket Pequot/Mohegan Indian-country income); 5 CONNECTICUT AGI = 3 \u2212 4; 6 TAX (\u2192 us.ct.income_tax; 'If your Connecticut adjusted gross income is less than or equal to $102,000, you may use the Tax Tables'); 7 credit for income taxes paid to qualifying jurisdictions (Schedule 2: 51 modified Connecticut AGI (= line 5 plus any net loss from the qualifying jurisdiction; 'You must first complete Form CT-1040, Schedule 3 \u2026 before completing Schedule 2' because line 55 nets line 11); 53 non-Connecticut income taxed by the other jurisdiction (Schedule 2 Worksheet); 54 = 53 \xF7 51 'May not exceed 1.0000'; 55 = line 6 \u2212 line 11; 56 = 54 \xD7 55; 57 tax paid to the jurisdiction; 58 lesser of 56 or 57; 59 total \u2192 line 7; a copy of the other return must be attached); 8 = max0(6 \u2212 7); 9 Connecticut AMT (Form CT-6251 line 23, required when federal AMT was paid \u2014 transcribed); 10 = 8 + 9; 11 PROPERTY TAX CREDIT (\u2192 us.ct.property_tax_credit; skipped when line 10 is $0; cannot exceed line 10); 12 = max0(10 \u2212 11); 13 Schedule CT-IT credits (transcribed, nonrefundable); 14 = max0(12 \u2212 13); 15 individual USE TAX (Schedule 4: 1% computer/data processing, 6.35% general, 7.75% luxury \u2014 vehicles over $50,000, jewelry over $5,000, clothing/footwear/handbags over $1,000 \u2014 2.99% vessels; 'You must enter "0" if no Connecticut use tax is due'); 16 = 17 = 14 + 15. PAYMENTS: 18 withholding (Schedule of W-2/1099 rows); 19 estimated payments INCLUDING prior-year overpayments applied; 20 extension payment (CT-1040 EXT); 20a CT EITC (\u2192 us.ct.eitc); 20b claim of right credit (CT-1040 CRC, repayments over $3,000); 20c pass-through entity tax credit (Schedule CT-PE); 20d historic homes rehabilitation credit; 21 total. SETTLE: 22 overpayment = 21 \u2212 17; 23 applied to 2026 estimated tax (irrevocable); 24 CHET contribution of the refund (Schedule CT-CHET); 24a designated charities (Schedule 5: AIDS research, organ transplant, endangered species, breast cancer, safety net, military relief, Baby Bond Trust, mental health); 25 REFUND = 22 \u2212 23 \u2212 24 \u2212 24a; 26 tax due = 17 \u2212 21; 27 late penalty 10% of line 26 (or $50 late-filing when no tax due); 28 interest 1% per month or fraction; 29 CT-2210 underpayment interest (applies when line 14 \u2212 withholding \u2212 line 20c is $1,000 or more; safe harbors per CT-2210); 30 total due. WHOLE DOLLARS throughout. Due April 15, 2026. FILING STATUS: same as federal, except a resident with a nonresident (or differently-resident part-year) spouse must file MFS for Connecticut unless both elect resident treatment; QSS uses the MFJ column of every table. NOT ON THIS RETURN: Form CT-1040NR/PY (part-year/nonresident, refused), Form CT-6251 mechanics, Schedule CT-IT credits, Schedule CT-PE. TY2026 CHANGES: IRA subtraction 75% \u2192 100% (us.ct.pension_annuity_subtraction v2); PA 25-168 \xA7 372 $500 refundable credit for owners of a state-licensed family child care home (TY2026+, transcribed); PA 25-168 \xA7 373 refundable 20% farm investment credit for eligible farmers (TY2026+, transcribed); 2026 session (PA 26-68 \xA7 277, PA 26-35 \xA7\xA7 18-19): military-retirement subtraction extended to U.S. Public Health Service commissioned-corps retirement pay (TY2026+), honor-guard funeral compensation subtraction (TY2026+ per the act text), National Guard active-service pay subtraction (TY2027); the 2026 Form CT-1040ES prints Tables A-E cell-for-cell identical to 2025 and '100% of the amount of IRA' on its pension worksheet; no 2025/2026 act changed the rates, exemptions, Tables C-E, the property tax credit, or the EITC percentage; the proposed state child tax credit (\xA7 12-704h plan) was NOT enacted for TY2025 or TY2026. PA 25-172 \xA7 2 (retroactive to TY2020): a credit of 60% of the additional Connecticut tax caused by re-adjusting the other-jurisdiction credit after a resident wins a refund from a state that taxed Connecticut-earned income under a 'convenience of the employer' rule \u2014 no CT-1040 line; transcribed via amended returns. Federal conformity: rolling (Connecticut AGI starts from federal AGI 'as amended'); OBBBA's below-the-line deductions do not reach Connecticut AGI.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      chetCapSingle: { value: "500000", type: "money" },
+      // $5,000
+      chetCapJoint: { value: "1000000", type: "money" },
+      // $10,000
+      ableCapSingle: { value: "500000", type: "money" },
+      ableCapJoint: { value: "1000000", type: "money" },
+      teachersRetirementPct: { value: "50", type: "int" },
+      useTaxGeneralRateBps: { value: "635", type: "int" },
+      useTaxLuxuryRateBps: { value: "775", type: "int" },
+      latePenaltyPct: { value: "10", type: "int" },
+      lateInterestPctPerMonth: { value: "1", type: "int" },
+      underpaymentInterestFloor: { value: "100000", type: "money" },
+      // $1,000
+      taxTableAgiTop: { value: "10200000", type: "money" },
+      familyChildCareHomeCredit2026: { value: "50000", type: "money" }
+      // $500 (PA 25-168 § 372)
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Connecticut Form CT-1040 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.ct.income_tax, us.ct.personal_exemption, us.ct.property_tax_credit, us.ct.eitc, us.ct.social_security_adjustment, and us.ct.pension_annuity_subtraction"
     }
   }
 ];
@@ -42675,6 +43489,7 @@ var stateParameterRules = [
   ...alRules,
   ...orRules,
   ...okRules,
+  ...ctRules,
   ...otherStateRules
 ];
 
@@ -42684,7 +43499,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus17 = (status) => ({
+var isStatus18 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -42756,7 +43571,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus17("mfj"),
+    cond: isStatus18("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -42855,7 +43670,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus17("mfj"),
+      cond: isStatus18("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -43043,7 +43858,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus18 = (status) => ({
+var isStatus19 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -43099,7 +43914,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus18("mfs"),
+      cond: isStatus19("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -43110,7 +43925,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus18("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus19("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -43130,7 +43945,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus18("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus19("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -43337,7 +44152,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus19 = (status) => ({
+var isStatus20 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -43476,7 +44291,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus19("mfs"),
+      cond: isStatus20("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -43565,11 +44380,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus19("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus20("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus19("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus20("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -43579,7 +44394,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus20 = (status) => ({
+var isStatus21 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -43627,7 +44442,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus20("mfs") },
+        { kind: "not", arg: isStatus21("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -43642,13 +44457,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus21 = (status) => ({
+var isStatus22 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus21("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus22("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -43679,7 +44494,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus21("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus21("mfj"),
+                    cond: isStatus22("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -43751,7 +44566,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus21("mfj"),
+      cond: isStatus22("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -43917,7 +44732,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add6 = (id, c2) => {
+  const add7 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -43939,20 +44754,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add6("wages", toCents(w.box1));
+    add7("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add6("federalTaxWithheld", toCents(w.box2));
+      add7("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add6("socialSecurityWages", toCents(w.box3));
+      add7("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add6("medicareWages", b5);
+      add7("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add6("federalTaxWithheld", excess);
+          add7("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars2(excess)}; added to withholding`);
         }
       }
@@ -43964,72 +44779,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(r.box4));
+      add7("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add6("wages", taxable3);
-      add6("scheduleRDisabilityIncome", taxable3);
+      add7("wages", taxable3);
+      add7("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars2(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add6("taxableIraDistributions", taxable3);
+      add7("taxableIraDistributions", taxable3);
     else
-      add6("taxablePensionsAndAnnuities", taxable3);
+      add7("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add6("earlyDistributionSubjectToPenalty", taxable3);
+        add7("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars2(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add6("socialSecurityBenefits", toCents(s.box5));
+    add7("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add6("federalTaxWithheld", toCents(s.box6));
+      add7("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(n.box4));
+      add7("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(k.box4));
+      add7("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add6("selfEmploymentNetProfit", net);
+        add7("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars2(seGross)} gross (1099-NEC/K) \u2212 $${dollars2(expenses)} expenses = $${dollars2(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add6("scheduleCNetLoss", -net);
+      add7("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars2(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add6("taxableInterest", toCents(t.box1));
+      add7("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add6("taxableInterest", toCents(t.box3));
+      add7("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars2(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add6("taxExemptInterest", toCents(t.box8));
+      add7("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(t.box4));
+      add7("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -44038,15 +44853,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars2(qualified2)}) exceeds box 1a (total, $${dollars2(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add6("qualifiedDividends", qualified2);
+      add7("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add6("ordinaryDividends", total - qualified2);
+      add7("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add6("__ltProceeds", toCents(d3.box2a));
+      add7("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars2(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(d3.box4));
+      add7("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -44061,24 +44876,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(b.box4));
+      add7("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add6("shortTermCapitalGains", stNet);
+      add7("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add6("shortTermCapitalLoss", -stNet);
+      add7("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add6("longTermCapitalGains", ltNet);
+      add7("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add6("longTermCapitalLoss", -ltNet);
+      add7("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars2(stNet)}, long-term net $${dollars2(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add6("unemploymentCompensation", toCents(g.box1));
+      add7("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add6("federalTaxWithheld", toCents(g.box4));
+      add7("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars2(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -44485,7 +45300,20 @@ var INDIVIDUAL_GROUPS = {
     "okStrDisabled",
     "okStrEligible",
     "okPropertyTaxPaid",
-    "okPtrEligible"
+    "okPtrEligible",
+    "ctAgi",
+    "ctUseTaxTable",
+    "ctPropertyTaxPaid",
+    "ctFederalEic",
+    "ctEitcQualifyingChild",
+    "ctEitcSeparateFagi",
+    "ctEitcJointFagi",
+    "ctFederalAgi",
+    "ctSsTotalBenefits",
+    "ctSsProvisionalExcess",
+    "ctTaxableSs",
+    "ctPensionAnnuityIncome",
+    "ctIraDistributions"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -44775,7 +45603,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -44802,7 +45630,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd15 = (c2) => {
+      const rd16 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -44829,11 +45657,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd15(after) + rd15(other);
-      const payments = rd15(withheld) + rd15(refundable) + rd15(extension) + rd15(estimated);
+      const total24 = rd16(after) + rd16(other);
+      const payments = rd16(withheld) + rd16(refundable) + rd16(extension) + rd16(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd15(c2));
+      const d3 = (c2) => fmt2(rd16(c2));
       return ok({
         ok: true,
         asOf,
@@ -44860,7 +45688,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd15(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd16(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

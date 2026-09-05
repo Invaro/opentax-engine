@@ -1,0 +1,12 @@
+{
+  "description": "CT MFS AGI $30,000: exemption $12,000 - 6 x $1,000 = $6,000; taxable $24,000 -> $200 + 4.5% x $14,000 = $830; Table E .10 -> $83 -> $747.",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctAgi": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "74700"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "CT Social Security worksheet: line B zero or less -> stop -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalAgi": 90000,
+    "ctTaxableSs": 0,
+    "ctSsTotalBenefits": 8000,
+    "ctSsProvisionalExcess": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.social_security_adjustment",
+  "expect": {
+    "valueCents": "0"
+  }
+}

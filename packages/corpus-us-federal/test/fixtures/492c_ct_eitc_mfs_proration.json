@@ -1,0 +1,15 @@
+{
+  "description": "CT EITC for a joint federal filer filing MFS for Connecticut: 40% x $3,000 = $1,200 x ($30,000 / $50,000 = .6000) = $720, plus the unprorated $250 = $970.",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctFederalEic": 3000,
+    "ctEitcQualifyingChild": true,
+    "ctEitcSeparateFagi": 30000,
+    "ctEitcJointFagi": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.eitc",
+  "expect": {
+    "valueCents": "97000"
+  }
+}

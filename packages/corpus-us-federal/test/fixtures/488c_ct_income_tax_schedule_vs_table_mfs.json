@@ -1,0 +1,12 @@
+{
+  "description": "The Tax Calculation Schedule rounds line 4 and line 9 to whole dollars: MFS AGI $18,025 -> line 4 $121, line 9 $48 -> $73 (the table prints $72 \u2014 both methods are allowed).",
+  "facts": {
+    "filingStatus": "mfs",
+    "ctAgi": 18025
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.income_tax",
+  "expect": {
+    "valueCents": "7300"
+  }
+}

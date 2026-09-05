@@ -1,0 +1,13 @@
+{
+  "description": "CT EITC with a qualifying child: 40% x $2,000 + $250 (PA 25-168) = $1,050.",
+  "facts": {
+    "filingStatus": "hoh",
+    "ctFederalEic": 2000,
+    "ctEitcQualifyingChild": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.eitc",
+  "expect": {
+    "valueCents": "105000"
+  }
+}

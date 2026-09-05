@@ -1,0 +1,12 @@
+{
+  "description": "CT Table A MFJ AGI $71,000 -> $1,000 (the $70,000-$71,000 row).",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctAgi": 71000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.personal_exemption",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

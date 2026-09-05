@@ -1,0 +1,13 @@
+{
+  "description": "CT property tax credit: HOH AGI $54,500.01 -> 1 step -> .15 -> $200 x .85 = $170.",
+  "facts": {
+    "filingStatus": "hoh",
+    "ctAgi": "54500.01",
+    "ctPropertyTaxPaid": 200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.property_tax_credit",
+  "expect": {
+    "valueCents": "17000"
+  }
+}

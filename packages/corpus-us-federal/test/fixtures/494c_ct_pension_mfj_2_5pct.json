@@ -1,0 +1,13 @@
+{
+  "description": "CT pension/annuity subtraction, MFJ FAGI $145,000 (.025): $40,000 x .025 = $1,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctFederalAgi": 145000,
+    "ctPensionAnnuityIncome": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.pension_annuity_subtraction",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

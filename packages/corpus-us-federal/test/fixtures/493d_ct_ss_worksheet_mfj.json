@@ -1,0 +1,15 @@
+{
+  "description": "CT Social Security worksheet: MFJ FAGI $120,000; A $30,000, B $40,000 -> 25% x $30,000 = $7,500; E $25,500 -> $18,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ctFederalAgi": 120000,
+    "ctTaxableSs": 25500,
+    "ctSsTotalBenefits": 30000,
+    "ctSsProvisionalExcess": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.social_security_adjustment",
+  "expect": {
+    "valueCents": "1800000"
+  }
+}

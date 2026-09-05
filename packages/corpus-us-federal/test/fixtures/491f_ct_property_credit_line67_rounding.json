@@ -1,0 +1,13 @@
+{
+  "description": "CT property tax credit, Schedule 3 rounding: single AGI $55,000 (.15), $250 paid -> line 67 = $250 x .15 = $37.50 -> $38 -> line 68 = $212 (a single rounding of 250 x .85 would give $213).",
+  "facts": {
+    "filingStatus": "single",
+    "ctAgi": 55000,
+    "ctPropertyTaxPaid": 250
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.property_tax_credit",
+  "expect": {
+    "valueCents": "21200"
+  }
+}

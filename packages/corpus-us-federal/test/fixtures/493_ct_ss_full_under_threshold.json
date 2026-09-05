@@ -1,0 +1,15 @@
+{
+  "description": "CT Social Security: single federal AGI $74,999.99 (under $75,000) -> all $10,000 of taxable benefits subtracted.",
+  "facts": {
+    "filingStatus": "single",
+    "ctFederalAgi": "74999.99",
+    "ctTaxableSs": 10000,
+    "ctSsTotalBenefits": 15000,
+    "ctSsProvisionalExcess": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ct.social_security_adjustment",
+  "expect": {
+    "valueCents": "1000000"
+  }
+}
