@@ -3605,4 +3605,101 @@ export const facts: FactSpec[] = [
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
   },
+  // ---- Kansas (Form K-40) ----
+  {
+    id: "ksStdBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description:
+      "Count of Kansas standard-deduction boxes for 65-or-older and/or blind (taxpayer and spouse: at most 2 for single/HOH/QSS, 4 for MFJ/MFS — the rule clamps a single/HOH count at 2) — each adds $850 (single/HOH/QSS) or $700 (MFJ/MFS) to the base deduction (us.ks.standard_deduction).",
+    default: { value: "0", rationale: "Assumed no 65+/blind boxes absent contrary input" },
+  },
+  {
+    id: "ksDependents",
+    type: "int",
+    min: "0",
+    description:
+      "Number of dependents claimed on the federal return — $2,320 each on Form K-40 (us.ks.exemptions); zero when the filer is claimed as someone else's dependent (isClaimedAsDependent).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" },
+  },
+  {
+    id: "ksChildrenBornThisYear",
+    type: "int",
+    min: "0",
+    description:
+      "Dependent children born during the tax year — an ADDITIONAL $2,320 Kansas exemption each (K.S.A. 79-32,121; us.ks.exemptions).",
+    default: { value: "0", rationale: "Assumed no children born this year absent contrary input" },
+  },
+  {
+    id: "ksStillbirths",
+    type: "int",
+    min: "0",
+    description:
+      "Stillbirths during the tax year for which a certificate of stillbirth was issued — $2,320 Kansas exemption each (us.ks.exemptions).",
+    default: { value: "0", rationale: "Assumed none absent contrary input" },
+  },
+  {
+    id: "ksDisabledVeterans",
+    type: "int",
+    min: "0",
+    description:
+      "Honorably discharged veterans on the return (taxpayer and/or spouse) certified by the VA at the 100% permanent disability rate — an additional $2,320 Kansas exemption each for 2025 and later (us.ks.exemptions).",
+    default: { value: "0", rationale: "Assumed no qualifying disabled veterans absent contrary input" },
+  },
+  {
+    id: "ksMedicalExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Medical and dental expenses paid (Kansas Schedule A line 1; the federal Schedule A line 1 amount, or the total if the filer did not itemize federally) — Kansas allows 100% of § 213 expenses over 7.5% of federal AGI (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no medical expenses absent contrary input" },
+  },
+  {
+    id: "ksFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income (Kansas Schedule A line 2 = Form 1040 line 11) — the base of the 7.5% medical floor (us.ks.itemized_deductions). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input" },
+  },
+  {
+    id: "ksPropertyTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "State and local REAL ESTATE plus value-based PERSONAL PROPERTY taxes paid (Kansas Schedule A lines 5-6) — 100% deductible with no SALT cap; state/local income or sales taxes are NOT deductible in Kansas (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no property taxes absent contrary input" },
+  },
+  {
+    id: "ksMortgageInterest",
+    type: "money",
+    min: "0",
+    description:
+      "Qualified residence interest and points (Kansas Schedule A lines 8a-8c, § 163(h)) — 100% deductible (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no mortgage interest absent contrary input" },
+  },
+  {
+    id: "ksCharitableContributions",
+    type: "money",
+    min: "0",
+    description:
+      "Gifts to charity by cash, other than cash, and carryover (Kansas Schedule A lines 10-12, § 170 limits) — 100% deductible (us.ks.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no charitable contributions absent contrary input" },
+  },
+  {
+    id: "ksFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "Federal earned income credit (Form 1040 line 27a) — Kansas allows 17%, nonrefundable to the line 16 tax with the excess refundable (us.ks.eitc); residents only, valid SSNs required. In dollars.",
+    default: { value: "0", rationale: "Assumed no federal EIC absent contrary input" },
+  },
+  {
+    id: "ksFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal child and dependent care credit ALLOWED (Form 2441 / Schedule 3 line 2) — Kansas allows 50%, nonrefundable, residents only (us.ks.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no federal child care credit absent contrary input" },
+  },
 ];

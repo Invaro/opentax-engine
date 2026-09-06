@@ -1,0 +1,13 @@
+{
+  "description": "KS filer claimed as another's dependent enters 0 dependents -> $9,160 only.",
+  "facts": {
+    "filingStatus": "single",
+    "ksDependents": 1,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.exemptions",
+  "expect": {
+    "valueCents": "916000"
+  }
+}

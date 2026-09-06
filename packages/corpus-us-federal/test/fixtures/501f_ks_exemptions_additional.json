@@ -1,0 +1,14 @@
+{
+  "description": "KS MFJ: 1 dependent + 1 child born this year + 1 disabled veteran: $18,320 + 3 x $2,320 = $25,280.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ksDependents": 1,
+    "ksChildrenBornThisYear": 1,
+    "ksDisabledVeterans": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.exemptions",
+  "expect": {
+    "valueCents": "2528000"
+  }
+}

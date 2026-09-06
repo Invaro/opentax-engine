@@ -1,0 +1,12 @@
+{
+  "description": "KS Tax Computation Worksheet (over $100,000), MFJ $150,000: 5.58% x $150,000 = $8,370 - $175 = $8,195.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "819500"
+  }
+}

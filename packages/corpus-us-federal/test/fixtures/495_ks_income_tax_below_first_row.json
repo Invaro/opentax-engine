@@ -1,0 +1,12 @@
+{
+  "description": "KS 2025 tax table starts at 'at least 26': taxable income $20 has no printed row, and the statute has no floor (the 2018-2023 zero band expired) -> 5.2% x $20 = $1.04 -> $1.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 20
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

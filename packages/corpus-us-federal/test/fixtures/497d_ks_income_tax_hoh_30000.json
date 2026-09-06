@@ -1,0 +1,12 @@
+{
+  "description": "KS HOH $30,000: row [29,951-30,000] midpoint $29,975.50 -> $1,196 + 5.58% x $6,975.50 = $1,585.23 -> $1,585.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "158500"
+  }
+}

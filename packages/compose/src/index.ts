@@ -1,6 +1,6 @@
 /**
  * compute_state_return — deterministic printed-form line composers for the
- * state jurisdictions in the corpus (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502, MO-1040, WI Form 1, MN M1, SC1040, AL Form 40, OR-40, OK Form 511, CT-1040).
+ * state jurisdictions in the corpus (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502, MO-1040, WI Form 1, MN M1, SC1040, AL Form 40, OR-40, OK Form 511, CT-1040, KS K-40).
  *
  * Evaluation finding: agents' state tax ARITHMETIC is oracle-exact, but they
  * transpose printed-form line numbers and drift on whole-dollar rounding when
@@ -28,6 +28,7 @@ import { composeAL } from "./al.js";
 import { composeOR } from "./or.js";
 import { composeOK } from "./ok.js";
 import { composeCT } from "./ct.js";
+import { composeKS } from "./ks.js";
 import { composeSC } from "./sc.js";
 import { composeVA } from "./va.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
@@ -90,7 +91,7 @@ export function composeStateReturn(
   // builds Alabama AGI from its own transcribed income lines — none of the
   // four uses federalAGI.
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
@@ -109,5 +110,6 @@ export function composeStateReturn(
   if (j === "or") return { lines: composeOR(input, evalStateTax, notes), notes };
   if (j === "ok") return { lines: composeOK(input, evalStateTax, notes), notes };
   if (j === "ct") return { lines: composeCT(input, evalStateTax, notes), notes };
+  if (j === "ks") return { lines: composeKS(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

@@ -1,0 +1,14 @@
+{
+  "description": "KS filer claimed as another's dependent: the child-born-this-year exemption rides on a paragraph (3) dependent (K.S.A. 79-32,121(a)(4)(A)) and is zeroed too -> $9,160 only.",
+  "facts": {
+    "filingStatus": "single",
+    "ksDependents": 1,
+    "ksChildrenBornThisYear": 1,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.exemptions",
+  "expect": {
+    "valueCents": "916000"
+  }
+}

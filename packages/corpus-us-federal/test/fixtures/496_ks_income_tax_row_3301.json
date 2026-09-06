@@ -1,0 +1,12 @@
+{
+  "description": "KS 2025 tax table row [3,301-3,350] -> $173 (5.2% x $3,325.50 = $172.93), same in both columns below the bracket.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 3325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "valueCents": "17300"
+  }
+}

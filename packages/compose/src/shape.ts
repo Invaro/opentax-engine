@@ -8,18 +8,18 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: z.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
   ageOrBlindBoxes: z.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions)"),
+  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 — Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -566,4 +566,37 @@ const ctShape = {
   // `subtractions`; Schedule CT-IT credits use the shared nonrefundableCredits.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape };
+
+const ksShape = {
+  ksExemptRetirement: usd.optional().describe("KS Schedule S line A14: retirement benefits exempt from Kansas tax included in federal AGI — KPERS, Kansas Police & Fire, Kansas teachers' annuities, federal civil service and MILITARY retirement (incl. TSP), Railroad Retirement, Highway Patrol, judges, Board of Public Utilities, Regents annuity contracts, Washburn, Overland Park police/fire (NOT Social Security — automatic via taxableSocialSecurity)"),
+  ksUsInterest: usd.optional().describe("KS Schedule S line A12: interest/dividends on U.S. government obligations included in federal AGI, net of related expenses (not FNMA/GNMA/FHLMC)"),
+  ksStateRefund: usd.optional().describe("KS Schedule S line A13: state or local income tax refund included in federal AGI (Schedule 1 line 1)"),
+  ks529Contributions: usd.optional().describe("KS Schedule S line A16: contributions to Learning Quest / Quest529 / Schwab 529 or another state's 529 plan — the composer caps at $3,000 per beneficiary ($6,000 MFJ) using ks529Beneficiaries"),
+  ks529Beneficiaries: z.number().int().optional().describe("number of 529 beneficiaries contributed for (caps line A16 at $3,000/$6,000 each); defaults to 1 when contributions are given"),
+  ksStdBoxes: z.number().int().optional().describe("Kansas standard-deduction boxes checked for 65-or-older and/or blind (taxpayer + spouse, 0-4): +$850 each single/HOH/QSS, +$700 each MFJ/MFS"),
+  ksItemize: z.boolean().optional().describe("force the deduction method: true = Kansas itemized (Schedule A), false = standard. Omit to let the composer take the LARGER (Kansas allows either regardless of the federal election; married-filing-separately spouses must use the same method — disclose)"),
+  ksMedicalExpenses: usd.optional().describe("KS Schedule A line 1: medical and dental expenses paid (federal Schedule A line 1, or the total if not itemizing federally) — the composer applies the 7.5%-of-federal-AGI floor"),
+  ksPropertyTaxes: usd.optional().describe("KS Schedule A lines 5-6: state and local real estate taxes plus value-based personal property taxes (100%, no SALT cap; NO income or sales taxes)"),
+  ksMortgageInterest: usd.optional().describe("KS Schedule A line 9: qualified residence interest and points (100%)"),
+  ksCharitableContributions: usd.optional().describe("KS Schedule A line 13: gifts to charity by cash, other than cash, and carryover (100%, § 170 limits)"),
+  ksChildrenBornThisYear: z.number().int().optional().describe("dependent children born during the tax year — additional $2,320 exemption each"),
+  ksStillbirths: z.number().int().optional().describe("certified stillbirths during the tax year — $2,320 exemption each"),
+  ksDisabledVeterans: z.number().int().optional().describe("taxpayer and/or spouse honorably discharged and VA-certified 100% permanently disabled — additional $2,320 exemption each"),
+  ksFederalLumpSumTax: usd.optional().describe("KS line 11: the FEDERAL tax on a lump-sum distribution from Form 4972 — Kansas tax is 13% of it (residents; KPERS lump sums prorated by the agent)"),
+  ksOtherStateTaxPaid: usd.optional().describe("KS line 13 worksheet line 1: 2025 income tax actually paid to ONE other state (incl. its localities) — not the amount withheld; enclose that state's return"),
+  ksOtherStateIncome: usd.optional().describe("KS line 13 worksheet line 3: total income from the other state included in Kansas AGI — the credit is limited to Kansas tax × (this ÷ KAGI)"),
+  ksFederalChildCareCredit: usd.optional().describe("federal child and dependent care credit ALLOWED (Form 2441 / Schedule 3 line 2) — Kansas allows 50% on line 14, nonrefundable, residents only"),
+  ksK120sCredit: usd.optional().describe("KS line 25: credit for the 5.58% tax paid on the filer's behalf by electing pass-through entities (Form K-9 Part C)"),
+  ksAmendedPaid: usd.optional().describe("KS line 24 (amended return only): payments remitted with the original return"),
+  ksAmendedOverpayment: usd.optional().describe("KS line 26 (amended return only): overpayment shown on the original return (subtracted)"),
+  ksInterest: usd.optional().describe("KS line 29: interest on a late-paid balance — 0.6667% per month (8% per annum) from the due date (agent-computed)"),
+  ksPenalty: usd.optional().describe("KS line 30: late payment penalty — 1% per month or fraction, maximum 24% (none when 90% was paid by the due date under an extension)"),
+  ksEstimatedTaxPenalty: usd.optional().describe("KS line 31: underpayment of estimated tax penalty from Schedule K-210 (applies when line 18 less withholding and refundable credits is $500 or more)"),
+  ksCreditForward: usd.optional().describe("KS line 34: overpayment applied to 2026 estimated tax ($1 or more)"),
+  ksCheckoffs: usd.optional().describe("KS lines 35-42 total: voluntary contributions (Chickadee, Meals on Wheels, breast cancer research, military emergency relief, hometown heroes, creative arts, school district, historic site) — reduce the refund or increase the amount owed"),
+  // Schedule S other additions (A1-A8) use the shared `additions`; other
+  // subtractions (A11, A15, A17-A25) use the shared `subtractions`; K-40
+  // line 15 uses nonrefundableCredits and line 23 uses refundableCredits.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape };

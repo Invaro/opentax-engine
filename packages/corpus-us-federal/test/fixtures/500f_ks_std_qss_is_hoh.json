@@ -1,0 +1,11 @@
+{
+  "description": "KS federal QSS checks the Head of Household box -> $6,180 (not the $8,240 joint amount).",
+  "facts": {
+    "filingStatus": "qss"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.standard_deduction",
+  "expect": {
+    "valueCents": "618000"
+  }
+}

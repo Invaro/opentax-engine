@@ -1,0 +1,12 @@
+{
+  "description": "KS standard deduction single, 65+ and blind (2 boxes): $3,605 + 2 x $850 = $5,305 (worksheet row).",
+  "facts": {
+    "filingStatus": "single",
+    "ksStdBoxes": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.standard_deduction",
+  "expect": {
+    "valueCents": "530500"
+  }
+}

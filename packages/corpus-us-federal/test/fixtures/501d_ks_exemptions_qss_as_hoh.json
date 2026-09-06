@@ -1,0 +1,12 @@
+{
+  "description": "KS federal QSS = Kansas HOH per the booklet ('check the Head of Household box'), and the form's HOH box carries the $2,320 additional exemption: $9,160 + $2,320 + 1 dependent $2,320 = $13,800 (not $18,320 joint). DELIBERATE: K.S.A. 79-32,121b(b)(1) speaks of 'head of household, as defined in 26 U.S.C. \u00a7 2(b)'; the pack follows the form and discloses.",
+  "facts": {
+    "filingStatus": "qss",
+    "ksDependents": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.exemptions",
+  "expect": {
+    "valueCents": "1380000"
+  }
+}

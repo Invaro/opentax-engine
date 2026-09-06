@@ -1,0 +1,12 @@
+{
+  "description": "KS asOf in 2024: the corpus starts at TY2025 \u2014 refuse.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2024-06-30",
+  "target": "us.ks.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

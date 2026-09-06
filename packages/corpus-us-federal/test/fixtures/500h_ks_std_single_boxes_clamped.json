@@ -1,0 +1,12 @@
+{
+  "description": "KS single with 3 boxes claimed (impossible: a single filer has at most 65+ and blind) -> clamped at 2: $3,605 + 2 x $850 = $5,305.",
+  "facts": {
+    "filingStatus": "single",
+    "ksStdBoxes": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.standard_deduction",
+  "expect": {
+    "valueCents": "530500"
+  }
+}

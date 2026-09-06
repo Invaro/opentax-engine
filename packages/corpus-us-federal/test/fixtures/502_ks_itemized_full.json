@@ -1,0 +1,16 @@
+{
+  "description": "KS Schedule A: medical $10,000 - 7.5% x $60,000 FAGI ($4,500) = $5,500; + property taxes $3,000 + mortgage interest $8,000 + charity $2,000 = $18,500 (no SALT cap).",
+  "facts": {
+    "filingStatus": "mfj",
+    "ksMedicalExpenses": 10000,
+    "ksFederalAgi": 60000,
+    "ksPropertyTaxes": 3000,
+    "ksMortgageInterest": 8000,
+    "ksCharitableContributions": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.itemized_deductions",
+  "expect": {
+    "valueCents": "1850000"
+  }
+}

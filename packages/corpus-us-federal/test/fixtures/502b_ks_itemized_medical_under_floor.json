@@ -1,0 +1,15 @@
+{
+  "description": "KS Schedule A: medical $3,000 under the $4,500 floor -> $0 medical; property $12,000 (fully deductible, above the federal cap) + interest $5,000 = $17,000.",
+  "facts": {
+    "filingStatus": "single",
+    "ksMedicalExpenses": 3000,
+    "ksFederalAgi": 60000,
+    "ksPropertyTaxes": 12000,
+    "ksMortgageInterest": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.itemized_deductions",
+  "expect": {
+    "valueCents": "1700000"
+  }
+}

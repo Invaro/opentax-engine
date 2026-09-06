@@ -1,0 +1,11 @@
+{
+  "description": "KS standard deduction single $3,605.",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ks.standard_deduction",
+  "expect": {
+    "valueCents": "360500"
+  }
+}
