@@ -1,0 +1,14 @@
+{
+  "description": "ID HOH, 65+: $23,625 + $2,000 = $25,625.",
+  "facts": {
+    "filingStatus": "hoh",
+    "idAgeBlindBoxes": 1,
+    "isClaimedAsDependent": false,
+    "idEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "2562500"
+  }
+}

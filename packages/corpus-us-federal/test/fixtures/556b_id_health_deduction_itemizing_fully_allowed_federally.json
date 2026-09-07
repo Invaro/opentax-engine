@@ -1,0 +1,20 @@
+{
+  "description": "ID health deduction itemizing: Sch A health 6,000 + LTC 2,000 + other 1,000 = 9,000; 7.5% x 40,000 = 3,000; allowed 6,000; line 8 = min(6,000, 6,000) -> $6,000 \u2212 6,000 = $0.",
+  "facts": {
+    "filingStatus": "single",
+    "idItemizingForIdaho": true,
+    "idSchAHealthPremiums": 6000,
+    "idSchALtcPremiums": 2000,
+    "idSchAOtherMedical": 1000,
+    "idAgi": 40000,
+    "idHealthPremiumsPaid": 6000,
+    "idHealthPremiumsDeductedElsewhere": 0,
+    "idLtcPremiumsPaid": 0,
+    "idLtcDeductedElsewhere": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.health_insurance_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

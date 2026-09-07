@@ -1,0 +1,14 @@
+{
+  "description": "ID MFS, blind: $15,750 + $1,600 = $17,350.",
+  "facts": {
+    "filingStatus": "mfs",
+    "idAgeBlindBoxes": 1,
+    "isClaimedAsDependent": false,
+    "idEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "1735000"
+  }
+}

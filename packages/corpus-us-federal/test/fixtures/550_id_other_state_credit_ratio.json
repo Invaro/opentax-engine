@@ -1,0 +1,15 @@
+{
+  "description": "ID Form 39R Part C: tax $2,000 x (30,000 / 90,000 = .3333) = 666.6 -> $667; other state's tax $1,000 -> $667.",
+  "facts": {
+    "filingStatus": "single",
+    "idTaxBeforeCredits": 2000,
+    "idOtherStateIncome": 30000,
+    "idAdjustedIncome": 90000,
+    "idOtherStateTaxDue": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.other_state_credit",
+  "expect": {
+    "valueCents": "66700"
+  }
+}

@@ -69,6 +69,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
   "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
   "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
+  "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund",
 };
 
 export function lookupParameters(

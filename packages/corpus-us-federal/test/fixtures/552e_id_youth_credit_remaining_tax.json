@@ -1,0 +1,16 @@
+{
+  "description": "ID youth/rehab credit: tax $1,000 \u2212 line 21 $900 \u2212 Part D line 1 $50 = $50 remaining -> $50.",
+  "facts": {
+    "filingStatus": "single",
+    "idYouthContributions": 500,
+    "idTaxBeforeCredits": 1000,
+    "idOtherStateCredit": 900,
+    "idEducationalCredit": 50,
+    "idInvestmentTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.youth_rehab_contribution_credit",
+  "expect": {
+    "valueCents": "5000"
+  }
+}

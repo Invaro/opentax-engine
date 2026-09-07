@@ -1,0 +1,14 @@
+{
+  "description": "ID PBF: not required to file ('NRF') -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "idReceivedPublicAssistance": false,
+    "idBlind": false,
+    "idRequiredToFile": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.permanent_building_fund_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

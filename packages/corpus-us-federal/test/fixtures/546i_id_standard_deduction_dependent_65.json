@@ -1,0 +1,14 @@
+{
+  "description": "ID dependent filer 65+, earned income $500: $1,350 + $2,000 = $3,350 (matches the filing table's 'Over $3,350').",
+  "facts": {
+    "filingStatus": "single",
+    "idAgeBlindBoxes": 1,
+    "isClaimedAsDependent": true,
+    "idEarnedIncome": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "335000"
+  }
+}

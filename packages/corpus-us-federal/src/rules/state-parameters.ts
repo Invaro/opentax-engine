@@ -35,6 +35,7 @@ import { ksRules } from "./state-ks.js";
 import { arRules } from "./state-ar.js";
 import { nmRules } from "./state-nm.js";
 import { neRules } from "./state-ne.js";
+import { idRules } from "./state-id.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -60,5 +61,6 @@ export const stateParameterRules: Rule[] = [
   ...arRules,
   ...nmRules,
   ...neRules,
+  ...idRules,
   ...otherStateRules,
 ];

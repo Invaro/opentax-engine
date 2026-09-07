@@ -1,0 +1,13 @@
+{
+  "description": "ID maintaining a home credit: none -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "idHomeFamilyMembers": 0,
+    "idHomeFamilyPartialMonths": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.home_for_family_member_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "ID MFS -> $0 ('If you're married, you can't claim this deduction if you file separately').",
+  "facts": {
+    "filingStatus": "mfs",
+    "idRetirementEligible": true,
+    "idRailroadBenefits": 0,
+    "idSocialSecurityBenefits": 0,
+    "idQualifyingRetirementBenefits": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.retirement_benefits_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

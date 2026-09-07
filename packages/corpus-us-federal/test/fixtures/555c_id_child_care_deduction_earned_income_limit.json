@@ -1,0 +1,15 @@
+{
+  "description": "ID child care deduction single: expenses $3,000, earned income $2,000 -> $2,000.",
+  "facts": {
+    "filingStatus": "single",
+    "idChildCareExpenses": 3000,
+    "idDependentCareBenefitsExcluded": 0,
+    "idEarnedIncome": 2000,
+    "idSpouseEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.child_care_deduction",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

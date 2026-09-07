@@ -1,0 +1,17 @@
+{
+  "description": "ID itemized over the cap: 5a 30,000 + 5b 15,000 + 5c 1,000 = 46,000 > 40,000; 5e 40,000 -> line 14 = 40,000 \u2212 16,000 = 24,000; $60,000 \u2212 24,000 = $36,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idFederalItemizedDeductions": 60000,
+    "idSaltIncomeOrSalesTaxes": 30000,
+    "idRealEstateTaxes": 15000,
+    "idPersonalPropertyTaxes": 1000,
+    "idSaltAllowed": 40000,
+    "idForeignTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.itemized_deductions",
+  "expect": {
+    "valueCents": "3600000"
+  }
+}

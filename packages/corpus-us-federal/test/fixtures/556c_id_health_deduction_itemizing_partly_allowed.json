@@ -1,0 +1,20 @@
+{
+  "description": "ID health deduction itemizing, AGI $100,000: floor 7,500; allowed 9,000 \u2212 7,500 = 1,500; line 8 = 1,500 -> $6,000 \u2212 1,500 = $4,500.",
+  "facts": {
+    "filingStatus": "single",
+    "idItemizingForIdaho": true,
+    "idSchAHealthPremiums": 6000,
+    "idSchALtcPremiums": 2000,
+    "idSchAOtherMedical": 1000,
+    "idAgi": 100000,
+    "idHealthPremiumsPaid": 6000,
+    "idHealthPremiumsDeductedElsewhere": 0,
+    "idLtcPremiumsPaid": 0,
+    "idLtcDeductedElsewhere": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.health_insurance_deduction",
+  "expect": {
+    "valueCents": "450000"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "ID child tax credit: 2 x $205 = $410 (tax $3,000).",
+  "facts": {
+    "filingStatus": "mfj",
+    "idQualifyingChildren": 2,
+    "idTaxBeforeCredits": 3000,
+    "idOtherStateCredit": 0,
+    "idContributionCredits": 0,
+    "idBusinessCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.child_tax_credit",
+  "expect": {
+    "valueCents": "41000"
+  }
+}

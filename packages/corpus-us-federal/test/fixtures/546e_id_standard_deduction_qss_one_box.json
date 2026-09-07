@@ -1,0 +1,14 @@
+{
+  "description": "ID QSS, 65+: $31,500 + $1,600 (married rate) = $33,100.",
+  "facts": {
+    "filingStatus": "qss",
+    "idAgeBlindBoxes": 1,
+    "isClaimedAsDependent": false,
+    "idEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "3310000"
+  }
+}

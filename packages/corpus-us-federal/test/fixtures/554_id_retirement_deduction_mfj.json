@@ -1,0 +1,15 @@
+{
+  "description": "ID retirement benefits deduction, MFJ eligible: $72,324 \u2212 SS $30,000 = 42,324; qualifying $50,000 -> $42,324.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idRetirementEligible": true,
+    "idRailroadBenefits": 0,
+    "idSocialSecurityBenefits": 30000,
+    "idQualifyingRetirementBenefits": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.retirement_benefits_deduction",
+  "expect": {
+    "valueCents": "4232400"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ID HOH $9,622 (the joint threshold \u2014 \u00a7 63-3024(2)(b) treats HOH as joint) -> $0.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 9622
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ID single $100,000: 95,189 x 5.3% = 5,045.017 -> $5,045.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.income_tax",
+  "expect": {
+    "valueCents": "504500"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "ID Part C: calculated $667 but the other state's tax is $500 -> $500.",
+  "facts": {
+    "filingStatus": "single",
+    "idTaxBeforeCredits": 2000,
+    "idOtherStateIncome": 30000,
+    "idAdjustedIncome": 90000,
+    "idOtherStateTaxDue": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.other_state_credit",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

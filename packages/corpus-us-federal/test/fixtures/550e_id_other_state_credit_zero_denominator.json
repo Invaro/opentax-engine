@@ -1,0 +1,15 @@
+{
+  "description": "ID Part C: Idaho adjusted income $0 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "idTaxBeforeCredits": 2000,
+    "idOtherStateIncome": 30000,
+    "idAdjustedIncome": 0,
+    "idOtherStateTaxDue": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.other_state_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

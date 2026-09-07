@@ -1,0 +1,15 @@
+{
+  "description": "ID HOH eligible uses the 'single' $48,216 maximum: \u2212 SS $8,216 -> $40,000; qualifying $45,000 -> $40,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "idRetirementEligible": true,
+    "idRailroadBenefits": 0,
+    "idSocialSecurityBenefits": 8216,
+    "idQualifyingRetirementBenefits": 45000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.retirement_benefits_deduction",
+  "expect": {
+    "valueCents": "4000000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "ID capital gains deduction limited to the $4,000 capital gain net income.",
+  "facts": {
+    "filingStatus": "single",
+    "idQualifiedCapitalGain": 10000,
+    "idNetCapitalGain": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.capital_gains_deduction",
+  "expect": {
+    "valueCents": "400000"
+  }
+}

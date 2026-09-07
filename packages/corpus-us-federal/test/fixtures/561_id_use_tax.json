@@ -1,0 +1,12 @@
+{
+  "description": "ID use tax: 6% of $1,000 = $60.",
+  "facts": {
+    "filingStatus": "single",
+    "idUseTaxPurchases": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.use_tax",
+  "expect": {
+    "valueCents": "6000"
+  }
+}

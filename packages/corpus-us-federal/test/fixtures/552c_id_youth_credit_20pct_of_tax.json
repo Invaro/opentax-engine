@@ -1,0 +1,16 @@
+{
+  "description": "ID youth/rehab credit: tax $400 -> 20% = $80.",
+  "facts": {
+    "filingStatus": "single",
+    "idYouthContributions": 500,
+    "idTaxBeforeCredits": 400,
+    "idOtherStateCredit": 0,
+    "idEducationalCredit": 0,
+    "idInvestmentTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.youth_rehab_contribution_credit",
+  "expect": {
+    "valueCents": "8000"
+  }
+}

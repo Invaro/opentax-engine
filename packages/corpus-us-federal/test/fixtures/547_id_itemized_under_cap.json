@@ -1,0 +1,17 @@
+{
+  "description": "ID itemized: Schedule A $30,000; 5a 8,000 + 5b 5,000 + 5c 500 = 5d 13,500 \u2264 $40,000 -> line 14 = 5a $8,000 -> $22,000.",
+  "facts": {
+    "filingStatus": "single",
+    "idFederalItemizedDeductions": 30000,
+    "idSaltIncomeOrSalesTaxes": 8000,
+    "idRealEstateTaxes": 5000,
+    "idPersonalPropertyTaxes": 500,
+    "idSaltAllowed": 13500,
+    "idForeignTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.itemized_deductions",
+  "expect": {
+    "valueCents": "2200000"
+  }
+}

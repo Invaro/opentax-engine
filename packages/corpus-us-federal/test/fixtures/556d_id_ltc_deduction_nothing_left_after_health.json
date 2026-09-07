@@ -1,0 +1,20 @@
+{
+  "description": "ID LTC deduction itemizing, AGI $100,000: line 12 = max0(1,500 \u2212 6,000) = 0 -> $2,000 paid \u2212 0 = $2,000.",
+  "facts": {
+    "filingStatus": "single",
+    "idItemizingForIdaho": true,
+    "idSchAHealthPremiums": 6000,
+    "idSchALtcPremiums": 2000,
+    "idSchAOtherMedical": 1000,
+    "idAgi": 100000,
+    "idHealthPremiumsPaid": 6000,
+    "idHealthPremiumsDeductedElsewhere": 0,
+    "idLtcPremiumsPaid": 2000,
+    "idLtcDeductedElsewhere": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.long_term_care_deduction",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

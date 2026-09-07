@@ -578,7 +578,7 @@ var require_codegen = __commonJS({
             return e instanceof _If ? e : e.nodes;
           if (this.nodes.length)
             return this;
-          return new _If(not3(cond), e instanceof _If ? [e] : e.nodes);
+          return new _If(not4(cond), e instanceof _If ? [e] : e.nodes);
         }
         if (cond === false || !this.nodes.length)
           return void 0;
@@ -1030,20 +1030,20 @@ var require_codegen = __commonJS({
       for (const n in from)
         names[n] = (names[n] || 0) - (from[n] || 0);
     }
-    function not3(x) {
+    function not4(x) {
       return typeof x == "boolean" || typeof x == "number" || x === null ? !x : (0, code_1._)`!${par(x)}`;
     }
-    exports.not = not3;
+    exports.not = not4;
     var andCode = mappend(exports.operators.AND);
     function and4(...args) {
       return args.reduce(andCode);
     }
     exports.and = and4;
     var orCode = mappend(exports.operators.OR);
-    function or5(...args) {
+    function or6(...args) {
       return args.reduce(orCode);
     }
-    exports.or = or5;
+    exports.or = or6;
     function mappend(op) {
       return (x, y) => x === code_1.nil ? y : y === code_1.nil ? x : (0, code_1._)`${par(x)} ${op} ${par(y)}`;
     }
@@ -7600,12 +7600,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub15 of error2.issues) {
-    if (sub15.path.length > 0) {
-      fieldErrors[sub15.path[0]] = fieldErrors[sub15.path[0]] || [];
-      fieldErrors[sub15.path[0]].push(mapper(sub15));
+  for (const sub16 of error2.issues) {
+    if (sub16.path.length > 0) {
+      fieldErrors[sub16.path[0]] = fieldErrors[sub16.path[0]] || [];
+      fieldErrors[sub16.path[0]].push(mapper(sub16));
     } else {
-      formErrors.push(mapper(sub15));
+      formErrors.push(mapper(sub16));
     }
   }
   return { formErrors, fieldErrors };
@@ -13433,8 +13433,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub15) => {
-      this.issues = [...this.issues, sub15];
+    this.addIssue = (sub16) => {
+      this.issues = [...this.issues, sub16];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -13501,13 +13501,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub15 of this.issues) {
-      if (sub15.path.length > 0) {
-        const firstEl = sub15.path[0];
+    for (const sub16 of this.issues) {
+      if (sub16.path.length > 0) {
+        const firstEl = sub16.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub15));
+        fieldErrors[firstEl].push(mapper(sub16));
       } else {
-        formErrors.push(mapper(sub15));
+        formErrors.push(mapper(sub16));
       }
     }
     return { formErrors, fieldErrors };
@@ -22558,7 +22558,8 @@ var JURISDICTION_NAMES = {
   "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
   "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
   "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
-  "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit"
+  "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
+  "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -23399,7 +23400,7 @@ function composeMO(input, evalStateTax, notes) {
   const l2124 = rd(c(input.moOtherDeductions));
   const l25 = l8 + l13 + l14 + l15 + l16 + l17 + l18 + l19 + l2124;
   const l26 = l6 - l25;
-  const alloc = (pct5) => rd((l26 * pct5 + 50n) / 100n);
+  const alloc = (pct6) => rd((l26 * pct6 + 50n) / 100n);
   const l27Y = pctY === 100n ? rd(l26) : alloc(pctY);
   const l27S = pctS === 0n ? 0n : pctS === 100n ? rd(l26) : alloc(pctS);
   const l28Y = rd(c(input.moEnterpriseZoneYou));
@@ -25449,10 +25450,10 @@ function composeAR(input, evalStateTax, notes) {
       if (itemize) {
         method = "itemized";
         if (status4) {
-          const pct5 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
-          a27 = (itemized * pct5 + 50n) / 100n;
+          const pct6 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
+          a27 = (itemized * pct6 + 50n) / 100n;
           b27 = itemized - a27;
-          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct5}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
+          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct6}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
         } else
           a27 = itemized;
         if (fs === "mfs")
@@ -26176,6 +26177,282 @@ function composeNE(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/id.js
+var D4 = (x) => rd(c(x));
+function composeID(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Idaho Form 40 composer");
+  const mfj = fs === "mfj";
+  const mfs = fs === "mfs";
+  const dependentFiler = input.claimedAsDependent === true;
+  const deps = input.dependents ?? 0;
+  const boxes = Math.min(input.ageOrBlindBoxes ?? 0, 4);
+  if (dependentFiler && typeof input.idEarnedIncome !== "number")
+    throw new Error("idEarnedIncome is required when claimedAsDependent \u2014 the Idaho standard deduction for a dependent filer is the larger of $1,350 or earned income + $450 (Standard Deduction Worksheet line 3)");
+  if (fs === "hoh" || fs === "qss")
+    notes.push(`ID filing status: a federal ${fs === "hoh" ? "head of household" : "qualifying surviving spouse"} uses the $9,622 joint threshold on the line 20 worksheet (\xA7 63-3024(2)(b)) with the ${fs === "hoh" ? "$23,625" : "$31,500"} standard deduction`);
+  if (mfs)
+    notes.push("ID married filing separately: the $4,811 threshold and $15,750 deduction apply; the retirement benefits deduction is not allowed; you must itemize if your spouse itemizes; the filing threshold is $5");
+  const l6a = dependentFiler ? 0 : 1;
+  const l6b = mfj ? 1 : 0;
+  const l6d = l6a + l6b + deps;
+  const l7 = rd(c(input.federalAGI));
+  const addNol = D4(input.idFederalNolDeduction);
+  const addBond = D4(input.idNonIdahoBondInterest);
+  const addOther = D4(input.additions);
+  const l8 = addNol + addBond + addOther;
+  if (l8 > 0n)
+    notes.push(`ID line 8 (Form 39R Part A): additions ${fmtD(l8)} \u2014 federal NOL deduction ${fmtD(addNol)}, non-Idaho state and local bond interest ${fmtD(addBond)}, other ${fmtD(addOther)} (non-Idaho capital loss carryover, IDeal nonqualified withdrawals, bonus depreciation, Form 4972 lump sums, bullion losses)`);
+  const l9 = l7 + l8;
+  const ss2 = D4(input.taxableSocialSecurity);
+  const nol = D4(input.idIdahoNolCarryover);
+  const refund = D4(input.idStateRefund);
+  const usInt = D4(input.idUsInterest);
+  const energy = rd(evalStateTax("us.id.alternative_energy_device_deduction", 0n, { idEnergyDeviceCost2025: c(input.idEnergyDeviceCost2025), idEnergyDeviceCost2024: c(input.idEnergyDeviceCost2024), idEnergyDeviceCost2023: c(input.idEnergyDeviceCost2023), idEnergyDeviceCost2022: c(input.idEnergyDeviceCost2022) }));
+  if (energy > 0n)
+    notes.push(`ID Form 39R line 5e: alternative energy device deduction ${fmtD(energy)} (40% first year, 20% the next three, $5,000 cap)`);
+  let childCare = 0n;
+  if (c(input.idChildCareExpenses) > 0n) {
+    childCare = rd(evalStateTax("us.id.child_care_deduction", 0n, { idChildCareExpenses: c(input.idChildCareExpenses), idDependentCareBenefitsExcluded: c(input.idDependentCareBenefitsExcluded), idEarnedIncome: c(input.idEarnedIncome), idSpouseEarnedIncome: c(input.idSpouseEarnedIncome) }));
+    notes.push(`ID Form 39R line 6: child and dependent care deduction ${fmtD(childCare)} \u2014 the smallest of expenses, $12,000 less excluded benefits, and each spouse's earned income${typeof input.idEarnedIncome !== "number" ? " (pass idEarnedIncome \u2014 assumed $0 \u2192 $0 deduction)" : ""}; attach federal Form 2441`);
+  }
+  let retirement = 0n;
+  if (c(input.idQualifyingRetirementBenefits) > 0n) {
+    retirement = rd(evalStateTax("us.id.retirement_benefits_deduction", 0n, { idRetirementEligible: input.idRetirementEligible === true, idRailroadBenefits: c(input.idRailroadBenefits), idSocialSecurityBenefits: c(input.idSocialSecurityBenefits), idQualifyingRetirementBenefits: c(input.idQualifyingRetirementBenefits) }));
+    if (retirement > 0n)
+      notes.push(`ID Form 39R line 8: retirement benefits deduction ${fmtD(retirement)} \u2014 the smaller of the ${mfj ? "$72,324" : "$48,216"} maximum less Social Security and railroad benefits received and the ${fmtD(D4(input.idQualifyingRetirementBenefits))} of qualifying benefits (CSRS/FSRDS, Idaho firefighter, Idaho city police, military \u2014 not FERS or private pensions)`);
+    else
+      notes.push(`ID Form 39R line 8: no retirement benefits deduction \u2014 ${mfs ? "not allowed married filing separately" : input.idRetirementEligible !== true ? "pass idRetirementEligible (65, or 62 and disabled; military: disabled, 62, or employed)" : "Social Security and railroad benefits received exceed the maximum"}`);
+  }
+  let capGain = 0n;
+  if (c(input.idQualifiedCapitalGain) > 0n) {
+    capGain = rd(evalStateTax("us.id.capital_gains_deduction", 0n, { idQualifiedCapitalGain: c(input.idQualifiedCapitalGain), idNetCapitalGain: c(input.idNetCapitalGain) }));
+    notes.push(`ID Form 39R line 10: Idaho capital gains deduction ${fmtD(capGain)} \u2014 60% of qualified Idaho property gain, limited to the capital gain net income${typeof input.idNetCapitalGain !== "number" ? " (pass idNetCapitalGain \u2014 assumed $0 \u2192 $0)" : ""}; attach Form CG`);
+  }
+  const military = D4(input.idMilitaryPayOutsideIdaho);
+  const adoption = min2(D4(input.idAdoptionExpenses), 1000000n);
+  if (D4(input.idAdoptionExpenses) > adoption)
+    notes.push("ID Form 39R line 12: adoption expenses capped at $10,000 per adoption");
+  const msaCap = mfj ? 2000000n : 1000000n;
+  const msa = min2(D4(input.idMedicalSavingsContributions), msaCap);
+  if (D4(input.idMedicalSavingsContributions) > msa)
+    notes.push(`ID Form 39R line 13: Idaho medical savings account contributions capped at ${fmtD(msaCap)}`);
+  const idealCap = mfj ? 1200000n : 600000n;
+  const ideal = min2(D4(input.idCollegeSavingsContributions), idealCap);
+  if (D4(input.idCollegeSavingsContributions) > ideal)
+    notes.push(`ID Form 39R line 14: IDeal college savings contributions capped at ${fmtD(idealCap)}`);
+  const homeMembers = Math.min(input.idHomeFamilyMembers ?? 0, 3);
+  const homeMonths = input.idHomeFamilyPartialMonths ?? 0;
+  const homeDeduction = input.idHomeFamilyDeduction === true ? min2(rd(100000n * BigInt(homeMembers) + 8333n * BigInt(homeMonths)), 300000n) : 0n;
+  if (homeDeduction > 0n)
+    notes.push(`ID Form 39R line 15: home for the aged or developmentally disabled deduction ${fmtD(homeDeduction)} ($1,000 per member, at most three; $83.33 per month) \u2014 the $100 Part E credit is then not allowed`);
+  const itemizedFederally = input.idFederalItemized === true;
+  const fthbCap = mfj ? 3000000n : 1500000n;
+  const fthb = min2(D4(input.idFirstTimeHomeBuyerContributions), fthbCap);
+  if (D4(input.idFirstTimeHomeBuyerContributions) > fthb)
+    notes.push(`ID Form 39R line 22: first-time home buyer savings contributions capped at ${fmtD(fthbCap)}`);
+  const otherSub = D4(input.subtractions);
+  if (otherSub > 0n)
+    notes.push(`ID Form 39R other subtractions ${fmtD(otherSub)} transcribed (energy efficiency upgrades, technological equipment donation, Idaho lottery prizes under $600, reservation income, workers' compensation premiums, bonus depreciation, bullion gains, Idaho Build America Bond interest)`);
+  if (ss2 > 0n)
+    notes.push(`ID Form 39R line 7: Social Security and railroad benefits taxed federally ${fmtD(ss2)} subtracted in full (\xA7 63-3022(l))`);
+  const healthFacts = (itemizing) => ({
+    idItemizingForIdaho: itemizing,
+    idSchAHealthPremiums: c(input.idSchAHealthPremiums),
+    idSchALtcPremiums: c(input.idSchALtcPremiums),
+    idSchAOtherMedical: c(input.idSchAOtherMedical),
+    idAgi: l7,
+    idHealthPremiumsPaid: c(input.idHealthPremiumsPaid),
+    idHealthPremiumsDeductedElsewhere: c(input.idHealthPremiumsDeductedElsewhere),
+    idLtcPremiumsPaid: c(input.idLtcPremiumsPaid),
+    idLtcDeductedElsewhere: c(input.idLtcDeductedElsewhere)
+  });
+  const wantsHealth = c(input.idHealthPremiumsPaid) > 0n || c(input.idLtcPremiumsPaid) > 0n;
+  const subtractionsExcludingHealth = nol + refund + usInt + energy + childCare + ss2 + retirement + capGain + military + adoption + msa + ideal + homeDeduction + fthb + otherSub;
+  const spouseItemizes = mfs && input.idSpouseItemizes === true;
+  const l16 = spouseItemizes ? 0n : rd(evalStateTax("us.id.standard_deduction", 0n, { idAgeBlindBoxes: boxes, isClaimedAsDependent: dependentFiler, idEarnedIncome: c(input.idEarnedIncome) }));
+  if (spouseItemizes)
+    notes.push("ID line 16: standard deduction $0 \u2014 'You Must Itemize If: Your filing status is married filing separately and your spouse itemizes' (IRC \xA7 63(c)(6)(A)); line 17 uses Idaho itemized deductions" + (itemizedFederally ? "" : " (pass idFederalItemized and the Schedule A amounts \u2014 assumed $0)"));
+  if (dependentFiler)
+    notes.push(`ID line 16: a filer claimable as a dependent gets the larger of $1,350 or earned income + $450, capped at the filing-status amount${boxes > 0 ? ", plus the age/blind amounts" : ""} \u2014 ${fmtD(l16)}`);
+  const l13 = itemizedFederally ? D4(input.idFederalItemizedDeductions) + D4(input.idForeignTaxCredit) : 0n;
+  let l15 = 0n;
+  let l14 = 0n;
+  if (itemizedFederally) {
+    l15 = rd(evalStateTax("us.id.itemized_deductions", 0n, { idFederalItemizedDeductions: c(input.idFederalItemizedDeductions), idForeignTaxCredit: c(input.idForeignTaxCredit), idSaltIncomeOrSalesTaxes: c(input.idSaltIncomeOrSalesTaxes), idRealEstateTaxes: c(input.idRealEstateTaxes), idPersonalPropertyTaxes: c(input.idPersonalPropertyTaxes), idSaltAllowed: c(input.idSaltAllowed) }));
+    l14 = l13 - l15;
+    if (D4(input.idForeignTaxCredit) > 0n)
+      notes.push(`ID line 13: the ${fmtD(D4(input.idForeignTaxCredit))} federal foreign tax credit is added to itemized deductions (Idaho has no matching credit)`);
+  }
+  const itemizeForIdaho = spouseItemizes || itemizedFederally && l15 > l16;
+  let health = 0n;
+  let ltc = 0n;
+  if (wantsHealth) {
+    health = rd(evalStateTax("us.id.health_insurance_deduction", 0n, healthFacts(itemizeForIdaho)));
+    ltc = rd(evalStateTax("us.id.long_term_care_deduction", 0n, healthFacts(itemizeForIdaho)));
+    if (health > 0n)
+      notes.push(`ID Form 39R line 18: health insurance premiums deduction ${fmtD(health)}${itemizeForIdaho ? " (reduced by the part of the federal medical deduction allocated to health insurance \u2014 you itemize for Idaho)" : " (no reduction \u2014 the Idaho standard deduction is used)"}; pre-tax and business-deducted premiums excluded`);
+    if (ltc > 0n)
+      notes.push(`ID Form 39R line 19: long-term care insurance premiums deduction ${fmtD(ltc)}`);
+  }
+  const l10 = subtractionsExcludingHealth + health + ltc;
+  const l11 = l9 - l10;
+  if (l11 < 0n)
+    notes.push("ID line 11: total adjusted income is negative \u2014 see Form 56 (Idaho NOL)");
+  const deduction = itemizeForIdaho ? l15 : l16;
+  if (itemizedFederally && !spouseItemizes)
+    notes.push(itemizeForIdaho ? `ID line 17: Idaho itemized deductions ${fmtD(l15)} (federal ${fmtD(l13)} less ${fmtD(l14)} of state and local income or sales taxes) beat the ${fmtD(l16)} standard deduction` : `ID line 17: the ${fmtD(l16)} standard deduction beats Idaho itemized deductions of ${fmtD(l15)} after removing state and local taxes ('it might be more beneficial to itemize for federal purposes but use the standard deduction for Idaho')`);
+  const l17 = max02(l11 - deduction);
+  const l18 = D4(input.idQbiDeduction);
+  if (l18 > 0n)
+    notes.push(`ID line 18: qualified business income and Schedule 1-A deductions ${fmtD(l18)} (federal Form 1040 lines 13a + 13b)`);
+  const l19 = max02(l17 - l18);
+  const l20 = rd(evalStateTax("us.id.income_tax", l19, {}));
+  notes.push(`ID line 20: 5.3% of Idaho taxable income over ${fs === "single" || mfs ? "$4,811" : "$9,622"} (no tax table \u2014 the line 20 worksheet)`);
+  let l21 = 0n;
+  if (D4(input.idOtherStateIncome) > 0n && D4(input.idOtherStateTaxDue) > 0n) {
+    l21 = rd(evalStateTax("us.id.other_state_credit", 0n, { idTaxBeforeCredits: l20, idOtherStateIncome: c(input.idOtherStateIncome), idAdjustedIncome: l11, idOtherStateTaxDue: c(input.idOtherStateTaxDue) }));
+    notes.push(`ID line 21 (Form 39R Part C): credit for tax paid to another state ${fmtD(l21)} \u2014 the smaller of Idaho tax \xD7 ${fmtD(D4(input.idOtherStateIncome))} \xF7 ${fmtD(l11)} (four decimals) and the other state's ${fmtD(D4(input.idOtherStateTaxDue))}; attach that state's return; one Form 39R per state`);
+  }
+  const l23 = D4(input.idBusinessCredits);
+  let d1 = 0n;
+  let d22 = 0n;
+  let d3 = 0n;
+  if (D4(input.idEducationalContributions) > 0n) {
+    d1 = rd(evalStateTax("us.id.educational_contribution_credit", 0n, { idTaxBeforeCredits: l20, idOtherStateCredit: l21, idEducationalContributions: c(input.idEducationalContributions) }));
+    notes.push(`ID Form 39R Part D line 1: Idaho educational entity credit ${fmtD(d1)} \u2014 the smallest of half the ${fmtD(D4(input.idEducationalContributions))} donated, 50% of the tax, ${mfj ? "$1,000" : "$500"}, and the tax after line 21`);
+  }
+  if (D4(input.idYouthContributions) > 0n) {
+    d22 = rd(evalStateTax("us.id.youth_rehab_contribution_credit", 0n, { idTaxBeforeCredits: l20, idOtherStateCredit: l21, idEducationalCredit: d1, idInvestmentTaxCredit: c(input.idInvestmentTaxCredit), idYouthContributions: c(input.idYouthContributions) }));
+    notes.push(`ID Form 39R Part D line 2: youth and rehabilitation facility credit ${fmtD(d22)} \u2014 the smallest of half the donation, 20% of the tax, ${mfj ? "$200" : "$100"}, and the remaining tax`);
+  }
+  if (D4(input.idOrganDonationExpenses) > 0n) {
+    d3 = rd(evalStateTax("us.id.live_organ_donation_credit", 0n, { idTaxBeforeCredits: l20, idOtherStateCredit: l21, idEducationalCredit: d1, idYouthCredit: d22, idBusinessCredits: l23, idOrganDonationExpenses: c(input.idOrganDonationExpenses) }));
+    notes.push(`ID Form 39R Part D line 3: live organ donation credit ${fmtD(d3)} (\u2264 $5,000; unused credit carries over five years)`);
+  }
+  const l22 = d1 + d22 + d3;
+  const children = input.idQualifyingChildren ?? 0;
+  let l24 = 0n;
+  if (children > 0) {
+    l24 = rd(evalStateTax("us.id.child_tax_credit", 0n, { idQualifyingChildren: children, idTaxBeforeCredits: l20, idOtherStateCredit: l21, idContributionCredits: l22, idBusinessCredits: l23 }));
+    notes.push(`ID line 24: Idaho Child Tax Credit ${fmtD(l24)} \u2014 $205 \xD7 ${children} qualifying child(ren) 16 or under, limited to the tax after lines 21-23; \xA7 63-3029L sunsets this credit for tax years beginning in 2026 (the 2026 extension bills did not pass)`);
+  }
+  const l25 = l21 + l22 + l23 + l24;
+  const l26 = max02(l20 - l25);
+  if (l25 > l20)
+    notes.push(`ID line 26: credits ${fmtD(l25)} exceed the tax ${fmtD(l20)} \u2014 the excess is lost (only the live organ credit carries over)`);
+  const l27 = D4(input.idFuelsTaxDue);
+  const purchases = D4(input.idUseTaxPurchases);
+  const l28 = purchases > 0n ? rd(evalStateTax("us.id.use_tax", 0n, { idUseTaxPurchases: purchases })) : 0n;
+  if (l28 > 0n)
+    notes.push(`ID line 28: use tax ${fmtD(l28)} = 6% of ${fmtD(purchases)} of untaxed purchases`);
+  const l29_30 = D4(input.idCreditRecapture);
+  const requiredToFile = input.idRequiredToFile !== false;
+  const l31 = rd(evalStateTax("us.id.permanent_building_fund_tax", 0n, { idReceivedPublicAssistance: input.idReceivedPublicAssistance === true, idBlind: input.idBlindFiler === true, idRequiredToFile: requiredToFile }));
+  if (l31 === 0n)
+    notes.push(`ID line 31: no $10 permanent building fund tax \u2014 ${!requiredToFile ? "not required to file ('NRF')" : input.idReceivedPublicAssistance === true ? "receiving Idaho public assistance (box checked)" : "legally blind"}`);
+  else
+    notes.push("ID line 31: $10 permanent building fund tax (\xA7 63-3082) \u2014 every filer required to file, unless on Idaho public assistance or legally blind (pass idBlindFiler)");
+  const l32 = l26 + l27 + l28 + l29_30 + l31;
+  const donations = D4(input.idDonations);
+  const l41 = l32 + donations;
+  if (donations > 0n)
+    notes.push(`ID lines 33-40: voluntary donations ${fmtD(donations)} added to the tax (they can't be reduced on an amended return)`);
+  const l42 = D4(input.idParentalChoiceCredit);
+  let l43 = 0n;
+  const excluded = input.idFoodCreditExcludedPersons ?? 0;
+  const partialMonths = input.idFoodCreditPartialMonths ?? 0;
+  const partialPersons = input.idFoodCreditPartialPersons ?? (partialMonths > 0 ? 1 : 0);
+  const foodPersons = Math.max(0, l6d - excluded - partialPersons);
+  if (input.idDonateFoodCredit === true)
+    notes.push("ID line 43: Food Tax Credit donated to the Cooperative Welfare Fund (box checked, $0 entered) \u2014 this can't be changed on an amended return");
+  else if (dependentFiler)
+    notes.push("ID line 43: no Food Tax Credit \u2014 'You can't claim this credit if someone else, such as a parent, can claim you as a dependent'");
+  else {
+    l43 = rd(evalStateTax("us.id.food_tax_credit", 0n, { idFoodCreditPersons: foodPersons, idFoodCreditPartialMonths: partialMonths }));
+    notes.push(`ID line 43: Food Tax Credit ${fmtD(l43)} \u2014 $155 \xD7 ${foodPersons} household member(s) qualified all year${partialMonths > 0 ? ` + $12.92 \xD7 ${partialMonths} qualified month(s)` : ""}; refundable; months on food stamps, incarcerated, or as a nonresident don't qualify (pass idFoodCreditPartialMonths / idFoodCreditExcludedPersons); receipts for actual sales tax paid (\u2264 $250 each) are an alternative not composed`);
+  }
+  let l44 = 0n;
+  if (homeMembers + homeMonths > 0 && input.idHomeFamilyDeduction !== true) {
+    l44 = rd(evalStateTax("us.id.home_for_family_member_credit", 0n, { idHomeFamilyMembers: homeMembers, idHomeFamilyPartialMonths: homeMonths }));
+    notes.push(`ID line 44 (Form 39R Part E): maintaining a home for a family member credit ${fmtD(l44)} ($100 per member, $8.33 per month, at most $300); refundable`);
+  }
+  const l45 = D4(input.idFuelsTaxRefund);
+  const l46 = D4(input.stateWithholding) + D4(input.spouseStateWithholding);
+  const l47 = D4(input.estimatedPayments) + D4(input.priorYearOverpaymentCredited) + D4(input.extensionPayment);
+  const l48 = D4(input.idEntityPayments);
+  const l49 = D4(input.idOtherRefundableCredits);
+  const l50 = l42 + l43 + l44 + l45 + l46 + l47 + l48 + l49;
+  const l52 = D4(input.idPenaltyAndInterest);
+  const l53 = D4(input.idPriorYearCredit);
+  const l51 = max02(l41 - l50);
+  const l54 = l41 >= l50 ? max02(l51 + l52 - l53) : 0n;
+  const l55 = l41 < l50 ? max02(l50 - l41 - l52) : 0n;
+  const apply = min2(D4(input.idApplyToNextYear), l55);
+  const l56 = l55 - apply;
+  if (l54 > 0n && l54 < 100n)
+    notes.push("ID line 54: 'Payments of less than $1 aren't required'");
+  if (l56 > 0n && l56 < 100n)
+    notes.push("ID line 56: 'We don't issue refunds of less than $1'");
+  if (l54 > 0n && l52 === 0n)
+    notes.push(`ID line 52: balance due ${fmtD(l54)} \u2014 interest runs from the due date at 6% for 2026; Idaho doesn't require estimated payments, so no underpayment penalty applies to a timely-filed return`);
+  notes.push("ID scope: Form 40 is composed for a full-year RESIDENT \u2014 part-year residents and nonresidents file Form 43 with Form 39NR (not composed); Form 44 business credits, Form 75 fuels tax, Form CG, Form 56 (NOL), the Parental Choice Tax Credit approval, and Part A/B lines not modeled are inputs; Idaho has no local income taxes");
+  const put = (k, v) => v !== 0n ? { [k]: fmtD(v) } : {};
+  return {
+    "6d_household": String(l6d),
+    "7_federal_agi": fmtD(l7),
+    ...put("8_additions", l8),
+    "9_total": fmtD(l9),
+    ...put("10_subtractions", l10),
+    ...put("39R_B6_child_care_deduction", childCare),
+    ...put("39R_B7_social_security", ss2),
+    ...put("39R_B8_retirement_benefits_deduction", retirement),
+    ...put("39R_B10_capital_gains_deduction", capGain),
+    ...put("39R_B18_health_insurance", health),
+    ...put("39R_B19_long_term_care", ltc),
+    "11_total_adjusted_income": fmtD(l11),
+    ...put("13_federal_itemized", l13),
+    ...put("14_state_local_taxes", l14),
+    ...put("15_idaho_itemized", l15),
+    "16_standard_deduction": fmtD(l16),
+    _deduction_method: itemizeForIdaho ? "itemized" : "standard",
+    "17_income_after_deduction": fmtD(l17),
+    ...put("18_qbi_deduction", l18),
+    "19_idaho_taxable_income": fmtD(l19),
+    "20_tax": fmtD(l20),
+    ...put("21_other_state_credit", l21),
+    ...put("22_part_d_credits", l22),
+    ...put("23_business_credits", l23),
+    ...put("24_child_tax_credit", l24),
+    "25_total_credits": fmtD(l25),
+    "26_tax_after_credits": fmtD(l26),
+    ...put("27_fuels_tax", l27),
+    ...put("28_use_tax", l28),
+    ...put("29_30_recapture", l29_30),
+    "31_permanent_building_fund_tax": fmtD(l31),
+    "32_total_tax": fmtD(l32),
+    ...put("33_40_donations", donations),
+    "41_total_tax_plus_donations": fmtD(l41),
+    ...put("42_parental_choice_credit", l42),
+    ...put("43_food_tax_credit", l43),
+    ...put("44_home_for_family_member_credit", l44),
+    ...put("45_fuels_tax_refund", l45),
+    ...put("46_withholding", l46),
+    ...put("47_estimated_payments", l47),
+    ...put("48_entity_payments", l48),
+    ...put("49_other_credits", l49),
+    "50_total_payments_credits": fmtD(l50),
+    "51_tax_due": fmtD(l51),
+    ...put("52_penalty_interest", l52),
+    ...put("53_prior_year_credit", l53),
+    "54_total_due": fmtD(l54),
+    "55_overpaid": fmtD(l55),
+    ...put("56_apply_to_2026", apply),
+    "56_refund": fmtD(l56)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -26565,11 +26842,11 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -27272,7 +27549,81 @@ var neShape = {
   // federalEITC (line 44), dependents, claimedAsDependent, ageOrBlindBoxes (line 2a), stateWithholding, estimatedPayments,
   // priorYearOverpaymentCredited, and extensionPayment (all three → line 40) are shared.
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape };
+var idShape = {
+  idFederalItemized: external_exports.boolean().optional().describe("ID lines 13-17: the filer itemized on the federal return \u2014 Idaho then uses the LARGER of the federal standard deduction and federal itemized deductions minus state and local income or sales taxes (pass idFederalItemizedDeductions and the Schedule A tax lines)"),
+  idFederalItemizedDeductions: usd.optional().describe("ID line 13: federal Schedule A line 17 total itemized deductions"),
+  idForeignTaxCredit: usd.optional().describe("ID: federal foreign tax credit claimed \u2014 Idaho adds it to itemized deductions (no matching credit)"),
+  idSaltIncomeOrSalesTaxes: usd.optional().describe("ID line 14 input: federal Schedule A line 5a state and local income taxes or general sales taxes"),
+  idRealEstateTaxes: usd.optional().describe("ID line 14 input: Schedule A line 5b real estate taxes"),
+  idPersonalPropertyTaxes: usd.optional().describe("ID line 14 input: Schedule A line 5c personal property taxes"),
+  idSaltAllowed: usd.optional().describe("ID line 14 input: Schedule A line 5e taxes allowed after the federal cap (used when 5a+5b+5c exceeds $40,000 / $20,000 MFS)"),
+  idEarnedIncome: usd.optional().describe("ID earned income \u2014 REQUIRED for a filer claimable as a dependent (the standard deduction is the larger of $1,350 or earned income + $450, capped) and for the Form 39R child care deduction"),
+  idSpouseEarnedIncome: usd.optional().describe("ID Form 39R child care worksheet line 6: spouse's earned income (MFJ)"),
+  idQbiDeduction: usd.optional().describe("ID line 18: federal Form 1040 lines 13a + 13b (qualified business income deduction and Schedule 1-A deductions) \u2014 subtracted from Idaho income"),
+  idQualifyingChildren: external_exports.number().int().optional().describe("ID line 24: qualifying children age 16 or under on December 31, 2025 \u2014 $205 nonrefundable each (TY2025 only; \xA7 63-3029L sunsets for 2026)"),
+  idFoodCreditPartialMonths: external_exports.number().int().optional().describe("ID line 43 Food Tax Credit: total qualified months across household members qualified only part of the year ($12.92 each) \u2014 months on food stamps, incarcerated, or nonresident don't qualify; pass idFoodCreditPartialPersons with it"),
+  idFoodCreditPartialPersons: external_exports.number().int().optional().describe("ID line 43: how many household members are qualified only part of the year (they are removed from the $155 full-year count and paid $12.92 per month via idFoodCreditPartialMonths); defaults to 1 when partial months are given"),
+  idSpouseItemizes: external_exports.boolean().optional().describe("ID married filing separately: the spouse itemizes \u2014 the filer MUST itemize (standard deduction $0); pass idFederalItemized and the Schedule A amounts"),
+  idInvestmentTaxCredit: usd.optional().describe("ID Form 44 Part I line 1: investment tax credit (Form 49) \u2014 the youth/rehab facility credit's remaining-tax limit subtracts this line specifically"),
+  idFoodCreditExcludedPersons: external_exports.number().int().optional().describe("ID line 43: household members who do NOT qualify for the Food Tax Credit at all (e.g. nonresident dependents, full-year food stamp recipients) \u2014 subtracted from the automatic full-year count"),
+  idDonateFoodCredit: external_exports.boolean().optional().describe("ID line 43: donate the entire Food Tax Credit to the Cooperative Welfare Fund (line 43 = $0)"),
+  idUsInterest: usd.optional().describe("ID Form 39R Part B line 3: interest from U.S. government obligations in federal AGI"),
+  idStateRefund: usd.optional().describe("ID Form 39R Part B line 2: state income tax refund included in federal income (Schedule 1 line 1)"),
+  idIdahoNolCarryover: usd.optional().describe("ID Form 39R Part B line 1: Idaho net operating loss carryover/carryback (Form 56)"),
+  idFederalNolDeduction: usd.optional().describe("ID Form 39R Part A line 1: federal NOL deduction included on Form 40 line 7 (added back)"),
+  idNonIdahoBondInterest: usd.optional().describe("ID Form 39R Part A line 3: interest and dividends from non-Idaho state and local bonds, net of expenses (added)"),
+  idRetirementEligible: external_exports.boolean().optional().describe("ID Form 39R line 8: the filer (or spouse) meets the \xA7 63-3022A age/disability test \u2014 65, or 62 and disabled; military retirees: disabled, 62+, or employed with income requiring a federal return. Not available MFS"),
+  idRailroadBenefits: usd.optional().describe("ID Form 39R line 8b: federal Railroad Retirement benefits received (RRB-1099 Box 5, RRB-1099-R Box 7 less Box 8)"),
+  idSocialSecurityBenefits: usd.optional().describe("ID Form 39R line 8c: Social Security benefits RECEIVED (SSA-1099 Box 5, gross) \u2014 reduces the $48,216 / $72,324 retirement deduction maximum"),
+  idQualifyingRetirementBenefits: usd.optional().describe("ID Form 39R line 8e: qualifying CSRS/FSRDS, Idaho firefighter, Idaho city police, or U.S. military retirement benefits included in federal income (not FERS, PERSI base plan, or private pensions)"),
+  idChildCareExpenses: usd.optional().describe("ID Form 39R Part B line 6: qualified child/dependent care expenses paid (deduction \u2264 $12,000 less excluded benefits, \u2264 each spouse's earned income; pass idEarnedIncome)"),
+  idDependentCareBenefitsExcluded: usd.optional().describe("ID Form 39R child care worksheet line 3: excluded dependent care benefits (Form 2441 Part III)"),
+  idQualifiedCapitalGain: usd.optional().describe("ID Form 39R Part B line 10 (Form CG): capital gain net income from qualified Idaho property (real property held 12+ months, etc.) \u2014 60% deductible"),
+  idNetCapitalGain: usd.optional().describe("ID: capital gain net income from all property included in taxable income \u2014 caps the capital gains deduction"),
+  idMilitaryPayOutsideIdaho: usd.optional().describe("ID Form 39R Part B line 11: active-duty military pay earned outside Idaho (120+ consecutive days)"),
+  idAdoptionExpenses: usd.optional().describe("ID Form 39R Part B line 12: legal and medical adoption expenses \u2014 the composer caps at $10,000 per adoption (pass the per-adoption total)"),
+  idMedicalSavingsContributions: usd.optional().describe("ID Form 39R Part B line 13: Idaho medical savings account contributions plus interest \u2014 capped at $10,000 ($20,000 MFJ)"),
+  idCollegeSavingsContributions: usd.optional().describe("ID Form 39R Part B line 14: Idaho College Savings Program (IDeal) contributions \u2014 capped at $6,000 ($12,000 MFJ)"),
+  idFirstTimeHomeBuyerContributions: usd.optional().describe("ID Form 39R Part B line 22: first-time home buyer savings account contributions plus interest \u2014 capped at $15,000 ($30,000 MFJ)"),
+  idHomeFamilyMembers: external_exports.number().int().optional().describe("ID Form 39R Part E / Part B line 15: family members age 65+ (not you or your spouse) or with a developmental disability for whom you maintained a home all year and provided over half the support \u2014 $100 credit each (max $300), or the $1,000 deduction each (max 3) with idHomeFamilyDeduction"),
+  idHomeFamilyPartialMonths: external_exports.number().int().optional().describe("ID Form 39R Part E: total months for partially-qualified family members ($8.33 credit or $83.33 deduction per month)"),
+  idHomeFamilyDeduction: external_exports.boolean().optional().describe("ID: take the $1,000-per-member Form 39R Part B line 15 deduction instead of the $100 Part E credit"),
+  idHealthPremiumsPaid: usd.optional().describe("ID Form 39R Part B line 18: health insurance premiums paid for you, spouse, and dependents, excluding pre-tax/cafeteria-plan and business-deducted premiums (worksheet line 7)"),
+  idHealthPremiumsDeductedElsewhere: usd.optional().describe("ID health worksheet line 9: health insurance costs deducted elsewhere on the federal return (self-employed health insurance)"),
+  idLtcPremiumsPaid: usd.optional().describe("ID Form 39R Part B line 19: qualified long-term care insurance premiums paid (worksheet line 11)"),
+  idLtcDeductedElsewhere: usd.optional().describe("ID LTC worksheet line 14: long-term care premiums deducted elsewhere on the federal return"),
+  idSchAHealthPremiums: usd.optional().describe("ID health/LTC worksheet line 1: health insurance premiums included on federal Schedule A (medical) \u2014 only matters when itemizing for Idaho"),
+  idSchALtcPremiums: usd.optional().describe("ID health/LTC worksheet line 2: long-term care premiums included on federal Schedule A"),
+  idSchAOtherMedical: usd.optional().describe("ID health/LTC worksheet line 3: other medical expenses on federal Schedule A"),
+  idEnergyDeviceCost2025: usd.optional().describe("ID Form 39R line 5a: alternative energy device cost placed in service in 2025 (40%, \u2264 $5,000)"),
+  idEnergyDeviceCost2024: usd.optional().describe("ID Form 39R line 5b: device cost, 2024 (20%)"),
+  idEnergyDeviceCost2023: usd.optional().describe("ID Form 39R line 5c: device cost, 2023 (20%)"),
+  idEnergyDeviceCost2022: usd.optional().describe("ID Form 39R line 5d: device cost, 2022 (20%)"),
+  idOtherStateIncome: usd.optional().describe("ID Form 39R Part C line 2: federal AGI earned in the other state and taxed by both states, adjusted for Idaho modifications"),
+  idOtherStateTaxDue: usd.optional().describe("ID Form 39R Part C line 6: the other state's tax due minus its income tax credits (not withholding; not SALT workaround payments) \u2014 attach that return"),
+  idEducationalContributions: usd.optional().describe("ID Form 39R Part D line 1: cash donated to qualified Idaho educational entities (50% credit, \u2264 50% of tax, \u2264 $500 / $1,000 joint)"),
+  idYouthContributions: usd.optional().describe("ID Form 39R Part D line 2: donations to Idaho youth/rehabilitation facilities, centers for independent living, or licensed substance abuse centers (50% credit, \u2264 20% of tax, \u2264 $100 / $200 joint)"),
+  idOrganDonationExpenses: usd.optional().describe("ID Form 39R Part D line 3: unreimbursed live organ donation travel, lodging, and lost wages (\u2264 $5,000; five-year carryover)"),
+  idBusinessCredits: usd.optional().describe("ID line 23: Form 44 Part I business income tax credits"),
+  idFuelsTaxDue: usd.optional().describe("ID line 27: fuels use tax due from Form 75"),
+  idUseTaxPurchases: usd.optional().describe("ID line 28: purchases on which no Idaho sales tax was paid (online, mail order, out-of-state) \u2014 6%"),
+  idCreditRecapture: usd.optional().describe("ID lines 29-30: recapture of income tax credits (Form 44 Part II) and of the qualified investment exemption (Form 49ER)"),
+  idReceivedPublicAssistance: external_exports.boolean().optional().describe("ID line 31: receiving Idaho public assistance payments at year end (not food stamps/WIC) \u2014 no $10 permanent building fund tax"),
+  idBlindFiler: external_exports.boolean().optional().describe("ID line 31: you or your spouse are legally blind at year end \u2014 no $10 permanent building fund tax (\xA7 63-3086); also check the line 12b box via ageOrBlindBoxes"),
+  idRequiredToFile: external_exports.boolean().optional().describe("ID line 31: set false when gross income is below the Idaho filing threshold (single $15,750 / $17,750 at 65+; MFJ $31,500; HOH $23,625; MFS $5) \u2014 no $10 permanent building fund tax; defaults to true"),
+  idDonations: usd.optional().describe("ID lines 33-40: total voluntary donations (Nongame Wildlife, Children's Trust, Special Olympics, Guard and Reserve, Red Cross, Veterans, Food Bank, Opportunity Scholarship)"),
+  idParentalChoiceCredit: usd.optional().describe("ID line 42: approved Parental Choice Tax Credit qualified expenses (refundable, up to the approved amount)"),
+  idFuelsTaxRefund: usd.optional().describe("ID line 45: special fuels / gasoline tax refund from Form 75"),
+  idEntityPayments: usd.optional().describe("ID line 48: Idaho tax paid or withheld by a pass-through entity or ABE (Form ID K-1)"),
+  idOtherRefundableCredits: usd.optional().describe("ID line 49: Tax Reimbursement Incentive credit and Claim of Right credit"),
+  idPenaltyAndInterest: usd.optional().describe("ID line 52: penalty and interest (interest 6% for 2026; 10% penalty on a nonqualified Idaho MSA withdrawal under 59\xBD)"),
+  idPriorYearCredit: usd.optional().describe("ID line 53: nonrefundable credit from a prior year return (Form 44)"),
+  idApplyToNextYear: usd.optional().describe("ID line 56: part of the overpayment to apply to 2026 estimated tax")
+  // Shared inputs used by Form 40: federalAGI (line 7), additions/subtractions (other Form 39R Part A/B lines), taxableSocialSecurity
+  // (Form 39R Part B line 7, 100%), dependents (line 6c → Food Tax Credit), claimedAsDependent (line 12c), ageOrBlindBoxes (lines 12a-12b),
+  // stateWithholding/spouseStateWithholding (line 46), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 47).
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -27302,7 +27653,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -27346,6 +27697,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeNM(input, evalStateTax, notes), notes };
   if (j === "ne")
     return { lines: composeNE(input, evalStateTax, notes), notes };
+  if (j === "id")
+    return { lines: composeID(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -30747,6 +31100,365 @@ var facts = [
     description: "Taxable IRA distributions other than Roth (Form 1040 line 4b) \u2014 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" }
   },
+  // ---- Idaho (Form 40) ----
+  {
+    id: "idAgeBlindBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description: "Form 40 lines 12a-12b boxes checked (you 65+, you blind, spouse 65+, spouse blind; must match the federal return) \u2014 $2,000 each for single/HOH, $1,600 each for MFJ/QSS/MFS (us.id.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "idEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Earned income (wages, salaries, tips, professional fees, taxable scholarships) \u2014 the dependent-filer standard deduction (us.id.standard_deduction) and the Form 39R child care worksheet line 5 (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Spouse's earned income on a joint return \u2014 Form 39R child care worksheet line 6 (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idFederalItemizedDeductions",
+    type: "money",
+    min: "0",
+    description: "Form 40 line 13: total federal itemized deductions, Schedule A line 17 (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idForeignTaxCredit",
+    type: "money",
+    min: "0",
+    description: "Federal foreign tax credit claimed \u2014 Idaho allows it as an addition to itemized deductions (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idSaltIncomeOrSalesTaxes",
+    type: "money",
+    min: "0",
+    description: "Federal Schedule A line 5a: state and local income taxes or general sales taxes (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idRealEstateTaxes",
+    type: "money",
+    min: "0",
+    description: "Federal Schedule A line 5b: state and local real estate taxes (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idPersonalPropertyTaxes",
+    type: "money",
+    min: "0",
+    description: "Federal Schedule A line 5c: state and local personal property taxes (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idSaltAllowed",
+    type: "money",
+    min: "0",
+    description: "Federal Schedule A line 5e: state and local taxes allowed after the federal cap \u2014 used when line 5d exceeds $40,000 ($20,000 MFS) (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idQualifyingChildren",
+    type: "int",
+    min: "0",
+    description: "Form 40 line 24 worksheet line 1: qualifying children (IRC \xA7 24(c)) age 16 or under on December 31 \u2014 $205 each (us.id.child_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "idTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description: "Form 40 line 20 Idaho income tax \u2014 the base for the credit limits (us.id.child_tax_credit, us.id.other_state_credit, us.id.educational_contribution_credit, us.id.youth_rehab_contribution_credit, us.id.live_organ_donation_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idOtherStateCredit",
+    type: "money",
+    min: "0",
+    description: "Form 40 line 21 credit for income tax paid to other states \u2014 reduces the tax available for the Part D and child tax credits. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idEducationalCredit",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part D line 1 educational entity credit already allowed \u2014 reduces the tax available for the youth/rehab and live organ credits. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idYouthCredit",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part D line 2 youth and rehabilitation facility credit already allowed \u2014 reduces the tax available for the live organ donation credit. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idInvestmentTaxCredit",
+    type: "money",
+    min: "0",
+    description: "Form 44 Part I line 1: Idaho investment tax credit (Form 49) \u2014 the only Form 44 line that reduces the tax available for the youth/rehabilitation facility credit (us.id.youth_rehab_contribution_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idContributionCredits",
+    type: "money",
+    min: "0",
+    description: "Form 40 line 22: total Form 39R Part D credits \u2014 reduces the tax available for the child tax credit (us.id.child_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idBusinessCredits",
+    type: "money",
+    min: "0",
+    description: "Form 40 line 23 / Form 44 Part I: business income tax credits \u2014 reduce the tax available for the Part D and child tax credits. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idFoodCreditPersons",
+    type: "int",
+    min: "0",
+    description: "Food Tax Credit worksheet: household members (you, spouse, resident dependents) qualified for all twelve months \u2014 $155 each (us.id.food_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "idFoodCreditPartialMonths",
+    type: "int",
+    min: "0",
+    description: "Food Tax Credit worksheet: total qualified months across household members qualified for only part of the year \u2014 $12.92 each (us.id.food_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "idOtherStateIncome",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part C line 2: federal AGI earned in the other state and taxed by both states, adjusted for Idaho modifications (us.id.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idAdjustedIncome",
+    type: "money",
+    description: "Form 39R Part C line 3: Idaho adjusted income, Form 40 line 11 (us.id.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idOtherStateTaxDue",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part C line 6: the other state's tax due from its table or schedule minus its income tax credits (not SALT workaround payments) (us.id.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idEducationalContributions",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part D line 1: cash contributed to qualified Idaho educational entities (us.id.educational_contribution_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idYouthContributions",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part D line 2: cash or goods contributed to Idaho youth and rehabilitation facilities, centers for independent living, or licensed substance abuse centers (us.id.youth_rehab_contribution_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idOrganDonationExpenses",
+    type: "money",
+    min: "0",
+    description: "Form 39R Part D line 3: unreimbursed travel, lodging, and lost wages for a live organ donation (us.id.live_organ_donation_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idRetirementEligible",
+    type: "bool",
+    description: "The filer (or spouse) meets the \xA7 63-3022A age/disability test \u2014 65, or 62 and disabled; military retirees: disabled, 62, or employed with income requiring a federal return (us.id.retirement_benefits_deduction).",
+    default: { value: false, rationale: "Eligibility must be affirmed; assumed not met" }
+  },
+  {
+    id: "idRailroadBenefits",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 8b: federal Railroad Retirement benefits received (RRB-1099 Box 5 net SSEB, RRB-1099-R Box 7 less Box 8) (us.id.retirement_benefits_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idSocialSecurityBenefits",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 8c: Social Security benefits received, SSA-1099 Box 5 (gross, not the taxable portion) (us.id.retirement_benefits_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idQualifyingRetirementBenefits",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 8e: qualifying CSRS/FSRDS, Idaho firefighter, Idaho city police, or military retirement benefits included in federal income (us.id.retirement_benefits_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idChildCareExpenses",
+    type: "money",
+    min: "0",
+    description: "Form 39R child care worksheet line 1: qualified expenses paid, excluding employer-paid or excluded amounts (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idDependentCareBenefitsExcluded",
+    type: "money",
+    min: "0",
+    description: "Form 39R child care worksheet line 3: excluded dependent care benefits from federal Form 2441 Part III (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idItemizingForIdaho",
+    type: "bool",
+    description: "The filer uses itemized deductions on Form 40 line 17 (line 15 exceeds line 16) \u2014 the health and long-term care worksheets then allocate the federal medical deduction (us.id.health_insurance_deduction, us.id.long_term_care_deduction).",
+    default: { value: false, rationale: "Assumed the standard deduction absent contrary input" }
+  },
+  {
+    id: "idSchAHealthPremiums",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 1: health insurance premiums claimed on federal Schedule A (us.id.health_insurance_deduction, us.id.long_term_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idSchALtcPremiums",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 2: long-term care premiums claimed on federal Schedule A. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idSchAOtherMedical",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 3: other medical expenses claimed on federal Schedule A. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idAgi",
+    type: "money",
+    description: "Federal adjusted gross income, Form 40 line 7 \u2014 the 7.5% medical floor in the health/LTC worksheets (us.id.health_insurance_deduction, us.id.long_term_care_deduction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idHealthPremiumsPaid",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 7: total health insurance premiums paid for you, your spouse, and dependents, excluding pre-tax/cafeteria-plan and business-deducted premiums (us.id.health_insurance_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idHealthPremiumsDeductedElsewhere",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 9: health insurance costs deducted elsewhere on the federal return (e.g. self-employed health insurance) (us.id.health_insurance_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idLtcPremiumsPaid",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 11: total qualified long-term care insurance premiums paid (us.id.long_term_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idLtcDeductedElsewhere",
+    type: "money",
+    min: "0",
+    description: "Health/LTC worksheet line 14: long-term care premiums deducted elsewhere on the federal return (us.id.long_term_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idEnergyDeviceCost2025",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 5a: cost of an alternative energy device placed in service in 2025 (40%) (us.id.alternative_energy_device_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idEnergyDeviceCost2024",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 5b: cost of an alternative energy device placed in service in 2024 (20%). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idEnergyDeviceCost2023",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 5c: cost of an alternative energy device placed in service in 2023 (20%). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idEnergyDeviceCost2022",
+    type: "money",
+    min: "0",
+    description: "Form 39R line 5d: cost of an alternative energy device placed in service in 2022 (20%). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idQualifiedCapitalGain",
+    type: "money",
+    min: "0",
+    description: "Form CG: capital gain net income from qualified Idaho property (real property held 12+ months, etc.) (us.id.capital_gains_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idNetCapitalGain",
+    type: "money",
+    min: "0",
+    description: "Capital gain net income from all property included in taxable income \u2014 caps the Idaho capital gains deduction (us.id.capital_gains_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "idReceivedPublicAssistance",
+    type: "bool",
+    description: "Form 40 line 31 box: receiving Idaho public assistance payments at the end of the tax year (not food stamps or WIC) \u2014 no $10 permanent building fund tax (us.id.permanent_building_fund_tax).",
+    default: { value: false, rationale: "Assumed not receiving public assistance" }
+  },
+  {
+    id: "idBlind",
+    type: "bool",
+    description: "You or your spouse are legally blind at the end of the tax year \u2014 no $10 permanent building fund tax (us.id.permanent_building_fund_tax).",
+    default: { value: false, rationale: "Assumed not blind" }
+  },
+  {
+    id: "idRequiredToFile",
+    type: "bool",
+    description: "Idaho requires this return (gross income at or above the filing threshold for the filing status) \u2014 the $10 permanent building fund tax applies (us.id.permanent_building_fund_tax).",
+    default: { value: true, rationale: "Assumed required to file" }
+  },
+  {
+    id: "idHomeFamilyMembers",
+    type: "int",
+    min: "0",
+    description: "Form 39R Part E: family members age 65+ (not you or your spouse) or with a developmental disability for whom you maintained a home all year and provided over half the support \u2014 $100 each, at most $300 (us.id.home_for_family_member_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "idHomeFamilyPartialMonths",
+    type: "int",
+    min: "0",
+    description: "Form 39R Part E: total months of home maintenance for partially-qualified family members \u2014 $8.33 each (us.id.home_for_family_member_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "idUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description: "Form 40 line 28: purchases on which no Idaho sales tax was paid (online, mail order, out-of-state) \u2014 6% (us.id.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
   // ---- Nebraska (Form 1040N) ----
   {
     id: "neUseTaxTable",
@@ -31674,7 +32386,7 @@ function bandMidpoint(o) {
     left: o,
     right: money2(cents)
   });
-  const banded = (unit, half2) => ({
+  const banded = (unit, half3) => ({
     kind: "add",
     args: [
       {
@@ -31682,7 +32394,7 @@ function bandMidpoint(o) {
         base: money2(unit),
         count: { kind: "stepUnits", value: o, unitCents: unit, mode: "floor" }
       },
-      money2(half2)
+      money2(half3)
     ]
   });
   return {
@@ -37147,10 +37859,10 @@ var isStatus8 = (status) => ({
   left: fact29("filingStatus"),
   right: { kind: "enum", value: status }
 });
-var mfsHalf = (full, half2) => ({
+var mfsHalf = (full, half3) => ({
   kind: "if",
   cond: isStatus8("mfs"),
-  then: param15(half2),
+  then: param15(half3),
   else: param15(full)
 });
 var agi = ruleRef23("us.federal.agi");
@@ -40554,7 +41266,7 @@ var njRules = [
     },
     formula: (() => {
       const ti = max05(fact36("stateTaxableIncome"));
-      const pct5 = (num) => ({
+      const pct6 = (num) => ({
         kind: "mulRate",
         base: fact36("njFederalCdcc"),
         rate: { num, den: "100" },
@@ -40563,7 +41275,7 @@ var njRules = [
       const tier = (max2, num, next) => ({
         kind: "if",
         cond: le(ti, param17(max2)),
-        then: pct5(num),
+        then: pct6(num),
         else: next
       });
       return rd3(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money33("0")))))));
@@ -41035,7 +41747,7 @@ var ohRules = [
       // $75,000 → 10%; above → 5%
     },
     formula: (() => {
-      const pct5 = (num) => ({
+      const pct6 = (num) => ({
         kind: "mulRate",
         base: max06(fact36("ohTaxLessCredits")),
         rate: { num, den: "100" },
@@ -41044,16 +41756,16 @@ var ohRules = [
       const tiered = {
         kind: "if",
         cond: le2(magiLessExemptions, param18("tier1Max")),
-        then: pct5("20"),
+        then: pct6("20"),
         else: {
           kind: "if",
           cond: le2(magiLessExemptions, param18("tier2Max")),
-          then: pct5("15"),
+          then: pct6("15"),
           else: {
             kind: "if",
             cond: le2(magiLessExemptions, param18("tier3Max")),
-            then: pct5("10"),
-            else: pct5("5")
+            then: pct6("10"),
+            else: pct6("5")
           }
         }
       };
@@ -42289,8 +43001,8 @@ var moRules = [
     formula: (() => {
       const magi2 = fact36("moMagi");
       const total = { kind: "max0", arg: fact36("moFederalTaxTotal") };
-      const pct5 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
-      const uncapped = iff2(le5(magi2, money33("2500000")), pct5("35"), iff2(le5(magi2, money33("5000000")), pct5("25"), iff2(le5(magi2, money33("10000000")), pct5("15"), iff2(le5(magi2, money33("12500000")), pct5("5"), money33("0")))));
+      const pct6 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
+      const uncapped = iff2(le5(magi2, money33("2500000")), pct6("35"), iff2(le5(magi2, money33("5000000")), pct6("25"), iff2(le5(magi2, money33("10000000")), pct6("15"), iff2(le5(magi2, money33("12500000")), pct6("5"), money33("0")))));
       const cap = iff2({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } }, money33("1000000"), money33("500000"));
       return { kind: "min", args: [uncapped, cap] };
     })()
@@ -42608,8 +43320,8 @@ var wiRules = [
     formula: (() => {
       const eic = { kind: "max0", arg: fact36("wiFederalEicForWi") };
       const kids = fact36("wiQualifyingChildren");
-      const pct5 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
-      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct5("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct5("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct5("4"), money33("0"))));
+      const pct6 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct6("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct6("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct6("4"), money33("0"))));
     })()
   },
   {
@@ -44699,15 +45411,15 @@ var tcsFor = (agi2, s, method) => {
   const taxable3 = max010(sub10(agi2, exemptionFor(agi2, s)));
   const scaledTax = scaledSchedule2(taxable3, SCHED[s]);
   const cAndD = add6(addbackFor(agi2, s), recaptureFor(agi2, s));
-  const pct5 = creditPctFor(agi2, s);
+  const pct6 = creditPctFor(agi2, s);
   if (method === "schedule") {
     const line4 = dollarsFromScaled2(scaledTax, "1000000");
     const line7 = add6(line4, cAndD);
-    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct5), c: money33("100"), round: "half-up" });
+    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct6), c: money33("100"), round: "half-up" });
     return sub10(line7, line92);
   }
   const totalScaled = add6(scaledTax, times2(cAndD, "10000"));
-  const keep = sub10(int5("100"), pct5);
+  const keep = sub10(int5("100"), pct6);
   const scaledAfterCredit = mulInt8(totalScaled, keep);
   return dollarsFromScaled2(scaledAfterCredit, "100000000");
 };
@@ -45692,8 +46404,8 @@ var arRules = [
       const earned2 = max012(fact36("arEarnedIncome"));
       const l6 = iff11(isMfj2, minE(l3, earned2, max012(fact36("arSpouseEarnedIncome"))), minE(l3, earned2));
       const steps = stepUnits2(max012(sub12(fact36("arFederalAgi"), money33("1500000"))), "200000", "ceil");
-      const pct5 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
-      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct5, c: money33("100"), round: "half-up" });
+      const pct6 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
+      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct6, c: money33("100"), round: "half-up" });
       return rd17({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
     })()
   },
@@ -46861,6 +47573,441 @@ var neRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-id.js
+var rd20 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp7 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var le13 = (l, r) => cmp7("le", l, r);
+var gt6 = (l, r) => cmp7("gt", l, r);
+var iff14 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add11 = (...args) => ({ kind: "add", args });
+var sub15 = (left, right) => ({ kind: "sub", left, right });
+var max015 = (arg) => ({ kind: "max0", arg });
+var minE4 = (...args) => ({ kind: "min", args });
+var maxE3 = (...args) => ({ kind: "max", args });
+var or5 = (...args) => ({ kind: "or", args });
+var not3 = (arg) => ({ kind: "not", arg });
+var mulInt13 = (base, count) => ({ kind: "mulInt", base, count });
+var isStatus23 = (v) => cmp7("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJointLike = or5(isStatus23("mfj"), isStatus23("qss"), isStatus23("hoh"));
+var isMfj3 = isStatus23("mfj");
+var pct4 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var half2 = (x) => pct4(x, "1", "2");
+var BOOKLET_URL5 = "https://tax.idaho.gov/document-mngr/forms_EIN00046/";
+var FORM40_URL = "https://tax.idaho.gov/document-mngr/forms_EFO00089/";
+var FORM39R_URL = "https://tax.idaho.gov/document-mngr/forms_EFO00088/";
+var CODE = (s) => `https://legislature.idaho.gov/statutesrules/idstat/Title63/T63CH30/SECT${s}/`;
+var idRules = [
+  {
+    id: "us.id.income_tax",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho income tax \u2014 5.3% of Idaho taxable income over $4,811 (single, MFS) or $9,622 (MFJ, HOH, QSS) (Form 40 line 20 worksheet)",
+    citation: {
+      source: "Idaho Code \xA7 63-3024(2)-(3) (as amended by 2025 ch. 13 [H40]: 5.3%; thresholds indexed from $2,500 / $5,000 by the CPI factor since 2000); 2025 Form 40 instructions, line 20 'Worksheet' p. 9; Form 40 line 20 'Tax from worksheet'",
+      section: "\xA7 63-3024; Form 40 line 20",
+      url: CODE("63-3024"),
+      excerpt: "STATUTE (verbatim): '(2)(a) The tax imposed upon individuals, trusts, and estates shall be computed at the rate of five and three-tenths percent (5.3%) of taxable income over two thousand five hundred dollars ($2,500). (b) For taxpayers filing a joint return pursuant to the provisions of section 63-3031, Idaho Code, the tax imposed shall be computed at the rate of five and three-tenths percent (5.3%) of taxable income over five thousand dollars ($5,000). For the purposes of this section, a return of a surviving spouse, as defined in section 2(a) of the Internal Revenue Code, and a head of household, as defined in section 2(b) of the Internal Revenue Code, shall be treated as a joint return. (3) For taxable year 2000 and each year thereafter, the state tax commission shall prescribe a factor that shall be used to compute the Idaho income tax thresholds provided in subsection (2) of this section. The factor shall provide an adjustment to the Idaho tax thresholds so that inflation will not result in a tax increase. \u2026 multiply the last threshold amount by the percentage (the consumer price index for the calendar year immediately preceding the calendar year to which the adjusted threshold amount will apply divided by the consumer price index for calendar year 1998).' History: '[63-3024, added 2022, 1st E.S., ch. 1, sec. 5, p. 6; am. 2024, ch. 237, sec. 2, p. 824; am. 2025, ch. 13, sec. 3, p. 43.]' \u2014 no 2026 amendment (H0589, 2026, was never heard). BOOKLET (What's New, p. 2): 'Tax Rate Reduction \u2014 Effective January 1, 2025, the individual income tax rate is 5.3%.' LINE 20 WORKSHEET (verbatim): '1. Enter the amount of Idaho taxable income from Form 40, line 19; 2. Enter the amount shown below for your filing status: Single or married filing separately, enter $4,811; Married filing jointly, head of household, or qualifying surviving spouse, enter $9,622; 3. Subtract line 2 from line 1. Enter the subtotal; 4. Multiply subtotal by 5.3%; 5. Idaho tax. Enter the total here and on Form 40, line 20. If zero or less, enter zero.' ROUNDING (General Information p. 6): 'Round the amounts on your return to the nearest whole dollar. Round down if under 50 cents, round up if 50 cents or more.' Idaho publishes no tax table \u2014 the worksheet is the only method. TY2026: the rate stays 5.3% but the thresholds re-index (unpublished) \u2014 this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rateBps: { value: "530", type: "int" },
+      thresholdSingleMfs: { value: "481100", type: "money" },
+      thresholdJointHohQss: { value: "962200", type: "money" },
+      statutoryBaseSingle: { value: "250000", type: "money" },
+      statutoryBaseJoint: { value: "500000", type: "money" }
+    },
+    formula: rd20(pct4(max015(sub15(max015(fact36("stateTaxableIncome")), iff14(isJointLike, money33("962200"), money33("481100")))), "53", "1000"))
+  },
+  {
+    id: "us.id.standard_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho standard deduction \u2014 the federal amounts: $15,750 single and MFS, $31,500 MFJ and QSS, $23,625 HOH, plus $1,600 ($2,000 single or HOH) per 65-or-older/blind box; a dependent filer's base is the larger of $1,350 or earned income + $450, capped at the filing-status amount (Form 40 line 16 and the Standard Deduction Worksheet)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022(j)(1) ('The standard deduction as defined in section 63 of the Internal Revenue Code'); 2025 Form 40 instructions, 'Standard Deduction Worksheet' pp. 8-9; printed Form 40 left margin ('Standard Deduction for Most People')",
+      section: "\xA7 63-3022(j); Form 40 lines 12a-12c, 16",
+      url: BOOKLET_URL5,
+      excerpt: "STATUTE (verbatim): '(j) In the case of an individual, there shall be allowed as a deduction from gross income either paragraph (1) or (2) of this subsection at the option of the taxpayer: (1) The standard deduction as defined in section 63 of the Internal Revenue Code; or (2) Itemized deductions as defined in section 63 of the Internal Revenue Code except state or local taxes measured by net income and general sales taxes as either is defined in section 164 of the Internal Revenue Code.' FORM 40 margin (verbatim): 'Standard Deduction for Most People \u2014 Single or Married Filing Separately: $15,750; Head of Household: $23,625; Married Filing Jointly or Qualifying Surviving Spouse: $31,500'. WORKSHEET (verbatim): '1. Enter the amount shown below for your filing status: Single or married filing separately, enter $15,750; Married filing jointly or qualifying surviving spouse, enter $31,500; Head of household, enter $23,625. 2. Can someone else claim you as a dependent? No. Enter the amount from line 1 on line 4. Skip line 3. Yes. Go to line 3. 3. Is your earned income* more than $900? Yes. Add $450 to your earned income. Enter the total. No. Enter $1,350. 4. If someone else can claim you as a dependent, enter the smaller of lines 1 or 3. If born after January 1, 1961, and not blind, skip to line 6. Otherwise, go to line 5. 5. If born before January 2, 1961, or blind, multiply the total number of boxes checked on Form 40, lines 12a and 12b, by $1,600 ($2,000 if single or head of household). 6. Add lines 4 and 5. Enter the total here and on Form 40, line 16.' 'Line 12a \u2026 The boxes you check here must match your federal return.' '*Earned income includes wages, salaries, tips, professional fees, and other compensation received for personal services you performed. It also includes any amount received as a scholarship that you must include in your income.' ENCODING: base by status; dependent filer \u2192 min(base, max($1,350, earned + $450)) (line 3's 'more than $900' test is the same thing); plus idAgeBlindBoxes \xD7 $2,000 (single, HOH) or $1,600 (MFJ, QSS, MFS). The 2026 federal amounts are known but Idaho's 2026 worksheet is unpublished \u2014 this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      single: { value: "1575000", type: "money" },
+      joint: { value: "3150000", type: "money" },
+      hoh: { value: "2362500", type: "money" },
+      perBoxSingleHoh: { value: "200000", type: "money" },
+      perBoxMarried: { value: "160000", type: "money" },
+      dependentFloor: { value: "135000", type: "money" },
+      dependentEarnedAddOn: { value: "45000", type: "money" }
+    },
+    formula: (() => {
+      const base = iff14(or5(isStatus23("mfj"), isStatus23("qss")), money33("3150000"), iff14(isStatus23("hoh"), money33("2362500"), money33("1575000")));
+      const depBase = minE4(base, maxE3(money33("135000"), add11(max015(fact36("idEarnedIncome")), money33("45000"))));
+      const l4 = iff14(fact36("isClaimedAsDependent"), depBase, base);
+      const perBox = iff14(or5(isStatus23("single"), isStatus23("hoh")), money33("200000"), money33("160000"));
+      return add11(l4, mulInt13(perBox, fact36("idAgeBlindBoxes")));
+    })()
+  },
+  {
+    id: "us.id.itemized_deductions",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho itemized deductions \u2014 federal Schedule A total (plus any federal foreign tax credit) minus state and local income or general sales taxes: Schedule A line 5a, or line 5e less lines 5b and 5c when line 5d exceeds $40,000 ($20,000 MFS) (Form 40 lines 13-15)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022(j)(2); 2025 Form 40 instructions, 'Itemized Deductions' and 'Federal Foreign Tax Credit' p. 8; printed Form 40 lines 13-15",
+      section: "\xA7 63-3022(j)(2); Form 40 lines 13, 14, 15",
+      url: BOOKLET_URL5,
+      excerpt: "FORM (verbatim): '13. Itemized deductions. Include federal Schedule A. Federal limits apply; 14. State and local income or general sales taxes included on federal Schedule A; 15. Subtract line 14 from line 13. If you don't use federal Schedule A, enter zero; 16. Standard deduction \u2026; 17. Subtract the larger of line 15 or 16 from line 11. If less than zero, enter zero'. BOOKLET (verbatim): 'Idaho requires you to subtract state income tax, local income tax, or general sales tax on federal Schedule A from your total itemized amount before you use that amount to reduce your income. Because of this addback, it might be more beneficial to itemize for federal purposes but use the standard deduction for Idaho.' 'Itemized Deductions \u2014 If you use federal Schedule A to itemize, follow these instructions for line 14. If federal Schedule A, line 5d, is: $40,000 or less ($20,000 if married filing separately), enter the amount from federal Schedule A, line 5a. More than $40,000 ($20,000 if married filing separately), subtract lines 5b and 5c from line 5e, and enter the amount here. Enter zero for any result less than zero.' 'Federal Foreign Tax Credit: If you claim the federal foreign tax credit, Idaho allows that amount as a deduction. Idaho doesn't have a credit that matches the federal foreign tax credit. Add the amount you claimed for the federal foreign tax credit to your Idaho itemized deductions.' 'You Must Itemize If: Your filing status is married filing separately and your spouse itemizes \u2026' ENCODING: line 13 = Schedule A line 17 + federal foreign tax credit; line 14 = 5a when 5a + 5b + 5c \u2264 $40,000 ($20,000 MFS), else max0(5e \u2212 5b \u2212 5c); line 15 = max0(13 \u2212 14). The composer takes the larger of line 15 and line 16. The federal SALT cap indexes to $40,400 ($20,200 MFS) for 2026 and Idaho's 2026 line 14 instruction is unpublished \u2014 this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { saltCap: { value: "4000000", type: "money" }, saltCapMfs: { value: "2000000", type: "money" } },
+    formula: (() => {
+      const a = max015(fact36("idSaltIncomeOrSalesTaxes"));
+      const b = max015(fact36("idRealEstateTaxes"));
+      const c2 = max015(fact36("idPersonalPropertyTaxes"));
+      const d3 = add11(a, b, c2);
+      const cap = iff14(isStatus23("mfs"), money33("2000000"), money33("4000000"));
+      const l14 = iff14(le13(d3, cap), a, max015(sub15(max015(fact36("idSaltAllowed")), add11(b, c2))));
+      const l13 = add11(max015(fact36("idFederalItemizedDeductions")), max015(fact36("idForeignTaxCredit")));
+      return max015(sub15(l13, l14));
+    })()
+  },
+  {
+    id: "us.id.child_tax_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho Child Tax Credit \u2014 $205 per qualifying child age 16 or under, nonrefundable, limited to the tax after the other-state, Form 39R Part D, and Form 44 credits (Form 40 line 24 worksheet); sunsets after TY2025",
+    citation: {
+      source: "Idaho Code \xA7 63-3029L(1) ('For taxable years beginning on or after January 1, 2018, and before January 1, 2026'); 2025 Form 40 instructions, line 24 and 'Child Tax Credit Worksheet' pp. 9-10; printed Form 40 line 24",
+      section: "\xA7 63-3029L; Form 40 line 24",
+      url: CODE("63-3029L"),
+      excerpt: `STATUTE (verbatim): '(1) For taxable years beginning on or after January 1, 2018, and before January 1, 2026, there shall be allowed to a taxpayer a nonrefundable credit against the tax imposed by this chapter in the amount of two hundred five dollars ($205) with respect to each qualifying child of the taxpayer. For purposes of this section, the term "qualifying child" has the meaning as defined in section 24(c) of the Internal Revenue Code. In no event shall more than one (1) taxpayer be allowed this credit for the same qualifying child. This credit is available only to Idaho residents. Any part-year resident entitled to a credit under this section shall receive a proportional credit reflecting the part of the year in which the part-year resident was domiciled in Idaho.' History ends '[\u2026 am. 2020, ch. 271, sec. 3, p. 795.]' \u2014 the 2026 session's extension bills (S1450 'Child tax credit, permanent', which died in Senate Local Government and Taxation, and H0782 'Income taxes', which struck the sunset but was never heard) did not pass; the Tax Commission's withholding guidance (tax.idaho.gov/taxes/income-tax/withholding/computing, updated July 29, 2026) states 'The Idaho Child Tax Credit has sunsetted per Idaho Code Section 63-3029L. Because the credit is no longer in effect, the allowance amount will be zero.' BOOKLET (verbatim): 'To qualify for the Idaho Child Tax Credit, the child must be both of these: Your qualifying child. Age 16 or under as of December 31, 2025.' 'Note: This credit is limited to your tax liability after any credit for tax paid to other states and credits from Forms 39R and 44.' WORKSHEET: '1. Enter the number of your qualifying children; 2. Multiply line 1 by $205; 3. Enter the amount from Form 40, line 20; 4. Enter the amount from Form 40, line 21; 5. Enter the amount from Form 40, line 22; 6. Enter the amount from Form 40, line 23; 7. Subtract lines 4 through 6 from line 3. If less than zero, enter zero; 8. Enter the lesser of lines 2 or 7 here and on Form 40, line 24.'`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { perChild: { value: "20500", type: "money" } },
+    formula: minE4(mulInt13(money33("20500"), fact36("idQualifyingChildren")), max015(sub15(fact36("idTaxBeforeCredits"), add11(fact36("idOtherStateCredit"), fact36("idContributionCredits"), fact36("idBusinessCredits")))))
+  },
+  {
+    id: "us.id.food_tax_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho Food Tax Credit (grocery credit) \u2014 $155 for the filer, spouse, and each dependent qualified all year, $12.92 per qualified month otherwise; refundable (Form 40 line 43 worksheet)",
+    citation: {
+      source: "Idaho Code \xA7 63-3024A(1), (5)-(6), (9) (as amended 2025 [H231]: '$155 for tax year 2025 and each year thereafter'); 2025 Form 40 instructions, line 43 and 'Food Tax Credit Worksheet' pp. 11-12; printed Form 40 line 43",
+      section: "\xA7 63-3024A; Form 40 line 43",
+      url: CODE("63-3024A"),
+      excerpt: "STATUTE (verbatim): '(1) Any resident individual who is required to file and who has filed an Idaho income tax return shall be allowed a credit against taxes due under the Idaho income tax act for the taxpayer, the taxpayer's spouse, and each dependent, as defined in section 152 of the Internal Revenue Code, claimed on the taxpayer's Idaho income tax return \u2026 For tax year 2022, the credit is one hundred dollars ($100). For tax years 2023 and 2024, the credit is one hundred twenty dollars ($120). For tax year 2025 and each year thereafter, the credit is one hundred fifty-five dollars ($155). If taxes due are less than the total credit allowed, the taxpayer shall be paid a refund equal to the balance of the unused credit.' '(5) \u2026 for whom assistance under the federal food stamp program was received for any month or part of a month \u2026 the credit or refund allowed under this section shall be in proportion to the number of months of the year in which no assistance was received. (6) \u2026 incarcerated \u2026 in proportion to the number of months of the year in which the individual was not incarcerated.' '(9) In lieu of the flat tax credit amounts \u2026 the actual amount of sales tax paid by such persons on food purchases that took place in Idaho during the taxable year, up to a maximum of two hundred fifty dollars ($250) per person' (receipts required \u2014 not composed). BOOKLET (line 43, verbatim): 'This credit applies only to Idaho residents. You can't claim this credit if someone else, such as a parent, can claim you as a dependent. The credit is either $155 each for you, your spouse, and your qualifying dependents or the actual amount of sales tax paid during the year (up to $250 each).' WORKSHEET (verbatim): 'Yourself: 1. Number of qualified months; 2. Multiply line 1 by $12.92. If qualified for the entire year, enter $155. Spouse (if joint return): 3. Number of qualified months; 4. Multiply line 3 by $12.92. If qualified for the entire year, enter $155. Resident dependents claimed on line 6: 5. Enter $155 for each dependent who qualifies for the entire year. If a dependent qualifies for only part of the year, calculate as follows: Number of qualified months ____ x $12.92 \u2026 6. Add amounts on lines 2, 4, and 5. Enter total on line 43.' 'Donating Your Food Tax Credit \u2014 You can donate your entire Food Tax Credit to the Cooperative Welfare Fund. To donate, check the box on line 43 and enter zero.' ENCODING: $155 \xD7 idFoodCreditPersons (people qualified all twelve months) + $12.92 \xD7 idFoodCreditPartialMonths (the sum of qualified months across partially-qualified people), rounded to whole dollars."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perPerson: { value: "15500", type: "money" }, perMonth: { value: "1292", type: "money" }, actualCostMaxPerPerson: { value: "25000", type: "money" } },
+    formula: rd20(add11(mulInt13(money33("15500"), fact36("idFoodCreditPersons")), mulInt13(money33("1292"), fact36("idFoodCreditPartialMonths"))))
+  },
+  {
+    id: "us.id.other_state_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho credit for income tax paid to other states \u2014 Form 39R Part C: Idaho tax \xD7 (other-state income \xF7 Idaho adjusted income, to four decimals), limited to the other state's tax after its credits and to the Idaho tax (Form 40 line 21)",
+    citation: {
+      source: "Idaho Code \xA7 63-3029(1), (3)(a)(i), (3)(c); 2025 Form 39R Part C lines 1-7 and instructions p. 37; Form 40 line 21",
+      section: "\xA7 63-3029; Form 39R Part C; Form 40 line 21",
+      url: CODE("63-3029"),
+      excerpt: "STATUTE (verbatim): '(1) A resident individual shall be allowed a credit against the tax otherwise due under this chapter for the amount of any income tax imposed on the individual \u2026 for the taxable year by another state on income derived from sources therein while domiciled in Idaho and that is also subject to tax under this chapter.' '(3)(a)(i) The credit provided under this section to an individual shall not exceed the proportion of the tax otherwise due under this chapter that the amount of the adjusted gross income of the taxpayer derived from sources in the other state as modified by this chapter bears to the adjusted gross income of the taxpayer as modified by this chapter.' '(c) The credit provided under this section shall further be limited to the tax paid to the other state.' FORM 39R PART C (verbatim): '1. Idaho tax, Form 40, line 20; 2. Federal adjusted gross income earned in other state and both states taxed, adjusted for Idaho modifications; 3. Idaho adjusted income; 4. Divide line 2 by line 3. Enter percentage here; 5. Multiply line 1 by line 4; 6. Other state's tax due minus its income tax credits; 7. Enter the smaller of lines 5 or 6 here and on Form 40, line 21.' INSTRUCTIONS (verbatim): 'Line 3. Enter your Idaho adjusted income from Form 40, line 11 \u2026' 'Line 4. Divide line 2 by line 3. Round to four digits to the right of the decimal point. For example, you'd round .66666 to .6667 and enter it as 66.67%.' 'Line 6. Enter the other state's tax due from its tax table or rate schedule minus its income tax credits. Don't subtract state and local tax (SALT) workaround payments or credits.' 'Line 7. \u2026 This credit can't exceed the Idaho tax due on Form 40, line 20.' One Form 39R per state; a copy of the other state's return is required. ENCODING: ratio = round-half-up(line 2 \xF7 line 3, 4 decimals); line 5 = round(line 1 \xD7 ratio); credit = min(line 5, line 6, line 1); $0 when line 3 is not positive."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { ratioDecimals: { value: "4", type: "int" } },
+    formula: (() => {
+      const l1 = max015(fact36("idTaxBeforeCredits"));
+      const l3 = fact36("idAdjustedIncome");
+      const ratio = { kind: "mulDiv", a: max015(fact36("idOtherStateIncome")), b: money33("10000"), c: l3, round: "half-up" };
+      const l5 = rd20({ kind: "mulDiv", a: l1, b: ratio, c: money33("10000"), round: "half-up" });
+      return iff14(gt6(l3, money33("0")), minE4(l5, max015(fact36("idOtherStateTaxDue")), l1), money33("0"));
+    })()
+  },
+  {
+    id: "us.id.educational_contribution_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho credit for contributions to Idaho educational entities \u2014 the smallest of half the cash donated, 50% of the Idaho tax, $500 ($1,000 joint), and the tax remaining after the other-state credit (Form 39R Part D line 1)",
+    citation: {
+      source: "Idaho Code \xA7 63-3029A (50% of contributions; individual limit 50% of the \xA7 63-3024 tax or $500); 2025 Form 39R Part D line 1 and instructions pp. 37-38; Form 40 line 22",
+      section: "\xA7 63-3029A; Form 39R Part D line 1",
+      url: CODE("63-3029A"),
+      excerpt: `STATUTE (verbatim): 'there shall be allowed \u2026 as a credit against the income tax imposed by chapter 30, title 63, Idaho Code, an amount equal to fifty percent (50%) of the aggregate amount of charitable contributions made by such taxpayer during the year to a nonprofit corporation, fund, foundation, trust, or association organized and operated exclusively for the benefit of institutions of higher learning located within the state of Idaho \u2026 to nonprofit private or public institutions of elementary, secondary, or higher education or their foundations located within the state of Idaho \u2026 (1) In the case of a taxpayer other than a corporation, the amount allowable as a credit under this section for any taxable year shall not exceed fifty percent (50%) of such taxpayer's total income tax liability imposed by section 63-3024, Idaho Code, for the year, or five hundred dollars ($500), whichever is less.' 'For the purposes of this section, "contribution" means monetary donations reduced by the value of any benefit received in return such as food, entertainment, or merchandise.' BOOKLET (Part D line 1, verbatim): 'If you donated cash to a qualified educational entity, you can claim a tax credit. Donation of goods or services don't qualify. \u2026 The credit is limited to the smallest of: One-half of the amount donated; 50% of the tax on Form 40, line 20; $500 ($1,000 on a joint return); The tax on Form 40, line 20 less the amount on Form 40, line 21.' ENCODING per the booklet (the Tax Commission doubles the $500 cap on a joint return; the statute states the per-taxpayer $500). The 2026 session (H0761, ch. 184, effective July 1, 2026) amended \xA7 63-3029A's list of qualifying entities \u2014 not the percentage or limits.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pctOfDonation: { value: "50", type: "int" }, pctOfTax: { value: "50", type: "int" }, cap: { value: "50000", type: "money" }, capJoint: { value: "100000", type: "money" } },
+    formula: (() => {
+      const tax = max015(fact36("idTaxBeforeCredits"));
+      return minE4(rd20(half2(max015(fact36("idEducationalContributions")))), rd20(half2(tax)), iff14(isMfj3, money33("100000"), money33("50000")), max015(sub15(tax, fact36("idOtherStateCredit"))));
+    })()
+  },
+  {
+    id: "us.id.youth_rehab_contribution_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho credit for contributions to Idaho youth and rehabilitation facilities \u2014 the smallest of half the donation, 20% of the Idaho tax, $100 ($200 joint), and the tax remaining after the other-state, educational, and Form 44 credits (Form 39R Part D line 2)",
+    citation: {
+      source: "Idaho Code \xA7 63-3029C (50% of contributions; individual limit 20% of the \xA7 63-3024 tax or $100); 2025 Form 39R Part D line 2 and instructions p. 38; Form 40 line 22",
+      section: "\xA7 63-3029C; Form 39R Part D line 2",
+      url: CODE("63-3029C"),
+      excerpt: "STATUTE (verbatim): 'an amount equal to fifty percent (50%) of the aggregate amount of charitable contributions made by such taxpayer during the year to the anchor house or its foundation, to the children's home society of Idaho, inc., to the Idaho youth ranch or its foundation, \u2026 to a center for independent living located within the state of Idaho, \u2026 to a nonprofit substance abuse center licensed by the department of health and welfare, or to a nonprofit rehabilitation facility located within the state of Idaho or its foundation. (1) In the case of a taxpayer other than a corporation, the amount allowable as a credit under this section for any taxable year shall not exceed twenty percent (20%) of such taxpayer's total income tax liability imposed by section 63-3024, Idaho Code, for the year, or one hundred dollars ($100), whichever is less.' BOOKLET (Part D line 2, verbatim): 'You can claim this credit if you donated cash or goods to any of these: Qualified center for independent living; Youth or rehabilitation facility or its foundation; Nonprofit substance abuse center that the Idaho Dept. of Health and Welfare licenses. \u2026 The credit is limited to the smallest of: One-half of the amount donated. 20% of the tax on Form 40, line 20. $100 ($200 on a joint return). The tax on Form 40, line 20 less the amounts on Form 40, line 21; Form 39R, Part D, line 1; and Form 44, Part I, line 1.' Form 44 Part I line 1 is the investment tax credit (Form 49) \u2014 only that line, not the line 23 total, reduces the tax available for this credit."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pctOfDonation: { value: "50", type: "int" }, pctOfTax: { value: "20", type: "int" }, cap: { value: "10000", type: "money" }, capJoint: { value: "20000", type: "money" } },
+    formula: (() => {
+      const tax = max015(fact36("idTaxBeforeCredits"));
+      return minE4(rd20(half2(max015(fact36("idYouthContributions")))), rd20(pct4(tax, "20", "100")), iff14(isMfj3, money33("20000"), money33("10000")), max015(sub15(tax, add11(fact36("idOtherStateCredit"), fact36("idEducationalCredit"), fact36("idInvestmentTaxCredit")))));
+    })()
+  },
+  {
+    id: "us.id.live_organ_donation_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho credit for live organ donation expenses \u2014 unreimbursed travel, lodging, and lost wages up to $5,000, limited to the remaining tax liability; five-year carryover (Form 39R Part D line 3)",
+    citation: {
+      source: "Idaho Code \xA7 63-3029K (lesser of the expenses or $5,000; nonrefundable; five-year carryforward); 2025 Form 39R Part D line 3 and instructions p. 39; Form 40 line 22",
+      section: "Form 39R Part D line 3",
+      url: FORM39R_URL,
+      excerpt: "BOOKLET (verbatim): 'A living taxpayer who donates (or whose dependent donates) a qualified organ that's transplanted into another individual can claim a credit for expenses related to the donation. The credit can't be more than the taxpayer's tax liability and is limited to the smaller of: The amount of live-organ donation expenses the taxpayer paid during the tax year. $5,000. You can carry over any unused credit for five years. To claim the credit, you must donate one or more of these organs: Human bone marrow; Any part of an: Intestine, Kidney, Liver, Lung, Pancreas. Qualified expenses are those that the taxpayer or dependent incurred for travel, lodging, or lost wages and that aren't reimbursed to the taxpayer.' ENCODING: min(expenses, $5,000, tax remaining after the other-state, educational, youth/rehab, and Form 44 credits); the carryover is a note."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "500000", type: "money" } },
+    formula: minE4(max015(fact36("idOrganDonationExpenses")), money33("500000"), max015(sub15(max015(fact36("idTaxBeforeCredits")), add11(fact36("idOtherStateCredit"), fact36("idEducationalCredit"), fact36("idYouthCredit"), fact36("idBusinessCredits")))))
+  },
+  {
+    id: "us.id.retirement_benefits_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho retirement benefits deduction \u2014 qualifying CSRS/FSRDS, Idaho firefighter, Idaho city police, and military retirement benefits, up to $48,216 (single) or $72,324 (joint) less Social Security and railroad benefits received; age 65 (62 if disabled; military 62 or disabled or employed); not for MFS (Form 39R Part B line 8)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022A(1)-(3); 2025 Form 39R Part B lines 8a-8f; 2025 Form 39R instructions, line 8 pp. 31-32",
+      section: "\xA7 63-3022A; Form 39R Part B line 8",
+      url: CODE("63-3022A"),
+      excerpt: "STATUTE (verbatim): '(1) An amount specified by subsection (2) of this section of the following retirement benefits may be deducted by an individual from taxable income: (a) If such individual has either attained age sixty-five (65) years or has attained age sixty-two (62) years and is classified as disabled: (i) Retirement annuities paid to a retired employee or the unmarried widow or widower of a retired employee by the United States of America under the: 1. Civil service retirement system; or 2. Foreign service retirement and disability system; or 3. Offset program \u2026; (ii) Retirement benefits paid from the firefighters' retirement fund of the state of Idaho \u2026; (iii) Retirement benefits paid to a retired Idaho city police officer \u2026 (b) Retirement benefits paid by the United States of America to a retired member of the military services of the United States, or the unremarried widow or widower of such member, who: (i) Is classified as disabled \u2026; (ii) Has attained the age of sixty-two (62) years by the end of the tax year; or (iii) Was employed during the tax year and received sufficient income from such employment to be required to file a federal return \u2026 (2) The amount of retirement benefits that may be deducted from taxable income shall be an amount not in excess of maximum retirement benefits under the social security act \u2026 (e) Taxpayers not described in paragraphs (a), (b), (c), and (d) of this subsection may not deduct any amount of retirement benefits under this section. This includes retirement benefits paid by the federal employees retirement system or foreign service pension system. (3) The total deduction under this section may not exceed the total amount of retirement benefits or annuities that are described in subsection (1) of this section and that are included in the taxpayer's gross income in the tax year.' FORM 39R (verbatim): '8. Retirement benefits deduction. See instructions for qualifications. a. If single, enter $48,216 or if married filing jointly, enter $72,324; b. Federal Railroad Retirement benefits received; c. Social Security benefits received; d. Line 8a minus lines 8b and 8c. If less than zero, enter zero; e. Qualifying retirement benefits included in federal income; f. Enter the smaller of line 8d or 8e here'. INSTRUCTIONS (verbatim): 'Line 8a. The maximum amounts you can deduct for 2025 are: Single $48,216; Married filing jointly $72,324. The retirement benefits you and your spouse received under the federal Social Security Act and the federal Railroad Retirement Act further reduce these maximum amounts. The amount deducted can't be more than the amount of qualified benefits included in federal income.' 'Line 8c. Enter the amount of retirement benefits you (and your spouse) received under the federal Social Security Act, Box 5 of your Form SSA-1099s.' 'If you're married, you can't claim this deduction if you file separately.' ENCODING: $0 unless idRetirementEligible (age/disability/employment tests met) and not MFS; the 'single' maximum applies to single, HOH, and QSS; 8b and 8c are GROSS benefits received (Box 5), not the taxable portion. The maximums track the Social Security maximum benefit and change every year \u2014 this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { maxSingle: { value: "4821600", type: "money" }, maxJoint: { value: "7232400", type: "money" } },
+    formula: (() => {
+      const l8a = iff14(isMfj3, money33("7232400"), money33("4821600"));
+      const l8d = max015(sub15(l8a, add11(max015(fact36("idRailroadBenefits")), max015(fact36("idSocialSecurityBenefits")))));
+      const l8f = minE4(l8d, max015(fact36("idQualifyingRetirementBenefits")));
+      return iff14(or5(not3(fact36("idRetirementEligible")), isStatus23("mfs")), money33("0"), l8f);
+    })()
+  },
+  {
+    id: "us.id.child_care_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho child and dependent care deduction \u2014 the smallest of qualified expenses paid, $12,000 less employer-excluded benefits, and each spouse's earned income (Form 39R Part B line 6 worksheet)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022D (as amended 2023 ch. 290: $12,000); 2025 Form 39R instructions, line 6 'Worksheet' p. 30; Form 39R Part B line 6",
+      section: "\xA7 63-3022D; Form 39R Part B line 6",
+      url: CODE("63-3022D"),
+      excerpt: "STATUTE (verbatim): 'There shall be allowed as a deduction, in the case of an individual who maintains a household that includes as a member one (1) or more qualifying individuals, as defined in section 21(b)(1) of the Internal Revenue Code, the employment-related expenses, as defined in section 21(b)(2) of the Internal Revenue Code and as further specified and limited by section 21 (d) and (e) of the Internal Revenue Code, paid by such individual during the taxable year, not to exceed twelve thousand dollars ($12,000).' BOOKLET (line 6, verbatim): 'If you claimed the federal Credit for Child and Dependent Care Expenses, you can take an Idaho deduction for the child care expenses you paid for your dependents. The Idaho deduction is a different amount than the federal credit.' WORKSHEET (verbatim): '1. Enter the amount of qualified expenses you incurred and paid in 2025. Don't include amounts paid by your employer or excluded from taxable income; 2. Enter $12,000 for one or more children or dependents cared for during the year; 3. Enter excluded benefits from Form 2441, Part III; 4. Subtract line 3 from line 2. If zero or less, stop. You can't claim the deduction; 5. Enter your earned income; 6. If married filing a joint return, enter your spouse's earned income. All others enter the amount from line 5; 7. Enter the smallest of lines 1, 4, 5, or 6 here and on Form 39R, Part B, line 6.' 'Include federal Form 2441, Child and Dependent Care Expenses, with your return.'"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "1200000", type: "money" } },
+    formula: (() => {
+      const l4 = max015(sub15(money33("1200000"), max015(fact36("idDependentCareBenefitsExcluded"))));
+      const earned2 = max015(fact36("idEarnedIncome"));
+      const l6 = iff14(isMfj3, max015(fact36("idSpouseEarnedIncome")), earned2);
+      return minE4(max015(fact36("idChildCareExpenses")), l4, earned2, l6);
+    })()
+  },
+  {
+    id: "us.id.health_insurance_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho health insurance premiums deduction \u2014 premiums paid for the filer, spouse, and dependents not otherwise deducted; when itemizing for Idaho, reduced by the part of the federal medical deduction allocated to health insurance (Form 39R Part B line 18 worksheet lines 1-10)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022P; 2025 Form 39R instructions, line 18 and the 'Health Insurance and Long-term Care Insurance Deduction Limitations' worksheet pp. 34-36",
+      section: "\xA7 63-3022P; Form 39R Part B line 18",
+      url: CODE("63-3022P"),
+      excerpt: "STATUTE (verbatim): 'With respect to an individual taxpayer, an amount equal to the amount paid by the taxpayer during the taxable year for insurance which constitutes medical care for the taxpayer, the spouse or dependents of the taxpayer which is not otherwise deducted or accounted for by the taxpayer for Idaho income tax purposes shall be allowed as a deduction for Idaho taxable income.' BOOKLET (line 18, verbatim): 'Deduct premiums you paid for health insurance for yourself, your spouse, and your dependents if those premiums haven't already been deducted or excluded from your income. If you claimed a deduction for health insurance premiums on your federal Form 1040 or 1040-SR, Schedule A, use the worksheet on page 35 to calculate the Idaho deduction. The worksheet follows the priority that itemized deductions first apply to health insurance premiums and then to long-term care insurance.' 'Salary Reduction Plans \u2014 You can't include premiums paid through a cafeteria plan or other salary-reduction arrangement \u2026' 'Business Deductions \u2014 You can't include in this Idaho deduction the premiums you already deducted as a business expense. This includes self-employed health insurance premiums deducted in arriving at federal adjusted gross income.' 'Idaho Standard Deduction \u2014 If you use the Idaho standard deduction instead of itemizing your deductions for Idaho purposes, you don't have to reduce your health insurance costs by any amount claimed as a federal itemized deduction.' WORKSHEET (verbatim): 'If you aren't itemizing deductions for Idaho, skip lines 1-6 and enter zeros on lines 8, 12, and 13. 1. Amount claimed for health insurance costs on federal Form 1040 or 1040-SR, Schedule A; 2. Amount claimed for long-term care insurance on federal \u2026 Schedule A; 3. Additional medical expenses claimed on federal \u2026 Schedule A; 4. Total medical expenses. Add lines 1, 2, and 3; 5. Enter 7.5% of federal adjusted gross income; 6. Medical expense deduction allowed on federal \u2026 Schedule A. (Subtract line 5 from line 4. If less than zero, enter zero.) Health Insurance: 7. Enter the total paid for health insurance; 8. Portion of health insurance deduction allowed on federal \u2026 Schedule A. Enter the lesser of lines 1 or 6; 9. Enter the total health insurance costs deducted elsewhere on the federal return; 10. Idaho health insurance deduction allowed. Subtract lines 8 and 9 from line 7. Enter this amount on Form 39R, line 18.'"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { medicalFloorBps: { value: "750", type: "int" } },
+    formula: (() => {
+      const l1 = max015(fact36("idSchAHealthPremiums"));
+      const l4 = add11(l1, max015(fact36("idSchALtcPremiums")), max015(fact36("idSchAOtherMedical")));
+      const l5 = rd20(pct4(max015(fact36("idAgi")), "75", "1000"));
+      const l6 = max015(sub15(l4, l5));
+      const l8 = iff14(fact36("idItemizingForIdaho"), minE4(l1, l6), money33("0"));
+      return max015(sub15(max015(fact36("idHealthPremiumsPaid")), add11(l8, max015(fact36("idHealthPremiumsDeductedElsewhere")))));
+    })()
+  },
+  {
+    id: "us.id.long_term_care_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho long-term care insurance premiums deduction \u2014 premiums paid not otherwise deducted; when itemizing for Idaho, reduced by the federal medical deduction left after health insurance (Form 39R Part B line 19 worksheet lines 11-15)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022Q; 2025 Form 39R instructions, line 19 and worksheet lines 11-15 pp. 35-36",
+      section: "\xA7 63-3022Q; Form 39R Part B line 19",
+      url: CODE("63-3022Q"),
+      excerpt: "STATUTE (verbatim): 'For taxable years commencing on or after January 1, 2004, premiums paid during the taxable year, by a taxpayer for long-term care insurance as that term is defined in section 41-4603, Idaho Code, which long-term care insurance is to be for the benefit of the taxpayer, a dependent of the taxpayer or an employee of the taxpayer, may be deducted from taxable income to the extent that the premium is not otherwise deducted or accounted for by the taxpayer for Idaho income tax purposes.' WORKSHEET (verbatim): 'Long-term Care Insurance: 11. Enter the total paid for long-term care insurance; 12. Medical expense deduction not allocated to health insurance costs. Subtract line 1 from line 6. If less than zero, enter zero; 13. Portion of long-term care insurance deduction allowed on federal Form 1040 or 1040-SR, Schedule A. Enter the lesser of lines 2 or 12; 14. Enter the total long-term care insurance costs deducted elsewhere on the federal return; 15. Long-term care insurance deduction allowed. Subtract lines 13 and 14 from line 11. Enter the amount on Form 39R, line 19.' Lines 1-6 are shared with us.id.health_insurance_deduction (zeros when not itemizing for Idaho)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { medicalFloorBps: { value: "750", type: "int" } },
+    formula: (() => {
+      const l1 = max015(fact36("idSchAHealthPremiums"));
+      const l2 = max015(fact36("idSchALtcPremiums"));
+      const l4 = add11(l1, l2, max015(fact36("idSchAOtherMedical")));
+      const l5 = rd20(pct4(max015(fact36("idAgi")), "75", "1000"));
+      const l6 = max015(sub15(l4, l5));
+      const l12 = max015(sub15(l6, l1));
+      const l13 = iff14(fact36("idItemizingForIdaho"), minE4(l2, l12), money33("0"));
+      return max015(sub15(max015(fact36("idLtcPremiumsPaid")), add11(l13, max015(fact36("idLtcDeductedElsewhere")))));
+    })()
+  },
+  {
+    id: "us.id.alternative_energy_device_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho alternative energy device deduction \u2014 40% of the cost of a device placed in service in 2025 and 20% for each of the three following years, each year capped at $5,000 (Form 39R Part B lines 5a-5e)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022C; 2025 Form 39R Part B line 5 (printed percentages) and instructions p. 30",
+      section: "\xA7 63-3022C; Form 39R Part B line 5",
+      url: FORM39R_URL,
+      excerpt: "FORM 39R (verbatim): '5. Alternative energy device deduction \u2014 Year Acquired / Type of Device / Total Cost / Percentage: a. 2025 \u2026 X 40% = 5a; b. 2024 \u2026 X 20% = 5b; c. 2023 \u2026 X 20% = 5c; d. 2022 \u2026 X 20% = 5d; e. Add lines 5a through 5d. Can't exceed $5,000'. INSTRUCTIONS (verbatim): 'If you install an alternative energy device in your Idaho residence, you can deduct a portion of the amount actually paid or accrued (billed but not paid). In the year the device is placed in service, you can deduct 40% of the cost to construct, reconstruct, remodel, install, or acquire the device, but not more than $5,000. In the three years after installation, you can deduct 20% of these costs per year, but not more than $5,000 in any year. Qualifying devices include: A system using solar radiation, wind, or geothermal resource primarily to provide heating or cooling or produce electrical power \u2026; A fluid-to-air heat pump \u2026; A natural gas or propane heating unit that replaces a noncertified wood stove; An EPA-certified wood stove or pellet stove \u2026 that replaces a noncertified wood stove.' 'Line 5e can't be more than $5,000.' ENCODING: min($5,000, \u03A3 min($5,000, round(pct \xD7 cost)))."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { firstYearPct: { value: "40", type: "int" }, laterYearPct: { value: "20", type: "int" }, cap: { value: "500000", type: "money" } },
+    formula: minE4(money33("500000"), add11(minE4(money33("500000"), rd20(pct4(max015(fact36("idEnergyDeviceCost2025")), "40", "100"))), minE4(money33("500000"), rd20(pct4(max015(fact36("idEnergyDeviceCost2024")), "20", "100"))), minE4(money33("500000"), rd20(pct4(max015(fact36("idEnergyDeviceCost2023")), "20", "100"))), minE4(money33("500000"), rd20(pct4(max015(fact36("idEnergyDeviceCost2022")), "20", "100")))))
+  },
+  {
+    id: "us.id.capital_gains_deduction",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho capital gains deduction \u2014 60% of the capital gain net income from qualified Idaho property (real property held 12+ months, etc.), limited to the capital gain net income included in taxable income (Form 39R Part B line 10, Form CG)",
+    citation: {
+      source: "Idaho Code \xA7 63-3022H(1)-(3); 2025 Form 39R instructions, line 10 p. 32; Form 39R Part B line 10",
+      section: "\xA7 63-3022H; Form 39R Part B line 10",
+      url: CODE("63-3022H"),
+      excerpt: `STATUTE (verbatim): '(1) If an individual taxpayer reports capital gain net income in determining Idaho taxable income, eighty percent (80%) in taxable year 2001 and sixty percent (60%) in taxable years thereafter of the capital gain net income from the sale or exchange of qualified property shall be a deduction in determining Idaho taxable income. (2) The deduction provided in this section is limited to the amount of the capital gain net income from all property included in taxable income. Gains treated as ordinary income by the Internal Revenue Code do not qualify for the deduction allowed in this section. The deduction otherwise allowable under this section shall be reduced by the amount of any federal capital gains deduction relating to such property, but not below zero. (3) Property \u2026 is "qualified property" under this section if the property had an Idaho situs at the time of sale and is: (a) Real property held at least twelve (12) months; (b) Tangible personal property used in Idaho for at least twelve (12) months by a revenue-producing enterprise; (c) Cattle or horses held for breeding, draft, dairy or sporting purposes for at least twenty-four (24) months in Idaho; (d) Breeding livestock other than cattle or horses held at least twelve (12) months in Idaho; (e) Timber grown in Idaho and held at least twenty-four (24) months; (f) A partnership interest \u2026' BOOKLET (line 10): 'You might be able to deduct 60% of the capital gain net income reported on federal Schedule D from the sale of any of the qualified Idaho property described below \u2026 Note: Gains from the sale of stocks, goodwill, and other intangibles don't qualify. Complete Idaho Form CG to calculate your capital gains deduction.' ENCODING: min(round(60% \xD7 qualified Idaho capital gain net income), net capital gain income from all property included in taxable income).`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "60", type: "int" } },
+    formula: minE4(rd20(pct4(max015(fact36("idQualifiedCapitalGain")), "60", "100")), max015(fact36("idNetCapitalGain")))
+  },
+  {
+    id: "us.id.permanent_building_fund_tax",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho permanent building fund tax \u2014 $10 per return for everyone required to file, except filers receiving Idaho public assistance or legally blind (Form 40 line 31)",
+    citation: {
+      source: "Idaho Code \xA7\xA7 63-3082(1), 63-3086; 2025 Form 40 instructions, line 31 p. 10; printed Form 40 line 31",
+      section: "\xA7 63-3082; Form 40 line 31",
+      url: CODE("63-3082"),
+      excerpt: `STATUTE (verbatim): '(1) Every person required to file an income tax return shall pay a tax of ten dollars ($10.00). For this purpose, a husband and wife filing a joint return shall be deemed a single person. This tax shall be in the nature of an excise tax upon the receipt of the income which requires the filing of such return.' \xA7 63-3086 (verbatim): 'This act shall not apply to any person who on the last day of his taxable year is blind or lawfully receiving public assistance payments from the state under title 56, Idaho Code.' FORM (verbatim): '31. Permanent building fund tax. Check the box if you received Idaho public assistance payments for 2025 \u2026 10 00'. BOOKLET (verbatim): 'You must pay the $10 PBF tax if Idaho requires you to file an Idaho income tax return. See Who Must File on page 2. You don't have to pay the $10 PBF tax if any of these were true: Your gross income was less than the amount specified for your filing status. Draw a line through the $10 and enter "NRF" (Not Required to File). You were receiving Idaho public assistance payments at the end of the tax year. Check the box on this line and draw a line through the $10. Food stamps and WIC payments don't qualify as Idaho public assistance. You (or your spouse) are legally blind at the end of the tax year. Draw a line through the $10.' 2025 filing thresholds (gross income, p. 4): MFJ $31,500 (one spouse 65+: $33,100; both: $34,700); HOH $23,625 ($25,625); single $15,750 ($17,750); QSS $31,500 ($33,100); MFS $5.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { tax: { value: "1000", type: "money" } },
+    formula: iff14(or5(fact36("idReceivedPublicAssistance"), fact36("idBlind"), not3(fact36("idRequiredToFile"))), money33("0"), money33("1000"))
+  },
+  {
+    id: "us.id.home_for_family_member_credit",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho credit for maintaining a home for a family member age 65 or older or with a developmental disability \u2014 $100 per member (up to $300), $8.33 per month for a partial year; refundable; not with the $1,000 deduction (Form 40 line 44, Form 39R Part E)",
+    citation: {
+      source: "2025 Form 40 instructions, line 44 p. 12; 2025 Form 39R Part E and instructions p. 39; Form 39R Part B line 15 instructions p. 33-34",
+      section: "Form 40 line 44; Form 39R Part E",
+      url: BOOKLET_URL5,
+      excerpt: "BOOKLET (line 44, verbatim): 'You can claim a tax credit of $100 per person (up to $300) if both of these are true: You didn't claim a deduction of $1,000 per person on Form 39R, Part B, line 15. You maintained a household for an immediate family member who either: Is age 65 or older (not including yourself or your spouse). Has a developmental disability (including yourself and your spouse).' PART E (verbatim): 'If you didn't claim the $1,000 deduction on Part B, line 15, you can claim a $100 credit for each family member who's age 65 or older (not including yourself or your spouse) for whom you do both of these: Maintain a household for; Provide more than one-half of the family member's support for the year. If you maintained the home for the family member for less than a full year, you can take the credit at the rate of $8.33 for each month you maintained the home.' Form 39R Part E line 4: 'Total amount claimed ($100 for each qualifying member but not more than $300). Enter here and on Form 40, line 44.' DEDUCTION ALTERNATIVE (Part B line 15): 'You can claim no more than three deductions of $1,000. If you claim this deduction, you can't claim the $100 credit in Part E. \u2026 If you maintained the home for the family member for less than a full year, you can take a deduction of $83.33 for each month you maintained the home.' ENCODING: min($300, $100 \xD7 full-year members + $8.33 \xD7 partial months), rounded to whole dollars."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perMember: { value: "10000", type: "money" }, perMonth: { value: "833", type: "money" }, cap: { value: "30000", type: "money" }, deductionPerMember: { value: "100000", type: "money" }, deductionPerMonth: { value: "8333", type: "money" } },
+    formula: minE4(money33("30000"), rd20(add11(mulInt13(money33("10000"), fact36("idHomeFamilyMembers")), mulInt13(money33("833"), fact36("idHomeFamilyPartialMonths")))))
+  },
+  {
+    id: "us.id.use_tax",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho sales/use tax due on untaxed purchases \u2014 6% of purchases on which no Idaho sales tax was paid (Form 40 line 28)",
+    citation: {
+      source: "2025 Form 40 instructions, line 28 p. 10; printed Form 40 line 28",
+      section: "Form 40 line 28",
+      url: BOOKLET_URL5,
+      excerpt: "BOOKLET (verbatim): 'Line 28 Sales/Use Tax Due \u2014 You owe use tax if you did either of these during the year: Bought items without paying Idaho sales tax. Bought items from an out-of-state seller (including internet, catalog, radio, and TV purchases) and the seller didn't collect sales tax. Multiply the total amount of purchases by 6% (.06). If you don't have an Idaho seller's permit: Add this use tax to any use tax you calculated on Form 75. Enter the total on this line. If you have an Idaho seller's permit: Don't report the use tax you owe on this line.' FORM: '28. Sales/use tax due on untaxed purchases (online, mail order, and other)'. Idaho has no local-option use tax on this line."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { rateBps: { value: "600", type: "int" } },
+    formula: rd20(pct4(max015(fact36("idUseTaxPurchases")), "6", "100"))
+  },
+  {
+    id: "us.id.parameters",
+    version: 1,
+    jurisdiction: "us.id",
+    title: "Idaho 2025 Form 40 parameters \u2014 line structure, Form 39R adjustments and their caps, the credit lines, filing thresholds, and the enacted TY2026 position",
+    citation: {
+      source: "2025 Idaho Individual Income Tax Forms and Instructions (EIN00046, 03-02-2026); printed Form 40 (EFO00089) and Form 39R (EFO00088); Idaho Code \xA7\xA7 63-3022, 63-3022A-U, 63-3024, 63-3024A, 63-3029-3029L, 63-3030, 63-3082; 2026 session legislation index (legislature.idaho.gov); web-verified September 2026",
+      section: "Form 40 lines 1-61; Form 39R Parts A-F",
+      url: FORM40_URL,
+      excerpt: "STRUCTURE (printed 2025 Form 40): 1-5 federal filing status ('Your Idaho filing status must be the same as your federal filing status'); 6a-6d household (yourself unless claimable as a dependent, spouse, dependents \u2014 used for the Food Tax Credit; Idaho has had no personal exemptions since 2018); 7 federal AGI (Form 1040 line 11); 8 additions (Form 39R Part A line 7: federal NOL deduction, non-Idaho capital loss carryover, non-Idaho state and local bond interest and dividends, nonqualified IDeal withdrawals, bonus depreciation, other \u2014 lump-sum distributions on Form 4972, non-Idaho passive losses, bullion capital loss, Idaho MSA / first-time home buyer nonqualified withdrawals); 9 = 7 + 8; 10 subtractions (Form 39R Part B line 24: 1 Idaho NOL, 2 state income tax refund, 3 U.S. government interest, 4 energy efficiency upgrades (pre-2002 residence), 5 alternative energy device (\u2192 us.id.alternative_energy_device_deduction), 6 child/dependent care (\u2192 us.id.child_care_deduction), 7 Social Security and railroad benefits taxable federally \u2014 100% (\xA7 63-3022(l)), 8 retirement benefits (\u2192 us.id.retirement_benefits_deduction), 9 technological equipment donation, 10 Idaho capital gains (\u2192 us.id.capital_gains_deduction), 11 active-duty military pay earned outside Idaho (120+ consecutive days), 12 adoption expenses \u2264 $10,000 per adoption, 13 Idaho medical savings account contributions \u2264 $10,000 ($20,000 joint) plus interest, 14 Idaho college savings (IDeal) \u2264 $6,000 ($12,000 joint), 15 home for the aged or developmentally disabled $1,000 each (\u2264 3; $83.33 per month), 16 Idaho lottery prizes under $600, 17 American Indian reservation income, 18 health insurance premiums (\u2192 us.id.health_insurance_deduction), 19 long-term care premiums (\u2192 us.id.long_term_care_deduction), 20 workers' compensation premiums (self-employed), 21 bonus depreciation, 22 first-time home buyer savings \u2264 $15,000 ($30,000 joint) plus interest, 23 other \u2014 bullion gains, Idaho Build America Bond interest); 11 total adjusted income; 12a-12c 65+/blind/dependent boxes; 13-16 deductions (\u2192 us.id.itemized_deductions, us.id.standard_deduction); 17 = 11 \u2212 larger of 15 or 16; 18 'Qualified business income deduction' \u2014 'Add lines 13a and 13b from federal Form 1040 or 1040-SR' (the QBI deduction and the new Schedule 1-A deductions); 19 Idaho taxable income; 20 tax (\u2192 us.id.income_tax); 21 other-state credit (\u2192 us.id.other_state_credit); 22 Form 39R Part D (\u2192 educational, youth/rehab, live organ credits); 23 Form 44 business credits; 24 child tax credit (\u2192 us.id.child_tax_credit); 25-26; 27 fuels use tax (Form 75); 28 use tax (\u2192 us.id.use_tax); 29-30 credit and QIE recapture; 31 $10 permanent building fund tax (\u2192 us.id.permanent_building_fund_tax); 32 total tax; 33-40 donations (Nongame Wildlife, Children's Trust, Special Olympics, Guard and Reserve Family Support, American Red Cross of Idaho, Veterans Support, Idaho Food Bank, Opportunity Scholarship); 41; 42 Parental Choice Tax Credit (approved amount; H0934, 2026 ch. 302 adds advance payment from 2026); 43 Food Tax Credit (\u2192 us.id.food_tax_credit) or donate to the Cooperative Welfare Fund; 44 maintaining a home credit (\u2192 us.id.home_for_family_member_credit); 45 fuels tax refund; 46 Idaho withholding; 47 Form 51 payments and prior-year credit; 48 paid by entity / withheld / ABE; 49 Tax Reimbursement Incentive and Claim of Right credits; 50 total payments; 51 tax due = 41 \u2212 50; 52 penalty and interest ('The rate for 2026 is 6%'; 10% penalty on nonqualified MSA withdrawals under 59\xBD); 53 nonrefundable credit from a prior year; 54 total due ('Payments of less than $1 aren't required'); 55 overpaid = 50 \u2212 41 \u2212 52; 56 refund / apply to 2026 ('We don't issue refunds of less than $1'); 57 direct deposit; 58-61 amended-return reconciliation. ROUNDING: nearest whole dollar. FILING (\xA7 63-3030(a)(1)): every resident required to file a federal return under \xA7 6012(a)(1); gross-income thresholds p. 4. ESTIMATED TAX: 'Idaho doesn't require estimated tax payments.' TY2026 (enacted, verified against the 2026 session index): the 5.3% rate continues (\xA7 63-3024 last amended 2025; H0589 died); \xA7 63-3029L's $205 child tax credit expires for taxable years beginning in 2026 (S1450 and H0782 died; the Tax Commission confirmed the sunset on July 29, 2026); the Food Tax Credit stays $155 (H0605 died); thresholds, the retirement maximums, and the federal standard deduction amounts re-index (Idaho's 2026 worksheets unpublished); H0733 (ch. 81) adds partnership federal-adjustment reporting; H0761 (ch. 184) amends the \xA7 63-3029A entity list from July 1, 2026. RESIDENCY: part-year residents and nonresidents file Form 43 with Form 39NR (proration) \u2014 not composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      adoptionExpenseCap: { value: "1000000", type: "money" },
+      medicalSavingsCap: { value: "1000000", type: "money" },
+      medicalSavingsCapJoint: { value: "2000000", type: "money" },
+      collegeSavingsCap: { value: "600000", type: "money" },
+      collegeSavingsCapJoint: { value: "1200000", type: "money" },
+      firstTimeHomeBuyerCap: { value: "1500000", type: "money" },
+      firstTimeHomeBuyerCapJoint: { value: "3000000", type: "money" },
+      homeForAgedDeductionPerMember: { value: "100000", type: "money" },
+      homeForAgedDeductionMaxMembers: { value: "3", type: "int" },
+      interestPctPerYear2026: { value: "6", type: "int" },
+      minimumPaymentOrRefund: { value: "100", type: "money" },
+      filingThresholdSingle: { value: "1575000", type: "money" },
+      filingThresholdJoint: { value: "3150000", type: "money" },
+      filingThresholdHoh: { value: "2362500", type: "money" },
+      filingThresholdMfs: { value: "500", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Idaho Form 40 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.id.income_tax, us.id.standard_deduction, us.id.itemized_deductions, us.id.child_tax_credit, us.id.food_tax_credit, us.id.other_state_credit, us.id.educational_contribution_credit, us.id.youth_rehab_contribution_credit, us.id.live_organ_donation_credit, us.id.retirement_benefits_deduction, us.id.child_care_deduction, us.id.health_insurance_deduction, us.id.long_term_care_deduction, us.id.alternative_energy_device_deduction, us.id.capital_gains_deduction, us.id.permanent_building_fund_tax, us.id.home_for_family_member_credit, and us.id.use_tax"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -47321,6 +48468,7 @@ var stateParameterRules = [
   ...arRules,
   ...nmRules,
   ...neRules,
+  ...idRules,
   ...otherStateRules
 ];
 
@@ -47330,7 +48478,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus23 = (status) => ({
+var isStatus24 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -47402,7 +48550,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus23("mfj"),
+    cond: isStatus24("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -47501,7 +48649,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus23("mfj"),
+      cond: isStatus24("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -47689,7 +48837,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus24 = (status) => ({
+var isStatus25 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -47745,7 +48893,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus24("mfs"),
+      cond: isStatus25("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -47756,7 +48904,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus24("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus25("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -47776,7 +48924,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus24("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus25("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -47825,7 +48973,7 @@ var fact40 = (factId) => ({ kind: "fact", factId });
 var money37 = (cents) => ({ kind: "money", cents });
 var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
 var param24 = (name) => ({ kind: "param", name });
-var pct4 = (num, base) => ({
+var pct5 = (num, base) => ({
   kind: "mulRate",
   base,
   rate: { num, den: "100" },
@@ -47874,14 +49022,14 @@ var magiBase = {
   }
 };
 var ss = fact40("socialSecurityBenefits");
-var provisional = { kind: "add", args: [magiBase, pct4("50", ss)] };
+var provisional = { kind: "add", args: [magiBase, pct5("50", ss)] };
 var isMfs5 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
   right: { kind: "enum", value: "mfs" }
 };
-var isMfj3 = {
+var isMfj4 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
@@ -47889,7 +49037,7 @@ var isMfj3 = {
 };
 var byJoint = (joint, other) => ({
   kind: "if",
-  cond: isMfj3,
+  cond: isMfj4,
   then: param24(joint),
   else: param24(other)
 });
@@ -47932,16 +49080,16 @@ var socialSecurityRules = [
         cond: isMfs5,
         then: {
           kind: "min",
-          args: [pct4("85", ss), pct4("85", { kind: "max0", arg: provisional })]
+          args: [pct5("85", ss), pct5("85", { kind: "max0", arg: provisional })]
         },
         else: {
           kind: "min",
           args: [
-            pct4("85", ss),
+            pct5("85", ss),
             {
               kind: "add",
               args: [
-                pct4("85", {
+                pct5("85", {
                   kind: "max0",
                   arg: {
                     kind: "sub",
@@ -47955,8 +49103,8 @@ var socialSecurityRules = [
                     {
                       kind: "min",
                       args: [
-                        pct4("50", ss),
-                        pct4("50", {
+                        pct5("50", ss),
+                        pct5("50", {
                           kind: "max0",
                           arg: {
                             kind: "sub",
@@ -47983,7 +49131,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus25 = (status) => ({
+var isStatus26 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -48122,7 +49270,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus25("mfs"),
+      cond: isStatus26("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -48211,11 +49359,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus25("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus26("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus25("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus26("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -48225,7 +49373,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus26 = (status) => ({
+var isStatus27 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -48273,7 +49421,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus26("mfs") },
+        { kind: "not", arg: isStatus27("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -48288,13 +49436,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus27 = (status) => ({
+var isStatus28 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus27("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus28("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -48325,7 +49473,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus27("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus27("mfj"),
+                    cond: isStatus28("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -48397,7 +49545,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus27("mfj"),
+      cond: isStatus28("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -48563,7 +49711,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add11 = (id, c2) => {
+  const add12 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -48585,20 +49733,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add11("wages", toCents(w.box1));
+    add12("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add11("federalTaxWithheld", toCents(w.box2));
+      add12("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add11("socialSecurityWages", toCents(w.box3));
+      add12("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add11("medicareWages", b5);
+      add12("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add11("federalTaxWithheld", excess);
+          add12("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars4(excess)}; added to withholding`);
         }
       }
@@ -48610,72 +49758,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(r.box4));
+      add12("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add11("wages", taxable3);
-      add11("scheduleRDisabilityIncome", taxable3);
+      add12("wages", taxable3);
+      add12("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars4(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add11("taxableIraDistributions", taxable3);
+      add12("taxableIraDistributions", taxable3);
     else
-      add11("taxablePensionsAndAnnuities", taxable3);
+      add12("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add11("earlyDistributionSubjectToPenalty", taxable3);
+        add12("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars4(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add11("socialSecurityBenefits", toCents(s.box5));
+    add12("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add11("federalTaxWithheld", toCents(s.box6));
+      add12("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(n.box4));
+      add12("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(k.box4));
+      add12("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add11("selfEmploymentNetProfit", net);
+        add12("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars4(seGross)} gross (1099-NEC/K) \u2212 $${dollars4(expenses)} expenses = $${dollars4(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add11("scheduleCNetLoss", -net);
+      add12("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars4(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add11("taxableInterest", toCents(t.box1));
+      add12("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add11("taxableInterest", toCents(t.box3));
+      add12("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars4(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add11("taxExemptInterest", toCents(t.box8));
+      add12("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(t.box4));
+      add12("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -48684,15 +49832,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars4(qualified2)}) exceeds box 1a (total, $${dollars4(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add11("qualifiedDividends", qualified2);
+      add12("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add11("ordinaryDividends", total - qualified2);
+      add12("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add11("__ltProceeds", toCents(d3.box2a));
+      add12("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars4(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(d3.box4));
+      add12("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -48707,24 +49855,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(b.box4));
+      add12("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add11("shortTermCapitalGains", stNet);
+      add12("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add11("shortTermCapitalLoss", -stNet);
+      add12("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add11("longTermCapitalGains", ltNet);
+      add12("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add11("longTermCapitalLoss", -ltNet);
+      add12("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars4(stNet)}, long-term net $${dollars4(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add11("unemploymentCompensation", toCents(g.box1));
+      add12("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add11("federalTaxWithheld", toCents(g.box4));
+      add12("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars4(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -49225,7 +50373,59 @@ var INDIVIDUAL_GROUPS = {
     "neAdjustmentsIncreasing",
     "neAdjustmentsDecreasing",
     "neUseTaxPurchases",
-    "neLocalUseTaxRateBps"
+    "neLocalUseTaxRateBps",
+    "idAgeBlindBoxes",
+    "idEarnedIncome",
+    "idSpouseEarnedIncome",
+    "idFederalItemizedDeductions",
+    "idForeignTaxCredit",
+    "idSaltIncomeOrSalesTaxes",
+    "idRealEstateTaxes",
+    "idPersonalPropertyTaxes",
+    "idSaltAllowed",
+    "idQualifyingChildren",
+    "idTaxBeforeCredits",
+    "idOtherStateCredit",
+    "idEducationalCredit",
+    "idYouthCredit",
+    "idInvestmentTaxCredit",
+    "idContributionCredits",
+    "idBusinessCredits",
+    "idFoodCreditPersons",
+    "idFoodCreditPartialMonths",
+    "idOtherStateIncome",
+    "idAdjustedIncome",
+    "idOtherStateTaxDue",
+    "idEducationalContributions",
+    "idYouthContributions",
+    "idOrganDonationExpenses",
+    "idRetirementEligible",
+    "idRailroadBenefits",
+    "idSocialSecurityBenefits",
+    "idQualifyingRetirementBenefits",
+    "idChildCareExpenses",
+    "idDependentCareBenefitsExcluded",
+    "idItemizingForIdaho",
+    "idSchAHealthPremiums",
+    "idSchALtcPremiums",
+    "idSchAOtherMedical",
+    "idAgi",
+    "idHealthPremiumsPaid",
+    "idHealthPremiumsDeductedElsewhere",
+    "idLtcPremiumsPaid",
+    "idLtcDeductedElsewhere",
+    "idEnergyDeviceCost2025",
+    "idEnergyDeviceCost2024",
+    "idEnergyDeviceCost2023",
+    "idEnergyDeviceCost2022",
+    "idQualifiedCapitalGain",
+    "idNetCapitalGain",
+    "idReceivedPublicAssistance",
+    "idBlind",
+    "idRequiredToFile",
+    "idHomeFamilyMembers",
+    "idHomeFamilyPartialMonths",
+    "idUseTaxPurchases"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -49515,7 +50715,7 @@ function createServer() {
     }
   });
   server2.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -49542,7 +50742,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd20 = (c2) => {
+      const rd21 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -49569,11 +50769,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd20(after) + rd20(other);
-      const payments = rd20(withheld) + rd20(refundable) + rd20(extension) + rd20(estimated);
+      const total24 = rd21(after) + rd21(other);
+      const payments = rd21(withheld) + rd21(refundable) + rd21(extension) + rd21(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd20(c2));
+      const d3 = (c2) => fmt2(rd21(c2));
       return ok({
         ok: true,
         asOf,
@@ -49600,7 +50800,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd20(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd21(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

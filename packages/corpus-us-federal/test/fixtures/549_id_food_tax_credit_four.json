@@ -1,0 +1,13 @@
+{
+  "description": "ID Food Tax Credit: 4 x $155 = $620.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idFoodCreditPersons": 4,
+    "idFoodCreditPartialMonths": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.food_tax_credit",
+  "expect": {
+    "valueCents": "62000"
+  }
+}

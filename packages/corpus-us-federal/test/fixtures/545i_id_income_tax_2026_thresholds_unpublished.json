@@ -1,0 +1,12 @@
+{
+  "description": "ID TY2026: the 5.3% rate continues but the CPI-indexed thresholds are unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.id.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "ID LTC deduction, not itemizing: $2,000 \u2212 $300 deducted elsewhere = $1,700.",
+  "facts": {
+    "filingStatus": "single",
+    "idItemizingForIdaho": false,
+    "idSchAHealthPremiums": 0,
+    "idSchALtcPremiums": 0,
+    "idSchAOtherMedical": 0,
+    "idAgi": 20000,
+    "idHealthPremiumsPaid": 0,
+    "idHealthPremiumsDeductedElsewhere": 0,
+    "idLtcPremiumsPaid": 2000,
+    "idLtcDeductedElsewhere": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.long_term_care_deduction",
+  "expect": {
+    "valueCents": "170000"
+  }
+}

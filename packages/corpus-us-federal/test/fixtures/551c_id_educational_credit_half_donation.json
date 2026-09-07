@@ -1,0 +1,14 @@
+{
+  "description": "ID educational entity credit: $400 donated -> $200.",
+  "facts": {
+    "filingStatus": "single",
+    "idEducationalContributions": 400,
+    "idTaxBeforeCredits": 3000,
+    "idOtherStateCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.educational_contribution_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

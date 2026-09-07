@@ -1,0 +1,15 @@
+{
+  "description": "ID child care deduction: $15,000 expenses, no benefits -> $12,000 cap.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idChildCareExpenses": 15000,
+    "idDependentCareBenefitsExcluded": 0,
+    "idEarnedIncome": 50000,
+    "idSpouseEarnedIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.child_care_deduction",
+  "expect": {
+    "valueCents": "1200000"
+  }
+}

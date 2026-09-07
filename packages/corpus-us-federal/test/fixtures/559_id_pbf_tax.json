@@ -1,0 +1,14 @@
+{
+  "description": "ID permanent building fund tax -> $10.",
+  "facts": {
+    "filingStatus": "single",
+    "idReceivedPublicAssistance": false,
+    "idBlind": false,
+    "idRequiredToFile": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.permanent_building_fund_tax",
+  "expect": {
+    "valueCents": "1000"
+  }
+}
