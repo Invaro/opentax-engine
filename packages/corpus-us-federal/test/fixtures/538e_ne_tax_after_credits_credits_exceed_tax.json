@@ -1,0 +1,15 @@
+{
+  "description": "NE line 35: credits $1,200 > tax $1,000 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 1000,
+    "neNonrefundableCredits": 1200,
+    "neNetAdjustments": 0,
+    "neFederalTaxBeforeCredits": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.tax_after_credits",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2026 MFJ $25,325 -> $202.95 + 3.51% x 17,075 = 802.28 -> $802.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "80200"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "NE TY2026 MFS, 4 boxes: $8,850 + $6,800 = $15,650 ('Both spouses are 65 or older, and both are blind 6,800').",
+  "facts": {
+    "filingStatus": "mfs",
+    "neAgeBlindBoxes": 4,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "1565000"
+  }
+}

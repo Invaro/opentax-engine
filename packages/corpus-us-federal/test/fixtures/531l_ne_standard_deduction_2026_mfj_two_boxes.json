@@ -1,0 +1,14 @@
+{
+  "description": "NE TY2026 MFJ, both 65+: $17,700 + 2 x $1,700 = $21,100 ('Both spouses are 65 or older 3,400').",
+  "facts": {
+    "filingStatus": "mfj",
+    "neAgeBlindBoxes": 2,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "2110000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NE itemized: federal Schedule A $30,000 minus $12,000 state and local income taxes = $18,000.",
+  "facts": {
+    "filingStatus": "single",
+    "neFederalItemizedDeductions": 30000,
+    "neSaltIncomeTaxes": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.itemized_deductions",
+  "expect": {
+    "valueCents": "1800000"
+  }
+}

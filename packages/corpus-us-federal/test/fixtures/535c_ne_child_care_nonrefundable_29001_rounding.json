@@ -1,0 +1,13 @@
+{
+  "description": "NE AGI $29,001, federal credit $1,201 -> 25% = 300.25 -> $300.",
+  "facts": {
+    "filingStatus": "hoh",
+    "neAgi": 29001,
+    "neFederalChildCareCredit": 1201
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_nonrefundable",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

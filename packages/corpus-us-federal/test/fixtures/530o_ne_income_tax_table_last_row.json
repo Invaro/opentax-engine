@@ -1,0 +1,13 @@
+{
+  "description": "NE paper Tax Table, single $77,760 -> last row (77,660, 77,760] -> $3,563 (printed).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 77760,
+    "neUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "356300"
+  }
+}

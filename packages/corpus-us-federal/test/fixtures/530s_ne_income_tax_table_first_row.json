@@ -1,0 +1,13 @@
+{
+  "description": "NE paper Tax Table, single $160 -> row (60, 160] midpoint 110 x 2.46% = 2.706 -> $3 (printed 3).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 160,
+    "neUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "300"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "NE TY2026 standard deduction single -> $8,850 (2026 Form 1040N-ES).",
+  "facts": {
+    "filingStatus": "single",
+    "neAgeBlindBoxes": 0,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "885000"
+  }
+}

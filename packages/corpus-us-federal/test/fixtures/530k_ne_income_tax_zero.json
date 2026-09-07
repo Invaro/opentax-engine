@@ -1,0 +1,12 @@
+{
+  "description": "NE $0 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NE HOH $57,630 (top of the 5.01% bracket): $1,275.66 + 5.01% x 19,040 = 2,229.56 -> $2,230.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 57630
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "223000"
+  }
+}

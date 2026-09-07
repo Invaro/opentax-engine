@@ -1,0 +1,16 @@
+{
+  "description": "NE Form 2441N: expenses $3,000 but earned income $1,000 -> line 6 $1,000 x .35 (AGI $10,000) = $350.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgi": 10000,
+    "neChildCareExpenses": 3000,
+    "neChildCareQualifyingPersons": 1,
+    "neEarnedIncome": 1000,
+    "neSpouseEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_refundable",
+  "expect": {
+    "valueCents": "35000"
+  }
+}

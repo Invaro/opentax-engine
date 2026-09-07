@@ -1,0 +1,14 @@
+{
+  "description": "NE MFS, 4 boxes: $8,600 + 4 x $1,650 = $15,200 (chart).",
+  "facts": {
+    "filingStatus": "mfs",
+    "neAgeBlindBoxes": 4,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "1520000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2026 personal exemption credit: 3 x $176 = $528.",
+  "facts": {
+    "filingStatus": "hoh",
+    "neExemptions": 3
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.personal_exemption_credit",
+  "expect": {
+    "valueCents": "52800"
+  }
+}

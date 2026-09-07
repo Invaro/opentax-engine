@@ -1784,3 +1784,96 @@ describe("composeNM — review follow-ups", () => {
     expect(dollars(withEx.lines, "RC14_lictr")).toBe("$75"); // row 11,501-13,000 col 1 = 149 → half 74.50 → $75
   });
 });
+
+describe("composeNE — 2025 Form 1040N (real corpus targets)", () => {
+  it("single wage earner: standard deduction, Calculation Schedule tax, $171 credit, small balance due", () => {
+    // 11 = 50,000 − 8,600 = 41,400 = 14; 15 = 1,543.28 + 5.2% × 2,530 = 1,674.84 → $1,675; 18 = 171; 35 = 1,504 (federal
+    // tax not given → cap not evaluated, note); withholding 1,500 → due $4.
+    const input = { jurisdiction: "ne" as const, filingStatus: "single", federalAGI: 50000, stateWithholding: 1500 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["4_personal_exemptions"]).toBe("1");
+    expect(dollars(lines, "6_standard_deduction")).toBe("$8,600");
+    expect(dollars(lines, "14_taxable_income")).toBe("$41,400");
+    expect(dollars(lines, "15_income_tax")).toBe("$1,675");
+    expect(dollars(lines, "18_personal_exemption_credit")).toBe("$171");
+    expect(dollars(lines, "35_tax_after_nonrefundable_credits")).toBe("$1,504");
+    expect(dollars(lines, "59_amount_due")).toBe("$4");
+    expect(notes.some((n) => n.includes("cap was NOT evaluated"))).toBe(true);
+  });
+
+  it("MFJ retirees: Social Security and military retirement excluded in full, 65+ boxes, credits exceed the tax", () => {
+    // 6 = 17,200 + 2 × 1,650 = 20,500; 11 = 39,500; 13 = 20,000 + 10,000 = 30,000; 14 = 9,500;
+    // 15 = 197.78 + 3.51% × 1,460 = 249.03 → $249; 18 = 342 > 249 → 35 = 0; refund = 600.
+    const input = {
+      jurisdiction: "ne" as const, filingStatus: "mfj", federalAGI: 60000, taxableSocialSecurity: 20000, neMilitaryRetirement: 10000,
+      ageOrBlindBoxes: 2, neFederalTaxBeforeCredits: 1200, stateWithholding: 600,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_standard_deduction")).toBe("$20,500");
+    expect(dollars(lines, "13_adjustments_decreasing")).toBe("$30,000");
+    expect(dollars(lines, "14_taxable_income")).toBe("$9,500");
+    expect(dollars(lines, "15_income_tax")).toBe("$249");
+    expect(dollars(lines, "18_personal_exemption_credit")).toBe("$342");
+    expect(dollars(lines, "35_tax_after_nonrefundable_credits")).toBe("$0");
+    expect(dollars(lines, "63_refund")).toBe("$600");
+    expect(notes.some((n) => n.includes("100% since TY2024"))).toBe(true);
+  });
+
+  it("low-income HOH: refundable Form 2441N credit, 10% EIC, refund", () => {
+    // 4 = 3; 6 = 12,600; 14 = 13,400; 15 = 184.75 + 3.51% × 5,890 = 391.49 → $391; 18 = 513 → 35 = 0.
+    // 42: AGI 26,000 ≤ 29,000: expenses 5,000 (cap 6,000, earned 26,000) × .29 (6 steps) = 1,450 × .60 (4 steps) = 870;
+    // 44 = 300; payments 300 + 870 + 300 = 1,470 → refund 1,470. Line 23 stays $0 (AGI not over $29,000).
+    const input = {
+      jurisdiction: "ne" as const, filingStatus: "hoh", federalAGI: 26000, dependents: 2, federalEITC: 3000, neFederalChildCareCredit: 700,
+      neChildCareExpenses: 5000, neChildCareQualifyingPersons: 2, neEarnedIncome: 26000, stateWithholding: 300,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["4_personal_exemptions"]).toBe("3");
+    expect(dollars(lines, "15_income_tax")).toBe("$391");
+    expect(dollars(lines, "18_personal_exemption_credit")).toBe("$513");
+    expect(lines["23_child_care_nonrefundable"]).toBeUndefined();
+    expect(dollars(lines, "42_child_care_refundable")).toBe("$870");
+    expect(dollars(lines, "44_earned_income_credit")).toBe("$300");
+    expect(dollars(lines, "63_refund")).toBe("$1,470");
+  });
+
+  it("itemizer with other-state income: Nebraska itemized deductions, Schedule II credit, federal tax cap, use tax", () => {
+    // 9 = 30,000 − 12,000 = 18,000 > 8,600 → 10 = 18,000; 14 = 102,000; 15 = 1,543.28 + 5.2% × 63,130 = 4,826.04 → $4,826;
+    // 19: 4,826 × (40,000 / 120,000 = .33333) = 1,608.65 → 1,609; min(4,826, 1,609, 2,500) = 1,609; 34 = 171 + 1,609 = 1,780;
+    // 35 = min(3,046, federal 1,000) = 1,000; 58 = 83 + 23 = 106; 57 + 58 = 1,106; withholding 3,000 → refund 1,894.
+    const input = {
+      jurisdiction: "ne" as const, filingStatus: "single", federalAGI: 120000, neFederalItemized: true, neFederalItemizedDeductions: 30000, neSaltIncomeTaxes: 12000,
+      neOtherStateAgi: 40000, neOtherStateTaxPaid: 2500, neFederalTaxBeforeCredits: 1000, neUseTaxPurchases: 1500, neLocalUseTaxRate: 1.5, stateWithholding: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._deduction_method).toBe("itemized");
+    expect(dollars(lines, "10_nebraska_deductions")).toBe("$18,000");
+    expect(dollars(lines, "15_income_tax")).toBe("$4,826");
+    expect(dollars(lines, "19_other_state_credit")).toBe("$1,609");
+    expect(dollars(lines, "35_tax_after_nonrefundable_credits")).toBe("$1,000");
+    expect(dollars(lines, "58_use_tax")).toBe("$106");
+    expect(dollars(lines, "63_refund")).toBe("$1,894");
+    expect(notes.some((n) => n.includes("§ 77-2715(1)"))).toBe(true);
+  });
+
+  it("paper filer: the Tax Table method (row midpoints) and the endpoint worksheet above $77,760", () => {
+    // 14 = 100,000 − 17,200 = 82,800 (MFJ) → table worksheet 3,088 + 5.2% × 5,040 = 3,350.08 → $3,350; schedule: 3,086.10 + 5.2% × 5,070 = 3,349.74 → $3,350
+    const input = { jurisdiction: "ne" as const, filingStatus: "mfj", federalAGI: 100000, neUseTaxTable: true };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines._tax_method).toBe("tax table");
+    expect(dollars(lines, "15_income_tax")).toBe("$3,350");
+    const sched = composeStateReturn({ ...input, neUseTaxTable: false, federalAGI: 42525 }, realPaEval(input));
+    // 42,525 − 17,200 = 25,325 → schedule $804 (table row midpoint 25,310 → exact 197.784 + 3.51% × 17,270 = 803.961 → $804)
+    expect(dollars(sched.lines, "15_income_tax")).toBe("$804");
+  });
+
+  it("caps line 6 at the federal standard deduction when the SPOUSE is claimable as a dependent, and refuses without the federal figure", () => {
+    // MFJ, spouse claimable: line 4 = 1 (no 4b); line 6 = min($17,200, federal $1,350) = $1,350
+    const input = { jurisdiction: "ne" as const, filingStatus: "mfj", federalAGI: 20000, neSpouseClaimedAsDependent: true, neFederalStandardDeduction: 1350 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["4_personal_exemptions"]).toBe("1");
+    expect(dollars(lines, "6_standard_deduction")).toBe("$1,350");
+    const bare = { jurisdiction: "ne" as const, filingStatus: "single", federalAGI: 9000, claimedAsDependent: true };
+    expect(() => composeStateReturn(bare, realPaEval(bare))).toThrow(/neFederalStandardDeduction/);
+  });
+});

@@ -1,0 +1,14 @@
+{
+  "description": "NE standard deduction single, no boxes: $8,600.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgeBlindBoxes": 0,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "860000"
+  }
+}

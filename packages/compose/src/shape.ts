@@ -8,18 +8,18 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: z.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
-  ageOrBlindBoxes: z.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column; NM line 5 exemptions and the $4,000 dependents deduction)"),
+  ageOrBlindBoxes: z.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box); NE line 2a: +$2,000 single/HOH or +$1,650 married/QSS each"),
+  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column; NM line 5 exemptions and the $4,000 dependents deduction; NE $171 exemption credits — count only federal CTC/ODC dependents)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 — Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -705,4 +705,44 @@ const nmShape = {
   // priorYearOverpaymentCredited, and extensionPayment are shared.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape };
+const neShape = {
+  neUseTaxTable: z.boolean().optional().describe("NE line 15: compute from the paper Nebraska Tax Table (row midpoints, endpoint worksheet over $77,760) instead of the Tax Calculation Schedule e-filers must use — they differ by up to $3 (the table prices each $100 row at its midpoint)"),
+  neFederalItemized: z.boolean().optional().describe("NE lines 7-10: the filer itemized on the federal return — Nebraska then allows the LARGER of its standard deduction and federal itemized deductions minus state and local income taxes (pass neFederalItemizedDeductions and neSaltIncomeTaxes). A federal standard-deduction filer must use the Nebraska standard deduction"),
+  neFederalItemizedDeductions: usd.optional().describe("NE line 7: federal Schedule A line 17 total itemized deductions"),
+  neSaltIncomeTaxes: usd.optional().describe("NE line 8: state and local INCOME taxes on federal Schedule A line 5a (before the federal cap); $0 if line 5a is general sales taxes"),
+  neFederalStandardDeduction: usd.optional().describe("NE line 6, REQUIRED when claimedAsDependent or neSpouseClaimedAsDependent (line 2b): the federal standard deduction actually allowed (Form 1040 line 12e) — the Nebraska deduction is the smaller of it and the chart amount"),
+  neSpouseClaimedAsDependent: z.boolean().optional().describe("NE line 4b: the spouse can be claimed as another taxpayer's dependent — no exemption for the spouse"),
+  neUsInterest: usd.optional().describe("NE Schedule I lines 15-17: interest and RIC dividends from U.S. government obligations exempt from state tax"),
+  neStateRefund: usd.optional().describe("NE Schedule I line 14: state income tax refund included in federal AGI (Schedule 1 line 1)"),
+  neMilitaryRetirement: usd.optional().describe("NE Schedule I line 32: military retirement benefits in federal AGI (Form 1040 line 5b, DoD or OPM 1099-R) — 100% excluded"),
+  neNestContributions: usd.optional().describe("NE Schedule I line 20: contributions by the account owner to Nebraska Educational Savings Plan Trust (NEST / Bloomwell / State Farm 529) accounts — the composer caps at $10,000 ($5,000 MFS)"),
+  neFederalOtherTax: usd.optional().describe("NE line 16c: federal Form 4972 lump-sum tax plus federal Form 5329 early-distribution tax (the lesser of Form 5329 or Schedule 2 line 8) — Nebraska adds 29.6%"),
+  neFederalElderlyCredit: usd.optional().describe("NE line 20: the federal credit for the elderly or the disabled (Schedule R, Schedule 3 line 6d) — Nebraska allows the same amount, nonrefundable"),
+  neOtherStateAgi: usd.optional().describe("NE Schedule II line 2: adjusted gross income derived from another state per the DOR Conversion Chart (not that state's taxable income)"),
+  neOtherStateTaxPaid: usd.optional().describe("NE Schedule II line 5: income tax due and paid to the other state (or its political subdivision) — not withholding; no foreign taxes; attach the other state's complete return"),
+  neFederalChildCareCredit: usd.optional().describe("NE line 23: the federal child and dependent care credit (Schedule 3 line 2) — 25% nonrefundable when AGI is over $29,000"),
+  neChildCareExpenses: usd.optional().describe("NE Form 2441N line 3 base (AGI $29,000 or less): qualified child/dependent care expenses paid, capped at $3,000 / $6,000 by neChildCareQualifyingPersons"),
+  neChildCareQualifyingPersons: z.number().int().optional().describe("NE Form 2441N qualifying persons (1 → $3,000 cap; 2 or more → $6,000); defaults to 1"),
+  neEarnedIncome: usd.optional().describe("NE Form 2441N line 4: the taxpayer's earned income"),
+  neSpouseEarnedIncome: usd.optional().describe("NE Form 2441N line 5: the spouse's earned income (MFJ)"),
+  neFederalTaxBeforeCredits: usd.optional().describe("NE line 35 Federal Tax Liability Worksheet line 3: Form 1040 line 16 + Schedule 2 line 2 + Schedule 2 line 8 — when net Schedule I adjustments (line 12 − 13) are under $5,000, Nebraska tax after nonrefundable credits cannot exceed this (§ 77-2715(1)). Omitted, the cap is skipped with a note"),
+  neWithholding1099: usd.optional().describe("NE line 37: Nebraska income tax withheld on W-2G, 1099-R, 1099-MISC, 1099-NEC (W-2 withholding goes in stateWithholding → line 36)"),
+  neK1nWithholding: usd.optional().describe("NE line 38: Nebraska income tax withheld reported on Schedules K-1N"),
+  nePtetCredit: usd.optional().describe("NE line 39: pass-through entity tax (PTET) credit from Schedules K-1N"),
+  neCommunityCollegeTaxes: usd.optional().describe("NE line 45 (Form PTC line 2a → line 1): community college property taxes paid in 2025 on parcels you own — 100% refundable credit (the school district credit ended with LB 34; use the DOR Look-up Tool)"),
+  neVolunteerResponders: z.number().int().optional().describe("NE line 46: qualified volunteer emergency responders on the return certified to DOR for at least two years (0-2) — $250 each, refundable"),
+  neStillbornChildren: z.number().int().optional().describe("NE line 47: stillborn children (20+ weeks, Nebraska certificate attached) — $2,000 each, refundable"),
+  neUnderpaymentPenalty: usd.optional().describe("NE line 56: Form 2210N penalty for underpayment of estimated tax"),
+  neUseTaxPurchases: usd.optional().describe("NE line 58: 2025 taxable purchases on which no Nebraska sales tax was collected (Internet / out-of-state) — 5.5% state plus the local rate"),
+  neLocalUseTaxRate: z.number().optional().describe("NE line 58: your local sales and use tax rate in percent from the codes schedule (0.5, 1, 1.5, 1.75, or 2); omit for none"),
+  neWildlifeDonation: usd.optional().describe("NE line 62: Wildlife Conservation Fund donation from the overpayment ($1 or more)"),
+  neCreditForward: usd.optional().describe("NE line 61: overpayment applied to 2026 estimated tax"),
+  neAmendedPaid: usd.optional().describe("NE line 52 (amended return only): amount paid with the original return plus later payments"),
+  neAmendedOverpayment: usd.optional().describe("NE line 54 (amended return only): overpayment allowed on the original return"),
+  // Schedule I Part A additions use the shared `additions`; other Part B subtractions use `subtractions`; lines 21-33 use
+  // nonrefundableCredits; lines 41, 43, 48-51 use refundableCredits; taxableSocialSecurity (line 31, 100% excluded),
+  // federalEITC (line 44), dependents, claimedAsDependent, ageOrBlindBoxes (line 2a), stateWithholding, estimatedPayments,
+  // priorYearOverpaymentCredited, and extensionPayment (all three → line 40) are shared.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape };

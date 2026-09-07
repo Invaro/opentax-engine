@@ -1,0 +1,12 @@
+{
+  "description": "NE federal QSS $25,325 -> $804 (the married-filing-jointly schedule).",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "80400"
+  }
+}

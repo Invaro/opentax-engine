@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2027 credit amount is indexed and unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "neExemptions": 1
+  },
+  "asOf": "2027-06-30",
+  "target": "us.ne.personal_exemption_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

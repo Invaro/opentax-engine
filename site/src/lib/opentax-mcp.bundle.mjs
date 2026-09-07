@@ -1038,10 +1038,10 @@ var require_codegen = __commonJS({
     }
     exports.and = and4;
     var orCode = mappend(exports.operators.OR);
-    function or4(...args) {
+    function or5(...args) {
       return args.reduce(orCode);
     }
-    exports.or = or4;
+    exports.or = or5;
     function mappend(op) {
       return (x, y) => x === code_1.nil ? y : y === code_1.nil ? x : (0, code_1._)`${par(x)} ${op} ${par(y)}`;
     }
@@ -7263,8 +7263,8 @@ var ZodError = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub14) => {
-      this.issues = [...this.issues, sub14];
+    this.addIssue = (sub15) => {
+      this.issues = [...this.issues, sub15];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -7331,13 +7331,13 @@ var ZodError = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub14 of this.issues) {
-      if (sub14.path.length > 0) {
-        const firstEl = sub14.path[0];
+    for (const sub15 of this.issues) {
+      if (sub15.path.length > 0) {
+        const firstEl = sub15.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub14));
+        fieldErrors[firstEl].push(mapper(sub15));
       } else {
-        formErrors.push(mapper(sub14));
+        formErrors.push(mapper(sub15));
       }
     }
     return { formErrors, fieldErrors };
@@ -11636,12 +11636,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub14 of error2.issues) {
-    if (sub14.path.length > 0) {
-      fieldErrors[sub14.path[0]] = fieldErrors[sub14.path[0]] || [];
-      fieldErrors[sub14.path[0]].push(mapper(sub14));
+  for (const sub15 of error2.issues) {
+    if (sub15.path.length > 0) {
+      fieldErrors[sub15.path[0]] = fieldErrors[sub15.path[0]] || [];
+      fieldErrors[sub15.path[0]].push(mapper(sub15));
     } else {
-      formErrors.push(mapper(sub14));
+      formErrors.push(mapper(sub15));
     }
   }
   return { formErrors, fieldErrors };
@@ -22418,7 +22418,8 @@ var JURISDICTION_NAMES = {
   "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport",
   "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
   "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
-  "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families"
+  "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
+  "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -23259,7 +23260,7 @@ function composeMO(input, evalStateTax, notes) {
   const l2124 = rd(c(input.moOtherDeductions));
   const l25 = l8 + l13 + l14 + l15 + l16 + l17 + l18 + l19 + l2124;
   const l26 = l6 - l25;
-  const alloc = (pct4) => rd((l26 * pct4 + 50n) / 100n);
+  const alloc = (pct5) => rd((l26 * pct5 + 50n) / 100n);
   const l27Y = pctY === 100n ? rd(l26) : alloc(pctY);
   const l27S = pctS === 0n ? 0n : pctS === 100n ? rd(l26) : alloc(pctS);
   const l28Y = rd(c(input.moEnterpriseZoneYou));
@@ -25222,7 +25223,7 @@ function composeAR(input, evalStateTax, notes) {
     const stS = married ? c(input.arSpouseShortTermGain) : 0n;
     if (!married && c(input.arSpouseLongTermGain) + c(input.arSpouseShortTermGain) !== 0n)
       n.push("AR line 14: arSpouseLongTermGain / arSpouseShortTermGain ignored \u2014 only a married couple on one return has a spouse column");
-    const cg = (lt14, st, s4) => lt14 !== 0n || st !== 0n ? rd(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt14, arShortTermGain: st, arStatus4: s4 })) : 0n;
+    const cg = (lt15, st, s4) => lt15 !== 0n || st !== 0n ? rd(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt15, arShortTermGain: st, arStatus4: s4 })) : 0n;
     const l14A = status4 ? cg(ltP, stP, true) : cg(ltP + ltS, stP + stS, false);
     const l14B = status4 ? cg(ltS, stS, true) : 0n;
     const l14 = l14A + l14B;
@@ -25309,10 +25310,10 @@ function composeAR(input, evalStateTax, notes) {
       if (itemize) {
         method = "itemized";
         if (status4) {
-          const pct4 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
-          a27 = (itemized * pct4 + 50n) / 100n;
+          const pct5 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
+          a27 = (itemized * pct5 + 50n) / 100n;
           b27 = itemized - a27;
-          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct4}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
+          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct5}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
         } else
           a27 = itemized;
         if (fs === "mfs")
@@ -25816,6 +25817,226 @@ function composeNM(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/ne.js
+var D3 = (x) => rd(c(x));
+function composeNE(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Nebraska Form 1040N composer");
+  const mfj = fs === "mfj";
+  const mfs = fs === "mfs";
+  const dependentFiler = input.claimedAsDependent === true;
+  const spouseDependent = mfj && input.neSpouseClaimedAsDependent === true;
+  const capAtFederal = dependentFiler || spouseDependent;
+  if (capAtFederal && typeof input.neFederalStandardDeduction !== "number")
+    throw new Error("neFederalStandardDeduction (Form 1040 line 12e, the federal standard deduction actually allowed) is required when you or your spouse can be claimed as another taxpayer's dependent \u2014 Nebraska line 6 is the smaller of it and the chart amount");
+  const deps = input.dependents ?? 0;
+  const boxes = Math.min(input.ageOrBlindBoxes ?? 0, mfj || mfs ? 4 : 2);
+  const table2 = input.neUseTaxTable === true;
+  if (fs === "qss")
+    notes.push("NE filing status: a federal qualifying surviving spouse uses the married-filing-jointly column of the Tax Table / Calculation Schedule and the $17,200 standard deduction ('A qualifying surviving spouse must also use this column')");
+  if (mfs)
+    notes.push("NE married filing separately: the single rate schedule and $8,600 deduction apply; the spouse's 65+/blind boxes count only if you can claim the spouse's exemption; neither Nebraska child/dependent care credit is allowed to a couple that filed jointly federally but separately in Nebraska");
+  const l4 = (dependentFiler ? 0 : 1) + (mfj && !spouseDependent ? 1 : 0) + deps;
+  if (deps > 0)
+    notes.push(`NE line 4c: ${deps} dependent(s) counted \u2014 only dependents who qualify for the federal child tax credit or other dependent credit are Nebraska personal exemptions`);
+  const l5 = rd(c(input.federalAGI));
+  const l6 = rd(evalStateTax("us.ne.standard_deduction", 0n, { neAgeBlindBoxes: boxes, isClaimedAsDependent: capAtFederal, neFederalStandardDeduction: c(input.neFederalStandardDeduction) }));
+  if (capAtFederal)
+    notes.push(`NE line 6: when you or your spouse can be claimed as another taxpayer's dependent (line 2b), the deduction is the smaller of the federal standard deduction allowed (${fmtD(D3(input.neFederalStandardDeduction))}) and the Nebraska chart amount \u2014 ${fmtD(l6)} composed`);
+  const itemized = input.neFederalItemized === true;
+  const l7 = itemized ? D3(input.neFederalItemizedDeductions) : 0n;
+  const l8 = itemized ? D3(input.neSaltIncomeTaxes) : 0n;
+  const l9 = itemized ? rd(evalStateTax("us.ne.itemized_deductions", 0n, { neFederalItemizedDeductions: l7, neSaltIncomeTaxes: l8 })) : 0n;
+  let l10 = l6;
+  let method = "standard";
+  if (itemized) {
+    if (l9 > l6) {
+      l10 = l9;
+      method = "itemized";
+      notes.push(`NE line 10: Nebraska itemized deductions ${fmtD(l9)} (federal itemized ${fmtD(l7)} minus state and local income taxes ${fmtD(l8)}) beat the ${fmtD(l6)} standard deduction`);
+    } else
+      notes.push(`NE line 10: standard deduction ${fmtD(l6)} kept \u2014 Nebraska itemized deductions after removing state and local income taxes are ${fmtD(l9)}`);
+  }
+  const l11 = l5 - l10;
+  const l12 = D3(input.additions);
+  if (l12 > 0n)
+    notes.push(`NE line 12 (Schedule I Part A): adjustments increasing federal AGI ${fmtD(l12)} transcribed (non-Nebraska state/local bond interest, financial institution tax credit claimed, 529/Enable recapture, federal NOL deduction, S corp/LLC non-Nebraska loss, PTET deducted, bullion loss, food donation add-back)`);
+  const ss2 = D3(input.taxableSocialSecurity);
+  const mil = D3(input.neMilitaryRetirement);
+  const usInt = D3(input.neUsInterest);
+  const refund = D3(input.neStateRefund);
+  const nestRaw = D3(input.neNestContributions);
+  const nestCap = mfs ? 500000n : 1000000n;
+  const nest = min2(nestRaw, nestCap);
+  if (nestRaw > nest)
+    notes.push(`NE Schedule I line 20: NEST contributions ${fmtD(nestRaw)} capped at ${fmtD(nestCap)}`);
+  const other = D3(input.subtractions);
+  const l13 = ss2 + mil + usInt + refund + nest + other;
+  if (ss2 > 0n)
+    notes.push(`NE Schedule I line 31: Social Security ${fmtD(ss2)} excluded in full (100% since TY2024, no AGI threshold)`);
+  if (mil > 0n)
+    notes.push(`NE Schedule I line 32: military retirement ${fmtD(mil)} excluded in full (\xA7 77-2716(15)(b); DoD or OPM 1099-R)`);
+  if (other > 0n)
+    notes.push(`NE Schedule I other subtractions ${fmtD(other)} transcribed (Railroad Retirement, special capital gains election, employer NEST / Enable contributions, S corp/LLC non-Nebraska income, Nebraska NOL, Nebraska bond interest, CSRS annuities, National Guard pay, Relocation Incentive wage exclusion, bullion gain, \u2026)`);
+  const l14 = max02(l11 + l12 - l13);
+  if (l11 + l12 - l13 < 0n)
+    notes.push("NE line 14: deductions and adjustments exceed income \u2014 Nebraska taxable income is $0 ('If less than -0-, enter -0-')");
+  const l15 = rd(evalStateTax("us.ne.income_tax", l14, { neUseTaxTable: table2 }));
+  notes.push(table2 ? "NE line 15: computed from the paper 2025 Nebraska Tax Table (row midpoints; endpoint worksheet over $77,760) \u2014 'Only taxpayers filing paper returns may use the Nebraska Tax Table'; for TY2026 no table is published yet, so the Tax Calculation Schedule is used regardless" : "NE line 15: computed from the 2025 Tax Calculation Schedule ('Electronic filers must use the Nebraska Tax Calculation Schedule'); pass neUseTaxTable for the paper table (differs by up to $3; it prices each $100 row at its midpoint)");
+  const fedOther = D3(input.neFederalOtherTax);
+  const l16 = fedOther > 0n ? rd(evalStateTax("us.ne.other_tax", 0n, { neFederalOtherTax: fedOther })) : 0n;
+  if (l16 > 0n)
+    notes.push(`NE line 16: other tax ${fmtD(l16)} = 29.6% of the ${fmtD(fedOther)} federal lump-sum / early-distribution tax`);
+  const l17 = l15 + l16;
+  const l18 = rd(evalStateTax("us.ne.personal_exemption_credit", 0n, { neExemptions: l4 }));
+  let l19 = 0n;
+  const osAgi = D3(input.neOtherStateAgi);
+  const osPaid = D3(input.neOtherStateTaxPaid);
+  if (osAgi > 0n && osPaid > 0n) {
+    l19 = rd(evalStateTax("us.ne.other_state_credit", 0n, { neTaxBeforeCredits: l17, neAgi: l5, neAdjustmentsIncreasing: l12, neAdjustmentsDecreasing: l13, neOtherStateAgi: osAgi, neOtherStateTaxPaid: osPaid }));
+    notes.push(`NE line 19 (Schedule II): credit for tax paid to another state ${fmtD(l19)} \u2014 the least of the Nebraska tax ${fmtD(l17)}, that tax \xD7 ${fmtD(osAgi)} \xF7 ${fmtD(l5 + l12 - l13)} (ratio to five decimals), and the ${fmtD(osPaid)} paid; attach the other state's complete return; one Schedule II per state`);
+  }
+  const l20 = D3(input.neFederalElderlyCredit);
+  if (l20 > 0n)
+    notes.push(`NE line 20: credit for the elderly or the disabled ${fmtD(l20)} = the federal Schedule R credit (attach Schedule R)`);
+  let l23 = 0n;
+  const fedCdcc = D3(input.neFederalChildCareCredit);
+  if (fedCdcc > 0n && l5 > 2900000n) {
+    l23 = rd(evalStateTax("us.ne.child_care_credit_nonrefundable", 0n, { neAgi: l5, neFederalChildCareCredit: fedCdcc }));
+    notes.push(`NE line 23: child/dependent care nonrefundable credit ${fmtD(l23)} = 25% of the ${fmtD(fedCdcc)} federal credit (AGI over $29,000; attach federal Form 2441)`);
+  }
+  const otherNonref = D3(input.nonrefundableCredits);
+  if (otherNonref > 0n)
+    notes.push(`NE lines 21-33: other nonrefundable credits ${fmtD(otherNonref)} transcribed (CDAA, Form 3800N, financial institution tax, TANF employer, blighted area, School Readiness, Child Care contributor, CHIEF, Family Caregiver, Pregnancy Help \u2264 50% of line 15)`);
+  const l34 = l18 + l19 + l20 + l23 + otherNonref;
+  const netAdj = l12 - l13;
+  let l35;
+  if (typeof input.neFederalTaxBeforeCredits === "number") {
+    l35 = rd(evalStateTax("us.ne.tax_after_credits", 0n, { neTaxBeforeCredits: l17, neNonrefundableCredits: l34, neNetAdjustments: netAdj, neFederalTaxBeforeCredits: c(input.neFederalTaxBeforeCredits) }));
+    if (netAdj < 500000n && l35 < max02(l17 - l34))
+      notes.push(`NE line 35: Nebraska tax after credits ${fmtD(max02(l17 - l34))} is limited to the ${fmtD(D3(input.neFederalTaxBeforeCredits))} federal tax before credits \u2014 net Schedule I adjustments ${fmtD(netAdj)} are under $5,000 (\xA7 77-2715(1); check the federal tax box and attach the federal return)`);
+  } else {
+    l35 = max02(l17 - l34);
+    if (l35 > 0n && netAdj < 500000n)
+      notes.push("NE line 35: the \xA7 77-2715(1) federal tax liability cap was NOT evaluated \u2014 pass neFederalTaxBeforeCredits (Form 1040 line 16 + Schedule 2 lines 2 and 8); when it is lower than the Nebraska tax after credits, line 35 is the federal amount");
+  }
+  if (l34 > l17)
+    notes.push(`NE line 35: nonrefundable credits ${fmtD(l34)} exceed the tax ${fmtD(l17)} \u2014 the excess is lost ('if line 34 is more than line 17, enter -0-')`);
+  const l36 = D3(input.stateWithholding) + D3(input.spouseStateWithholding);
+  const l37 = D3(input.neWithholding1099);
+  const l38 = D3(input.neK1nWithholding);
+  const l39 = D3(input.nePtetCredit);
+  const l40 = D3(input.estimatedPayments) + D3(input.priorYearOverpaymentCredited) + D3(input.extensionPayment);
+  let l42 = 0n;
+  const expenses = c(input.neChildCareExpenses);
+  if (expenses > 0n) {
+    if (l5 <= 2900000n) {
+      l42 = rd(evalStateTax("us.ne.child_care_credit_refundable", 0n, {
+        neAgi: l5,
+        neChildCareExpenses: expenses,
+        neChildCareQualifyingPersons: input.neChildCareQualifyingPersons ?? 1,
+        neEarnedIncome: c(input.neEarnedIncome),
+        neSpouseEarnedIncome: c(input.neSpouseEarnedIncome)
+      }));
+      const missingEarned = typeof input.neEarnedIncome !== "number" ? " \u2014 pass neEarnedIncome (assumed $0 \u2192 $0 credit)" : mfj && typeof input.neSpouseEarnedIncome !== "number" ? " \u2014 pass neSpouseEarnedIncome (assumed $0 \u2192 $0 credit on a joint return)" : "";
+      notes.push(`NE line 42 (Form 2441N): child/dependent care refundable credit ${fmtD(l42)} \u2014 AGI ${fmtD(l5)} is $29,000 or less: expenses \xD7 the federal percentage \xD7 the state percentage (100% to $22,000, \u221210 points per $1,000 over); attach Form 2441N, not the federal 2441${missingEarned}`);
+    } else
+      notes.push(`NE line 42: no refundable child care credit \u2014 AGI ${fmtD(l5)} exceeds $29,000 (the 25% nonrefundable credit on line 23 applies instead; pass neFederalChildCareCredit)`);
+  }
+  const fedEic = D3(input.federalEITC);
+  const l44 = fedEic > 0n ? rd(evalStateTax("us.ne.eitc", 0n, { neFederalEic: fedEic })) : 0n;
+  if (l44 > 0n)
+    notes.push(`NE line 44: Nebraska earned income credit ${fmtD(l44)} = 10% of the ${fmtD(fedEic)} federal EIC (line 27a); a filer deducting a federal NOL carryforward must pass the booklet's Nebraska Earned Income Worksheet limits`);
+  const l45 = D3(input.neCommunityCollegeTaxes);
+  if (l45 > 0n)
+    notes.push(`NE line 45 (Form PTC): credit for community college property taxes ${fmtD(l45)} \u2014 100% of the community college taxes paid in 2025 on your parcels (Form PTC line 1 = line 2a); the school district credit ended with LB 34 (relief now appears on the property tax statement)`);
+  const l46 = 25000n * BigInt(input.neVolunteerResponders ?? 0);
+  const l47 = 200000n * BigInt(input.neStillbornChildren ?? 0);
+  if (l46 > 0n)
+    notes.push(`NE line 46: qualified volunteer emergency responder credit ${fmtD(l46)} ($250 each; DOR certification for at least two years)`);
+  if (l47 > 0n)
+    notes.push(`NE line 47: stillborn child tax credit ${fmtD(l47)} ($2,000 each; attach the Birth Resulting in Stillbirth Certificate)`);
+  const otherRef = D3(input.refundableCredits);
+  if (otherRef > 0n)
+    notes.push(`NE lines 41, 43, 48-51: other refundable credits ${fmtD(otherRef)} transcribed (Form 3800N, beginning farmer, Child Care Tax Credit for a parent \u2264 $150,000 AGI, School Readiness staff, reverse osmosis, direct support professional $500)`);
+  const l52 = D3(input.neAmendedPaid);
+  const l53 = l36 + l37 + l38 + l39 + l40 + l42 + l44 + l45 + l46 + l47 + otherRef + l52;
+  const l54 = D3(input.neAmendedOverpayment);
+  const l55 = l53 - l54;
+  const l56 = D3(input.neUnderpaymentPenalty);
+  const l57 = l35 + l56;
+  const purchases = D3(input.neUseTaxPurchases);
+  const localBps = Math.round((input.neLocalUseTaxRate ?? 0) * 100);
+  const l58 = purchases > 0n ? rd(evalStateTax("us.ne.use_tax", 0n, { neUseTaxPurchases: purchases, neLocalUseTaxRateBps: localBps })) : 0n;
+  if (l58 > 0n)
+    notes.push(`NE line 58: use tax ${fmtD(l58)} on ${fmtD(purchases)} of untaxed purchases (5.5% state${localBps > 0 ? ` + ${(localBps / 100).toFixed(2)}% local` : ""}, each rounded); purchases in more than one local jurisdiction go on Form 3`);
+  const l59 = max02(l57 + l58 - l55);
+  const l60 = max02(l55 - l57 - l58);
+  const l61 = min2(D3(input.neCreditForward), l60);
+  const l62 = min2(D3(input.neWildlifeDonation), l60 - l61);
+  const l63 = l60 - l61 - l62;
+  if (l59 > 0n && l59 < 200n)
+    notes.push("NE line 59: 'A balance due of less than $2 need not be paid'");
+  if (l63 > 0n && l63 < 200n)
+    notes.push("NE line 63: 'Amounts less than $2 will not be refunded'");
+  if (l59 > 0n && l56 === 0n)
+    notes.push(`NE line 56: balance due ${fmtD(l59)} \u2014 check Form 2210N for an underpayment-of-estimated-tax penalty; unpaid tax bears 8% interest from the due date`);
+  notes.push("NE scope: Form 1040N is composed for a full-year RESIDENT \u2014 partial-year residents and nonresidents compute on Schedule III (income ratio), not composed; the high school district code, Schedule I transcribed lines, Forms 3800N/PTC/2210N, and certificated credits are inputs; Nebraska has no local income taxes");
+  const put = (k, v, always = false) => always || v !== 0n ? { [k]: fmtD(v) } : {};
+  return {
+    "4_personal_exemptions": String(l4),
+    "5_federal_agi": fmtD(l5),
+    "6_standard_deduction": fmtD(l6),
+    ...put("7_federal_itemized", l7),
+    ...put("8_state_local_income_taxes", l8),
+    ...put("9_nebraska_itemized", l9),
+    "10_nebraska_deductions": fmtD(l10),
+    _deduction_method: method,
+    "11_income_before_adjustments": fmtD(l11),
+    ...put("12_adjustments_increasing", l12),
+    ...put("13_adjustments_decreasing", l13),
+    ...put("I31_social_security", ss2),
+    ...put("I32_military_retirement", mil),
+    ...put("I20_nest_contributions", nest),
+    "14_taxable_income": fmtD(l14),
+    "15_income_tax": fmtD(l15),
+    _tax_method: table2 ? "tax table" : "tax calculation schedule",
+    ...put("16_other_tax", l16),
+    "17_total_tax": fmtD(l17),
+    "18_personal_exemption_credit": fmtD(l18),
+    ...put("19_other_state_credit", l19),
+    ...put("20_elderly_disabled_credit", l20),
+    ...put("23_child_care_nonrefundable", l23),
+    ...put("21_33_other_nonrefundable", otherNonref),
+    "34_total_nonrefundable_credits": fmtD(l34),
+    "35_tax_after_nonrefundable_credits": fmtD(l35),
+    ...put("36_withholding_w2", l36),
+    ...put("37_withholding_1099", l37),
+    ...put("38_k1n_withholding", l38),
+    ...put("39_ptet_credit", l39),
+    ...put("40_estimated_payments", l40),
+    ...put("42_child_care_refundable", l42),
+    ...put("44_earned_income_credit", l44),
+    ...put("45_community_college_property_tax_credit", l45),
+    ...put("46_volunteer_responder_credit", l46),
+    ...put("47_stillborn_child_credit", l47),
+    ...put("41_43_48_51_other_refundable", otherRef),
+    ...put("52_amended_paid", l52),
+    "53_total_payments_credits": fmtD(l53),
+    ...put("54_amended_overpayment", l54),
+    "55_actual_tax_paid": fmtD(l55),
+    ...put("56_underpayment_penalty", l56),
+    "57_tax_and_penalty": fmtD(l57),
+    ...put("58_use_tax", l58),
+    "59_amount_due": fmtD(l59),
+    "60_overpayment": fmtD(l60),
+    ...put("61_credit_forward", l61),
+    ...put("62_wildlife_donation", l62),
+    "63_refund": fmtD(l63)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -26205,18 +26426,18 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: external_exports.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
-  ageOrBlindBoxes: external_exports.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column; NM line 5 exemptions and the $4,000 dependents deduction)"),
+  ageOrBlindBoxes: external_exports.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box); NE line 2a: +$2,000 single/HOH or +$1,650 married/QSS each"),
+  dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column; NM line 5 exemptions and the $4,000 dependents deduction; NE $171 exemption credits \u2014 count only federal CTC/ODC dependents)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 \u2014 Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -26873,7 +27094,46 @@ var nmShape = {
   // claimedAsDependent, stateWithholding, estimatedPayments,
   // priorYearOverpaymentCredited, and extensionPayment are shared.
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape };
+var neShape = {
+  neUseTaxTable: external_exports.boolean().optional().describe("NE line 15: compute from the paper Nebraska Tax Table (row midpoints, endpoint worksheet over $77,760) instead of the Tax Calculation Schedule e-filers must use \u2014 they differ by up to $3 (the table prices each $100 row at its midpoint)"),
+  neFederalItemized: external_exports.boolean().optional().describe("NE lines 7-10: the filer itemized on the federal return \u2014 Nebraska then allows the LARGER of its standard deduction and federal itemized deductions minus state and local income taxes (pass neFederalItemizedDeductions and neSaltIncomeTaxes). A federal standard-deduction filer must use the Nebraska standard deduction"),
+  neFederalItemizedDeductions: usd.optional().describe("NE line 7: federal Schedule A line 17 total itemized deductions"),
+  neSaltIncomeTaxes: usd.optional().describe("NE line 8: state and local INCOME taxes on federal Schedule A line 5a (before the federal cap); $0 if line 5a is general sales taxes"),
+  neFederalStandardDeduction: usd.optional().describe("NE line 6, REQUIRED when claimedAsDependent or neSpouseClaimedAsDependent (line 2b): the federal standard deduction actually allowed (Form 1040 line 12e) \u2014 the Nebraska deduction is the smaller of it and the chart amount"),
+  neSpouseClaimedAsDependent: external_exports.boolean().optional().describe("NE line 4b: the spouse can be claimed as another taxpayer's dependent \u2014 no exemption for the spouse"),
+  neUsInterest: usd.optional().describe("NE Schedule I lines 15-17: interest and RIC dividends from U.S. government obligations exempt from state tax"),
+  neStateRefund: usd.optional().describe("NE Schedule I line 14: state income tax refund included in federal AGI (Schedule 1 line 1)"),
+  neMilitaryRetirement: usd.optional().describe("NE Schedule I line 32: military retirement benefits in federal AGI (Form 1040 line 5b, DoD or OPM 1099-R) \u2014 100% excluded"),
+  neNestContributions: usd.optional().describe("NE Schedule I line 20: contributions by the account owner to Nebraska Educational Savings Plan Trust (NEST / Bloomwell / State Farm 529) accounts \u2014 the composer caps at $10,000 ($5,000 MFS)"),
+  neFederalOtherTax: usd.optional().describe("NE line 16c: federal Form 4972 lump-sum tax plus federal Form 5329 early-distribution tax (the lesser of Form 5329 or Schedule 2 line 8) \u2014 Nebraska adds 29.6%"),
+  neFederalElderlyCredit: usd.optional().describe("NE line 20: the federal credit for the elderly or the disabled (Schedule R, Schedule 3 line 6d) \u2014 Nebraska allows the same amount, nonrefundable"),
+  neOtherStateAgi: usd.optional().describe("NE Schedule II line 2: adjusted gross income derived from another state per the DOR Conversion Chart (not that state's taxable income)"),
+  neOtherStateTaxPaid: usd.optional().describe("NE Schedule II line 5: income tax due and paid to the other state (or its political subdivision) \u2014 not withholding; no foreign taxes; attach the other state's complete return"),
+  neFederalChildCareCredit: usd.optional().describe("NE line 23: the federal child and dependent care credit (Schedule 3 line 2) \u2014 25% nonrefundable when AGI is over $29,000"),
+  neChildCareExpenses: usd.optional().describe("NE Form 2441N line 3 base (AGI $29,000 or less): qualified child/dependent care expenses paid, capped at $3,000 / $6,000 by neChildCareQualifyingPersons"),
+  neChildCareQualifyingPersons: external_exports.number().int().optional().describe("NE Form 2441N qualifying persons (1 \u2192 $3,000 cap; 2 or more \u2192 $6,000); defaults to 1"),
+  neEarnedIncome: usd.optional().describe("NE Form 2441N line 4: the taxpayer's earned income"),
+  neSpouseEarnedIncome: usd.optional().describe("NE Form 2441N line 5: the spouse's earned income (MFJ)"),
+  neFederalTaxBeforeCredits: usd.optional().describe("NE line 35 Federal Tax Liability Worksheet line 3: Form 1040 line 16 + Schedule 2 line 2 + Schedule 2 line 8 \u2014 when net Schedule I adjustments (line 12 \u2212 13) are under $5,000, Nebraska tax after nonrefundable credits cannot exceed this (\xA7 77-2715(1)). Omitted, the cap is skipped with a note"),
+  neWithholding1099: usd.optional().describe("NE line 37: Nebraska income tax withheld on W-2G, 1099-R, 1099-MISC, 1099-NEC (W-2 withholding goes in stateWithholding \u2192 line 36)"),
+  neK1nWithholding: usd.optional().describe("NE line 38: Nebraska income tax withheld reported on Schedules K-1N"),
+  nePtetCredit: usd.optional().describe("NE line 39: pass-through entity tax (PTET) credit from Schedules K-1N"),
+  neCommunityCollegeTaxes: usd.optional().describe("NE line 45 (Form PTC line 2a \u2192 line 1): community college property taxes paid in 2025 on parcels you own \u2014 100% refundable credit (the school district credit ended with LB 34; use the DOR Look-up Tool)"),
+  neVolunteerResponders: external_exports.number().int().optional().describe("NE line 46: qualified volunteer emergency responders on the return certified to DOR for at least two years (0-2) \u2014 $250 each, refundable"),
+  neStillbornChildren: external_exports.number().int().optional().describe("NE line 47: stillborn children (20+ weeks, Nebraska certificate attached) \u2014 $2,000 each, refundable"),
+  neUnderpaymentPenalty: usd.optional().describe("NE line 56: Form 2210N penalty for underpayment of estimated tax"),
+  neUseTaxPurchases: usd.optional().describe("NE line 58: 2025 taxable purchases on which no Nebraska sales tax was collected (Internet / out-of-state) \u2014 5.5% state plus the local rate"),
+  neLocalUseTaxRate: external_exports.number().optional().describe("NE line 58: your local sales and use tax rate in percent from the codes schedule (0.5, 1, 1.5, 1.75, or 2); omit for none"),
+  neWildlifeDonation: usd.optional().describe("NE line 62: Wildlife Conservation Fund donation from the overpayment ($1 or more)"),
+  neCreditForward: usd.optional().describe("NE line 61: overpayment applied to 2026 estimated tax"),
+  neAmendedPaid: usd.optional().describe("NE line 52 (amended return only): amount paid with the original return plus later payments"),
+  neAmendedOverpayment: usd.optional().describe("NE line 54 (amended return only): overpayment allowed on the original return")
+  // Schedule I Part A additions use the shared `additions`; other Part B subtractions use `subtractions`; lines 21-33 use
+  // nonrefundableCredits; lines 41, 43, 48-51 use refundableCredits; taxableSocialSecurity (line 31, 100% excluded),
+  // federalEITC (line 44), dependents, claimedAsDependent, ageOrBlindBoxes (line 2a), stateWithholding, estimatedPayments,
+  // priorYearOverpaymentCredited, and extensionPayment (all three → line 40) are shared.
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -26903,7 +27163,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -26945,6 +27205,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeAR(input, evalStateTax, notes), notes };
   if (j === "nm")
     return { lines: composeNM(input, evalStateTax, notes), notes };
+  if (j === "ne")
+    return { lines: composeNE(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -30346,6 +30608,172 @@ var facts = [
     description: "Taxable IRA distributions other than Roth (Form 1040 line 4b) \u2014 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" }
   },
+  // ---- Nebraska (Form 1040N) ----
+  {
+    id: "neUseTaxTable",
+    type: "bool",
+    description: "Compute Nebraska line 15 from the paper 2025 Nebraska Tax Table (row-midpoint cells and the over-$77,760 endpoint worksheet) instead of the Tax Calculation Schedule that e-filers must use (us.ne.income_tax). The two differ by up to $3 (the table prices each $100 row at its midpoint).",
+    default: { value: false, rationale: "Electronic filers must use the Tax Calculation Schedule, so it is the default" }
+  },
+  {
+    id: "neExemptions",
+    type: "int",
+    min: "0",
+    description: "Form 1040N line 4 Nebraska personal exemptions: yourself and spouse (unless claimable as another taxpayer's dependent) plus the dependents who qualify for the federal child tax credit or other dependent credit \u2014 $171 each (us.ne.personal_exemption_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "neAgeBlindBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description: "Form 1040N line 2a boxes checked: you 65 or older, you blind, spouse 65 or older, spouse blind (0-4) \u2014 $2,000 each for single/HOH, $1,650 each for MFJ/QSS/MFS; the rule clamps at 2 for single, QSS, and HOH (us.ne.standard_deduction). For MFS the spouse boxes count only if you can claim the spouse's exemption.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "neFederalStandardDeduction",
+    type: "money",
+    min: "0",
+    description: "The federal standard deduction actually allowed on Form 1040 line 12e \u2014 caps the Nebraska standard deduction for a filer who can be claimed as another taxpayer's dependent (us.ne.standard_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neFederalItemizedDeductions",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 7: total federal itemized deductions, Schedule A line 17 (us.ne.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neSaltIncomeTaxes",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 8: state and local INCOME taxes on federal Schedule A line 5a, before the federal cap \u2014 $0 if line 5a is general sales taxes (us.ne.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neFederalOtherTax",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 16c: federal tax on lump-sum distributions (Form 4972) plus federal tax on early distributions (the lesser of Form 5329 or Schedule 2 line 8) \u2014 Nebraska adds 29.6% (us.ne.other_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neAgi",
+    type: "money",
+    description: "Federal adjusted gross income, Form 1040N line 5 (Form 1040 line 11) \u2014 the $29,000 child care credit split (us.ne.child_care_credit_nonrefundable, us.ne.child_care_credit_refundable) and the Schedule II ratio denominator (us.ne.other_state_credit). May be negative. In dollars."
+  },
+  {
+    id: "neFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description: "Federal child and dependent care credit allowed, Schedule 3 line 2 \u2014 Nebraska allows 25% when AGI exceeds $29,000 (us.ne.child_care_credit_nonrefundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neChildCareExpenses",
+    type: "money",
+    min: "0",
+    description: "Form 2441N line 2(C)/3: qualified child and dependent care expenses paid, before the $3,000 / $6,000 cap (us.ne.child_care_credit_refundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neChildCareQualifyingPersons",
+    type: "int",
+    min: "0",
+    description: "Form 2441N line 2 qualifying persons \u2014 caps line 3 at $3,000 for one, $6,000 for two or more (us.ne.child_care_credit_refundable).",
+    default: { value: "1", rationale: "Assumed one qualifying person when expenses are given" }
+  },
+  {
+    id: "neEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Form 2441N line 4: the taxpayer's earned income (us.ne.child_care_credit_refundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Form 2441N line 5: the spouse's earned income on a joint return (student/disabled deemed amounts per the federal instructions) (us.ne.child_care_credit_refundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neFederalEic",
+    type: "money",
+    min: "0",
+    description: "Federal earned income credit, Form 1040 line 27a \u2014 Nebraska allows 10% (us.ne.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 17: total Nebraska tax before the personal exemption credit (line 15 + line 16) (us.ne.tax_after_credits, us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neNonrefundableCredits",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 34: total nonrefundable credits, lines 18 through 33 (us.ne.tax_after_credits). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neNetAdjustments",
+    type: "money",
+    description: "Form 1040N line 12 minus line 13 (net Schedule I adjustments; may be negative) \u2014 under $5,000 the \xA7 77-2715(1) federal tax liability cap applies (us.ne.tax_after_credits). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neFederalTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description: "Federal Tax Liability Worksheet line 3: Form 1040 line 16 + Schedule 2 line 2 + Schedule 2 line 8 \u2014 the ceiling on Nebraska tax after nonrefundable credits when net adjustments are under $5,000 (us.ne.tax_after_credits). In dollars."
+  },
+  {
+    id: "neOtherStateAgi",
+    type: "money",
+    min: "0",
+    description: "Schedule II line 2: adjusted gross income derived from the other state per the DOR Conversion Chart (not that state's taxable income) (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neOtherStateTaxPaid",
+    type: "money",
+    min: "0",
+    description: "Schedule II line 5: income tax due and paid to the other state or its political subdivision (not the amount withheld; no foreign taxes) (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neAdjustmentsIncreasing",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 12: total Schedule I Part A adjustments increasing federal AGI \u2014 part of the Schedule II ratio denominator (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neAdjustmentsDecreasing",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 13: total Schedule I Part B adjustments decreasing federal AGI \u2014 part of the Schedule II ratio denominator (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description: "Form 1040N line 58: 2025 taxable purchases on which no Nebraska sales tax was collected (us.ne.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "neLocalUseTaxRateBps",
+    type: "int",
+    min: "0",
+    max: "200",
+    description: "Form 1040N line 58 local use tax rate in basis points \u2014 0, 50, 100, 150, 175, or 200 (0.5% to 2%) from the local sales and use tax codes schedule (us.ne.use_tax).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
   // ---- New Mexico (Form PIT-1) ----
   {
     id: "nmAgi",
@@ -31101,7 +31529,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt14 = (cents) => ({
+  const lt15 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -31120,22 +31548,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt14("500"),
+    cond: lt15("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt14("1500"),
+      cond: lt15("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt14("2500"),
+        cond: lt15("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt14("300000"),
+          cond: lt15("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -39987,7 +40415,7 @@ var njRules = [
     },
     formula: (() => {
       const ti = max05(fact36("stateTaxableIncome"));
-      const pct4 = (num) => ({
+      const pct5 = (num) => ({
         kind: "mulRate",
         base: fact36("njFederalCdcc"),
         rate: { num, den: "100" },
@@ -39996,7 +40424,7 @@ var njRules = [
       const tier = (max2, num, next) => ({
         kind: "if",
         cond: le(ti, param17(max2)),
-        then: pct4(num),
+        then: pct5(num),
         else: next
       });
       return rd3(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money33("0")))))));
@@ -40468,7 +40896,7 @@ var ohRules = [
       // $75,000 → 10%; above → 5%
     },
     formula: (() => {
-      const pct4 = (num) => ({
+      const pct5 = (num) => ({
         kind: "mulRate",
         base: max06(fact36("ohTaxLessCredits")),
         rate: { num, den: "100" },
@@ -40477,16 +40905,16 @@ var ohRules = [
       const tiered = {
         kind: "if",
         cond: le2(magiLessExemptions, param18("tier1Max")),
-        then: pct4("20"),
+        then: pct5("20"),
         else: {
           kind: "if",
           cond: le2(magiLessExemptions, param18("tier2Max")),
-          then: pct4("15"),
+          then: pct5("15"),
           else: {
             kind: "if",
             cond: le2(magiLessExemptions, param18("tier3Max")),
-            then: pct4("10"),
-            else: pct4("5")
+            then: pct5("10"),
+            else: pct5("5")
           }
         }
       };
@@ -41722,8 +42150,8 @@ var moRules = [
     formula: (() => {
       const magi2 = fact36("moMagi");
       const total = { kind: "max0", arg: fact36("moFederalTaxTotal") };
-      const pct4 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
-      const uncapped = iff2(le5(magi2, money33("2500000")), pct4("35"), iff2(le5(magi2, money33("5000000")), pct4("25"), iff2(le5(magi2, money33("10000000")), pct4("15"), iff2(le5(magi2, money33("12500000")), pct4("5"), money33("0")))));
+      const pct5 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
+      const uncapped = iff2(le5(magi2, money33("2500000")), pct5("35"), iff2(le5(magi2, money33("5000000")), pct5("25"), iff2(le5(magi2, money33("10000000")), pct5("15"), iff2(le5(magi2, money33("12500000")), pct5("5"), money33("0")))));
       const cap = iff2({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } }, money33("1000000"), money33("500000"));
       return { kind: "min", args: [uncapped, cap] };
     })()
@@ -42041,8 +42469,8 @@ var wiRules = [
     formula: (() => {
       const eic = { kind: "max0", arg: fact36("wiFederalEicForWi") };
       const kids = fact36("wiQualifyingChildren");
-      const pct4 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
-      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct4("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct4("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct4("4"), money33("0"))));
+      const pct5 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct5("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct5("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct5("4"), money33("0"))));
     })()
   },
   {
@@ -44132,15 +44560,15 @@ var tcsFor = (agi2, s, method) => {
   const taxable3 = max010(sub10(agi2, exemptionFor(agi2, s)));
   const scaledTax = scaledSchedule2(taxable3, SCHED[s]);
   const cAndD = add6(addbackFor(agi2, s), recaptureFor(agi2, s));
-  const pct4 = creditPctFor(agi2, s);
+  const pct5 = creditPctFor(agi2, s);
   if (method === "schedule") {
     const line4 = dollarsFromScaled2(scaledTax, "1000000");
     const line7 = add6(line4, cAndD);
-    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct4), c: money33("100"), round: "half-up" });
+    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct5), c: money33("100"), round: "half-up" });
     return sub10(line7, line92);
   }
   const totalScaled = add6(scaledTax, times2(cAndD, "10000"));
-  const keep = sub10(int5("100"), pct4);
+  const keep = sub10(int5("100"), pct5);
   const scaledAfterCredit = mulInt8(totalScaled, keep);
   return dollarsFromScaled2(scaledAfterCredit, "100000000");
 };
@@ -45125,8 +45553,8 @@ var arRules = [
       const earned2 = max012(fact36("arEarnedIncome"));
       const l6 = iff11(isMfj2, minE(l3, earned2, max012(fact36("arSpouseEarnedIncome"))), minE(l3, earned2));
       const steps = stepUnits2(max012(sub12(fact36("arFederalAgi"), money33("1500000"))), "200000", "ceil");
-      const pct4 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
-      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct4, c: money33("100"), round: "half-up" });
+      const pct5 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
+      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct5, c: money33("100"), round: "half-up" });
       return rd17({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
     })()
   },
@@ -45833,6 +46261,467 @@ var nmRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-ne.js
+var rd19 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp6 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt14 = (l, r) => cmp6("lt", l, r);
+var le12 = (l, r) => cmp6("le", l, r);
+var gt5 = (l, r) => cmp6("gt", l, r);
+var iff13 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add10 = (...args) => ({ kind: "add", args });
+var sub14 = (left, right) => ({ kind: "sub", left, right });
+var max014 = (arg) => ({ kind: "max0", arg });
+var minE3 = (...args) => ({ kind: "min", args });
+var or4 = (...args) => ({ kind: "or", args });
+var int8 = (value) => ({ kind: "int", value });
+var mulInt12 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits4 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus21 = (v) => cmp6("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJoint2 = or4(isStatus21("mfj"), isStatus21("qss"));
+var isHoh2 = isStatus21("hoh");
+var isSingleSched = or4(isStatus21("single"), isStatus21("mfs"));
+var times6 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var pct3 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var dollarsFromScaled6 = (n, denCents) => times6({ kind: "mulDiv", a: n, b: money33("1"), c: money33(denCents), round: "half-up" }, "100");
+var scaledSchedule6 = (base, rows) => add10(...rows.map((r, i) => {
+  const excess = sub14(base, money33(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money33("0"), hi: money33(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max014(excess);
+  return times6(portion, r.rateNum);
+}));
+var calcSchedule = (base, rows) => {
+  let expr = dollarsFromScaled6(add10(times6(money33(rows[0].fixedCents), "10000"), times6(sub14(base, money33(rows[0].thresholdCents)), rows[0].rateNum)), "1000000");
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    expr = iff13(gt5(base, money33(r.thresholdCents)), dollarsFromScaled6(add10(times6(money33(r.fixedCents), "10000"), times6(sub14(base, money33(r.thresholdCents)), r.rateNum)), "1000000"), expr);
+  }
+  return expr;
+};
+var CALC_SINGLE = [
+  { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
+  { thresholdCents: "403000", fixedCents: "9914", rateNum: "351" },
+  // $99.14 + 3.51% over $4,030
+  { thresholdCents: "2412000", fixedCents: "80430", rateNum: "501" },
+  // $804.30 + 5.01% over $24,120
+  { thresholdCents: "3887000", fixedCents: "154328", rateNum: "520" }
+  // $1,543.28 + 5.20% over $38,870
+];
+var CALC_JOINT = [
+  { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
+  { thresholdCents: "804000", fixedCents: "19778", rateNum: "351" },
+  // $197.78 + 3.51% over $8,040
+  { thresholdCents: "4825000", fixedCents: "160915", rateNum: "501" },
+  // $1,609.15 + 5.01% over $48,250
+  { thresholdCents: "7773000", fixedCents: "308610", rateNum: "520" }
+  // $3,086.10 + 5.20% over $77,730
+];
+var CALC_HOH = [
+  { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
+  { thresholdCents: "751000", fixedCents: "18475", rateNum: "351" },
+  // $184.75 + 3.51% over $7,510
+  { thresholdCents: "3859000", fixedCents: "127566", rateNum: "501" },
+  // $1,275.66 + 5.01% over $38,590
+  { thresholdCents: "5763000", fixedCents: "222956", rateNum: "520" }
+  // $2,229.56 + 5.20% over $57,630
+];
+var exactRows = (rows) => rows.map((r) => ({ thresholdCents: r.thresholdCents, rateNum: r.rateNum }));
+var BOOKLET_URL4 = "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_Individual_Income_Tax_Booklet.pdf";
+var CALC_URL = "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/2025_Tax_Calculation_Schedule.pdf";
+var neRules = [
+  {
+    id: "us.ne.income_tax",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska income tax \u2014 2025 Tax Calculation Schedule (2.46 / 3.51 / 5.01 / 5.20% at $4,030 / $24,120 / $38,870 single and MFS; $8,040 / $48,250 / $77,730 MFJ and QSS; $7,510 / $38,590 / $57,630 HOH), or the paper Tax Table (row midpoints, exact anchors) and its over-$77,760 worksheet (Form 1040N line 15)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715.03(2)-(5) (LB 754, 2023: rate four 5.20% for 2025; brackets indexed by CPI-U, rounded to $10); 2025 Nebraska Tax Calculation Schedule (8-460-2025); 2025 Nebraska Tax Table pp. 46-49 of the booklet and the 'Over $77,760' worksheet; 2025 booklet line 15 instructions p. 14",
+      section: "\xA7 77-2715.03; Form 1040N line 15; Tax Calculation Schedule; Tax Table",
+      url: CALC_URL,
+      excerpt: "STATUTE (\xA7 77-2715.03(2)(a)-(c), verbatim): bracket table 'Single Individuals $0-2,999 / $3,000-17,999 / $18,000-28,999 / $29,000 and Over; Married, Filing Jointly $0-5,999 / $6,000-35,999 / $36,000-57,999 / $58,000 and Over; Head of Household $0-5,599 / $5,600-28,799 / $28,800-42,999 / $43,000 and Over; Married, Filing Separate $0-2,999 / $3,000-17,999 / $18,000-28,999 / $29,000 and Over' at '2.46%', '3.51%', 'Rate Three', 'Rate Four'; '(b) \u2026 rate three shall be: (i) 5.01% for taxable years beginning or deemed to begin on or after January 1, 2014, and before January 1, 2026; (ii) 4.55% \u2026 on or after January 1, 2026, and before January 1, 2027; and (iii) 3.99% \u2026 on or after January 1, 2027. (c) \u2026 rate four shall be: \u2026 (iv) 5.20% for taxable years beginning or deemed to begin on or after January 1, 2025, and before January 1, 2026; (v) 4.55% \u2026 2026 \u2026; and (vi) 3.99% \u2026 2027.' '(3)(a) For taxable years beginning or deemed to begin on or after January 1, 2015, the minimum and maximum dollar amounts for each income tax bracket \u2026 shall be adjusted for inflation \u2026 rounded to the nearest ten-dollar amount.' '(5) The Tax Commissioner shall prepare, from the rate schedules, tax tables \u2026 The difference in tax between two tax table brackets shall not exceed fifteen dollars.' 2025 TAX CALCULATION SCHEDULE (verbatim): 'Single Taxpayers: $0 \u2013 $4,030: 2.46% of Nebraska Taxable Income, line 14, Form 1040N; 4,030 \u2013 24,120: $99.14 + 3.51% of the excess over $4,030; 24,120 \u2013 38,870: $804.30 + 5.01% of the excess over $24,120; 38,870 \u2013 \u2013\u2013: $1,543.28 + 5.20% of the excess over $38,870. Married Taxpayers, Filing Jointly and Qualifying Surviving Spouses: $0 \u2013 $8,040: 2.46%; 8,040 \u2013 48,250: $197.78 + 3.51% of the excess over $8,040; 48,250 \u2013 77,730: $1,609.15 + 5.01% of the excess over $48,250; 77,730 \u2013 \u2013\u2013: $3,086.10 + 5.20% of the excess over $77,730. Married Taxpayers, Filing Separately: [same as Single]. Head of Household Taxpayers: $0 \u2013 $7,510: 2.46%; 7,510 \u2013 38,590: $184.75 + 3.51% of the excess over $7,510; 38,590 \u2013 57,630: $1,275.66 + 5.01% of the excess over $38,590; 57,630 \u2013 \u2013\u2013: $2,229.56 + 5.20% of the excess over $57,630.' BOOKLET (line 15, verbatim): 'Paper filers may use the Nebraska Tax Table. Electronic filers must use the Nebraska Tax Calculation Schedule.' 'Enter All Amounts as Whole Dollars \u2026 Round any amount from 50 cents to 99 cents to the next higher dollar. Round any amount less than 50 cents to the next lower dollar.' TAX TABLE (verbatim header): 'Use your Nebraska taxable income found on line 14, Form 1040N. Only taxpayers filing paper returns may use the Nebraska Tax Table. If your Nebraska taxable income is more than the highest amount in the tax table, see instructions at the end of the table. If Nebraska taxable income is \u2014 Over / But not over \u2014 And you are \u2014 Single / Married, filing jointly * / Married, filing separately / Head of a household \u2014 Your Nebraska tax is \u2014'; '* A qualifying surviving spouse must also use this column'; first rows '60 160 $3 $3 $3 $3', '160 260 $5 $5 $5 $5'; last row '77660 77760 $3,563 $3,085 $3,563 $3,274'. CONVENTION (verified on all 777 rows \xD7 4 columns): each cell is the EXACT \xA7 77-2715.03 marginal schedule (unrounded anchors: 2.46% \xD7 $8,040 = $197.784, not the schedule's $197.78) at the row midpoint (lo + 50), rounded half-up \u2014 the rounded-anchor schedule misses 12 cells (e.g. MFJ row 10,660-10,760: exact $291.501 \u2192 $292 printed; rounded anchors give $291.497 \u2192 $291). WORKSHEET (verbatim): 'Over $77,760 \u2014 Use the following worksheet if your Nebraska taxable income is more than the maximum amount included in the 2025 Nebraska Tax Table. The tax table shown above calculates tax to the midpoint of the bracket. The amounts shown below represent tax calculated on $77,760, the endpoint of the bracket. Single: Add $3,566 plus 5.20% of the amount over $77,760. Married, filing jointly or qualifying surviving spouse: Add $3,088 plus 5.20% of the amount over $77,760. Married, filing separately: Add $3,566 plus 5.20% of the amount over $77,760. Head of household: Add $3,276 plus 5.20% of the amount over $77,760.' ENCODING: default = the Tax Calculation Schedule as printed (rounded anchors + rate \xD7 excess, one whole-dollar rounding \u2014 the method e-filers must use); neUseTaxTable = true \u2192 the paper table (midpoint of the (lo, lo+100] row on the exact schedule for $61-$77,760; the exact schedule on the income itself at $60 or less, where no row is printed) and the endpoint worksheet above $77,760. The two methods differ by up to $3 (the table prices the row midpoint, up to $50 from the income; its worksheet base $3,566 vs the schedule's $3,565.55 at $77,760). MFS uses the single schedule; a federal QSS uses the joint column. 2026: version 2 of this rule (LB 754's 4.55% / 4.55% rates on the DOR-published 2026 brackets). Nonresidents and partial-year residents apportion on Schedule III (not composed)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "246", type: "int" },
+      rate2Bps: { value: "351", type: "int" },
+      rate3Bps: { value: "501", type: "int" },
+      rate4Bps: { value: "520", type: "int" },
+      singleBracket1: { value: "403000", type: "money" },
+      singleBracket2: { value: "2412000", type: "money" },
+      singleBracket3: { value: "3887000", type: "money" },
+      jointBracket1: { value: "804000", type: "money" },
+      jointBracket2: { value: "4825000", type: "money" },
+      jointBracket3: { value: "7773000", type: "money" },
+      hohBracket1: { value: "751000", type: "money" },
+      hohBracket2: { value: "3859000", type: "money" },
+      hohBracket3: { value: "5763000", type: "money" },
+      tableTop: { value: "7776000", type: "money" },
+      // $77,760
+      tableWorksheetBaseSingleMfs: { value: "356600", type: "money" },
+      tableWorksheetBaseJoint: { value: "308800", type: "money" },
+      tableWorksheetBaseHoh: { value: "327600", type: "money" },
+      rate3Bps2026: { value: "455", type: "int" },
+      rate4Bps2026: { value: "455", type: "int" }
+    },
+    formula: (() => {
+      const x = max014(fact36("stateTaxableIncome"));
+      const calc = iff13(isJoint2, calcSchedule(x, CALC_JOINT), iff13(isHoh2, calcSchedule(x, CALC_HOH), calcSchedule(x, CALC_SINGLE)));
+      const k = stepUnits4(sub14(x, money33("6000")), "10000", "ceil");
+      const mid = add10(mulInt12(money33("10000"), k), money33("1000"));
+      const exactAt = (b) => iff13(isJoint2, dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_JOINT)), "1000000"), iff13(isHoh2, dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_HOH)), "1000000"), dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_SINGLE)), "1000000")));
+      const worksheetBase = iff13(isJoint2, money33("308800"), iff13(isHoh2, money33("327600"), money33("356600")));
+      const worksheet = dollarsFromScaled6(add10(times6(worksheetBase, "10000"), times6(sub14(x, money33("7776000")), "520")), "1000000");
+      const table2 = iff13(le12(x, money33("6000")), exactAt(x), iff13(le12(x, money33("7776000")), exactAt(mid), worksheet));
+      return iff13(fact36("neUseTaxTable"), table2, calc);
+    })()
+  },
+  {
+    id: "us.ne.standard_deduction",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska standard deduction \u2014 $8,600 single and MFS, $17,200 MFJ and QSS, $12,600 HOH, plus $2,000 (single, HOH) or $1,650 (married, QSS) per 65-or-older/blind box; a dependent filer gets the smaller of the federal standard deduction and the Nebraska amount (Form 1040N line 6)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2716.01(3) ($6,750 / $9,900 base and $1,300 / $1,600 additional amounts indexed by CPI-U from 2019, rounded down to $50); 2025 booklet, line 6 instructions and 'Nebraska Standard Deduction Chart' p. 13; printed Form 1040N line 6",
+      section: "\xA7 77-2716.01(3); Form 1040N lines 2a, 2b, 6",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(3)(a) For tax years beginning or deemed to begin on or after January 1, 2018, every individual who did not itemize deductions on his or her federal return shall be allowed to subtract from federal adjusted gross income a standard deduction based on the filing status used on the federal return. The standard deduction shall be the smaller of the federal standard deduction actually allowed or (i) six thousand seven hundred fifty dollars for single taxpayers and (ii) nine thousand nine hundred dollars for head of household taxpayers. The standard deduction for married filing jointly taxpayers or qualifying widows or widowers shall be double the standard deduction for single taxpayers, and the standard deduction for married filing separately taxpayers shall be the same as the standard deduction for single taxpayers. Taxpayers who are allowed additional federal standard deduction amounts because of age or blindness shall be allowed an increase in the Nebraska standard deduction for each additional amount allowed on the federal return. The additional amounts shall be one thousand three hundred dollars for married taxpayers and one thousand six hundred dollars for single or head of household taxpayers. (b) For tax years beginning or deemed to begin on or after January 1, 2019, the standard deduction amounts, including the additional standard deduction amounts, in this subsection shall be adjusted for inflation \u2026 If any amount is not a multiple of fifty dollars, the amount shall be rounded to the next lowest multiple of fifty dollars.' BOOKLET (line 6, verbatim): 'If you use the standard deduction on the federal return, you must use the Nebraska standard deduction on the Nebraska return. All taxpayers that claimed itemized deductions on their federal return are allowed the larger of the Nebraska standard deduction or federal itemized deductions, minus state and local income taxes claimed on Federal Schedule A. \u2026 If you or your spouse can be claimed by another taxpayer for federal child tax credit or dependent tax credit purposes, your standard deduction is the smaller of the federal standard deduction allowed on line 12e of the Federal Form 1040 or 1040-SR, or the Nebraska standard deduction from the following chart.' CHART (verbatim, 'Filing Status / Number of Boxes Checked on Line 2a / Standard Deduction'): 'Single 0 $8,600; 1 $10,600; 2 $12,600. Married, Filing Jointly 0 $17,200; 1 $18,850; 2 $20,500; 3 $22,150; 4 $23,800. Qualifying surviving spouse 0 $17,200; 1 $18,850; 2 $20,500. Married, Filing Separately 0 $8,600; 1 $10,250; 2 $11,900; 3 $13,550; 4 $15,200. If married, filing separately, the additional amounts for spouse 65 and over and blind apply only if the primary taxpayer can claim a personal exemption for his or her spouse. Head of Household 0 $12,600; 1 $14,600; 2 $16,600.' ENCODING: base + per-box amount \xD7 boxes (single/HOH $2,000, MFJ/QSS/MFS $1,650), boxes clamped at 2 for single, QSS, and HOH and 4 for MFJ and MFS; when isClaimedAsDependent, the smaller of that and neFederalStandardDeduction. Version 2 carries the DOR-published 2026 amounts."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      single: { value: "860000", type: "money" },
+      joint: { value: "1720000", type: "money" },
+      hoh: { value: "1260000", type: "money" },
+      perBoxSingleHoh: { value: "200000", type: "money" },
+      perBoxMarried: { value: "165000", type: "money" }
+    },
+    formula: (() => {
+      const base = iff13(isJoint2, money33("1720000"), iff13(isHoh2, money33("1260000"), money33("860000")));
+      const perBox = iff13(or4(isStatus21("single"), isHoh2), money33("200000"), money33("165000"));
+      const maxBoxes = iff13(or4(isStatus21("mfj"), isStatus21("mfs")), int8("4"), int8("2"));
+      const boxes = iff13(gt5(fact36("neAgeBlindBoxes"), maxBoxes), maxBoxes, fact36("neAgeBlindBoxes"));
+      const ne = add10(base, mulInt12(perBox, boxes));
+      return iff13(fact36("isClaimedAsDependent"), minE3(ne, max014(fact36("neFederalStandardDeduction"))), ne);
+    })()
+  },
+  {
+    id: "us.ne.itemized_deductions",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska itemized deductions \u2014 federal Schedule A total minus the state and local INCOME taxes on Schedule A line 5a (before the federal cap); a federal itemizer takes the larger of this and the Nebraska standard deduction (Form 1040N lines 7-10)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2716.01(4); 2025 booklet, lines 7-10 instructions p. 14",
+      section: "\xA7 77-2716.01(4); Form 1040N lines 7, 8, 9, 10",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(4) Every individual who itemized deductions on his or her federal return shall be allowed to subtract from federal adjusted gross income the greater of either the standard deduction allowed in this section or his or her federal itemized deductions as defined in section 63(d) of the Internal Revenue Code of 1986, as amended, except for the amount for state or local income taxes included in federal itemized deductions before any federal disallowance.' BOOKLET (verbatim): 'Line 7 Total Itemized Deductions. If you itemized deductions on your federal return, enter the amount from line 17 of Schedule A, Federal Form 1040. If you did not itemize deductions on your federal return, skip lines 7 through 9 and enter the line 6 amount on line 10. \u2026 Line 8 State and Local Income Taxes. If you itemized deductions on your federal return, you must enter the amount of state and local income taxes reported on Federal Schedule A, line 5a even if the total amount of state and local taxes was limited to $40,000 ($20,000 married, filing separately) on Federal Schedule A, line 5e. If you entered general sales taxes on Federal Schedule A, line 5a, do not enter an amount on line 8. Line 9 Nebraska Itemized Deductions. Line 7 minus line 8. Line 10 Nebraska Deductions. Enter line 6 or line 9, whichever is greater.' ENCODING: max0(federal itemized total \u2212 state and local income taxes on 5a); the composer takes the larger of this and us.ne.standard_deduction only when the filer itemized federally (a federal standard-deduction filer must use the Nebraska standard deduction). Pass neSaltIncomeTaxes = 0 when line 5a is general sales tax."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: max014(sub14(max014(fact36("neFederalItemizedDeductions")), max014(fact36("neSaltIncomeTaxes"))))
+  },
+  {
+    id: "us.ne.personal_exemption_credit",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska personal exemption credit \u2014 $171 per Nebraska personal exemption (yourself and spouse unless claimable as another's dependent, plus federal child tax credit / other dependent credit dependents) (Form 1040N line 18)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2716.01(1)(b) ($134 for 2018, indexed by CPI-U, rounded to the dollar); 2025 booklet, lines 4a-4c p. 12 and line 18 p. 14; printed Form 1040N lines 4 and 18",
+      section: "\xA7 77-2716.01(1)(b); Form 1040N lines 4a, 4b, 4c, 18",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(b) Beginning with tax year 2018, every individual, except an individual that can be claimed for a child credit or dependent credit on the federal return of another taxpayer, shall be allowed to subtract from his or her income tax liability an amount for personal exemptions. The amount allowed to be subtracted shall be the credit amount for the year as provided in this subdivision multiplied by the sum of the number of child credits and dependent credits taken on the federal return, plus two for a married filing jointly return or plus one for any other return. For tax year 2018, the credit amount shall be one hundred thirty-four dollars. For tax year 2019 and each tax year thereafter, the credit amount shall be adjusted for inflation \u2026 If any credit amount is not an even dollar amount, the amount shall be rounded to the nearest dollar.' BOOKLET (verbatim): 'Line 4a Enter 1 in line 4a for yourself. You cannot enter a 1 in line 4a if you are claimed by another taxpayer for child tax credit or dependent tax credit purposes. \u2026 Line 4b If your status is married, filing jointly enter 1 in line 4b for your spouse. You cannot enter a 1 in line 4b if your spouse is claimed by another taxpayer \u2026 Line 4c Enter the dependents' names and social security numbers listed in columns 1 and 2 of the Federal Form 1040 or 1040-SR that qualify for the child tax credit or dependent tax credit. \u2026 Line 18 Nebraska Personal Exemption Credit for Residents Only. Residents may claim a $171 credit for each Nebraska personal exemption reported on line 4, Form 1040N. Multiply $171 by the number of Nebraska exemptions on line 4, Form 1040N.' Form line 18: 'NE personal exemption credit for residents only ($171 times the number on line 4)'. Nonrefundable (line 35: 'if line 34 is more than line 17, enter -0-'). Version 2 carries the DOR-published 2026 amount ($176)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "17100", type: "money" } },
+    formula: mulInt12(money33("17100"), fact36("neExemptions"))
+  },
+  {
+    id: "us.ne.other_tax",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska other tax \u2014 29.6% of the federal tax on lump-sum distributions (Form 4972) and on early distributions (Form 5329) (Form 1040N line 16)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715(2)(b) and \xA7 77-2715.03(6); 2025 booklet, line 16 instructions p. 14; printed Form 1040N lines 16a-16c",
+      section: "\xA7 77-2715.03(6); Form 1040N line 16",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): \xA7 77-2715(2)(b) 'the tax for each resident individual shall be a percentage of such individual's federal adjusted gross income as modified \u2026, plus a percentage of the federal tax on premature or lump-sum distributions from qualified retirement plans.' \xA7 77-2715.03(6): 'For taxable years beginning or deemed to begin on or after January 1, 2013, the tax rate applied to other federal taxes included in the computation of the Nebraska individual income tax shall be 29.6 percent.' BOOKLET (line 16, verbatim): 'Nebraska Other Tax. You are required to calculate Nebraska other tax if you were required to pay: Federal tax on lump-sum distributions of qualified retirement plans; and/or Federal tax on early distributions of qualified retirement plans. The Nebraska other tax is 29.6% of the federal other tax on the items shown above.' FORM: '16a Federal Tax on Lump-Sum Distributions (Federal Form 4972); 16b Federal tax on early distributions (lesser of Federal Form 5329 or line 8, Sch 2, Federal Form 1040 or 1040-SR); 16c Total (add lines 16a and 16b); Residents multiply line 16c by 29.6% (x .296) and enter the result on line 16.' Input neFederalOtherTax = line 16c."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pctTimes10: { value: "296", type: "int" } },
+    formula: rd19(pct3(max014(fact36("neFederalOtherTax")), "296", "1000"))
+  },
+  {
+    id: "us.ne.child_care_credit_nonrefundable",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska child/dependent care nonrefundable credit \u2014 25% of the federal \xA7 21 credit when federal AGI is over $29,000 (Form 1040N line 23)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715.07(2)(a); 2025 booklet, line 23 instructions p. 15; printed Form 1040N line 23",
+      section: "\xA7 77-2715.07(2)(a); Form 1040N line 23",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(2) There shall be allowed to qualified resident individuals against the income tax imposed by the Nebraska Revenue Act of 1967: (a) For returns filed reporting federal adjusted gross incomes of greater than twenty-nine thousand dollars, a nonrefundable credit equal to twenty-five percent of the federal credit allowed under section 21 of the Internal Revenue Code of 1986, as amended, except that for taxable years beginning or deemed to begin on or after January 1, 2015, such nonrefundable credit shall be allowed only if the individual would have received the federal credit allowed under section 21 of the code after adding back in any carryforward of a net operating loss \u2026' BOOKLET (line 23, verbatim): 'Resident taxpayers with AGI greater than $29,000 can claim this credit (if AGI is $29,000 or less, see line 48 instructions). Multiply the amount on line 2 of Schedule 3, Federal Form 1040 by 25% (.25). \u2026 Include a copy of Federal Form 2441. \u2026 Taxpayers who are filing married, filing jointly federally, but filing married, filing separately on their Nebraska return cannot claim this Nebraska credit.' Form line 23: 'Nebraska child/dependent care nonrefundable credit, only if line 5 is more than $29,000'. Input neFederalChildCareCredit = Schedule 3 line 2 (the federal credit as allowed)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "25", type: "int" }, agiFloor: { value: "2900000", type: "money" } },
+    formula: iff13(gt5(fact36("neAgi"), money33("2900000")), rd19(pct3(max014(fact36("neFederalChildCareCredit")), "25", "100")), money33("0"))
+  },
+  {
+    id: "us.ne.child_care_credit_refundable",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska child/dependent care refundable credit \u2014 Form 2441N when federal AGI is $29,000 or less: the \xA7 21 expense base \xD7 the federal percentage (35% to 28%) \xD7 the state percentage (100% to 30%, down 10 points per $1,000 over $22,000) (Form 1040N line 42)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715.07(2)(b); 2025 Form 2441N Part II lines 3-11; 2025 booklet, line 42 instructions p. 18",
+      section: "\xA7 77-2715.07(2)(b); Form 2441N lines 3-11; Form 1040N line 42",
+      url: "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_2441N.pdf",
+      excerpt: "STATUTE (verbatim): '(b) For returns filed reporting federal adjusted gross income of twenty-nine thousand dollars or less, a refundable credit equal to a percentage of the federal credit allowable under section 21 of the Internal Revenue Code of 1986, as amended, whether or not the federal credit was limited by the federal tax liability. The percentage of the federal credit shall be one hundred percent for incomes not greater than twenty-two thousand dollars, and the percentage shall be reduced by ten percent for each one thousand dollars, or fraction thereof, by which the reported federal adjusted gross income exceeds twenty-two thousand dollars \u2026' FORM 2441N (verbatim): 'File Form 2441N ONLY if your federal adjusted gross income (AGI) is $29,000 or less \u2026 3 Add the amounts in Column (C) of line 2. Do not enter more than $3,000 for one qualifying person, or $6,000 for two or more persons. \u2026 4 Enter your earned income \u2026 5 If married, filing jointly, enter your spouse's earned income. If you or your spouse was a student or was disabled, see instructions; all others, enter the amount from line 4. 6 Enter the smallest of line 3, 4, or 5. 7 Enter federal AGI from Nebraska Form 1040N, line 5. If the amount is over $29,000, do not file this form \u2026 8 Enter the federal decimal amount shown below that applies to the dollar amount on line 7: $0 \u2013 15,000 .35; 15,000 \u2013 17,000 .34; 17,000 \u2013 19,000 .33; 19,000 \u2013 21,000 .32; 21,000 \u2013 23,000 .31; 23,000 \u2013 25,000 .30; 25,000 \u2013 27,000 .29; 27,000 \u2013 29,000 .28. 9 Enter the state decimal amount below that applies to the dollar amount on line 7: $0 or less \u2013 22,000 1.00; 22,000 \u2013 23,000 .90; 23,000 \u2013 24,000 .80; 24,000 \u2013 25,000 .70; 25,000 \u2013 26,000 .60; 26,000 \u2013 27,000 .50; 27,000 \u2013 28,000 .40; 28,000 \u2013 29,000 .30. 10 Multiply line 6 by the decimal amount on line 8 \u2026 11 Multiply line 10 by the decimal amount on line 9. Residents enter result here and on line 42, Form 1040N.' BOOKLET (line 42): 'Nebraska Child/Dependent Care Refundable Credit (AGI $29,000 or Less and Full-Year or Partial-Year Resident). Attach the Nebraska Child And Dependent Care Expenses, Form 2441N \u2026 Taxpayers who file married, filing jointly federally, but file married, filing separately on their Nebraska return cannot claim this Nebraska credit.' ENCODING: $0 when AGI > $29,000; line 3 = min(expenses, $3,000 or $6,000 by qualifying persons); line 6 = min(line 3, earned income, spouse's earned income when filingStatus is mfj); federal percentage = 35 \u2212 ceil(max0(AGI \u2212 $15,000) / $2,000) (28 at $27,001-$29,000); state percentage = 100 \u2212 10 \xD7 ceil(max0(AGI \u2212 $22,000) / $1,000); lines 10 and 11 each rounded to whole dollars as the form prints them."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      agiLimit: { value: "2900000", type: "money" },
+      fullStatePctThrough: { value: "2200000", type: "money" },
+      expenseCapOne: { value: "300000", type: "money" },
+      expenseCapTwoPlus: { value: "600000", type: "money" }
+    },
+    formula: (() => {
+      const agi2 = fact36("neAgi");
+      const cap = iff13(cmp6("ge", fact36("neChildCareQualifyingPersons"), int8("2")), money33("600000"), money33("300000"));
+      const l3 = minE3(max014(fact36("neChildCareExpenses")), cap);
+      const earned2 = max014(fact36("neEarnedIncome"));
+      const l6 = iff13(isStatus21("mfj"), minE3(l3, earned2, max014(fact36("neSpouseEarnedIncome"))), minE3(l3, earned2));
+      const fedSteps = stepUnits4(max014(sub14(agi2, money33("1500000"))), "200000", "ceil");
+      const fedPct = sub14(money33("35"), mulInt12(money33("1"), fedSteps));
+      const stateSteps = stepUnits4(max014(sub14(agi2, money33("2200000"))), "100000", "ceil");
+      const statePct = max014(sub14(money33("100"), mulInt12(money33("10"), stateSteps)));
+      const l10 = rd19({ kind: "mulDiv", a: l6, b: fedPct, c: money33("100"), round: "half-up" });
+      const l11 = rd19({ kind: "mulDiv", a: l10, b: statePct, c: money33("100"), round: "half-up" });
+      return iff13(gt5(agi2, money33("2900000")), money33("0"), l11);
+    })()
+  },
+  {
+    id: "us.ne.eitc",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska earned income credit \u2014 10% of the federal EIC, refundable (Form 1040N line 44)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715.07(2)(e); 2025 booklet, line 44 instructions p. 18 and the 'Nebraska Earned Income Worksheet for Taxpayers Claiming a Net Operating Loss Deduction'; printed Form 1040N line 44",
+      section: "\xA7 77-2715.07(2)(e); Form 1040N line 44",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(e) A refundable credit equal to ten percent of the federal credit allowed under section 32 of the Internal Revenue Code of 1986, as amended, except that for taxable years beginning or deemed to begin on or after January 1, 2015, such refundable credit shall be allowed only if the individual would have received the federal credit allowed under section 32 of the code after adding back in any carryforward of a net operating loss that was deducted pursuant to such section in determining eligibility for the federal credit'. BOOKLET (line 44, verbatim): 'Nebraska residents and partial-year residents who have a federal earned income credit are allowed a state credit equal to 10% of the federal credit. Complete the federal credit information from line 27a (Form 1040 or 1040-SR, page 2). Enter the number of qualifying children using information from Federal Schedule EIC (Form 1040). If you are a nonresident, you cannot claim this credit.' Form line 44: 'Nebraska earned income credit \u2026 Federal credit $ ____ x .10 (10%)'. The NOL add-back worksheet (earned income + federal NOL carryforward against the 2025 federal EIC limits $19,104 / $26,214 \u2026 $61,555 / $68,675) is a composer note; input neFederalEic = Form 1040 line 27a."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "10", type: "int" } },
+    formula: rd19(pct3(max014(fact36("neFederalEic")), "10", "100"))
+  },
+  {
+    id: "us.ne.tax_after_credits",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska tax after nonrefundable credits \u2014 line 17 minus line 34 (not below zero), and when net Schedule I adjustments are under $5,000, not more than the federal tax before credits (Form 1040N line 35 and the Federal Tax Liability Worksheet)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715(1); 2025 booklet, line 35 instructions and 'Federal Tax Liability Worksheet' p. 17; printed Form 1040N line 35",
+      section: "\xA7 77-2715(1); Form 1040N line 35",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(1) A tax is hereby imposed for each taxable year on the entire income of every resident individual \u2026, except that any individual who has additions to adjusted gross income pursuant to section 77-2716 of less than five thousand dollars shall not have an individual income tax liability after nonrefundable credits under the Nebraska Revenue Act of 1967 that exceeds his or her individual income tax liability before credits under the Internal Revenue Code of 1986.' BOOKLET (line 35, verbatim): 'Nebraska Tax After Nonrefundable Credits. Do not complete the worksheet below if the result of line 12 minus line 13 is $5,000 or more. Otherwise, if your federal tax liability is -0- or is less than your Nebraska tax, complete the Federal Tax Liability Worksheet below. On line 35, enter the smaller of the amounts from line 2 or line 3 of the worksheet. If entering federal tax liability, attach a copy of your federal return.' WORKSHEET (verbatim): '1. Nebraska Adjustments to AGI: a. Amount of adjustments increasing federal AGI (line 12, Form 1040N); b. Amount of adjustments decreasing federal AGI (line 13, Form 1040N); Net adjustments to federal AGI (line 1a minus line 1b). If the amount on line 1 is $5,000 or more Stop. Line 35 of Form 1040N must be the mathematical result of line 17 minus line 34. 2. Nebraska Tax after Nonrefundable Credits: a. Nebraska tax, line 17 of Form 1040N; b. Total Nonrefundable Credits, line 34 of Form 1040N; Line 2a minus line 2b. If the amount on line 2 is zero or less, enter -0- on line 35 of Form 1040N; and Stop here. 3. Federal tax before credits: a. Line 16 of Form 1040 or 1040-SR, page 2; b. Line 2 of Form 1040 Schedule 2; c. Line 8 of Form 1040 Schedule 2; d. Total tax\u2013Form 1040 or 1040-SR (add lines 3a, 3b, and 3c). On line 35, enter the smaller of the amounts from line 2 or line 3 of this worksheet, and check the federal tax box if line 3 is used.' Form line 35: 'Subtract line 34 from line 17 (if line 34 is more than line 17, enter -0-). If the result is greater than your federal tax liability, see instructions. If entering federal tax, check box'. ENCODING: max0(neTaxBeforeCredits \u2212 neNonrefundableCredits), then min with neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8) when neNetAdjustments (line 12 \u2212 line 13, may be negative) is less than $5,000 \u2014 a federal liability of $0 zeroes the Nebraska tax after credits."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { adjustmentThreshold: { value: "500000", type: "money" } },
+    formula: (() => {
+      const net = max014(sub14(fact36("neTaxBeforeCredits"), fact36("neNonrefundableCredits")));
+      return iff13(lt14(fact36("neNetAdjustments"), money33("500000")), minE3(net, max014(fact36("neFederalTaxBeforeCredits"))), net);
+    })()
+  },
+  {
+    id: "us.ne.other_state_credit",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska credit for tax paid to another state \u2014 Schedule II: the least of the total Nebraska tax, that tax \xD7 (other-state AGI \xF7 Nebraska-adjusted federal AGI, to five decimals), and the tax paid to the other state (Form 1040N line 19)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2730(1)-(2); 2025 Nebraska Schedule II lines 1-6 and instructions p. 29; printed Form 1040N line 19",
+      section: "\xA7 77-2730; Schedule II lines 1-6; Form 1040N line 19",
+      url: BOOKLET_URL4,
+      excerpt: "STATUTE (verbatim): '(1) A resident individual \u2026 shall be allowed a credit against the income tax otherwise due for the amount of any income tax imposed on him or her \u2026 by another state of the United States or a political subdivision thereof or the District of Columbia on income derived from sources therein and which is also subject to income tax under sections 77-2714 to 77-27,123. (2) The credit \u2026 shall not exceed the proportion of the income tax otherwise due under such sections that the amount of the taxpayer's adjusted gross income or total income derived from sources in the other taxing jurisdiction bears to federal adjusted gross income or total federal income.' SCHEDULE II (verbatim): '1 Total Nebraska tax (line 17, Form 1040N) \u2026 2 Adjusted gross income derived from another state (do not enter amount of taxable income from the other state \u2013 use Conversion Chart on the DOR's website) \u2026 3 Ratio: Line 2 \xF7 (Form 1040N, Line 5 + Line 12 \u2013 Line 13) \u2026 4 Calculated tax credit. Line 1 multiplied by line 3 ratio \u2026 5 Tax due and paid to another state (do not enter amount withheld for the other state) \u2026 6 Allowable tax credit (line 1, 4, or 5, whichever is least). Enter amount here and on line 19, Form 1040N.' INSTRUCTIONS (verbatim): 'Line 3 Calculate the Ratio. Calculate the ratio to six decimal places, and then round to five decimals. For example, if your division result is .123467, round to .12347 (12.347%).' 'A separate Schedule II must be completed for each state where income tax was paid. The total credits cannot exceed the Nebraska tax liability. \u2026 Nebraska law does not allow credit for taxes paid to a foreign country or its political subdivisions.' ENCODING: ratio = round-half-up(other-state AGI \xF7 (federal AGI + line 12 \u2212 line 13), 5 decimals); line 4 = round(line 1 \xD7 ratio); credit = min(line 1, line 4, tax paid); $0 when the denominator is not positive."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { ratioDecimals: { value: "5", type: "int" } },
+    formula: (() => {
+      const l1 = max014(fact36("neTaxBeforeCredits"));
+      const denom = add10(fact36("neAgi"), fact36("neAdjustmentsIncreasing"), { kind: "sub", left: money33("0"), right: fact36("neAdjustmentsDecreasing") });
+      const ratio = { kind: "mulDiv", a: max014(fact36("neOtherStateAgi")), b: money33("100000"), c: denom, round: "half-up" };
+      const l4 = rd19({ kind: "mulDiv", a: l1, b: ratio, c: money33("100000"), round: "half-up" });
+      return iff13(gt5(denom, money33("0")), minE3(l1, l4, max014(fact36("neOtherStateTaxPaid"))), money33("0"));
+    })()
+  },
+  {
+    id: "us.ne.use_tax",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska individual use tax \u2014 5.5% state plus the local rate (0.5% to 2%) on untaxed purchases, each rounded to whole dollars (Form 1040N line 58)",
+    citation: {
+      source: "2025 booklet, line 58 instructions pp. 20-21 and the 'Nebraska Local Sales and Use Tax Codes and Rates' schedule p. 50; printed Form 1040N line 58",
+      section: "Form 1040N line 58",
+      url: BOOKLET_URL4,
+      excerpt: "BOOKLET (line 58, verbatim): 'Use tax is due on all taxable purchases when Nebraska and any applicable local sales tax is not paid. \u2026 Enter your total taxable 2025 purchases if Nebraska sales tax was not collected by the seller. Multiply this amount by 5.5% (.055). If local tax applies, enter your local code from the local sales and use tax codes and rates schedule on page 50 of these instructions, and multiply your total taxable purchases by the local rate (.005, .010, .015, .0175, or .02). Add the state and local tax amounts together and enter on line 58. \u2026 Example. You purchase a computer from a seller in South Dakota over the Internet for $1,470 plus $30 shipping and handling charges. Both charges are taxable. The computer is shipped to you in Scottsbluff, Nebraska and no tax is charged or collected by the seller. Your state tax is $83 ($1,500 X 5.5% = $83) and the local tax is $23 ($1,500 X 1.5% = $23). The total use tax owed is $106 ($83 + $23 = $106). When calculating state and local tax, round your results, and then add them together \u2026' FORM: 'Enter purchases subject to state tax $___ State tax $___ (purchases x 5.5%); Enter purchases subject to local tax $___ Local tax $___ (purchases x local rate of ___%); Local code ___'. ENCODING: round(5.5% \xD7 purchases) + round(local bps \xD7 purchases); neLocalUseTaxRateBps is the local rate in basis points (0, 50, 100, 150, 175, or 200). Purchases in more than one local jurisdiction or in a Good Life District go on Form 3 instead."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { stateRateBps: { value: "550", type: "int" } },
+    formula: (() => {
+      const p = max014(fact36("neUseTaxPurchases"));
+      const state = rd19(pct3(p, "55", "1000"));
+      const local = rd19({ kind: "mulDiv", a: p, b: mulInt12(money33("1"), fact36("neLocalUseTaxRateBps")), c: money33("10000"), round: "half-up" });
+      return add10(state, local);
+    })()
+  },
+  {
+    id: "us.ne.parameters",
+    version: 1,
+    jurisdiction: "us.ne",
+    title: "Nebraska 2025 Form 1040N parameters \u2014 line structure, Schedule I adjustments, the credit lines, the 2026 LB 754 rates, and the property tax credit status",
+    citation: {
+      source: "2025 Nebraska Individual Income Tax Booklet (Form 1040N, Schedules I-III, Forms 2441N and PTC instructions; 'What's New' pp. 1-5); Neb. Rev. Stat. \xA7\xA7 77-2715, 77-2715.03, 77-2715.07, 77-2716, 77-2716.01, 77-2730; LB 754 (2023), LB 34 (2024 special session), LB 650 (2025); web-verified September 2026",
+      section: "Form 1040N lines 1-64; Schedule I lines 1-44; Schedule II lines 1-6",
+      url: BOOKLET_URL4,
+      excerpt: "STRUCTURE (printed 2025 Form 1040N): 1 federal filing status ('Your Nebraska filing status is the same as your federal filing status'); 2a 65-or-older / blind boxes (you, spouse); 2b claimable as a dependent; 3 resident / partial-year / nonresident; 4a-4c Nebraska personal exemptions (\u2192 us.ne.personal_exemption_credit); 5 federal AGI (1040 line 11); 6 Nebraska standard deduction (\u2192 us.ne.standard_deduction); 7 federal itemized total (Schedule A line 17); 8 state and local income taxes (Schedule A line 5a); 9 = 7 \u2212 8 (\u2192 us.ne.itemized_deductions); 10 the larger of 6 or 9 (federal itemizers only); 11 = 5 \u2212 10; 12 Schedule I Part A additions (line 13: non-Nebraska state and local bond interest net of Nebraska bonds, financial institution tax credit claimed, 529 and Enable recapture, federal NOL deduction, S corporation/LLC non-Nebraska loss, PTET deducted, Relocation Incentive Act recapture, bullion loss, food donation add-back); 13 Schedule I Part B subtractions (line 44: 14 state income tax refund (Schedule 1 line 1), 15-17 U.S. government obligation interest and RIC dividends, 18 Railroad Retirement Board benefits, 19 special capital gains election (Form 4797N), 20 Nebraska College Savings (NEST) contributions \u2264 $10,000 ($5,000 MFS), 21 employer NEST contributions \u2264 $10,000, 22 Enable contributions \u2264 $10,000, 23 S corporation/LLC non-Nebraska income, 24 nonresident military pay, 25 Native American income in Indian country, 26 claim of right, 27 Nebraska NOL carryforward, 28-30 Nebraska agricultural revenue / NIFA / Build America bond interest, 31 Social Security \u2014 'The entire social security benefit amount included in the federal AGI can be excluded and no longer has a federal AGI threshold' (\xA7 77-2716(14): 100% from 2024), 32 military retirement \u2014 'All military retirees are allowed to exclude 100%' (\xA7 77-2716(15)(b)), 33 foreign corporation dividends, 34 Segal AmeriCorps award, 35 firefighter cancer benefits, 36 retired law enforcement / firefighter health premiums, 37 Nebraska Highway Bond interest, 38 CSRS annuities, 39-40 Medical Debt Relief Act, 41 Nebraska National Guard Title 32 / state active duty pay, 42 Relocation Incentive Act wage exclusion, 43 bullion gain); 14 NEBRASKA TAXABLE INCOME = max0(11 + 12 \u2212 13); 15 tax (\u2192 us.ne.income_tax); 16 other tax (\u2192 us.ne.other_tax); 17 = 15 + 16; 18 personal exemption credit; 19 credit for tax paid to another state (\u2192 us.ne.other_state_credit); 20 credit for the elderly or disabled = the federal Schedule R credit (\xA7 77-2715.07(1)(a): 'equal to the federal credit allowed under section 22'); 21 CDAA; 22 Form 3800N nonrefundable; 23 child/dependent care nonrefundable (\u2192 us.ne.child_care_credit_nonrefundable); 24 financial institution tax; 25 TANF employer; 26 extremely blighted area $5,000; 27 convicted felons employer; 28 School Readiness provider; 29 Child Care Tax Credit contributor; 30 Opportunity Scholarships carryforward; 31 CHIEF; 32 Family Caregiver; 33 Pregnancy Help (\u2264 50% of line 15); 34 total nonrefundable credits; 35 tax after nonrefundable credits (\u2192 us.ne.tax_after_credits); 36 W-2 withholding; 37 W-2G/1099 withholding; 38 Schedule K-1N withholding; 39 PTET credit; 40 estimated payments incl. the 2024 carryover and extension payments; 41 Form 3800N refundable; 42 child/dependent care refundable (\u2192 us.ne.child_care_credit_refundable); 43 beginning farmer; 44 Nebraska EIC (\u2192 us.ne.eitc); 45 community college property tax credit \u2014 Form PTC line 1 = line 2a, 100% of the community college property taxes paid in 2025 (the booklet, p. 43, Form PTC instructions: 'LB 34 enacted in the 2024 special session created the School District Property Tax Relief Act \u2026 For tax years beginning on or after January 1, 2024, the Form PTC will only be used to claim a credit for community college property taxes paid'); 46 volunteer emergency responders $250 each; 47 stillborn child $2,000 each; 48 Child Care Tax Credit for a parent (certified; AGI \u2264 $150,000); 49 School Readiness staff member; 50 reverse osmosis; 51 direct support professional $500; 52 amended: paid with original; 53 total payments and refundable credits; 54 amended: prior overpayment; 55 = 53 \u2212 54; 56 Form 2210N underpayment penalty; 57 = 35 + 56; 58 use tax (\u2192 us.ne.use_tax); 59 amount due = 57 + 58 \u2212 55 ('A balance due of less than $2 need not be paid'); 60 overpayment = 55 \u2212 57 \u2212 58; 61 applied to 2026 estimated tax; 62 Wildlife Conservation Fund donation; 63 refund = 60 \u2212 61 \u2212 62 ('Amounts less than $2 will not be refunded'). ROUNDING: 'Enter All Amounts as Whole Dollars \u2026 Round any amount from 50 cents to 99 cents to the next higher dollar.' INTEREST: 8% per year on unpaid tax from the due date. TY2025 CHANGES (booklet pp. 1-5): rate four 5.20%; new refundable direct support professional credit and nonrefundable Pregnancy Help, Shortline Rail, Relocation Incentive, and food donation credits; Nebraska National Guard and Relocation Incentive Act wage exclusions; bullion gain/loss adjustments; amended returns now filed on Form 1040N with the box checked. TY2026 (\xA7 77-2715.03(2)(b)-(c), LB 754): rates three and four both 4.55% for taxable years beginning in 2026 (3.99% for 2027 and after); the brackets, standard deduction chart, and $171 credit re-index \u2014 DOR has published the 2026 amounts (2026 Form 1040N-ES pp. 4-6 and the Tax Rate Chronologies Rev. 2-2026: brackets $4,130 / $24,760 / $39,900 single and MFS, $8,250 / $49,530 / $79,800 MFJ and QSS, $7,700 / $39,620 / $59,160 HOH; standard deduction $8,850 / $17,700 / $12,950 with $2,050 / $1,700 additional amounts; $176 credit), encoded as version 2 of those rules; this parameters rule still ends 2026-01-01 because the 2026 Form 1040N line structure (a new Adoption Tax Credit line under \xA7 77-2715.07(2)(d)) is unpublished; \xA7 77-2716(21) National Guard exclusion adds Title 10 duty from 2027; \xA7 77-2716(27) first-time home buyer savings deduction from 2027. RESIDENCY: nonresidents and partial-year residents complete Schedule III (income ratio) \u2014 not composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      nestContributionCap: { value: "1000000", type: "money" },
+      nestContributionCapMfs: { value: "500000", type: "money" },
+      volunteerResponderCredit: { value: "25000", type: "money" },
+      stillbornChildCredit: { value: "200000", type: "money" },
+      childCareTaxCreditAgiLimit: { value: "15000000", type: "money" },
+      pregnancyHelpCreditPctOfTax: { value: "50", type: "int" },
+      minimumDueOrRefund: { value: "200", type: "money" },
+      interestPctPerYear: { value: "8", type: "int" },
+      communityCollegeCreditPct: { value: "100", type: "int" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Nebraska Form 1040N composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.ne.income_tax, us.ne.standard_deduction, us.ne.itemized_deductions, us.ne.personal_exemption_credit, us.ne.other_tax, us.ne.child_care_credit_nonrefundable, us.ne.child_care_credit_refundable, us.ne.eitc, us.ne.tax_after_credits, us.ne.other_state_credit, and us.ne.use_tax"
+    }
+  },
+  // ---- TY2026 versions: DOR-published 2026 indexed amounts (2026 Form 1040N-ES; Nebraska Tax Rate Chronologies Rev. 2-2026) ----
+  {
+    id: "us.ne.income_tax",
+    version: 2,
+    jurisdiction: "us.ne",
+    title: "Nebraska income tax TY2026 \u2014 LB 754 rates 2.46 / 3.51 / 4.55 / 4.55% on the DOR-published 2026 brackets ($4,130 / $24,760 / $39,900 single and MFS; $8,250 / $49,530 / $79,800 MFJ and QSS; $7,700 / $39,620 / $59,160 HOH) (Form 1040N line 15)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2715.03(2)(b)(ii), (2)(c)(v) (LB 754, 2023); Nebraska DOR, 'Nebraska Tax Rate Chronologies, Table 1' (Rev. 2-2026), 2026 bracket table; 2026 Nebraska Individual Estimated Income Tax Payment Vouchers, Form 1040N-ES (8-014-2025 Rev. 11-2025) p. 6, '2026 Nebraska Estimated Income Tax Rate Schedule'",
+      section: "\xA7 77-2715.03; DOR Tax Rate Chronologies (2026); Form 1040N-ES 2026 p. 6",
+      url: "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N-ES.pdf",
+      excerpt: "STATUTE (verbatim): 'rate three shall be: \u2026 (ii) 4.55% for taxable years beginning or deemed to begin on or after January 1, 2026, and before January 1, 2027'; 'rate four shall be: \u2026 (v) 4.55% for taxable years beginning or deemed to begin on or after January 1, 2026, and before January 1, 2027'. DOR CHRONOLOGY (Rev. 2-2026, verbatim): 'Effective for tax years beginning on or after January 1, 2026, the individual income tax brackets are as follows: Bracket No. / Married, Filing Jointly / Head of Household / Single Individuals/Married, Filing Separately \u2014 1 $0 - 8,250 / $0 - 7,700 / $0 - 4,130; 2 $8,250 - 49,530 / $7,700 - 39,620 / $4,130 - 24,760; 3 $49,530 - 79,800 / $39,620 - 59,160 / $24,760 - 39,900; 4 Over $79,800 / Over $59,160 / Over $39,900'; rate row 'Jan. 1, 2026 \u2026 2.46% 3.51% 4.55% 4.55% $176 $8,850 $17,700'. FORM 1040N-ES 2026 p. 6 (verbatim): 'Single: $0 \u2013 $4,130 2.46% of the income; 4,130 \u2013 24,760 $101.60 + 3.51% of the excess over $4,130; 24,760 \u2013 39,900 825.71 + 4.55% of the excess over $24,760; 39,900 \u2014\u2014 1,514.58 + 4.55% of the excess over $39,900. Head of Household: $0 \u2013 $7,700 2.46% of the income; 7,700 \u2013 39,620 $189.42 + 3.51% of the excess over $7,700; 39,620 \u2013 59,160 1,309.81 + 4.55% of the excess over $39,620; 59,160 \u2014\u2014 2,198.88 + 4.55% of the excess over $59,160. Married, Filing Jointly and Surviving Spouses: $0 \u2013 $8,250 2.46% of the income; 8,250 \u2013 49,530 $202.95 + 3.51% of the excess over $8,250; 49,530 \u2013 79,800 1,651.88 + 4.55% of the excess over $49,530; 79,800 \u2014\u2014 3,029.16 + 4.55% of the excess over $79,800. Married, Filing Separately: [same as Single].' 'Note: The tax year 2026 individual income tax rates for the third and fourth brackets are at the same rate of 4.55% per Neb. Rev. Stat. \xA7 77-2715.03(2)(c)(v).' Anchors recompute exactly (4,130 \xD7 2.46% = 101.598 \u2192 $101.60; 101.60 + 3.51% \xD7 20,630 = 825.713 \u2192 $825.71; 825.71 + 4.55% \xD7 15,140 = 1,514.58). CAVEAT: the ES booklet says 'Use this rate schedule only for computing 2026 estimated income tax \u2026 Do not use it to compute an amount for any tax returns' \u2014 the 2026 Tax Calculation Schedule, Tax Table, and booklet are not yet published (checked September 2026); this version encodes the two DOR publications of the same 2026 brackets and rates and should be re-verified against the 2026 Tax Calculation Schedule when it appears. No 2026 Tax Table exists yet, so neUseTaxTable is ignored for 2026 (the schedule is used)."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "246", type: "int" },
+      rate2Bps: { value: "351", type: "int" },
+      rate3Bps: { value: "455", type: "int" },
+      rate4Bps: { value: "455", type: "int" },
+      singleBracket1: { value: "413000", type: "money" },
+      singleBracket2: { value: "2476000", type: "money" },
+      singleBracket3: { value: "3990000", type: "money" },
+      jointBracket1: { value: "825000", type: "money" },
+      jointBracket2: { value: "4953000", type: "money" },
+      jointBracket3: { value: "7980000", type: "money" },
+      hohBracket1: { value: "770000", type: "money" },
+      hohBracket2: { value: "3962000", type: "money" },
+      hohBracket3: { value: "5916000", type: "money" }
+    },
+    formula: (() => {
+      const x = max014(fact36("stateTaxableIncome"));
+      const S26 = [
+        { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
+        { thresholdCents: "413000", fixedCents: "10160", rateNum: "351" },
+        { thresholdCents: "2476000", fixedCents: "82571", rateNum: "455" },
+        { thresholdCents: "3990000", fixedCents: "151458", rateNum: "455" }
+      ];
+      const J262 = [
+        { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
+        { thresholdCents: "825000", fixedCents: "20295", rateNum: "351" },
+        { thresholdCents: "4953000", fixedCents: "165188", rateNum: "455" },
+        { thresholdCents: "7980000", fixedCents: "302916", rateNum: "455" }
+      ];
+      const H26 = [
+        { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
+        { thresholdCents: "770000", fixedCents: "18942", rateNum: "351" },
+        { thresholdCents: "3962000", fixedCents: "130981", rateNum: "455" },
+        { thresholdCents: "5916000", fixedCents: "219888", rateNum: "455" }
+      ];
+      return iff13(isJoint2, calcSchedule(x, J262), iff13(isHoh2, calcSchedule(x, H26), calcSchedule(x, S26)));
+    })()
+  },
+  {
+    id: "us.ne.standard_deduction",
+    version: 2,
+    jurisdiction: "us.ne",
+    title: "Nebraska standard deduction TY2026 \u2014 $8,850 single and MFS, $17,700 MFJ and QSS, $12,950 HOH, plus $2,050 (single, HOH) or $1,700 (married, QSS) per 65-or-older/blind box; dependent filers capped at the federal standard deduction (Form 1040N line 6)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2716.01(3); 2026 Form 1040N-ES (8-014-2025 Rev. 11-2025) p. 4 line 5 and p. 5 'Additional Standard Deduction for Elderly and/or Blind'; DOR Tax Rate Chronologies (Rev. 2-2026) row 'Jan. 1, 2026 \u2026 $8,850 $17,700'",
+      section: "\xA7 77-2716.01(3); Form 1040N-ES 2026 pp. 4-5",
+      url: "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N-ES.pdf",
+      excerpt: "FORM 1040N-ES 2026 (verbatim): '5 Nebraska standard deduction: Single $8,850; Married, Filing Jointly $17,700; Head of Household $12,950; Married, Filing Separately $8,850; or 65 or older and/or blind (see page 5)'. 'Additional Standard Deduction for Elderly and/or Blind \u2014 Your Nebraska standard deduction is increased by this amount if, at the end of 2026, you will be: An unmarried individual (single or head of household), and 65 or older, or blind $2,050; 65 or older, and blind 4,100. Qualifying surviving spouse, and 65 or older, or blind $1,700; 65 or older, and blind $3,400. A married individual (filing jointly or separately) and 65 or older, or blind $1,700; 65 or older, and blind 3,400; Both spouses are 65 or older 3,400; And one spouse is also blind 5,100; Both spouses are blind 3,400; And one spouse is also 65 or older 5,100; Both spouses are 65 or older, and both are blind 6,800. If married, filing separately, these amounts apply only if you can claim a Nebraska personal exemption for your spouse.' DOR CHRONOLOGY row 'Jan. 1, 2026 \u2026 $176 $8,850 $17,700'. Same structure as 2025 (base + per-box amount, boxes clamped at 2 for single/QSS/HOH and 4 for MFJ/MFS; a dependent filer takes the smaller of this and the federal standard deduction allowed). Re-verify against the 2026 booklet's Standard Deduction Chart when published."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      single: { value: "885000", type: "money" },
+      joint: { value: "1770000", type: "money" },
+      hoh: { value: "1295000", type: "money" },
+      perBoxSingleHoh: { value: "205000", type: "money" },
+      perBoxMarried: { value: "170000", type: "money" }
+    },
+    formula: (() => {
+      const base = iff13(isJoint2, money33("1770000"), iff13(isHoh2, money33("1295000"), money33("885000")));
+      const perBox = iff13(or4(isStatus21("single"), isHoh2), money33("205000"), money33("170000"));
+      const maxBoxes = iff13(or4(isStatus21("mfj"), isStatus21("mfs")), int8("4"), int8("2"));
+      const boxes = iff13(gt5(fact36("neAgeBlindBoxes"), maxBoxes), maxBoxes, fact36("neAgeBlindBoxes"));
+      const ne = add10(base, mulInt12(perBox, boxes));
+      return iff13(fact36("isClaimedAsDependent"), minE3(ne, max014(fact36("neFederalStandardDeduction"))), ne);
+    })()
+  },
+  {
+    id: "us.ne.personal_exemption_credit",
+    version: 2,
+    jurisdiction: "us.ne",
+    title: "Nebraska personal exemption credit TY2026 \u2014 $176 per Nebraska personal exemption (Form 1040N line 18)",
+    citation: {
+      source: "Neb. Rev. Stat. \xA7 77-2716.01(1)(b); 2026 Form 1040N-ES (8-014-2025 Rev. 11-2025) p. 6 worksheet instructions; DOR Tax Rate Chronologies (Rev. 2-2026) row 'Jan. 1, 2026 \u2026 $176'",
+      section: "\xA7 77-2716.01(1)(b); Form 1040N-ES 2026 p. 6",
+      url: "https://revenue.nebraska.gov/sites/default/files/doc/tax-forms/2025/f_1040N-ES.pdf",
+      excerpt: "FORM 1040N-ES 2026 (verbatim): 'Include $176 for each Nebraska personal exemption allowed on line 14 of the [worksheet]'. DOR CHRONOLOGY (Rev. 2-2026): personal exemption credit column 'Jan. 1, 2026 \u2026 $176' (2025: $171; 2024: $166). Statute: \xA7 77-2716.01(1)(b) indexes the $134 (2018) credit by CPI-U, rounded to the nearest dollar. Re-verify against the 2026 Form 1040N line 18 when published."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "17600", type: "money" } },
+    formula: mulInt12(money33("17600"), fact36("neExemptions"))
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -46292,6 +47181,7 @@ var stateParameterRules = [
   ...ksRules,
   ...arRules,
   ...nmRules,
+  ...neRules,
   ...otherStateRules
 ];
 
@@ -46301,7 +47191,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus21 = (status) => ({
+var isStatus23 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -46373,7 +47263,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus21("mfj"),
+    cond: isStatus23("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -46472,7 +47362,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus21("mfj"),
+      cond: isStatus23("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -46660,7 +47550,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus23 = (status) => ({
+var isStatus24 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -46716,7 +47606,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus23("mfs"),
+      cond: isStatus24("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -46727,7 +47617,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus23("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus24("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -46747,7 +47637,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus23("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus24("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -46796,7 +47686,7 @@ var fact40 = (factId) => ({ kind: "fact", factId });
 var money37 = (cents) => ({ kind: "money", cents });
 var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
 var param24 = (name) => ({ kind: "param", name });
-var pct3 = (num, base) => ({
+var pct4 = (num, base) => ({
   kind: "mulRate",
   base,
   rate: { num, den: "100" },
@@ -46845,7 +47735,7 @@ var magiBase = {
   }
 };
 var ss = fact40("socialSecurityBenefits");
-var provisional = { kind: "add", args: [magiBase, pct3("50", ss)] };
+var provisional = { kind: "add", args: [magiBase, pct4("50", ss)] };
 var isMfs5 = {
   kind: "cmp",
   op: "eq",
@@ -46903,16 +47793,16 @@ var socialSecurityRules = [
         cond: isMfs5,
         then: {
           kind: "min",
-          args: [pct3("85", ss), pct3("85", { kind: "max0", arg: provisional })]
+          args: [pct4("85", ss), pct4("85", { kind: "max0", arg: provisional })]
         },
         else: {
           kind: "min",
           args: [
-            pct3("85", ss),
+            pct4("85", ss),
             {
               kind: "add",
               args: [
-                pct3("85", {
+                pct4("85", {
                   kind: "max0",
                   arg: {
                     kind: "sub",
@@ -46926,8 +47816,8 @@ var socialSecurityRules = [
                     {
                       kind: "min",
                       args: [
-                        pct3("50", ss),
-                        pct3("50", {
+                        pct4("50", ss),
+                        pct4("50", {
                           kind: "max0",
                           arg: {
                             kind: "sub",
@@ -46954,7 +47844,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus24 = (status) => ({
+var isStatus25 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -47093,7 +47983,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus24("mfs"),
+      cond: isStatus25("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -47182,11 +48072,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus24("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus25("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus24("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus25("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -47196,7 +48086,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus25 = (status) => ({
+var isStatus26 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -47244,7 +48134,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus25("mfs") },
+        { kind: "not", arg: isStatus26("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -47259,13 +48149,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus26 = (status) => ({
+var isStatus27 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus26("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus27("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -47296,7 +48186,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus26("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus26("mfj"),
+                    cond: isStatus27("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -47368,7 +48258,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus26("mfj"),
+      cond: isStatus27("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -47534,7 +48424,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add10 = (id, c2) => {
+  const add11 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -47556,20 +48446,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add10("wages", toCents(w.box1));
+    add11("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add10("federalTaxWithheld", toCents(w.box2));
+      add11("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add10("socialSecurityWages", toCents(w.box3));
+      add11("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add10("medicareWages", b5);
+      add11("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add10("federalTaxWithheld", excess);
+          add11("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars4(excess)}; added to withholding`);
         }
       }
@@ -47581,72 +48471,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(r.box4));
+      add11("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add10("wages", taxable3);
-      add10("scheduleRDisabilityIncome", taxable3);
+      add11("wages", taxable3);
+      add11("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars4(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add10("taxableIraDistributions", taxable3);
+      add11("taxableIraDistributions", taxable3);
     else
-      add10("taxablePensionsAndAnnuities", taxable3);
+      add11("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add10("earlyDistributionSubjectToPenalty", taxable3);
+        add11("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars4(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add10("socialSecurityBenefits", toCents(s.box5));
+    add11("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add10("federalTaxWithheld", toCents(s.box6));
+      add11("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(n.box4));
+      add11("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(k.box4));
+      add11("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add10("selfEmploymentNetProfit", net);
+        add11("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars4(seGross)} gross (1099-NEC/K) \u2212 $${dollars4(expenses)} expenses = $${dollars4(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add10("scheduleCNetLoss", -net);
+      add11("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars4(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add10("taxableInterest", toCents(t.box1));
+      add11("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add10("taxableInterest", toCents(t.box3));
+      add11("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars4(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add10("taxExemptInterest", toCents(t.box8));
+      add11("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(t.box4));
+      add11("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -47655,15 +48545,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars4(qualified2)}) exceeds box 1a (total, $${dollars4(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add10("qualifiedDividends", qualified2);
+      add11("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add10("ordinaryDividends", total - qualified2);
+      add11("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add10("__ltProceeds", toCents(d3.box2a));
+      add11("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars4(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(d3.box4));
+      add11("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -47678,24 +48568,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(b.box4));
+      add11("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add10("shortTermCapitalGains", stNet);
+      add11("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add10("shortTermCapitalLoss", -stNet);
+      add11("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add10("longTermCapitalGains", ltNet);
+      add11("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add10("longTermCapitalLoss", -ltNet);
+      add11("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars4(stNet)}, long-term net $${dollars4(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add10("unemploymentCompensation", toCents(g.box1));
+      add11("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add10("federalTaxWithheld", toCents(g.box4));
+      add11("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars4(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -48172,7 +49062,31 @@ var INDIVIDUAL_GROUPS = {
     "nmSaltAllowed",
     "nmFederalStandardDeduction",
     "nmFederalItemizedDeductions",
-    "nmFederalItemized"
+    "nmFederalItemized",
+    "neUseTaxTable",
+    "neExemptions",
+    "neAgeBlindBoxes",
+    "neFederalStandardDeduction",
+    "neFederalItemizedDeductions",
+    "neSaltIncomeTaxes",
+    "neFederalOtherTax",
+    "neAgi",
+    "neFederalChildCareCredit",
+    "neChildCareExpenses",
+    "neChildCareQualifyingPersons",
+    "neEarnedIncome",
+    "neSpouseEarnedIncome",
+    "neFederalEic",
+    "neTaxBeforeCredits",
+    "neNonrefundableCredits",
+    "neNetAdjustments",
+    "neFederalTaxBeforeCredits",
+    "neOtherStateAgi",
+    "neOtherStateTaxPaid",
+    "neAdjustmentsIncreasing",
+    "neAdjustmentsDecreasing",
+    "neUseTaxPurchases",
+    "neLocalUseTaxRateBps"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -48462,7 +49376,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -48489,7 +49403,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd19 = (c2) => {
+      const rd20 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -48516,11 +49430,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd19(after) + rd19(other);
-      const payments = rd19(withheld) + rd19(refundable) + rd19(extension) + rd19(estimated);
+      const total24 = rd20(after) + rd20(other);
+      const payments = rd20(withheld) + rd20(refundable) + rd20(extension) + rd20(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd19(c2));
+      const d3 = (c2) => fmt2(rd20(c2));
       return ok({
         ok: true,
         asOf,
@@ -48547,7 +49461,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd19(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd20(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

@@ -1,0 +1,13 @@
+{
+  "description": "NE use tax booklet example: $1,500 x 5.5% = 82.50 -> $83; x 1.5% = 22.50 -> $23; total $106.",
+  "facts": {
+    "filingStatus": "single",
+    "neUseTaxPurchases": 1500,
+    "neLocalUseTaxRateBps": 150
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.use_tax",
+  "expect": {
+    "valueCents": "10600"
+  }
+}

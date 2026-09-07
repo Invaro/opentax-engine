@@ -1,0 +1,12 @@
+{
+  "description": "NE single $38,870.50: $1,543.28 + 5.20% x 0.50 = 1,543.306 -> $1,543.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": "38870.50"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "154300"
+  }
+}

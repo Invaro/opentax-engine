@@ -1,0 +1,13 @@
+{
+  "description": "NE AGI exactly $29,000 -> not over $29,000 -> $0 (the refundable credit applies).",
+  "facts": {
+    "filingStatus": "single",
+    "neAgi": 29000,
+    "neFederalChildCareCredit": 600
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_nonrefundable",
+  "expect": {
+    "valueCents": "0"
+  }
+}

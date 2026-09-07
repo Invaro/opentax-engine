@@ -1,0 +1,16 @@
+{
+  "description": "NE Form 2441N: AGI $29,001 -> not eligible -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgi": 29001,
+    "neChildCareExpenses": 3000,
+    "neChildCareQualifyingPersons": 1,
+    "neEarnedIncome": 30000,
+    "neSpouseEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_refundable",
+  "expect": {
+    "valueCents": "0"
+  }
+}

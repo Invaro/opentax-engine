@@ -1,0 +1,12 @@
+{
+  "description": "NE other tax: 29.6% of $1,000 federal Form 4972/5329 tax = $296.",
+  "facts": {
+    "filingStatus": "single",
+    "neFederalOtherTax": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.other_tax",
+  "expect": {
+    "valueCents": "29600"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "NE dependent filer with a $15,750 federal standard deduction -> the $8,600 Nebraska amount.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgeBlindBoxes": 0,
+    "isClaimedAsDependent": true,
+    "neFederalStandardDeduction": 15750
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "860000"
+  }
+}

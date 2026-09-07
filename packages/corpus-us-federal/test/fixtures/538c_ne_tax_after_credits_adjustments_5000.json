@@ -1,0 +1,15 @@
+{
+  "description": "NE line 35: net adjustments $5,000 -> the worksheet stops; $700 even though federal tax is $500.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 1000,
+    "neNonrefundableCredits": 300,
+    "neNetAdjustments": 5000,
+    "neFederalTaxBeforeCredits": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.tax_after_credits",
+  "expect": {
+    "valueCents": "70000"
+  }
+}

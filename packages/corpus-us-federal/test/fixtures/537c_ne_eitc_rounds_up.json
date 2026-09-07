@@ -1,0 +1,12 @@
+{
+  "description": "NE EIC: 10% of $1,235 = 123.50 -> $124.",
+  "facts": {
+    "filingStatus": "single",
+    "neFederalEic": 1235
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.eitc",
+  "expect": {
+    "valueCents": "12400"
+  }
+}

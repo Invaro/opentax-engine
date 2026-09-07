@@ -1,0 +1,14 @@
+{
+  "description": "NE MFJ, 3 boxes: $17,200 + 3 x $1,650 = $22,150 (chart).",
+  "facts": {
+    "filingStatus": "mfj",
+    "neAgeBlindBoxes": 3,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "2215000"
+  }
+}

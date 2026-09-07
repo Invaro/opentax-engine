@@ -1,0 +1,17 @@
+{
+  "description": "NE Schedule II: ratio over 100% -> calculated $2,500 capped at the $2,000 Nebraska tax.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 2000,
+    "neAgi": 100000,
+    "neAdjustmentsIncreasing": 0,
+    "neAdjustmentsDecreasing": 0,
+    "neOtherStateAgi": 125000,
+    "neOtherStateTaxPaid": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.other_state_credit",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

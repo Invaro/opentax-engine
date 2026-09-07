@@ -1,0 +1,14 @@
+{
+  "description": "NE TY2027 standard deduction is indexed and unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgeBlindBoxes": 0,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2027-06-30",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}
