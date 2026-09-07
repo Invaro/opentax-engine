@@ -1,0 +1,16 @@
+{
+  "description": "AR2441 no earned income -> line 6 $0 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "arChildCareExpenses": 3000,
+    "arChildCareQualifyingPersons": 1,
+    "arEarnedIncome": 0,
+    "arSpouseEarnedIncome": 0,
+    "arFederalAgi": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.child_care_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

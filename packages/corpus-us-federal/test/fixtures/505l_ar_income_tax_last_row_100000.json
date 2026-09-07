@@ -1,0 +1,12 @@
+{
+  "description": "AR $100,000 -> $3,809: last printed row [99,901-100,001), midpoint 99,951 -> 3,808.79 -> $3,809.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "380900"
+  }
+}

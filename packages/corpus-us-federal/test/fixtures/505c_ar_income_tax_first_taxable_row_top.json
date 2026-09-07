@@ -1,0 +1,12 @@
+{
+  "description": "AR $5,699 -> $1 (same row as $5,600).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 5699
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

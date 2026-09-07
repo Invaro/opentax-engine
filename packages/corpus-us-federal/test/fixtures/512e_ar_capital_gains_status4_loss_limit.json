@@ -1,0 +1,14 @@
+{
+  "description": "AR1000D status 4 column: LT loss $5,000 -> -$1,500 per taxpayer.",
+  "facts": {
+    "filingStatus": "mfj",
+    "arLongTermGain": -5000,
+    "arShortTermGain": 0,
+    "arStatus4": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.capital_gains",
+  "expect": {
+    "valueCents": "-150000"
+  }
+}

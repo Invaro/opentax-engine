@@ -1,0 +1,15 @@
+{
+  "description": "AR3: AGI $50,000; medical 4,000 under the 5,000 floor -> 0; misc 900 under the 1,000 floor -> 0; taxes 1,000 -> $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": 50000,
+    "arMedicalExpenses": 4000,
+    "arMiscExpenses": 900,
+    "arTaxesPaid": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.itemized_deductions",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

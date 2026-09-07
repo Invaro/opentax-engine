@@ -1,0 +1,16 @@
+{
+  "description": "AR2441 federal AGI $15,001 -> one step -> 34%: $2,000 x 34% = $680 -> $136.",
+  "facts": {
+    "filingStatus": "single",
+    "arChildCareExpenses": 2000,
+    "arChildCareQualifyingPersons": 1,
+    "arEarnedIncome": 20000,
+    "arSpouseEarnedIncome": 0,
+    "arFederalAgi": 15001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.child_care_credit",
+  "expect": {
+    "valueCents": "13600"
+  }
+}

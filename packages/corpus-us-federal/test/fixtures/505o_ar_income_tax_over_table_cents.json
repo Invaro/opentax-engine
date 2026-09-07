@@ -1,0 +1,12 @@
+{
+  "description": "AR $250,000.50 -> 3,809 + 3.9% x 150,000.50 = 9,659.02 -> $9,659 (one whole-dollar rounding).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": "250000.50"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "965900"
+  }
+}

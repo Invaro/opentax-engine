@@ -1,0 +1,13 @@
+{
+  "description": "AR MFJ with 2 dependents, AGI $29,722 -> $0 (zero row '0 29,722 0'; the booklet's Who Must File threshold prints $28,723 \u2014 the table governs).",
+  "facts": {
+    "filingStatus": "mfj",
+    "arAgi": 29722,
+    "arDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

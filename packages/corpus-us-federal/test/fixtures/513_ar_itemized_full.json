@@ -1,0 +1,18 @@
+{
+  "description": "AR3: AGI $50,000; medical 8,000 - 5,000 (10%) = 3,000; taxes 2,500; interest 6,000; contributions 3,000; misc 1,500 - 1,000 (2%) = 500; other misc 200 -> $15,200.",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": 50000,
+    "arMedicalExpenses": 8000,
+    "arTaxesPaid": 2500,
+    "arInterestPaid": 6000,
+    "arContributions": 3000,
+    "arMiscExpenses": 1500,
+    "arOtherMiscDeductions": 200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.itemized_deductions",
+  "expect": {
+    "valueCents": "1520000"
+  }
+}

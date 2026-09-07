@@ -1,0 +1,12 @@
+{
+  "description": "AR TY2026: the 3.7% top rate is enacted (Acts 1-2 of the 2026 1st Ex. Sess.) but DFA's indexed 2026 brackets are unpublished \u2014 no applicable rule until they are.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

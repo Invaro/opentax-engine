@@ -1,0 +1,13 @@
+{
+  "description": "AR MFJ with 2 dependents, AGI $35,050 -> $681 (row '35,001 35,100 681' \u2014 printed on the same line as the footnote).",
+  "facts": {
+    "filingStatus": "mfj",
+    "arAgi": 35050,
+    "arDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "68100"
+  }
+}

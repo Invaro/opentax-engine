@@ -1,0 +1,13 @@
+{
+  "description": "AR Low Income Tax Table, single AGI $14,644 -> $29 (row '14,644 14,700 29').",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": 14644,
+    "arDependents": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "2900"
+  }
+}

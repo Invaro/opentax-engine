@@ -1,0 +1,13 @@
+{
+  "description": "AR1000D: LT $1,001 -> 50% = 500.50 -> $501.",
+  "facts": {
+    "filingStatus": "single",
+    "arLongTermGain": 1001,
+    "arShortTermGain": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.capital_gains",
+  "expect": {
+    "valueCents": "50100"
+  }
+}

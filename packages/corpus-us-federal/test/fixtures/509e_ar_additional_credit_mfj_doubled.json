@@ -1,0 +1,12 @@
+{
+  "description": "AR MFJ (status 2) $20,000 -> $60 x 2 = $120 ('Double the credit').",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.additional_tax_credit",
+  "expect": {
+    "valueCents": "12000"
+  }
+}

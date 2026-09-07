@@ -1,0 +1,12 @@
+{
+  "description": "AR $94,700 -> $3,271: row [94,601-94,701) midpoint 94,651 <= $94,700 uses the standard table: 3,691.39 - 419.96 = 3,271.43 -> $3,271.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 94700
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "327100"
+  }
+}

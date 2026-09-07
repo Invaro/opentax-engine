@@ -1,0 +1,13 @@
+{
+  "description": "AR1000D MFJ: LT loss $2,000, ST loss $500 -> -$2,500 (within the $3,000 limit).",
+  "facts": {
+    "filingStatus": "mfj",
+    "arLongTermGain": -2000,
+    "arShortTermGain": -500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.capital_gains",
+  "expect": {
+    "valueCents": "-250000"
+  }
+}

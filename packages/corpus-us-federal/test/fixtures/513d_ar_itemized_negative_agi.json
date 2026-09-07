@@ -1,0 +1,16 @@
+{
+  "description": "AR3: negative AGI -> floors $0; medical 1,000 + misc 500 + casualty 700 + tuition 300 = $2,500.",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": -10000,
+    "arMedicalExpenses": 1000,
+    "arMiscExpenses": 500,
+    "arCasualtyLosses": 700,
+    "arTuitionDeduction": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.itemized_deductions",
+  "expect": {
+    "valueCents": "250000"
+  }
+}

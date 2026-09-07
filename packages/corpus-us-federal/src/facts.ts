@@ -3605,6 +3605,162 @@ export const facts: FactSpec[] = [
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
   },
+  // ---- Arkansas (Form AR1000F) ----
+  {
+    id: "arStatus4",
+    type: "bool",
+    description:
+      "Arkansas Filing Status 4 — a married couple (filingStatus mfj) filing SEPARATELY ON THE SAME RETURN, each spouse taxed on their own column; false = status 2 (joint). Affects us.ar.standard_deduction ($2,470 per column instead of $4,940), us.ar.additional_tax_credit (per column, not doubled), us.ar.capital_gains ($1,500 loss limit per column), and us.ar.low_income_tax (refused for status 4).",
+    default: { value: false, rationale: "A married couple is assumed to file jointly (status 2) absent the status-4 election" },
+  },
+  {
+    id: "arAgi",
+    type: "money",
+    description:
+      "Arkansas adjusted gross income (AR1000F line 25) of the return or COLUMN being evaluated — the Low Income Tax Table lookup base (us.ar.low_income_tax), the standard-deduction cap (us.ar.standard_deduction), and, as the COMBINED line 25A + 25B, the 10% medical and 2% miscellaneous floors (us.ar.itemized_deductions). May be negative. In dollars.",
+  },
+  {
+    id: "arDependents",
+    type: "int",
+    min: "0",
+    description:
+      "Dependents listed on AR1000F line 7B — $29 each (us.ar.personal_tax_credits) and the '1 or no' vs '2 or more' Low Income Tax Table column (us.ar.low_income_tax).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" },
+  },
+  {
+    id: "arCreditBoxes",
+    type: "int",
+    min: "0",
+    max: "8",
+    description:
+      "Count of AR1000F line 7A boxes checked for '65 or over', '65 Special' (65+ and NOT claiming the line 18 retirement exclusion), 'Blind', and 'Deaf' — taxpayer and spouse (at most 4 each; the rule clamps an unmarried filer at 4). $29 each (us.ar.personal_tax_credits). Do NOT count Yourself, Spouse, or the head-of-household/surviving-spouse box — the rule adds those from filingStatus.",
+    default: { value: "0", rationale: "Assumed no 65+/blind/deaf boxes absent contrary input" },
+  },
+  {
+    id: "arPensionTaxable",
+    type: "money",
+    min: "0",
+    description:
+      "ONE taxpayer's federally taxable employer-plan pension and qualified traditional IRA distributions (1099-R box 2a; IRA only after 59½ or on death/disability) — the base of the $6,000 exclusion (us.ar.retirement_exclusion). Premature IRA withdrawals and annuities go on line 16 with no exclusion. In dollars.",
+    default: { value: "0", rationale: "Assumed no pension or qualified IRA distributions absent contrary input" },
+  },
+  {
+    id: "arMilitaryRetirement",
+    type: "money",
+    min: "0",
+    description:
+      "The same taxpayer's exempt military retirement pay (AR1000F line 17) — reduces the $6,000 pension/IRA exclusion dollar for dollar (Ark. Code § 26-51-307(f); us.ar.retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no military retirement absent contrary input" },
+  },
+  {
+    id: "arChildCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "AR2441 line 2(c)/3: qualified child and dependent care expenses paid in the year, before the $3,000 / $6,000 cap (us.ar.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no child care expenses absent contrary input" },
+  },
+  {
+    id: "arChildCareQualifyingPersons",
+    type: "int",
+    min: "0",
+    description:
+      "Number of qualifying persons on AR2441 line 2 — caps line 3 at $3,000 for one, $6,000 for two or more (us.ar.child_care_credit).",
+    default: { value: "1", rationale: "Assumed one qualifying person when expenses are given" },
+  },
+  {
+    id: "arEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "AR2441 line 4: the taxpayer's earned income (us.ar.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input (denies the credit)" },
+  },
+  {
+    id: "arSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "AR2441 line 5: the spouse's earned income when filingStatus is mfj (Arkansas status 2 or 4; a student or disabled spouse's deemed income per the instructions); ignored for other statuses (us.ar.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no spouse earned income absent contrary input (denies a married couple's credit)" },
+  },
+  {
+    id: "arFederalAgi",
+    type: "money",
+    description:
+      "AR2441 line 7 = federal Form 1040 line 11 — sets the 35%-to-20% percentage (1 point per $2,000 over $15,000) (us.ar.child_care_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input (35% tier)" },
+  },
+  {
+    id: "arLongTermGain",
+    type: "money",
+    description:
+      "AR1000D line 3: Arkansas net long-term capital gain or LOSS (negative) for the column — federal Schedule D line 15 adjusted for depreciation differences (us.ar.capital_gains). In dollars.",
+    default: { value: "0", rationale: "Assumed no long-term capital gain or loss absent contrary input" },
+  },
+  {
+    id: "arShortTermGain",
+    type: "money",
+    description:
+      "AR1000D lines 6/11: Arkansas net short-term capital gain (positive) or loss (negative) for the column — federal Schedule D line 7 (us.ar.capital_gains). In dollars.",
+    default: { value: "0", rationale: "Assumed no short-term capital gain or loss absent contrary input" },
+  },
+  {
+    id: "arMedicalExpenses",
+    type: "money",
+    min: "0",
+    description: "AR3 line 1: medical and dental expenses paid, not reimbursed — the rule subtracts 10% of Arkansas AGI (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no medical expenses absent contrary input" },
+  },
+  {
+    id: "arTaxesPaid",
+    type: "money",
+    min: "0",
+    description:
+      "AR3 lines 5-6: real estate tax plus personal property tax and other deductible taxes (city income taxes, foreign income taxes on income taxed here) — NOT Arkansas or federal income taxes or sales taxes (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no deductible taxes absent contrary input" },
+  },
+  {
+    id: "arInterestPaid",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 8-11: home mortgage interest (institutions and individuals), deductible points, and investment interest limited to investment income (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no deductible interest absent contrary input" },
+  },
+  {
+    id: "arContributions",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 13-16: cash, art/literary, other, and carryover contributions (excess over 60% of AGI carries forward five years) (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no contributions absent contrary input" },
+  },
+  {
+    id: "arCasualtyLosses",
+    type: "money",
+    min: "0",
+    description: "AR3 line 18: total casualty and theft losses from AR4684 (after the $100 exclusion and the 10%-of-AGI test) (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no casualty losses absent contrary input" },
+  },
+  {
+    id: "arTuitionDeduction",
+    type: "money",
+    min: "0",
+    description: "AR3 line 19: post-secondary education tuition deduction(s) from AR1075 (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no tuition deduction absent contrary input" },
+  },
+  {
+    id: "arMiscExpenses",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 20-21: unreimbursed employee business expenses (AR2106) and other miscellaneous deductions SUBJECT to the 2%-of-AGI floor — the rule subtracts 2% of Arkansas AGI (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no miscellaneous expenses absent contrary input" },
+  },
+  {
+    id: "arOtherMiscDeductions",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 26-28: volunteer firefighter expenses (≤ $1,000), gambling losses (≤ winnings), and other miscellaneous deductions NOT subject to the 2% floor (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed none absent contrary input" },
+  },
   // ---- Kansas (Form K-40) ----
   {
     id: "ksStdBoxes",

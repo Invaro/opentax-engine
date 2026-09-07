@@ -1,0 +1,13 @@
+{
+  "description": "AR HOH with 2 dependents, AGI $29,001 -> above $29,000 \u2014 refused.",
+  "facts": {
+    "filingStatus": "hoh",
+    "arAgi": 29001,
+    "arDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

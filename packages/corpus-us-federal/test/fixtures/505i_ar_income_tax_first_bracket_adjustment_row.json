@@ -1,0 +1,12 @@
+{
+  "description": "AR $94,701 -> $3,296: row [94,701-94,801) midpoint 94,751 uses the upper table (2% of $4,700 + 3.9% above = 3,605.99) minus the $310 bracket adjustment = 3,295.99 -> $3,296 (DFA '$399.30' adjustment row).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 94701
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "329600"
+  }
+}

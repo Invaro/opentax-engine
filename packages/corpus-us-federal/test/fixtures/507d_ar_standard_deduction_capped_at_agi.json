@@ -1,0 +1,12 @@
+{
+  "description": "AR HOH with AGI $1,500: 'If the amount on line 25 is less than the Standard Deduction, enter the amount from line 25 on line 27' -> $1,500.",
+  "facts": {
+    "filingStatus": "hoh",
+    "arAgi": 1500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.standard_deduction",
+  "expect": {
+    "valueCents": "150000"
+  }
+}

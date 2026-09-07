@@ -1,0 +1,12 @@
+{
+  "description": "AR status 5 $27,250 -> $20 ('$27,201 - $27,300 $20').",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 27250
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.additional_tax_credit",
+  "expect": {
+    "valueCents": "2000"
+  }
+}

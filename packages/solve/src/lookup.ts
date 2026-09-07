@@ -66,6 +66,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief",
   "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport",
   "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
+  "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
 };
 
 export function lookupParameters(

@@ -1,0 +1,12 @@
+{
+  "description": "AR $75,950 -> $2,542: DFA Example 1 \u2014 printed row [75,901-76,001) midpoint 75,951 x .039 = 2,962.09 - 419.96 = 2,542.13 -> $2,542.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 75950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "254200"
+  }
+}

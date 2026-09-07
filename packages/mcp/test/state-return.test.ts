@@ -1498,3 +1498,158 @@ describe("composeKS — 2025 Form K-40 (real corpus targets)", () => {
     expect(() => composeStateReturn({ jurisdiction: "ks" as const, filingStatus: "single" }, realPaEval({}))).toThrow(/federalAGI is required/);
   });
 });
+
+describe("composeAR — 2025 Form AR1000F (real corpus targets)", () => {
+  it("single wage earner: standard deduction, table tax, personal credit, refund", () => {
+    // 23 = 40,000 + 500 = 40,500; standard 2,470 -> 28 = 38,030 -> row [38,000-38,100)
+    // midpoint 38,050 x 3.9% = 1,483.95 - 419.96 = 1,063.99 -> $1,064; credit $29 ->
+    // net 1,035; withholding 1,200 -> refund 165. Low income table: AGI over $17,500.
+    const input = { jurisdiction: "ar" as const, filingStatus: "single", wages: 40000, arInterest: 500, stateWithholding: 1200 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._filing_status).toBe("1");
+    expect(dollars(lines, "23_total_income")).toBe("$40,500");
+    expect(dollars(lines, "27_deduction")).toBe("$2,470");
+    expect(dollars(lines, "28_net_taxable_income")).toBe("$38,030");
+    expect(dollars(lines, "29_tax")).toBe("$1,064");
+    expect(dollars(lines, "34_personal_credits")).toBe("$29");
+    expect(dollars(lines, "38_net_tax")).toBe("$1,035");
+    expect(dollars(lines, "50_refund")).toBe("$165");
+    expect(lines["26_table"]).toBe("standard");
+    expect(notes.some((n) => n.includes("Low Income Tax Table not available"))).toBe(true);
+  });
+
+  it("MFJ retirees (status 2): two $6,000 exclusions, 65 boxes, doubled additional credit, credits capped", () => {
+    // 18A = 20,000 - 6,000 = 14,000; 18B = 9,000 - 6,000 = 3,000; interest 1,000 -> 23 = 18,000;
+    // standard 4,940 -> 28 = 13,060 -> row [13,000-13,100) midpoint 13,050 x 3% = 391.50 - 223.97
+    // = 167.53 -> $168. Low income: without exclusions AGI 30,000 + SS 30,000 = 60,000 > 29,000.
+    // Credits: (self + spouse + 2 boxes) x 29 = 116; additional 60 x 2 = 120 -> 236 > 168 -> net 0.
+    const input = {
+      jurisdiction: "ar" as const, filingStatus: "mfj", arPensionTaxablePrimary: 20000, arPensionTaxableSpouse: 9000,
+      arInterest: 1000, arExemptIncome: 30000, arCreditBoxes: 2, stateWithholding: 300,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._filing_status).toBe("2");
+    expect(dollars(lines, "18A_pension_primary")).toBe("$14,000");
+    expect(dollars(lines, "18B_pension_spouse")).toBe("$3,000");
+    expect(dollars(lines, "25_agi")).toBe("$18,000");
+    expect(dollars(lines, "27_deduction")).toBe("$4,940");
+    expect(dollars(lines, "29_tax")).toBe("$168");
+    expect(dollars(lines, "34_personal_credits")).toBe("$116");
+    expect(dollars(lines, "36_other_credits")).toBe("$120");
+    expect(dollars(lines, "38_net_tax")).toBe("$0");
+    expect(dollars(lines, "50_refund")).toBe("$300");
+    expect(notes.some((n) => n.includes("not refundable"))).toBe(true);
+  });
+
+  it("HOH with two dependents takes the Low Income Tax Table when it is lower", () => {
+    // Regular: 27,000 - 2,470 = 24,530 -> midpoint 24,550 x 3.4% = 834.70 - 287.97 = 546.73 -> $547.
+    // Low income (HOH 2+ table, limit 29,000): AGI 27,000 -> row [26,901-27,000] = $355. Credits:
+    // (self + HOH + 2 dependents) x 29 = 116; additional credit on line 28 = 27,000 -> $35 -> 151;
+    // net 204; withholding 400 -> refund 196.
+    const input = { jurisdiction: "ar" as const, filingStatus: "hoh", wages: 27000, dependents: 2, stateWithholding: 400 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["26_table"]).toBe("low income table");
+    expect(dollars(lines, "27_deduction")).toBe("$0");
+    expect(dollars(lines, "28_net_taxable_income")).toBe("$27,000");
+    expect(dollars(lines, "29_tax")).toBe("$355");
+    expect(dollars(lines, "34_personal_credits")).toBe("$116");
+    expect(dollars(lines, "36_other_credits")).toBe("$35");
+    expect(dollars(lines, "38_net_tax")).toBe("$204");
+    expect(dollars(lines, "50_refund")).toBe("$196");
+    expect(notes.some((n) => n.includes("Low Income Tax Table chosen") && n.includes("$547"))).toBe(true);
+    // forced regular
+    const forced = composeStateReturn({ ...input, arUseLowIncomeTable: false }, realPaEval(input));
+    expect(dollars(forced.lines, "29_tax")).toBe("$547");
+  });
+
+  it("two-income couple: status 4 (separately on the same return) beats status 2", () => {
+    // Status 4: A = 90,000 - 40,000 = 50,000 -> 47,530 -> midpoint 47,550 x 3.9% = 1,854.45 - 419.96
+    // = 1,434.49 -> $1,434; B = 40,000 -> 37,530 -> 1,464.45 - 419.96 = 1,044.49 -> $1,044; combined
+    // 2,478. Status 2: 90,000 - 4,940 = 85,060 -> row [85,001-85,101) midpoint 85,051 x 3.9% =
+    // 3,316.99 - 419.96 = 2,897.03 -> $2,897. Credits 58 -> net 2,420; withholding 2,000 -> due 420.
+    const input = { jurisdiction: "ar" as const, filingStatus: "mfj", wages: 90000, arSpouseIncome: 40000, stateWithholding: 2000 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._filing_status).toBe("4");
+    expect(dollars(lines, "25A_agi")).toBe("$50,000");
+    expect(dollars(lines, "25B_agi")).toBe("$40,000");
+    expect(dollars(lines, "27A_deduction")).toBe("$2,470");
+    expect(dollars(lines, "27B_deduction")).toBe("$2,470");
+    expect(dollars(lines, "29A_tax")).toBe("$1,434");
+    expect(dollars(lines, "29B_tax")).toBe("$1,044");
+    expect(dollars(lines, "30_combined_tax")).toBe("$2,478");
+    expect(dollars(lines, "34_personal_credits")).toBe("$58");
+    expect(dollars(lines, "38_net_tax")).toBe("$2,420");
+    expect(dollars(lines, "51_amount_due")).toBe("$420");
+    expect(notes.some((n) => n.includes("status 4) nets $2,420") && n.includes("status 2) nets $2,839"))).toBe(true);
+    const joint = composeStateReturn({ ...input, arStatus4: false }, realPaEval(input));
+    expect(joint.lines._filing_status).toBe("2");
+    expect(dollars(joint.lines, "29_tax")).toBe("$2,897");
+  });
+
+  it("HOH with an approved early childhood program: the 20% AR2441 credit is refundable on line 43", () => {
+    // 30,000 - 2,470 = 27,530 -> midpoint 27,550 x 3.9% = 1,074.45 - 419.96 = 654.49 -> $654; low
+    // income HOH 0-1 table limit 25,300 < 30,000. Child care: 3,000 x 27% = 810 -> 20% = 162 -> line 43.
+    // Credits: (self + HOH + 1 dependent) x 29 = 87; additional credit at 27,530 = $5 -> 92; net 562;
+    // payments 162 -> due 400.
+    const input = {
+      jurisdiction: "ar" as const, filingStatus: "hoh", wages: 30000, dependents: 1, federalAGI: 30000,
+      arChildCareExpenses: 3500, arChildCareQualifyingPersons: 1, arEarnedIncome: 30000, arEarlyChildhoodApproved: true,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "29_tax")).toBe("$654");
+    expect(lines["35_child_care_credit"]).toBeUndefined();
+    expect(dollars(lines, "43_early_childhood_credit")).toBe("$162");
+    expect(dollars(lines, "36_other_credits")).toBe("$5");
+    expect(dollars(lines, "38_net_tax")).toBe("$562");
+    expect(dollars(lines, "51_amount_due")).toBe("$400");
+    const nonrefundable = composeStateReturn({ ...input, arEarlyChildhoodApproved: false }, realPaEval(input));
+    expect(dollars(nonrefundable.lines, "35_child_care_credit")).toBe("$162");
+    expect(dollars(nonrefundable.lines, "38_net_tax")).toBe("$400");
+    expect(() => composeStateReturn({ ...input, federalAGI: undefined }, realPaEval(input))).toThrow(/federalAGI is required for the Arkansas child care credit/);
+  });
+
+  it("status 4 runs AR1000D per column, and the exempt half of a gain still counts for the low-income test", () => {
+    // Joint losses split by spouse: primary LT -2,000, spouse ST -2,000 -> each column floors at -1,500 (status 4)
+    // vs -3,000 on one joint schedule (status 2). A: 60,000 - 30,000 - 1,500 = 28,500 -> 26,030 -> midpoint
+    // 26,050 x 3.4% = 885.70 - 287.97 = 597.73 -> $598; B: 30,000 - 1,500 = 28,500 -> $598; combined 1,196;
+    // credits 58 + additional (26,030 -> $60 each) 120 -> net 1,018. Status 2: 57,000 - 4,940 = 52,060 ->
+    // midpoint 52,050 x 3.9% = 2,029.95 - 419.96 = 1,609.99 -> $1,610; net 1,610 - 58 - 0 = 1,552.
+    const input = { jurisdiction: "ar" as const, filingStatus: "mfj", wages: 60000, arSpouseIncome: 30000, arLongTermGain: -2000, arSpouseShortTermGain: -2000 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._filing_status).toBe("4");
+    expect(dollars(lines, "14_capital_gains")).toBe("-$3,000");
+    expect(dollars(lines, "23A_total_income")).toBe("$28,500");
+    expect(dollars(lines, "23B_total_income")).toBe("$28,500");
+    expect(dollars(lines, "30_combined_tax")).toBe("$1,196");
+    expect(dollars(lines, "38_net_tax")).toBe("$1,018");
+    expect(notes.some((n) => n.includes("status 2) nets $1,552"))).toBe(true);
+    // Low-income test: wages 10,000 + LT gain 14,000 -> line 23 = 17,000 (50% taxed) but income from all
+    // sources is 24,000 > 17,500 -> Regular table: 17,000 - 2,470 = 14,530 -> midpoint 14,550 x 3% =
+    // 436.50 - 223.97 = 212.53 -> $213.
+    const gain = { jurisdiction: "ar" as const, filingStatus: "single", wages: 10000, arLongTermGain: 14000 };
+    const r = composeStateReturn(gain, realPaEval(gain));
+    expect(dollars(r.lines, "23_total_income")).toBe("$17,000");
+    expect(r.lines["26_table"]).toBe("standard");
+    expect(dollars(r.lines, "29_tax")).toBe("$213");
+    expect(r.notes.some((n) => n.includes("excluded capital gain $7,000"))).toBe(true);
+    // arItemize with no AR3 inputs falls back to the standard deduction
+    const noItems = { jurisdiction: "ar" as const, filingStatus: "single", wages: 30000, arItemize: true };
+    const i = composeStateReturn(noItems, realPaEval(noItems));
+    expect(dollars(i.lines, "27_deduction")).toBe("$2,470");
+    expect(i.notes.some((n) => n.includes("no AR3 amounts were given"))).toBe(true);
+  });
+
+  it("65 Special is added when the low-income election forgoes the pension exclusion", () => {
+    // Single, 66, pension 5,000 taxable + interest 11,000: regular: 18A = 0 -> 23 = 11,000 -> 8,530 -> midpoint
+    // 8,550 x 2% = 171.00 - 111.98 = 59.02 -> $59; credits 29 + 60 -> net 0. Low table (exclusion forgone):
+    // AGI 16,000 -> row [15,901-16,000] = $117; credits 29 + 29 (65 Special now available) + 60 = 118 -> net 0.
+    // Tie -> regular kept. With a 65 box already claimed on the regular path (arCreditBoxes 1) the 65 box and
+    // the 65 Special box are both $29 on the low path.
+    const input = { jurisdiction: "ar" as const, filingStatus: "single", arInterest: 11000, arPensionTaxablePrimary: 5000, arAge65Count: 1, arCreditBoxes: 1, arUseLowIncomeTable: true };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["26_table"]).toBe("low income table");
+    expect(dollars(lines, "29_tax")).toBe("$117");
+    expect(dollars(lines, "34_personal_credits")).toBe("$87");
+    expect(notes.some((n) => n.includes("65 Special"))).toBe(true);
+  });
+});

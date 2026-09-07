@@ -1,0 +1,12 @@
+{
+  "description": "AR $16,000 -> $258: midpoint 16,050 x .034 = 545.70 - 287.97 = 257.73 -> $258 (printed 258).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 16000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "25800"
+  }
+}

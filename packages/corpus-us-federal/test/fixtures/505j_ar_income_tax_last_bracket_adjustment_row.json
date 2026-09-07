@@ -1,0 +1,12 @@
+{
+  "description": "AR $97,800 -> $3,713: midpoint 97,751 -> upper 3,722.99 minus the $10 adjustment (row $97,701-$97,800) = 3,712.99 -> $3,713.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 97800
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "371300"
+  }
+}

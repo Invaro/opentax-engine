@@ -1,0 +1,13 @@
+{
+  "description": "AR status 5 (separate returns) has no Low Income Tax Table \u2014 refused.",
+  "facts": {
+    "filingStatus": "mfs",
+    "arAgi": 15000,
+    "arDependents": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

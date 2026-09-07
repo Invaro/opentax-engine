@@ -1,0 +1,12 @@
+{
+  "description": "AR negative AGI -> $0 deduction (capped at line 25).",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": -500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.standard_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

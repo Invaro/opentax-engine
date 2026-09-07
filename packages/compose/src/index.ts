@@ -29,6 +29,7 @@ import { composeOR } from "./or.js";
 import { composeOK } from "./ok.js";
 import { composeCT } from "./ct.js";
 import { composeKS } from "./ks.js";
+import { composeAR } from "./ar.js";
 import { composeSC } from "./sc.js";
 import { composeVA } from "./va.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
@@ -88,9 +89,10 @@ export function composeStateReturn(
   // The AGI-based states start from federal line 11; refuse loudly rather
   // than compose on a silent $0 AGI. PA and NJ are class/category-based, and
   // SC starts from federal TAXABLE income (scFederalTaxableIncome), and AL
-  // builds Alabama AGI from its own transcribed income lines — none of the
-  // four uses federalAGI.
-  if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
+  // builds Alabama AGI from its own transcribed income lines, and AR builds
+  // Arkansas AGI from its own lines 8-24 (federalAGI only feeds AR2441) — none
+  // of the five requires federalAGI.
+  if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -111,5 +113,6 @@ export function composeStateReturn(
   if (j === "ok") return { lines: composeOK(input, evalStateTax, notes), notes };
   if (j === "ct") return { lines: composeCT(input, evalStateTax, notes), notes };
   if (j === "ks") return { lines: composeKS(input, evalStateTax, notes), notes };
+  if (j === "ar") return { lines: composeAR(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

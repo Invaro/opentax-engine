@@ -8104,6 +8104,149 @@ var facts = [
     description: "Taxable IRA distributions other than Roth (Form 1040 line 4b) \u2014 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" }
   },
+  // ---- Arkansas (Form AR1000F) ----
+  {
+    id: "arStatus4",
+    type: "bool",
+    description: "Arkansas Filing Status 4 \u2014 a married couple (filingStatus mfj) filing SEPARATELY ON THE SAME RETURN, each spouse taxed on their own column; false = status 2 (joint). Affects us.ar.standard_deduction ($2,470 per column instead of $4,940), us.ar.additional_tax_credit (per column, not doubled), us.ar.capital_gains ($1,500 loss limit per column), and us.ar.low_income_tax (refused for status 4).",
+    default: { value: false, rationale: "A married couple is assumed to file jointly (status 2) absent the status-4 election" }
+  },
+  {
+    id: "arAgi",
+    type: "money",
+    description: "Arkansas adjusted gross income (AR1000F line 25) of the return or COLUMN being evaluated \u2014 the Low Income Tax Table lookup base (us.ar.low_income_tax), the standard-deduction cap (us.ar.standard_deduction), and, as the COMBINED line 25A + 25B, the 10% medical and 2% miscellaneous floors (us.ar.itemized_deductions). May be negative. In dollars."
+  },
+  {
+    id: "arDependents",
+    type: "int",
+    min: "0",
+    description: "Dependents listed on AR1000F line 7B \u2014 $29 each (us.ar.personal_tax_credits) and the '1 or no' vs '2 or more' Low Income Tax Table column (us.ar.low_income_tax).",
+    default: { value: "0", rationale: "Assumed no dependents absent contrary input" }
+  },
+  {
+    id: "arCreditBoxes",
+    type: "int",
+    min: "0",
+    max: "8",
+    description: "Count of AR1000F line 7A boxes checked for '65 or over', '65 Special' (65+ and NOT claiming the line 18 retirement exclusion), 'Blind', and 'Deaf' \u2014 taxpayer and spouse (at most 4 each; the rule clamps an unmarried filer at 4). $29 each (us.ar.personal_tax_credits). Do NOT count Yourself, Spouse, or the head-of-household/surviving-spouse box \u2014 the rule adds those from filingStatus.",
+    default: { value: "0", rationale: "Assumed no 65+/blind/deaf boxes absent contrary input" }
+  },
+  {
+    id: "arPensionTaxable",
+    type: "money",
+    min: "0",
+    description: "ONE taxpayer's federally taxable employer-plan pension and qualified traditional IRA distributions (1099-R box 2a; IRA only after 59\xBD or on death/disability) \u2014 the base of the $6,000 exclusion (us.ar.retirement_exclusion). Premature IRA withdrawals and annuities go on line 16 with no exclusion. In dollars.",
+    default: { value: "0", rationale: "Assumed no pension or qualified IRA distributions absent contrary input" }
+  },
+  {
+    id: "arMilitaryRetirement",
+    type: "money",
+    min: "0",
+    description: "The same taxpayer's exempt military retirement pay (AR1000F line 17) \u2014 reduces the $6,000 pension/IRA exclusion dollar for dollar (Ark. Code \xA7 26-51-307(f); us.ar.retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no military retirement absent contrary input" }
+  },
+  {
+    id: "arChildCareExpenses",
+    type: "money",
+    min: "0",
+    description: "AR2441 line 2(c)/3: qualified child and dependent care expenses paid in the year, before the $3,000 / $6,000 cap (us.ar.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no child care expenses absent contrary input" }
+  },
+  {
+    id: "arChildCareQualifyingPersons",
+    type: "int",
+    min: "0",
+    description: "Number of qualifying persons on AR2441 line 2 \u2014 caps line 3 at $3,000 for one, $6,000 for two or more (us.ar.child_care_credit).",
+    default: { value: "1", rationale: "Assumed one qualifying person when expenses are given" }
+  },
+  {
+    id: "arEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "AR2441 line 4: the taxpayer's earned income (us.ar.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no earned income absent contrary input (denies the credit)" }
+  },
+  {
+    id: "arSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "AR2441 line 5: the spouse's earned income when filingStatus is mfj (Arkansas status 2 or 4; a student or disabled spouse's deemed income per the instructions); ignored for other statuses (us.ar.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no spouse earned income absent contrary input (denies a married couple's credit)" }
+  },
+  {
+    id: "arFederalAgi",
+    type: "money",
+    description: "AR2441 line 7 = federal Form 1040 line 11 \u2014 sets the 35%-to-20% percentage (1 point per $2,000 over $15,000) (us.ar.child_care_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 federal AGI absent contrary input (35% tier)" }
+  },
+  {
+    id: "arLongTermGain",
+    type: "money",
+    description: "AR1000D line 3: Arkansas net long-term capital gain or LOSS (negative) for the column \u2014 federal Schedule D line 15 adjusted for depreciation differences (us.ar.capital_gains). In dollars.",
+    default: { value: "0", rationale: "Assumed no long-term capital gain or loss absent contrary input" }
+  },
+  {
+    id: "arShortTermGain",
+    type: "money",
+    description: "AR1000D lines 6/11: Arkansas net short-term capital gain (positive) or loss (negative) for the column \u2014 federal Schedule D line 7 (us.ar.capital_gains). In dollars.",
+    default: { value: "0", rationale: "Assumed no short-term capital gain or loss absent contrary input" }
+  },
+  {
+    id: "arMedicalExpenses",
+    type: "money",
+    min: "0",
+    description: "AR3 line 1: medical and dental expenses paid, not reimbursed \u2014 the rule subtracts 10% of Arkansas AGI (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no medical expenses absent contrary input" }
+  },
+  {
+    id: "arTaxesPaid",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 5-6: real estate tax plus personal property tax and other deductible taxes (city income taxes, foreign income taxes on income taxed here) \u2014 NOT Arkansas or federal income taxes or sales taxes (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no deductible taxes absent contrary input" }
+  },
+  {
+    id: "arInterestPaid",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 8-11: home mortgage interest (institutions and individuals), deductible points, and investment interest limited to investment income (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no deductible interest absent contrary input" }
+  },
+  {
+    id: "arContributions",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 13-16: cash, art/literary, other, and carryover contributions (excess over 60% of AGI carries forward five years) (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no contributions absent contrary input" }
+  },
+  {
+    id: "arCasualtyLosses",
+    type: "money",
+    min: "0",
+    description: "AR3 line 18: total casualty and theft losses from AR4684 (after the $100 exclusion and the 10%-of-AGI test) (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no casualty losses absent contrary input" }
+  },
+  {
+    id: "arTuitionDeduction",
+    type: "money",
+    min: "0",
+    description: "AR3 line 19: post-secondary education tuition deduction(s) from AR1075 (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no tuition deduction absent contrary input" }
+  },
+  {
+    id: "arMiscExpenses",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 20-21: unreimbursed employee business expenses (AR2106) and other miscellaneous deductions SUBJECT to the 2%-of-AGI floor \u2014 the rule subtracts 2% of Arkansas AGI (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed no miscellaneous expenses absent contrary input" }
+  },
+  {
+    id: "arOtherMiscDeductions",
+    type: "money",
+    min: "0",
+    description: "AR3 lines 26-28: volunteer firefighter expenses (\u2264 $1,000), gambling losses (\u2264 winnings), and other miscellaneous deductions NOT subject to the 2% floor (us.ar.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed none absent contrary input" }
+  },
   // ---- Kansas (Form K-40) ----
   {
     id: "ksStdBoxes",
@@ -8455,12 +8598,12 @@ var money2 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef2 = (ruleId) => ({ kind: "rule", ruleId });
 var RATES = ["10", "12", "22", "24", "32", "35", "37"];
 function table(lowerBoundsDollars) {
-  return lowerBoundsDollars.map((dollars2, i) => ({
-    threshold: String(BigInt(dollars2) * 100n),
+  return lowerBoundsDollars.map((dollars3, i) => ({
+    threshold: String(BigInt(dollars3) * 100n),
     rate: { num: RATES[i], den: "100" }
   }));
 }
-var d = (dollars2) => money2(String(BigInt(dollars2) * 100n));
+var d = (dollars3) => money2(String(BigInt(dollars3) * 100n));
 var B25 = {
   single: table([0, 11925, 48475, 103350, 197300, 250525, 626350]),
   mfj: table([0, 23850, 96950, 206700, 394600, 501050, 751600]),
@@ -8549,7 +8692,7 @@ function incomeTaxRule(version, effectiveFrom, effectiveTo, tables, yearLabel, c
   };
 }
 function bandMidpoint(o) {
-  const lt13 = (cents2) => ({
+  const lt14 = (cents2) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -8568,22 +8711,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt13("500"),
+    cond: lt14("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt13("1500"),
+      cond: lt14("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt13("2500"),
+        cond: lt14("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt13("300000"),
+          cond: lt14("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -8742,7 +8885,7 @@ var fact3 = (factId) => ({ kind: "fact", factId });
 var money3 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef3 = (ruleId) => ({ kind: "rule", ruleId });
 var param2 = (name) => ({ kind: "param", name });
-var d2 = (dollars2) => money3(String(BigInt(dollars2) * 100n));
+var d2 = (dollars3) => money3(String(BigInt(dollars3) * 100n));
 var taxable2 = ruleRef3("us.federal.taxable_income");
 var regOrdinary = ruleRef3("us.federal.ordinary_taxable_income");
 function amtRule(version, from, to, year, p, cg, source, amountsNote) {
@@ -22075,6 +22218,630 @@ var ksRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-ar-tables.js
+var AR_LOW_INCOME_SINGLE = [
+  [14644, 14700, 29],
+  [14701, 14800, 33],
+  [14801, 14900, 40],
+  [14901, 15e3, 47],
+  [15001, 15100, 54],
+  [15101, 15200, 61],
+  [15201, 15300, 68],
+  [15301, 15400, 75],
+  [15401, 15500, 82],
+  [15501, 15600, 89],
+  [15601, 15700, 96],
+  [15701, 15800, 103],
+  [15801, 15900, 110],
+  [15901, 16e3, 117],
+  [16001, 16100, 124],
+  [16101, 16200, 131],
+  [16201, 16300, 138],
+  [16301, 16400, 145],
+  [16401, 16500, 152],
+  [16501, 16600, 159],
+  [16601, 16700, 166],
+  [16701, 16800, 173],
+  [16801, 16900, 180],
+  [16901, 17e3, 187],
+  [17001, 17100, 194],
+  [17101, 17200, 201],
+  [17201, 17300, 208],
+  [17301, 17400, 215],
+  [17401, 17500, 222]
+];
+var AR_LOW_INCOME_HOH_QSS_0_1_DEP = [
+  [20821, 20900, 67],
+  [20901, 21e3, 77],
+  [21001, 21100, 86],
+  [21101, 21200, 95],
+  [21201, 21300, 105],
+  [21301, 21400, 114],
+  [21401, 21500, 124],
+  [21501, 21600, 133],
+  [21601, 21700, 142],
+  [21701, 21800, 152],
+  [21801, 21900, 161],
+  [21901, 22e3, 171],
+  [22001, 22100, 180],
+  [22101, 22200, 189],
+  [22201, 22300, 199],
+  [22301, 22400, 208],
+  [22401, 22500, 218],
+  [22501, 22600, 227],
+  [22601, 22700, 236],
+  [22701, 22800, 246],
+  [22801, 22900, 255],
+  [22901, 23e3, 265],
+  [23001, 23100, 274],
+  [23101, 23200, 283],
+  [23201, 23300, 293],
+  [23301, 23400, 302],
+  [23401, 23500, 312],
+  [23501, 23600, 321],
+  [23601, 23700, 330],
+  [23701, 23800, 340],
+  [23801, 23900, 349],
+  [23901, 24e3, 359],
+  [24001, 24100, 368],
+  [24101, 24200, 377],
+  [24201, 24300, 387],
+  [24301, 24400, 396],
+  [24401, 24500, 406],
+  [24501, 24600, 415],
+  [24601, 24700, 424],
+  [24701, 24800, 434],
+  [24801, 24900, 443],
+  [24901, 25e3, 453],
+  [25001, 25100, 462],
+  [25101, 25200, 471],
+  [25201, 25300, 481]
+];
+var AR_LOW_INCOME_HOH_QSS_2_PLUS_DEP = [
+  [24819, 24900, 94],
+  [24901, 25e3, 107],
+  [25001, 25100, 119],
+  [25101, 25200, 132],
+  [25201, 25300, 144],
+  [25301, 25400, 156],
+  [25401, 25500, 169],
+  [25501, 25600, 181],
+  [25601, 25700, 194],
+  [25701, 25800, 206],
+  [25801, 25900, 218],
+  [25901, 26e3, 231],
+  [26001, 26100, 243],
+  [26101, 26200, 256],
+  [26201, 26300, 268],
+  [26301, 26400, 280],
+  [26401, 26500, 293],
+  [26501, 26600, 305],
+  [26601, 26700, 318],
+  [26701, 26800, 330],
+  [26801, 26900, 342],
+  [26901, 27e3, 355],
+  [27001, 27100, 367],
+  [27101, 27200, 380],
+  [27201, 27300, 392],
+  [27301, 27400, 404],
+  [27401, 27500, 417],
+  [27501, 27600, 429],
+  [27601, 27700, 442],
+  [27701, 27800, 454],
+  [27801, 27900, 466],
+  [27901, 28e3, 479],
+  [28001, 28100, 491],
+  [28101, 28200, 504],
+  [28201, 28300, 516],
+  [28301, 28400, 528],
+  [28401, 28500, 541],
+  [28501, 28600, 553],
+  [28601, 28700, 566],
+  [28701, 28800, 578],
+  [28801, 28900, 590],
+  [28901, 29e3, 603]
+];
+var AR_LOW_INCOME_MFJ_0_1_DEP = [
+  [24696, 24700, 77],
+  [24701, 24800, 87],
+  [24801, 24900, 98],
+  [24901, 25e3, 108],
+  [25001, 25100, 118],
+  [25101, 25200, 129],
+  [25201, 25300, 139],
+  [25301, 25400, 150],
+  [25401, 25500, 160],
+  [25501, 25600, 170],
+  [25601, 25700, 181],
+  [25701, 25800, 191],
+  [25801, 25900, 202],
+  [25901, 26e3, 212],
+  [26001, 26100, 222],
+  [26101, 26200, 233],
+  [26201, 26300, 243],
+  [26301, 26400, 254],
+  [26401, 26500, 264],
+  [26501, 26600, 274],
+  [26601, 26700, 285],
+  [26701, 26800, 295],
+  [26801, 26900, 306],
+  [26901, 27e3, 316],
+  [27001, 27100, 326],
+  [27101, 27200, 337],
+  [27201, 27300, 347],
+  [27301, 27400, 358],
+  [27401, 27500, 368],
+  [27501, 27600, 378],
+  [27601, 27700, 389],
+  [27701, 27800, 399],
+  [27801, 27900, 410],
+  [27901, 28e3, 420],
+  [28001, 28100, 430],
+  [28101, 28200, 441],
+  [28201, 28300, 451],
+  [28301, 28400, 462],
+  [28401, 28500, 472],
+  [28501, 28600, 482],
+  [28601, 28700, 493],
+  [28701, 28800, 503],
+  [28801, 28900, 514],
+  [28901, 29e3, 524]
+];
+var AR_LOW_INCOME_MFJ_2_PLUS_DEP = [
+  [29723, 29800, 111],
+  [29801, 29900, 122],
+  [29901, 3e4, 132],
+  [30001, 30100, 143],
+  [30101, 30200, 153],
+  [30201, 30300, 163],
+  [30301, 30400, 174],
+  [30401, 30500, 184],
+  [30501, 30600, 195],
+  [30601, 30700, 205],
+  [30701, 30800, 215],
+  [30801, 30900, 226],
+  [30901, 31e3, 236],
+  [31001, 31100, 247],
+  [31101, 31200, 257],
+  [31201, 31300, 267],
+  [31301, 31400, 278],
+  [31401, 31500, 289],
+  [31501, 31600, 300],
+  [31601, 31700, 311],
+  [31701, 31800, 322],
+  [31801, 31900, 333],
+  [31901, 32e3, 343],
+  [32001, 32100, 354],
+  [32101, 32200, 365],
+  [32201, 32300, 376],
+  [32301, 32400, 387],
+  [32401, 32500, 398],
+  [32501, 32600, 409],
+  [32601, 32700, 420],
+  [32701, 32800, 431],
+  [32801, 32900, 442],
+  [32901, 33e3, 452],
+  [33001, 33100, 463],
+  [33101, 33200, 474],
+  [33201, 33300, 485],
+  [33301, 33400, 496],
+  [33401, 33500, 507],
+  [33501, 33600, 518],
+  [33601, 33700, 529],
+  [33701, 33800, 540],
+  [33801, 33900, 551],
+  [33901, 34e3, 561],
+  [34001, 34100, 572],
+  [34101, 34200, 583],
+  [34201, 34300, 594],
+  [34301, 34400, 605],
+  [34401, 34500, 616],
+  [34501, 34600, 627],
+  [34601, 34700, 638],
+  [34701, 34800, 649],
+  [34801, 34900, 660],
+  [34901, 35e3, 670],
+  [35001, 35100, 681],
+  [35101, 35200, 692],
+  [35201, 35300, 703],
+  [35301, 35400, 714],
+  [35401, 35500, 725],
+  [35501, 35600, 736],
+  [35601, 35700, 747],
+  [35701, 35800, 758],
+  [35801, 35900, 769],
+  [35901, 36e3, 779],
+  [36001, 36100, 790]
+];
+
+// ../corpus-us-federal/dist/rules/state-ar.js
+var rd16 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp4 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt13 = (l, r) => cmp4("lt", l, r);
+var le10 = (l, r) => cmp4("le", l, r);
+var gt3 = (l, r) => cmp4("gt", l, r);
+var ge3 = (l, r) => cmp4("ge", l, r);
+var iff11 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add8 = (...args) => ({ kind: "add", args });
+var sub12 = (left, right) => ({ kind: "sub", left, right });
+var max011 = (arg) => ({ kind: "max0", arg });
+var minE = (...args) => ({ kind: "min", args });
+var maxE = (...args) => ({ kind: "max", args });
+var and2 = (...args) => ({ kind: "and", args });
+var or2 = (...args) => ({ kind: "or", args });
+var not = (arg) => ({ kind: "not", arg });
+var int5 = (value) => ({ kind: "int", value });
+var mulInt10 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits2 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus19 = (v) => cmp4("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isMfj2 = isStatus19("mfj");
+var isStatus22 = and2(isMfj2, not(fact36("arStatus4")));
+var isHohQss = or2(isStatus19("hoh"), isStatus19("qss"));
+var isMfs2 = isStatus19("mfs");
+var times4 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled4 = (n, denCents) => times4({ kind: "mulDiv", a: n, b: money33("1"), c: money33(denCents), round: "half-up" }, "100");
+var scaledSchedule4 = (base, rows) => add8(...rows.map((r, i) => {
+  const excess = sub12(base, money33(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money33("0"), hi: money33(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max011(excess);
+  return times4(portion, r.rateNum);
+}));
+var dollars2 = (d3) => money33(String(d3) + "00");
+var STANDARD_TABLE_2025 = [
+  { thresholdCents: "0", rateNum: "0" },
+  // $0 – $5,599: 0%
+  { thresholdCents: "559900", rateNum: "200" },
+  // $5,600 – $11,199: 2%
+  { thresholdCents: "1119900", rateNum: "300" },
+  // $11,200 – $15,999: 3%
+  { thresholdCents: "1599900", rateNum: "340" },
+  // $16,000 – $26,399: 3.4%
+  { thresholdCents: "2639900", rateNum: "390" }
+  // $26,400 – $94,700: 3.9%
+];
+var UPPER_TABLE_2025 = [
+  { thresholdCents: "0", rateNum: "200" },
+  { thresholdCents: "470000", rateNum: "390" }
+];
+var BOOKLET_URL3 = "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf";
+var BRACKETS_URL = "https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxBrackets.pdf";
+var lowIncomeLookup = (rows, label) => {
+  const agi2 = rd16(fact36("arAgi"));
+  let expr = {
+    kind: "unsupported",
+    reason: `Arkansas Low Income Tax Table (${label}) ends at $${rows[rows.length - 1][1].toLocaleString("en-US")}: "Above $${rows[rows.length - 1][1].toLocaleString("en-US")}, use Standard or Itemized Deductions and Regular Income Tax Table" (us.ar.income_tax)`
+  };
+  for (let i = rows.length - 1; i >= 0; i--)
+    expr = iff11(le10(agi2, dollars2(rows[i][1])), dollars2(rows[i][2]), expr);
+  return iff11(lt13(agi2, dollars2(rows[0][0])), money33("0"), expr);
+};
+var arRules = [
+  {
+    id: "us.ar.income_tax",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas income tax \u2014 2025 Regular Income Tax Table (0% / 2% / 3% / 3.4% / 3.9% at $5,600 / $11,200 / $16,000 / $26,400, the upper table with bracket adjustments from $94,701, midpoint rows) and '$3,809 + 3.9% of the excess over $100,000' above the table; one schedule for every filing status (AR1000F line 29)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-201(a)(3) (as amended by Act 1 of the Second Extraordinary Session of 2024) and \xA7 26-51-201(d) (annual indexing); DFA '2025 Indexed Tax Brackets' (2025_TaxBrackets.pdf); 2025 Arkansas Individual Income Tax booklet: line 29 p. 14, 2025 Regular Income Tax Table pp. 26-30 (Rev 09/29/2025); DFA '2025 Tax Tables' (R 10/17/2025)",
+      section: "\xA7 26-51-201(a)(3), (d); AR1000F line 29; 2025 Regular Income Tax Table",
+      url: BRACKETS_URL,
+      excerpt: "DFA 2025 INDEXED TAX BRACKETS (verbatim table 'From / Less Than or Equal To / Percentage / Minus Adjustment'): '$0 $5,599 0.00%; $5,600 $11,199 2.00% $111.98; $11,200 $15,999 3.00% $223.97; $16,000 $26,399 3.40% $287.97; $26,400 $94,700 3.90% $419.96; $94,701 $94,800 3.90% $399.30; $94,801 $94,900 3.90% $389.30; \u2026 [minus $10.00 per $100 row] \u2026 $97,701 $97,800 3.90% $99.30; $97,801 and over 3.90% $89.30. For $100,001 and over, $3,809 + 3.9% of the excess over $100,000. If you use a formula to calculate Arkansas income tax, the results must match the table exactly. The calculations in the table are made at the midpoint of each income level. EXAMPLE 1: For income level $75,900 to $76,000. ($75,900+$76,000)/2=$75,950 x .039 = $2,962.05 - $419.96 = $2,542.09 rounded to $2,542.00 Tax from table: $2,542.00 EXAMPLE 2: For income level $14,800 to $14,900. ($14,800 + $14,900)/2=$14,850 x .030 = $445.50 \u2013 $223.97 = $221.53 rounded to $222.00 Tax from table: $222.00'. STATUTE (\xA7 26-51-201(a)(3), 2024 base amounts before indexing, verbatim from Act 1 of 2024 2nd Ex. Sess. \xA7 1): '(A) Every resident, individual, trust, or estate having net income less than or equal to \u2026 ($89,600) shall determine the amount of income tax due \u2026 in accordance with the table set forth below: $0 $5,299 0%; $5,300 $10,599 2%; $10,600 $15,099 3%; $15,100 $24,999 3.4%; $25,000 $89,600 3.9% (B) \u2026 net income greater than \u2026 ($89,600) \u2026 : $0 $4,500 2%; $4,501 and above 3.9% (C) \u2026 net income greater than or equal to \u2026 ($89,601) but not greater than \u2026 ($92,700) shall reduce the amount of income tax due as determined under subdivision (a)(3)(B) \u2026 by deducting a bracket adjustment amount \u2026: $89,601 $89,700 $310; \u2026 [minus $10 per $100] \u2026; $92,601 $92,700 $10; $92,701 and up $0'; \xA7 26-51-201(d)(1): 'The secretary shall increase the minimum and maximum dollar amounts for each rate bracket, rounding to the nearest one hundred dollars ($100), \u2026 by the cost-of-living adjustment for each calendar year' (2025 indexed: $5,600 / $11,200 / $16,000 / $26,400 / $94,700; upper table $4,700; bracket adjustment $310 \u2192 $10 over $94,701 \u2013 $97,800 \u2014 DFA's $399.30 = $89.30 + $310). BOOKLET (line 29, verbatim): 'Using the appropriate tax table locate the tax for your income and enter here.' TABLE STRUCTURE (pp. 26-30): header 'If Your Income is / As Much As / But Less Than / YOUR TAX IS'; first row '0 5,100 0', then $100 rows \u2026 '74,900 75,001 2,503' then '75,001 75,101 2,507' \u2014 from $75,001 the printed rows run [100k+1, 100k+101) instead of [100k, 100k+100), so the midpoint is 100k+50 below $75,001 and 100k+51 from $75,001 up; every one of the 950 printed rows equals the schedule at that midpoint (either the standard table for midpoints \u2264 $94,700 or the upper table minus the bracket adjustment for midpoints \u2265 $94,701), rounded half-up to whole dollars \u2014 verified for all 100,000 whole-dollar incomes. ABOVE THE TABLE (p. 30, verbatim): 'PLEASE NOTE: For $100,001 and over, your tax is $3,809 + 3.9% of the excess over $100,000' \u2014 encoded as printed ($3,809 is the last row's value; the exact upper schedule at $100,000 is $3,810.70), rounded to whole dollars. STATUS: the same table applies to every filing status \u2014 'Married couples must use the same filing status and tax table' (p. 26); a status-4 couple looks up each spouse's own line 28. Nonresidents/part-year residents (AR1000NR) prorate on lines 38A-38D \u2014 not composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "200", type: "int" },
+      rate2Bps: { value: "300", type: "int" },
+      rate3Bps: { value: "340", type: "int" },
+      topRateBps: { value: "390", type: "int" },
+      bracket1Top: { value: "559900", type: "money" },
+      // $5,599 (0% through)
+      bracket2Top: { value: "1119900", type: "money" },
+      // $11,199
+      bracket3Top: { value: "1599900", type: "money" },
+      // $15,999
+      bracket4Top: { value: "2639900", type: "money" },
+      // $26,399
+      standardTableTop: { value: "9470000", type: "money" },
+      // $94,700
+      upperTableLowBand: { value: "470000", type: "money" },
+      // $4,700 at 2%
+      bracketAdjustmentStart: { value: "31000", type: "money" },
+      // $310 at $94,701-$94,800, −$10 per $100 row, $0 from $97,801
+      tableTop: { value: "10000000", type: "money" },
+      // $100,000
+      overTableBase: { value: "380900", type: "money" }
+      // $3,809 + 3.9% of the excess over $100,000
+    },
+    formula: (() => {
+      const x = max011(fact36("stateTaxableIncome"));
+      const unitsHi = stepUnits2(sub12(x, money33("100")), "10000", "floor");
+      const midHi = add8(mulInt10(money33("10000"), unitsHi), money33("5100"));
+      const unitsLo = stepUnits2(minE(x, money33("7499900")), "10000", "floor");
+      const midLo = add8(mulInt10(money33("10000"), unitsLo), money33("5000"));
+      const mid = iff11(ge3(x, money33("7500100")), midHi, midLo);
+      const k = stepUnits2(sub12(mid, money33("9470100")), "10000", "floor");
+      const bracketAdjustment = max011(sub12(money33("31000"), mulInt10(money33("1000"), k)));
+      const upper = sub12(scaledSchedule4(mid, UPPER_TABLE_2025), times4(bracketAdjustment, "10000"));
+      const table2 = iff11(le10(mid, money33("9470000")), dollarsFromScaled4(scaledSchedule4(mid, STANDARD_TABLE_2025), "1000000"), dollarsFromScaled4(upper, "1000000"));
+      const overTable = dollarsFromScaled4(add8(times4(money33("380900"), "10000"), times4(sub12(x, money33("10000000")), "390")), "1000000");
+      return iff11(gt3(x, money33("10000000")), overTable, table2);
+    })()
+  },
+  {
+    id: "us.ar.low_income_tax",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas Low Income Tax Tables \u2014 tax looked up on ADJUSTED GROSS INCOME (line 25) with the standard deduction built in; five tables (single; HOH/surviving spouse with 0-1 or 2+ dependents; MFJ with 0-1 or 2+ dependents); statuses 4 and 5 and itemizers excluded (AR1000F line 29 with line 27 = 0)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-301 (low-income tax credit tables, indexed); 2025 Arkansas Individual Income Tax booklet: 2025 Low Income Tax Tables pp. 24-25 (p. 24 Rev 12/12/2025, p. 25 Rev 09/29/2025), line 26-27 instructions p. 14; DFA '2025 Tax Tables' (R 10/17/2025, row-for-row identical)",
+      section: "\xA7 26-51-301; AR1000F lines 26, 27, 29; 2025 Low Income Tax Tables",
+      url: BOOKLET_URL3,
+      excerpt: "QUALIFICATIONS (p. 24, verbatim): '1. Your total income from all sources (regardless of whether the income is taxable to Arkansas) must fall within the limits of the appropriate table based on your filing status. 2. Married couples must file a joint return (Filing Status 2) to qualify to use these tables. 3. If you use an exemption for military compensation, military retirement or employment related pension income, you do not qualify. 4. If you itemize your deductions, you must use the Regular Income Tax Table. 5. Find your Adjusted Gross Income from line 25, AR1000F/AR1000NR, in the appropriate table below. Your tax is to the right of this amount. Enter the tax on line 29, AR1000F/AR1000NR.' LINE 26 (p. 14, verbatim): 'If you use an exclusion for active-duty military compensation, employer-sponsored pension income, or a qualified traditional IRA distribution, you do not qualify for a Low Income Tax Table. You may elect NOT TO USE the exclusion(s) to which you are entitled and use a Low Income Tax Table if you fall within the income limits. CAUTION: If you qualify to use a Low-Income Tax Table, enter zero (0) on line 27, column A. (The Standard Deduction is already built into the table.)' TABLES (columns 'IF YOUR ADJUSTED GROSS INCOME IS FROM / TO / YOUR TAX IS', $100 rows after a short first row; verbatim first, second and last rows): Single (FILING STATUS 1): '0 14,643 0; 14,644 14,700 29; 14,701 14,800 33; \u2026 17,401 17,500 222 *Above $17,500, use Standard or Itemized Deductions and Regular Income Tax Table'. Head of Household/Surviving Spouse with 1 or No Dependents (FILING STATUS 3 or 6): '0 20,820 0; 20,821 20,900 67; 20,901 21,000 77; \u2026 25,201 25,300 481 *Above $25,300 \u2026'. Head of Household/Surviving Spouse with 2 or More Dependents (FILING STATUS 3 or 6): '0 24,818 0; 24,819 24,900 94; 24,901 25,000 107; \u2026 28,901 29,000 603 *Above $29,000 \u2026'. Married Filing Joint (FILING STATUS 2) With One or No Dependents: '0 24,695 0; 24,696 24,700 77; 24,701 24,800 87; \u2026 28,901 29,000 524 *Above $29,000 \u2026'. Married Filing Joint (FILING STATUS 2) With Two or More Dependents: '0 29,722 0; 29,723 29,800 111; 29,801 29,900 122; \u2026 36,001 36,100 790 *Above $36,100 use Standard or Itemized Deductions and Regular Income Tax Table'. All 224 rows are transcribed in state-ar-tables.ts and proven against the booklet AND the standalone DFA sheet (test/ar-tables.test.ts). The tables are NOT a formula: the statute publishes them as a 'low-income tax credit' schedule indexed under \xA7 26-51-301(e). AGI is rounded to whole dollars before the lookup (booklet p. 12: 'Round all amounts to the nearest dollar'). Statuses 4 and 5 (married filing separately on the same or different returns) and AGI above a table's last row are refused (NOT_MODELED) \u2014 use us.ar.income_tax on line 28. A federal QSS is Arkansas Filing Status 6 (Surviving Spouse) and shares the HOH tables. NOTE the booklet's 'Who Must File' threshold for MFJ with 2+ dependents prints $28,723 (p. 10) while this table's first taxable row starts at $29,723 \u2014 the table governs the tax."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      singleTop: { value: "1750000", type: "money" },
+      // $17,500
+      hohQss01DepTop: { value: "2530000", type: "money" },
+      // $25,300
+      hohQss2PlusDepTop: { value: "2900000", type: "money" },
+      // $29,000
+      mfj01DepTop: { value: "2900000", type: "money" },
+      // $29,000
+      mfj2PlusDepTop: { value: "3610000", type: "money" },
+      // $36,100
+      singleZeroRowTop: { value: "1464300", type: "money" },
+      // $14,643
+      hohQss01DepZeroRowTop: { value: "2082000", type: "money" },
+      hohQss2PlusDepZeroRowTop: { value: "2481800", type: "money" },
+      mfj01DepZeroRowTop: { value: "2469500", type: "money" },
+      mfj2PlusDepZeroRowTop: { value: "2972200", type: "money" }
+    },
+    formula: (() => {
+      const twoPlus = ge3(fact36("arDependents"), int5("2"));
+      const refused = {
+        kind: "unsupported",
+        reason: "Arkansas Low Income Tax Tables are for Filing Status 1, 2, 3, and 6 only \u2014 'Married couples must file a joint return (Filing Status 2) to qualify'; status 4 (separately on the same return) and status 5 (separate returns) use the Regular Income Tax Table (us.ar.income_tax)"
+      };
+      return iff11(isStatus19("single"), lowIncomeLookup(AR_LOW_INCOME_SINGLE, "Single"), iff11(isHohQss, iff11(twoPlus, lowIncomeLookup(AR_LOW_INCOME_HOH_QSS_2_PLUS_DEP, "HOH/Surviving Spouse, 2+ dependents"), lowIncomeLookup(AR_LOW_INCOME_HOH_QSS_0_1_DEP, "HOH/Surviving Spouse, 0-1 dependents")), iff11(isStatus22, iff11(twoPlus, lowIncomeLookup(AR_LOW_INCOME_MFJ_2_PLUS_DEP, "MFJ, 2+ dependents"), lowIncomeLookup(AR_LOW_INCOME_MFJ_0_1_DEP, "MFJ, 0-1 dependents")), refused)));
+    })()
+  },
+  {
+    id: "us.ar.standard_deduction",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas standard deduction \u2014 $2,470 per taxpayer ($4,940 on a status-2 joint return; $2,470 per column for status 4; $2,470 for single, HOH, surviving spouse, and separate returns), limited to the column's AGI (AR1000F line 27)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-430(b)-(c) ($2,200 per taxpayer indexed by CPI, rounded to $10); 2025 Arkansas Individual Income Tax booklet, 'Standard Deduction' table p. 14; printed AR1000F line 26-27",
+      section: "\xA7 26-51-430; AR1000F line 27",
+      url: BOOKLET_URL3,
+      excerpt: "BOOKLET (p. 14, verbatim): 'The Standard Deduction for your filing status is shown below. (If the amount on line 25 is less than the Standard Deduction, enter the amount from line 25 on line 27.) Filing Status / Standard Deduction: 1 Single $2,470; 2 Married Filing Joint $4,940; 3 Head of Household $2,470; 4 Married Filing Separately on Same Return $2,470 each; 5 Married Filing Separately on Different Returns $2,470; 6 Surviving Spouse $2,470. NOTE: The $2,470 Standard Deduction does not apply to taxpayer's dependent(s).' STATUTE (verbatim): '(a)(1) In lieu of itemizing deductions, each taxpayer may elect to use the standard deduction. (2) In the case of a married couple, both spouses must elect to use the standard deduction or both spouses must claim itemized deductions, without regard to whether the spouses file separate returns or file separately on the same return. (b)(1) The standard deduction shall be: \u2026 (B) For tax years beginning on and after January 1, 2015, two thousand two hundred dollars ($2,200) per taxpayer. \u2026 (c)(1) The Secretary of the Department of Finance and Administration shall increase annually the standard deduction provided under subsection (b) of this section by the cost-of-living adjustment for the current calendar year, rounding the amount to the nearest ten dollars ($10.00). (2)(A)(i) \u2026 the percentage, if any, by which the Consumer Price Index for the current calendar year exceeds the Consumer Price Index for the preceding calendar year, not to exceed three percent (3%)' \u2014 indexed to $2,470 for TY2025 (DFA's 2026 withholding formula also carries $2,470, but the 2026 AR1000F amount is unpublished). The rule caps at the column's AGI per the parenthetical; a status-4 return evaluates each spouse's column with arStatus4 = true (the joint $4,940 applies only to status 2)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      perTaxpayer: { value: "247000", type: "money" },
+      jointStatus2: { value: "494000", type: "money" }
+    },
+    formula: minE(iff11(isStatus22, money33("494000"), money33("247000")), max011(fact36("arAgi")))
+  },
+  {
+    id: "us.ar.personal_tax_credits",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas personal tax credits \u2014 $29 for yourself, $29 for a spouse on the same return (status 2 or 4), $29 for head of household or surviving spouse, $29 per 65-or-over / 65 Special / blind / deaf box, and $29 per dependent (AR1000F lines 7A-7C \u2192 34)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-501(a)(1)-(3), (d), (e) ($20 'adjusted individual credit' / $40 'adjusted joint credit', indexed to $29 / $58) and \xA7 26-51-307(d) ('65 Special'); 2025 Arkansas Individual Income Tax booklet, lines 7A-7C p. 12; printed AR1000F page 1",
+      section: "\xA7 26-51-501; \xA7 26-51-307(d); AR1000F lines 7A, 7B, 7C, 34",
+      url: BOOKLET_URL3,
+      excerpt: `FORM (page 1, verbatim): '7A. Yourself / 65 or over / 65 Special / Blind / Deaf / Head of household/surviving spouse (Filing status 3 only) (Filing status 6 only); Spouse / 65 or over / 65 Special / Blind / Deaf \u2014 Multiply number of boxes checked \u2026 X $29 = \u2026 7B. Multiply number of DEPENDENTS from above \u2026 X $29 = \u2026 7C. TOTAL PERSONAL TAX CREDITS: (Add lines 7A and 7B. Enter total here and on line 34)'. BOOKLET (p. 12, verbatim): 'LINE 7A. Each taxpayer and spouse is entitled to one personal tax credit. You can claim additional personal tax credits if you can answer "Yes" to any of these questions: Is your filing status Head of Household or Surviving Spouse? On January 1, 2026, were you age 65 or over? On December 31, 2025, were you deaf? On December 31, 2025, were you blind? Check the box or boxes that apply to you and/or your spouse. You CANNOT claim any of these credits for your children or dependents. \u2026 Any taxpayer age 65 or over not claiming a retirement income exemption on line 18 is eligible for an additional $29 (per taxpayer) tax credit. Check the box(es) marked "65 Special". Add the number of boxes you checked on line 7A. Write the total in the box provided. Multiply the number by $29 \u2026 LINE 7B. List the name(s) of your dependent(s) \u2026 DO NOT INCLUDE YOURSELF AND/OR YOUR SPOUSE. \u2026 Multiply the number by $29'. STATUTE (\xA7 26-51-501, verbatim): '(a)(1)(A) For a single individual, the adjusted individual credit. (B) However, a taxpayer who was blind or deaf at any time during the income year shall be entitled to an additional tax credit of twenty dollars ($20.00). \u2026 (D) A single individual of sixty-five (65) years of age or older shall be entitled to an additional tax credit of twenty dollars ($20.00); (2)(A)(i)(a) For the head of household, surviving spouse, or married spouses living together, the adjusted joint credit. (b) Spouses living together and filing either jointly or separately on the same income tax form shall receive only one (1) adjusted joint credit against their aggregate tax. \u2026 (C) However, a spouse filing a separate return on a separate tax form shall receive the adjusted individual credit on each return so filed \u2026 (3)(A) For each individual, other than a spouse, who \u2026 is dependent upon and receives his or her chief support from the taxpayer, the adjusted individual credit. \u2026 (d)(1) "Adjusted individual credit" shall be twenty dollars ($20.00); and (2) "Adjusted joint credit" shall be forty dollars ($40.00). (e)(1)(A) Not later than July 15 of each calendar year, the Secretary \u2026 shall increase the adjusted individual credit and adjusted joint credit by the cost-of-living adjustment \u2026 rounding each amount to the nearest dollar' (indexed: $29 / $58). \xA7 26-51-307(d)(1): 'An individual who is sixty-five (65) years of age or older and who does not claim an exemption under subsection (a) of this section is entitled to an additional state income tax credit of twenty dollars ($20.00)' (the '65 Special' box, indexed to $29). ENCODING: $29 \xD7 (1 + [married, status 2 or 4] + [HOH or surviving spouse] + arCreditBoxes + arDependents); arCreditBoxes counts the 65-or-over / 65 Special / blind / deaf boxes for the taxpayer and spouse (at most 4 per person; the rule clamps an unmarried filer at 4). Nonrefundable: 'If Total Credits on line 37 is more than "Total Tax" on line 33, the difference is not refundable' (p. 15).`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      perCredit: { value: "2900", type: "money" },
+      // $29
+      jointCredit: { value: "5800", type: "money" }
+      // $58 (self + spouse, or self + HOH/QSS)
+    },
+    formula: (() => {
+      const boxes = iff11(and2(not(isMfj2), gt3(fact36("arCreditBoxes"), int5("4"))), int5("4"), fact36("arCreditBoxes"));
+      return add8(money33("2900"), iff11(isMfj2, money33("2900"), money33("0")), iff11(isHohQss, money33("2900"), money33("0")), mulInt10(money33("2900"), boxes), mulInt10(money33("2900"), fact36("arDependents")));
+    })()
+  },
+  {
+    id: "us.ar.additional_tax_credit",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas additional tax credit for qualified individuals \u2014 $60 when net taxable income (line 28) is $26,500 or less, minus $5 per $100 (or fraction) above $26,500, $0 from $27,601; doubled on a status-2 joint return, per column for status 4 (AR1000TC line 6 \u2192 AR1000F line 36)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-501(a)(6) (Act 1 of the Second Extraordinary Session of 2021 \xA7 10; table indexed under \xA7 26-51-201(d)); 2025 Arkansas Individual Income Tax booklet, 'Additional Tax Credit for Qualified Individuals Worksheet' and table p. 21 (R 10/10/2025), 'Special Information for Tax Year 2025' p. 6; 2025 AR1000TC line 6 and instructions",
+      section: "\xA7 26-51-501(a)(6); AR1000TC line 6; AR1000F line 36",
+      url: BOOKLET_URL3,
+      excerpt: "WORKSHEET (p. 21, verbatim): 'An individual taxpayer having a net income up to $27,600 and who timely files a tax return is allowed an additional tax credit. If your net income amount on line 28 is $27,600 or less, fill out the worksheet below to determine amount of credit. Filing Status 1,3,5, and 6: 1. Enter amount from line 28 of your AR1000F or AR1000NR. 2. Find income range in the table below. Enter corresponding credit here and on line 6 of the AR1000TC. Filing Status 2: 1. Enter amount from line 28 \u2026 2. Find your net taxable income in the table below. Enter corresponding credit here. 3. Double the credit from line 2. Enter the amount here and on line 6 of the AR1000TC. Filing Status 4: 1. Enter amount from line 28 \u2026 [1A Primary / 1B Spouse] 2. Find your net taxable income in the table below. Enter corresponding credit for each spouse here \u2026 3. Add primary and spouse columns from line 2 above. Enter the amount here and on line 6 of the AR1000TC.' TABLE (verbatim): 'Income Range / Credit: $0 - $26,500 $60; $26,501 - $26,600 $55; $26,601 - $26,700 $50; $26,701 - $26,800 $45; $26,801 - $26,900 $40; $26,901 - $27,000 $35; $27,001 - $27,100 $30; $27,101 - $27,200 $25; $27,201 - $27,300 $20; $27,301 - $27,400 $15; $27,401 - $27,500 $10; $27,501 - $27,600 $5; $27,601 and up $0'. STATUTE (verbatim): '(6)(A) An individual taxpayer having net income up to twenty-four thousand seven hundred dollars ($24,700) who timely files a tax return is allowed an income tax credit \u2026 in accordance with the table set forth below \u2026 (B) The amount of the income tax credit \u2026 that may be claimed by the taxpayer in a tax year shall not exceed the amount of income tax due by the taxpayer. (C) The table in subdivision (a)(6)(A) of this section shall be adjusted annually in accordance with the method set forth in \xA7 26-51-201(d).' ENCODING: per taxpayer = max($0, $60 \u2212 $5 \xD7 ceil((line 28 \u2212 $26,500) / $100)); status 2 doubles it (filingStatus mfj with arStatus4 false); for status 4 evaluate each column with arStatus4 = true and add. TIMELY FILING is a condition the composer notes. The 'shall not exceed the amount of income tax due' cap is applied by the composer through AR1000F line 38 ('If line 37 is greater than line 33, enter 0')."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      maxCredit: { value: "6000", type: "money" },
+      // $60
+      fullCreditThrough: { value: "2650000", type: "money" },
+      // $26,500
+      stepDown: { value: "500", type: "money" },
+      // $5 per $100
+      zeroFrom: { value: "2760100", type: "money" }
+      // $27,601
+    },
+    formula: (() => {
+      const x = max011(fact36("stateTaxableIncome"));
+      const steps = stepUnits2(max011(sub12(x, money33("2650000"))), "10000", "ceil");
+      const per = max011(sub12(money33("6000"), mulInt10(money33("500"), steps)));
+      return iff11(isStatus22, mulInt10(per, int5("2")), per);
+    })()
+  },
+  {
+    id: "us.ar.child_care_credit",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas child and dependent care credit \u2014 AR2441: expenses capped at $3,000 / $6,000, limited to the smaller earned income, times the 2013-law \xA7 21 percentage (35% falling 1 point per $2,000 of federal AGI over $15,000 to 20%), times 20% (AR1000F line 35; refundable on line 43 for an approved early childhood program)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-502 (\xA7 21 as in effect January 2, 2013; 20% of the federal credit allowable; the 20% early-childhood credit is refundable); 2025 Form AR2441 Part II lines 3-10 (R 4/28/2025); 2025 Arkansas Individual Income Tax booklet, lines 35 and 43 p. 15",
+      section: "\xA7 26-51-502(b), (c); AR2441 lines 3-10; AR1000F lines 35, 43",
+      url: "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR2441_Child_andDependentCareExpenses.pdf",
+      excerpt: `AR2441 PART II (verbatim): '3 Add the amounts in column (c) of line 2. Do not enter more than $3,000 for one qualifying person or $6,000 for two or more persons. If you completed Part III, enter the amount from line 30. 4 Enter your earned income. See instructions. 5 If married filing status 2 or 4, enter your spouse's earned income (if you or your spouse was a student or was disabled, see the instructions); all others, enter the amount from line 4. 6 Enter the smallest of line 3, 4, or 5. 7 Enter the amount from Form 1040, 1040-SR, or 1040-NR, line 11. 8 Enter on line 8 the decimal amount shown below that applies to the amount on line 7. If line 7 is: Over / But not over / Decimal amount is: $0 \u2013 15,000 .35; 15,000 \u2013 17,000 .34; 17,000 \u2013 19,000 .33; 19,000 \u2013 21,000 .32; 21,000 \u2013 23,000 .31; 23,000 \u2013 25,000 .30; 25,000 \u2013 27,000 .29; 27,000 \u2013 29,000 .28; 29,000 \u2013 31,000 .27; 31,000 \u2013 33,000 .26; 33,000 \u2013 35,000 .25; 35,000 \u2013 37,000 .24; 37,000 \u2013 39,000 .23; 39,000 \u2013 41,000 .22; 41,000 \u2013 43,000 .21; 43,000 \u2013 No limit .20. 9 Multiply line 6 by the decimal amount on line 8. 10 Multiply line 9 by .20. Enter this amount on line 35 and/or line 43 of AR1000F/AR1000NR.' Header: 'You cannot claim a credit for child and dependent care expenses if you're filing status 5 (married filing separately on different returns) unless you meet the requirements listed in the instructions under "Married Filing Separately on Different Returns."' STATUTE (verbatim): '(b)(1) Title 26 U. S. C. \xA7 21, as in effect on January 2, 2013, is adopted for purposes of determining the allowable credit \u2026 (2) The amount of credit shall be twenty percent (20%) of the federal credit allowable. (c)(1)(A)(i) A credit, which is equal to twenty percent (20%) of the federal childcare credit as allowed under 26 U. S. C. \xA7 21, as in effect on January 2, 2013, shall be allowed to qualified individuals \u2026 (ii) The twenty-percent childcare credit is refundable. \u2026 (B) "Qualified individual" means a taxpayer who has a dependent child \u2026 and who incurs childcare expenses necessary for gainful employment at an approved childcare facility \u2026 (2) A taxpayer cannot claim both the credit allowed in subsections (a) and (b) of this section and the credit allowed in subsection (c) of this section.' BOOKLET (p. 15): 'If you are claiming the Early Childhood Credit on line 43, the total amounts from lines 35 and 43 cannot exceed the amount allowed on Form AR2441.' ENCODING: line 3 = min(expenses, $3,000 or $6,000 by arChildCareQualifyingPersons); line 6 = min(line 3, earned income, spouse's earned income when filingStatus is mfj); percentage = 35 \u2212 ceil(max(0, federal AGI \u2212 $15,000) / $2,000), floored at 20 (the 2013 \xA7 21(a)(2) reduction); line 9 rounded to whole dollars, then line 10 = 20% of line 9 rounded. This is 20% of the OLD-LAW federal computation, not 20% of the current federal Form 2441 credit. Status 5 filers are refused by the composer unless considered unmarried.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      pct: { value: "20", type: "int" },
+      expenseCapOne: { value: "300000", type: "money" },
+      expenseCapTwoPlus: { value: "600000", type: "money" },
+      maxPercentage: { value: "35", type: "int" },
+      minPercentage: { value: "20", type: "int" },
+      phaseStart: { value: "1500000", type: "money" },
+      // $15,000
+      phaseStep: { value: "200000", type: "money" }
+      // 1 point per $2,000
+    },
+    formula: (() => {
+      const cap = iff11(ge3(fact36("arChildCareQualifyingPersons"), int5("2")), money33("600000"), money33("300000"));
+      const l3 = minE(max011(fact36("arChildCareExpenses")), cap);
+      const earned2 = max011(fact36("arEarnedIncome"));
+      const l6 = iff11(isMfj2, minE(l3, earned2, max011(fact36("arSpouseEarnedIncome"))), minE(l3, earned2));
+      const steps = stepUnits2(max011(sub12(fact36("arFederalAgi"), money33("1500000"))), "200000", "ceil");
+      const pct3 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
+      const l9 = rd16({ kind: "mulDiv", a: l6, b: pct3, c: money33("100"), round: "half-up" });
+      return rd16({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
+    })()
+  },
+  {
+    id: "us.ar.retirement_exclusion",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas $6,000 retirement exclusion \u2014 the first $6,000 of taxable employer-plan pension and qualified traditional IRA distributions per taxpayer, reduced by any military retirement exemption claimed (AR1000F lines 18A/18B 'Less $6,000')",
+    citation: {
+      source: "Ark. Code \xA7 26-51-307(a), (b), (e), (f) (as amended by Act 141 of 2017); 2025 Arkansas Individual Income Tax booklet, exempt income items 12-13 p. 11, lines 17-18B p. 13; printed AR1000F lines 18A-18B",
+      section: "\xA7 26-51-307; AR1000F lines 17, 18A, 18B",
+      url: BOOKLET_URL3,
+      excerpt: "STATUTE (verbatim): '(a)(1) The first six thousand dollars ($6,000) of benefits received by a resident of this state from an individual retirement account or the first six thousand dollars ($6,000) of retirement benefits received by a resident of this state from public or private employment-related retirement systems, plans, or programs, regardless of the method of funding for these systems, plans, or programs, is exempt from the state income tax. (2)(A) Only individual retirement account benefits received by an individual retirement account participant after reaching fifty-nine and one-half (59\xBD) years of age qualify for the exemption. (B) The only other distributions or withdrawals from an individual retirement account that qualify for the exemption before \u2026 59\xBD \u2026 are those made on account of the participant's death or disability. \u2026 (b)(1)(B) Except as provided in subsection (e) of this section, a taxpayer shall not receive an exemption greater than six thousand dollars ($6,000) during any tax year under this section. \u2026 (e)(1) The following are exempt from the income tax imposed under this chapter: (A) Retirement benefits received by a member of the uniformed services \u2026 (f)(1) Except as provided in subdivision (f)(2) of this section, a taxpayer claiming an exemption under subsection (e) of this section is not eligible for an exemption under subsection (a) of this section. (2) A taxpayer claiming an exemption of less than six thousand dollars ($6,000) for income from military retirement or survivor benefits under subsection (e) of this section may claim as exempt additional retirement benefits under subsection (a) of this section in an amount equal to the difference between the exemption claimed under subsection (e) of this section and six thousand dollars ($6,000).' BOOKLET (p. 13, verbatim): 'LINE 18A. \u2026 Enter the federal taxable amount from box 2a of your 1099-R(s) in the space provided. \u2026 You are entitled to a $6,000 exemption from the taxable amount; the balance is taxable to Arkansas. Enter the balance on line 18A, column A.' 'Military retirees cannot claim the $6,000 exemption for traditional or employer-sponsored distributions if their military retirement exemption exceeds $6,000. If the military retirement exemption is less than $6,000, the remaining amount of the exemption may be taken for traditional or employer-sponsored distributions.' p. 11: 'NOTE: Total exemptions from all plans described under 12 and 13 cannot exceed $6,000 per taxpayer, not including recovery of cost.' 'A surviving spouse qualifies for the exemption; however he/she is limited to a single $6,000 exemption.' ENCODING (one taxpayer): min(qualified taxable pension/IRA, max($0, $6,000 \u2212 military retirement exempted)). Premature IRA distributions and annuities go on line 16 with no exclusion; military retirement itself is 100% exempt (line 17 is informational)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { exclusion: { value: "600000", type: "money" } },
+    formula: minE(max011(fact36("arPensionTaxable")), max011(sub12(money33("600000"), max011(fact36("arMilitaryRetirement")))))
+  },
+  {
+    id: "us.ar.capital_gains",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas taxable capital gain \u2014 AR1000D: 50% of the net long-term gain (after netting a short-term loss; gain over $10,000,000 exempt) plus 100% of a net short-term gain; net loss limited to $3,000 ($1,500 per taxpayer for statuses 4 and 5) (AR1000F line 14)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-815(a)-(b) (50% of net capital gain exempt; the excess over $10,000,000 exempt); 2025 Form AR1000D lines 1-12 (R 4/25/2025); 2025 Arkansas Individual Income Tax booklet, line 14 p. 13",
+      section: "\xA7 26-51-815; AR1000D lines 1-12; AR1000F line 14",
+      url: "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000D_CapitalGains.pdf",
+      excerpt: "AR1000D (verbatim): 'In Arkansas, only 50% of the net long-term capital gain is taxed. 100% of the short-term capital gain is taxed. Per Act 1488 of 2013, the amount of net capital gain in excess of ten million dollars ($10,000,000) from a gain realized on or after January 1, 2014 is exempt from state tax. \u2026 The amount of capital loss that can be deducted after offsetting capital gains is limited to $3,000 ($1,500 per taxpayer for filing status 4 or 5). 1. Enter federal long-term capital gain or loss reported on line 15, federal Schedule D or Form 1040, line 7 \u2026 3. Arkansas long-term capital gain or loss. Add (or subtract) line 1 and line 2. 4. Enter federal net short-term capital loss, if any, reported on line 7, federal Schedule D \u2026 6. Arkansas net short-term capital loss. \u2026 7a. Arkansas net capital gain or loss. (If gain, subtract line 6 from 3. If loss, add lines 6 and 3.) 7b. If the amount on line 7a is over $10,000,000, only enter $10,000,000. If less than $10,000,000, enter the total amount. 8. Arkansas taxable amount. If a gain multiply line 7b by 50 percent (.50), otherwise enter loss. 9. Enter federal short-term capital gain, if any, reported on line 7, federal Schedule D \u2026 11. Arkansas short-term capital gain. \u2026 12. Total taxable Arkansas capital gain or loss. Add lines 8 and 11. (Loss limited to $3,000 for filing status 1,2,3,5 and 6; $1,500 per taxpayer if filing status 4 or 5.) Enter here. Filing status 1,2,3,5 and 6: Add line 12, columns A and B and enter on AR1000F/AR1000NR, line 14. Filing status 4: Enter line 12, column A on AR1000F/AR1000NR, line 14, column A. Enter line 12, column B on AR1000F/AR1000NR, line 14, column B.' STATUTE (verbatim): '(b)(2) If a taxpayer has a net capital gain, the following portion of the gain is exempt from state income tax: \u2026 (C) Beginning on and after July 1, 2016, fifty percent (50%). (3) The amount of net capital gain in excess of ten million dollars ($10,000,000) from a gain realized on or after January 1, 2014, is exempt from the state income tax.' ENCODING (one column): line 7a = long-term \xB1 short-term LOSS; line 8 = 50% of min(line 7a, $10,000,000) when a gain (half-dollars rounded half-up), else the loss; line 12 = line 8 + short-term GAIN; floor \u2212$3,000, or \u2212$1,500 when filingStatus is mfs (status 5) or arStatus4 (each column). Depreciation-difference adjustments (lines 2, 5, 10) are folded into the inputs; Arkansas did not adopt federal bonus depreciation. Personal residence gain exclusion $250,000 / $500,000 (booklet p. 13) is applied before the input."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      longTermExclusionPct: { value: "50", type: "int" },
+      gainExemptOver: { value: "1000000000", type: "money" },
+      // $10,000,000
+      lossLimit: { value: "-300000", type: "money" },
+      lossLimitPerSpouseSeparate: { value: "-150000", type: "money" }
+    },
+    formula: (() => {
+      const longTerm = fact36("arLongTermGain");
+      const shortTerm = fact36("arShortTermGain");
+      const shortTermLoss = minE(shortTerm, money33("0"));
+      const shortTermGain = max011(shortTerm);
+      const l7a = add8(longTerm, shortTermLoss);
+      const l7b = minE(l7a, money33("1000000000"));
+      const l8 = iff11(gt3(l7a, money33("0")), rd16({ kind: "mulRate", base: l7b, rate: { num: "50", den: "100" }, round: "half-up" }), l7a);
+      const l12 = add8(l8, shortTermGain);
+      const floor = iff11(or2(isMfs2, fact36("arStatus4")), money33("-150000"), money33("-300000"));
+      return maxE(l12, floor);
+    })()
+  },
+  {
+    id: "us.ar.itemized_deductions",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas itemized deductions (AR3) \u2014 medical over 10% of AGI, real estate and other deductible taxes (no state income or sales taxes), home mortgage and investment interest, contributions, casualty losses, post-secondary tuition, miscellaneous deductions over 2% of AGI, and other miscellaneous deductions (AR3 line 30 \u2192 AR1000F line 27)",
+    citation: {
+      source: "Ark. Code \xA7 26-51-430(a) (election; both spouses must match); 2025 Form AR3 lines 1-35 (R 4/25/2025); 2025 Arkansas Individual Income Tax booklet, AR3 instructions pp. 17-18 and line 27 p. 14",
+      section: "AR3 lines 1-30 (31-35 status 4/5 proration); AR1000F line 27",
+      url: "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR3_ItemizedDeduction.pdf",
+      excerpt: "AR3 (verbatim): 'MEDICAL AND DENTAL EXPENSES: 1. Medical and dental expenses; 2. Enter amount from Form AR1000F/AR1000NR, line 25A and 25B; 3. Multiply line 2 by 10% (.10), otherwise enter 0; 4. TOTAL MEDICAL EXPENSES: (Subtract line 3 from line 1; if more than line 1, enter 0). TAXES: 5. Real estate tax; 6. Personal property tax or other taxes; 7. TOTAL TAXES. INTEREST EXPENSES: 8. Home mortgage interest paid to financial institutions; 9. Home mortgage interest paid to an individual; 10. Deductible points; 11. Investment interest (Attach federal Form 4952); 12. TOTAL INTEREST EXPENSE. CONTRIBUTIONS: 13. Cash contributions; 14. Art and literary contributions; 15. Other; 16. Carryover contributions; 17. TOTAL CONTRIBUTIONS. 18. TOTAL CASUALTY AND THEFT LOSSES (Attach Form AR4684). 19. TOTAL POST-SECONDARY EDUCATION TUITION DEDUCTION(S) [Attach AR1075(s)]. MISCELLANEOUS DEDUCTIONS SUBJECT TO 2% AGI LIMIT: 20. Unreimbursed employee business expenses (Attach Form AR2106); 21. Other expenses; 22. Add the amounts on lines 20 and 21; 23. Enter amount from Form AR1000F/AR1000NR, line 25A and 25B; 24. Multiply line 23 above by 2% (.02); 25. TOTAL MISCELLANEOUS DEDUCTIONS: (Subtract line 24 from line 22; If line 24 is more than line 22, enter 0). OTHER MISCELLANEOUS DEDUCTIONS: 26. Volunteer firefighter expenses; 27. Gambling Losses; 28. Other miscellaneous deductions; 29. TOTAL \u2026 (Add lines 26 through 28). 30. Add amounts on lines 4, 7, 12, 17, 18, 19, 25, and 29 and enter the total here. Complete lines 31 - 35 ONLY if Filing Status 4 or 5. 31. Enter adjusted gross income \u2026 line 25A and 25B; 32. Total Arkansas adjusted gross income; 33. Divide the amount on line 31A above by the amount on line 32. Enter the percentage here; 34. Multiply line 30 by the percentage on line 33. Enter here and on \u2026 line 27, col. (A); 35. Subtract line 34 from line 30. Enter here and on \u2026 line 27, column (B).' BOOKLET (p. 17-18): taxes you CANNOT deduct include 'Arkansas income taxes \u2026 Federal income taxes \u2026 Sales taxes'; you may deduct 'City income taxes, Mississippi gambling taxes, Personal property taxes, Taxes paid to a foreign country on income taxed on this return'; casualty losses 'must exceed ten percent (10%) of your adjusted gross income' with the $100 exclusion (computed on AR4684 \u2014 input here); contributions over 60% of AGI carry forward five years; line 33 'Round to the nearest whole percent'. Line 27 (p. 14): 'enter the larger of your itemized deductions (from Form AR3) or your Standard Deduction' \u2014 the election is independent of the federal return; 'If you are filing status 4 or 5 and one spouse itemizes, then both spouses must itemize.' ENCODING: total = max0(medical \u2212 10% of AGI) + taxes + interest + contributions + casualty + tuition + max0(miscellaneous \u2212 2% of AGI) + other miscellaneous, the two floors rounded to whole dollars; arAgi is the COMBINED line 25A + 25B. The status-4/5 proration (lines 31-35) is composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      medicalFloorPct: { value: "10", type: "int" },
+      miscFloorPct: { value: "2", type: "int" }
+    },
+    formula: (() => {
+      const agi2 = max011(fact36("arAgi"));
+      const medical = max011(sub12(max011(fact36("arMedicalExpenses")), rd16({ kind: "mulRate", base: agi2, rate: { num: "10", den: "100" }, round: "half-up" })));
+      const misc = max011(sub12(max011(fact36("arMiscExpenses")), rd16({ kind: "mulRate", base: agi2, rate: { num: "2", den: "100" }, round: "half-up" })));
+      return add8(medical, max011(fact36("arTaxesPaid")), max011(fact36("arInterestPaid")), max011(fact36("arContributions")), max011(fact36("arCasualtyLosses")), max011(fact36("arTuitionDeduction")), misc, max011(fact36("arOtherMiscDeductions")));
+    })()
+  },
+  {
+    id: "us.ar.parameters",
+    version: 1,
+    jurisdiction: "us.ar",
+    title: "Arkansas 2025 Form AR1000F parameters \u2014 line structure, filing statuses 1-6 (status 4 columns), AR1000TC credits, adjustments, penalties, and the TY2026 3.7% enactment awaiting DFA's indexed 2026 tables",
+    citation: {
+      source: "2025 Arkansas Individual Income Tax booklet (AR1000F/AR1000NR instructions; AR3, AR1000ADJ, AR1000TC, AR2441, AR1000D, AR1000TD, AR1000CO forms and instructions); Ark. Code \xA7\xA7 26-51-201, -301, -307, -430, -501, -502, -815; Act 1 of the 2024 2nd Ex. Sess.; Acts 1 and 2 of the 2026 1st Ex. Sess. (approved 5/6/2026) and the DFA Fiscal Impact Statement for SB1 (4/30/2026); web-verified September 2026",
+      section: "Form AR1000F lines 1-52C",
+      url: BOOKLET_URL3,
+      excerpt: "STRUCTURE (printed 2025 AR1000F): filing status 1 Single / 2 Married filing joint / 3 Head of household / 4 Married filing separately on the same return (columns A and B) / 5 Married filing separately on different returns / 6 Surviving spouse with dependent child; 7A-7C personal tax credits (\u2192 us.ar.personal_tax_credits); INCOME 8 wages; 9 military pay (exempt, informational); 10 interest (AR4 if over $1,500); 11 dividends; 12 alimony received; 13 business income (Sch. C); 14 capital gains (AR1000D \u2192 us.ar.capital_gains); 15 other gains (4797); 16 non-qualified IRA distributions and taxable annuities; 17 military retirement (exempt, informational); 18A/18B employer pension and qualified IRA \u2014 gross, taxable, 'Less $6,000' (\u2192 us.ar.retirement_exclusion per taxpayer); 19 rents/royalties/partnerships (Sch. E); 20 farm; 21 unemployment (taxable since TY2018); 22 other income / depreciation differences (AR-OI); 23 TOTAL INCOME; 24 TOTAL ADJUSTMENTS (AR1000ADJ: border city, tuition savings $5,000, IRA, MSA, HSA, student loan interest \u2264 $2,500 with the $85,000-$100,000 / $170,000-$200,000 phase-out, intergenerational trust $4,000, moving, self-employed health insurance, Keogh/SEP/SIMPLE, early-withdrawal penalty, alimony paid, disabled-individual support $500, organ donor \u2264 $10,000, reserve expenses, reforestation, teacher classroom expense, ABLE $5,000); 25 AGI; 26 select ONE table: low income / standard / itemized; 27 = 0 (low income) or the LARGER of the standard deduction (\u2192 us.ar.standard_deduction) or AR3 itemized (\u2192 us.ar.itemized_deductions; status 4/5 prorated by the whole-percent AGI share); 28 NET TAXABLE INCOME = 25 \u2212 27; 29 tax (\u2192 us.ar.low_income_tax on line 25, or us.ar.income_tax on line 28, per column); 30 combined tax (A + B); 31 lump-sum distribution averaging tax (AR1000TD); 32 = 10% of the federal Form 5329 Part I (and Coverdell Part II) additional tax; 33 TOTAL TAX; 34 personal credits (7C); 35 child care credit (AR2441 \u2192 us.ar.child_care_credit; nonrefundable); 36 other credits (AR1000TC: 1 political contributions \u2264 $50 per taxpayer / $100 joint; 2 other state tax credit = the lesser of the tax actually paid to the other state or the Arkansas tax attributable to that income \u2014 'redo the AR1000F \u2026 with all the other states' income/losses removed' and subtract; 3 adoption 20% of the federal credit; 4 phenylketonuria; 5 stillborn child \u2264 $500; 6 additional tax credit for qualified individuals (\u2192 us.ar.additional_tax_credit); 7 developmental disabilities $500 per certified dependent; 8 business incentive credits); 37 TOTAL CREDITS; 38 NET TAX = max0(33 \u2212 37) \u2014 credits are not refundable; PAYMENTS 39A W-2 withholding; 39B 1099/AR-K1 withholding (new split for 2025); 40 estimated tax paid or credit brought forward from 2024; 41 extension payment; 42 amended: previous payments; 43 early childhood program credit (AR1000EC + AR2441 \u2014 the refundable 20% credit for an APPROVED facility; lines 35 + 43 cannot exceed the AR2441 amount); 44 TOTAL PAYMENTS; 45 amended: previous refund; 46 = 44 \u2212 45; 47 OVERPAYMENT = 46 \u2212 38; 48 applied to 2026 estimated tax; 49 check-off contributions (AR1000CO, whole dollars); 50 REFUND = 47 \u2212 48 \u2212 49; 51 AMOUNT DUE = 38 \u2212 46 ('If over $1,000, continue to 52A'); 52A/52B underestimate penalty (AR2210/AR2210A; 10% when net tax \u2265 $1,000 and withholding under 90%); 52C TOTAL DUE = 51 + 52B. EXEMPT INCOME (pp. 10-11): Social Security, VA, workers' compensation, Railroad Retirement, U.S./Arkansas obligation interest, active-duty military pay, military retirement, PSLF discharges, the first $6,000 of pension/IRA, personal residence gain up to $250,000 / $500,000. STATUS 4 (p. 12): 'columns A and B must be used. Write the primary's income in column A and the spouse's income in column B'; 'IF ONE SPOUSE HAD A TOTAL NEGATIVE INCOME, YOU MUST FILE MARRIED FILING JOINTLY'; business and farm income 'may not be split between you and your spouse unless a partnership was legally established'. PENALTIES (p. 16): failure to pay 1% per month, failure to file 5% per month, maximum 35%; interest 10% per year. TY2026 STATUS: Acts 1 (HB1001) and 2 (SB1) of the First Extraordinary Session of 2026, approved 5/6/2026, rewrite \xA7 26-51-201(a)(4) 'For tax years beginning on or after January 1, 2026': standard table '$0 $5,599 0%; $5,600 $11,199 2%; $11,200 $15,999 3%; $16,000 $26,399 3.4%; $26,400 $94,700 3.7%'; upper table '$0 $4,700 2%; $4,701 and above 3.7%'; bracket adjustment '$94,701 $94,800 $290 \u2026 $97,501 $97,600 $10; $97,601 and over $0'; '(5) The tables set forth in subdivisions (a)(1)-(4) of this section shall be adjusted annually in accordance with the method set forth in subsection (d)'. DFA's 2026 withholding formula (effective 01/01/2026) carries those thresholds, a $367.16 adjustment for the 3.7% band, $2,470, and $29 \u2014 but the 2026 AR1000F indexed brackets, standard deduction, low-income tables, and additional-credit table were unpublished when verified (September 2026; 2026_TaxBrackets.pdf returns 404), so every TY2025 rule ends 2026-01-01 and TY2026 is refused until DFA publishes. 2025 Regular Session: no enacted act changed the AR1000F rates, deduction, or credits (HB1065 indexing-cap repeal and HB1066 standard-deduction increase died in committee). Full-year residents only \u2014 AR1000NR (nonresident / part-year) is a separate form and is not composed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      politicalContributionCreditPerTaxpayer: { value: "5000", type: "money" },
+      // $50
+      adoptionCreditPctOfFederal: { value: "20", type: "int" },
+      stillbornChildCreditMax: { value: "50000", type: "money" },
+      // $500
+      developmentalDisabilityCreditPerDependent: { value: "50000", type: "money" },
+      // $500
+      earlyWithdrawalTaxPctOfFederal: { value: "10", type: "int" },
+      tuitionSavingsDeductionPerTaxpayer: { value: "500000", type: "money" },
+      ableDeductionPerTaxpayer: { value: "500000", type: "money" },
+      studentLoanInterestMax: { value: "250000", type: "money" },
+      failureToPayPctPerMonth: { value: "1", type: "int" },
+      failureToFilePctPerMonth: { value: "5", type: "int" },
+      penaltyMaxPct: { value: "35", type: "int" },
+      interestPctPerYear: { value: "10", type: "int" },
+      underestimatePenaltyNetTaxFloor: { value: "100000", type: "money" },
+      // $1,000
+      filingThresholdSingle: { value: "1464400", type: "money" },
+      filingThresholdMfj01Dep: { value: "2469600", type: "money" },
+      filingThresholdMfs: { value: "947000", type: "money" },
+      topRate2026Bps: { value: "370", type: "int" }
+      // Acts 1-2 of 2026 1st Ex. Sess.
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Arkansas Form AR1000F composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.ar.income_tax, us.ar.low_income_tax, us.ar.standard_deduction, us.ar.personal_tax_credits, us.ar.additional_tax_credit, us.ar.child_care_credit, us.ar.retirement_exclusion, us.ar.capital_gains, and us.ar.itemized_deductions"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -22532,6 +23299,7 @@ var stateParameterRules = [
   ...okRules,
   ...ctRules,
   ...ksRules,
+  ...arRules,
   ...otherStateRules
 ];
 
@@ -22541,7 +23309,7 @@ var money34 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus19 = (status) => ({
+var isStatus20 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -22613,7 +23381,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus19("mfj"),
+    cond: isStatus20("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -22712,7 +23480,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus19("mfj"),
+      cond: isStatus20("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -22900,7 +23668,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus20 = (status) => ({
+var isStatus21 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -22956,7 +23724,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus20("mfs"),
+      cond: isStatus21("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -22967,7 +23735,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus20("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus21("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -22987,7 +23755,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus20("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus21("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -23086,13 +23854,13 @@ var magiBase = {
 };
 var ss = fact40("socialSecurityBenefits");
 var provisional = { kind: "add", args: [magiBase, pct2("50", ss)] };
-var isMfs2 = {
+var isMfs3 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
   right: { kind: "enum", value: "mfs" }
 };
-var isMfj2 = {
+var isMfj3 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
@@ -23100,7 +23868,7 @@ var isMfj2 = {
 };
 var byJoint = (joint, other) => ({
   kind: "if",
-  cond: isMfj2,
+  cond: isMfj3,
   then: param24(joint),
   else: param24(other)
 });
@@ -23140,7 +23908,7 @@ var socialSecurityRules = [
       then: money37("0"),
       else: {
         kind: "if",
-        cond: isMfs2,
+        cond: isMfs3,
         then: {
           kind: "min",
           args: [pct2("85", ss), pct2("85", { kind: "max0", arg: provisional })]
@@ -23194,7 +23962,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus21 = (status) => ({
+var isStatus23 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -23333,7 +24101,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus21("mfs"),
+      cond: isStatus23("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -23422,11 +24190,11 @@ function additionalRule(version, effectiveFrom, effectiveTo, marriedCents, unmar
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus21("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus23("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus21("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus23("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -23436,7 +24204,7 @@ function additionalRule(version, effectiveFrom, effectiveTo, marriedCents, unmar
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus22 = (status) => ({
+var isStatus24 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -23484,7 +24252,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus22("mfs") },
+        { kind: "not", arg: isStatus24("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -23499,13 +24267,13 @@ var money39 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus23 = (status) => ({
+var isStatus25 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus23("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus25("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -23536,7 +24304,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus23("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus23("mfj"),
+                    cond: isStatus25("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -23608,7 +24376,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus23("mfj"),
+      cond: isStatus25("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -25723,6 +26491,174 @@ var FACT_FLAGS = [
     boolean: false
   },
   {
+    factId: "arStatus4",
+    option: "--ar-status4",
+    key: "arStatus4",
+    group: "Income:",
+    help: "AR filing status 4: married filing separately on the SAME return (per-column deduction, additional credit, loss limit; no low-income table)",
+    boolean: true
+  },
+  {
+    factId: "arAgi",
+    option: "--ar-agi <dollars>",
+    key: "arAgi",
+    group: "Income:",
+    help: "AR line 25 AGI of the column \u2014 low-income table lookup, standard-deduction cap, AR3 floors (combined)",
+    boolean: false
+  },
+  {
+    factId: "arDependents",
+    option: "--ar-dependents <count>",
+    key: "arDependents",
+    group: "Income:",
+    help: "AR line 7B dependents: $29 each; 2+ selects the larger low-income table",
+    boolean: false
+  },
+  {
+    factId: "arCreditBoxes",
+    option: "--ar-credit-boxes <count>",
+    key: "arCreditBoxes",
+    group: "Income:",
+    help: "AR line 7A 65+/65 Special/blind/deaf boxes (0-8): $29 each (us.ar.personal_tax_credits)",
+    boolean: false
+  },
+  {
+    factId: "arPensionTaxable",
+    option: "--ar-pension-taxable <dollars>",
+    key: "arPensionTaxable",
+    group: "Income:",
+    help: "AR line 18: one taxpayer's taxable employer pension/qualified IRA \u2014 $6,000 exclusion (us.ar.retirement_exclusion)",
+    boolean: false
+  },
+  {
+    factId: "arMilitaryRetirement",
+    option: "--ar-military-retirement <dollars>",
+    key: "arMilitaryRetirement",
+    group: "Income:",
+    help: "AR line 17: the same taxpayer's exempt military retirement \u2014 reduces the $6,000 exclusion",
+    boolean: false
+  },
+  {
+    factId: "arChildCareExpenses",
+    option: "--ar-child-care-expenses <dollars>",
+    key: "arChildCareExpenses",
+    group: "Income:",
+    help: "AR2441 line 3 base: child and dependent care expenses (us.ar.child_care_credit)",
+    boolean: false
+  },
+  {
+    factId: "arChildCareQualifyingPersons",
+    option: "--ar-child-care-persons <count>",
+    key: "arChildCarePersons",
+    group: "Income:",
+    help: "AR2441 qualifying persons (1 \u2192 $3,000 cap, 2+ \u2192 $6,000)",
+    boolean: false
+  },
+  {
+    factId: "arEarnedIncome",
+    option: "--ar-earned-income <dollars>",
+    key: "arEarnedIncome",
+    group: "Income:",
+    help: "AR2441 line 4: taxpayer's earned income",
+    boolean: false
+  },
+  {
+    factId: "arSpouseEarnedIncome",
+    option: "--ar-spouse-earned-income <dollars>",
+    key: "arSpouseEarnedIncome",
+    group: "Income:",
+    help: "AR2441 line 5: spouse's earned income (mfj)",
+    boolean: false
+  },
+  {
+    factId: "arFederalAgi",
+    option: "--ar-federal-agi <dollars>",
+    key: "arFederalAgi",
+    group: "Income:",
+    help: "AR2441 line 7: federal AGI \u2014 sets the 35%-20% percentage",
+    boolean: false
+  },
+  {
+    factId: "arLongTermGain",
+    option: "--ar-long-term-gain <dollars>",
+    key: "arLongTermGain",
+    group: "Income:",
+    help: "AR1000D: net long-term capital gain/loss (50% of a gain exempt) (us.ar.capital_gains)",
+    boolean: false
+  },
+  {
+    factId: "arShortTermGain",
+    option: "--ar-short-term-gain <dollars>",
+    key: "arShortTermGain",
+    group: "Income:",
+    help: "AR1000D: net short-term capital gain/loss (100% taxed)",
+    boolean: false
+  },
+  {
+    factId: "arMedicalExpenses",
+    option: "--ar-medical <dollars>",
+    key: "arMedical",
+    group: "Income:",
+    help: "AR3 line 1 medical expenses \u2014 10%-of-AGI floor (us.ar.itemized_deductions)",
+    boolean: false
+  },
+  {
+    factId: "arTaxesPaid",
+    option: "--ar-taxes-paid <dollars>",
+    key: "arTaxesPaid",
+    group: "Income:",
+    help: "AR3 lines 5-6 real estate, personal property, and other deductible taxes",
+    boolean: false
+  },
+  {
+    factId: "arInterestPaid",
+    option: "--ar-interest-paid <dollars>",
+    key: "arInterestPaid",
+    group: "Income:",
+    help: "AR3 lines 8-11 mortgage, points, investment interest",
+    boolean: false
+  },
+  {
+    factId: "arContributions",
+    option: "--ar-contributions <dollars>",
+    key: "arContributions",
+    group: "Income:",
+    help: "AR3 lines 13-16 contributions",
+    boolean: false
+  },
+  {
+    factId: "arCasualtyLosses",
+    option: "--ar-casualty-losses <dollars>",
+    key: "arCasualtyLosses",
+    group: "Income:",
+    help: "AR3 line 18 casualty and theft losses (AR4684)",
+    boolean: false
+  },
+  {
+    factId: "arTuitionDeduction",
+    option: "--ar-tuition-deduction <dollars>",
+    key: "arTuitionDeduction",
+    group: "Income:",
+    help: "AR3 line 19 post-secondary tuition deduction (AR1075)",
+    boolean: false
+  },
+  {
+    factId: "arMiscExpenses",
+    option: "--ar-misc-expenses <dollars>",
+    key: "arMiscExpenses",
+    group: "Income:",
+    help: "AR3 lines 20-21 miscellaneous deductions subject to the 2% floor",
+    boolean: false
+  },
+  {
+    factId: "arOtherMiscDeductions",
+    option: "--ar-other-misc <dollars>",
+    key: "arOtherMisc",
+    group: "Income:",
+    help: "AR3 lines 26-28 miscellaneous deductions not subject to the 2% floor",
+    boolean: false
+  },
+  {
     factId: "mfsAbuseOrAbandonmentException",
     option: "--mfs-abuse-abandonment-relief",
     key: "mfsAbuseAbandonmentRelief",
@@ -26699,9 +27635,9 @@ function formatMoney(cents2) {
   const sign = n < 0n ? "-" : "";
   if (n < 0n)
     n = -n;
-  const dollars2 = n / 100n;
+  const dollars3 = n / 100n;
   const rem = (n % 100n).toString().padStart(2, "0");
-  const grouped = dollars2.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const grouped = dollars3.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${sign}$${grouped}.${rem}`;
 }
 function formatValue(tv) {
@@ -27498,7 +28434,8 @@ var JURISDICTION_NAMES = {
   "us.or": "oregon or or-40 portland salem kicker",
   "us.ok": "oklahoma ok form 511 oklahoma city tulsa sales tax relief",
   "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport",
-  "us.ks": "kansas ks k-40 wichita topeka overland park kpers"
+  "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
+  "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table"
 };
 function lookupParameters(corpus, query, asOf) {
   const tokens = tokenize(query);
@@ -27874,7 +28811,7 @@ function setup(flags) {
     target: flags.target ?? DEFAULT_TARGET
   };
 }
-var cents = (dollars2) => parseDollars(dollars2);
+var cents = (dollars3) => parseDollars(dollars3);
 function runSweep(flags) {
   try {
     const { corpus, base, vary, asOf, target } = setup(flags);
@@ -28390,8 +29327,8 @@ var ZodError = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub12) => {
-      this.issues = [...this.issues, sub12];
+    this.addIssue = (sub13) => {
+      this.issues = [...this.issues, sub13];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -28458,13 +29395,13 @@ var ZodError = class _ZodError extends Error {
   flatten(mapper = (issue) => issue.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub12 of this.issues) {
-      if (sub12.path.length > 0) {
-        const firstEl = sub12.path[0];
+    for (const sub13 of this.issues) {
+      if (sub13.path.length > 0) {
+        const firstEl = sub13.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub12));
+        fieldErrors[firstEl].push(mapper(sub13));
       } else {
-        formErrors.push(mapper(sub12));
+        formErrors.push(mapper(sub13));
       }
     }
     return { formErrors, fieldErrors };
@@ -32157,13 +33094,13 @@ var NEVER = INVALID;
 
 // ../compose/dist/money.js
 var c = (d3) => BigInt(Math.round((d3 ?? 0) * 100));
-var rd16 = (x) => {
+var rd17 = (x) => {
   const neg = x < 0n;
   const a = neg ? -x : x;
   const r = (a + 50n) / 100n * 100n;
   return neg ? -r : r;
 };
-var max011 = (x) => x > 0n ? x : 0n;
+var max012 = (x) => x > 0n ? x : 0n;
 var min22 = (a, b) => a < b ? a : b;
 var fmtD = (x) => {
   const neg = x < 0n;
@@ -32175,7 +33112,7 @@ var fmtD = (x) => {
 var isJoint = (input) => input.filingJoint === true;
 var isHoh = (input) => input.filingHoh === true;
 var isHohOrQss = (input) => input.filingHohOrQss === true;
-var isMfs3 = (input) => input.filingStatus === "mfs";
+var isMfs4 = (input) => input.filingStatus === "mfs";
 
 // ../compose/dist/ca.js
 var STD_DEDUCTION_SINGLE = 570600n;
@@ -32183,14 +33120,14 @@ var STD_DEDUCTION_JOINT_HOH = 1141200n;
 var PERSONAL_EXEMPTION_CREDIT = 15300n;
 var DEPENDENT_EXEMPTION_CREDIT = 47500n;
 function scheduleCaAdjustments(input, notes) {
-  const ssSub = rd16(c(input.taxableSocialSecurity));
-  const uiSub = rd16(c(input.unemploymentCompensation));
-  const hsaDistSub = rd16(c(input.caHsaTaxableDistribution));
-  const educatorAdd = rd16(c(input.caEducatorExpensesDeducted));
-  const hsaDedAdd = rd16(c(input.caHsaDeduction));
-  const ab5WageAdd = rd16(c(input.caAb5GrossIncomeAddition));
-  const ab5LossAdd = rd16(c(input.caAb5NetLossAddition));
-  const deprAdd = rd16(c(input.caDepreciationAddition));
+  const ssSub = rd17(c(input.taxableSocialSecurity));
+  const uiSub = rd17(c(input.unemploymentCompensation));
+  const hsaDistSub = rd17(c(input.caHsaTaxableDistribution));
+  const educatorAdd = rd17(c(input.caEducatorExpensesDeducted));
+  const hsaDedAdd = rd17(c(input.caHsaDeduction));
+  const ab5WageAdd = rd17(c(input.caAb5GrossIncomeAddition));
+  const ab5LossAdd = rd17(c(input.caAb5NetLossAddition));
+  const deprAdd = rd17(c(input.caDepreciationAddition));
   if (ssSub > 0n)
     notes.push(`CA subtraction: federally taxable social security ${fmtD(ssSub)} (Schedule CA line 6 col B)`);
   if (uiSub > 0n)
@@ -32214,43 +33151,43 @@ function scheduleCaAdjustments(input, notes) {
 }
 function composeCA(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const l13 = rd16(c(input.federalAGI));
+  const l13 = rd17(c(input.federalAGI));
   const { adds, subs } = scheduleCaAdjustments(input, notes);
-  const l17 = rd16(l13 + c(input.additions) + adds - c(input.subtractions) - subs);
+  const l17 = rd17(l13 + c(input.additions) + adds - c(input.subtractions) - subs);
   const standard = joint || isHohOrQss(input) ? STD_DEDUCTION_JOINT_HOH : STD_DEDUCTION_SINGLE;
-  const itemized = rd16(c(input.caItemizedDeductions));
+  const itemized = rd17(c(input.caItemizedDeductions));
   const l18 = itemized > standard ? itemized : standard;
   if (itemized > standard)
     notes.push(`CA itemized deduction ${fmtD(itemized)} exceeds the standard deduction ${fmtD(standard)} \u2014 line 18 itemizes (Schedule CA Part II, agent-computed and disclosed)`);
-  const l19 = max011(l17 - l18);
-  const l31 = rd16(evalStateTax("us.ca.income_tax", l19));
+  const l19 = max012(l17 - l18);
+  const l31 = rd17(evalStateTax("us.ca.income_tax", l19));
   const persons = joint || input.filingStatus === "qss" ? 2n : 1n;
-  const l32 = rd16(persons * PERSONAL_EXEMPTION_CREDIT + BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION_CREDIT + BigInt(input.ageOrBlindBoxes ?? 0) * PERSONAL_EXEMPTION_CREDIT);
-  const renters = rd16(c(input.caRentersCredit));
-  const l48 = max011(l31 - l32 - renters);
+  const l32 = rd17(persons * PERSONAL_EXEMPTION_CREDIT + BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION_CREDIT + BigInt(input.ageOrBlindBoxes ?? 0) * PERSONAL_EXEMPTION_CREDIT);
+  const renters = rd17(c(input.caRentersCredit));
+  const l48 = max012(l31 - l32 - renters);
   if (l31 < l32 + renters && l31 > 0n)
     notes.push("CA exemption credits and/or renter's credit exceed tax \u2014 line 48 floors at $0 (both are nonrefundable)");
-  let amt = rd16(c(input.caAmt));
+  let amt = rd17(c(input.caAmt));
   if (input.caAmt === void 0 && (input.caIsoPreference !== void 0 || input.caAmtTaxesAddback !== void 0)) {
-    const addback = itemized > standard ? rd16(c(input.caAmtTaxesAddback)) : standard;
-    const amti = l19 + addback + rd16(c(input.caIsoPreference));
-    amt = rd16(evalStateTax("us.ca.amt", l19, { caAmti: amti, caRegularTax: l31 }));
-    notes.push(`Schedule P: AMTI ${fmtD(amti)} = taxable income ${fmtD(l19)} + ${itemized > standard ? "itemized-taxes addback" : "standard-deduction addback"} ${fmtD(addback)} + ISO preference ${fmtD(rd16(c(input.caIsoPreference)))}; AMT ${fmtD(amt)}`);
+    const addback = itemized > standard ? rd17(c(input.caAmtTaxesAddback)) : standard;
+    const amti = l19 + addback + rd17(c(input.caIsoPreference));
+    amt = rd17(evalStateTax("us.ca.amt", l19, { caAmti: amti, caRegularTax: l31 }));
+    notes.push(`Schedule P: AMTI ${fmtD(amti)} = taxable income ${fmtD(l19)} + ${itemized > standard ? "itemized-taxes addback" : "standard-deduction addback"} ${fmtD(addback)} + ISO preference ${fmtD(rd17(c(input.caIsoPreference)))}; AMT ${fmtD(amt)}`);
   }
-  const bhst = rd16(c(input.caBhst));
-  const earlyBase = rd16(c(input.caTaxableEarlyDistribution));
-  const l63 = rd16(earlyBase * 25n / 1000n);
+  const bhst = rd17(c(input.caBhst));
+  const earlyBase = rd17(c(input.caTaxableEarlyDistribution));
+  const l63 = rd17(earlyBase * 25n / 1000n);
   if (l63 > 0n)
     notes.push(`CA line 63: 2.5% early-distribution additional tax ${fmtD(l63)} on ${fmtD(earlyBase)} (R&TC \xA7 17085(c)(1))`);
   const l64 = l48 + amt + bhst + l63;
   const l71 = c(input.stateWithholding);
-  const l72 = c(input.estimatedPayments) + rd16(c(input.extensionPayment)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l75 = rd16(c(input.caCalEITC));
-  const l76 = rd16(c(input.caYCTC));
-  const l78 = l71 + l72 + l75 + l76 + rd16(c(input.refundableCredits));
+  const l72 = c(input.estimatedPayments) + rd17(c(input.extensionPayment)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l75 = rd17(c(input.caCalEITC));
+  const l76 = rd17(c(input.caYCTC));
+  const l78 = l71 + l72 + l75 + l76 + rd17(c(input.refundableCredits));
   const due = l64 + c(input.useTax);
-  const l97 = max011(l78 - due);
-  const l111 = max011(due - l78);
+  const l97 = max012(l78 - due);
+  const l111 = max012(due - l78);
   return {
     "13_federal_agi": fmtD(l13),
     "17_ca_agi": fmtD(l17),
@@ -32277,15 +33214,15 @@ function composeCA(input, evalStateTax, notes) {
 
 // ../compose/dist/ga.js
 function composeGA(input, evalStateTax, notes) {
-  const fagi = rd16(c(input.federalAGI));
+  const fagi = rd17(c(input.federalAGI));
   const l8 = fagi;
-  const additions = rd16(c(input.additions));
-  const taxableSS = rd16(c(input.taxableSocialSecurity));
+  const additions = rd17(c(input.additions));
+  const taxableSS = rd17(c(input.taxableSocialSecurity));
   if (taxableSS > 0n)
     notes.push("GA Schedule 1: taxable Social Security subtracted automatically (Georgia never taxes it; Tiers 1 and 2 RRB likewise)");
   const tiers2 = { none: 0, "62to64OrDisabled": 1, "65plus": 2 };
   const tier = (v) => typeof v === "string" && v in tiers2 ? v : "none";
-  const retirementExclusion = tier(input.gaExclusionTier) !== "none" || tier(input.gaSpouseExclusionTier) !== "none" ? rd16(evalStateTax("us.ga.retirement_exclusion", 0n, {
+  const retirementExclusion = tier(input.gaExclusionTier) !== "none" || tier(input.gaSpouseExclusionTier) !== "none" ? rd17(evalStateTax("us.ga.retirement_exclusion", 0n, {
     gaRetirementIncome: c(input.gaRetirementIncome),
     gaSpouseRetirementIncome: c(input.gaSpouseRetirementIncome),
     gaRetirementEarnedIncome: c(input.gaRetirementEarnedIncome),
@@ -32295,62 +33232,62 @@ function composeGA(input, evalStateTax, notes) {
   })) : 0n;
   if (retirementExclusion > 0n)
     notes.push(`GA retirement income exclusion ${fmtD(retirementExclusion)} (Schedule 1 page 2 worksheet; per-spouse caps, $5,000 earned-income allowance)`);
-  const militaryExclusion = rd16(c(input.gaMilitaryExclusion));
+  const militaryExclusion = rd17(c(input.gaMilitaryExclusion));
   if (militaryExclusion > 0n)
     notes.push("GA military retirement exclusion (under-62, $17,500 + conditional $17,500 \u2014 Schedule 1 page 3 worksheet, hand-computed)");
-  const subtractions = rd16(c(input.subtractions)) + taxableSS + retirementExclusion + militaryExclusion;
+  const subtractions = rd17(c(input.subtractions)) + taxableSS + retirementExclusion + militaryExclusion;
   const l9 = additions - subtractions;
   const l10 = l8 + l9;
   const itemizing = c(input.gaFederalItemized) > 0n;
   let l11 = 0n, l12c = 0n;
   if (itemizing) {
-    const l12a = rd16(c(input.gaFederalItemized));
-    const l12b = rd16(c(input.gaItemizedAdjustments));
-    l12c = max011(l12a - l12b);
+    const l12a = rd17(c(input.gaFederalItemized));
+    const l12b = rd17(c(input.gaItemizedAdjustments));
+    l12c = max012(l12a - l12b);
     notes.push("GA line 12: federal itemizer must itemize for Georgia ('Leave Line 11 blank if you itemize deductions on your Federal return') \u2014 line 12b subtracts state income taxes and the disallowed-SALT proration");
   } else {
-    l11 = rd16(evalStateTax("us.ga.standard_deduction", 0n));
+    l11 = rd17(evalStateTax("us.ga.standard_deduction", 0n));
   }
   const l13 = l10 - (itemizing ? l12c : l11);
   const nDeps = input.gaDependentCount ?? 0;
-  const l14 = rd16(evalStateTax("us.ga.dependent_exemption", 0n, { gaDependentCount: nDeps }));
+  const l14 = rd17(evalStateTax("us.ga.dependent_exemption", 0n, { gaDependentCount: nDeps }));
   const l15a = l13 - l14;
-  const nolRaw = rd16(c(input.gaNolUtilized));
-  const l15b = min22(nolRaw, max011(l15a));
+  const nolRaw = rd17(c(input.gaNolUtilized));
+  const l15b = min22(nolRaw, max012(l15a));
   if (nolRaw > l15b)
     notes.push("GA line 15b capped at line 15a (the NOL utilized cannot exceed income before NOL; the 80% limitation is the caller's Schedule 4 computation)");
   const l15c = l15a - l15b;
-  const l16 = rd16(evalStateTax("us.ga.income_tax", max011(l15c)));
-  const lic = (input.gaLicExemptions ?? 0) > 0 ? rd16(evalStateTax("us.ga.low_income_credit", 0n, {
+  const l16 = rd17(evalStateTax("us.ga.income_tax", max012(l15c)));
+  const lic = (input.gaLicExemptions ?? 0) > 0 ? rd17(evalStateTax("us.ga.low_income_credit", 0n, {
     gaFederalAgi: fagi,
     gaLicExemptions: input.gaLicExemptions ?? 0,
     gaLic65Count: input.gaLic65Count ?? 0
   })) : 0n;
   const l17c = lic;
-  const l18 = rd16(c(input.gaOtherStateCredit));
-  const l19 = min22(rd16(c(input.gaEligibleItemizerCredit)), 30000n * BigInt(input.filingStatus === "mfj" ? 2 : 1));
+  const l18 = rd17(c(input.gaOtherStateCredit));
+  const l19 = min22(rd17(c(input.gaEligibleItemizerCredit)), 30000n * BigInt(input.filingStatus === "mfj" ? 2 : 1));
   if (c(input.gaEligibleItemizerCredit) > 0n && !itemizing)
     notes.push("GA line 19: the Eligible Itemizer Tax Credit requires itemizing \u2014 verify eligibility (183+ days or GA resident at year end)");
-  const cdcc = c(input.gaFederalCdccAllowed) > 0n ? rd16(evalStateTax("us.ga.cdcc", 0n, { gaFederalCdccAllowed: c(input.gaFederalCdccAllowed) })) : 0n;
+  const cdcc = c(input.gaFederalCdccAllowed) > 0n ? rd17(evalStateTax("us.ga.cdcc", 0n, { gaFederalCdccAllowed: c(input.gaFederalCdccAllowed) })) : 0n;
   if (cdcc > 0n)
     notes.push(`GA IND-CR 202 child and dependent care credit ${fmtD(cdcc)} (50% of the allowed federal \xA7 21 credit, HB 136) folded into line 20`);
-  const l20 = rd16(c(input.gaIndCrCredits)) + cdcc;
-  const l21 = rd16(c(input.nonrefundableCredits));
+  const l20 = rd17(c(input.gaIndCrCredits)) + cdcc;
+  const l21 = rd17(c(input.nonrefundableCredits));
   const creditsRaw = l17c + l18 + l19 + l20 + l21;
   const l22 = min22(creditsRaw, l16);
   if (creditsRaw > l22)
     notes.push(`GA line 22: total credits ${fmtD(creditsRaw)} capped at the line 16 tax ('cannot exceed Line 16')`);
-  const l23 = max011(l16 - l22);
-  const l24 = rd16(c(input.stateWithholding));
-  const l25 = rd16(c(input.gaOtherWithholding));
-  const l26 = rd16(c(input.estimatedPayments)) + rd16(c(input.extensionPayment));
-  const l27 = rd16(c(input.refundableCredits));
+  const l23 = max012(l16 - l22);
+  const l24 = rd17(c(input.stateWithholding));
+  const l25 = rd17(c(input.gaOtherWithholding));
+  const l26 = rd17(c(input.estimatedPayments)) + rd17(c(input.extensionPayment));
+  const l27 = rd17(c(input.refundableCredits));
   const l28 = l24 + l25 + l26 + l27;
-  const l29 = max011(l23 - l28);
-  const l30 = max011(l28 - l23);
-  const l42 = rd16(c(input.gaUetPenalty));
+  const l29 = max012(l23 - l28);
+  const l30 = max012(l28 - l23);
+  const l42 = rd17(c(input.gaUetPenalty));
   const l45 = l29 + l42;
-  const l46 = max011(l30 - l42);
+  const l46 = max012(l30 - l42);
   notes.push("GA conformity: IRC as of Jan 1, 2025 \u2014 OBBBA changes do NOT apply for TY2025 (IT-511 p.5); QBI never allowed but needs no adjustment (GA starts from federal AGI)");
   return {
     "7c_total_dependents": String(nDeps),
@@ -32393,28 +33330,28 @@ function composeIL(input, evalStateTax, notes) {
   const fedEITC = c(input.federalEITC);
   const wh = c(input.stateWithholding);
   const est = c(input.estimatedPayments);
-  const l1 = rd16(fagi);
-  const l4 = rd16(l1 + c(input.additions));
-  const l9 = max011(rd16(l4 - c(input.subtractions)));
+  const l1 = rd17(fagi);
+  const l4 = rd17(l1 + c(input.additions));
+  const l9 = max012(rd17(l4 - c(input.subtractions)));
   const nExemptions = input.exemptions ?? 1;
-  let l10 = rd16(BigInt(nExemptions) * EXEMPTION2 + BigInt(input.ageOrBlindBoxes ?? 0) * AGE_BLIND_BOX);
+  let l10 = rd17(BigInt(nExemptions) * EXEMPTION2 + BigInt(input.ageOrBlindBoxes ?? 0) * AGE_BLIND_BOX);
   if (input.claimedAsDependent === true && l9 > EXEMPTION2) {
     l10 = 0n;
     notes.push("IL exemption allowance $0: taxpayer is claimable as a dependent on another return and base income exceeds $2,850");
   }
-  const l11 = max011(l9 - l10);
-  const l12 = rd16(evalStateTax("us.il.income_tax", l11));
+  const l11 = max012(l9 - l10);
+  const l12 = rd17(evalStateTax("us.il.income_tax", l11));
   const l14 = l12;
   const l18 = ilNonrefundableCredits(input, l14, notes);
-  const l21 = rd16(c(input.useTax));
+  const l21 = rd17(c(input.useTax));
   const l23 = l14 - l18 + l21;
-  const l29 = input.ilEitcOverride !== void 0 ? rd16(c(input.ilEitcOverride)) : rd16(fedEITC * 20n / 100n);
-  const l30 = input.ilChildUnder12 ? rd16(l29 * 40n / 100n) : 0n;
+  const l29 = input.ilEitcOverride !== void 0 ? rd17(c(input.ilEitcOverride)) : rd17(fedEITC * 20n / 100n);
+  const l30 = input.ilChildUnder12 ? rd17(l29 * 40n / 100n) : 0n;
   if (!input.ilChildUnder12 && l29 > 0n)
     notes.push("IL CTC $0: no dependent child under 12 indicated");
   const l31 = wh + est + l29 + l30;
-  const l32 = max011(l31 - l23);
-  const l41 = max011(l23 - l31);
+  const l32 = max012(l31 - l23);
+  const l41 = max012(l23 - l31);
   return {
     "1_federal_agi": fmtD(l1),
     "4_total_income": fmtD(l4),
@@ -32435,18 +33372,18 @@ function composeIL(input, evalStateTax, notes) {
   };
 }
 function ilNonrefundableCredits(input, taxDue, notes) {
-  const propertyTax = rd16(c(input.ilPropertyTaxPaid) * 5n / 100n);
+  const propertyTax = rd17(c(input.ilPropertyTaxPaid) * 5n / 100n);
   const k12 = (() => {
-    const over = max011(c(input.ilK12Expenses) - 25000n);
-    const credit = rd16(over * 25n / 100n);
+    const over = max012(c(input.ilK12Expenses) - 25000n);
+    const credit = rd17(over * 25n / 100n);
     return credit > 75000n ? 75000n : credit;
   })();
   const teacher = (() => {
-    const t = rd16(c(input.ilTeacherExpenses));
+    const t = rd17(c(input.ilTeacherExpenses));
     const cap = isJoint(input) ? 100000n : 50000n;
     return t > cap ? cap : t;
   })();
-  const available = propertyTax + k12 + teacher + rd16(c(input.nonrefundableCredits));
+  const available = propertyTax + k12 + teacher + rd17(c(input.nonrefundableCredits));
   const allowed = available > taxDue ? taxDue : available;
   if (available > allowed)
     notes.push(`IL credits available ${fmtD(available)} capped at tax due \u2014 line 18 reports the ALLOWED amount`);
@@ -32515,28 +33452,28 @@ function composeMD(input, evalStateTax, notes) {
       throw new Error("a Maryland dependent taxpayer (Filing Status 6) files the Schedule I columns \u2014 pass filingStatus single/mfs with claimedAsDependent, not mfj/hoh/qss");
   }
   const fagi = c(input.federalAGI);
-  const l1 = rd16(fagi);
-  const l6 = rd16(c(input.additions));
+  const l1 = rd17(fagi);
+  const l6 = rd17(c(input.additions));
   const l7 = l1 + l6;
-  const l8 = rd16(c(input.mdStateRefunds));
+  const l8 = rd17(c(input.mdStateRefunds));
   const careCap = input.mdChildCareTwoOrMoreDependents === true ? 600000n : 300000n;
-  const l9 = min22(rd16(c(input.mdChildCareExpenses)), careCap);
+  const l9 = min22(rd17(c(input.mdChildCareExpenses)), careCap);
   if (l9 > 0n)
     notes.push(`MD line 9: child and dependent care EXPENSES ${fmtD(l9)} subtract from income (capped at ${fmtD(careCap)}; distinct from the 502CR Part B credit)`);
-  if (rd16(c(input.mdChildCareExpenses)) > careCap)
+  if (rd17(c(input.mdChildCareExpenses)) > careCap)
     notes.push("MD line 9 capped: the subtraction is the SMALLER of federal Form 2441 line 6 or $3,000 ($6,000 with two or more dependents)");
-  const pension = (p, ss2) => c(p) > 0n ? rd16(evalStateTax("us.md.pension_exclusion", 0n, { mdQualifyingPension: c(p), mdSsRrBenefits: c(ss2) })) : 0n;
+  const pension = (p, ss2) => c(p) > 0n ? rd17(evalStateTax("us.md.pension_exclusion", 0n, { mdQualifyingPension: c(p), mdSsRrBenefits: c(ss2) })) : 0n;
   const l10a = pension(input.mdPensionYou, input.mdSsRrBenefitsYou) + pension(input.mdPensionSpouse, input.mdSsRrBenefitsSpouse);
   if (l10a > 0n)
     notes.push(`MD pension exclusion ${fmtD(l10a)} (Worksheet 13A per qualifying spouse: min(pension, $41,200 \u2212 TOTAL SS/RR benefits); 65+/disabled and \xA7 401(a)/403/457(b) plans only \u2014 IRAs never qualify)`);
-  const l10b = rd16(c(input.mdRangerPension));
-  const l11 = rd16(c(input.taxableSocialSecurity));
+  const l10b = rd17(c(input.mdRangerPension));
+  const l11 = rd17(c(input.taxableSocialSecurity));
   if (l11 > 0n)
     notes.push(`MD line 11: federally taxable Social Security/RR ${fmtD(l11)} subtracted (Maryland never taxes it)`);
-  const l13 = rd16(c(input.subtractions));
+  const l13 = rd17(c(input.subtractions));
   let l14 = 0n;
   if (joint && input.mdTwoIncomeLesserSpouseNet !== void 0) {
-    l14 = min22(120000n, max011(rd16(c(input.mdTwoIncomeLesserSpouseNet))));
+    l14 = min22(120000n, max012(rd17(c(input.mdTwoIncomeLesserSpouseNet))));
     notes.push(`MD two-income subtraction ${fmtD(l14)} (Worksheet 13D: lesser-income spouse's net Maryland income, capped $1,200)`);
   } else if (!joint && c(input.mdTwoIncomeLesserSpouseNet) > 0n) {
     notes.push("MD two-income subtraction $0: joint returns only");
@@ -32548,13 +33485,13 @@ function composeMD(input, evalStateTax, notes) {
   let method = "standard";
   let l17c = 0n;
   if (input.mdItemizing === true) {
-    const l17a = rd16(c(input.mdFederalItemized));
-    const l17b = rd16(c(input.mdItemizedStateLocalTaxes));
-    const threshold2 = isMfs3(input) ? 10000000n : 20000000n;
-    l17c = rd16(max011(fagi - threshold2) * 75n / 1000n);
+    const l17a = rd17(c(input.mdFederalItemized));
+    const l17b = rd17(c(input.mdItemizedStateLocalTaxes));
+    const threshold2 = isMfs4(input) ? 10000000n : 20000000n;
+    l17c = rd17(max012(fagi - threshold2) * 75n / 1000n);
     if (l17c > 0n)
       notes.push(`MD itemized phase-out ${fmtD(l17c)} (Worksheet 14A: 7.5% of FAGI over ${fmtD(threshold2)})`);
-    const itemized = max011(l17a - l17b - l17c);
+    const itemized = max012(l17a - l17b - l17c);
     if (itemized > standard) {
       l17 = itemized;
       method = "itemized";
@@ -32564,82 +33501,82 @@ function composeMD(input, evalStateTax, notes) {
   }
   const l18 = l16 - l17;
   const nExemptions = input.exemptions ?? (joint ? 2 : 1);
-  const chartAmount = rd16(evalStateTax("us.md.exemption_amount", 0n, {
+  const chartAmount = rd17(evalStateTax("us.md.exemption_amount", 0n, {
     mdFagi: fagi,
     mdExemptionCount: nExemptions,
     mdDependentTaxpayer: dependentTaxpayer
   }));
   const boxes = BigInt(input.ageOrBlindBoxes ?? 0);
   const l19 = chartAmount + boxes * AGE_BLIND_BOX2;
-  const l20 = max011(l18 - l19);
+  const l20 = max012(l18 - l19);
   let l20a = 0n;
   if (c(input.mdNetCapitalGainSubject) > 0n) {
     if (fagi > CG_SURTAX_FAGI_GATE) {
-      l20a = rd16(c(input.mdNetCapitalGainSubject));
+      l20a = rd17(c(input.mdNetCapitalGainSubject));
       notes.push(`MD Form 502CG line 9 net capital gain ${fmtD(l20a)} subject to the 2% H.B. 352 surtax (line 21b)`);
     } else {
       notes.push("MD line 20a forced to $0: FAGI does not exceed $350,000, so the Form 502CG surtax does not apply");
     }
   }
-  const l21 = rd16(evalStateTax("us.md.income_tax", l20));
-  const l21a = rd16(c(input.mdRecapturedCredit));
-  const l21b = l20a > 0n ? rd16(evalStateTax("us.md.capital_gains_surtax", 0n, { mdNetCapitalGainSubject: l20a })) : 0n;
+  const l21 = rd17(evalStateTax("us.md.income_tax", l20));
+  const l21a = rd17(c(input.mdRecapturedCredit));
+  const l21b = l20a > 0n ? rd17(evalStateTax("us.md.capital_gains_surtax", 0n, { mdNetCapitalGainSubject: l20a })) : 0n;
   const mdTaxSum = l21 + l21a + l21b;
-  const fedEIC = rd16(c(input.federalEITC));
-  const marriedOrQc = joint || isMfs3(input) || input.mdEicQualifyingChild === true;
-  const l22 = fedEIC > 0n ? marriedOrQc ? rd16(fedEIC * 50n / 100n) : fedEIC : 0n;
+  const fedEIC = rd17(c(input.federalEITC));
+  const marriedOrQc = joint || isMfs4(input) || input.mdEicQualifyingChild === true;
+  const l22 = fedEIC > 0n ? marriedOrQc ? rd17(fedEIC * 50n / 100n) : fedEIC : 0n;
   if (fedEIC > 0n)
     notes.push(marriedOrQc ? `MD EIC ${fmtD(l22)} = 50% of the federal EIC (Worksheet 18A)` : `MD EIC ${fmtD(l22)} = 100% of the federal EIC (childless single/HOH/QSS, Worksheet 18A.1)`);
-  if (fedEIC > 0n && isMfs3(input))
+  if (fedEIC > 0n && isMfs4(input))
     notes.push("MD MFS EIC: spouses who filed a JOINT federal return may claim a COMBINED total of at most one-half the federal credit across both separate Maryland returns (Instruction 18) \u2014 verify the other spouse's claim");
-  const earned2 = rd16(c(input.mdEarnedIncome));
-  const l23 = !dependentTaxpayer && earned2 > 0n && input.mdHouseholdSize !== void 0 ? rd16(evalStateTax("us.md.poverty_level_credit", 0n, {
+  const earned2 = rd17(c(input.mdEarnedIncome));
+  const l23 = !dependentTaxpayer && earned2 > 0n && input.mdHouseholdSize !== void 0 ? rd17(evalStateTax("us.md.poverty_level_credit", 0n, {
     mdEarnedIncome: earned2,
     mdFagiPlusAdditions: l7,
     mdHouseholdSize: input.mdHouseholdSize ?? 1,
     mdDependentTaxpayer: dependentTaxpayer
   })) : 0n;
-  if (l23 > 0n && isMfs3(input))
+  if (l23 > 0n && isMfs4(input))
     notes.push("MD poverty level credit (MFS): Worksheet 18B line 1 must use the JOINT federal AGI plus additions when a joint federal return was filed \u2014 pass that amount via the poverty inputs, not the separate-return line 7");
-  const l24 = rd16(c(input.nonrefundableCredits));
-  const l25 = rd16(c(input.mdBusinessCredits));
+  const l24 = rd17(c(input.nonrefundableCredits));
+  const l25 = rd17(c(input.mdBusinessCredits));
   const l26 = l22 + l23 + l24 + l25;
-  const l27 = max011(mdTaxSum - l26);
-  const l28 = rd16(evalStateTax("us.md.local_tax", l20, { mdSubdivision: subdivision }));
+  const l27 = max012(mdTaxSum - l26);
+  const l28 = rd17(evalStateTax("us.md.local_tax", l20, { mdSubdivision: subdivision }));
   const rateBp = subdivision === "anne_arundel" ? 270n : subdivision === "frederick" ? frederickRateBp(l20, jointSchedule) : LOCAL_RATES_BP[subdivision] ?? 0n;
-  const l29 = l22 > 0n ? rd16(fedEIC * rateBp * 10n / 10000n) : 0n;
-  const l30 = l23 > 0n ? rd16(earned2 * rateBp / 10000n) : 0n;
-  const l31 = rd16(c(input.md502crPartBB));
+  const l29 = l22 > 0n ? rd17(fedEIC * rateBp * 10n / 10000n) : 0n;
+  const l30 = l23 > 0n ? rd17(earned2 * rateBp / 10000n) : 0n;
+  const l31 = rd17(c(input.md502crPartBB));
   const l32 = l29 + l30 + l31;
-  const l33 = max011(l28 - l32);
+  const l33 = max012(l28 - l32);
   const l34 = l27 + l33;
-  const contributions = rd16(c(input.mdContributions));
+  const contributions = rd17(c(input.mdContributions));
   const l40 = l34 + contributions;
-  const l41 = rd16(c(input.stateWithholding));
-  const l42 = rd16(c(input.mdMw506nrs));
-  const l43 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited)) + rd16(c(input.extensionPayment));
+  const l41 = rd17(c(input.stateWithholding));
+  const l42 = rd17(c(input.mdMw506nrs));
+  const l43 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited)) + rd17(c(input.extensionPayment));
   let l44 = 0n;
   if (fedEIC > 0n) {
     if (marriedOrQc) {
       if (l22 >= mdTaxSum && l22 > 0n && l29 > 0n)
-        l44 = max011(rd16(fedEIC * 45n / 100n) - mdTaxSum);
+        l44 = max012(rd17(fedEIC * 45n / 100n) - mdTaxSum);
       else if (l22 < mdTaxSum)
         notes.push("MD refundable EIC $0: the 50% credit did not fully absorb the state tax (Worksheet 18A line 3 > 0 \u2014 poverty level credit path instead)");
     } else {
-      l44 = max011(l22 - mdTaxSum);
+      l44 = max012(l22 - mdTaxSum);
     }
   }
-  const ctc = (input.mdCtcChildren ?? 0) > 0 ? rd16(evalStateTax("us.md.ctc", 0n, { mdFagi: fagi, mdQualifiedChildren: input.mdCtcChildren ?? 0 })) : 0n;
+  const ctc = (input.mdCtcChildren ?? 0) > 0 ? rd17(evalStateTax("us.md.ctc", 0n, { mdFagi: fagi, mdQualifiedChildren: input.mdCtcChildren ?? 0 })) : 0n;
   if (ctc > 0n)
     notes.push(`MD Child Tax Credit ${fmtD(ctc)} (Worksheet 21C: $500/child, \u2212$50 per $1,000 of FAGI over $15,000 \u2014 refundable, 502CR Part CC line 8)`);
-  const l45 = rd16(c(input.refundableCredits)) + ctc;
+  const l45 = rd17(c(input.refundableCredits)) + ctc;
   const l46 = l41 + l42 + l43 + l44 + l45;
-  const l47 = max011(l40 - l46);
-  const l48 = max011(l46 - l40);
-  const l51 = rd16(c(input.mdInterestCharges));
-  const l51a = rd16(c(input.mdHomebuyerPenalty));
-  const l50 = max011(l48 - l51 - l51a);
-  const l52 = l48 > 0n ? max011(l51 + l51a - l48) : l47 + l51 + l51a;
+  const l47 = max012(l40 - l46);
+  const l48 = max012(l46 - l40);
+  const l51 = rd17(c(input.mdInterestCharges));
+  const l51a = rd17(c(input.mdHomebuyerPenalty));
+  const l50 = max012(l48 - l51 - l51a);
+  const l52 = l48 > 0n ? max012(l51 + l51a - l48) : l47 + l51 + l51a;
   if (l48 > 0n && l51 + l51a > 0n)
     notes.push(`MD refund netting (Instruction 22): the ${fmtD(l48)} overpayment absorbs ${fmtD(min22(l48, l51 + l51a))} of interest/penalty before refunding`);
   return {
@@ -32694,14 +33631,14 @@ var HOH_QW_EXEMPTION = 140000n;
 var PRIVATE_PENSION_CAP = 600000n;
 function composeMO(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const mfs = isMfs3(input);
+  const mfs = isMfs4(input);
   const fagi = c(input.federalAGI);
-  let l1Y = input.moFagiYou !== void 0 ? rd16(c(input.moFagiYou)) : rd16(fagi);
-  let l1S = rd16(c(input.moFagiSpouse));
+  let l1Y = input.moFagiYou !== void 0 ? rd17(c(input.moFagiYou)) : rd17(fagi);
+  let l1S = rd17(c(input.moFagiSpouse));
   if (joint && input.moFagiSpouse === void 0)
     notes.push("MO combined return with no spouse split supplied \u2014 all income placed in the Yourself column (valid for a one-income couple; Missouri law otherwise requires splitting FAGI between spouses)");
-  if (l1Y + l1S !== rd16(fagi))
-    notes.push(`MO line 1 split (${fmtD(l1Y)} + ${fmtD(l1S)}) does not equal federal AGI ${fmtD(rd16(fagi))} \u2014 verify the spouse allocation worksheet`);
+  if (l1Y + l1S !== rd17(fagi))
+    notes.push(`MO line 1 split (${fmtD(l1Y)} + ${fmtD(l1S)}) does not equal federal AGI ${fmtD(rd17(fagi))} \u2014 verify the spouse allocation worksheet`);
   if (l1Y < 0n || l1S < 0n) {
     const combined = l1Y + l1S;
     if (combined <= 0n) {
@@ -32718,25 +33655,25 @@ function composeMO(input, evalStateTax, notes) {
       notes.push(`MO negative-FAGI zeroing (12 CSR 10-2.710): the spouse's negative FAGI enters $0 and the primary enters the netted joint FAGI ${fmtD(combined)}`);
     }
   }
-  const l2Y = rd16(c(input.moAdditionsYou));
-  const l2S = rd16(c(input.moAdditionsSpouse));
+  const l2Y = rd17(c(input.moAdditionsYou));
+  const l2S = rd17(c(input.moAdditionsSpouse));
   const l3Y = l1Y + l2Y;
   const l3S = l1S + l2S;
   const cg = (v) => {
-    const x = rd16(c(v));
+    const x = rd17(c(v));
     return x > 0n ? x : 0n;
   };
   const cgY = cg(input.moCapitalGainYou);
   const cgS = cg(input.moCapitalGainSpouse);
   if (cgY + cgS > 0n)
     notes.push(`MO capital gain subtraction ${fmtD(cgY + cgS)} (MO-A line 18, H.B. 594: 100% of federally reported capital gains, TY2025+; a negative federal amount enters as $0 but still reduced FAGI)`);
-  const bid = (v) => c(v) > 0n ? rd16(evalStateTax("us.mo.business_income_deduction", 0n, { moBusinessIncome: c(v) })) : 0n;
+  const bid = (v) => c(v) > 0n ? rd17(evalStateTax("us.mo.business_income_deduction", 0n, { moBusinessIncome: c(v) })) : 0n;
   const bidY = bid(input.moBusinessIncomeYou);
   const bidS = bid(input.moBusinessIncomeSpouse);
   if (bidY + bidS > 0n)
     notes.push(`MO business income deduction ${fmtD(bidY + bidS)} (MO-A line 17, \xA7 143.022: 20% per spouse)`);
-  const l4Y = rd16(c(input.moSubtractionsYou)) + cgY + bidY;
-  const l4S = rd16(c(input.moSubtractionsSpouse)) + cgS + bidS;
+  const l4Y = rd17(c(input.moSubtractionsYou)) + cgY + bidY;
+  const l4S = rd17(c(input.moSubtractionsSpouse)) + cgS + bidS;
   const l5Y = l3Y - l4Y;
   const l5S = l3S - l4S;
   const l6 = l5Y + l5S;
@@ -32752,27 +33689,27 @@ function composeMO(input, evalStateTax, notes) {
   const pctS = 100n - pctY;
   if (joint && pctS > 0n)
     notes.push(`MO line 7 income percentages: ${pctY}% / ${pctS}% (rounded to whole percents per the instructions; deductions allocate by these ratios)`);
-  const ssExY = rd16(c(input.moSsExemptYou));
-  const ssExS = rd16(c(input.moSsExemptSpouse));
+  const ssExY = rd17(c(input.moSsExemptYou));
+  const ssExS = rd17(c(input.moSsExemptSpouse));
   const secC = ssExY + ssExS;
   if (secC > 0n)
     notes.push(`MO-A Section C SS/SSD exemption ${fmtD(secC)} (100% of taxable Social Security; requires the 62-and-older box or SSD \u2014 attested by the caller)`);
-  const secA = (p, ssEx) => c(p) > 0n ? rd16(evalStateTax("us.mo.public_pension_exemption", 0n, { moPublicPension: c(p), moSsSameSpouseExemption: ssEx })) : 0n;
+  const secA = (p, ssEx) => c(p) > 0n ? rd17(evalStateTax("us.mo.public_pension_exemption", 0n, { moPublicPension: c(p), moSsSameSpouseExemption: ssEx })) : 0n;
   const secAY = secA(input.moPublicPensionYou, ssExY);
   const secAS = secA(input.moPublicPensionSpouse, ssExS);
   if (secAY + secAS > 0n)
     notes.push(`MO-A Section A public pension exemption ${fmtD(secAY + secAS)} (min(pension, $47,633) per spouse, less that spouse's Section C exemption)`);
   const privateLimit = joint ? 3200000n : mfs ? 1600000n : 2500000n;
-  const privRaw = min22(rd16(c(input.moPrivatePensionYou)), PRIVATE_PENSION_CAP) + min22(rd16(c(input.moPrivatePensionSpouse)), PRIVATE_PENSION_CAP);
+  const privRaw = min22(rd17(c(input.moPrivatePensionYou)), PRIVATE_PENSION_CAP) + min22(rd17(c(input.moPrivatePensionSpouse)), PRIVATE_PENSION_CAP);
   let secB = 0n;
   if (privRaw > 0n) {
-    const excess = max011(l6 - rd16(c(input.taxableSocialSecurity)) - privateLimit);
-    secB = max011(privRaw - excess);
+    const excess = max012(l6 - rd17(c(input.taxableSocialSecurity)) - privateLimit);
+    secB = max012(privRaw - excess);
     notes.push(`MO-A Section B private pension exemption ${fmtD(secB)} ($6,000/spouse cap, reduced by the excess of MO AGI less taxable SS over ${fmtD(privateLimit)})`);
   }
   const l8 = secAY + secAS + secB + secC;
-  const l11 = rd16(c(input.moFederalTax9)) + rd16(c(input.moOtherFederalTax10));
-  const l13 = l11 > 0n ? rd16(evalStateTax("us.mo.federal_tax_deduction", 0n, { moFederalTaxTotal: l11, moMagi: l6 })) : 0n;
+  const l11 = rd17(c(input.moFederalTax9)) + rd17(c(input.moOtherFederalTax10));
+  const l13 = l11 > 0n ? rd17(evalStateTax("us.mo.federal_tax_deduction", 0n, { moFederalTaxTotal: l11, moMagi: l6 })) : 0n;
   if (l13 > 0n)
     notes.push(`MO federal income tax deduction ${fmtD(l13)} (line 11 ${fmtD(l11)} \xD7 the line 12 percentage by combined MO AGI, capped $${joint ? "10,000" : "5,000"})`);
   const boxes = BigInt(input.ageOrBlindBoxes ?? 0);
@@ -32780,7 +33717,7 @@ function composeMO(input, evalStateTax, notes) {
   let std = (joint || isHohOrQss(input) && !isHoh(input) ? STD_COMBINED_QW : isHoh(input) ? STD_HOH : STD_SINGLE_MFS) + boxes * addlPer;
   if (input.claimedAsDependent === true) {
     if (input.moStandardDeductionOverride !== void 0) {
-      std = rd16(c(input.moStandardDeductionOverride));
+      std = rd17(c(input.moStandardDeductionOverride));
       notes.push("MO dependent-claimed filer: standard deduction taken from moStandardDeductionOverride (the federal dependent limit \u2014 greater of $1,350 or earned income + $450, up to $15,750)");
     } else {
       notes.push("MO dependent-claimed filer: pass moStandardDeductionOverride with the federal dependent standard deduction \u2014 the full amount was used absent it");
@@ -32789,7 +33726,7 @@ function composeMO(input, evalStateTax, notes) {
   let l14 = std;
   let method = "standard";
   if (input.moItemizing === true) {
-    const itemized = max011(rd16(c(input.moFederalItemized)) + rd16(c(input.moPayrollTaxAddback)) - rd16(c(input.moNetStateIncomeTaxes)));
+    const itemized = max012(rd17(c(input.moFederalItemized)) + rd17(c(input.moPayrollTaxAddback)) - rd17(c(input.moNetStateIncomeTaxes)));
     if (input.moRequiredToItemize === true || itemized > std) {
       l14 = itemized;
       method = "itemized";
@@ -32801,42 +33738,42 @@ function composeMO(input, evalStateTax, notes) {
   const l15 = isHohOrQss(input) && !joint ? HOH_QW_EXEMPTION : 0n;
   if (l15 > 0n)
     notes.push("MO line 15: $1,400 additional exemption (head of household / qualifying widow(er))");
-  const l16 = rd16(c(input.moLtcDeduction));
-  const l17 = rd16(c(input.moHcsmDeduction));
-  const l18 = rd16(c(input.moActiveDutyMilitary));
-  const l19 = rd16(c(input.moInactiveDutyMilitary));
-  const l2124 = rd16(c(input.moOtherDeductions));
+  const l16 = rd17(c(input.moLtcDeduction));
+  const l17 = rd17(c(input.moHcsmDeduction));
+  const l18 = rd17(c(input.moActiveDutyMilitary));
+  const l19 = rd17(c(input.moInactiveDutyMilitary));
+  const l2124 = rd17(c(input.moOtherDeductions));
   const l25 = l8 + l13 + l14 + l15 + l16 + l17 + l18 + l19 + l2124;
   const l26 = l6 - l25;
-  const alloc = (pct3) => rd16((l26 * pct3 + 50n) / 100n);
-  const l27Y = pctY === 100n ? rd16(l26) : alloc(pctY);
-  const l27S = pctS === 0n ? 0n : pctS === 100n ? rd16(l26) : alloc(pctS);
-  const l28Y = rd16(c(input.moEnterpriseZoneYou));
-  const l28S = rd16(c(input.moEnterpriseZoneSpouse));
-  const l29Y = max011(l27Y - l28Y);
-  const l29S = max011(l27S - l28S);
-  const l30Y = rd16(evalStateTax("us.mo.income_tax", l29Y));
-  const l30S = l29S > 0n ? rd16(evalStateTax("us.mo.income_tax", l29S)) : 0n;
-  const l31Y = min22(rd16(c(input.moResidentCreditYou)), l30Y);
-  const l31S = min22(rd16(c(input.moResidentCreditSpouse)), l30S);
+  const alloc = (pct3) => rd17((l26 * pct3 + 50n) / 100n);
+  const l27Y = pctY === 100n ? rd17(l26) : alloc(pctY);
+  const l27S = pctS === 0n ? 0n : pctS === 100n ? rd17(l26) : alloc(pctS);
+  const l28Y = rd17(c(input.moEnterpriseZoneYou));
+  const l28S = rd17(c(input.moEnterpriseZoneSpouse));
+  const l29Y = max012(l27Y - l28Y);
+  const l29S = max012(l27S - l28S);
+  const l30Y = rd17(evalStateTax("us.mo.income_tax", l29Y));
+  const l30S = l29S > 0n ? rd17(evalStateTax("us.mo.income_tax", l29S)) : 0n;
+  const l31Y = min22(rd17(c(input.moResidentCreditYou)), l30Y);
+  const l31S = min22(rd17(c(input.moResidentCreditSpouse)), l30S);
   if (l31Y + l31S > 0n)
     notes.push(`MO resident credit ${fmtD(l31Y + l31S)} (Form MO-CR taxes paid to other states \u2014 agent-computed, capped at each spouse's line 30)`);
   const l33Y = l30Y - l31Y;
   const l33S = l30S - l31S;
-  const l34Y = rd16(c(input.moOtherTaxesYou));
-  const l34S = rd16(c(input.moOtherTaxesSpouse));
+  const l34Y = rd17(c(input.moOtherTaxesYou));
+  const l34S = rd17(c(input.moOtherTaxesSpouse));
   if (l34Y + l34S > 0n)
     notes.push("MO line 34 other taxes (Form 4972 lump sum \xD7 10% / Form 4970 trusts \u2014 agent-computed, form attached)");
   const l35Y = l33Y + l34Y;
   const l35S = l33S + l34S;
   const l36 = l35Y + l35S;
-  const l37 = rd16(c(input.stateWithholding));
-  const l38 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l3940 = rd16(c(input.moNrPayments));
-  const l41 = rd16(c(input.extensionPayment));
-  const l42 = rd16(c(input.nonrefundableCredits));
-  const l43 = rd16(c(input.moPropertyTaxCredit));
-  const fedEIC = rd16(c(input.federalEITC));
+  const l37 = rd17(c(input.stateWithholding));
+  const l38 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l3940 = rd17(c(input.moNrPayments));
+  const l41 = rd17(c(input.extensionPayment));
+  const l42 = rd17(c(input.nonrefundableCredits));
+  const l43 = rd17(c(input.moPropertyTaxCredit));
+  const fedEIC = rd17(c(input.federalEITC));
   let l44 = 0n;
   if (fedEIC > 0n) {
     if (mfs || input.claimedAsDependent === true) {
@@ -32844,8 +33781,8 @@ function composeMO(input, evalStateTax, notes) {
     } else if (input.moWftcInvestmentOver4400 === true) {
       notes.push("MO Working Family Tax Credit $0: investment income over $4,400 (MO-WFTC question 3 \u2014 the credit follows EIC law FROZEN as of January 1, 2021 per the instructions, so the indexed pre-ARPA investment limit applies, computed the pre-2021 way including tax-exempt interest; the current federal $11,950 limit does NOT carry over)");
     } else {
-      const raw = rd16(evalStateTax("us.mo.wftc", 0n, { moFederalEic: fedEIC }));
-      l44 = min22(raw, max011(l36 - l42 - l43));
+      const raw = rd17(evalStateTax("us.mo.wftc", 0n, { moFederalEic: fedEIC }));
+      l44 = min22(raw, max012(l36 - l42 - l43));
       if (raw > l44)
         notes.push(`MO WFTC ${fmtD(raw)} (20% of the federal EIC) capped at ${fmtD(l44)} \u2014 nonrefundable against line 36 tax less lines 42/43 (no carryforward)`);
       else
@@ -32853,13 +33790,13 @@ function composeMO(input, evalStateTax, notes) {
     }
   }
   const l45 = l37 + l38 + l3940 + l41 + l42 + l43 + l44;
-  const l49 = max011(l45 - l36);
-  const l50 = rd16(c(input.moAppliedToNextYear));
-  const l51 = rd16(c(input.moTrustFundDonations));
-  const l52 = rd16(c(input.mo529Deposit));
-  const l53 = max011(l49 - l50 - l51 - l52);
-  const l54 = max011(l36 - l45);
-  const l55 = rd16(c(input.moUnderpaymentPenalty));
+  const l49 = max012(l45 - l36);
+  const l50 = rd17(c(input.moAppliedToNextYear));
+  const l51 = rd17(c(input.moTrustFundDonations));
+  const l52 = rd17(c(input.mo529Deposit));
+  const l53 = max012(l49 - l50 - l51 - l52);
+  const l54 = max012(l36 - l45);
+  const l55 = rd17(c(input.moUnderpaymentPenalty));
   const l56 = l54 + l55;
   return {
     "1Y_fagi": fmtD(l1Y),
@@ -32896,15 +33833,15 @@ function composeMO(input, evalStateTax, notes) {
 // ../compose/dist/mn.js
 function composeMN(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const mfs = isMfs3(input);
+  const mfs = isMfs4(input);
   const fagi = c(input.federalAGI);
-  const l1 = rd16(fagi);
-  const l2 = rd16(c(input.mnAdditions));
+  const l1 = rd17(fagi);
+  const l2 = rd17(c(input.mnAdditions));
   if (l2 > 0n)
     notes.push(`MN line 2 additions ${fmtD(l2)} (M1M/M1MB; Minnesota's IRC is frozen at May 1, 2023 \u2014 2025 OBBBA items convert on Schedule M1NC)`);
   const l3 = l1 + l2;
   const boxes = input.mnStdBoxes ?? 0;
-  const std = rd16(evalStateTax("us.mn.standard_deduction", 0n, {
+  const std = rd17(evalStateTax("us.mn.standard_deduction", 0n, {
     mnAgi: fagi,
     mnStdBoxes: boxes,
     isClaimedAsDependent: input.claimedAsDependent === true,
@@ -32912,7 +33849,7 @@ function composeMN(input, evalStateTax, notes) {
   }));
   let l4 = std;
   let method = "standard";
-  const itemized = rd16(c(input.mnItemized));
+  const itemized = rd17(c(input.mnItemized));
   if (mfs && input.mnMfsSpouseItemizes === true) {
     l4 = itemized;
     method = "itemized";
@@ -32925,61 +33862,61 @@ function composeMN(input, evalStateTax, notes) {
     notes.push(`MN standard deduction ${fmtD(std)} reflects the Worksheet A/B limitation (AGI over $238,950: reduced by the lesser of 3%/10% of the excess or 80%)`);
   }
   const deps = input.mnDependents ?? 0;
-  const l5 = deps > 0 ? rd16(evalStateTax("us.mn.exemptions", 0n, {
+  const l5 = deps > 0 ? rd17(evalStateTax("us.mn.exemptions", 0n, {
     mnDependents: deps,
     mnAgi: fagi,
     isClaimedAsDependent: input.claimedAsDependent === true
   })) : 0n;
   if (deps > 0 && l5 < BigInt(deps) * 520000n)
     notes.push(`MN exemptions phased: ${deps} \xD7 $5,200 reduced to ${fmtD(l5)} (2% per $2,500 ceil-step of AGI over the threshold)`);
-  const l6 = rd16(c(input.mnStateRefund));
-  const taxableSs = rd16(c(input.taxableSocialSecurity));
+  const l6 = rd17(c(input.mnStateRefund));
+  const taxableSs = rd17(c(input.taxableSocialSecurity));
   let ssSub = 0n;
   if (taxableSs > 0n) {
-    const simplified = rd16(evalStateTax("us.mn.social_security_subtraction", 0n, { mnAgi: fagi, mnTaxableSs: taxableSs }));
-    const alternative = rd16(c(input.mnSsAlternativeMethod));
-    const rrOffset = rd16(c(input.mnRrTier1Offset));
-    const simplifiedNet = max011(simplified - rrOffset);
+    const simplified = rd17(evalStateTax("us.mn.social_security_subtraction", 0n, { mnAgi: fagi, mnTaxableSs: taxableSs }));
+    const alternative = rd17(c(input.mnSsAlternativeMethod));
+    const rrOffset = rd17(c(input.mnRrTier1Offset));
+    const simplifiedNet = max012(simplified - rrOffset);
     const alternativeNet = alternative;
     if (rrOffset > 0n)
       notes.push(`MN SS subtraction reduced by ${fmtD(rrOffset)} of Tier 1 Railroad Retirement benefits already subtracted on M1M line 17 (worksheet steps 25-29 \u2014 no double subtraction)`);
     ssSub = alternativeNet > simplifiedNet ? alternativeNet : simplifiedNet;
     notes.push(ssSub === alternative && alternative > 0n ? `MN Social Security subtraction ${fmtD(ssSub)} \u2014 the M1M ALTERNATIVE method beat the simplified method` : `MN Social Security subtraction ${fmtD(ssSub)} (simplified method: full below the AGI threshold, then 10% steps per $4,000 of excess${alternative === 0n && fagi > (joint ? 10832000n : mfs ? 5416000n : 8449000n) ? "; compute the M1M alternative method too and pass mnSsAlternativeMethod if greater" : ""})`);
   }
-  const l7 = rd16(c(input.mnSubtractions)) + ssSub;
+  const l7 = rd17(c(input.mnSubtractions)) + ssSub;
   const l8 = l4 + l5 + l6 + l7;
-  const l9 = max011(l3 - l8);
-  const l10 = rd16(evalStateTax("us.mn.income_tax", l9));
-  const l11 = rd16(c(input.mnAmt));
+  const l9 = max012(l3 - l8);
+  const l10 = rd17(evalStateTax("us.mn.income_tax", l9));
+  const l11 = rd17(c(input.mnAmt));
   if (l11 > 0n)
     notes.push(`MN alternative minimum tax ${fmtD(l11)} (Schedule M1MT, 6.75% \u2014 agent-computed)`);
   const l12 = l10 + l11;
   const l13 = l12;
-  const niit = c(input.mnNetInvestmentIncome) > 0n ? rd16(evalStateTax("us.mn.niit", 0n, { mnNetInvestmentIncome: c(input.mnNetInvestmentIncome) })) : 0n;
+  const niit = c(input.mnNetInvestmentIncome) > 0n ? rd17(evalStateTax("us.mn.niit", 0n, { mnNetInvestmentIncome: c(input.mnNetInvestmentIncome) })) : 0n;
   if (niit > 0n)
     notes.push(`MN net investment income tax ${fmtD(niit)} (Schedule NIIT: 1% over $1,000,000, TY2024+; attach federal Form 8960 and check M1 box 14a(d))`);
-  const l14a = rd16(c(input.mnOtherTaxes14a)) + niit;
-  const l14b = rd16(c(input.mnAdvanceCtcRepayment));
+  const l14a = rd17(c(input.mnOtherTaxes14a)) + niit;
+  const l14b = rd17(c(input.mnAdvanceCtcRepayment));
   if (l14b > 0n)
     notes.push(`MN line 14b: repayment of advance Child Tax Credit ${fmtD(l14b)} (2025 reconciliation of the advance-payment election)`);
   const l15 = l13 + l14a + l14b;
-  const l16 = rd16(c(input.nonrefundableCredits));
-  const l17 = max011(l15 - l16);
-  const l18 = rd16(c(input.mnWildlifeContribution));
+  const l16 = rd17(c(input.nonrefundableCredits));
+  const l17 = max012(l15 - l16);
+  const l18 = rd17(c(input.mnWildlifeContribution));
   const l19 = l17 + l18;
-  const l20 = rd16(c(input.stateWithholding));
-  const l21 = rd16(c(input.estimatedPayments)) + rd16(c(input.extensionPayment)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l22 = rd16(c(input.refundableCredits));
+  const l20 = rd17(c(input.stateWithholding));
+  const l21 = rd17(c(input.estimatedPayments)) + rd17(c(input.extensionPayment)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l22 = rd17(c(input.refundableCredits));
   if (l22 > 0n)
     notes.push("MN line 22 refundable credits (Schedule M1REF): Child and Working Family Credits (M1CWFC/M1DQC), the Renter's Credit (M1RENT \u2014 household income under $77,570, max $2,720, CRP attached), dependent care (M1CD), K-12 education (M1ED), stillborn-child credit \u2014 agent-computed per the schedules with disclosure");
   const l23 = l20 + l21 + l22;
-  const l27 = rd16(c(input.mnUnderpaymentPenalty));
-  const l28 = rd16(c(input.mnPenaltyInterest));
+  const l27 = rd17(c(input.mnUnderpaymentPenalty));
+  const l28 = rd17(c(input.mnPenaltyInterest));
   const net = l23 - l19 - l27;
-  const l24 = max011(net);
-  const l30 = rd16(c(input.mnAppliedToNextYear));
-  const l29 = max011(l24 - l30);
-  const owe = max011(-net) + l28;
+  const l24 = max012(net);
+  const l30 = rd17(c(input.mnAppliedToNextYear));
+  const l29 = max012(l24 - l30);
+  const owe = max012(-net) + l28;
   return {
     "1_federal_agi": fmtD(l1),
     ...l2 !== 0n ? { "2_additions": fmtD(l2) } : {},
@@ -33015,40 +33952,40 @@ var DEP_STD_MIN = 135000n;
 var DEP_STD_ADDITION = 45000n;
 function composeWI(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const mfs = isMfs3(input);
+  const mfs = isMfs4(input);
   const fagi = c(input.federalAGI);
-  const l1 = rd16(fagi);
-  const l2 = rd16(c(input.wiScheduleIAdjustments));
+  const l1 = rd17(fagi);
+  const l2 = rd17(c(input.wiScheduleIAdjustments));
   if (l2 !== 0n)
     notes.push(`WI Schedule I adjustment ${fmtD(l2)} (Wisconsin conforms to the IRC as of December 31, 2022 \u2014 post-2022 federal changes incl. the 2025 OBBBA need Schedule I conversion)`);
   const l3 = l1 + l2;
-  const l4 = rd16(c(input.additions));
+  const l4 = rd17(c(input.additions));
   const l5 = l3 + l4;
-  const ss2 = rd16(c(input.taxableSocialSecurity));
+  const ss2 = rd17(c(input.taxableSocialSecurity));
   if (ss2 > 0n)
     notes.push(`WI SB line 4: federally taxable Social Security ${fmtD(ss2)} subtracted (Wisconsin never taxes it)`);
-  const cgSub = rd16(c(input.wiCapitalGainSubtraction));
+  const cgSub = rd17(c(input.wiCapitalGainSubtraction));
   if (cgSub > 0n)
     notes.push(`WI SB line 5 capital gain subtraction ${fmtD(cgSub)} (Schedule WD: 30% net LTCG exclusion, 60% farm; loss limit $3,000/$1,500-MFS for TY2023+)`);
-  const ret67 = c(input.wiRetirement67Income) > 0n ? rd16(evalStateTax("us.wi.retirement_subtraction_67", 0n, {
+  const ret67 = c(input.wiRetirement67Income) > 0n ? rd17(evalStateTax("us.wi.retirement_subtraction_67", 0n, {
     wiRetirementIncome67: c(input.wiRetirement67Income),
     wiBothSpouses67: input.wiBothSpouses67 === true
   })) : 0n;
   const creditsForfeited = ret67 > 0n;
   if (creditsForfeited)
     notes.push(`WI SB line 16 retirement subtraction ${fmtD(ret67)} (2025 Act 15, 67+, cap $${input.wiBothSpouses67 === true && joint ? "48,000" : "24,000"}) \u2014 ALL Form 1 credits on lines 13-20 and 30-35 and Schedule CR are FORFEITED (including carryforwards); compare both ways before electing`);
-  const l6 = rd16(c(input.subtractions)) + ss2 + cgSub + ret67;
+  const l6 = rd17(c(input.subtractions)) + ss2 + cgSub + ret67;
   const l7 = l5 - l6;
-  let l8 = rd16(evalStateTax("us.wi.standard_deduction", 0n, { wiIncome: l7 }));
+  let l8 = rd17(evalStateTax("us.wi.standard_deduction", 0n, { wiIncome: l7 }));
   if (input.claimedAsDependent === true) {
-    const earned2 = rd16(c(input.wiDependentEarnedIncome));
+    const earned2 = rd17(c(input.wiDependentEarnedIncome));
     const limit = earned2 + DEP_STD_ADDITION < DEP_STD_MIN ? DEP_STD_MIN : earned2 + DEP_STD_ADDITION;
     if (limit < l8) {
       l8 = limit;
       notes.push(`WI dependent standard deduction ${fmtD(l8)} (worksheet: greater of $1,350 or earned income + $450, capped at the table amount)`);
     }
   }
-  const l9 = max011(l7 - l8);
+  const l9 = max012(l7 - l8);
   const nExemptions = input.exemptions ?? (joint ? 2 : 1);
   const boxes65 = BigInt(input.wiAge65Boxes ?? 0);
   const l10a = BigInt(nExemptions) * EXEMPTION3;
@@ -33058,8 +33995,8 @@ function composeWI(input, evalStateTax, notes) {
     notes.push("WI exemptions: a filer claimable as a dependent gets NO $700 exemption for themself \u2014 the exemptions count should exclude them (line 10a instructions)");
   if (boxes65 > 0n && nExemptions === 0)
     notes.push("WI line 10b: the $250 age-65 exemption is allowed only for a person allowed the $700 line 10a exemption \u2014 verify the boxes");
-  const l11 = max011(l9 - l10c);
-  const l12 = rd16(evalStateTax("us.wi.income_tax", l11));
+  const l11 = max012(l9 - l10c);
+  const l12 = rd17(evalStateTax("us.wi.income_tax", l11));
   const forfeit = (v, label) => {
     if (creditsForfeited && v > 0n) {
       notes.push(`WI ${label} forced to $0 \u2014 forfeited by the SB line 16 retirement subtraction election`);
@@ -33067,12 +34004,12 @@ function composeWI(input, evalStateTax, notes) {
     }
     return v;
   };
-  const itemizedComponents = rd16(c(input.wiItemizedComponents));
-  const l13 = forfeit(itemizedComponents > l8 ? rd16((itemizedComponents - l8) * 5n / 100n) : 0n, "itemized deduction credit");
-  const l14 = forfeit(rd16(c(input.wi2441Credit)), "additional child and dependent care credit");
-  const l15 = forfeit(rd16(rd16(c(input.wiBlindWorkerExpenses)) * 50n / 100n), "blind worker transportation credit");
+  const itemizedComponents = rd17(c(input.wiItemizedComponents));
+  const l13 = forfeit(itemizedComponents > l8 ? rd17((itemizedComponents - l8) * 5n / 100n) : 0n, "itemized deduction credit");
+  const l14 = forfeit(rd17(c(input.wi2441Credit)), "additional child and dependent care credit");
+  const l15 = forfeit(rd17(rd17(c(input.wiBlindWorkerExpenses)) * 50n / 100n), "blind worker transportation credit");
   const sptcInputs = c(input.wiRentHeatIncluded) + c(input.wiRentHeatNotIncluded) + c(input.wiPropertyTaxesPaid);
-  let l16 = forfeit(sptcInputs > 0n ? rd16(evalStateTax("us.wi.school_property_tax_credit", 0n, {
+  let l16 = forfeit(sptcInputs > 0n ? rd17(evalStateTax("us.wi.school_property_tax_credit", 0n, {
     wiRentHeatIncluded: c(input.wiRentHeatIncluded),
     wiRentHeatNotIncluded: c(input.wiRentHeatNotIncluded),
     wiPropertyTaxesPaid: c(input.wiPropertyTaxesPaid)
@@ -33090,21 +34027,21 @@ function composeWI(input, evalStateTax, notes) {
     if (!joint)
       notes.push("WI married couple credit $0: joint returns with two earners only");
     else
-      l18 = forfeit(rd16(evalStateTax("us.wi.married_couple_credit", 0n, { wiLowerQualifiedEarnedIncome: c(input.wiLowerQualifiedEarnedIncome) })), "married couple credit");
+      l18 = forfeit(rd17(evalStateTax("us.wi.married_couple_credit", 0n, { wiLowerQualifiedEarnedIncome: c(input.wiLowerQualifiedEarnedIncome) })), "married couple credit");
   }
-  const l19 = forfeit(rd16(c(input.nonrefundableCredits)), "Schedule CR nonrefundable credits");
-  const l20 = forfeit(rd16(c(input.wiOtherStateCredit)), "credit for net tax paid to another state");
+  const l19 = forfeit(rd17(c(input.nonrefundableCredits)), "Schedule CR nonrefundable credits");
+  const l20 = forfeit(rd17(c(input.wiOtherStateCredit)), "credit for net tax paid to another state");
   const l21 = l13 + l14 + l15 + l16 + l17 + l18 + l19 + l20;
-  const l22 = max011(l12 - l21);
-  const l23 = rd16(c(input.useTax));
-  const l24 = rd16(c(input.wiDonations));
-  const l25 = rd16(rd16(c(input.wiFederalRetirementPenalties)) * 33n / 100n);
+  const l22 = max012(l12 - l21);
+  const l23 = rd17(c(input.useTax));
+  const l24 = rd17(c(input.wiDonations));
+  const l25 = rd17(rd17(c(input.wiFederalRetirementPenalties)) * 33n / 100n);
   if (l25 > 0n)
     notes.push(`WI line 25: 33% of the federal retirement-plan/IRA/MSA penalties = ${fmtD(l25)}`);
-  const l26 = rd16(c(input.wiOtherPenalties));
+  const l26 = rd17(c(input.wiOtherPenalties));
   const l27 = l22 + l23 + l24 + l25 + l26;
-  const l28 = rd16(c(input.stateWithholding));
-  const l29 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited));
+  const l28 = rd17(c(input.stateWithholding));
+  const l29 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited));
   let l30 = 0n;
   const eicBase = input.wiFederalEicForWi !== void 0 ? c(input.wiFederalEicForWi) : c(input.federalEITC);
   const kids = input.wiEicQualifyingChildren ?? 0;
@@ -33112,7 +34049,7 @@ function composeWI(input, evalStateTax, notes) {
     if (mfs)
       notes.push("WI earned income credit $0: married filing separately is ineligible (unless IRC \xA7 7703(b) applies \u2014 then file as 'head of household, married')");
     else {
-      l30 = rd16(evalStateTax("us.wi.eic", 0n, { wiFederalEicForWi: eicBase, wiQualifyingChildren: kids }));
+      l30 = rd17(evalStateTax("us.wi.eic", 0n, { wiFederalEicForWi: eicBase, wiQualifyingChildren: kids }));
       if (creditsForfeited) {
         notes.push("WI earned income credit forced to $0 \u2014 forfeited by the SB line 16 retirement subtraction election");
         l30 = 0n;
@@ -33124,18 +34061,18 @@ function composeWI(input, evalStateTax, notes) {
   if (c(input.wiVeteransCredit) > 0n && (c(input.wiFarmlandCredit) > 0n || c(input.wiHomesteadCredit) > 0n)) {
     notes.push("WI conflict: farmland preservation and homestead credits are NOT claimable together with the veterans and surviving spouses credit \u2014 resolve before filing");
   }
-  const l31 = forfeit(rd16(c(input.wiFarmlandCredit)), "farmland preservation credit");
-  const l32 = forfeit(rd16(c(input.wiRepaymentCredit)), "repayment credit");
-  const l33 = forfeit(rd16(c(input.wiHomesteadCredit)), "homestead credit");
-  const l34 = forfeit(rd16(c(input.wiVeteransCredit)), "veterans and surviving spouses property tax credit");
-  const l35 = forfeit(rd16(c(input.refundableCredits)), "Schedule CR refundable credits");
+  const l31 = forfeit(rd17(c(input.wiFarmlandCredit)), "farmland preservation credit");
+  const l32 = forfeit(rd17(c(input.wiRepaymentCredit)), "repayment credit");
+  const l33 = forfeit(rd17(c(input.wiHomesteadCredit)), "homestead credit");
+  const l34 = forfeit(rd17(c(input.wiVeteransCredit)), "veterans and surviving spouses property tax credit");
+  const l35 = forfeit(rd17(c(input.refundableCredits)), "Schedule CR refundable credits");
   const l37 = l28 + l29 + l30 + l31 + l32 + l33 + l34 + l35;
   const l39 = l37;
-  const l40 = max011(l39 - l27);
-  const l42 = rd16(c(input.wiAppliedToNextYear));
-  const l41 = max011(l40 - l42);
-  const l43 = max011(l27 - l39);
-  const l44 = rd16(c(input.wiScheduleUInterest));
+  const l40 = max012(l39 - l27);
+  const l42 = rd17(c(input.wiAppliedToNextYear));
+  const l41 = max012(l40 - l42);
+  const l43 = max012(l27 - l39);
+  const l44 = rd17(c(input.wiScheduleUInterest));
   const l45 = l43 + l44;
   return {
     "1_federal_agi": fmtD(l1),
@@ -33170,32 +34107,32 @@ function composeWI(input, evalStateTax, notes) {
 
 // ../compose/dist/nc.js
 function composeNC(input, evalStateTax, notes) {
-  const fagi = rd16(c(input.federalAGI));
+  const fagi = rd17(c(input.federalAGI));
   const l6 = fagi;
-  const l7 = rd16(c(input.additions));
+  const l7 = rd17(c(input.additions));
   const l8 = l6 + l7;
-  const taxableSS = rd16(c(input.taxableSocialSecurity));
+  const taxableSS = rd17(c(input.taxableSocialSecurity));
   if (taxableSS > 0n)
     notes.push("NC Schedule S line 19: taxable Social Security deducted automatically (NC never taxes it)");
-  const bailey = rd16(c(input.ncBaileyRetirement));
+  const bailey = rd17(c(input.ncBaileyRetirement));
   if (bailey > 0n)
     notes.push("NC Schedule S line 20: Bailey settlement retirement deducted (5+ years of creditable service as of Aug 12, 1989 \u2014 attested; enclose the 1099-R)");
-  const military = rd16(c(input.ncMilitaryRetirement));
+  const military = rd17(c(input.ncMilitaryRetirement));
   if (military > 0n)
     notes.push("NC Schedule S line 21: military retirement deducted (20+ years of service OR Chapter 61 medical retirement \u2014 attested; never also on the Bailey line)");
-  const usInterest = rd16(c(input.ncUsObligationInterest));
-  const l9 = rd16(c(input.subtractions)) + taxableSS + bailey + military + usInterest;
+  const usInterest = rd17(c(input.ncUsObligationInterest));
+  const l9 = rd17(c(input.subtractions)) + taxableSS + bailey + military + usInterest;
   const nQc = input.ncQualifyingChildren ?? 0;
   const extra = {
     ncFederalAgi: fagi,
     qualifyingChildren: nQc
   };
-  const l10b = nQc > 0 ? rd16(evalStateTax("us.nc.child_deduction", 0n, extra)) : 0n;
-  const standard = rd16(evalStateTax("us.nc.standard_deduction", 0n, extra));
+  const l10b = nQc > 0 ? rd17(evalStateTax("us.nc.child_deduction", 0n, extra)) : 0n;
+  const standard = rd17(evalStateTax("us.nc.standard_deduction", 0n, extra));
   const wantsItemized = c(input.ncMortgageInterest) > 0n || c(input.ncRealEstateTaxes) > 0n || c(input.ncCharitable) > 0n || c(input.ncMedicalExpenses) > 0n || c(input.ncClaimOfRightRepayment) > 0n;
   let l11 = standard;
   if (wantsItemized) {
-    const itemized = rd16(evalStateTax("us.nc.itemized_deductions", 0n, {
+    const itemized = rd17(evalStateTax("us.nc.itemized_deductions", 0n, {
       ...extra,
       ncMortgageInterest: c(input.ncMortgageInterest),
       ncRealEstateTaxes: c(input.ncRealEstateTaxes),
@@ -33213,24 +34150,24 @@ function composeNC(input, evalStateTax, notes) {
   const l12a = l9 + l10b + l11;
   const l12b = l8 - l12a;
   const l14 = l12b;
-  const l15 = rd16(evalStateTax("us.nc.income_tax", max011(l14)));
-  const creditsRaw = rd16(c(input.ncTaxCredits)) + rd16(c(input.nonrefundableCredits));
+  const l15 = rd17(evalStateTax("us.nc.income_tax", max012(l14)));
+  const creditsRaw = rd17(c(input.ncTaxCredits)) + rd17(c(input.nonrefundableCredits));
   const l16 = min22(creditsRaw, l15);
   if (creditsRaw > l16)
     notes.push("NC line 16 capped at the line 15 tax (D-400TC credits are nonrefundable)");
   const l17 = l15 - l16;
-  const l18 = input.ncUseTaxEstimate === true ? rd16(evalStateTax("us.nc.use_tax", max011(l14))) : rd16(c(input.useTax));
+  const l18 = input.ncUseTaxEstimate === true ? rd17(evalStateTax("us.nc.use_tax", max012(l14))) : rd17(c(input.useTax));
   if (input.ncUseTaxEstimate === true)
     notes.push(`NC line 18: no-receipts use tax estimate ${fmtD(l18)} from the printed table (keyed to line 14 taxable income)`);
   const l19 = l17 + l18;
-  const l20 = rd16(c(input.stateWithholding)) + rd16(c(input.spouseStateWithholding));
-  const l21 = rd16(c(input.estimatedPayments)) + rd16(c(input.extensionPayment)) + rd16(c(input.ncPartnershipPayments)) + rd16(c(input.ncScorpPayments));
+  const l20 = rd17(c(input.stateWithholding)) + rd17(c(input.spouseStateWithholding));
+  const l21 = rd17(c(input.estimatedPayments)) + rd17(c(input.extensionPayment)) + rd17(c(input.ncPartnershipPayments)) + rd17(c(input.ncScorpPayments));
   const l23 = l20 + l21;
   const l25 = l23;
-  const l26a = max011(l19 - l25);
-  const l26e = rd16(c(input.ncUnderpaymentInterest));
+  const l26a = max012(l19 - l25);
+  const l26e = rd17(c(input.ncUnderpaymentInterest));
   const l27 = l26a + l26e;
-  const l28 = max011(l25 - l19);
+  const l28 = max012(l25 - l19);
   notes.push("NC part-year/nonresident Schedule PN proration is out of scope \u2014 resident return composed");
   return {
     "6_federal_agi": fmtD(l6),
@@ -33281,7 +34218,7 @@ var OTHER_RETIREMENT_EARNED_CAP = 300000n;
 var PENSION_FULL_TIER_MAX = 10000000n;
 var EITC_AGE_DECOUPLED_FLAT = 26000n;
 var cat2 = (v, label, notes) => {
-  const x = rd16(c(v));
+  const x = rd17(c(v));
   if (x < 0n) {
     notes.push(`NJ ${label}: net category loss not entered (NJ-1040 p.7 \u2014 a loss never offsets another category and never carries over)`);
     return 0n;
@@ -33289,7 +34226,7 @@ var cat2 = (v, label, notes) => {
   return x;
 };
 function composeNJ(input, evalStateTax, notes) {
-  const mfsSameHome = isMfs3(input) && input.njMfsSameHome === true;
+  const mfsSameHome = isMfs4(input) && input.njMfsSameHome === true;
   const joint = input.filingStatus === "mfj";
   const thresholdJoint = input.filingStatus === "mfj" || input.filingStatus === "hoh" || input.filingStatus === "qss";
   const l15 = cat2(input.njWages ?? input.wages, "line 15 wages", notes);
@@ -33297,12 +34234,12 @@ function composeNJ(input, evalStateTax, notes) {
     notes.push("NJ line 15: W-2 Box 16 state wages not transcribed \u2014 federal wages used (401(k) deferrals reduce both boxes for NJ, but cafeteria/125 and some benefits differ; pass njWages when Box 16 differs)");
   }
   const l16a = cat2(input.njTaxableInterest, "line 16a interest", notes);
-  const l16b = rd16(c(input.njTaxExemptInterest));
+  const l16b = rd17(c(input.njTaxExemptInterest));
   const l17 = cat2(input.njDividends, "line 17 dividends", notes);
   const l18 = cat2(input.njBusinessNet, "line 18 business", notes);
   const l19 = cat2(input.njDispositionNet, "line 19 disposition of property", notes);
   const l20a = cat2(input.njPension, "line 20a pensions", notes);
-  const l20b = rd16(c(input.njPensionExcludable));
+  const l20b = rd17(c(input.njPensionExcludable));
   const l21 = cat2(input.njPartnershipNet, "line 21 partnership", notes);
   const l22 = cat2(input.njScorpNet, "line 22 S corporation", notes);
   const l23 = cat2(input.njRentRoyaltyNet, "line 23 rents/royalties", notes);
@@ -33310,20 +34247,20 @@ function composeNJ(input, evalStateTax, notes) {
   const l25 = cat2(input.njAlimonyReceived, "line 25 alimony received", notes);
   const l26 = cat2(input.njOtherIncome, "line 26 other", notes);
   const l27 = l15 + l16a + l17 + l18 + l19 + l20a + l21 + l22 + l23 + l24 + l25 + l26;
-  const eligiblePension = input.njPensionEligibleAmount !== void 0 ? rd16(c(input.njPensionEligibleAmount)) : l20a;
-  const l28a = min22(rd16(evalStateTax("us.nj.pension_exclusion", 0n, {
+  const eligiblePension = input.njPensionEligibleAmount !== void 0 ? rd17(c(input.njPensionEligibleAmount)) : l20a;
+  const l28a = min22(rd17(evalStateTax("us.nj.pension_exclusion", 0n, {
     njPensionIncome: eligiblePension,
     njTotalIncome: l27,
     njPensionEligible: input.njPensionEligible === true
   })), l20a);
   let l28b = 0n;
   if (input.njOtherRetirementExclusion !== void 0) {
-    l28b = rd16(c(input.njOtherRetirementExclusion));
+    l28b = rd17(c(input.njOtherRetirementExclusion));
   } else if (input.njOtherRetirementEligible === true) {
     const earned2 = l15 + l18 + l21 + l22;
     if (earned2 <= OTHER_RETIREMENT_EARNED_CAP && l27 <= PENSION_FULL_TIER_MAX) {
-      const cap = joint ? 10000000n : isMfs3(input) ? 5000000n : 7500000n;
-      l28b = max011(cap - l28a);
+      const cap = joint ? 10000000n : isMfs4(input) ? 5000000n : 7500000n;
+      l28b = max012(cap - l28a);
       notes.push("NJ line 28b: unclaimed Other Retirement Income Exclusion computed per Worksheet D (62+, earned income \u2264 $3,000, line 27 \u2264 $100,000)");
     } else if (earned2 > OTHER_RETIREMENT_EARNED_CAP) {
       notes.push("NJ line 28b $0: earned income (lines 15+18+21+22) exceeds the $3,000 Worksheet D gate");
@@ -33336,7 +34273,7 @@ function composeNJ(input, evalStateTax, notes) {
     notes.push("NJ line 28b includes the Special Exclusion (never eligible for Social Security/Railroad Retirement \u2014 attested)");
   }
   const l28c = l28a + l28b;
-  const l29 = max011(l27 - l28c);
+  const l29 = max012(l27 - l28c);
   const threshold2 = thresholdJoint ? 2000000n : 1000000n;
   const belowThreshold = l29 <= threshold2;
   if (belowThreshold) {
@@ -33345,31 +34282,31 @@ function composeNJ(input, evalStateTax, notes) {
   const regularCount = BigInt(1 + (joint ? 1 : 0) + (input.njDomesticPartner === true ? 1 : 0));
   const l13 = regularCount * EXEMPTION_REGULAR + BigInt(input.njSeniorCount ?? 0) * EXEMPTION_SENIOR + BigInt(input.njBlindCount ?? 0) * EXEMPTION_BLIND + BigInt(input.njVeteranCount ?? 0) * EXEMPTION_VETERAN + BigInt(input.dependents ?? 0) * EXEMPTION_DEPENDENT + BigInt(input.njCollegeDependents ?? 0) * EXEMPTION_COLLEGE;
   const l30 = l13;
-  const medicalFloor = rd16(l29 * 2n / 100n);
-  const l31 = max011(rd16(c(input.njMedicalExpenses)) - medicalFloor) + rd16(c(input.njArcherMsa)) + rd16(c(input.njSeHealthInsurance));
+  const medicalFloor = rd17(l29 * 2n / 100n);
+  const l31 = max012(rd17(c(input.njMedicalExpenses)) - medicalFloor) + rd17(c(input.njArcherMsa)) + rd17(c(input.njSeHealthInsurance));
   if (l31 === 0n && c(input.njMedicalExpenses) > 0n) {
     notes.push(`NJ line 31 $0: medical expenses do not exceed the 2% floor (${fmtD(medicalFloor)})`);
   }
-  const l32 = rd16(c(input.njAlimonyPaid));
-  const l33 = rd16(c(input.njConservationContribution));
-  const l34 = rd16(c(input.njHezDeduction));
-  const l35 = rd16(c(input.njAbcaAdjustment));
-  const l36 = min22(rd16(c(input.njOrganDonationExpenses)), ORGAN_DONATION_CAP);
+  const l32 = rd17(c(input.njAlimonyPaid));
+  const l33 = rd17(c(input.njConservationContribution));
+  const l34 = rd17(c(input.njHezDeduction));
+  const l35 = rd17(c(input.njAbcaAdjustment));
+  const l36 = min22(rd17(c(input.njOrganDonationExpenses)), ORGAN_DONATION_CAP);
   let l37a = 0n, l37b = 0n, l37c = 0n;
   const wantsCollege = c(input.njNjbestContributions) > 0n || c(input.njNjclassPaid) > 0n || c(input.njTuitionPaid) > 0n;
   if (wantsCollege && l29 > COLLEGE_INCOME_CAP) {
     notes.push("NJ lines 37a-37c $0: the College Affordability deductions require gross income of $200,000 or less");
   } else {
-    l37a = min22(rd16(c(input.njNjbestContributions)), NJBEST_CAP);
-    l37b = min22(rd16(c(input.njNjclassPaid)), NJCLASS_CAP);
-    l37c = min22(rd16(c(input.njTuitionPaid)), TUITION_CAP);
+    l37a = min22(rd17(c(input.njNjbestContributions)), NJBEST_CAP);
+    l37b = min22(rd17(c(input.njNjclassPaid)), NJCLASS_CAP);
+    l37c = min22(rd17(c(input.njTuitionPaid)), TUITION_CAP);
   }
   const l38 = l30 + l31 + l32 + l33 + l34 + l35 + l36 + l37a + l37b + l37c;
-  const l39 = max011(l29 - l38);
-  const l40a = rd16(c(input.njPropertyTaxesPaid)) + rd16(rd16(c(input.njRentPaid)) * 18n / 100n);
+  const l39 = max012(l29 - l38);
+  const l40a = rd17(c(input.njPropertyTaxesPaid)) + rd17(rd17(c(input.njRentPaid)) * 18n / 100n);
   if (c(input.njRentPaid) > 0n)
     notes.push("NJ line 40a includes 18% of rent paid (tenant property-tax equivalent)");
-  const taxOn = (ti) => belowThreshold ? 0n : rd16(evalStateTax("us.nj.income_tax", max011(ti)));
+  const taxOn = (ti) => belowThreshold ? 0n : rd17(evalStateTax("us.nj.income_tax", max012(ti)));
   let l41 = 0n;
   let l56 = 0n;
   if (l40a > 0n && !belowThreshold) {
@@ -33386,46 +34323,46 @@ function composeNJ(input, evalStateTax, notes) {
   } else if (l40a > 0n && belowThreshold) {
     notes.push("NJ property tax: income at or below the filing threshold \u2014 seniors/blind/disabled filers may still claim the $50 credit via Form NJ-1040-HW (not composed here)");
   }
-  const l42 = max011(l39 - l41);
+  const l42 = max012(l39 - l41);
   const l43 = taxOn(l42);
-  const cojRaw = rd16(c(input.njCojCredit));
+  const cojRaw = rd17(c(input.njCojCredit));
   const l44 = min22(cojRaw, l43);
   if (cojRaw > l44)
     notes.push("NJ line 44 capped at the line 43 tax (Schedule NJ-COJ credit cannot exceed the tax)");
   const l45 = l43 - l44;
-  const l46 = rd16(c(input.njShelteredWorkshopCredit));
-  const l47 = rd16(c(input.njGoldStarCredit));
-  const l48 = rd16(c(input.njOrganDonorEmployerCredit));
+  const l46 = rd17(c(input.njShelteredWorkshopCredit));
+  const l47 = rd17(c(input.njGoldStarCredit));
+  const l48 = rd17(c(input.njOrganDonorEmployerCredit));
   const l49 = l46 + l47 + l48;
-  const l50 = max011(l45 - l49);
-  const l51 = rd16(c(input.useTax));
-  const l52 = rd16(c(input.njUnderpaymentInterest));
-  let l53c = rd16(c(input.njSrp));
+  const l50 = max012(l45 - l49);
+  const l51 = rd17(c(input.useTax));
+  const l52 = rd17(c(input.njUnderpaymentInterest));
+  let l53c = rd17(c(input.njSrp));
   if (belowThreshold && l53c > 0n) {
     l53c = 0n;
     notes.push("NJ line 53c $0: income at or below the filing threshold is exempt from the Shared Responsibility Payment");
   }
   const l54 = l50 + l51 + l52 + l53c;
-  const l55 = rd16(c(input.stateWithholding));
-  const l57 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited)) + rd16(c(input.extensionPayment));
-  const fedEITC = rd16(c(input.federalEITC));
-  const l58 = input.njEitcOverride !== void 0 ? rd16(c(input.njEitcOverride)) : input.njEitcAgeDecoupled === true && fedEITC === 0n ? EITC_AGE_DECOUPLED_FLAT : rd16(fedEITC * 40n / 100n);
+  const l55 = rd17(c(input.stateWithholding));
+  const l57 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited)) + rd17(c(input.extensionPayment));
+  const fedEITC = rd17(c(input.federalEITC));
+  const l58 = input.njEitcOverride !== void 0 ? rd17(c(input.njEitcOverride)) : input.njEitcAgeDecoupled === true && fedEITC === 0n ? EITC_AGE_DECOUPLED_FLAT : rd17(fedEITC * 40n / 100n);
   if (l58 === EITC_AGE_DECOUPLED_FLAT && input.njEitcAgeDecoupled === true && fedEITC === 0n) {
     notes.push("NJ line 58: flat $260 NJEITC (18+, no qualifying child, met all federal EIC requirements except age \u2014 attested)");
   }
-  const l59 = rd16(c(input.njExcessUiWfSwf));
-  const l60 = rd16(c(input.njExcessDi));
-  const l61 = rd16(c(input.njExcessFli));
-  const l62 = rd16(c(input.njWwcCredit));
-  const l63 = rd16(c(input.njBaitCredit));
-  const l64 = c(input.njFederalCdcc) > 0n ? rd16(evalStateTax("us.nj.cdcc", l42, { njFederalCdcc: c(input.njFederalCdcc) })) : 0n;
-  if (isMfs3(input) && l64 > 0n) {
+  const l59 = rd17(c(input.njExcessUiWfSwf));
+  const l60 = rd17(c(input.njExcessDi));
+  const l61 = rd17(c(input.njExcessFli));
+  const l62 = rd17(c(input.njWwcCredit));
+  const l63 = rd17(c(input.njBaitCredit));
+  const l64 = c(input.njFederalCdcc) > 0n ? rd17(evalStateTax("us.nj.cdcc", l42, { njFederalCdcc: c(input.njFederalCdcc) })) : 0n;
+  if (isMfs4(input) && l64 > 0n) {
     notes.push("NJ line 64 (MFS): the CDCC requires meeting the federal \xA7 21(e) living-apart exceptions \u2014 attested by supplying njFederalCdcc");
   }
-  const l65 = rd16(evalStateTax("us.nj.ctc", l42, { njChildrenUnder6: input.njChildrenUnder6 ?? 0 }));
+  const l65 = rd17(evalStateTax("us.nj.ctc", l42, { njChildrenUnder6: input.njChildrenUnder6 ?? 0 }));
   const l66 = l55 + l56 + l57 + l58 + l59 + l60 + l61 + l62 + l63 + l64 + l65;
-  const l67 = max011(l54 - l66);
-  const l68 = max011(l66 - l54);
+  const l67 = max012(l54 - l66);
+  const l68 = max012(l66 - l54);
   notes.push("NJ: ANCHOR / Senior Freeze / Stay NJ property-tax relief is applied for on the separate PAS-1, never on the NJ-1040");
   return {
     "13_total_exemption_amount": fmtD(l13),
@@ -33494,33 +34431,33 @@ var STD_DEDUCTION_HOH = 1120000n;
 var STD_DEDUCTION_SINGLE2 = 800000n;
 var DEPENDENT_EXEMPTION = 100000n;
 function composeNY(input, evalStateTax, notes) {
-  const l1 = rd16(c(input.wages));
-  const l19 = rd16(c(input.federalAGI));
-  const l24 = rd16(l19 + c(input.additions));
-  const ssSub = rd16(c(input.taxableSocialSecurity));
+  const l1 = rd17(c(input.wages));
+  const l19 = rd17(c(input.federalAGI));
+  const l24 = rd17(l19 + c(input.additions));
+  const ssSub = rd17(c(input.taxableSocialSecurity));
   if (ssSub > 0n)
     notes.push(`NY subtraction: federally taxable social security ${fmtD(ssSub)} (IT-201 line 27)`);
-  const l32 = rd16(c(input.subtractions)) + ssSub;
+  const l32 = rd17(c(input.subtractions)) + ssSub;
   const l33 = l24 - l32;
   const l34 = isJoint(input) ? STD_DEDUCTION_JOINT : isHoh(input) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE2;
-  const l37 = max011(l33 - l34 - BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION);
-  const l39 = rd16(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
-  const l43 = rd16(c(input.nyHouseholdCredit));
-  const l44 = max011(l39 - l43);
+  const l37 = max012(l33 - l34 - BigInt(input.dependents ?? 0) * DEPENDENT_EXEMPTION);
+  const l39 = rd17(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
+  const l43 = rd17(c(input.nyHouseholdCredit));
+  const l44 = max012(l39 - l43);
   let nycNet = 0n;
   if (input.nycTaxableIncome !== void 0 && c(input.nycTaxableIncome) > 0n) {
-    const nycTax = rd16(evalStateTax("us.ny.nyc_income_tax", rd16(c(input.nycTaxableIncome)), { useFormulaMethod: true }));
-    nycNet = max011(nycTax - rd16(c(input.nycHouseholdCredit)));
+    const nycTax = rd17(evalStateTax("us.ny.nyc_income_tax", rd17(c(input.nycTaxableIncome)), { useFormulaMethod: true }));
+    nycNet = max012(nycTax - rd17(c(input.nycHouseholdCredit)));
   }
-  const yonkers = rd16(c(input.yonkersSurcharge));
+  const yonkers = rd17(c(input.yonkersSurcharge));
   const l62 = l44 + nycNet + yonkers + c(input.useTax);
   const l72 = c(input.stateWithholding);
   const l73 = c(input.cityWithholding);
   const l74 = c(input.yonkersWithholding);
-  const l75 = c(input.estimatedPayments) + rd16(c(input.extensionPayment));
-  const l76 = l72 + l73 + l74 + l75 + rd16(c(input.refundableCredits));
-  const l77 = max011(l76 - l62);
-  const owed = max011(l62 - l76);
+  const l75 = c(input.estimatedPayments) + rd17(c(input.extensionPayment));
+  const l76 = l72 + l73 + l74 + l75 + rd17(c(input.refundableCredits));
+  const l77 = max012(l76 - l62);
+  const owed = max012(l62 - l76);
   if (owed > 0n)
     notes.push(`balance due ${fmtD(owed)} (IT-201 line 80)`);
   return {
@@ -33550,18 +34487,18 @@ function composeNY(input, evalStateTax, notes) {
 var BID_CAP = 25000000n;
 var BID_CAP_MFS = 12500000n;
 function composeOH(input, evalStateTax, notes) {
-  const fagi = rd16(c(input.federalAGI));
+  const fagi = rd17(c(input.federalAGI));
   const l1 = fagi;
-  const l2a = rd16(c(input.additions));
-  const bizTotal = rd16(c(input.ohBusinessIncome));
-  const line112 = max011(min22(bizTotal, max011(fagi)));
-  const bid = min22(line112, isMfs3(input) ? BID_CAP_MFS : BID_CAP);
+  const l2a = rd17(c(input.additions));
+  const bizTotal = rd17(c(input.ohBusinessIncome));
+  const line112 = max012(min22(bizTotal, max012(fagi)));
+  const bid = min22(line112, isMfs4(input) ? BID_CAP_MFS : BID_CAP);
   if (bid > 0n)
-    notes.push(`OH Business Income Deduction ${fmtD(bid)} (Schedule of Business Income line 13; cap ${isMfs3(input) ? "$125,000 MFS" : "$250,000"})`);
-  const taxableSS = rd16(c(input.taxableSocialSecurity));
+    notes.push(`OH Business Income Deduction ${fmtD(bid)} (Schedule of Business Income line 13; cap ${isMfs4(input) ? "$125,000 MFS" : "$250,000"})`);
+  const taxableSS = rd17(c(input.taxableSocialSecurity));
   if (taxableSS > 0n)
     notes.push("OH Schedule of Adjustments line 16: taxable Social Security deducted automatically (Ohio never taxes it)");
-  const l2b = rd16(c(input.subtractions)) + bid + taxableSS;
+  const l2b = rd17(c(input.subtractions)) + bid + taxableSS;
   const l3 = l1 + l2a - l2b;
   const nExemptions = input.exemptions ?? 1;
   const magi2 = l3 + bid;
@@ -33569,56 +34506,56 @@ function composeOH(input, evalStateTax, notes) {
     ohModifiedAgi: magi2,
     ohExemptionCount: nExemptions
   };
-  const l4 = rd16(evalStateTax("us.oh.exemption_amount", 0n, ohBase));
+  const l4 = rd17(evalStateTax("us.oh.exemption_amount", 0n, ohBase));
   if (input.claimedAsDependent === true) {
     notes.push("OH line 4: a taxpayer claimable as a dependent on another return takes NO exemption for self \u2014 pass the exemptions count accordingly");
   }
-  const l5 = max011(l3 - l4);
-  const line14 = max011(line112 - bid);
+  const l5 = max012(l3 - l4);
+  const line14 = max012(line112 - bid);
   const l6 = min22(line14, l5);
-  const l7 = max011(l5 - l6);
-  const l8a = rd16(evalStateTax("us.oh.income_tax", l7));
-  const l8b = l6 > 0n ? rd16(evalStateTax("us.oh.business_income_tax", 0n, { ohTaxableBusinessIncome: l6 })) : 0n;
+  const l7 = max012(l5 - l6);
+  const l8a = rd17(evalStateTax("us.oh.income_tax", l7));
+  const l8b = l6 > 0n ? rd17(evalStateTax("us.oh.business_income_tax", 0n, { ohTaxableBusinessIncome: l6 })) : 0n;
   const l8c = l8a + l8b;
   const age65 = input.ohAge65OrOlder === true;
-  const sc2 = rd16(evalStateTax("us.oh.retirement_income_credit", 0n, { ...ohBase, ohEligibleRetirementIncome: c(input.ohRetirementIncome) }));
-  const sc4 = rd16(evalStateTax("us.oh.senior_citizen_credit", 0n, { ...ohBase, isAge65OrOlder: age65 }));
-  const sc6 = c(input.ohFederalCdccTentative) > 0n || c(input.ohFederalCdccAllowed) > 0n ? rd16(evalStateTax("us.oh.cdcc", 0n, {
+  const sc2 = rd17(evalStateTax("us.oh.retirement_income_credit", 0n, { ...ohBase, ohEligibleRetirementIncome: c(input.ohRetirementIncome) }));
+  const sc4 = rd17(evalStateTax("us.oh.senior_citizen_credit", 0n, { ...ohBase, isAge65OrOlder: age65 }));
+  const sc6 = c(input.ohFederalCdccTentative) > 0n || c(input.ohFederalCdccAllowed) > 0n ? rd17(evalStateTax("us.oh.cdcc", 0n, {
     ...ohBase,
     ohFederalCdccTentative: c(input.ohFederalCdccTentative),
     ohFederalCdccAllowed: c(input.ohFederalCdccAllowed)
   })) : 0n;
-  const sc9 = rd16(evalStateTax("us.oh.exemption_credit", 0n, ohBase));
-  const scOtherPre = rd16(c(input.ohOtherCreditsPreJfc));
+  const sc9 = rd17(evalStateTax("us.oh.exemption_credit", 0n, ohBase));
+  const scOtherPre = rd17(c(input.ohOtherCreditsPreJfc));
   const sc10 = sc2 + sc4 + sc6 + sc9 + scOtherPre;
-  const sc11 = max011(l8c - sc10);
-  const sc12 = rd16(evalStateTax("us.oh.joint_filing_credit", 0n, {
+  const sc11 = max012(l8c - sc10);
+  const sc12 = rd17(evalStateTax("us.oh.joint_filing_credit", 0n, {
     ...ohBase,
     ohTaxLessCredits: sc11,
     ohBothSpousesHaveQualifyingIncome: input.ohBothSpousesQualifyingIncome === true
   }));
   if (sc12 > 0n)
     notes.push("OH joint filing credit claimed \u2014 include the statement listing each spouse's qualifying income (R.C. 5747.05(E))");
-  const fedEITC = rd16(c(input.federalEITC));
-  const sc13 = input.ohEicOverride !== void 0 ? rd16(c(input.ohEicOverride)) : rd16(fedEITC * 30n / 100n);
-  const scOtherPost = rd16(c(input.nonrefundableCredits));
+  const fedEITC = rd17(c(input.federalEITC));
+  const sc13 = input.ohEicOverride !== void 0 ? rd17(c(input.ohEicOverride)) : rd17(fedEITC * 30n / 100n);
+  const scOtherPost = rd17(c(input.nonrefundableCredits));
   const sc36 = sc12 + sc13 + scOtherPost;
-  const sc38 = rd16(c(input.ohNonresidentCredit));
-  const sc39 = rd16(c(input.ohResidentCredit));
+  const sc38 = rd17(c(input.ohNonresidentCredit));
+  const sc39 = rd17(c(input.ohResidentCredit));
   const sc40 = sc10 + sc36 + sc38 + sc39;
   if (sc36 > sc11)
     notes.push(`OH Schedule of Credits: line 12-35 credits ${fmtD(sc36)} exceed the line 11 remaining tax ${fmtD(sc11)} \u2014 line 40 still reports the full sum (the printed form's line 37 is informational); the excess dies at IT 1040 line 10's zero floor, never refunds`);
   const l9 = sc40;
-  const l10 = max011(l8c - l9);
-  const l11 = rd16(c(input.ohInterestPenalty));
-  const l12 = rd16(c(input.useTax));
+  const l10 = max012(l8c - l9);
+  const l11 = rd17(c(input.ohInterestPenalty));
+  const l12 = rd17(c(input.useTax));
   const l13 = l10 + l11 + l12;
-  const l14 = rd16(c(input.stateWithholding));
-  const l15 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited)) + rd16(c(input.extensionPayment));
-  const l16 = rd16(c(input.refundableCredits));
+  const l14 = rd17(c(input.stateWithholding));
+  const l15 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited)) + rd17(c(input.extensionPayment));
+  const l16 = rd17(c(input.refundableCredits));
   const l17 = l14 + l15 + l16;
-  const l20 = max011(l13 - l17);
-  const l23 = max011(l17 - l13);
+  const l20 = max012(l13 - l17);
+  const l23 = max012(l17 - l13);
   notes.push("OH school district income tax (SD 100) is a SEPARATE return \u2014 if the taxpayer's district levies one (tax.ohio.gov/Finder), compute and disclose it separately");
   notes.push("OH municipal income taxes are separate city levies (RITA/CCA) \u2014 never on the IT 1040");
   if (l23 > 0n && l23 <= 100n)
@@ -33662,28 +34599,28 @@ function composeOH(input, evalStateTax, notes) {
 }
 
 // ../compose/dist/pa.js
-var classLine = (p, s) => p > 0n || s > 0n ? max011(p) + max011(s) : p + s;
+var classLine = (p, s) => p > 0n || s > 0n ? max012(p) + max012(s) : p + s;
 function composePA(input, evalStateTax, notes) {
   const box16 = input.paGrossCompensation !== void 0 ? c(input.paGrossCompensation) : c(input.wages);
   if (input.paGrossCompensation === void 0 && input.wages !== void 0) {
     notes.push("PA line 1a: W-2 Box 16 total not transcribed \u2014 federal Box 1 wages used (401(k)/elective deferrals are PA-taxable; pass paGrossCompensation when Box 16 differs)");
   }
-  const l1a = rd16(box16);
-  const l1b = rd16(c(input.paUnreimbursedExpenses));
-  const l1c = max011(l1a - l1b);
-  const l2 = rd16(c(input.paInterest));
-  const l3 = rd16(c(input.paDividends));
-  const bizP = rd16(c(input.paBusinessNet));
-  const bizS = rd16(c(input.paSpouseBusinessNet));
-  const propP = rd16(c(input.paPropertyNet));
-  const propS = rd16(c(input.paSpousePropertyNet));
-  const rentP = rd16(c(input.paRentRoyaltyNet));
-  const rentS = rd16(c(input.paSpouseRentRoyaltyNet));
+  const l1a = rd17(box16);
+  const l1b = rd17(c(input.paUnreimbursedExpenses));
+  const l1c = max012(l1a - l1b);
+  const l2 = rd17(c(input.paInterest));
+  const l3 = rd17(c(input.paDividends));
+  const bizP = rd17(c(input.paBusinessNet));
+  const bizS = rd17(c(input.paSpouseBusinessNet));
+  const propP = rd17(c(input.paPropertyNet));
+  const propS = rd17(c(input.paSpousePropertyNet));
+  const rentP = rd17(c(input.paRentRoyaltyNet));
+  const rentS = rd17(c(input.paSpouseRentRoyaltyNet));
   const l4 = classLine(bizP, bizS);
   const l5 = classLine(propP, propS);
   const l6 = classLine(rentP, rentS);
-  const l7 = rd16(c(input.paEstateTrust));
-  const l8 = rd16(c(input.paGambling));
+  const l7 = rd17(c(input.paEstateTrust));
+  const l8 = rd17(c(input.paGambling));
   const extra = {
     wages: box16,
     paUnreimbursedBusinessExpenses: c(input.paUnreimbursedExpenses),
@@ -33702,35 +34639,35 @@ function composePA(input, evalStateTax, notes) {
     paAbleContributions: c(input.paAbleContributions),
     paMsaHsaContributions: c(input.paMsaHsaContributions)
   };
-  const l9 = rd16(evalStateTax("us.pa.taxable_income", 0n, extra));
-  const l10 = rd16(evalStateTax("us.pa.other_deductions", 0n, extra));
-  const l11 = max011(l9 - l10);
-  const l12 = rd16(evalStateTax("us.pa.income_tax", 0n, extra));
-  const l13 = rd16(c(input.stateWithholding));
-  const l14 = rd16(c(input.priorYearOverpaymentCredited));
-  const l15 = rd16(c(input.estimatedPayments));
-  const l16 = rd16(c(input.extensionPayment));
-  const l17 = rd16(c(input.paNrk1Withholding));
+  const l9 = rd17(evalStateTax("us.pa.taxable_income", 0n, extra));
+  const l10 = rd17(evalStateTax("us.pa.other_deductions", 0n, extra));
+  const l11 = max012(l9 - l10);
+  const l12 = rd17(evalStateTax("us.pa.income_tax", 0n, extra));
+  const l13 = rd17(c(input.stateWithholding));
+  const l14 = rd17(c(input.priorYearOverpaymentCredited));
+  const l15 = rd17(c(input.estimatedPayments));
+  const l16 = rd17(c(input.extensionPayment));
+  const l17 = rd17(c(input.paNrk1Withholding));
   const l18 = l14 + l15 + l16 + l17;
   const spDeps = input.paSpDependentChildren ?? 0;
-  const l21 = rd16(evalStateTax("us.pa.tax_forgiveness", 0n, {
+  const l21 = rd17(evalStateTax("us.pa.tax_forgiveness", 0n, {
     ...extra,
     paSpDependentChildren: spDeps,
     paEligibilityIncomeAddbacks: c(input.paEligibilityAddbacks),
     paResidentCredit: c(input.paResidentCredit)
   }));
-  const l20 = l9 + rd16(c(input.paEligibilityAddbacks));
-  const l22 = rd16(c(input.paResidentCredit));
-  const l23 = rd16(c(input.paScheduleDcCredit)) + rd16(c(input.paScheduleOcCredits));
+  const l20 = l9 + rd17(c(input.paEligibilityAddbacks));
+  const l22 = rd17(c(input.paResidentCredit));
+  const l23 = rd17(c(input.paScheduleDcCredit)) + rd17(c(input.paScheduleOcCredits));
   const l24 = l13 + l18 + l21 + l22 + l23;
-  const l25 = rd16(c(input.useTax));
-  const l26 = max011(l12 + l25 - l24);
-  const l27 = rd16(c(input.paPenaltiesInterest));
+  const l25 = rd17(c(input.useTax));
+  const l26 = max012(l12 + l25 - l24);
+  const l27 = rd17(c(input.paPenaltiesInterest));
   const l28 = l26 + l27;
-  const l29 = max011(l24 - l12 - l25 - l27);
+  const l29 = max012(l24 - l12 - l25 - l27);
   const fedEITC = c(input.federalEITC);
   if (fedEITC > 0n) {
-    const wptc = min22(rd16(fedEITC * 10n / 100n), 80500n);
+    const wptc = min22(rd17(fedEITC * 10n / 100n), 80500n);
     notes.push(`PA Working Pennsylvanians Tax Credit ${fmtD(wptc)} (10% of federal EITC, max $805, refundable) \u2014 NO line on the printed 2025 PA-40; DOR applies it in processing from the attached federal return`);
   }
   notes.push("PA local earned income tax (Act 32) is filed separately with the local collector \u2014 out of scope for the PA-40");
@@ -33785,26 +34722,26 @@ function composeAL(input, evalStateTax, notes) {
     input.filingHoh = false;
     input.filingHohOrQss = false;
   }
-  const l5b = rd16(c(input.alWages ?? input.wages));
-  const l6 = rd16(c(input.alInterestDividends));
+  const l5b = rd17(c(input.alWages ?? input.wages));
+  const l6 = rd17(c(input.alInterestDividends));
   const retPerson = (taxable3, is65, label) => {
     if (taxable3 <= 0n)
       return 0n;
-    const excl = is65 ? rd16(evalStateTax("us.al.retirement_exclusion", 0n, { alTaxableRetirement: taxable3, alIs65: true })) : 0n;
+    const excl = is65 ? rd17(evalStateTax("us.al.retirement_exclusion", 0n, { alTaxableRetirement: taxable3, alIs65: true })) : 0n;
     if (excl > 0n)
       notes.push(`AL ${label} Schedule RS retirement exclusion ${fmtD(excl)} (65+, up to $6,000 of otherwise-taxable retirement; defined-benefit pensions/SS/military are already fully exempt and never entered). NOTE: the widely reported "$12,000 in 2026" is FALSE \u2014 HB388 died in May 2025; $6,000 continues.`);
-    return max011(taxable3 - excl);
+    return max012(taxable3 - excl);
   };
-  const l4ret = retPerson(rd16(c(input.alTaxableRetirementYou)), input.alIs65You === true, "taxpayer") + retPerson(rd16(c(input.alTaxableRetirementSpouse)), input.alIs65Spouse === true, "spouse");
-  const otherIncome = rd16(c(input.alOtherIncome));
+  const l4ret = retPerson(rd17(c(input.alTaxableRetirementYou)), input.alIs65You === true, "taxpayer") + retPerson(rd17(c(input.alTaxableRetirementSpouse)), input.alIs65Spouse === true, "spouse");
+  const otherIncome = rd17(c(input.alOtherIncome));
   const l7 = otherIncome + l4ret;
   const l8 = l5b + l6 + l7;
-  const l9 = rd16(c(input.alAdjustments));
+  const l9 = rd17(c(input.alAdjustments));
   if (l9 > 0n)
     notes.push(`AL line 9 adjustments ${fmtD(l9)} (Part II: per-spouse IRA, Keogh/SEP, alimony paid, adoption, MOVING EXPENSES (Alabama kept them), SE health insurance, College Counts 529/PACT, HSA, catastrophe savings, ABLE \u2014 transcribed)`);
   const l10 = l8 - l9;
-  const std = rd16(evalStateTax("us.al.standard_deduction", 0n, { alAgi: l10 }));
-  const itemized = rd16(c(input.alItemizedDeductions));
+  const std = rd17(evalStateTax("us.al.standard_deduction", 0n, { alAgi: l10 }));
+  const itemized = rd17(c(input.alItemizedDeductions));
   let l11 = std;
   let method = "standard";
   if (itemized > std) {
@@ -33816,48 +34753,48 @@ function composeAL(input, evalStateTax, notes) {
   }
   let l12;
   if (input.alFederalTaxDeductionOverride !== void 0) {
-    l12 = rd16(c(input.alFederalTaxDeductionOverride));
+    l12 = rd17(c(input.alFederalTaxDeductionOverride));
     notes.push(`AL line 12 federal tax deduction ${fmtD(l12)} from override (joint-federal/separate-Alabama returns and part-year residents RATIO the federal liability per the instructions)`);
   } else {
-    l12 = rd16(evalStateTax("us.al.federal_tax_deduction", 0n, {
-      alFederalTaxPlusNiit: rd16(c(input.alFederalTaxPlusNiit)),
-      alFederalRefundableCredits: rd16(c(input.alFederalRefundableCredits))
+    l12 = rd17(evalStateTax("us.al.federal_tax_deduction", 0n, {
+      alFederalTaxPlusNiit: rd17(c(input.alFederalTaxPlusNiit)),
+      alFederalRefundableCredits: rd17(c(input.alFederalRefundableCredits))
     }));
     if (l12 > 0n)
       notes.push(`AL line 12: federal income tax deduction ${fmtD(l12)} (UNLIMITED: 1040 line 22 + Form 8960 NIIT, minus EIC/ACTC/AOC/refundable-adoption/2439 \u2014 never the W-2 withholding; attach federal pages 1-2 + Schedule 1)`);
   }
   const l13 = joint || isHoh(input) ? PERSONAL_EXEMPTION_JOINT_HOF : PERSONAL_EXEMPTION_SINGLE_MFS;
   const deps = input.alDependents ?? input.dependents ?? 0;
-  const l14 = deps > 0 ? rd16(evalStateTax("us.al.dependent_exemption", 0n, { alDependents: deps, alAgi: l10 })) : 0n;
+  const l14 = deps > 0 ? rd17(evalStateTax("us.al.dependent_exemption", 0n, { alDependents: deps, alAgi: l10 })) : 0n;
   if (l14 > 0n)
     notes.push(`AL line 14: dependent exemption ${fmtD(l14)} (${deps} \xD7 the chart amount \u2014 $1,000 at AGI \u2264 $50,000, $500 to $100,000, $300 above; Alabama's OWN relationship list, not federal \xA7 152)`);
   const l15 = l11 + l12 + l13 + l14;
-  const l16 = max011(l10 - l15);
+  const l16 = max012(l10 - l15);
   if (l10 - l15 < 0n)
     notes.push("AL line 16 taxable income computed below zero \u2014 entered $0 (tax $0)");
-  const l17 = rd16(evalStateTax("us.al.income_tax", l16));
-  const oc = rd16(c(input.nonrefundableCredits));
-  const l18 = max011(l17 - oc);
+  const l17 = rd17(evalStateTax("us.al.income_tax", l16));
+  const oc = rd17(c(input.nonrefundableCredits));
+  const l18 = max012(l17 - oc);
   if (oc > 0n)
     notes.push(`AL line 18: Schedule OC nonrefundable credits ${fmtD(oc > l17 ? l17 : oc)} applied${oc > l17 ? ` (${fmtD(oc)} claimed, capped at the line 17 tax)` : ""} \u2014 many OC credits require My Alabama Taxes pre-registration/reservation`);
-  const useTax = rd16(c(input.useTax));
-  const l19 = useTax + rd16(c(input.alAtpOtherTaxes));
+  const useTax = rd17(c(input.useTax));
+  const l19 = useTax + rd17(c(input.alAtpOtherTaxes));
   if (useTax > 0n)
     notes.push(`AL line 19 includes use tax ${fmtD(useTax)} (Schedule ATP: general 4%, automotive 2%, food/grocery 2% on/after September 1, 2025 (3% before), farm 1.5%)`);
-  const l20 = rd16(c(input.alCampaignCheckoff));
+  const l20 = rd17(c(input.alCampaignCheckoff));
   const l21 = l18 + l19 + l20;
-  const l22 = rd16(c(input.stateWithholding));
-  const l23 = rd16(c(input.estimatedPayments)) + rd16(c(input.extensionPayment)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l25 = rd16(c(input.refundableCredits));
-  const l26 = rd16(c(input.alScheduleCpPayments));
+  const l22 = rd17(c(input.stateWithholding));
+  const l23 = rd17(c(input.estimatedPayments)) + rd17(c(input.extensionPayment)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l25 = rd17(c(input.refundableCredits));
+  const l26 = rd17(c(input.alScheduleCpPayments));
   const l27 = l22 + l23 + l25 + l26;
   const l29 = l27;
-  const l31 = rd16(c(input.alPenalties));
+  const l31 = rd17(c(input.alPenalties));
   const l30 = l21 > l29 ? l21 - l29 + l31 : 0n;
-  const l32 = max011(l29 - l21);
-  const l33 = rd16(c(input.alAppliedToNextYear));
-  const l34 = rd16(c(input.alDonations));
-  const l35 = l32 > 0n ? max011(l32 - l31 - l33 - l34) : 0n;
+  const l32 = max012(l29 - l21);
+  const l33 = rd17(c(input.alAppliedToNextYear));
+  const l34 = rd17(c(input.alDonations));
+  const l35 = l32 > 0n ? max012(l32 - l31 - l33 - l34) : 0n;
   if (l32 > 0n && l31 > 0n)
     notes.push(`AL line 35: penalties ${fmtD(l31)} subtract from the refund per the printed formula (line 32 \u2212 lines 31/33/34)`);
   if (l31 > 0n && l30 === 0n && l31 + l33 + l34 > l32)
@@ -33893,24 +34830,24 @@ function composeAL(input, evalStateTax, notes) {
 // ../compose/dist/or.js
 function composeOR(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const mfs = isMfs3(input);
-  const fagi = rd16(c(input.federalAGI));
+  const mfs = isMfs4(input);
+  const fagi = rd17(c(input.federalAGI));
   const l7 = fagi;
-  const l8 = rd16(c(input.orAdditions));
+  const l8 = rd17(c(input.orAdditions));
   if (l8 > 0n)
     notes.push(`OR line 8 additions ${fmtD(l8)} (Schedule OR-ASC line A5 \u2014 transcribed)`);
   const l9 = l7 + l8;
   let worksheetLine10;
   if (input.orFederalTaxLiabilityOverride !== void 0) {
-    worksheetLine10 = rd16(c(input.orFederalTaxLiabilityOverride));
+    worksheetLine10 = rd17(c(input.orFederalTaxLiabilityOverride));
     notes.push("OR line 10: federal tax liability taken from override (amended/foreign-tax/1040-NR/recapture situations per Publication OR-17)");
   } else {
-    const wl3 = max011(rd16(c(input.orFederal1040Line22)) - rd16(c(input.orExcessAptcRepayment)));
-    const wl5 = wl3 + rd16(c(input.orFederalOtherIncomeTaxes));
-    const wl9 = rd16(c(input.orFederalAoc)) + rd16(c(input.orFederalRefundableAdoption)) + rd16(c(input.orFederalPtc));
-    worksheetLine10 = max011(wl5 - wl9);
+    const wl3 = max012(rd17(c(input.orFederal1040Line22)) - rd17(c(input.orExcessAptcRepayment)));
+    const wl5 = wl3 + rd17(c(input.orFederalOtherIncomeTaxes));
+    const wl9 = rd17(c(input.orFederalAoc)) + rd17(c(input.orFederalRefundableAdoption)) + rd17(c(input.orFederalPtc));
+    worksheetLine10 = max012(wl5 - wl9);
   }
-  const l10 = rd16(evalStateTax("us.or.federal_tax_subtraction", 0n, {
+  const l10 = rd17(evalStateTax("us.or.federal_tax_subtraction", 0n, {
     orFederalTaxLiability: worksheetLine10,
     orAgi: fagi
   }));
@@ -33918,50 +34855,50 @@ function composeOR(input, evalStateTax, notes) {
     notes.push(`OR line 10: federal tax liability subtraction ${fmtD(l10)} (1040 line 22 \u2212 excess-APTC + other income taxes, minus AOC/refundable-adoption/PTC \u2014 NOT the EITC or ACTC; capped $8,500/$4,250-MFS and AGI-phased per Table 4)`);
   else if (worksheetLine10 > 0n)
     notes.push(`OR line 10: the $${fmtD(worksheetLine10)} federal tax liability is fully phased out by AGI (Table 4: $0 at $145,000+ single/MFS, $290,000+ joint/HOH/QSS)`);
-  const l11 = rd16(c(input.taxableSocialSecurity));
+  const l11 = rd17(c(input.taxableSocialSecurity));
   if (l11 > 0n)
     notes.push(`OR line 11: Social Security subtraction ${fmtD(l11)} (federal line 6b in full \u2014 Oregon never taxes SS; tier 2/windfall Railroad Retirement subtracts on OR-ASC instead)`);
-  const l12 = rd16(c(input.orStateRefund));
-  const l13 = rd16(c(input.orSubtractions));
+  const l12 = rd17(c(input.orStateRefund));
+  const l13 = rd17(c(input.orSubtractions));
   if (l13 > 0n)
     notes.push(`OR line 13 subtractions ${fmtD(l13)} (Schedule OR-ASC line B7: OBBBA-conforming tips/overtime/vehicle-interest codes 390/391/392, US government interest, federal pension %, OR-HOME first-time home buyer, 529 contributions \u2014 transcribed)`);
   const l14 = l10 + l11 + l12 + l13;
   const l15 = l9 - l14;
   const boxes = input.orStdBoxes ?? 0;
-  const l17 = rd16(evalStateTax("us.or.standard_deduction", 0n, {
+  const l17 = rd17(evalStateTax("us.or.standard_deduction", 0n, {
     orStdBoxes: boxes,
     isClaimedAsDependent: input.claimedAsDependent === true,
     orDependentEarnedIncome: c(input.orDependentEarnedIncome),
     spouseItemizes: input.orSpouseItemizes === true
   }));
-  const l16 = rd16(c(input.orItemizedDeductions));
+  const l16 = rd17(c(input.orItemizedDeductions));
   const l18 = l16 > l17 ? l16 : l17;
   if (l16 > l17)
     notes.push(`OR itemized deductions ${fmtD(l16)} (Schedule OR-A \u2014 Oregon's own amounts, NOT the federal Schedule A) beat the standard deduction ${fmtD(l17)}`);
   if (mfs && input.orSpouseItemizes === true)
     notes.push("OR MFS: standard deduction is $0 because the spouse itemizes \u2014 Schedule OR-A required");
-  const l19 = max011(l15 - l18);
+  const l19 = max012(l15 - l18);
   let l20;
   if (input.orTaxMethodOverride !== void 0) {
-    l20 = rd16(c(input.orTaxMethodOverride));
+    l20 = rd17(c(input.orTaxMethodOverride));
     notes.push("OR line 20: tax from an alternate method (20a farm income averaging OR-FIA-40 / 20b farm capital gain Worksheet FCG / 20c the IRREVOCABLE OR-PTE-FY reduced rate \u2014 agent-computed, box checked)");
   } else {
-    l20 = rd16(evalStateTax("us.or.income_tax", l19));
+    l20 = rd17(evalStateTax("us.or.income_tax", l19));
   }
-  const l21 = rd16(c(input.orInstallmentInterest));
+  const l21 = rd17(c(input.orInstallmentInterest));
   if (l21 > 0n)
     notes.push("OR line 21: interest on installment-sale deferred tax (9% annual rate for 2025)");
-  const l22 = rd16(c(input.orCreditRecaptures));
+  const l22 = rd17(c(input.orCreditRecaptures));
   const l23 = l21 + l22;
   const l24 = l20 + l23;
-  const l25 = rd16(evalStateTax("us.or.exemption_credit", 0n, {
+  const l25 = rd17(evalStateTax("us.or.exemption_credit", 0n, {
     orRegularExemptions: input.orRegularExemptions ?? 0,
     orDisabilityExemptions: input.orDisabilityExemptions ?? 0,
     orAgi: fagi
   }));
   if (l25 > 0n)
     notes.push(`OR line 25: exemption credit ${fmtD(l25)} ($256 per exemption; $0 cliff above $100,000/$200,000 federal AGI \u2014 disability exemptions cliff at $100,000 for every status)`);
-  const polRaw = rd16(c(input.orPoliticalContributions));
+  const polRaw = rd17(c(input.orPoliticalContributions));
   let l26 = 0n;
   if (polRaw > 0n) {
     const agiLimit = joint ? 15000000n : 7500000n;
@@ -33972,27 +34909,27 @@ function composeOR(input, evalStateTax, notes) {
       notes.push(`OR line 26: political contribution credit ${fmtD(l26)} (standard credit, max $${joint ? "100" : "50"})`);
     }
   }
-  const l27 = rd16(c(input.nonrefundableCredits));
+  const l27 = rd17(c(input.nonrefundableCredits));
   const l28 = l25 + l26 + l27;
-  const l29 = max011(l24 - l28);
-  const l30 = min22(rd16(c(input.orCarryforwardCredits)), l29);
+  const l29 = max012(l24 - l28);
+  const l30 = min22(rd17(c(input.orCarryforwardCredits)), l29);
   const l31 = l29 - l30;
   let l32 = 0n;
-  const liab2024 = rd16(c(input.or2024TaxLiability));
+  const liab2024 = rd17(c(input.or2024TaxLiability));
   if (input.orKickerDonate === true) {
     notes.push("OR line 32: kicker $0 \u2014 filer irrevocably donates the entire kicker to the State School Fund (box 55)");
   } else if (liab2024 > 0n) {
-    l32 = rd16(evalStateTax("us.or.kicker", 0n, { or2024TaxLiability: liab2024 }));
+    l32 = rd17(evalStateTax("us.or.kicker", 0n, { or2024TaxLiability: liab2024 }));
     notes.push(`OR line 32: surplus kicker ${fmtD(l32)} (9.863% of the 2024 liability ${fmtD(liab2024)} \u2014 the 2024 after-other-state-credit liability; requires the 2024 return filed first)`);
   }
-  const l33 = rd16(c(input.stateWithholding));
-  const l34 = rd16(c(input.priorYearOverpaymentCredited));
-  const l35 = rd16(c(input.estimatedPayments)) + rd16(c(input.extensionPayment));
-  const l36 = rd16(c(input.orPtePayments));
-  const fedEic = rd16(c(input.federalEITC));
+  const l33 = rd17(c(input.stateWithholding));
+  const l34 = rd17(c(input.priorYearOverpaymentCredited));
+  const l35 = rd17(c(input.estimatedPayments)) + rd17(c(input.extensionPayment));
+  const l36 = rd17(c(input.orPtePayments));
+  const fedEic = rd17(c(input.federalEITC));
   let l37 = 0n;
   if (fedEic > 0n) {
-    l37 = rd16(evalStateTax("us.or.eic", 0n, { orFederalEic: fedEic, orYoungestUnder3: input.orYoungestUnder3 === true }));
+    l37 = rd17(evalStateTax("us.or.eic", 0n, { orFederalEic: fedEic, orYoungestUnder3: input.orYoungestUnder3 === true }));
     notes.push(`OR line 37: earned income credit ${fmtD(l37)} (${input.orYoungestUnder3 === true ? "12% \u2014 youngest dependent under 3" : "9%"} of the federal EITC, refundable)`);
   }
   let l38 = 0n;
@@ -34001,24 +34938,24 @@ function composeOR(input, evalStateTax, notes) {
     if (mfs) {
       notes.push("OR line 38: Oregon Kids Credit $0 \u2014 married filing separately is ineligible");
     } else {
-      const qi = l15 + rd16(c(input.orKidsObbbaAddback)) + rd16(c(input.orKidsLossAddback));
-      l38 = rd16(evalStateTax("us.or.kids_credit", 0n, { orKidsQualifyingIncome: qi, orKidsUnder6: kidsUnder6 }));
+      const qi = l15 + rd17(c(input.orKidsObbbaAddback)) + rd17(c(input.orKidsLossAddback));
+      l38 = rd17(evalStateTax("us.or.kids_credit", 0n, { orKidsQualifyingIncome: qi, orKidsUnder6: kidsUnder6 }));
       if (l38 > 0n)
         notes.push(`OR line 38: Oregon Kids Credit ${fmtD(l38)} (${Math.min(kidsUnder6, 5)} \xD7 $1,050, refundable; qualifying income ${fmtD(qi)} vs the $26,550-$31,550 phase-out)`);
       else
         notes.push(`OR line 38: Oregon Kids Credit $0 \u2014 qualifying income ${fmtD(qi)} is $31,550 or more`);
     }
   }
-  const l39 = rd16(c(input.refundableCredits));
+  const l39 = rd17(c(input.refundableCredits));
   const l40 = l32 + l33 + l34 + l35 + l36 + l37 + l38 + l39;
-  const l41 = max011(l40 - l31);
-  const l42 = max011(l31 - l40);
-  const l45 = rd16(c(input.orPenalty)) + rd16(c(input.orInterest));
+  const l41 = max012(l40 - l31);
+  const l42 = max012(l31 - l40);
+  const l45 = rd17(c(input.orPenalty)) + rd17(c(input.orInterest));
   const l46 = l42 > 0n ? l42 + l45 : l45 > l41 ? l45 - l41 : 0n;
-  const l47 = l41 > 0n ? max011(l41 - l45) : 0n;
+  const l47 = l41 > 0n ? max012(l41 - l45) : 0n;
   if (l41 > 0n && l45 > l41)
     notes.push(`OR penalty and interest ${fmtD(l45)} exceed the overpayment ${fmtD(l41)} \u2014 see the line 46 instructions (the excess is owed)`);
-  const l48to51 = rd16(c(input.orAppliedToNextYear)) + rd16(c(input.orCharitableCheckoffs)) + rd16(c(input.orPoliticalPartyCheckoff)) + rd16(c(input.or529Deposits));
+  const l48to51 = rd17(c(input.orAppliedToNextYear)) + rd17(c(input.orCharitableCheckoffs)) + rd17(c(input.orPoliticalPartyCheckoff)) + rd17(c(input.or529Deposits));
   const l52 = min22(l48to51, l47);
   const l53 = l47 - l52;
   notes.push("OR scope: the statewide transit tax (0.1% of wages, employer-withheld), Portland Metro SHS, Multnomah County PFA, and TriMet/LTD self-employment taxes are SEPARATE filings \u2014 never on Form OR-40");
@@ -34060,21 +34997,21 @@ function composeOR(input, evalStateTax, notes) {
 function composeOK(input, evalStateTax, notes) {
   const joint = isJoint(input);
   const fs = input.filingStatus;
-  const fagi = rd16(c(input.federalAGI));
-  const a1 = rd16(c(input.okUsInterest));
-  const a2 = rd16(c(input.taxableSocialSecurity));
+  const fagi = rd17(c(input.federalAGI));
+  const a1 = rd17(c(input.okUsInterest));
+  const a2 = rd17(c(input.taxableSocialSecurity));
   if (a2 > 0n)
     notes.push(`OK Schedule 511-A line 2: taxable Social Security ${fmtD(a2)} subtracted in full (68 O.S. \xA7 2358(E)(9) \u2014 Oklahoma never taxes it)`);
-  const a3 = rd16(c(input.okCsrsRetirement));
+  const a3 = rd17(c(input.okCsrsRetirement));
   if (a3 > 0n)
     notes.push(`OK Schedule 511-A line 3: CSRS retirement in lieu of Social Security ${fmtD(a3)} excluded 100% (Retirement Claim Number required; FERS does not qualify except the CSRS component / annuity supplement)`);
-  const a4 = rd16(c(input.okMilitaryRetirement));
+  const a4 = rd17(c(input.okMilitaryRetirement));
   if (a4 > 0n)
     notes.push(`OK Schedule 511-A line 4: military retirement ${fmtD(a4)} excluded 100%`);
-  const govYou = rd16(c(input.okGovRetirementYou));
-  const othYou = rd16(c(input.okOtherRetirementYou));
-  let govSp = rd16(c(input.okGovRetirementSpouse));
-  let othSp = rd16(c(input.okOtherRetirementSpouse));
+  const govYou = rd17(c(input.okGovRetirementYou));
+  const othYou = rd17(c(input.okOtherRetirementYou));
+  let govSp = rd17(c(input.okGovRetirementSpouse));
+  let othSp = rd17(c(input.okOtherRetirementSpouse));
   if (!joint && govSp + othSp > 0n) {
     notes.push(`OK Schedule 511-A lines 5-6: spouse retirement ${fmtD(govSp + othSp)} IGNORED \u2014 the exclusion is per individual 'in your name', and a spouse's income is not on a ${fs ?? "non-joint"} return`);
     govSp = 0n;
@@ -34082,7 +35019,7 @@ function composeOK(input, evalStateTax, notes) {
   }
   let a56 = 0n;
   if (govYou + govSp + othYou + othSp > 0n) {
-    a56 = rd16(evalStateTax("us.ok.retirement_exclusion", 0n, {
+    a56 = rd17(evalStateTax("us.ok.retirement_exclusion", 0n, {
       okGovRetirementYou: govYou,
       okGovRetirementSpouse: govSp,
       okOtherRetirementYou: othYou,
@@ -34091,45 +35028,45 @@ function composeOK(input, evalStateTax, notes) {
     const a5 = min22(govYou, 1000000n) + min22(govSp, 1000000n);
     notes.push(`OK Schedule 511-A lines 5-6: retirement exclusion ${fmtD(a56)} (line 5 government/civil-service ${fmtD(a5)}; line 6 other qualified plans/IRAs ${fmtD(a56 - a5)} \u2014 $10,000 combined cap PER PERSON, in that person's name, never pooled)`);
   }
-  const a7 = rd16(c(input.okRailroadRetirement));
+  const a7 = rd17(c(input.okRailroadRetirement));
   if (a7 > 0n)
     notes.push(`OK Schedule 511-A line 7: Railroad Retirement benefits ${fmtD(a7)} excluded`);
-  const aOther = rd16(c(input.subtractions));
+  const aOther = rd17(c(input.subtractions));
   if (aOther > 0n)
     notes.push(`OK Schedule 511-A lines 8-17: other subtractions ${fmtD(aOther)} (US obligations handled on line 1; depletion, Oklahoma NOL, tribal income, Form 561 capital gain deduction, state refund of added-back tax, PTE income, bonus depreciation, misc codes \u2014 transcribed)`);
   const l2 = a1 + a2 + a3 + a4 + a56 + a7 + aOther;
   const l3 = fagi - l2;
-  const l4 = rd16(c(input.okOutOfStateIncome));
+  const l4 = rd17(c(input.okOutOfStateIncome));
   if (l4 > 0n)
     notes.push(`OK line 4: out-of-state income ${fmtD(l4)} (real/tangible property or business income taxed by another state \u2014 never wages, interest, dividends, pensions; describe and attach the other state's return). Deductions and exemptions are prorated on Schedule 511-E.`);
   const l5 = l3 - l4;
-  const l6 = rd16(c(input.additions));
+  const l6 = rd17(c(input.additions));
   if (l6 > 0n)
     notes.push(`OK line 6: Schedule 511-B additions ${fmtD(l6)} (non-Oklahoma municipal interest, out-of-state losses, lump sums, federal NOL, depletion/529 recapture, PTE loss, bonus depreciation add-back \u2014 transcribed)`);
   const l7 = l5 + l6;
-  const c1 = rd16(c(input.okMilitaryPay));
+  const c1 = rd17(c(input.okMilitaryPay));
   if (c1 > 0n)
     notes.push(`OK Schedule 511-C line 1: active military pay ${fmtD(c1)} excluded 100% (Reserve and National Guard pay included)`);
-  const c3raw = rd16(c(input.ok529Contributions));
+  const c3raw = rd17(c(input.ok529Contributions));
   const c3cap = joint ? 2000000n : 1000000n;
   const c3 = min22(c3raw, c3cap);
   if (c3raw > c3)
     notes.push(`OK Schedule 511-C line 3: Oklahoma 529 contributions ${fmtD(c3raw)} capped at ${fmtD(c3cap)} (${joint ? "$20,000 joint" : "$10,000"} per year \u2014 the excess carries forward up to five years)`);
   else if (c3 > 0n)
     notes.push(`OK Schedule 511-C line 3: Oklahoma 529 contributions ${fmtD(c3)} deducted`);
-  const cOther = rd16(c(input.okOtherAdjustments));
+  const cOther = rd17(c(input.okOtherAdjustments));
   if (cOther > 0n)
     notes.push(`OK Schedule 511-C lines 2, 4-6: other adjustments ${fmtD(cOther)} (disability modifications, foster care up to $5,000, Parental Choice payments, MSA/HSA, ABLE $10,000/$20,000, homebuyer savings, poll-worker leave \u2014 transcribed)`);
   const l8 = c1 + c3 + cOther;
   const l9 = l7 - l8;
   const itemizing = input.okFederalItemized === true;
-  const standard = rd16(evalStateTax("us.ok.standard_deduction", 0n));
+  const standard = rd17(evalStateTax("us.ok.standard_deduction", 0n));
   let ded = standard;
   if (itemizing) {
     if (input.okFederalItemizedTotal === void 0) {
       throw new Error("okFederalItemizedTotal (federal Schedule A line 17) is required when okFederalItemized is true \u2014 Oklahoma itemized deductions start from it (Schedule 511-D line 1)");
     }
-    ded = rd16(evalStateTax("us.ok.itemized_deductions", 0n, {
+    ded = rd17(evalStateTax("us.ok.itemized_deductions", 0n, {
       okFederalItemizedTotal: c(input.okFederalItemizedTotal),
       okFederalSaltDeducted: c(input.okFederalSaltDeducted),
       okFederalMedical: c(input.okFederalMedical),
@@ -34139,7 +35076,7 @@ function composeOK(input, evalStateTax, notes) {
   }
   const basic = (input.exemptions ?? 0) + (input.okBlindExemptions ?? 0);
   const special = input.okSpecialExemptions65 ?? 0;
-  const exemptions = rd16(evalStateTax("us.ok.exemptions", 0n, {
+  const exemptions = rd17(evalStateTax("us.ok.exemptions", 0n, {
     okBasicExemptions: basic,
     okSpecialExemptions65: special,
     okFederalAgi: fagi,
@@ -34166,23 +35103,23 @@ function composeOK(input, evalStateTax, notes) {
     lines["11_exemptions"] = fmtD(exemptions);
     l12 = ded + exemptions;
   }
-  const l13 = max011(l9 - l12);
+  const l13 = max012(l9 - l12);
   let l14a;
   if (input.okFarmIncomeAveragingTax !== void 0) {
-    l14a = rd16(c(input.okFarmIncomeAveragingTax));
+    l14a = rd17(c(input.okFarmIncomeAveragingTax));
     notes.push("OK line 14a: tax from Form 573 farm income averaging (box 1) \u2014 agent-computed, replaces the table tax");
   } else {
-    l14a = rd16(evalStateTax("us.ok.income_tax", l13));
+    l14a = rd17(evalStateTax("us.ok.income_tax", l13));
   }
-  const l14b = rd16(c(input.okAdditionalTax));
+  const l14b = rd17(c(input.okAdditionalTax));
   if (l14b > 0n)
     notes.push(`OK line 14b: additional tax ${fmtD(l14b)} (HSA non-qualified withdrawal 10% / Affordable Housing credit recapture / IRC \xA7 965(h) installment \u2014 transcribed)`);
   const l14 = l14a + l14b;
-  const cdcc = rd16(c(input.okFederalChildCareCredit));
-  const ctc = rd16(c(input.okFederalChildTaxCredit));
+  const cdcc = rd17(c(input.okFederalChildCareCredit));
+  const ctc = rd17(c(input.okFederalChildTaxCredit));
   let l15 = 0n;
   if (cdcc > 0n || ctc > 0n) {
-    l15 = rd16(evalStateTax("us.ok.child_care_child_tax_credit", 0n, {
+    l15 = rd17(evalStateTax("us.ok.child_care_child_tax_credit", 0n, {
       okFederalChildCareCredit: cdcc,
       okFederalChildTaxCredit: ctc,
       okFederalAgi: fagi,
@@ -34199,32 +35136,32 @@ function composeOK(input, evalStateTax, notes) {
       l15 = l14;
     }
   }
-  const l16raw = rd16(c(input.okOtherStateCredit));
+  const l16raw = rd17(c(input.okOtherStateCredit));
   const l16 = min22(l16raw, l14 - l15);
   if (l16 > 0n)
     notes.push(`OK line 16: credit for tax paid to another state ${fmtD(l16)} (Form 511-TX \u2014 personal-services income only, capped at the remaining tax)`);
-  const l17raw = rd16(c(input.nonrefundableCredits));
+  const l17raw = rd17(c(input.nonrefundableCredits));
   const l17 = min22(l17raw, l14 - l15 - l16);
   if (l17raw > l17)
     notes.push(`OK line 17: Form 511-CR credits ${fmtD(l17raw)} capped at the remaining tax ${fmtD(l17)}`);
-  const l18 = max011(l14 - l15 - l16 - l17);
+  const l18 = max012(l14 - l15 - l16 - l17);
   let l19;
   if (input.okUseTaxEstimate === true) {
-    l19 = rd16(evalStateTax("us.ok.use_tax", 0n, { okFederalAgi: fagi }));
+    l19 = rd17(evalStateTax("us.ok.use_tax", 0n, { okFederalAgi: fagi }));
     notes.push(`OK line 19: use tax estimate ${fmtD(l19)} from the printed Use Tax Table on federal AGI (0.056% of AGI at $54,670 and over) \u2014 the filer had no purchase records`);
   } else {
-    l19 = rd16(c(input.useTax));
+    l19 = rd17(c(input.useTax));
     if (l19 === 0n)
       notes.push("OK line 19: no use tax reported \u2014 check the 'no use tax is due' certification box, or supply useTax / okUseTaxEstimate");
   }
   const l20 = l18 + l19;
-  const l21 = rd16(c(input.stateWithholding)) + rd16(c(input.spouseStateWithholding));
-  const l22 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l23 = rd16(c(input.extensionPayment));
-  const ghi = rd16(c(input.okGrossHouseholdIncome));
+  const l21 = rd17(c(input.stateWithholding)) + rd17(c(input.spouseStateWithholding));
+  const l22 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l23 = rd17(c(input.extensionPayment));
+  const ghi = rd17(c(input.okGrossHouseholdIncome));
   let l24 = 0n;
   if (input.okPtrEligible === true && c(input.okPropertyTaxPaid) > 0n) {
-    l24 = rd16(evalStateTax("us.ok.property_tax_relief_credit", 0n, { okPropertyTaxPaid: rd16(c(input.okPropertyTaxPaid)), okGrossHouseholdIncome: ghi, okPtrEligible: true }));
+    l24 = rd17(evalStateTax("us.ok.property_tax_relief_credit", 0n, { okPropertyTaxPaid: rd17(c(input.okPropertyTaxPaid)), okGrossHouseholdIncome: ghi, okPtrEligible: true }));
     if (l24 > 0n)
       notes.push(`OK line 24: property tax relief credit ${fmtD(l24)} (Form 538-H: homestead tax over 1% of gross household income, max $200; 65+/totally disabled head of household, household income \u2264 $12,000)`);
     else
@@ -34235,7 +35172,7 @@ function composeOK(input, evalStateTax, notes) {
     const strEx = input.okStrExemptions !== void 0 ? input.okStrExemptions : input.exemptions ?? 0;
     if (input.okStrExemptions === void 0)
       notes.push(`OK Form 538-S Box D: qualified exemptions defaulted to the ${strEx} regular exemptions (self + spouse + dependents; the 65+/blind boxes never count) \u2014 pass okStrExemptions to override`);
-    l25 = rd16(evalStateTax("us.ok.sales_tax_relief_credit", 0n, {
+    l25 = rd17(evalStateTax("us.ok.sales_tax_relief_credit", 0n, {
       okGrossHouseholdIncome: ghi,
       okStrExemptions: strEx,
       okStrHasDependent: input.okStrHasDependent === true,
@@ -34248,13 +35185,13 @@ function composeOK(input, evalStateTax, notes) {
     else
       notes.push(`OK line 25: sales tax relief credit $0 \u2014 gross household income ${fmtD(ghi)} exceeds the limit ($20,000, or $50,000 with a dependent, a 65+ filer, or a qualifying disability)`);
   }
-  const l26 = rd16(c(input.okNaturalDisasterCredit));
-  const l27 = rd16(c(input.okForm578Credit));
+  const l26 = rd17(c(input.okNaturalDisasterCredit));
+  const l27 = rd17(c(input.okForm578Credit));
   let l28 = 0n;
   if (input.okEicEligible === true) {
     const kids = input.okEicQualifyingChildren ?? 0;
-    const cur = rd16(evalStateTax("us.ok.eic_2020_rules", 0n, {
-      okEicEarnedIncome: rd16(c(input.okEicEarnedIncome2025)),
+    const cur = rd17(evalStateTax("us.ok.eic_2020_rules", 0n, {
+      okEicEarnedIncome: rd17(c(input.okEicEarnedIncome2025)),
       okEicAgi: fagi,
       okEicQualifyingChildren: kids,
       okEicEligible: true
@@ -34263,23 +35200,23 @@ function composeOK(input, evalStateTax, notes) {
     if (input.okEicEarnedIncome2024 !== void 0 && input.okEicAgi2024 === void 0) {
       notes.push("OK Form 511-EIC 2024 column SKIPPED \u2014 okEicAgi2024 (2024 federal AGI, line 17) is required with okEicEarnedIncome2024 so the line 19 AGI look-up can run; only the 2025 column was used");
     } else if (input.okEicEarnedIncome2024 !== void 0) {
-      prior = rd16(evalStateTax("us.ok.eic_2020_rules", 0n, {
-        okEicEarnedIncome: rd16(c(input.okEicEarnedIncome2024)),
-        okEicAgi: rd16(c(input.okEicAgi2024)),
+      prior = rd17(evalStateTax("us.ok.eic_2020_rules", 0n, {
+        okEicEarnedIncome: rd17(c(input.okEicEarnedIncome2024)),
+        okEicAgi: rd17(c(input.okEicAgi2024)),
         okEicQualifyingChildren: kids,
         okEicEligible: true
       }));
     }
     const eic2020 = prior > cur ? prior : cur;
     if (eic2020 > 0n) {
-      l28 = rd16(evalStateTax("us.ok.eic", 0n, { okEic2020Amount: eic2020, okAgi: l7, okFederalAgi: fagi }));
+      l28 = rd17(evalStateTax("us.ok.eic", 0n, { okEic2020Amount: eic2020, okAgi: l7, okFederalAgi: fagi }));
       notes.push(`OK line 28: Oklahoma EIC ${fmtD(l28)} = 5% of the 2020-rule federal EIC ${fmtD(eic2020)} (Form 511-EIC line 20, ${prior > cur ? "2024" : "2025"} earned income column${prior > 0n && prior !== cur ? `; the other year gave ${fmtD(prior > cur ? cur : prior)}` : ""}${l7 < fagi ? `; prorated by Oklahoma AGI \xF7 federal AGI on Schedule 511-G` : ""}; refundable)`);
     } else {
       notes.push("OK line 28: Oklahoma EIC $0 \u2014 no 2020-rule federal EIC at this earned income/AGI (or MFS)");
     }
     lines["_form_511_eic_line_20"] = fmtD(eic2020);
   }
-  let l29 = rd16(c(input.okHomeschoolCredit));
+  let l29 = rd17(c(input.okHomeschoolCredit));
   if (l29 > 0n) {
     const students = input.okHomeschoolStudents ?? 0;
     if (students > 0 && l29 > BigInt(students) * 100000n) {
@@ -34287,18 +35224,18 @@ function composeOK(input, evalStateTax, notes) {
       l29 = BigInt(students) * 100000n;
     }
   }
-  const l30 = rd16(c(input.okAmendedPaid));
+  const l30 = rd17(c(input.okAmendedPaid));
   const l31 = l21 + l22 + l23 + l24 + l25 + l26 + l27 + l28 + l29 + l30;
-  const l32 = rd16(c(input.okAmendedPriorOverpayment));
+  const l32 = rd17(c(input.okAmendedPriorOverpayment));
   const l33 = l31 - l32;
-  const l34 = max011(l33 - l20);
-  const l39 = max011(l20 - l33);
-  const l40 = rd16(c(input.okUnderpaymentInterest));
-  const l35Requested = min22(rd16(c(input.okAppliedToNextYear)), l34);
-  const l36 = min22(rd16(c(input.okDonations)), l34 - l35Requested);
+  const l34 = max012(l33 - l20);
+  const l39 = max012(l20 - l33);
+  const l40 = rd17(c(input.okUnderpaymentInterest));
+  const l35Requested = min22(rd17(c(input.okAppliedToNextYear)), l34);
+  const l36 = min22(rd17(c(input.okDonations)), l34 - l35Requested);
   const l37 = l35Requested + l36;
   let l35 = l35Requested;
-  let l38 = max011(l34 - l37);
+  let l38 = max012(l34 - l37);
   let owedInterest = l40;
   if (l34 > 0n && l40 > 0n) {
     const fromRefund = min22(l40, l38);
@@ -34308,8 +35245,8 @@ function composeOK(input, evalStateTax, notes) {
     owedInterest = l40 - fromRefund - fromApplied;
     notes.push(`OK line 40: underpayment-of-estimated-tax interest ${fmtD(l40)} paid from the overpayment per the line 40 instructions (refund reduced by ${fmtD(fromRefund)}${fromApplied > 0n ? `, line 35 application reduced by ${fmtD(fromApplied)}` : ""}); line 42 is printed as the form adds it, '_amount_to_pay' is what is still owed`);
   }
-  const l41a = rd16(c(input.okPenalty));
-  const l41b = rd16(c(input.okInterest));
+  const l41a = rd17(c(input.okPenalty));
+  const l41b = rd17(c(input.okInterest));
   const l42 = l39 + l40 + l41a + l41b;
   const amountToPay = l39 + (l34 > 0n ? owedInterest : l40) + l41a + l41b;
   notes.push("OK scope: Form 511 is the full-year RESIDENT return \u2014 part-year and nonresident filers use Form 511-NR (not composed); Oklahoma has no local income taxes; Form 511-TX, 511-CR, 573, and 561 amounts are transcribed inputs");
@@ -34365,29 +35302,29 @@ function composeOK(input, evalStateTax, notes) {
 function composeCT(input, evalStateTax, notes) {
   const fs = input.filingStatus;
   const jointColumn = isJoint(input) || fs === "qss";
-  const fagi = rd16(c(input.federalAGI));
+  const fagi = rd17(c(input.federalAGI));
   const l1 = fagi;
-  const l2 = rd16(c(input.additions));
+  const l2 = rd17(c(input.additions));
   if (l2 > 0n)
     notes.push(`CT line 2: Schedule 1 additions ${fmtD(l2)} (non-Connecticut municipal interest and exempt-interest dividends, Form 4972 lump sums, 100% of \xA7 168(k) bonus depreciation, 80% of \xA7 179, Connecticut tax deducted above the line \u2014 transcribed)`);
   const l3 = l1 + l2;
-  const other = rd16(c(input.subtractions));
-  const l43 = rd16(c(input.ctRailroadRetirement));
-  const l44 = rd16(c(input.ctMilitaryRetirement));
+  const other = rd17(c(input.subtractions));
+  const l43 = rd17(c(input.ctRailroadRetirement));
+  const l44 = rd17(c(input.ctMilitaryRetirement));
   if (l44 > 0n)
     notes.push(`CT Schedule 1 line 44: military retirement pay ${fmtD(l44)} subtracted in full (\xA7 12-701(a)(20)(B)(xvi))`);
-  const teachers = rd16(c(input.ctTeachersRetirement));
-  const l45 = rd16(teachers / 2n);
+  const teachers = rd17(c(input.ctTeachersRetirement));
+  const l45 = rd17(teachers / 2n);
   if (teachers > 0n)
     notes.push(`CT Schedule 1 line 45: 50% of Connecticut Teachers' Retirement income ${fmtD(teachers)} \u2192 ${fmtD(l45)} (a teacher under the pension AGI threshold may instead take the line 48b pension subtraction on the full amount \u2014 never both)`);
-  const taxableSs = rd16(c(input.taxableSocialSecurity));
+  const taxableSs = rd17(c(input.taxableSocialSecurity));
   let l41 = 0n;
   if (taxableSs > 0n) {
-    l41 = rd16(evalStateTax("us.ct.social_security_adjustment", 0n, {
+    l41 = rd17(evalStateTax("us.ct.social_security_adjustment", 0n, {
       ctFederalAgi: fagi,
       ctTaxableSs: taxableSs,
-      ctSsTotalBenefits: rd16(c(input.ctSsTotalBenefits)),
-      ctSsProvisionalExcess: rd16(c(input.ctSsProvisionalExcess))
+      ctSsTotalBenefits: rd17(c(input.ctSsTotalBenefits)),
+      ctSsProvisionalExcess: rd17(c(input.ctSsProvisionalExcess))
     }));
     const threshold2 = fs === "single" || fs === "mfs" ? 7500000n : 10000000n;
     if (fagi < threshold2)
@@ -34397,45 +35334,45 @@ function composeCT(input, evalStateTax, notes) {
     else
       notes.push("CT Schedule 1 line 41: Social Security benefit adjustment $0 \u2014 25% of the lesser of total benefits or the provisional-income excess equals or exceeds the taxable benefits (or the worksheet inputs were not supplied)");
   }
-  const chetRaw = rd16(c(input.ctChetContributions));
+  const chetRaw = rd17(c(input.ctChetContributions));
   const chetCap = jointColumn ? 1000000n : 500000n;
   const l48 = min22(chetRaw, chetCap);
   if (chetRaw > l48)
     notes.push(`CT Schedule 1 line 48: CHET contributions ${fmtD(chetRaw)} capped at ${fmtD(chetCap)} (excess carries forward five years)`);
-  const pension = rd16(c(input.ctPensionAnnuityIncome));
-  const ira = rd16(c(input.ctIraDistributions));
+  const pension = rd17(c(input.ctPensionAnnuityIncome));
+  const ira = rd17(c(input.ctIraDistributions));
   let l48b = 0n;
   if (pension + ira > 0n) {
-    l48b = rd16(evalStateTax("us.ct.pension_annuity_subtraction", 0n, { ctFederalAgi: fagi, ctPensionAnnuityIncome: pension, ctIraDistributions: ira }));
+    l48b = rd17(evalStateTax("us.ct.pension_annuity_subtraction", 0n, { ctFederalAgi: fagi, ctPensionAnnuityIncome: pension, ctIraDistributions: ira }));
     notes.push(`CT Schedule 1 line 48b: pension and annuity subtraction ${fmtD(l48b)} (100% of pensions/annuities ${fmtD(pension)} + the IRA percentage of ${fmtD(ira)}, \xD7 the federal-AGI phase-out decimal \u2014 $75,000-$100,000 single/MFS/HOH, $100,000-$150,000 MFJ/QSS)`);
   }
-  const ableRaw = rd16(c(input.ctAbleContributions));
+  const ableRaw = rd17(c(input.ctAbleContributions));
   const l48d = min22(ableRaw, chetCap);
   if (ableRaw > l48d)
     notes.push(`CT Schedule 1 line 48d: ABLE contributions ${fmtD(ableRaw)} capped at ${fmtD(chetCap)}`);
   const l4 = other + l41 + l43 + l44 + l45 + l48 + l48b + l48d;
   const l5 = l3 - l4;
   const useTable = input.ctUseTaxTable === true;
-  const l6 = rd16(evalStateTax("us.ct.income_tax", 0n, { ctAgi: l5, ctUseTaxTable: useTable }));
+  const l6 = rd17(evalStateTax("us.ct.income_tax", 0n, { ctAgi: l5, ctUseTaxTable: useTable }));
   notes.push(`CT line 6: ${fmtD(l6)} from the Tax Calculation Schedule on Connecticut AGI ${fmtD(l5)} (Table A exemption, Table B rates, Table C 2% add-back, Table D recapture, Table E credit percentage${useTable ? " \u2014 DRS tax-table midpoint method" : ""})`);
-  const auto2 = rd16(c(input.ctPropertyTaxAuto2));
+  const auto2 = rd17(c(input.ctPropertyTaxAuto2));
   if (auto2 > 0n && !jointColumn)
     notes.push(`CT Schedule 3 line 62: second vehicle ${fmtD(auto2)} IGNORED \u2014 only married filing jointly or qualifying surviving spouse may claim two vehicles`);
-  const l63 = rd16(c(input.ctPropertyTaxResidence)) + rd16(c(input.ctPropertyTaxAuto1)) + (jointColumn ? auto2 : 0n);
-  const l11raw = l63 > 0n ? rd16(evalStateTax("us.ct.property_tax_credit", 0n, { ctAgi: l5, ctPropertyTaxPaid: l63 })) : 0n;
+  const l63 = rd17(c(input.ctPropertyTaxResidence)) + rd17(c(input.ctPropertyTaxAuto1)) + (jointColumn ? auto2 : 0n);
+  const l11raw = l63 > 0n ? rd17(evalStateTax("us.ct.property_tax_credit", 0n, { ctAgi: l5, ctPropertyTaxPaid: l63 })) : 0n;
   let l7 = 0n;
-  const ojIncome = rd16(c(input.ctOtherJurisdictionIncome));
-  const ojPaid = rd16(c(input.ctOtherJurisdictionTaxPaid));
+  const ojIncome = rd17(c(input.ctOtherJurisdictionIncome));
+  const ojPaid = rd17(c(input.ctOtherJurisdictionTaxPaid));
   if (ojIncome > 0n && ojPaid > 0n) {
     const l51 = l5;
-    const l55 = max011(l6 - l11raw);
+    const l55 = max012(l6 - l11raw);
     const ratio4 = l51 <= 0n || ojIncome >= l51 ? 10000n : (ojIncome * 10000n + l51 / 2n) / l51;
-    const l56 = rd16(l55 * ratio4 / 10000n);
+    const l56 = rd17(l55 * ratio4 / 10000n);
     l7 = min22(l56, ojPaid);
     notes.push(`CT line 7: credit for taxes paid to a qualifying jurisdiction ${fmtD(l7)} (Schedule 2: ${fmtD(ojIncome)} \xF7 ${fmtD(l51)} = ${(Number(ratio4) / 1e4).toFixed(4)} \xD7 (line 6 \u2212 line 11 ${fmtD(l55)}) = ${fmtD(l56)}, limited to the ${fmtD(ojPaid)} paid; attach the other jurisdiction's return)`);
   }
-  const l8 = max011(l6 - l7);
-  const l9 = rd16(c(input.ctAmt));
+  const l8 = max012(l6 - l7);
+  const l9 = rd17(c(input.ctAmt));
   if (l9 > 0n)
     notes.push(`CT line 9: Connecticut alternative minimum tax ${fmtD(l9)} (Form CT-6251 \u2014 transcribed)`);
   const l10 = l8 + l9;
@@ -34448,24 +35385,24 @@ function composeCT(input, evalStateTax, notes) {
     else
       notes.push(`CT line 11: property tax credit ${fmtD(l11)} (Schedule 3: ${fmtD(l63)} paid, capped at $300, reduced by the AGI decimal${l11 < l11raw ? `, limited to the line 10 tax` : ""}; nonrefundable, no carryforward)`);
   }
-  const l12 = max011(l10 - l11);
-  const l13 = min22(rd16(c(input.nonrefundableCredits)), l12);
+  const l12 = max012(l10 - l11);
+  const l13 = min22(rd17(c(input.nonrefundableCredits)), l12);
   if (l13 > 0n)
     notes.push(`CT line 13: Schedule CT-IT credits ${fmtD(l13)} (capped at line 12)`);
-  const l14 = max011(l12 - l13);
-  const l15 = rd16(c(input.useTax));
+  const l14 = max012(l12 - l13);
+  const l15 = rd17(c(input.useTax));
   if (l15 === 0n)
     notes.push("CT line 15: individual use tax $0 \u2014 the form requires an explicit '0' when none is due (Schedule 4: 1% / 6.35% / 7.75% / 2.99%)");
   const l16 = l14 + l15;
   const l17 = l16;
-  const l18 = rd16(c(input.stateWithholding)) + rd16(c(input.spouseStateWithholding));
-  const l19 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l20 = rd16(c(input.extensionPayment));
-  const fedEic = rd16(c(input.federalEITC));
+  const l18 = rd17(c(input.stateWithholding)) + rd17(c(input.spouseStateWithholding));
+  const l19 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l20 = rd17(c(input.extensionPayment));
+  const fedEic = rd17(c(input.federalEITC));
   let l20a = 0n;
   if (fedEic > 0n) {
-    const jointFagi = rd16(c(input.ctEitcJointFagi));
-    l20a = rd16(evalStateTax("us.ct.eitc", 0n, {
+    const jointFagi = rd17(c(input.ctEitcJointFagi));
+    l20a = rd17(evalStateTax("us.ct.eitc", 0n, {
       ctFederalEic: fedEic,
       ctEitcQualifyingChild: input.ctEitcQualifyingChild === true,
       ctEitcSeparateFagi: jointFagi > 0n ? fagi : 0n,
@@ -34473,21 +35410,21 @@ function composeCT(input, evalStateTax, notes) {
     }));
     notes.push(`CT line 20a: Connecticut EITC ${fmtD(l20a)} (40% of the ${fmtD(fedEic)} federal EIC${input.ctEitcQualifyingChild === true ? " + the $250 qualifying-child add-on (PA 25-168)" : ""}${jointFagi > 0n ? `, prorated by separate \xF7 joint federal AGI ${fmtD(fagi)} \xF7 ${fmtD(jointFagi)}` : ""}; refundable; Schedule CT-EITC attached; full-year residents only)`);
   }
-  const l20b = rd16(c(input.ctClaimOfRightCredit));
-  const l20c = rd16(c(input.ctPteCredit));
-  const l20d = rd16(c(input.ctHistoricHomesCredit));
+  const l20b = rd17(c(input.ctClaimOfRightCredit));
+  const l20c = rd17(c(input.ctPteCredit));
+  const l20d = rd17(c(input.ctHistoricHomesCredit));
   const l21 = l18 + l19 + l20 + l20a + l20b + l20c + l20d;
-  const l22 = max011(l21 - l17);
-  const l23 = min22(rd16(c(input.ctAppliedToNextYear)), l22);
-  const l24 = min22(rd16(c(input.ctChetRefundContribution)), l22 - l23);
-  const l24a = min22(rd16(c(input.ctCharityContributions)), l22 - l23 - l24);
-  const l25 = max011(l22 - l23 - l24 - l24a);
-  const l26 = max011(l17 - l21);
-  const l27 = input.ctLate === true && l26 > 0n ? rd16(l26 / 10n) : 0n;
+  const l22 = max012(l21 - l17);
+  const l23 = min22(rd17(c(input.ctAppliedToNextYear)), l22);
+  const l24 = min22(rd17(c(input.ctChetRefundContribution)), l22 - l23);
+  const l24a = min22(rd17(c(input.ctCharityContributions)), l22 - l23 - l24);
+  const l25 = max012(l22 - l23 - l24 - l24a);
+  const l26 = max012(l17 - l21);
+  const l27 = input.ctLate === true && l26 > 0n ? rd17(l26 / 10n) : 0n;
   if (l27 > 0n)
     notes.push(`CT line 27: late payment penalty 10% of the ${fmtD(l26)} due = ${fmtD(l27)}`);
-  const l28 = rd16(c(input.ctLateInterest));
-  const l29 = rd16(c(input.ctUnderpaymentInterest));
+  const l28 = rd17(c(input.ctLateInterest));
+  const l29 = rd17(c(input.ctUnderpaymentInterest));
   const l30 = l26 + l27 + l28 + l29;
   notes.push("CT scope: Form CT-1040 is the full-year RESIDENT return \u2014 part-year and nonresident filers use Form CT-1040NR/PY (not composed); Connecticut has no local income taxes; Schedule 2 is composed for ONE qualifying jurisdiction (add further columns by hand); Form CT-6251, Schedule CT-IT, Schedule CT-PE, and Form CT-2210 amounts are transcribed inputs");
   return {
@@ -34543,19 +35480,19 @@ function composeKS(input, evalStateTax, notes) {
   const fs = input.filingStatus;
   if (fs === "qss")
     notes.push("KS filing status: 'If your federal filing status is Qualifying Widow(er) with Dependent Child, check the Head of Household box' \u2014 composed as Kansas head of household (single-column rates, $6,180 deduction, $9,160 exemption). The form's HOH box also carries the $2,320 additional exemption and this composer follows the form; K.S.A. 79-32,121b(b)(1) grants it to 'head of household, as defined in 26 U.S.C. \xA7 2(b)', which a federal QSS (\xA7 2(a)) is not \u2014 a preparer may take the stricter view; disclose");
-  const fagi = rd16(c(input.federalAGI));
-  const a9 = rd16(c(input.additions));
+  const fagi = rd17(c(input.federalAGI));
+  const a9 = rd17(c(input.additions));
   if (a9 > 0n)
     notes.push(`KS Schedule S line A9: additions ${fmtD(a9)} (non-Kansas municipal interest, KPERS employee contributions from W-2 box 14, \xA7 163(j) carryforward, unqualified savings-account withdrawals, other \u2014 transcribed)`);
-  const a10 = rd16(c(input.taxableSocialSecurity));
+  const a10 = rd17(c(input.taxableSocialSecurity));
   if (a10 > 0n)
     notes.push(`KS Schedule S line A10: taxable Social Security ${fmtD(a10)} subtracted in full (100% exempt since TY2024 \u2014 no AGI limit)`);
-  const a12 = rd16(c(input.ksUsInterest));
-  const a13 = rd16(c(input.ksStateRefund));
-  const a14 = rd16(c(input.ksExemptRetirement));
+  const a12 = rd17(c(input.ksUsInterest));
+  const a13 = rd17(c(input.ksStateRefund));
+  const a14 = rd17(c(input.ksExemptRetirement));
   if (a14 > 0n)
     notes.push(`KS Schedule S line A14: exempt retirement benefits ${fmtD(a14)} (KPERS, federal civil service and military retirement, Railroad Retirement, Kansas police/fire/teachers/judges systems \u2014 keep the 1099-Rs)`);
-  const c529 = rd16(c(input.ks529Contributions));
+  const c529 = rd17(c(input.ks529Contributions));
   let a16 = 0n;
   if (c529 > 0n) {
     const beneficiaries = BigInt(input.ks529Beneficiaries ?? 1);
@@ -34566,7 +35503,7 @@ function composeKS(input, evalStateTax, notes) {
     else
       notes.push(`KS Schedule S line A16: 529 contributions ${fmtD(a16)} subtracted`);
   }
-  const aOther = rd16(c(input.subtractions));
+  const aOther = rd17(c(input.subtractions));
   if (aOther > 0n)
     notes.push(`KS Schedule S other subtractions ${fmtD(aOther)} (lines A11, A15, A17-A25 \u2014 KPERS lump sums, military bonuses, ABLE $3,000/$6,000, first-time home buyer, adoption savings, organ donor \u2264 $5,000 \u2014 transcribed)`);
   const a26 = a10 + a12 + a13 + a14 + a16 + aOther;
@@ -34574,11 +35511,11 @@ function composeKS(input, evalStateTax, notes) {
   const l1 = fagi;
   const l3 = l1 + l2;
   const boxes = input.ksStdBoxes ?? 0;
-  const standard = rd16(evalStateTax("us.ks.standard_deduction", 0n, { ksStdBoxes: boxes }));
+  const standard = rd17(evalStateTax("us.ks.standard_deduction", 0n, { ksStdBoxes: boxes }));
   const hasItemized = c(input.ksMedicalExpenses) > 0n || c(input.ksPropertyTaxes) > 0n || c(input.ksMortgageInterest) > 0n || c(input.ksCharitableContributions) > 0n;
   let itemized = 0n;
   if (hasItemized) {
-    itemized = rd16(evalStateTax("us.ks.itemized_deductions", 0n, {
+    itemized = rd17(evalStateTax("us.ks.itemized_deductions", 0n, {
       ksMedicalExpenses: c(input.ksMedicalExpenses),
       ksFederalAgi: fagi,
       ksPropertyTaxes: c(input.ksPropertyTaxes),
@@ -34605,7 +35542,7 @@ function composeKS(input, evalStateTax, notes) {
   }
   if (fs === "mfs")
     notes.push(`KS line 4 (MFS): both spouses must use the same method \u2014 K.S.A. 79-32,115(g): neither is allowed the Kansas itemized deduction unless both itemize, and neither may use the tax table unless both do; this return is ${method} \u2014 pass ksItemize to match the spouse`);
-  const l5 = rd16(evalStateTax("us.ks.exemptions", 0n, {
+  const l5 = rd17(evalStateTax("us.ks.exemptions", 0n, {
     ksDependents: input.dependents ?? 0,
     ksChildrenBornThisYear: input.ksChildrenBornThisYear ?? 0,
     ksStillbirths: input.ksStillbirths ?? 0,
@@ -34613,62 +35550,62 @@ function composeKS(input, evalStateTax, notes) {
     isClaimedAsDependent: input.claimedAsDependent === true
   }));
   const l6 = l4 + l5;
-  const l7 = max011(l3 - l6);
-  const l8 = rd16(evalStateTax("us.ks.income_tax", l7));
-  const lumpFed = rd16(c(input.ksFederalLumpSumTax));
-  const l11 = lumpFed > 0n ? rd16((lumpFed * 13n + 50n) / 100n) : 0n;
+  const l7 = max012(l3 - l6);
+  const l8 = rd17(evalStateTax("us.ks.income_tax", l7));
+  const lumpFed = rd17(c(input.ksFederalLumpSumTax));
+  const l11 = lumpFed > 0n ? rd17((lumpFed * 13n + 50n) / 100n) : 0n;
   if (l11 > 0n)
     notes.push(`KS line 11: Kansas tax on lump-sum distributions ${fmtD(l11)} = 13% of the federal Form 4972 tax ${fmtD(lumpFed)}`);
   const l12 = l8 + l11;
   let l13 = 0n;
-  const osPaid = rd16(c(input.ksOtherStateTaxPaid));
-  const osIncome = rd16(c(input.ksOtherStateIncome));
+  const osPaid = rd17(c(input.ksOtherStateTaxPaid));
+  const osIncome = rd17(c(input.ksOtherStateIncome));
   if (osPaid > 0n && osIncome > 0n && l3 > 0n) {
-    const maxCredit = osIncome >= l3 ? l12 : rd16(l12 * osIncome / l3);
+    const maxCredit = osIncome >= l3 ? l12 : rd17(l12 * osIncome / l3);
     l13 = min22(osPaid, maxCredit);
     notes.push(`KS line 13: credit for taxes paid to another state ${fmtD(l13)} (lesser of ${fmtD(osPaid)} paid or ${fmtD(l12)} \xD7 ${fmtD(osIncome)} \xF7 ${fmtD(l3)} = ${fmtD(maxCredit)}; enclose the other state's return; not the amount withheld)`);
   }
   let l14 = 0n;
-  const fedCdcc = rd16(c(input.ksFederalChildCareCredit));
+  const fedCdcc = rd17(c(input.ksFederalChildCareCredit));
   if (fedCdcc > 0n) {
-    l14 = rd16(evalStateTax("us.ks.child_care_credit", 0n, { ksFederalChildCareCredit: fedCdcc }));
-    const room = max011(l12 - l13);
+    l14 = rd17(evalStateTax("us.ks.child_care_credit", 0n, { ksFederalChildCareCredit: fedCdcc }));
+    const room = max012(l12 - l13);
     if (l14 > room) {
       notes.push(`KS line 14: child and dependent care credit ${fmtD(l14)} limited to the remaining tax ${fmtD(room)} (nonrefundable)`);
       l14 = room;
     } else
       notes.push(`KS line 14: child and dependent care credit ${fmtD(l14)} (50% of the federal credit; residents only; valid SSNs required)`);
   }
-  const l15 = min22(rd16(c(input.nonrefundableCredits)), max011(l12 - l13 - l14));
+  const l15 = min22(rd17(c(input.nonrefundableCredits)), max012(l12 - l13 - l14));
   if (l15 > 0n)
     notes.push(`KS line 15: other credits ${fmtD(l15)} (Schedule K credits \u2014 capped at the remaining tax)`);
-  const l16 = max011(l12 - l13 - l14 - l15);
-  const fedEic = rd16(c(input.federalEITC));
+  const l16 = max012(l12 - l13 - l14 - l15);
+  const fedEic = rd17(c(input.federalEITC));
   let l17 = 0n;
   let l22 = 0n;
   if (fedEic > 0n) {
-    const ksEitc = rd16(evalStateTax("us.ks.eitc", 0n, { ksFederalEic: fedEic }));
+    const ksEitc = rd17(evalStateTax("us.ks.eitc", 0n, { ksFederalEic: fedEic }));
     l17 = min22(ksEitc, l16);
     l22 = ksEitc - l17;
     notes.push(`KS EITC ${fmtD(ksEitc)} = 17% of the ${fmtD(fedEic)} federal EIC: ${fmtD(l17)} nonrefundable on line 17 (up to line 16) and ${fmtD(l22)} refundable on line 22 (residents only)`);
   }
-  const l18 = max011(l16 - l17);
-  const l19 = rd16(c(input.stateWithholding)) + rd16(c(input.spouseStateWithholding));
-  const l20 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l21 = rd16(c(input.extensionPayment));
-  const l23 = rd16(c(input.refundableCredits));
-  const l24 = rd16(c(input.ksAmendedPaid));
-  const l25 = rd16(c(input.ksK120sCredit));
-  const l26 = rd16(c(input.ksAmendedOverpayment));
+  const l18 = max012(l16 - l17);
+  const l19 = rd17(c(input.stateWithholding)) + rd17(c(input.spouseStateWithholding));
+  const l20 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l21 = rd17(c(input.extensionPayment));
+  const l23 = rd17(c(input.refundableCredits));
+  const l24 = rd17(c(input.ksAmendedPaid));
+  const l25 = rd17(c(input.ksK120sCredit));
+  const l26 = rd17(c(input.ksAmendedOverpayment));
   const l27 = l19 + l20 + l21 + l22 + l23 + l24 + l25 - l26;
-  const l28 = max011(l18 - l27);
-  const l29 = rd16(c(input.ksInterest));
-  const l30 = rd16(c(input.ksPenalty));
-  const l31 = rd16(c(input.ksEstimatedTaxPenalty));
-  const checkoffs = rd16(c(input.ksCheckoffs));
-  const l33 = max011(l27 - l18);
-  const l34 = min22(rd16(c(input.ksCreditForward)), l33);
-  const refundBeforeCheckoffs = max011(l33 - l34);
+  const l28 = max012(l18 - l27);
+  const l29 = rd17(c(input.ksInterest));
+  const l30 = rd17(c(input.ksPenalty));
+  const l31 = rd17(c(input.ksEstimatedTaxPenalty));
+  const checkoffs = rd17(c(input.ksCheckoffs));
+  const l33 = max012(l27 - l18);
+  const l34 = min22(rd17(c(input.ksCreditForward)), l33);
+  const refundBeforeCheckoffs = max012(l33 - l34);
   const checkoffsFromRefund = min22(checkoffs, refundBeforeCheckoffs);
   const l43 = refundBeforeCheckoffs - checkoffsFromRefund;
   const l32 = l28 > 0n ? l28 + l29 + l30 + l31 + checkoffs : l29 + l30 + l31 + (checkoffs - checkoffsFromRefund);
@@ -34721,44 +35658,405 @@ function composeKS(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/ar.js
+var D = (x) => rd17(c(x));
+var ITEMIZED_KEYS = ["arMedicalExpenses", "arTaxesPaid", "arInterestPaid", "arContributions", "arCasualtyLosses", "arTuitionDeduction", "arMiscExpenses", "arOtherMiscDeductions"];
+function composeAR(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Arkansas AR1000F composer");
+  const married = fs === "mfj";
+  const spouseGiven = typeof input.arSpouseIncome === "number";
+  const deps = input.dependents ?? 0;
+  const arStatus = { single: "1", mfj: "2", hoh: "3", mfs: "5", qss: "6" }[fs] ?? "1";
+  if (!married && (input.arStatus4 === true || spouseGiven))
+    notes.push("AR filing status: arStatus4 / arSpouseIncome apply only to a married couple filing on ONE Arkansas return (federal MFJ \u2192 status 2 or 4) \u2014 ignored");
+  if (fs === "qss")
+    notes.push("AR filing status 6 (Surviving Spouse with dependent child): spouse died in 2023 or 2024, not remarried, dependent child, over half the cost of the home \u2014 same rate table as everyone, the HOH/surviving-spouse personal credit and Low Income Tax Table columns, a single $6,000 retirement exclusion");
+  const compute = (status4, low) => {
+    const n = [];
+    const useExclusions = !low;
+    const pTax = D(input.arPensionTaxablePrimary);
+    const sTax = D(input.arPensionTaxableSpouse);
+    const milP = D(input.arMilitaryRetirementPrimary);
+    const milS = D(input.arMilitaryRetirementSpouse);
+    const milPay = D(input.arMilitaryPay);
+    const exclP = useExclusions && pTax > 0n ? rd17(evalStateTax("us.ar.retirement_exclusion", 0n, { arPensionTaxable: pTax, arMilitaryRetirement: milP })) : 0n;
+    const exclS = useExclusions && married && sTax > 0n ? rd17(evalStateTax("us.ar.retirement_exclusion", 0n, { arPensionTaxable: sTax, arMilitaryRetirement: milS })) : 0n;
+    if (!married && sTax > 0n)
+      n.push("AR line 18B: arPensionTaxableSpouse ignored \u2014 only a married couple on one return has a spouse line; a surviving spouse (status 6) 'is limited to a single $6,000 exemption'");
+    const l18A = pTax - exclP;
+    const l18B = married ? sTax - exclS : 0n;
+    if (exclP > 0n)
+      n.push(`AR line 18A: $6,000 exclusion ${fmtD(exclP)} against ${fmtD(pTax)} of employer pension / qualified IRA${milP > 0n ? ` (reduced by the ${fmtD(milP)} military retirement exemption \u2014 \xA7 26-51-307(f))` : ""}; premature IRA withdrawals belong on line 16 with no exclusion`);
+    if (exclS > 0n)
+      n.push(`AR line 18B: spouse's $6,000 exclusion ${fmtD(exclS)} against ${fmtD(sTax)}${milS > 0n ? ` (reduced by ${fmtD(milS)} military retirement)` : ""}`);
+    const l8 = D(input.wages);
+    const l10 = D(input.arInterest);
+    const l11 = D(input.arDividends);
+    const l12 = D(input.arAlimonyReceived);
+    const l13 = D(input.arBusinessIncome);
+    const l15 = D(input.arOtherGains);
+    const l16 = D(input.arIraTaxable);
+    const l19 = D(input.arRentsRoyalties);
+    const l20 = D(input.arFarmIncome);
+    const l21 = D(input.unemploymentCompensation);
+    const l22 = D(input.arOtherIncome);
+    const ltP = c(input.arLongTermGain);
+    const stP = c(input.arShortTermGain);
+    const ltS = married ? c(input.arSpouseLongTermGain) : 0n;
+    const stS = married ? c(input.arSpouseShortTermGain) : 0n;
+    if (!married && c(input.arSpouseLongTermGain) + c(input.arSpouseShortTermGain) !== 0n)
+      n.push("AR line 14: arSpouseLongTermGain / arSpouseShortTermGain ignored \u2014 only a married couple on one return has a spouse column");
+    const cg = (lt14, st, s4) => lt14 !== 0n || st !== 0n ? rd17(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt14, arShortTermGain: st, arStatus4: s4 })) : 0n;
+    const l14A = status4 ? cg(ltP, stP, true) : cg(ltP + ltS, stP + stS, false);
+    const l14B = status4 ? cg(ltS, stS, true) : 0n;
+    const l14 = l14A + l14B;
+    if (l14 !== 0n || ltP + ltS + stP + stS !== 0n)
+      n.push(`AR line 14 (AR1000D): taxable capital gain ${fmtD(l14)} from long-term ${fmtD(rd17(ltP + ltS))} and short-term ${fmtD(rd17(stP + stS))} \u2014 50% of the net long-term gain is exempt; a net loss is limited to $3,000 ($1,500 per taxpayer for status 4 or 5)${status4 ? `; status 4 runs AR1000D per column (primary ${fmtD(l14A)}, spouse ${fmtD(l14B)} from arSpouseLongTermGain / arSpouseShortTermGain)` : ""}`);
+    const excludedGain = max012(max012(ltP + ltS + stP + stS) - l14);
+    const milTaxA = low ? milP + milPay : 0n;
+    const milTaxB = low ? milS : 0n;
+    if (!low && milPay + milP + milS > 0n)
+      n.push(`AR lines 9/17: active-duty military pay ${fmtD(milPay)} and military retirement ${fmtD(milP + milS)} are exempt \u2014 informational boxes only, not in column A`);
+    const other = l8 + l10 + l11 + l12 + l13 + l15 + l16 + l19 + l20 + l21 + l22;
+    const spouseShare = status4 ? D(input.arSpouseIncome) : 0n;
+    let a23;
+    let b23;
+    if (status4) {
+      a23 = other - spouseShare + l14A + l18A + milTaxA;
+      b23 = spouseShare + l14B + l18B + milTaxB;
+      if (a23 < 0n || b23 < 0n)
+        return { invalid: `column ${a23 < 0n ? "A" : "B"} total income is negative (${fmtD(a23 < 0n ? a23 : b23)}) \u2014 'IF ONE SPOUSE HAD A TOTAL NEGATIVE INCOME, YOU MUST FILE MARRIED FILING JOINTLY'` };
+    } else {
+      a23 = other + l14 + l18A + l18B + milTaxA + milTaxB;
+      b23 = 0n;
+    }
+    const adjTotal = D(input.arAdjustments);
+    const b24 = status4 ? D(input.arSpouseAdjustments) : 0n;
+    const a24 = adjTotal - b24;
+    if (adjTotal > 0n)
+      n.push(`AR line 24 (AR1000ADJ): adjustments ${fmtD(adjTotal)} transcribed (IRA, HSA, student loan interest \u2264 $2,500, tuition savings \u2264 $5,000, self-employed health insurance, alimony paid, ABLE \u2264 $5,000, \u2026)${status4 ? ` \u2014 ${fmtD(b24)} in the spouse's column B` : ""}`);
+    const a25 = a23 - a24;
+    const b25 = b23 - b24;
+    const agiAll = a25 + b25;
+    if (low) {
+      if (status4)
+        return { ineligible: "status 4 \u2014 'Married couples must file a joint return (Filing Status 2) to qualify'" };
+      if (fs === "mfs")
+        return { ineligible: "status 5 (separate returns) \u2014 only statuses 1, 2, 3, and 6 have a Low Income Tax Table" };
+      if (input.arItemize === true)
+        return { ineligible: "arItemize \u2014 'If you itemize your deductions, you must use the Regular Income Tax Table'" };
+      const limit = fs === "single" ? 1750000n : fs === "hoh" || fs === "qss" ? deps >= 2 ? 2900000n : 2530000n : deps >= 2 ? 3610000n : 2900000n;
+      const exempt = D(input.arExemptIncome);
+      const totalAll = a23 + exempt + excludedGain;
+      if (totalAll > limit)
+        return { ineligible: `total income from all sources ${fmtD(totalAll)} (line 23 ${fmtD(a23)} + nontaxable ${fmtD(exempt)}${excludedGain > 0n ? ` + excluded capital gain ${fmtD(excludedGain)}` : ""}${milTaxA + milTaxB + pTax + sTax > 0n ? ", exclusions forgone" : ""}) exceeds the ${fmtD(limit)} table limit` };
+      if (a25 > limit)
+        return { ineligible: `AGI ${fmtD(a25)} exceeds the ${fmtD(limit)} table limit` };
+      if (exempt === 0n)
+        n.push("AR line 26: the Low Income Tax Table test uses 'total income from all sources (regardless of whether the income is taxable to Arkansas)' \u2014 assumed no Social Security or other nontaxable income (pass arExemptIncome)");
+      const forgone = (pTax > 0n ? min22(pTax, 600000n) : 0n) + (married && sTax > 0n ? min22(sTax, 600000n) : 0n) + milP + milS + milPay;
+      if (forgone > 0n)
+        n.push(`AR line 26: the retirement / military exclusions (${fmtD(forgone)}) are NOT used on this return \u2014 'You may elect NOT TO USE the exclusion(s) to which you are entitled and use a Low Income Tax Table'`);
+    }
+    let a27 = 0n;
+    let b27 = 0n;
+    let method;
+    if (low) {
+      method = "low income table";
+    } else {
+      const hasItemized = ITEMIZED_KEYS.some((k) => c(input[k]) > 0n);
+      const itemized = hasItemized ? rd17(evalStateTax("us.ar.itemized_deductions", 0n, {
+        arMedicalExpenses: c(input.arMedicalExpenses),
+        arTaxesPaid: c(input.arTaxesPaid),
+        arInterestPaid: c(input.arInterestPaid),
+        arContributions: c(input.arContributions),
+        arCasualtyLosses: c(input.arCasualtyLosses),
+        arTuitionDeduction: c(input.arTuitionDeduction),
+        arMiscExpenses: c(input.arMiscExpenses),
+        arOtherMiscDeductions: c(input.arOtherMiscDeductions),
+        arAgi: agiAll
+      })) : 0n;
+      const stdA = rd17(evalStateTax("us.ar.standard_deduction", 0n, { arStatus4: status4, arAgi: a25 }));
+      const stdB = status4 ? rd17(evalStateTax("us.ar.standard_deduction", 0n, { arStatus4: true, arAgi: b25 })) : 0n;
+      let itemize;
+      if (input.arItemize === true && !hasItemized) {
+        itemize = false;
+        n.push("AR line 27: arItemize is true but no AR3 amounts were given \u2014 the standard deduction is composed (pass the arMedicalExpenses / arTaxesPaid / arInterestPaid / arContributions / \u2026 inputs to itemize)");
+      } else if (input.arItemize === true)
+        itemize = true;
+      else if (input.arItemize === false || !hasItemized)
+        itemize = false;
+      else {
+        itemize = itemized > stdA + stdB;
+        n.push(itemize ? `AR line 27: AR3 itemized deductions ${fmtD(itemized)} beat the ${fmtD(stdA + stdB)} standard deduction (the election is independent of the federal return)` : `AR line 27: standard deduction ${fmtD(stdA + stdB)} kept (AR3 total ${fmtD(itemized)})`);
+      }
+      if (itemize) {
+        method = "itemized";
+        if (status4) {
+          const pct3 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
+          a27 = (itemized * pct3 + 50n) / 100n;
+          b27 = itemized - a27;
+          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct3}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
+        } else
+          a27 = itemized;
+        if (fs === "mfs")
+          n.push("AR line 27 (status 5): both spouses must itemize or both take the standard deduction (\xA7 26-51-430(a)(2)); prorate the AR3 total between the two returns by AGI share (AR3 lines 31-35)");
+      } else {
+        method = "standard";
+        a27 = stdA;
+        b27 = stdB;
+        if (fs === "mfs")
+          n.push("AR line 27 (status 5): both spouses must use the same method (\xA7 26-51-430(a)(2)) \u2014 pass arItemize to match the spouse's return");
+      }
+    }
+    const a28 = a25 - a27;
+    const b28 = status4 ? b25 - b27 : 0n;
+    const lowTax = (agi2) => rd17(evalStateTax("us.ar.low_income_tax", 0n, { arAgi: agi2, arDependents: deps, arStatus4: false }));
+    const a29 = low ? lowTax(a25) : rd17(evalStateTax("us.ar.income_tax", max012(a28)));
+    const b29 = status4 ? rd17(evalStateTax("us.ar.income_tax", max012(b28))) : 0n;
+    if (a28 < 0n || b28 < 0n)
+      n.push("AR line 28: a negative net taxable income is shown as printed; the tax on it is $0");
+    const l30 = a29 + b29;
+    const l31 = D(input.arLumpSumTax);
+    if (l31 > 0n)
+      n.push(`AR line 31: lump-sum distribution averaging tax ${fmtD(l31)} from AR1000TD (transcribed)`);
+    const fed5329 = D(input.arFederalEarlyWithdrawalTax);
+    const l32 = rd17(fed5329 / 10n);
+    if (l32 > 0n)
+      n.push(`AR line 32: ${fmtD(l32)} = 10% of the federal Form 5329 additional tax ${fmtD(fed5329)} on IRA / qualified plan / Coverdell distributions`);
+    const l33 = l30 + l31 + l32;
+    const age65 = Math.min(input.arAge65Count ?? 0, married ? 2 : 1);
+    const pensioners = (pTax > 0n ? 1 : 0) + (married && sTax > 0n ? 1 : 0);
+    const special65Extra = low ? Math.min(age65, pensioners) : 0;
+    const boxes = (input.arCreditBoxes ?? 0) + special65Extra;
+    if (special65Extra > 0)
+      n.push(`AR line 7A: ${special65Extra} additional '65 Special' box(es) \u2014 with the line 18 exclusion forgone for the Low Income Tax Table, the 65-or-over pensioner(s) qualify ($29 each; arAge65Count)`);
+    const l34 = rd17(evalStateTax("us.ar.personal_tax_credits", 0n, { arCreditBoxes: boxes, arDependents: deps, arStatus4: status4 }));
+    let childCare = 0n;
+    const expenses = c(input.arChildCareExpenses);
+    if (expenses > 0n) {
+      if (typeof input.federalAGI !== "number")
+        throw new Error("federalAGI is required for the Arkansas child care credit \u2014 AR2441 line 7 is Form 1040 line 11 (run compute_return first)");
+      if (fs === "mfs" && input.arConsideredUnmarried !== true)
+        n.push("AR line 35: a status 5 filer 'cannot claim a credit for child and dependent care expenses' unless considered unmarried (lived apart the last six months, kept up the qualifying person's home) \u2014 pass arConsideredUnmarried: true if so; $0 composed");
+      else {
+        childCare = rd17(evalStateTax("us.ar.child_care_credit", 0n, {
+          arChildCareExpenses: expenses,
+          arChildCareQualifyingPersons: input.arChildCareQualifyingPersons ?? 1,
+          arEarnedIncome: c(input.arEarnedIncome),
+          arSpouseEarnedIncome: c(input.arSpouseEarnedIncome),
+          arFederalAgi: c(input.federalAGI)
+        }));
+      }
+    }
+    const early = input.arEarlyChildhoodApproved === true;
+    const l35 = early ? 0n : childCare;
+    const l43 = early ? childCare : 0n;
+    if (childCare > 0n)
+      n.push(early ? `AR line 43: early childhood program credit ${fmtD(childCare)} \u2014 the 20% AR2441 credit is REFUNDABLE when the child attends an APPROVED early childhood program (attach AR1000EC and AR2441; \xA7 26-51-502(c)); nothing on line 35` : `AR line 35: child care credit ${fmtD(childCare)} = 20% of the AR2441 computation (2013-law \xA7 21 percentages on federal AGI ${fmtD(rd17(c(input.federalAGI)))}); nonrefundable \u2014 refundable on line 43 only for an approved early childhood program (arEarlyChildhoodApproved)`);
+    const political = min22(D(input.arPoliticalContributions), married ? 10000n : 5000n);
+    if (political > 0n)
+      n.push(`AR1000TC line 1: state political contribution credit ${fmtD(political)} (cash contributions to Arkansas candidates, PACs, or parties by April 15, 2026; up to $50 per taxpayer, $100 for status 2 or 4)`);
+    let osCredit = 0n;
+    const osPaid = D(input.arOtherStateTaxPaid);
+    const osIncome = D(input.arOtherStateIncome);
+    if (osPaid > 0n && osIncome > 0n) {
+      const without = low ? lowTax(max012(a25 - osIncome)) : rd17(evalStateTax("us.ar.income_tax", max012(a28 - osIncome)));
+      const arTaxOnIt = max012(a29 - without);
+      osCredit = min22(osPaid, arTaxOnIt);
+      n.push(`AR1000TC line 2: other state tax credit ${fmtD(osCredit)} \u2014 lesser of ${fmtD(osPaid)} paid to the other state or the Arkansas tax on that income ${fmtD(arTaxOnIt)} (${fmtD(a29)} with it, ${fmtD(without)} without it)${status4 ? "; the other-state income is taken from the PRIMARY column" : ""}; attach the other state's signed return`);
+    }
+    const additional = status4 ? rd17(evalStateTax("us.ar.additional_tax_credit", max012(a28), { arStatus4: true })) + rd17(evalStateTax("us.ar.additional_tax_credit", max012(b28), { arStatus4: true })) : rd17(evalStateTax("us.ar.additional_tax_credit", max012(a28), { arStatus4: false }));
+    if (additional > 0n)
+      n.push(`AR1000TC line 6: additional tax credit for qualified individuals ${fmtD(additional)} (net taxable income $27,600 or less; $60 through $26,500 then \u2212$5 per $100; ${status4 ? "each spouse's column" : married ? "doubled for status 2" : "one taxpayer"}) \u2014 requires a TIMELY filed return`);
+    const ddCount = input.arDevelopmentallyDisabledDependents ?? 0;
+    const dd = 50000n * BigInt(ddCount);
+    if (dd > 0n)
+      n.push(`AR1000TC line 7: ${fmtD(dd)} = $500 \xD7 ${ddCount} dependent(s) with developmental disabilities (AR1000-DD certification on file)`);
+    const otherTc = D(input.nonrefundableCredits);
+    if (otherTc > 0n)
+      n.push(`AR1000TC lines 3-5, 8: other credits ${fmtD(otherTc)} transcribed (adoption 20% of federal, phenylketonuria, stillborn child \u2264 $500, business incentive certificates)`);
+    const l36 = political + osCredit + additional + dd + otherTc;
+    const l37 = l34 + l35 + l36;
+    const l38 = max012(l33 - l37);
+    if (l37 > l33)
+      n.push(`AR line 38: credits ${fmtD(l37)} exceed the total tax ${fmtD(l33)} \u2014 'the difference is not refundable'`);
+    const l39A = D(input.stateWithholding) + D(input.spouseStateWithholding);
+    const l39B = D(input.arWithholding1099);
+    const l40 = D(input.estimatedPayments) + D(input.priorYearOverpaymentCredited);
+    const l41 = D(input.extensionPayment);
+    const l42 = D(input.arAmendedPaid);
+    const l44 = l39A + l39B + l40 + l41 + l42 + l43;
+    const l45 = D(input.arAmendedRefund);
+    const l46 = l44 - l45;
+    const l47 = max012(l46 - l38);
+    const l48 = min22(D(input.arCreditForward), l47);
+    const l49 = min22(D(input.arCheckoffs), l47 - l48);
+    const l50 = l47 - l48 - l49;
+    const l51 = max012(l38 - l46);
+    const l52B = D(input.arUnderestimatePenalty);
+    const l52C = l51 + l52B;
+    if (l51 > 100000n && l52B === 0n)
+      n.push(`AR line 51: amount due ${fmtD(l51)} is over $1,000 \u2014 'continue to 52A': attach AR2210 (or AR2210A) and enter the exception number or the computed underestimate penalty (10% when withholding was under 90% of net tax)`);
+    if (D(input.arCheckoffs) > l49)
+      n.push(`AR line 49: check-off contributions ${fmtD(D(input.arCheckoffs))} limited to the ${fmtD(l49)} available from the overpayment (a filer who owes sends contributions separately)`);
+    const col = (num, label, a, b) => status4 ? { [`${num}A_${label}`]: fmtD(a), [`${num}B_${label}`]: fmtD(b) } : { [`${num}_${label}`]: fmtD(a) };
+    const lines = {
+      _filing_status: status4 ? "4" : arStatus,
+      "7C_personal_credits": fmtD(l34),
+      ...l8 !== 0n ? { "8_wages": fmtD(l8) } : {},
+      ...l10 !== 0n ? { "10_interest": fmtD(l10) } : {},
+      ...l11 !== 0n ? { "11_dividends": fmtD(l11) } : {},
+      ...l12 !== 0n ? { "12_alimony": fmtD(l12) } : {},
+      ...l13 !== 0n ? { "13_business_income": fmtD(l13) } : {},
+      ...l14 !== 0n ? { "14_capital_gains": fmtD(l14) } : {},
+      ...l15 !== 0n ? { "15_other_gains": fmtD(l15) } : {},
+      ...l16 !== 0n ? { "16_ira_annuities": fmtD(l16) } : {},
+      ...pTax !== 0n ? { "18A_pension_primary": fmtD(l18A) } : {},
+      ...married && sTax !== 0n ? { "18B_pension_spouse": fmtD(l18B) } : {},
+      ...l19 !== 0n ? { "19_rents_royalties": fmtD(l19) } : {},
+      ...l20 !== 0n ? { "20_farm_income": fmtD(l20) } : {},
+      ...l21 !== 0n ? { "21_unemployment": fmtD(l21) } : {},
+      ...l22 !== 0n ? { "22_other_income": fmtD(l22) } : {},
+      ...milTaxA + milTaxB !== 0n ? { _military_income_included: fmtD(milTaxA + milTaxB) } : {},
+      ...col("23", "total_income", a23, b23),
+      ...a24 + b24 !== 0n ? col("24", "adjustments", a24, b24) : {},
+      ...col("25", "agi", a25, b25),
+      "26_table": method,
+      ...col("27", "deduction", a27, b27),
+      ...col("28", "net_taxable_income", a28, b28),
+      ...col("29", "tax", a29, b29),
+      "30_combined_tax": fmtD(l30),
+      ...l31 !== 0n ? { "31_lump_sum_tax": fmtD(l31) } : {},
+      ...l32 !== 0n ? { "32_early_withdrawal_tax": fmtD(l32) } : {},
+      "33_total_tax": fmtD(l33),
+      "34_personal_credits": fmtD(l34),
+      ...l35 !== 0n ? { "35_child_care_credit": fmtD(l35) } : {},
+      ...l36 !== 0n ? { "36_other_credits": fmtD(l36) } : {},
+      "37_total_credits": fmtD(l37),
+      "38_net_tax": fmtD(l38),
+      ...l39A !== 0n ? { "39A_withholding_w2": fmtD(l39A) } : {},
+      ...l39B !== 0n ? { "39B_withholding_1099": fmtD(l39B) } : {},
+      ...l40 !== 0n ? { "40_estimated_payments": fmtD(l40) } : {},
+      ...l41 !== 0n ? { "41_extension_payment": fmtD(l41) } : {},
+      ...l42 !== 0n ? { "42_amended_payments": fmtD(l42) } : {},
+      ...l43 !== 0n ? { "43_early_childhood_credit": fmtD(l43) } : {},
+      "44_total_payments": fmtD(l44),
+      ...l45 !== 0n ? { "45_amended_refund": fmtD(l45) } : {},
+      "46_adjusted_payments": fmtD(l46),
+      "47_overpayment": fmtD(l47),
+      ...l48 !== 0n ? { "48_credit_forward": fmtD(l48) } : {},
+      ...l49 !== 0n ? { "49_checkoffs": fmtD(l49) } : {},
+      "50_refund": fmtD(l50),
+      "51_amount_due": fmtD(l51),
+      ...l52B !== 0n ? { "52B_penalty": fmtD(l52B) } : {},
+      "52C_total_due": fmtD(l52C)
+    };
+    return { lines, notes: n, netTax: l38, tax: l30, status4, low };
+  };
+  const best = (status4) => {
+    const regular = compute(status4, false);
+    if ("invalid" in regular) {
+      notes.push(`AR filing status 4 not available: ${regular.invalid}`);
+      return void 0;
+    }
+    if ("ineligible" in regular)
+      return void 0;
+    const low = compute(status4, true);
+    const lowOk = !("ineligible" in low) && !("invalid" in low) ? low : void 0;
+    const why = "ineligible" in low ? low.ineligible : "invalid" in low ? low.invalid : "";
+    if (input.arUseLowIncomeTable === true) {
+      if (lowOk) {
+        lowOk.notes.push(`AR line 26: Low Income Tax Table used as requested \u2014 tax ${fmtD(lowOk.tax)} (net ${fmtD(lowOk.netTax)}) vs ${fmtD(regular.tax)} (net ${fmtD(regular.netTax)}) with the ${regular.lines["26_table"]} deduction`);
+        return lowOk;
+      }
+      regular.notes.push(`AR line 26: Low Income Tax Table requested but not available \u2014 ${why}; Regular Income Tax Table composed`);
+      return regular;
+    }
+    if (!lowOk) {
+      if (!status4 && fs !== "mfs" && input.arItemize !== true)
+        regular.notes.push(`AR line 26: Low Income Tax Table not available \u2014 ${why}`);
+      return regular;
+    }
+    if (input.arUseLowIncomeTable === false) {
+      regular.notes.push(`AR line 26: Regular Income Tax Table used as requested \u2014 tax ${fmtD(regular.tax)} (net ${fmtD(regular.netTax)}); the Low Income Tax Table would give ${fmtD(lowOk.tax)} (net ${fmtD(lowOk.netTax)})`);
+      return regular;
+    }
+    if (lowOk.netTax < regular.netTax) {
+      lowOk.notes.push(`AR line 26: Low Income Tax Table chosen \u2014 tax ${fmtD(lowOk.tax)} (net ${fmtD(lowOk.netTax)}) vs ${fmtD(regular.tax)} (net ${fmtD(regular.netTax)}) with the ${regular.lines["26_table"]} deduction on the Regular Income Tax Table (line 27 = 0: 'The Standard Deduction is already built into the table'; pass arUseLowIncomeTable: false to override)`);
+      return lowOk;
+    }
+    regular.notes.push(`AR line 26: Regular Income Tax Table kept \u2014 tax ${fmtD(regular.tax)} (net ${fmtD(regular.netTax)}) vs ${fmtD(lowOk.tax)} (net ${fmtD(lowOk.netTax)}) on the Low Income Tax Table (pass arUseLowIncomeTable: true to override)`);
+    return regular;
+  };
+  const candidates = [];
+  if (married && input.arStatus4 !== false && (input.arStatus4 === true || spouseGiven)) {
+    if (!spouseGiven)
+      notes.push("AR filing status 4: arSpouseIncome not given \u2014 the spouse's column B carries only line 18B (pass arSpouseIncome = the spouse's share of lines 8-22 and arSpouseAdjustments)");
+    const s4 = best(true);
+    if (s4)
+      candidates.push(s4);
+  }
+  if (!(married && input.arStatus4 === true) || candidates.length === 0) {
+    const s2 = best(false);
+    if (s2)
+      candidates.push(s2);
+  }
+  let chosen = candidates[0];
+  for (const cand of candidates)
+    if (cand.netTax < chosen.netTax)
+      chosen = cand;
+  if (candidates.length === 2) {
+    const s4 = candidates.find((x) => x.status4);
+    const s2 = candidates.find((x) => !x.status4);
+    notes.push(`AR filing status: married filing separately on the same return (status 4) nets ${fmtD(s4.netTax)}; married filing joint (status 2) nets ${fmtD(s2.netTax)} \u2014 status ${chosen.status4 ? "4" : "2"} composed ('Use the method that suits you best'; pass arStatus4 to force)`);
+  } else if (married && input.arStatus4 === void 0 && !spouseGiven)
+    notes.push("AR filing status 2 (joint) composed \u2014 Arkansas has ONE rate table for every status, so a two-income couple usually saves with status 4 (separately on the same return); pass arSpouseIncome (the spouse's share of lines 8-22) to compare");
+  notes.push(...chosen.notes);
+  notes.push("AR scope: Form AR1000F is composed for a FULL-YEAR RESIDENT \u2014 nonresidents and part-year residents file AR1000NR (columns C and lines 38A-38D proration, not composed); Arkansas has no local income taxes; Social Security, VA, workers' compensation, Railroad Retirement, and U.S./Arkansas obligation interest are exempt and never enter lines 8-22; AR1000ADJ, AR-OI, AR1000TD, AR1000CO, and AR1000TC lines 3-5 and 8 are transcribed inputs");
+  return chosen.lines;
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
 var CONSUMER_PROTECTION_JOINT_OR_DEPS = 100000n;
 function composeSC(input, evalStateTax, notes) {
   const joint = isJoint(input);
-  const mfs = isMfs3(input);
+  const mfs = isMfs4(input);
   if (typeof input.scFederalTaxableIncome !== "number") {
     throw new Error("scFederalTaxableIncome is required for SC returns \u2014 the SC1040 starts from FEDERAL TAXABLE INCOME (Form 1040 line 15), not federal AGI; run compute_return first and pass line 15 verbatim (a negative amount is allowed and handled via line r)");
   }
   const fti = c(input.scFederalTaxableIncome);
-  const l1 = max011(rd16(fti));
-  const negFti = max011(-rd16(fti));
-  const l2 = rd16(c(input.scAdditions));
+  const l1 = max012(rd17(fti));
+  const negFti = max012(-rd17(fti));
+  const l2 = rd17(c(input.scAdditions));
   if (l2 > 0n)
     notes.push(`SC line 2 additions ${fmtD(l2)} (lines a-e: state tax addback for federal itemizers, out-of-state losses, non-SC municipal interest \u2014 transcribed)`);
   const l3 = l1 + l2;
-  const netLtcg = max011(rd16(c(input.scNetLtcgAfterLosses)));
-  const lineI = netLtcg > 0n ? rd16((netLtcg * 44n + 50n) / 100n) : 0n;
+  const netLtcg = max012(rd17(c(input.scNetLtcgAfterLosses)));
+  const lineI = netLtcg > 0n ? rd17((netLtcg * 44n + 50n) / 100n) : 0n;
   if (lineI > 0n)
     notes.push(`SC line i: 44% net long-term capital gain deduction ${fmtD(lineI)} (net of ALL capital losses first, incl. short-term, per the printed example)`);
-  const lineO = rd16(c(input.taxableSocialSecurity));
+  const lineO = rd17(c(input.taxableSocialSecurity));
   if (lineO > 0n)
     notes.push(`SC line o: Social Security/Railroad Retirement subtraction ${fmtD(lineO)} (100% of the federally taxed amount \u2014 automatic)`);
   const person = (retirement, military, is65, label) => {
-    const mil = max011(rd16(military));
-    const p = retirement > 0n ? rd16(evalStateTax("us.sc.retirement_deduction", 0n, {
+    const mil = max012(rd17(military));
+    const p = retirement > 0n ? rd17(evalStateTax("us.sc.retirement_deduction", 0n, {
       scQualifiedRetirementIncome: retirement,
       scMilitaryRetirementDeduction: mil,
       scIs65: is65
     })) : 0n;
     if (mil > 0n)
       notes.push(`SC ${label} military retirement deduction ${fmtD(mil)} (100% since TY2022; the printed worksheet reduces the same person's retirement-deduction CAP and age-65 deduction by it)`);
-    const q = is65 ? rd16(evalStateTax("us.sc.age65_deduction", 0n, { scRetirementDeductionsClaimed: p + mil })) : 0n;
+    const q = is65 ? rd17(evalStateTax("us.sc.age65_deduction", 0n, { scRetirementDeductionsClaimed: p + mil })) : 0n;
     return { p, mil, q };
   };
-  const you = person(rd16(c(input.scRetirementIncomeYou)), rd16(c(input.scMilitaryRetirementYou)), input.scIs65You === true, "taxpayer");
-  const spouse = joint ? person(rd16(c(input.scRetirementIncomeSpouse)), rd16(c(input.scMilitaryRetirementSpouse)), input.scIs65Spouse === true, "spouse") : { p: 0n, mil: 0n, q: 0n };
+  const you = person(rd17(c(input.scRetirementIncomeYou)), rd17(c(input.scMilitaryRetirementYou)), input.scIs65You === true, "taxpayer");
+  const spouse = joint ? person(rd17(c(input.scRetirementIncomeSpouse)), rd17(c(input.scMilitaryRetirementSpouse)), input.scIs65Spouse === true, "spouse") : { p: 0n, mil: 0n, q: 0n };
   const lineP = you.p + you.mil + spouse.p + spouse.mil;
   const lineQ = you.q + spouse.q;
   if (you.p + spouse.p > 0n)
@@ -34772,89 +36070,89 @@ function composeSC(input, evalStateTax, notes) {
   if (lineS > 0n)
     notes.push(`SC line s: subsistence allowance ${fmtD(lineS)} (${days} days \xD7 $16 \u2014 federal/state/local police, full-time fire, EMS)`);
   const under6 = input.scDependentsUnder6 ?? 0;
-  const lineT = under6 > 0 ? rd16(evalStateTax("us.sc.dependent_exemption", 0n, { scDependents: under6 })) : 0n;
+  const lineT = under6 > 0 ? rd17(evalStateTax("us.sc.dependent_exemption", 0n, { scDependents: under6 })) : 0n;
   if (lineT > 0n)
     notes.push(`SC line t: dependents under 6 deduction ${fmtD(lineT)} (${under6} \xD7 $4,930 \u2014 the SAME indexed amount as line w, claimed AGAIN for each child under 6 on December 31)`);
-  const cpRaw = rd16(c(input.scConsumerProtection));
+  const cpRaw = rd17(c(input.scConsumerProtection));
   const deps = input.scDependents ?? input.dependents ?? 0;
   const cpCap = joint || deps > 0 ? CONSUMER_PROTECTION_JOINT_OR_DEPS : CONSUMER_PROTECTION_INDIVIDUAL;
   const lineU = min22(cpRaw, cpCap);
   if (cpRaw > lineU)
     notes.push(`SC line u: consumer protection services capped at ${fmtD(lineU)} ($300 individual / $1,000 joint-or-with-dependents)`);
-  const lineW = deps > 0 ? rd16(evalStateTax("us.sc.dependent_exemption", 0n, { scDependents: deps })) : 0n;
+  const lineW = deps > 0 ? rd17(evalStateTax("us.sc.dependent_exemption", 0n, { scDependents: deps })) : 0n;
   if (lineW > 0n)
     notes.push(`SC line w: dependent exemption ${fmtD(lineW)} (${deps} \xD7 $4,930, 2025 indexed; must match the federal dependent count)`);
-  const otherSubs = rd16(c(input.scSubtractionsOther));
+  const otherSubs = rd17(c(input.scSubtractionsOther));
   if (otherSubs > 0n)
     notes.push(`SC other subtractions ${fmtD(otherSubs)} (lines f/g/h/j/k/l/m/n/v: state refund, disability retirement, out-of-state income, volunteer deductions, Future Scholar 529, active trade or business, US interest, Guard/Reserve pay \u2014 transcribed)`);
   const l4 = lineI + lineO + lineP + lineQ + negFti + lineS + lineT + lineU + lineW + otherSubs;
-  const l5 = max011(l3 - l4);
-  const l6 = rd16(evalStateTax("us.sc.income_tax", l5));
-  const l7 = rd16(c(input.scLumpSumTax));
+  const l5 = max012(l3 - l4);
+  const l6 = rd17(evalStateTax("us.sc.income_tax", l5));
+  const l7 = rd17(c(input.scLumpSumTax));
   if (l7 > 0n)
     notes.push("SC line 7: tax on lump-sum distribution (SC4972 \u2014 agent-computed, form attached)");
-  const l8 = rd16(c(input.scActiveTradeTax));
+  const l8 = rd17(c(input.scActiveTradeTax));
   if (l8 > 0n)
     notes.push("SC line 8: tax on active trade or business income (I-335 flat 3% election \u2014 agent-computed; the electing income must be excluded from line 5 via subtraction line l)");
-  const l9 = rd16(c(input.scCatastropheTax));
+  const l9 = rd17(c(input.scCatastropheTax));
   const l10 = l6 + l7 + l8 + l9;
   let l11 = 0n;
-  const careExpenses = rd16(c(input.scCareExpenses));
+  const careExpenses = rd17(c(input.scCareExpenses));
   if (careExpenses > 0n) {
     if (mfs) {
       notes.push("SC line 11 Child and Dependent Care Credit $0: denied to married filing separately");
     } else {
-      l11 = rd16(evalStateTax("us.sc.cdcc", 0n, { scCareExpenses: careExpenses, scCareChildren: input.scCareChildren ?? 1 }));
+      l11 = rd17(evalStateTax("us.sc.cdcc", 0n, { scCareExpenses: careExpenses, scCareChildren: input.scCareChildren ?? 1 }));
       notes.push(`SC line 11: Child and Dependent Care Credit ${fmtD(l11)} (7% of the federal Form 2441 EXPENSES, max $210 one child / $420 two or more)`);
     }
   }
   let l12 = 0n;
-  const lowerEarned = rd16(c(input.scLowerQualifiedEarnedIncome));
+  const lowerEarned = rd17(c(input.scLowerQualifiedEarnedIncome));
   if (lowerEarned > 0n) {
     if (!joint) {
       notes.push("SC line 12 Two Wage Earner Credit $0: married-filing-jointly only");
     } else {
-      l12 = rd16(evalStateTax("us.sc.two_wage_earner_credit", 0n, { scLowerQualifiedEarnedIncome: lowerEarned }));
+      l12 = rd17(evalStateTax("us.sc.two_wage_earner_credit", 0n, { scLowerQualifiedEarnedIncome: lowerEarned }));
       notes.push(`SC line 12: Two Wage Earner Credit ${fmtD(l12)} (0.7% of the lesser spouse's SC qualified earned income, capped $50,000 \u2014 max $350)`);
     }
   }
-  const fedEitc = rd16(c(input.federalEITC));
+  const fedEitc = rd17(c(input.federalEITC));
   let scEitc = 0n;
   if (fedEitc > 0n) {
-    scEitc = rd16((fedEitc * 125n + 50n) / 100n);
+    scEitc = rd17((fedEitc * 125n + 50n) / 100n);
     notes.push(`SC EITC ${fmtD(scEitc)} in line 13 (125% of the federal EIC, NONREFUNDABLE, full-year residents, via SC1040TC/TC-60 \u2014 \xA7 12-6-3632, fully phased since 2023)`);
   }
-  const l13 = scEitc + rd16(c(input.nonrefundableCredits));
+  const l13 = scEitc + rd17(c(input.nonrefundableCredits));
   const l14 = l11 + l12 + l13;
-  const l15 = max011(l10 - l14);
+  const l15 = max012(l10 - l14);
   if (l14 > l10)
     notes.push(`SC nonrefundable credits ${fmtD(l14)} exceed the line 10 tax ${fmtD(l10)} \u2014 line 15 floors at $0 (no carryforward, no refund of the excess)`);
-  const l16 = rd16(c(input.stateWithholding));
-  const l17 = rd16(c(input.estimatedPayments)) + rd16(c(input.priorYearOverpaymentCredited));
-  const l18 = rd16(c(input.extensionPayment));
-  const l19 = rd16(c(input.scI290Payments));
-  const l20 = rd16(c(input.scOtherWithholding));
-  const l21 = rd16(c(input.scTuitionCredit));
+  const l16 = rd17(c(input.stateWithholding));
+  const l17 = rd17(c(input.estimatedPayments)) + rd17(c(input.priorYearOverpaymentCredited));
+  const l18 = rd17(c(input.extensionPayment));
+  const l19 = rd17(c(input.scI290Payments));
+  const l20 = rd17(c(input.scOtherWithholding));
+  const l21 = rd17(c(input.scTuitionCredit));
   if (l21 > 0n)
     notes.push("SC line 21: refundable tuition tax credit (I-319: 50% of qualifying SC-institution tuition within the form's limits \u2014 agent-computed, form attached)");
-  const l22 = rd16(c(input.refundableCredits));
+  const l22 = rd17(c(input.refundableCredits));
   if (l22 > 0n)
     notes.push("SC line 22 refundable credits (22a-d: anhydrous ammonia I-333, milk I-334, classroom teacher I-360, parental refundable I-361 \u2014 transcribed, forms attached)");
   const l23 = l16 + l17 + l18 + l19 + l20 + l21 + l22;
-  const l24 = max011(l23 - l15);
-  const l25 = max011(l15 - l23);
-  const l26 = rd16(c(input.useTax));
+  const l24 = max012(l23 - l15);
+  const l25 = max012(l15 - l23);
+  const l26 = rd17(c(input.useTax));
   if (l26 > 0n)
     notes.push(`SC line 26: use tax ${fmtD(l26)} (county sales-tax rate on untaxed online/out-of-state purchases \u2014 transcribed)`);
-  const l27 = rd16(c(input.scAppliedToNextYear));
-  const l28 = rd16(c(input.scContributions));
+  const l27 = rd17(c(input.scAppliedToNextYear));
+  const l28 = rd17(c(input.scContributions));
   const l29 = l26 + l27 + l28;
   const l30 = l29 > l24 ? 0n : l24 - l29;
-  const l31 = l25 + max011(l29 - l24);
+  const l31 = l25 + max012(l29 - l24);
   if (l24 > 0n && l29 > l24)
     notes.push(`SC lines 26-28 (${fmtD(l29)}) exceed the line 24 overpayment (${fmtD(l24)}) \u2014 the shortfall becomes line 31 tax due`);
-  const l32 = rd16(c(input.scLatePenalties));
-  const l33 = rd16(c(input.scUnderpaymentPenalty));
+  const l32 = rd17(c(input.scLatePenalties));
+  const l33 = rd17(c(input.scUnderpaymentPenalty));
   const l34 = l31 + l32 + l33;
   notes.push("SC OBBBA nonconformity (TY2025): South Carolina conforms to the IRC only through December 31, 2024 (the 2026 conformity bill failed) \u2014 federal OBBBA deductions taken in federal taxable income (tips, overtime premium, the $6,000 senior deduction, car-loan interest, OBBBA business items) MUST be added back in scAdditions (SC1040 line e); verify the federal return for these before composing");
   notes.push("SC filing note: the SCDOR granted ALL taxpayers an automatic extension to October 15, 2026 for 2025 returns (no form required) \u2014 FILING only; 90% of the liability was due April 15, 2026. TY2026 is restructured by H.4216 (federal-AGI base, phase-out Income Adjusted Deduction, 1.99%/5.21% rates, EITC capped $200)");
@@ -34906,15 +36204,15 @@ function vaAgeDeduction(args, notes) {
   const testedMax = BigInt(args.testedCount) * AGE_DEDUCTION_EACH;
   const afagi = args.fagi - args.taxableSS;
   const threshold2 = args.joint ? 7500000n : 5000000n;
-  const reduction = max011(afagi - threshold2);
-  const deduction = rd16(full + max011(testedMax - reduction));
+  const reduction = max012(afagi - threshold2);
+  const deduction = rd17(full + max012(testedMax - reduction));
   if (deduction > 0n || args.testedCount > 0) {
     notes.push(`VA age deduction ${fmtD(deduction)} (AFAGI ${fmtD(afagi)} = FAGI minus taxable social security; reduction ${fmtD(min22(reduction, testedMax))} against ${fmtD(testedMax)} income-tested)`);
   }
   return deduction;
 }
 function vaScheduleA(a, notes) {
-  const med = max011(a.medical - rd16(a.fagi * 10n / 100n));
+  const med = max012(a.medical - rd17(a.fagi * 10n / 100n));
   const vaSaltCap = a.mfs ? 2000000n : 4000000n;
   const salesElected = a.salesTaxes > 0n;
   const line5a = salesElected ? min22(a.salesTaxes, vaSaltCap) : a.incomeTaxes;
@@ -34924,8 +36222,8 @@ function vaScheduleA(a, notes) {
   const peaseThreshold = a.joint ? 39920000n : a.mfs ? 19960000n : a.hoh ? 36595000n : 33270000n;
   let limited = total;
   if (a.fagi > peaseThreshold && total > protectedDed) {
-    const threePct = rd16((a.fagi - peaseThreshold) * 3n / 100n);
-    const eightyPct = rd16((total - protectedDed) * 80n / 100n);
+    const threePct = rd17((a.fagi - peaseThreshold) * 3n / 100n);
+    const eightyPct = rd17((total - protectedDed) * 80n / 100n);
     const reduction = min22(threePct, eightyPct);
     limited = total - reduction;
     notes.push(`VA overall itemized limitation: ${fmtD(total)} reduced by ${fmtD(reduction)} (lesser of 3% of FAGI over ${fmtD(peaseThreshold)} or 80% of non-protected deductions) = ${fmtD(limited)}`);
@@ -34934,13 +36232,13 @@ function vaScheduleA(a, notes) {
   if (!salesElected && line5a > 0n) {
     const capped5a = min22(line5a, vaSaltCap);
     if (limited < total) {
-      line18Reduction = rd16(capped5a * limited / total);
+      line18Reduction = rd17(capped5a * limited / total);
       notes.push("VA Sch A line 18 (income-tax reduction) prorated per the Limited Itemized Deduction Worksheet Part B \u2014 verify against the printed worksheet if this return is limited");
     } else {
       line18Reduction = capped5a;
     }
   }
-  return max011(limited - line18Reduction);
+  return max012(limited - line18Reduction);
 }
 function vaSpouseTaxAdjustment(w, evalStateTax, notes) {
   const exFor = (boxes) => BigInt(boxes) * VA_AGE_BLIND_EXEMPTION + VA_PERSONAL_EXEMPTION;
@@ -34956,10 +36254,10 @@ function vaSpouseTaxAdjustment(w, evalStateTax, notes) {
     notes.push("STA = $259 (worksheet line 5 shortcut: smaller income > $17,000 and taxable income > $34,000)");
     return STA_CAP;
   }
-  const line6 = max011(line4 - line5);
+  const line6 = max012(line4 - line5);
   const line7 = line4 / 2n;
-  const t8 = rd16(evalStateTax("us.va.income_tax", min22(line5, line7)));
-  const t9 = rd16(evalStateTax("us.va.income_tax", line6 > line7 ? line6 : line7));
+  const t8 = rd17(evalStateTax("us.va.income_tax", min22(line5, line7)));
+  const t9 = rd17(evalStateTax("us.va.income_tax", line6 > line7 ? line6 : line7));
   const sta = w.jointTax - (t8 + t9);
   const capped = sta < 0n ? 0n : sta > STA_CAP ? STA_CAP : sta;
   notes.push(`STA worksheet: joint tax ${fmtD(w.jointTax)} \u2212 split taxes ${fmtD(t8)}+${fmtD(t9)} = ${fmtD(capped)} (cap $259)`);
@@ -34973,7 +36271,7 @@ function vaLine23Credit(a, notes) {
   }
   if (a.fedEITC <= 0n && a.familyVagi === void 0)
     return 0n;
-  const refundable = rd16(a.fedEITC * 20n / 100n);
+  const refundable = rd17(a.fedEITC * 20n / 100n);
   const familyVagi = a.familyVagi ?? a.vagi;
   const povertyLine2 = 1565000n + BigInt(Math.max(0, a.exemptions - 1)) * 550000n;
   const cli = familyVagi <= povertyLine2 ? BigInt(a.exemptions) * 30000n : 0n;
@@ -34991,10 +36289,10 @@ function vaLine23Credit(a, notes) {
 function composeVA(input, evalStateTax, notes) {
   const joint = isJoint(input);
   const fagi = c(input.federalAGI);
-  const l1 = rd16(fagi);
-  const ssSub = rd16(c(input.taxableSocialSecurity));
-  const uiSub = rd16(c(input.unemploymentCompensation));
-  let age = rd16(c(input.vaAgeDeduction));
+  const l1 = rd17(fagi);
+  const ssSub = rd17(c(input.taxableSocialSecurity));
+  const uiSub = rd17(c(input.unemploymentCompensation));
+  let age = rd17(c(input.vaAgeDeduction));
   if (input.vaAgeDeduction === void 0 && (input.vaAgeQualifyingFull !== void 0 || input.vaAgeQualifyingTested !== void 0)) {
     age = vaAgeDeduction({
       fullCount: input.vaAgeQualifyingFull ?? 0,
@@ -35008,27 +36306,27 @@ function composeVA(input, evalStateTax, notes) {
     notes.push(`VA subtraction: federally taxable social security ${fmtD(ssSub)} (760 line 5)`);
   if (uiSub > 0n)
     notes.push(`VA subtraction: unemployment compensation ${fmtD(uiSub)} (Va. Code \xA7 58.1-322.02(9))`);
-  const l9 = rd16(l1 + c(input.additions) - age - ssSub - uiSub - c(input.subtractions));
+  const l9 = rd17(l1 + c(input.additions) - age - ssSub - uiSub - c(input.subtractions));
   const n = input.exemptions ?? (joint ? 2 : 1) + (input.dependents ?? 0);
   let l10 = 0n;
   let l11 = joint ? VA_STD_DEDUCTION_JOINT : VA_STD_DEDUCTION_OTHER;
   if (input.vaItemizing === true) {
     l10 = vaScheduleA({
       fagi,
-      medical: rd16(c(input.vaItemizedMedical)),
-      incomeTaxes: rd16(c(input.vaItemizedStateLocalIncomeTaxes)),
-      salesTaxes: rd16(c(input.vaItemizedSalesTaxes)),
-      realEstateTaxes: rd16(c(input.vaItemizedRealEstateTaxes)),
-      personalPropertyTaxes: rd16(c(input.vaItemizedPersonalPropertyTaxes)),
-      otherTaxes: rd16(c(input.vaItemizedOtherTaxes)),
-      mortgageInterest: rd16(c(input.vaItemizedMortgageInterest)),
-      investmentInterest: rd16(c(input.vaItemizedInvestmentInterest)),
-      charitable: rd16(c(input.vaItemizedCharitable)),
-      casualty: rd16(c(input.vaItemizedCasualty)),
-      gambling: rd16(c(input.vaItemizedGambling)),
-      other: rd16(c(input.vaItemizedOther)),
+      medical: rd17(c(input.vaItemizedMedical)),
+      incomeTaxes: rd17(c(input.vaItemizedStateLocalIncomeTaxes)),
+      salesTaxes: rd17(c(input.vaItemizedSalesTaxes)),
+      realEstateTaxes: rd17(c(input.vaItemizedRealEstateTaxes)),
+      personalPropertyTaxes: rd17(c(input.vaItemizedPersonalPropertyTaxes)),
+      otherTaxes: rd17(c(input.vaItemizedOtherTaxes)),
+      mortgageInterest: rd17(c(input.vaItemizedMortgageInterest)),
+      investmentInterest: rd17(c(input.vaItemizedInvestmentInterest)),
+      charitable: rd17(c(input.vaItemizedCharitable)),
+      casualty: rd17(c(input.vaItemizedCasualty)),
+      gambling: rd17(c(input.vaItemizedGambling)),
+      other: rd17(c(input.vaItemizedOther)),
       joint,
-      mfs: isMfs3(input),
+      mfs: isMfs4(input),
       hoh: isHoh(input)
     }, notes);
     l11 = 0n;
@@ -35036,52 +36334,52 @@ function composeVA(input, evalStateTax, notes) {
     notes.push("VA standard deduction for a claimable-as-dependent filer is limited to earned income \u2014 pass vaItemizing/earned income facts if this binds");
   }
   const abBoxes = input.ageOrBlindBoxes ?? (input.vaYourAgeBlindBoxes ?? 0) + (input.vaSpouseAgeBlindBoxes ?? 0);
-  const l12 = rd16(BigInt(n) * VA_PERSONAL_EXEMPTION + BigInt(abBoxes) * VA_AGE_BLIND_EXEMPTION);
-  const l13 = rd16(c(input.vaScheduleAdjDeductions));
+  const l12 = rd17(BigInt(n) * VA_PERSONAL_EXEMPTION + BigInt(abBoxes) * VA_AGE_BLIND_EXEMPTION);
+  const l13 = rd17(c(input.vaScheduleAdjDeductions));
   const l14 = l10 + l11 + l12 + l13;
   const l15 = l9 - l14;
   const filingThreshold = joint ? 2390000n : 1195000n;
-  let l16 = rd16(evalStateTax("us.va.income_tax", max011(l15)));
+  let l16 = rd17(evalStateTax("us.va.income_tax", max012(l15)));
   if (l9 < filingThreshold && l16 > 0n) {
     notes.push(`VA tax $0: VAGI ${fmtD(l9)} is below the \xA7 58.1-321 filing threshold ${fmtD(filingThreshold)}`);
     l16 = 0n;
   }
-  let l17 = rd16(c(input.vaSpouseTaxAdjustment));
+  let l17 = rd17(c(input.vaSpouseTaxAdjustment));
   if (input.vaSpouseTaxAdjustment === void 0 && joint && input.vaYourVagi !== void 0 && input.vaSpouseVagi !== void 0 && l16 > 0n) {
     l17 = vaSpouseTaxAdjustment({
-      yourVagi: rd16(c(input.vaYourVagi)),
-      spouseVagi: rd16(c(input.vaSpouseVagi)),
+      yourVagi: rd17(c(input.vaYourVagi)),
+      spouseVagi: rd17(c(input.vaSpouseVagi)),
       yourAgeBlindBoxes: input.vaYourAgeBlindBoxes ?? 0,
       spouseAgeBlindBoxes: input.vaSpouseAgeBlindBoxes ?? 0,
-      taxableIncome: max011(l15),
+      taxableIncome: max012(l15),
       jointTax: l16
     }, evalStateTax, notes);
   }
-  const l18 = max011(l16 - l17);
+  const l18 = max012(l16 - l17);
   const l19a = c(input.stateWithholding);
   const l19b = c(input.spouseStateWithholding);
   const l20 = c(input.estimatedPayments);
-  const l21 = rd16(c(input.priorYearOverpaymentCredited));
-  const l22 = rd16(c(input.extensionPayment));
+  const l21 = rd17(c(input.priorYearOverpaymentCredited));
+  const l22 = rd17(c(input.extensionPayment));
   let l23;
   if (input.vaRefundableEitc !== void 0 || input.nonrefundableCredits !== void 0) {
-    const avail = rd16(c(input.nonrefundableCredits));
-    l23 = (avail > l18 ? l18 : avail) + rd16(c(input.vaRefundableEitc));
+    const avail = rd17(c(input.nonrefundableCredits));
+    l23 = (avail > l18 ? l18 : avail) + rd17(c(input.vaRefundableEitc));
   } else {
     l23 = vaLine23Credit({
-      fedEITC: rd16(c(input.federalEITC)),
+      fedEITC: rd17(c(input.federalEITC)),
       netTax: l18,
       vagi: l9,
-      familyVagi: input.vaFamilyVagi !== void 0 ? rd16(c(input.vaFamilyVagi)) : void 0,
+      familyVagi: input.vaFamilyVagi !== void 0 ? rd17(c(input.vaFamilyVagi)) : void 0,
       exemptions: n,
       barred: age > 0n || (input.ageOrBlindBoxes ?? 0) > 0
     }, notes);
   }
-  const l26 = l19a + l19b + l20 + l21 + l22 + l23 + rd16(c(input.refundableCredits));
+  const l26 = l19a + l19b + l20 + l21 + l22 + l23 + rd17(c(input.refundableCredits));
   const l33 = c(input.useTax);
   const totalDue = l18 + l33;
-  const l36 = max011(l26 - totalDue);
-  const l35 = max011(totalDue - l26);
+  const l36 = max012(l26 - totalDue);
+  const l35 = max012(totalDue - l26);
   return {
     "1_federal_agi": fmtD(l1),
     "9_vagi": fmtD(l9),
@@ -35110,18 +36408,18 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks \u2014 the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: external_exports.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
   ageOrBlindBoxes: external_exports.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions)"),
+  dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 \u2014 Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -35674,7 +36972,67 @@ var ksShape = {
   // subtractions (A11, A15, A17-A25) use the shared `subtractions`; K-40
   // line 15 uses nonrefundableCredits and line 23 uses refundableCredits.
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape };
+var arShape = {
+  arStatus4: external_exports.boolean().optional().describe("AR: elect Filing Status 4 \u2014 married filing separately on the SAME return (each spouse's own column, $2,470 deduction each, one rate table). Omit with arSpouseIncome given to let the composer take the LOWER of status 2 (joint) and status 4; false forces joint"),
+  arSpouseIncome: usd.optional().describe("AR status 4 column B: the SPOUSE's share of lines 8-22 (wages, interest, dividends, business, capital gains, rents, other) \u2014 the primary's column A is the household total minus this; line 18B (spouse pension) is added automatically. Business/farm income cannot be split without a partnership"),
+  arSpouseAdjustments: usd.optional().describe("AR status 4 column B: the spouse's share of the AR1000ADJ adjustments (line 24B); column A gets arAdjustments minus this"),
+  arInterest: usd.optional().describe("AR line 10: interest income (AR4 if over $1,500; U.S. and Arkansas obligation interest is exempt \u2014 exclude it)"),
+  arDividends: usd.optional().describe("AR line 11: dividend income (no dividend exclusion)"),
+  arAlimonyReceived: usd.optional().describe("AR line 12: alimony and separate maintenance received under a court order"),
+  arBusinessIncome: usd.optional().describe("AR line 13: net business or professional income (federal Schedule C), may be negative"),
+  arLongTermGain: usd.optional().describe("AR line 14 via AR1000D: net LONG-TERM capital gain or loss (federal Schedule D line 15, adjusted for Arkansas depreciation) \u2014 50% of a net long-term gain is exempt; gain over $10,000,000 exempt"),
+  arShortTermGain: usd.optional().describe("AR line 14 via AR1000D: net SHORT-TERM capital gain (100% taxed) or loss (federal Schedule D line 7); the net loss is limited to $3,000 ($1,500 per taxpayer for status 4/5). For a status-4 comparison this is the PRIMARY's own column \u2014 the spouse's gains go in arSpouseLongTermGain / arSpouseShortTermGain"),
+  arSpouseLongTermGain: usd.optional().describe("AR status 4 column B (AR1000D): the SPOUSE's net long-term capital gain or loss \u2014 its own 50% exclusion and $1,500 loss floor; added to the primary's for a status 2 (joint) return"),
+  arSpouseShortTermGain: usd.optional().describe("AR status 4 column B (AR1000D): the spouse's net short-term capital gain or loss"),
+  arOtherGains: usd.optional().describe("AR line 15: other gains or losses (federal Form 4797 Part II; no capital loss limit)"),
+  arIraTaxable: usd.optional().describe("AR line 16: taxable NON-qualified IRA distributions (premature withdrawals), lump sums, and annuities \u2014 no $6,000 exclusion; pass the federal Form 5329 tax in arFederalEarlyWithdrawalTax"),
+  arPensionTaxablePrimary: usd.optional().describe("AR line 18A: the primary's TAXABLE employer-plan pension and qualified traditional IRA distributions (1099-R box 2a; IRA after 59\xBD or on death/disability) \u2014 the composer applies the $6,000 exclusion"),
+  arPensionTaxableSpouse: usd.optional().describe("AR line 18B: the spouse's taxable employer pension / qualified IRA (status 2 or 4 only) \u2014 its own $6,000 exclusion"),
+  arMilitaryRetirementPrimary: usd.optional().describe("AR line 17: the primary's military retirement (100% exempt; informational box) \u2014 reduces the primary's $6,000 pension exclusion dollar for dollar"),
+  arMilitaryRetirementSpouse: usd.optional().describe("AR line 17: the spouse's military retirement (exempt) \u2014 reduces the spouse's $6,000 exclusion"),
+  arMilitaryPay: usd.optional().describe("AR line 9: U.S. active-duty military compensation, household total (100% exempt; informational box; the W-2 wages must be excluded from `wages`). Under the Low Income Tax Table election it is counted as income in the primary's column"),
+  arRentsRoyalties: usd.optional().describe("AR line 19: rents, royalties, partnerships, estates, trusts (federal Schedule E), may be negative"),
+  arFarmIncome: usd.optional().describe("AR line 20: farm income (federal Schedule F), may be negative"),
+  arOtherIncome: usd.optional().describe("AR line 22: net other income and depreciation differences from Form AR-OI (gambling winnings, cancellation of debt, taxable scholarships/stipends, HSA/MSA taxable distributions, PET back-outs, NOL carryforward as a negative, federal-vs-Arkansas depreciation), may be negative"),
+  arAdjustments: usd.optional().describe("AR line 24: TOTAL adjustments from AR1000ADJ (IRA payments, HSA/MSA, student loan interest \u2264 $2,500 with the $85,000-$100,000 / $170,000-$200,000 phase-out, tuition savings \u2264 $5,000 per taxpayer, intergenerational trust \u2264 $4,000, moving expenses, self-employed health insurance, Keogh/SEP/SIMPLE, early-withdrawal penalty, alimony paid, disabled-individual support $500, organ donor \u2264 $10,000, reserve expenses, reforestation, teacher classroom expense, ABLE \u2264 $5,000) \u2014 transcribed"),
+  arExemptIncome: usd.optional().describe("AR Low Income Tax Table test only: income NOT on lines 8-22 (Social Security, VA benefits, workers' compensation, Railroad Retirement, U.S./Arkansas obligation interest, the $250,000/$500,000 residence gain) \u2014 qualification 1 counts 'total income from all sources (regardless of whether the income is taxable to Arkansas)'; the exempt half of long-term capital gains and the forgone retirement/military exclusions are added automatically"),
+  arAge65Count: external_exports.number().int().optional().describe("AR: number of taxpayers on the return who are 65 or over (0-2) \u2014 lets the composer add the '65 Special' $29 box when the Low Income Tax Table path forgoes the line 18 retirement exclusion (on the regular path count 65 Special yourself in arCreditBoxes)"),
+  arUseLowIncomeTable: external_exports.boolean().optional().describe("AR line 26: force the Low Income Tax Table (true; statuses 1, 2, 3, 6 within the income limits, no itemizing \u2014 the retirement/military exclusions are then NOT used) or the Regular Income Tax Table (false). Omit to let the composer take the LOWER net tax"),
+  arItemize: external_exports.boolean().optional().describe("AR line 26/27: force AR3 itemized deductions (true) or the standard deduction (false). Omit to take the LARGER (independent of the federal election; married spouses must match under \xA7 26-51-430(a)(2))"),
+  arMedicalExpenses: usd.optional().describe("AR3 line 1: medical and dental expenses paid \u2014 the 10%-of-AGI floor is applied by the rule"),
+  arTaxesPaid: usd.optional().describe("AR3 lines 5-6: real estate tax plus personal property and other deductible taxes (city income, foreign income taxes) \u2014 NEVER Arkansas/federal income tax or sales tax"),
+  arInterestPaid: usd.optional().describe("AR3 lines 8-11: home mortgage interest, deductible points, investment interest (\u2264 investment income)"),
+  arContributions: usd.optional().describe("AR3 lines 13-16: cash, art/literary, other, and carryover contributions"),
+  arCasualtyLosses: usd.optional().describe("AR3 line 18: casualty and theft losses from AR4684 (after the $100 exclusion and 10%-of-AGI test)"),
+  arTuitionDeduction: usd.optional().describe("AR3 line 19: post-secondary education tuition deduction from AR1075"),
+  arMiscExpenses: usd.optional().describe("AR3 lines 20-21: unreimbursed employee business expenses (AR2106), union dues, tax preparation fees, and other deductions SUBJECT to the 2%-of-AGI floor (applied by the rule)"),
+  arOtherMiscDeductions: usd.optional().describe("AR3 lines 26-28: volunteer firefighter expenses (\u2264 $1,000), gambling losses (\u2264 winnings), other deductions not subject to the 2% floor"),
+  arCreditBoxes: external_exports.number().int().optional().describe("AR line 7A: count of '65 or over', '65 Special' (65+ and NOT claiming the line 18 retirement exclusion), 'Blind', and 'Deaf' boxes for the taxpayer and spouse (0-8) \u2014 $29 each; the Yourself/Spouse/head-of-household boxes are added automatically"),
+  arChildCareExpenses: usd.optional().describe("AR2441 line 3 base: qualified child and dependent care expenses paid (capped at $3,000 / $6,000 by arChildCareQualifyingPersons); the credit is 20% of the 2013-law federal computation \u2014 requires federalAGI (AR2441 line 7)"),
+  arChildCareQualifyingPersons: external_exports.number().int().optional().describe("AR2441 line 2: number of qualifying persons (1 \u2192 $3,000 cap; 2 or more \u2192 $6,000); defaults to 1"),
+  arEarnedIncome: usd.optional().describe("AR2441 line 4: the taxpayer's earned income"),
+  arSpouseEarnedIncome: usd.optional().describe("AR2441 line 5: the spouse's earned income (status 2 or 4; student/disabled deemed amounts per the instructions)"),
+  arEarlyChildhoodApproved: external_exports.boolean().optional().describe("AR line 43: the qualifying child attends an APPROVED early childhood program (Form AR1000EC certificate) \u2014 the 20% AR2441 credit becomes REFUNDABLE on line 43 instead of nonrefundable on line 35"),
+  arConsideredUnmarried: external_exports.boolean().optional().describe("AR2441 status 5 only: the filer meets the 'considered unmarried' tests (lived apart the last 6 months, kept up the qualifying person's home) \u2014 otherwise a status 5 filer cannot claim the child care credit"),
+  arPoliticalContributions: usd.optional().describe("AR1000TC line 1: cash contributions to Arkansas state/local candidates, approved PACs, or parties (by April 15, 2026) \u2014 credit capped at $50 per taxpayer ($100 status 2/4)"),
+  arOtherStateTaxPaid: usd.optional().describe("AR1000TC line 2: income tax actually paid to another state on income also taxed by Arkansas (attach that state's signed return) \u2014 credit is the LESSER of this or the Arkansas tax on that income"),
+  arOtherStateIncome: usd.optional().describe("AR1000TC line 2: the other state's income included on this return \u2014 the composer approximates the three-step method by recomputing the line 29 tax with this removed from line 28 (or line 25 on the low-income table); status 4 takes it from the primary's column"),
+  arDevelopmentallyDisabledDependents: external_exports.number().int().optional().describe("AR1000TC line 7: dependents with a certified developmental disability (AR1000-DD on file) \u2014 $500 each"),
+  arLumpSumTax: usd.optional().describe("AR line 31: tax from the Lump Sum Distribution Averaging Schedule AR1000TD (transcribed)"),
+  arFederalEarlyWithdrawalTax: usd.optional().describe("AR line 32 base: the FEDERAL Form 5329 Part I additional tax on early IRA/qualified plan distributions (plus Part II Coverdell) \u2014 Arkansas adds 10% of it"),
+  arWithholding1099: usd.optional().describe("AR line 39B: Arkansas tax withheld on 1099-R, 1099-PT, and AR-K1 forms (new separate line for 2025; W-2 withholding goes in stateWithholding \u2192 line 39A)"),
+  arAmendedPaid: usd.optional().describe("AR line 42 (amended return only): previous payments with the original return and billing notices"),
+  arAmendedRefund: usd.optional().describe("AR line 45 (amended return only): previous refund(s) from the original and earlier amended returns (subtracted)"),
+  arCreditForward: usd.optional().describe("AR line 48: overpayment to apply to 2026 estimated tax (credited to the primary filer only)"),
+  arCheckoffs: usd.optional().describe("AR line 49: AR1000CO check-off contributions (Disaster Relief, Game and Fish, Schools for the Blind/Deaf, Baby Sharon's, Organ Donor, Area Agencies on Aging, Military Family Relief, Cord Blood, Law Enforcement Family Relief, Brighter Future 529) \u2014 whole dollars, from the overpayment"),
+  arUnderestimatePenalty: usd.optional().describe("AR line 52B: underestimate penalty from AR2210 line 17 or AR2210A line 48 (required when line 51 is over $1,000 unless an exception applies)")
+  // AR1000TC lines 3-5 and 8 (adoption 20% of federal, phenylketonuria,
+  // stillborn child ≤ $500, business incentive certificates) use the shared
+  // nonrefundableCredits; W-2 withholding uses stateWithholding (line 39A);
+  // wages, dependents, unemploymentCompensation, estimatedPayments,
+  // priorYearOverpaymentCredited, and extensionPayment are shared.
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -35703,7 +37061,7 @@ function composeStateReturn(input, evalStateTax) {
     input.filingHohOrQss = fs === "hoh" || fs === "qss" || fs === "mfj";
   }
   const j = input.jurisdiction;
-  if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && typeof input.federalAGI !== "number") {
+  if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
@@ -35742,6 +37100,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeCT(input, evalStateTax, notes), notes };
   if (j === "ks")
     return { lines: composeKS(input, evalStateTax, notes), notes };
+  if (j === "ar")
+    return { lines: composeAR(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -35963,7 +37323,7 @@ program2.command("search").description('full-text search over the encoded law, e
 program2.command("occupation").description("is this a \xA7 224 tipped occupation? matches the Treasury list, never guesses").argument("<title...>", "job title, e.g. `opentax occupation bartender`").option("--json", "machine-readable output").action((words, flags) => {
   process.exitCode = runOccupation(words, { json: flags.json });
 });
-program2.command("state").description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502, MO-1040, WI Form 1, MN M1, SC1040, AL Form 40, OR-40, OK Form 511, CT-1040, KS K-40) from a composer-facts JSON file").requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((flags) => {
+program2.command("state").description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502, MO-1040, WI Form 1, MN M1, SC1040, AL Form 40, OR-40, OK Form 511, CT-1040, KS K-40, AR AR1000F) from a composer-facts JSON file").requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((flags) => {
   process.exitCode = runState({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
 });
 program2.command("signup").description("get OpenTax updates by email (new features and other things worth knowing)").argument("<email>", "your email address").option("--json", "machine-readable output").action(async (email, flags) => {
