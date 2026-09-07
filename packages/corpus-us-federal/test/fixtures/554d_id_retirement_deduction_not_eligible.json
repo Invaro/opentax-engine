@@ -1,0 +1,15 @@
+{
+  "description": "ID not meeting the age/disability test -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "idRetirementEligible": false,
+    "idRailroadBenefits": 0,
+    "idSocialSecurityBenefits": 0,
+    "idQualifyingRetirementBenefits": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.retirement_benefits_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

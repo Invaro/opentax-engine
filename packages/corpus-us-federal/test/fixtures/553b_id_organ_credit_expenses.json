@@ -1,0 +1,17 @@
+{
+  "description": "ID live organ donation credit: $3,000 expenses -> $3,000.",
+  "facts": {
+    "filingStatus": "single",
+    "idOrganDonationExpenses": 3000,
+    "idTaxBeforeCredits": 6000,
+    "idOtherStateCredit": 0,
+    "idEducationalCredit": 0,
+    "idYouthCredit": 0,
+    "idBusinessCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.live_organ_donation_credit",
+  "expect": {
+    "valueCents": "300000"
+  }
+}

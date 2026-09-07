@@ -1,0 +1,15 @@
+{
+  "description": "ID single eligible: $48,216 \u2212 SS $20,000 = 28,216; qualifying $50,000 -> $28,216.",
+  "facts": {
+    "filingStatus": "single",
+    "idRetirementEligible": true,
+    "idRailroadBenefits": 0,
+    "idSocialSecurityBenefits": 20000,
+    "idQualifyingRetirementBenefits": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.retirement_benefits_deduction",
+  "expect": {
+    "valueCents": "2821600"
+  }
+}

@@ -3605,6 +3605,417 @@ export const facts: FactSpec[] = [
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
   },
+  // ---- Idaho (Form 40) ----
+  {
+    id: "idAgeBlindBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description:
+      "Form 40 lines 12a-12b boxes checked (you 65+, you blind, spouse 65+, spouse blind; must match the federal return) — $2,000 each for single/HOH, $1,600 each for MFJ/QSS/MFS (us.id.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "idEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Earned income (wages, salaries, tips, professional fees, taxable scholarships) — the dependent-filer standard deduction (us.id.standard_deduction) and the Form 39R child care worksheet line 5 (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Spouse's earned income on a joint return — Form 39R child care worksheet line 6 (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idFederalItemizedDeductions",
+    type: "money",
+    min: "0",
+    description:
+      "Form 40 line 13: total federal itemized deductions, Schedule A line 17 (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idForeignTaxCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal foreign tax credit claimed — Idaho allows it as an addition to itemized deductions (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idSaltIncomeOrSalesTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5a: state and local income taxes or general sales taxes (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idRealEstateTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5b: state and local real estate taxes (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idPersonalPropertyTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5c: state and local personal property taxes (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idSaltAllowed",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5e: state and local taxes allowed after the federal cap — used when line 5d exceeds $40,000 ($20,000 MFS) (us.id.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idQualifyingChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Form 40 line 24 worksheet line 1: qualifying children (IRC § 24(c)) age 16 or under on December 31 — $205 each (us.id.child_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "idTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 40 line 20 Idaho income tax — the base for the credit limits (us.id.child_tax_credit, us.id.other_state_credit, us.id.educational_contribution_credit, us.id.youth_rehab_contribution_credit, us.id.live_organ_donation_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idOtherStateCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Form 40 line 21 credit for income tax paid to other states — reduces the tax available for the Part D and child tax credits. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idEducationalCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part D line 1 educational entity credit already allowed — reduces the tax available for the youth/rehab and live organ credits. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idYouthCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part D line 2 youth and rehabilitation facility credit already allowed — reduces the tax available for the live organ donation credit. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idInvestmentTaxCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Form 44 Part I line 1: Idaho investment tax credit (Form 49) — the only Form 44 line that reduces the tax available for the youth/rehabilitation facility credit (us.id.youth_rehab_contribution_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idContributionCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 40 line 22: total Form 39R Part D credits — reduces the tax available for the child tax credit (us.id.child_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idBusinessCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 40 line 23 / Form 44 Part I: business income tax credits — reduce the tax available for the Part D and child tax credits. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idFoodCreditPersons",
+    type: "int",
+    min: "0",
+    description:
+      "Food Tax Credit worksheet: household members (you, spouse, resident dependents) qualified for all twelve months — $155 each (us.id.food_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "idFoodCreditPartialMonths",
+    type: "int",
+    min: "0",
+    description:
+      "Food Tax Credit worksheet: total qualified months across household members qualified for only part of the year — $12.92 each (us.id.food_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "idOtherStateIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part C line 2: federal AGI earned in the other state and taxed by both states, adjusted for Idaho modifications (us.id.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idAdjustedIncome",
+    type: "money",
+    description:
+      "Form 39R Part C line 3: Idaho adjusted income, Form 40 line 11 (us.id.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idOtherStateTaxDue",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part C line 6: the other state's tax due from its table or schedule minus its income tax credits (not SALT workaround payments) (us.id.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idEducationalContributions",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part D line 1: cash contributed to qualified Idaho educational entities (us.id.educational_contribution_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idYouthContributions",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part D line 2: cash or goods contributed to Idaho youth and rehabilitation facilities, centers for independent living, or licensed substance abuse centers (us.id.youth_rehab_contribution_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idOrganDonationExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R Part D line 3: unreimbursed travel, lodging, and lost wages for a live organ donation (us.id.live_organ_donation_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idRetirementEligible",
+    type: "bool",
+    description:
+      "The filer (or spouse) meets the § 63-3022A age/disability test — 65, or 62 and disabled; military retirees: disabled, 62, or employed with income requiring a federal return (us.id.retirement_benefits_deduction).",
+    default: { value: false, rationale: "Eligibility must be affirmed; assumed not met" },
+  },
+  {
+    id: "idRailroadBenefits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 8b: federal Railroad Retirement benefits received (RRB-1099 Box 5 net SSEB, RRB-1099-R Box 7 less Box 8) (us.id.retirement_benefits_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idSocialSecurityBenefits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 8c: Social Security benefits received, SSA-1099 Box 5 (gross, not the taxable portion) (us.id.retirement_benefits_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idQualifyingRetirementBenefits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 8e: qualifying CSRS/FSRDS, Idaho firefighter, Idaho city police, or military retirement benefits included in federal income (us.id.retirement_benefits_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idChildCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R child care worksheet line 1: qualified expenses paid, excluding employer-paid or excluded amounts (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idDependentCareBenefitsExcluded",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R child care worksheet line 3: excluded dependent care benefits from federal Form 2441 Part III (us.id.child_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idItemizingForIdaho",
+    type: "bool",
+    description:
+      "The filer uses itemized deductions on Form 40 line 17 (line 15 exceeds line 16) — the health and long-term care worksheets then allocate the federal medical deduction (us.id.health_insurance_deduction, us.id.long_term_care_deduction).",
+    default: { value: false, rationale: "Assumed the standard deduction absent contrary input" },
+  },
+  {
+    id: "idSchAHealthPremiums",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 1: health insurance premiums claimed on federal Schedule A (us.id.health_insurance_deduction, us.id.long_term_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idSchALtcPremiums",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 2: long-term care premiums claimed on federal Schedule A. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idSchAOtherMedical",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 3: other medical expenses claimed on federal Schedule A. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, Form 40 line 7 — the 7.5% medical floor in the health/LTC worksheets (us.id.health_insurance_deduction, us.id.long_term_care_deduction). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idHealthPremiumsPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 7: total health insurance premiums paid for you, your spouse, and dependents, excluding pre-tax/cafeteria-plan and business-deducted premiums (us.id.health_insurance_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idHealthPremiumsDeductedElsewhere",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 9: health insurance costs deducted elsewhere on the federal return (e.g. self-employed health insurance) (us.id.health_insurance_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idLtcPremiumsPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 11: total qualified long-term care insurance premiums paid (us.id.long_term_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idLtcDeductedElsewhere",
+    type: "money",
+    min: "0",
+    description:
+      "Health/LTC worksheet line 14: long-term care premiums deducted elsewhere on the federal return (us.id.long_term_care_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idEnergyDeviceCost2025",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 5a: cost of an alternative energy device placed in service in 2025 (40%) (us.id.alternative_energy_device_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idEnergyDeviceCost2024",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 5b: cost of an alternative energy device placed in service in 2024 (20%). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idEnergyDeviceCost2023",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 5c: cost of an alternative energy device placed in service in 2023 (20%). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idEnergyDeviceCost2022",
+    type: "money",
+    min: "0",
+    description:
+      "Form 39R line 5d: cost of an alternative energy device placed in service in 2022 (20%). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idQualifiedCapitalGain",
+    type: "money",
+    min: "0",
+    description:
+      "Form CG: capital gain net income from qualified Idaho property (real property held 12+ months, etc.) (us.id.capital_gains_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idNetCapitalGain",
+    type: "money",
+    min: "0",
+    description:
+      "Capital gain net income from all property included in taxable income — caps the Idaho capital gains deduction (us.id.capital_gains_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "idReceivedPublicAssistance",
+    type: "bool",
+    description:
+      "Form 40 line 31 box: receiving Idaho public assistance payments at the end of the tax year (not food stamps or WIC) — no $10 permanent building fund tax (us.id.permanent_building_fund_tax).",
+    default: { value: false, rationale: "Assumed not receiving public assistance" },
+  },
+  {
+    id: "idBlind",
+    type: "bool",
+    description:
+      "You or your spouse are legally blind at the end of the tax year — no $10 permanent building fund tax (us.id.permanent_building_fund_tax).",
+    default: { value: false, rationale: "Assumed not blind" },
+  },
+  {
+    id: "idRequiredToFile",
+    type: "bool",
+    description:
+      "Idaho requires this return (gross income at or above the filing threshold for the filing status) — the $10 permanent building fund tax applies (us.id.permanent_building_fund_tax).",
+    default: { value: true, rationale: "Assumed required to file" },
+  },
+  {
+    id: "idHomeFamilyMembers",
+    type: "int",
+    min: "0",
+    description:
+      "Form 39R Part E: family members age 65+ (not you or your spouse) or with a developmental disability for whom you maintained a home all year and provided over half the support — $100 each, at most $300 (us.id.home_for_family_member_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "idHomeFamilyPartialMonths",
+    type: "int",
+    min: "0",
+    description:
+      "Form 39R Part E: total months of home maintenance for partially-qualified family members — $8.33 each (us.id.home_for_family_member_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "idUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description:
+      "Form 40 line 28: purchases on which no Idaho sales tax was paid (online, mail order, out-of-state) — 6% (us.id.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
   // ---- Nebraska (Form 1040N) ----
   {
     id: "neUseTaxTable",

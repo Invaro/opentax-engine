@@ -1,0 +1,13 @@
+{
+  "description": "ID Food Tax Credit: 12 x $12.92 = 155.04 -> $155 (the worksheet says enter $155 for a full year).",
+  "facts": {
+    "filingStatus": "mfj",
+    "idFoodCreditPersons": 0,
+    "idFoodCreditPartialMonths": 12
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.food_tax_credit",
+  "expect": {
+    "valueCents": "15500"
+  }
+}

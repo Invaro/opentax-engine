@@ -1,0 +1,15 @@
+{
+  "description": "ID Part C: 60,000 / 90,000 = .66666 -> .6667 x $2,000 = 1,333.4 -> $1,333.",
+  "facts": {
+    "filingStatus": "single",
+    "idTaxBeforeCredits": 2000,
+    "idOtherStateIncome": 60000,
+    "idAdjustedIncome": 90000,
+    "idOtherStateTaxDue": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.other_state_credit",
+  "expect": {
+    "valueCents": "133300"
+  }
+}

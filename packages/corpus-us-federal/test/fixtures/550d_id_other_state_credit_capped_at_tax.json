@@ -1,0 +1,15 @@
+{
+  "description": "ID Part C: other-state income exceeds Idaho adjusted income -> ratio over 100% -> capped at the $2,000 Idaho tax.",
+  "facts": {
+    "filingStatus": "single",
+    "idTaxBeforeCredits": 2000,
+    "idOtherStateIncome": 120000,
+    "idAdjustedIncome": 90000,
+    "idOtherStateTaxDue": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.other_state_credit",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "ID youth/rehab credit, MFJ -> $200.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idYouthContributions": 500,
+    "idTaxBeforeCredits": 3000,
+    "idOtherStateCredit": 0,
+    "idEducationalCredit": 0,
+    "idInvestmentTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.youth_rehab_contribution_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

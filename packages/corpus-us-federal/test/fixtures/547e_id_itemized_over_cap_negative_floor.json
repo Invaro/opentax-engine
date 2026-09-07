@@ -1,0 +1,17 @@
+{
+  "description": "ID over the cap with 5b + 5c > 5e: line 14 = max0(40,000 \u2212 45,000) = 0 -> full $60,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idFederalItemizedDeductions": 60000,
+    "idSaltIncomeOrSalesTaxes": 10000,
+    "idRealEstateTaxes": 40000,
+    "idPersonalPropertyTaxes": 5000,
+    "idSaltAllowed": 40000,
+    "idForeignTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.itemized_deductions",
+  "expect": {
+    "valueCents": "6000000"
+  }
+}

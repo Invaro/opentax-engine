@@ -1,0 +1,15 @@
+{
+  "description": "ID TY2026 maximums (Social Security-indexed) unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "idRetirementEligible": true,
+    "idRailroadBenefits": 0,
+    "idSocialSecurityBenefits": 0,
+    "idQualifyingRetirementBenefits": 10000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.id.retirement_benefits_deduction",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

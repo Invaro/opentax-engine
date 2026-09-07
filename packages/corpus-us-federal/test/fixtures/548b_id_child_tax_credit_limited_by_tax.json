@@ -1,0 +1,16 @@
+{
+  "description": "ID child tax credit: $410 limited to the $300 tax.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idQualifyingChildren": 2,
+    "idTaxBeforeCredits": 300,
+    "idOtherStateCredit": 0,
+    "idContributionCredits": 0,
+    "idBusinessCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.child_tax_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

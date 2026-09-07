@@ -1,0 +1,14 @@
+{
+  "description": "ID standard deduction single -> $15,750 (federal amount).",
+  "facts": {
+    "filingStatus": "single",
+    "idAgeBlindBoxes": 0,
+    "isClaimedAsDependent": false,
+    "idEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "1575000"
+  }
+}

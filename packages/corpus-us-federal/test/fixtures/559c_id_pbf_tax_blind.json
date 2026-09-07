@@ -1,0 +1,14 @@
+{
+  "description": "ID PBF: legally blind -> $0 (\u00a7 63-3086).",
+  "facts": {
+    "filingStatus": "single",
+    "idReceivedPublicAssistance": false,
+    "idBlind": true,
+    "idRequiredToFile": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.permanent_building_fund_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

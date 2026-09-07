@@ -1,0 +1,20 @@
+{
+  "description": "ID health insurance deduction, not itemizing for Idaho: $6,000 paid \u2212 $1,000 deducted elsewhere = $5,000 (no Schedule A reduction).",
+  "facts": {
+    "filingStatus": "single",
+    "idItemizingForIdaho": false,
+    "idSchAHealthPremiums": 6000,
+    "idSchALtcPremiums": 0,
+    "idSchAOtherMedical": 0,
+    "idAgi": 40000,
+    "idHealthPremiumsPaid": 6000,
+    "idHealthPremiumsDeductedElsewhere": 1000,
+    "idLtcPremiumsPaid": 0,
+    "idLtcDeductedElsewhere": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.health_insurance_deduction",
+  "expect": {
+    "valueCents": "500000"
+  }
+}

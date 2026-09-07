@@ -1,0 +1,16 @@
+{
+  "description": "ID TY2026: \u00a7 63-3029L applies only 'before January 1, 2026' and the 2026 extension bills failed -> no applicable rule.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idQualifyingChildren": 2,
+    "idTaxBeforeCredits": 3000,
+    "idOtherStateCredit": 0,
+    "idContributionCredits": 0,
+    "idBusinessCredits": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.id.child_tax_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

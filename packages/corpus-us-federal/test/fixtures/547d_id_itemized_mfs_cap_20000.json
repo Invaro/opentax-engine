@@ -1,0 +1,17 @@
+{
+  "description": "ID MFS: 5a 15,000 + 5b 8,000 = 23,000 > $20,000; 5e 20,000 -> line 14 = 12,000; $30,000 \u2212 12,000 = $18,000.",
+  "facts": {
+    "filingStatus": "mfs",
+    "idFederalItemizedDeductions": 30000,
+    "idSaltIncomeOrSalesTaxes": 15000,
+    "idRealEstateTaxes": 8000,
+    "idPersonalPropertyTaxes": 0,
+    "idSaltAllowed": 20000,
+    "idForeignTaxCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.itemized_deductions",
+  "expect": {
+    "valueCents": "1800000"
+  }
+}

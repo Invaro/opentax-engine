@@ -1,0 +1,14 @@
+{
+  "description": "ID TY2026 worksheet unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "idAgeBlindBoxes": 0,
+    "isClaimedAsDependent": false,
+    "idEarnedIncome": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

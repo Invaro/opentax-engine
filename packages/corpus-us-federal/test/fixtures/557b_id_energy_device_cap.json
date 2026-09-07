@@ -1,0 +1,15 @@
+{
+  "description": "ID alternative energy device: 20% of $30,000 (2024) = 6,000 -> $5,000 cap.",
+  "facts": {
+    "filingStatus": "single",
+    "idEnergyDeviceCost2025": 0,
+    "idEnergyDeviceCost2024": 30000,
+    "idEnergyDeviceCost2023": 0,
+    "idEnergyDeviceCost2022": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.alternative_energy_device_deduction",
+  "expect": {
+    "valueCents": "500000"
+  }
+}

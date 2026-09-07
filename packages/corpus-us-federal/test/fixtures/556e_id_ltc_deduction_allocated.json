@@ -1,0 +1,20 @@
+{
+  "description": "ID LTC deduction itemizing: Sch A health 1,000, LTC 2,000, AGI $20,000 (floor 1,500): allowed 1,500; line 12 = 500; line 13 = min(2,000, 500) = 500 -> $2,000 \u2212 500 = $1,500.",
+  "facts": {
+    "filingStatus": "single",
+    "idItemizingForIdaho": true,
+    "idSchAHealthPremiums": 1000,
+    "idSchALtcPremiums": 2000,
+    "idSchAOtherMedical": 0,
+    "idAgi": 20000,
+    "idHealthPremiumsPaid": 1000,
+    "idHealthPremiumsDeductedElsewhere": 0,
+    "idLtcPremiumsPaid": 2000,
+    "idLtcDeductedElsewhere": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.long_term_care_deduction",
+  "expect": {
+    "valueCents": "150000"
+  }
+}

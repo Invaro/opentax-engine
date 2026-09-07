@@ -1,0 +1,12 @@
+{
+  "description": "ID MFS $4,811 (single threshold) -> $0.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 4811
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

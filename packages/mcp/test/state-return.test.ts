@@ -1877,3 +1877,105 @@ describe("composeNE — 2025 Form 1040N (real corpus targets)", () => {
     expect(() => composeStateReturn(bare, realPaEval(bare))).toThrow(/neFederalStandardDeduction/);
   });
 });
+
+describe("composeID — 2025 Form 40 (real corpus targets)", () => {
+  it("single wage earner: federal standard deduction, 5.3% over $4,811, $10 PBF, $155 food credit", () => {
+    // 16 = 15,750; 17 = 19 = 44,250; 20 = (44,250 − 4,811) × 5.3% = 2,090.267 → $2,090; 31 = 10; 32 = 2,100; 43 = 155; 46 = 2,500 → 55 = 555
+    const input = { jurisdiction: "id" as const, filingStatus: "single", federalAGI: 60000, stateWithholding: 2500 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["6d_household"]).toBe("1");
+    expect(dollars(lines, "16_standard_deduction")).toBe("$15,750");
+    expect(dollars(lines, "19_idaho_taxable_income")).toBe("$44,250");
+    expect(dollars(lines, "20_tax")).toBe("$2,090");
+    expect(dollars(lines, "31_permanent_building_fund_tax")).toBe("$10");
+    expect(dollars(lines, "43_food_tax_credit")).toBe("$155");
+    expect(dollars(lines, "55_overpaid")).toBe("$555");
+  });
+
+  it("MFJ with two children: $205 child tax credit, four-person food credit", () => {
+    // 16 = 31,500; 19 = 58,500; 20 = 48,878 × 5.3% = 2,590.534 → $2,591; 24 = 410; 26 = 2,181; 32 = 2,191; 43 = 620; 50 = 3,620 → 55 = 1,429
+    const input = { jurisdiction: "id" as const, filingStatus: "mfj", federalAGI: 90000, dependents: 2, idQualifyingChildren: 2, stateWithholding: 3000 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["6d_household"]).toBe("4");
+    expect(dollars(lines, "20_tax")).toBe("$2,591");
+    expect(dollars(lines, "24_child_tax_credit")).toBe("$410");
+    expect(dollars(lines, "26_tax_after_credits")).toBe("$2,181");
+    expect(dollars(lines, "43_food_tax_credit")).toBe("$620");
+    expect(dollars(lines, "55_overpaid")).toBe("$1,429");
+    expect(notes.some((n) => n.includes("sunsets this credit"))).toBe(true);
+  });
+
+  it("MFJ retirees: Social Security and CSRS pension subtracted, no taxable income, $10 PBF still due, food credit refunds", () => {
+    // 16 = 31,500 + 2 × 1,600 = 34,700; 10 = SS 20,000 + retirement min(72,324 − 25,000, 40,000) = 40,000 → 60,000; 11 = 10,000; 17 = 19 = 0;
+    // 20 = 0; 31 = 10; 43 = 310; 55 = 300
+    const input = {
+      jurisdiction: "id" as const, filingStatus: "mfj", federalAGI: 70000, taxableSocialSecurity: 20000, ageOrBlindBoxes: 2,
+      idRetirementEligible: true, idSocialSecurityBenefits: 25000, idQualifyingRetirementBenefits: 40000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "16_standard_deduction")).toBe("$34,700");
+    expect(dollars(lines, "39R_B8_retirement_benefits_deduction")).toBe("$40,000");
+    expect(dollars(lines, "10_subtractions")).toBe("$60,000");
+    expect(dollars(lines, "19_idaho_taxable_income")).toBe("$0");
+    expect(dollars(lines, "20_tax")).toBe("$0");
+    expect(dollars(lines, "32_total_tax")).toBe("$10");
+    expect(dollars(lines, "43_food_tax_credit")).toBe("$310");
+    expect(dollars(lines, "55_overpaid")).toBe("$300");
+  });
+
+  it("itemizer with other-state income, an educational credit, QBI, and use tax", () => {
+    // 13 = 40,000; 5d = 18,000 ≤ 40,000 → 14 = 12,000; 15 = 28,000 > 15,750 → itemized; 17 = 122,000; 18 = 2,000; 19 = 120,000;
+    // 20 = 115,189 × 5.3% = 6,105.017 → $6,105; 21: 50,000 / 150,000 = .3333 → 6,105 × .3333 = 2,034.7965 → 2,035 (≤ 3,000); 22 = 500;
+    // 25 = 2,535; 26 = 3,570; 28 = 30; 31 = 10; 32 = 3,610; 43 = 155; 46 = 5,000 → 50 = 5,155 → 55 = 1,545
+    const input = {
+      jurisdiction: "id" as const, filingStatus: "single", federalAGI: 150000, idFederalItemized: true, idFederalItemizedDeductions: 40000,
+      idSaltIncomeOrSalesTaxes: 12000, idRealEstateTaxes: 6000, idSaltAllowed: 18000, idQbiDeduction: 2000,
+      idOtherStateIncome: 50000, idOtherStateTaxDue: 3000, idEducationalContributions: 2000, idUseTaxPurchases: 500, stateWithholding: 5000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines._deduction_method).toBe("itemized");
+    expect(dollars(lines, "14_state_local_taxes")).toBe("$12,000");
+    expect(dollars(lines, "19_idaho_taxable_income")).toBe("$120,000");
+    expect(dollars(lines, "20_tax")).toBe("$6,105");
+    expect(dollars(lines, "21_other_state_credit")).toBe("$2,035");
+    expect(dollars(lines, "22_part_d_credits")).toBe("$500");
+    expect(dollars(lines, "28_use_tax")).toBe("$30");
+    expect(dollars(lines, "55_overpaid")).toBe("$1,545");
+  });
+
+  it("dependent filer below the filing threshold: earned-income deduction, no food credit, no PBF, refund of withholding", () => {
+    // 16 = max(1,350, 6,000 + 450) = 6,450; 17 = 0; 20 = 0; 31 = 0 (NRF); 43 = 0 (dependent); refund 100
+    const input = { jurisdiction: "id" as const, filingStatus: "single", federalAGI: 6000, claimedAsDependent: true, idEarnedIncome: 6000, idRequiredToFile: false, stateWithholding: 100 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["6d_household"]).toBe("0");
+    expect(dollars(lines, "16_standard_deduction")).toBe("$6,450");
+    expect(dollars(lines, "31_permanent_building_fund_tax")).toBe("$0");
+    expect(lines["43_food_tax_credit"]).toBeUndefined();
+    expect(dollars(lines, "56_refund")).toBe("$100");
+    expect(notes.some((n) => n.includes("can't claim this credit if someone else"))).toBe(true);
+    const bare = { jurisdiction: "id" as const, filingStatus: "single", federalAGI: 6000, claimedAsDependent: true };
+    expect(() => composeStateReturn(bare, realPaEval(bare))).toThrow(/idEarnedIncome/);
+  });
+
+  it("food credit with two part-year dependents, penalty when payments equal the tax, MFS spouse itemizes, line 18 printed as entered", () => {
+    // MFJ, 2 dependents each qualified 3 months: 2 × $155 + 6 × $12.92 = 387.52 → $388
+    const a = { jurisdiction: "id" as const, filingStatus: "mfj", federalAGI: 90000, dependents: 2, idFoodCreditPartialPersons: 2, idFoodCreditPartialMonths: 6 };
+    expect(dollars(composeStateReturn(a, realPaEval(a)).lines, "43_food_tax_credit")).toBe("$388");
+    // single, tax 2,090 + 10 = 2,100 = withholding 1,945 + food 155; penalty 50 → 54 = $50, 55 = $0
+    const b = { jurisdiction: "id" as const, filingStatus: "single", federalAGI: 60000, stateWithholding: 1945, idPenaltyAndInterest: 50 };
+    const lb = composeStateReturn(b, realPaEval(b)).lines;
+    expect(dollars(lb, "54_total_due")).toBe("$50");
+    expect(dollars(lb, "55_overpaid")).toBe("$0");
+    // MFS whose spouse itemizes: standard deduction $0, itemized 9,000 − 2,000 SALT = 7,000 used; 40,000 − 7,000 = 33,000 → (33,000 − 4,811) × 5.3% = 1,494.017 → $1,494
+    const m = { jurisdiction: "id" as const, filingStatus: "mfs", federalAGI: 40000, idSpouseItemizes: true, idFederalItemized: true, idFederalItemizedDeductions: 9000, idSaltIncomeOrSalesTaxes: 2000, idSaltAllowed: 2000 };
+    const lm = composeStateReturn(m, realPaEval(m)).lines;
+    expect(dollars(lm, "16_standard_deduction")).toBe("$0");
+    expect(lm._deduction_method).toBe("itemized");
+    expect(dollars(lm, "20_tax")).toBe("$1,494");
+    // line 18 larger than line 17 prints as entered; line 19 floors at zero
+    const q = { jurisdiction: "id" as const, filingStatus: "single", federalAGI: 60000, idQbiDeduction: 100000 };
+    const lq = composeStateReturn(q, realPaEval(q)).lines;
+    expect(dollars(lq, "18_qbi_deduction")).toBe("$100,000");
+    expect(dollars(lq, "19_idaho_taxable_income")).toBe("$0");
+  });
+});

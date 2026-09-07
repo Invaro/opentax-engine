@@ -1,0 +1,14 @@
+{
+  "description": "ID educational entity credit: tax $600 -> 50% = $300.",
+  "facts": {
+    "filingStatus": "single",
+    "idEducationalContributions": 2000,
+    "idTaxBeforeCredits": 600,
+    "idOtherStateCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.educational_contribution_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

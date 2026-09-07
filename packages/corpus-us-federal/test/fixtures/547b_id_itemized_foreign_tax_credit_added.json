@@ -1,0 +1,17 @@
+{
+  "description": "ID itemized: $30,000 + $300 federal foreign tax credit \u2212 $8,000 = $22,300.",
+  "facts": {
+    "filingStatus": "single",
+    "idFederalItemizedDeductions": 30000,
+    "idSaltIncomeOrSalesTaxes": 8000,
+    "idRealEstateTaxes": 5000,
+    "idPersonalPropertyTaxes": 500,
+    "idSaltAllowed": 13500,
+    "idForeignTaxCredit": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.itemized_deductions",
+  "expect": {
+    "valueCents": "2230000"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "ID MFJ, both 65+: $31,500 + 2 x $1,600 = $34,700.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idAgeBlindBoxes": 2,
+    "isClaimedAsDependent": false,
+    "idEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "3470000"
+  }
+}

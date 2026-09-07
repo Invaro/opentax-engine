@@ -1,0 +1,15 @@
+{
+  "description": "ID child care deduction: excluded benefits $12,000 -> line 4 zero -> $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idChildCareExpenses": 8000,
+    "idDependentCareBenefitsExcluded": 12000,
+    "idEarnedIncome": 40000,
+    "idSpouseEarnedIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.child_care_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

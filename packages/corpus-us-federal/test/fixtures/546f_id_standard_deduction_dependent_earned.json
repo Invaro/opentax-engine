@@ -1,0 +1,14 @@
+{
+  "description": "ID dependent filer, earned income $5,000: larger of $1,350 or 5,000 + 450 = $5,450 (below $15,750).",
+  "facts": {
+    "filingStatus": "single",
+    "idAgeBlindBoxes": 0,
+    "isClaimedAsDependent": true,
+    "idEarnedIncome": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.standard_deduction",
+  "expect": {
+    "valueCents": "545000"
+  }
+}

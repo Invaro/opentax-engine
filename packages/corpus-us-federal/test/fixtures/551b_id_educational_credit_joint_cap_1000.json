@@ -1,0 +1,14 @@
+{
+  "description": "ID educational entity credit, MFJ: min(1,000, 1,500, 1,000, 3,000) = $1,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "idEducationalContributions": 2000,
+    "idTaxBeforeCredits": 3000,
+    "idOtherStateCredit": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.educational_contribution_credit",
+  "expect": {
+    "valueCents": "100000"
+  }
+}
