@@ -74,7 +74,7 @@ describe("2025 Arkansas Regular Income Tax Table — every printed row", () => {
       if (got !== regular.rows[i].tax) bad.push(`${x}: got ${got}, printed ${regular.rows[i].tax}`);
     }
     expect(bad, bad.slice(0, 10).join("\n")).toEqual([]);
-  });
+  }, 120_000); // 100,000 evaluations: ~4s locally, ~15s on the CI runners
 
   it("is the same table for every filing status", () => {
     for (const fs of ["mfj", "hoh", "mfs", "qss"]) {
