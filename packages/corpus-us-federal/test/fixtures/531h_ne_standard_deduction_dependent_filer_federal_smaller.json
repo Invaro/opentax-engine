@@ -1,0 +1,14 @@
+{
+  "description": "NE dependent filer: smaller of the $1,350 federal standard deduction allowed and $8,600 -> $1,350.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgeBlindBoxes": 0,
+    "isClaimedAsDependent": true,
+    "neFederalStandardDeduction": 1350
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "135000"
+  }
+}

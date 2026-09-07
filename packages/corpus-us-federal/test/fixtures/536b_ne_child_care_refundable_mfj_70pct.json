@@ -1,0 +1,16 @@
+{
+  "description": "NE Form 2441N MFJ: AGI $25,000, $8,000 for two -> $6,000; smallest of 6,000 / 20,000 / spouse 15,000 = 6,000; federal .30 -> $1,800; state .70 (3 steps over $22,000) -> $1,260.",
+  "facts": {
+    "filingStatus": "mfj",
+    "neAgi": 25000,
+    "neChildCareExpenses": 8000,
+    "neChildCareQualifyingPersons": 2,
+    "neEarnedIncome": 20000,
+    "neSpouseEarnedIncome": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_refundable",
+  "expect": {
+    "valueCents": "126000"
+  }
+}

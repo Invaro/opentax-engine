@@ -1,0 +1,13 @@
+{
+  "description": "NE paper Tax Table worksheet, HOH $80,000 -> $3,276 + 5.20% x 2,240 = 3,392.48 -> $3,392.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 80000,
+    "neUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "339200"
+  }
+}

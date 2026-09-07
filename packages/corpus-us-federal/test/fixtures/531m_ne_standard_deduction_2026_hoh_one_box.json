@@ -1,0 +1,14 @@
+{
+  "description": "NE TY2026 HOH, 65+: $12,950 + $2,050 = $15,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "neAgeBlindBoxes": 1,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "1500000"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "NE Schedule II: $12,346.70 / $100,000 = .123467 -> .12347 (five decimals) x $2,000 = 246.94 -> $247.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 2000,
+    "neAgi": 100000,
+    "neAdjustmentsIncreasing": 0,
+    "neAdjustmentsDecreasing": 0,
+    "neOtherStateAgi": "12346.70",
+    "neOtherStateTaxPaid": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.other_state_credit",
+  "expect": {
+    "valueCents": "24700"
+  }
+}

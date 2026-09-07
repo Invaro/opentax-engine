@@ -1,0 +1,13 @@
+{
+  "description": "NE paper Tax Table, HOH $10,000 -> row (9,960, 10,060] midpoint 10,010: exact 184.746 + 3.51% x 2,500 = 272.496 -> $272 (printed 272; rounded anchors would give 272.50 -> $273).",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 10000,
+    "neUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "27200"
+  }
+}

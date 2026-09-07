@@ -1,0 +1,12 @@
+{
+  "description": "NE earned income credit: 10% of a $4,000 federal EIC = $400.",
+  "facts": {
+    "filingStatus": "hoh",
+    "neFederalEic": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.eitc",
+  "expect": {
+    "valueCents": "40000"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "NE line 35: net adjustments $4,999.99 -> cap applies -> $500.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 1000,
+    "neNonrefundableCredits": 300,
+    "neNetAdjustments": "4999.99",
+    "neFederalTaxBeforeCredits": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.tax_after_credits",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

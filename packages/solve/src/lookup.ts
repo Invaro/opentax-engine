@@ -68,6 +68,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
   "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
   "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
+  "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
 };
 
 export function lookupParameters(

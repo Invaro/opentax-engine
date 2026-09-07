@@ -1,0 +1,13 @@
+{
+  "description": "NE itemized: $10,000 minus $15,000 of income taxes -> $0 (not negative).",
+  "facts": {
+    "filingStatus": "single",
+    "neFederalItemizedDeductions": 10000,
+    "neSaltIncomeTaxes": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.itemized_deductions",
+  "expect": {
+    "valueCents": "0"
+  }
+}

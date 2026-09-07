@@ -1,0 +1,12 @@
+{
+  "description": "NE HOH $25,325: $184.75 + 3.51% x 17,815 = 810.06 -> $810.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "81000"
+  }
+}

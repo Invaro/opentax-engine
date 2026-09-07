@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2026 single $39,900 -> the $1,514.58 anchor -> $1,515.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 39900
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "151500"
+  }
+}

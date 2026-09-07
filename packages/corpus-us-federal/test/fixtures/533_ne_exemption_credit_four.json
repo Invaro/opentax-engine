@@ -1,0 +1,12 @@
+{
+  "description": "NE personal exemption credit: 4 exemptions x $171 = $684.",
+  "facts": {
+    "filingStatus": "mfj",
+    "neExemptions": 4
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.personal_exemption_credit",
+  "expect": {
+    "valueCents": "68400"
+  }
+}

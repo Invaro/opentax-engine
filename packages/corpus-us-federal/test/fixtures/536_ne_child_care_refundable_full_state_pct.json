@@ -1,0 +1,16 @@
+{
+  "description": "NE Form 2441N: AGI $20,000, $4,000 for one child -> $3,000; federal decimal .32 (ceil(5,000/2,000) = 3 steps) -> $960; state 1.00 -> $960.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgi": 20000,
+    "neChildCareExpenses": 4000,
+    "neChildCareQualifyingPersons": 1,
+    "neEarnedIncome": 20000,
+    "neSpouseEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_refundable",
+  "expect": {
+    "valueCents": "96000"
+  }
+}

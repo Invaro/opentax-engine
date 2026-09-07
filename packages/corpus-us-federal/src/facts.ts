@@ -3605,6 +3605,196 @@ export const facts: FactSpec[] = [
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
   },
+  // ---- Nebraska (Form 1040N) ----
+  {
+    id: "neUseTaxTable",
+    type: "bool",
+    description:
+      "Compute Nebraska line 15 from the paper 2025 Nebraska Tax Table (row-midpoint cells and the over-$77,760 endpoint worksheet) instead of the Tax Calculation Schedule that e-filers must use (us.ne.income_tax). The two differ by up to $3 (the table prices each $100 row at its midpoint).",
+    default: { value: false, rationale: "Electronic filers must use the Tax Calculation Schedule, so it is the default" },
+  },
+  {
+    id: "neExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Form 1040N line 4 Nebraska personal exemptions: yourself and spouse (unless claimable as another taxpayer's dependent) plus the dependents who qualify for the federal child tax credit or other dependent credit — $171 each (us.ne.personal_exemption_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "neAgeBlindBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description:
+      "Form 1040N line 2a boxes checked: you 65 or older, you blind, spouse 65 or older, spouse blind (0-4) — $2,000 each for single/HOH, $1,650 each for MFJ/QSS/MFS; the rule clamps at 2 for single, QSS, and HOH (us.ne.standard_deduction). For MFS the spouse boxes count only if you can claim the spouse's exemption.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "neFederalStandardDeduction",
+    type: "money",
+    min: "0",
+    description:
+      "The federal standard deduction actually allowed on Form 1040 line 12e — caps the Nebraska standard deduction for a filer who can be claimed as another taxpayer's dependent (us.ne.standard_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neFederalItemizedDeductions",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 7: total federal itemized deductions, Schedule A line 17 (us.ne.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neSaltIncomeTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 8: state and local INCOME taxes on federal Schedule A line 5a, before the federal cap — $0 if line 5a is general sales taxes (us.ne.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neFederalOtherTax",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 16c: federal tax on lump-sum distributions (Form 4972) plus federal tax on early distributions (the lesser of Form 5329 or Schedule 2 line 8) — Nebraska adds 29.6% (us.ne.other_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, Form 1040N line 5 (Form 1040 line 11) — the $29,000 child care credit split (us.ne.child_care_credit_nonrefundable, us.ne.child_care_credit_refundable) and the Schedule II ratio denominator (us.ne.other_state_credit). May be negative. In dollars.",
+  },
+  {
+    id: "neFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal child and dependent care credit allowed, Schedule 3 line 2 — Nebraska allows 25% when AGI exceeds $29,000 (us.ne.child_care_credit_nonrefundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neChildCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Form 2441N line 2(C)/3: qualified child and dependent care expenses paid, before the $3,000 / $6,000 cap (us.ne.child_care_credit_refundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neChildCareQualifyingPersons",
+    type: "int",
+    min: "0",
+    description:
+      "Form 2441N line 2 qualifying persons — caps line 3 at $3,000 for one, $6,000 for two or more (us.ne.child_care_credit_refundable).",
+    default: { value: "1", rationale: "Assumed one qualifying person when expenses are given" },
+  },
+  {
+    id: "neEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Form 2441N line 4: the taxpayer's earned income (us.ne.child_care_credit_refundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Form 2441N line 5: the spouse's earned income on a joint return (student/disabled deemed amounts per the federal instructions) (us.ne.child_care_credit_refundable). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "Federal earned income credit, Form 1040 line 27a — Nebraska allows 10% (us.ne.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 17: total Nebraska tax before the personal exemption credit (line 15 + line 16) (us.ne.tax_after_credits, us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neNonrefundableCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 34: total nonrefundable credits, lines 18 through 33 (us.ne.tax_after_credits). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neNetAdjustments",
+    type: "money",
+    description:
+      "Form 1040N line 12 minus line 13 (net Schedule I adjustments; may be negative) — under $5,000 the § 77-2715(1) federal tax liability cap applies (us.ne.tax_after_credits). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neFederalTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Tax Liability Worksheet line 3: Form 1040 line 16 + Schedule 2 line 2 + Schedule 2 line 8 — the ceiling on Nebraska tax after nonrefundable credits when net adjustments are under $5,000 (us.ne.tax_after_credits). In dollars.",
+  },
+  {
+    id: "neOtherStateAgi",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule II line 2: adjusted gross income derived from the other state per the DOR Conversion Chart (not that state's taxable income) (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neOtherStateTaxPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule II line 5: income tax due and paid to the other state or its political subdivision (not the amount withheld; no foreign taxes) (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neAdjustmentsIncreasing",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 12: total Schedule I Part A adjustments increasing federal AGI — part of the Schedule II ratio denominator (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neAdjustmentsDecreasing",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 13: total Schedule I Part B adjustments decreasing federal AGI — part of the Schedule II ratio denominator (us.ne.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040N line 58: 2025 taxable purchases on which no Nebraska sales tax was collected (us.ne.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "neLocalUseTaxRateBps",
+    type: "int",
+    min: "0",
+    max: "200",
+    description:
+      "Form 1040N line 58 local use tax rate in basis points — 0, 50, 100, 150, 175, or 200 (0.5% to 2%) from the local sales and use tax codes schedule (us.ne.use_tax).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
   // ---- New Mexico (Form PIT-1) ----
   {
     id: "nmAgi",

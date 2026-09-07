@@ -1,0 +1,13 @@
+{
+  "description": "NE itemized: Schedule A line 5a was sales tax -> nothing subtracted: $25,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "neFederalItemizedDeductions": 25000,
+    "neSaltIncomeTaxes": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.itemized_deductions",
+  "expect": {
+    "valueCents": "2500000"
+  }
+}

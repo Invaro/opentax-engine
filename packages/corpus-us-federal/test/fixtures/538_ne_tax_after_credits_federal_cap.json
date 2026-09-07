@@ -1,0 +1,15 @@
+{
+  "description": "NE line 35: tax $1,000 \u2212 credits $300 = $700, but net adjustments $0 < $5,000 and federal tax before credits $500 -> $500.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 1000,
+    "neNonrefundableCredits": 300,
+    "neNetAdjustments": 0,
+    "neFederalTaxBeforeCredits": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.tax_after_credits",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

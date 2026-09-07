@@ -1,0 +1,12 @@
+{
+  "description": "NE other tax: 29.6% of $1,234 = 365.264 -> $365.",
+  "facts": {
+    "filingStatus": "single",
+    "neFederalOtherTax": 1234
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.other_tax",
+  "expect": {
+    "valueCents": "36500"
+  }
+}

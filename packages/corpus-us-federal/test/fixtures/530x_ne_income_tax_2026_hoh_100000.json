@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2026 HOH $100,000 -> $2,198.88 + 4.55% x 40,840 = 4,057.10 -> $4,057.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "405700"
+  }
+}

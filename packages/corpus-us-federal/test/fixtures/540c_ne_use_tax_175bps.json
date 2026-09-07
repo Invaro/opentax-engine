@@ -1,0 +1,13 @@
+{
+  "description": "NE use tax: $1,000 at 1.75% local -> $55 + 17.50 -> $18 = $73.",
+  "facts": {
+    "filingStatus": "single",
+    "neUseTaxPurchases": 1000,
+    "neLocalUseTaxRateBps": 175
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.use_tax",
+  "expect": {
+    "valueCents": "7300"
+  }
+}

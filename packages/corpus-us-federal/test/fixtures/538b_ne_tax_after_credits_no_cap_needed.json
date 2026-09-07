@@ -1,0 +1,15 @@
+{
+  "description": "NE line 35: $700 with federal tax $2,000 -> $700.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 1000,
+    "neNonrefundableCredits": 300,
+    "neNetAdjustments": 0,
+    "neFederalTaxBeforeCredits": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.tax_after_credits",
+  "expect": {
+    "valueCents": "70000"
+  }
+}

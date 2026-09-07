@@ -1,0 +1,16 @@
+{
+  "description": "NE Form 2441N: $1,555 x .34 (AGI $16,000) = 528.70 -> $529; x 1.00 -> $529.",
+  "facts": {
+    "filingStatus": "single",
+    "neAgi": 16000,
+    "neChildCareExpenses": 1555,
+    "neChildCareQualifyingPersons": 1,
+    "neEarnedIncome": 5000,
+    "neSpouseEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.child_care_credit_refundable",
+  "expect": {
+    "valueCents": "52900"
+  }
+}

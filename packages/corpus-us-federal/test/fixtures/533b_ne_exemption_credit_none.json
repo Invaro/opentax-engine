@@ -1,0 +1,12 @@
+{
+  "description": "NE dependent filer with 0 exemptions -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "neExemptions": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.personal_exemption_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

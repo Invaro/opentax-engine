@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2027: LB 754's 3.99% rates on re-indexed brackets \u2014 unpublished, no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2027-06-30",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

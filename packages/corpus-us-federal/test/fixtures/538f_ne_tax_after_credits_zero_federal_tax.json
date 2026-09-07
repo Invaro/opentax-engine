@@ -1,0 +1,15 @@
+{
+  "description": "NE line 35: negative net adjustments and a $0 federal tax liability -> Nebraska tax after credits is $0.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 1000,
+    "neNonrefundableCredits": 300,
+    "neNetAdjustments": -3000,
+    "neFederalTaxBeforeCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.tax_after_credits",
+  "expect": {
+    "valueCents": "0"
+  }
+}

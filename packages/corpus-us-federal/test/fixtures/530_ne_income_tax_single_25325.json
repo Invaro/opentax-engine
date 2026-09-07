@@ -1,0 +1,12 @@
+{
+  "description": "NE Tax Calculation Schedule, single $25,325: $804.30 + 5.01% x 1,205 = 864.67 -> $865.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "86500"
+  }
+}

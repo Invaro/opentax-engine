@@ -1,0 +1,13 @@
+{
+  "description": "NE paper Tax Table, single $60 (no printed row) -> exact schedule 2.46% x 60 = 1.476 -> $1.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 60,
+    "neUseTaxTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

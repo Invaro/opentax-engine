@@ -1,0 +1,12 @@
+{
+  "description": "NE TY2026 (DOR-published brackets, LB 754 4.55% rates): single $25,325 -> $825.71 + 4.55% x 565 = 851.42 -> $851.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2026-06-30",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "85100"
+  }
+}

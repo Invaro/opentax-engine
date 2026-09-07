@@ -1,0 +1,17 @@
+{
+  "description": "NE Schedule II: denominator = 100,000 + 10,000 \u2212 30,000 = 80,000; $40,000 / 80,000 = .50000 x $2,000 = $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "neTaxBeforeCredits": 2000,
+    "neAgi": 100000,
+    "neAdjustmentsIncreasing": 10000,
+    "neAdjustmentsDecreasing": 30000,
+    "neOtherStateAgi": 40000,
+    "neOtherStateTaxPaid": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.other_state_credit",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

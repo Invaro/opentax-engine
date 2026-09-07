@@ -1,0 +1,12 @@
+{
+  "description": "NE single $4,031: $99.14 + 3.51% x 1 = 99.1751 -> $99.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 4031
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "9900"
+  }
+}

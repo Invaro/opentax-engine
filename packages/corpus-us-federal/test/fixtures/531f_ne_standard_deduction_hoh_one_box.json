@@ -1,0 +1,14 @@
+{
+  "description": "NE HOH, 1 box: $12,600 + $2,000 = $14,600 (chart).",
+  "facts": {
+    "filingStatus": "hoh",
+    "neAgeBlindBoxes": 1,
+    "isClaimedAsDependent": false,
+    "neFederalStandardDeduction": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.standard_deduction",
+  "expect": {
+    "valueCents": "1460000"
+  }
+}

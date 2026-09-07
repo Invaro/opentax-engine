@@ -1,0 +1,12 @@
+{
+  "description": "NE MFJ $200,000: $3,086.10 + 5.20% x 122,270 = 9,444.14 -> $9,444.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.income_tax",
+  "expect": {
+    "valueCents": "944400"
+  }
+}
