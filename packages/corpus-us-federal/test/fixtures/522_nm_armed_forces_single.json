@@ -1,0 +1,12 @@
+{
+  "description": "NM armed forces retirement pay $40,000 -> $30,000 exempt.",
+  "facts": {
+    "filingStatus": "single",
+    "nmArmedForcesRetirementPay": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.armed_forces_retirement_exemption",
+  "expect": {
+    "valueCents": "3000000"
+  }
+}

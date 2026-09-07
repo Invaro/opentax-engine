@@ -1,0 +1,16 @@
+{
+  "description": "NM: MGI $16,000 liability $180; tax $500 -> 320 -> $250.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 16000,
+    "nmPropertyTaxBilled": 500,
+    "nmRentPaid": 0,
+    "nmAge65Count": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.property_tax_rebate_65",
+  "expect": {
+    "valueCents": "25000"
+  }
+}

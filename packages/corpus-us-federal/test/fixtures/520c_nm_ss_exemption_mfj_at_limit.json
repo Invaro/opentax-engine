@@ -1,0 +1,13 @@
+{
+  "description": "NM MFJ AGI $150,000 (the limit) with $30,000 taxable SS -> $30,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": 150000,
+    "nmTaxableSocialSecurity": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.social_security_exemption",
+  "expect": {
+    "valueCents": "3000000"
+  }
+}

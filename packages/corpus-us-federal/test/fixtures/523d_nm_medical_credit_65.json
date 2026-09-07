@@ -1,0 +1,13 @@
+{
+  "description": "NM 65+ with $30,000 of expenses -> $2,800 refundable credit.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAge65Count": 1,
+    "nmMedicalExpenses": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.medical_care_credit_65",
+  "expect": {
+    "valueCents": "280000"
+  }
+}

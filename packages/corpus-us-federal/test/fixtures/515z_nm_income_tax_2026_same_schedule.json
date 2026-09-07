@@ -1,0 +1,12 @@
+{
+  "description": "NM TY2026: \u00a7 7-2-7 is unindexed and unchanged by the 2025 and 2026 sessions \u2014 single $25,325 -> $815.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2026-06-30",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "81500"
+  }
+}

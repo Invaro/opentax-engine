@@ -1,0 +1,12 @@
+{
+  "description": "NM single $100,000 -> last row (99,900, 100,000] midpoint 99,950: 2,716.50 + 4.9% x 33,450 = 4,355.55 -> $4,356 (printed 4,356).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "435600"
+  }
+}

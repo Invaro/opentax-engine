@@ -1,0 +1,17 @@
+{
+  "description": "NM line 10: ratio 1.0000, line 5 = 30,000, but itemized 20,000 - standard 15,750 = 4,250 -> $4,250.",
+  "facts": {
+    "filingStatus": "single",
+    "nmFederalItemized": true,
+    "nmSaltIncomeTaxes": 30000,
+    "nmSaltTotal": 30000,
+    "nmSaltAllowed": 30000,
+    "nmFederalStandardDeduction": 15750,
+    "nmFederalItemizedDeductions": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.salt_addback",
+  "expect": {
+    "valueCents": "425000"
+  }
+}

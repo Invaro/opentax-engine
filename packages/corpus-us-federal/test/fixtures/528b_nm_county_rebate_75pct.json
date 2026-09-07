@@ -1,0 +1,14 @@
+{
+  "description": "NM: MGI $8,000, tax $400 -> 75% = $300.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 8000,
+    "nmPropertyTaxBilled": 400,
+    "nmRebateCounty": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.county_property_tax_rebate",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NM MFJ: $40,000 + spouse $12,000 -> $30,000 + $12,000 = $42,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmArmedForcesRetirementPay": 40000,
+    "nmArmedForcesRetirementPaySpouse": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.armed_forces_retirement_exemption",
+  "expect": {
+    "valueCents": "4200000"
+  }
+}

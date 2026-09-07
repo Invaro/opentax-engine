@@ -1,0 +1,12 @@
+{
+  "description": "NM single $300,000 -> 9,746 + 5.9% x 90,000 = $15,056.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "1505600"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NM no net capital gain -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmNetCapitalGain": 0,
+    "nmBusinessSaleGain": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

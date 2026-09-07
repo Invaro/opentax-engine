@@ -1,0 +1,14 @@
+{
+  "description": "NM LICTR: MGI $1,001, 7 exemptions -> '6 or more' column $775.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 1001,
+    "nmRebateExemptions": 7,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.lictr",
+  "expect": {
+    "valueCents": "77500"
+  }
+}

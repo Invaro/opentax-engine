@@ -1,0 +1,13 @@
+{
+  "description": "NM net capital gain $1,000 (after short-term losses) with a $100,000 business-sale gain -> business gain limited to the $1,000 net gain: max(min(1,000, 2,500), 40% x 1,000) = $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "nmNetCapitalGain": 1000,
+    "nmBusinessSaleGain": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

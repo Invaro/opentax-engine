@@ -1,0 +1,14 @@
+{
+  "description": "NM child income tax credit TY2026: the CPI-adjusted 2026 table is unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": 20000,
+    "nmQualifyingChildren": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2026-06-30",
+  "target": "us.nm.child_income_tax_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

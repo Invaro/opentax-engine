@@ -1,0 +1,13 @@
+{
+  "description": "NM business-sale gain $2,000,000 -> 40% of up to $1,000,000 = $400,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmNetCapitalGain": 2000000,
+    "nmBusinessSaleGain": 2000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "40000000"
+  }
+}

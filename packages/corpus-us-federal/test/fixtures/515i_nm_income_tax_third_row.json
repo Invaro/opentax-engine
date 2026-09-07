@@ -1,0 +1,12 @@
+{
+  "description": "NM $101 -> row (100, 200] midpoint 150 x 1.5% = 2.25 -> $2 (printed 2).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 101
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "200"
+  }
+}

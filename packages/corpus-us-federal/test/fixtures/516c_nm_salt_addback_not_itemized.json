@@ -1,0 +1,17 @@
+{
+  "description": "NM line 10: federal standard deduction taken -> no add-back.",
+  "facts": {
+    "filingStatus": "single",
+    "nmFederalItemized": false,
+    "nmSaltIncomeTaxes": 12000,
+    "nmSaltTotal": 20000,
+    "nmSaltAllowed": 10000,
+    "nmFederalStandardDeduction": 15750,
+    "nmFederalItemizedDeductions": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.salt_addback",
+  "expect": {
+    "valueCents": "0"
+  }
+}

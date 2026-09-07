@@ -1,0 +1,14 @@
+{
+  "description": "NM LICTR TY2026: the CPI-adjusted 2026 table is unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 10000,
+    "nmRebateExemptions": 2,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2026-06-30",
+  "target": "us.nm.lictr",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

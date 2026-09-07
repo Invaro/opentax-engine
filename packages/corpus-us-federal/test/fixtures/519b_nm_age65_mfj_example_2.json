@@ -1,0 +1,13 @@
+{
+  "description": "NM PIT-ADJ example: MFJ, one 65 and one blind, AGI $28,000 -> $8,000 x 2 = $16,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": 28000,
+    "nmAge65OrBlindPersons": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.age65_blind_exemption",
+  "expect": {
+    "valueCents": "1600000"
+  }
+}

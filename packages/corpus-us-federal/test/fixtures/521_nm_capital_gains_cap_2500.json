@@ -1,0 +1,13 @@
+{
+  "description": "NM net capital gain $10,000 -> $2,500 cap.",
+  "facts": {
+    "filingStatus": "single",
+    "nmNetCapitalGain": 10000,
+    "nmBusinessSaleGain": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "250000"
+  }
+}

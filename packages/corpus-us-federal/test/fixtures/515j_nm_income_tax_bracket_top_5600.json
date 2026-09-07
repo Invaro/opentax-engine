@@ -1,0 +1,12 @@
+{
+  "description": "NM single $5,600 -> row (5,500, 5,600] midpoint 5,550: 82.50 + 3.2% x 50 = 84.10 -> $84 (printed 84).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 5600
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "8400"
+  }
+}

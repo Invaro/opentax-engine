@@ -1,0 +1,14 @@
+{
+  "description": "NM PIT-RC example: Los Alamos resident, tax $800, MGI $19,000 -> 45% = $360 -> capped at $350.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 19000,
+    "nmPropertyTaxBilled": 800,
+    "nmRebateCounty": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.county_property_tax_rebate",
+  "expect": {
+    "valueCents": "35000"
+  }
+}

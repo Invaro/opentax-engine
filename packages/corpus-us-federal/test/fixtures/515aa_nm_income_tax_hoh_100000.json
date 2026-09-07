@@ -1,0 +1,12 @@
+{
+  "description": "NM HOH $100,000 -> joint column last row $4,087.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "408700"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "NM: no taxpayer 65+ -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 10000,
+    "nmPropertyTaxBilled": 400,
+    "nmRentPaid": 0,
+    "nmAge65Count": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.property_tax_rebate_65",
+  "expect": {
+    "valueCents": "0"
+  }
+}

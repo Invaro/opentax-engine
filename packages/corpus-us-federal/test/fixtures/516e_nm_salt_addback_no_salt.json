@@ -1,0 +1,17 @@
+{
+  "description": "NM line 10: Schedule A line 5d is $0 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmFederalItemized": true,
+    "nmSaltIncomeTaxes": 0,
+    "nmSaltTotal": 0,
+    "nmSaltAllowed": 0,
+    "nmFederalStandardDeduction": 15750,
+    "nmFederalItemizedDeductions": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.salt_addback",
+  "expect": {
+    "valueCents": "0"
+  }
+}

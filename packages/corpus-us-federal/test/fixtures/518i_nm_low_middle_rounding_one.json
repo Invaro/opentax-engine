@@ -1,0 +1,13 @@
+{
+  "description": "NM single AGI $25,333 -> 2,500 - 15% x 5,333 = 1,700.05 -> $1,700.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAgi": 25333,
+    "nmExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.low_middle_income_exemption",
+  "expect": {
+    "valueCents": "170000"
+  }
+}

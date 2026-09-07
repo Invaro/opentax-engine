@@ -1,0 +1,12 @@
+{
+  "description": "NM $25,000 of retirement pay -> $25,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "nmArmedForcesRetirementPay": 25000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.armed_forces_retirement_exemption",
+  "expect": {
+    "valueCents": "2500000"
+  }
+}

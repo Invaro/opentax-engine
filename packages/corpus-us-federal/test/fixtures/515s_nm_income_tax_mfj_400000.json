@@ -1,0 +1,12 @@
+{
+  "description": "NM MFJ $400,000 -> 14,622 + 5.9% x 85,000 = $19,637.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 400000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "1963700"
+  }
+}

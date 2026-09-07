@@ -1,0 +1,12 @@
+{
+  "description": "NM single $150,000 -> 4,356 + 4.9% x 50,000 = $6,806 (statute exact $6,808).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "680600"
+  }
+}

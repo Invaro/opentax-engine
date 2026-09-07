@@ -1,0 +1,12 @@
+{
+  "description": "NM MFS $157,500 -> 4,492 + 4.9% x 57,500 = 7,309.50 -> $7,310 (matches the printed top-tier base).",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 157500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "731000"
+  }
+}

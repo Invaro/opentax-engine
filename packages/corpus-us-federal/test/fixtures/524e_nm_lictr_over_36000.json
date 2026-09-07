@@ -1,0 +1,14 @@
+{
+  "description": "NM LICTR: MGI $36,001 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 36001,
+    "nmRebateExemptions": 3,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.lictr",
+  "expect": {
+    "valueCents": "0"
+  }
+}

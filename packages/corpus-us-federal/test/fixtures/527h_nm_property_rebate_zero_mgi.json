@@ -1,0 +1,16 @@
+{
+  "description": "NM: MGI $0 -> first-row liability $20; tax $100 -> $80.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 0,
+    "nmPropertyTaxBilled": 100,
+    "nmRentPaid": 0,
+    "nmAge65Count": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.property_tax_rebate_65",
+  "expect": {
+    "valueCents": "8000"
+  }
+}

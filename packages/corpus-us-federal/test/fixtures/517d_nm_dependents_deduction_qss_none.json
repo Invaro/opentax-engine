@@ -1,0 +1,13 @@
+{
+  "description": "NM surviving spouse with 3 dependents -> $0 (\u00a7 7-2-39 does not list surviving spouses).",
+  "facts": {
+    "filingStatus": "qss",
+    "nmDependents": 3,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.dependents_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

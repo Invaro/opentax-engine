@@ -1,0 +1,13 @@
+{
+  "description": "NM MFS net capital gain $2,000,000 all from a New Mexico business sale -> 40% of up to $500,000 = $200,000.",
+  "facts": {
+    "filingStatus": "mfs",
+    "nmNetCapitalGain": 2000000,
+    "nmBusinessSaleGain": 2000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "20000000"
+  }
+}

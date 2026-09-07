@@ -1,0 +1,12 @@
+{
+  "description": "NM $100 -> $1 (top of the (60, 100] row).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}
