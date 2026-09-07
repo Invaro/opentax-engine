@@ -1,0 +1,13 @@
+{
+  "description": "NM MFS net capital gain $10,000 -> $1,250 (half of the joint $2,500).",
+  "facts": {
+    "filingStatus": "mfs",
+    "nmNetCapitalGain": 10000,
+    "nmBusinessSaleGain": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "125000"
+  }
+}

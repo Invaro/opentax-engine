@@ -1,0 +1,14 @@
+{
+  "description": "NM 65+ dependent of another taxpayer -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAge65Count": 1,
+    "nmMedicalExpenses": 30000,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.medical_care_credit_65",
+  "expect": {
+    "valueCents": "0"
+  }
+}

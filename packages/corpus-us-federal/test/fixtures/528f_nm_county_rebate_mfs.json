@@ -1,0 +1,14 @@
+{
+  "description": "NM MFS: 800 x 45% / 2 = $180 -> capped at $175.",
+  "facts": {
+    "filingStatus": "mfs",
+    "nmModifiedGrossIncome": 19000,
+    "nmPropertyTaxBilled": 800,
+    "nmRebateCounty": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.county_property_tax_rebate",
+  "expect": {
+    "valueCents": "17500"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NM MFS $25,325 -> midpoint 25,350: 869.50 + 4.7% x 350 = 885.95 -> $886 (printed 886).",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "88600"
+  }
+}

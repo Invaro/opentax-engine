@@ -1,0 +1,17 @@
+{
+  "description": "NM line 10 worksheet: 5a 12,000 / 5d 20,000 = 0.6000; x 5e 10,000 = 6,000; lesser of 6,000 and 10,000 = 6,000; itemized 30,000 - standard 15,750 = 14,250 -> $6,000.",
+  "facts": {
+    "filingStatus": "single",
+    "nmFederalItemized": true,
+    "nmSaltIncomeTaxes": 12000,
+    "nmSaltTotal": 20000,
+    "nmSaltAllowed": 10000,
+    "nmFederalStandardDeduction": 15750,
+    "nmFederalItemizedDeductions": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.salt_addback",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

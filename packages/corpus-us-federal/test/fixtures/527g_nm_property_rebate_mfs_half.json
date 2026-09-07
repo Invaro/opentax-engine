@@ -1,0 +1,16 @@
+{
+  "description": "NM MFS: (200 - 75) / 2 = 62.50 -> $63.",
+  "facts": {
+    "filingStatus": "mfs",
+    "nmModifiedGrossIncome": 10000,
+    "nmPropertyTaxBilled": 200,
+    "nmRentPaid": 0,
+    "nmAge65Count": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.property_tax_rebate_65",
+  "expect": {
+    "valueCents": "6300"
+  }
+}

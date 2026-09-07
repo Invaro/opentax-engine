@@ -1,0 +1,12 @@
+{
+  "description": "NM MFJ $8,000 -> row (7,900, 8,000] midpoint 7,950 x 1.5% = 119.25 -> $119 (printed 119).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "11900"
+  }
+}

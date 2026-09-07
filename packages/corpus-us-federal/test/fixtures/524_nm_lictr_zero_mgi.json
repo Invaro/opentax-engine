@@ -1,0 +1,14 @@
+{
+  "description": "NM LICTR: MGI $0, 1 exemption -> first row $224.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 0,
+    "nmRebateExemptions": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.lictr",
+  "expect": {
+    "valueCents": "22400"
+  }
+}

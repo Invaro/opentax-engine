@@ -1,0 +1,12 @@
+{
+  "description": "NM single $100,001 -> printed worksheet $4,356 + 4.9% x 1 = 4,356.05 -> $4,356 (the statute would give $4,358.05).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "435600"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NM HOH AGI $51,000 -> $1,000 (joint table).",
+  "facts": {
+    "filingStatus": "hoh",
+    "nmAgi": 51000,
+    "nmAge65OrBlindPersons": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.age65_blind_exemption",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

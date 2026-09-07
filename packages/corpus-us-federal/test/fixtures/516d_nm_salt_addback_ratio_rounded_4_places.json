@@ -1,0 +1,17 @@
+{
+  "description": "NM line 10: 1,000 / 3,000 = 0.3333 (4 decimals) x 3,000 = 999.90 -> lesser 999.90 -> whole dollars $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "nmFederalItemized": true,
+    "nmSaltIncomeTaxes": 1000,
+    "nmSaltTotal": 3000,
+    "nmSaltAllowed": 3000,
+    "nmFederalStandardDeduction": 15750,
+    "nmFederalItemizedDeductions": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.salt_addback",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

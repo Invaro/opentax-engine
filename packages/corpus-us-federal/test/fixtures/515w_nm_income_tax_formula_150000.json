@@ -1,0 +1,13 @@
+{
+  "description": "NM useFormulaMethod: single $150,000 exact statute = 2,716.50 + 4.9% x 83,500 = $6,808 (vs printed $6,806).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 150000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "680800"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "NM LICTR: 0 rebate exemptions -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 5000,
+    "nmRebateExemptions": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.lictr",
+  "expect": {
+    "valueCents": "0"
+  }
+}

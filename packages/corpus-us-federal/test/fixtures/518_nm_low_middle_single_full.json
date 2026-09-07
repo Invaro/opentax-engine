@@ -1,0 +1,13 @@
+{
+  "description": "NM single AGI $20,000, 1 exemption -> $2,500.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAgi": 20000,
+    "nmExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.low_middle_income_exemption",
+  "expect": {
+    "valueCents": "250000"
+  }
+}

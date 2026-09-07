@@ -1,0 +1,12 @@
+{
+  "description": "NM WFTC: 25% of $1,234 = 308.50 -> $309.",
+  "facts": {
+    "filingStatus": "single",
+    "nmFederalEic": 1234
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.working_families_credit",
+  "expect": {
+    "valueCents": "30900"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NM single AGI $36,667 (the limit) -> 2,500 - 15% x 16,667 = -0.05 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAgi": 36667,
+    "nmExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.low_middle_income_exemption",
+  "expect": {
+    "valueCents": "0"
+  }
+}

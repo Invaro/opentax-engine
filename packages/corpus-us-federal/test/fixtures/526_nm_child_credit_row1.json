@@ -1,0 +1,14 @@
+{
+  "description": "NM child income tax credit: AGI $25,000, 2 children -> $637 x 2 = $1,274.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": 25000,
+    "nmQualifyingChildren": 2,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.child_income_tax_credit",
+  "expect": {
+    "valueCents": "127400"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NM 65+ with $28,000 of unreimbursed medical expenses -> $3,000 exemption.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAge65Count": 1,
+    "nmMedicalExpenses": 28000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.medical_expense_exemption_65",
+  "expect": {
+    "valueCents": "300000"
+  }
+}

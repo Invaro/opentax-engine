@@ -1,0 +1,13 @@
+{
+  "description": "NM under 65 with $50,000 of expenses -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAge65Count": 0,
+    "nmMedicalExpenses": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.medical_expense_exemption_65",
+  "expect": {
+    "valueCents": "0"
+  }
+}

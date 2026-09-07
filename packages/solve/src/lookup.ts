@@ -67,6 +67,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.ct": "connecticut ct ct-1040 hartford new haven stamford bridgeport",
   "us.ks": "kansas ks k-40 wichita topeka overland park kpers",
   "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
+  "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
 };
 
 export function lookupParameters(

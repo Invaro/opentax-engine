@@ -1,0 +1,13 @@
+{
+  "description": "NM useFormulaMethod: single $25,325 exact statute = 434.50 + 4.3% x 8,825 = 813.975 -> $814 (vs table $815).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25325,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "81400"
+  }
+}

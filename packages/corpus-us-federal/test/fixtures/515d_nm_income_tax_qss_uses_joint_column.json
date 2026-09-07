@@ -1,0 +1,12 @@
+{
+  "description": "NM federal QSS = New Mexico surviving spouse, $25,325 -> $679 ('This column must also be used by surviving spouse').",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "67900"
+  }
+}

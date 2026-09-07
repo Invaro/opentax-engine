@@ -1,0 +1,14 @@
+{
+  "description": "NM LICTR: a dependent of another taxpayer -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 5000,
+    "nmRebateExemptions": 1,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.lictr",
+  "expect": {
+    "valueCents": "0"
+  }
+}

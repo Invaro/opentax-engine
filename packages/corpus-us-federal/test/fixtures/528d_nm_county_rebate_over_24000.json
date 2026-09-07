@@ -1,0 +1,14 @@
+{
+  "description": "NM: MGI $24,001 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 24001,
+    "nmPropertyTaxBilled": 400,
+    "nmRebateCounty": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.county_property_tax_rebate",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -8,18 +8,18 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: z.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
   ageOrBlindBoxes: z.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column)"),
+  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column; NM line 5 exemptions and the $4,000 dependents deduction)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 — Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -660,4 +660,49 @@ const arShape = {
   // priorYearOverpaymentCredited, and extensionPayment are shared.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape };
+const nmShape = {
+  nmFederalDeduction: usd.optional().describe("NM PIT-1 line 12: the federal standard or itemized deduction from Form 1040 line 12 — REQUIRED (New Mexico taxable income subtracts the federal deduction; § 7-2-2(N))"),
+  nmFederalItemized: z.boolean().optional().describe("NM PIT-1 box 12a: the filer itemized on the federal return — triggers the line 10 state and local tax add-back (pass nmSaltIncomeTaxes / nmSaltTotal / nmSaltAllowed / nmFederalStandardDeduction)"),
+  nmSaltIncomeTaxes: usd.optional().describe("NM line 10 worksheet line 1: federal Schedule A line 5a (state and local income taxes, or sales taxes, claimed)"),
+  nmSaltTotal: usd.optional().describe("NM line 10 worksheet line 2: federal Schedule A line 5d (total state and local taxes before the cap)"),
+  nmSaltAllowed: usd.optional().describe("NM line 10 worksheet line 4: federal Schedule A line 5e (state and local taxes deducted after the cap)"),
+  nmFederalStandardDeduction: usd.optional().describe("NM line 10 worksheet line 7: the federal standard deduction the itemizer could have claimed instead"),
+  nmAge65OrBlindPersons: z.number().int().optional().describe("NM PIT-ADJ line 13: taxpayer and spouse who are 65 or older OR blind (0-2; one per person even if both) — up to $8,000 each by AGI"),
+  nmAge65Count: z.number().int().optional().describe("NM: taxpayer and spouse who are 65 or older (0-2) — gates the $3,000 medical exemption, the $2,800 medical credit, the 65+ property tax rebate, and adds 2 LICTR exemptions each"),
+  nmBlindCount: z.number().int().optional().describe("NM: taxpayer and spouse who are blind for federal purposes (0-2) — adds 1 LICTR rebate exemption each (PIT-RC line 2c)"),
+  nmNetCapitalGain: usd.optional().describe("NM PIT-ADJ line 16: net capital gain (§ 1222(11), net long-term gain over net short-term loss) — up to $2,500 deducted"),
+  nmBusinessSaleGain: usd.optional().describe("NM PIT-ADJ line 16: net capital gain from the sale of a New Mexico-apportioned business — 40% of up to $1,000,000 deducted if larger"),
+  nmArmedForcesRetirementPay: usd.optional().describe("NM PIT-ADJ line 24: the primary's armed forces retirement pay (or survivor benefit) in federal AGI — $30,000 exempt"),
+  nmArmedForcesRetirementPaySpouse: usd.optional().describe("NM PIT-ADJ line 24: the spouse's armed forces retirement pay (MFJ) — its own $30,000"),
+  nmMedicalExpenses: usd.optional().describe("NM: unreimbursed medical care expenses paid (§ 7-2-5.9 definition) — $28,000 or more with a 65+ taxpayer gives the PIT-ADJ line 18 $3,000 exemption and the PIT-RC line 23 $2,800 refundable credit"),
+  nmLumpSumAmount: usd.optional().describe("NM PIT-1 line 19: the lump-sum distribution amount taxed under the federal 10-year option (Form 4972) — New Mexico adds 5 × the tax on 20% of it"),
+  nmOtherStateTax: usd.optional().describe("NM PIT-1 line 20 worksheet (column 2 line 1): income tax due to the other state (not withholding; not a city or county tax)"),
+  nmOtherStateTaxableIncome: usd.optional().describe("NM line 20 worksheet (column 2 line 2): the other state's taxable income on which that tax was computed"),
+  nmIncomeTaxedByBothStates: usd.optional().describe("NM line 20 worksheet line 4: the income subject to tax in BOTH states (capped at each state's taxable income)"),
+  nmModifiedGrossIncome: usd.optional().describe("NM PIT-RC line 12 modified gross income: ALL income of the taxpayer, spouse, and dependents, taxable or not, undiminished by losses (wages, gross Social Security and pensions, unemployment, public assistance, business profit, gross capital gains, gifts, interest, child support). REQUIRED for the LICTR, property tax rebates, and child day care credit — omitted, those sections are skipped with a note"),
+  nmNonQualifyingHouseholdMembers: z.number().int().optional().describe("NM PIT-RC line 2a: household members who do not qualify for the LICTR (nonresident dependents; a spouse not present six months)"),
+  nmSpouseRebateExemptionsClaimed: z.number().int().optional().describe("NM PIT-RC line 2h (married filing separately only): the household members and extra exemptions your spouse already claimed on the spouse's PIT-RC line 2g — subtracted so each exemption is claimed once"),
+  nmPropertyTaxBilled: usd.optional().describe("NM PIT-RC lines 15 / 18a: property tax billed for 2025 on the owned principal residence"),
+  nmRentPaid: usd.optional().describe("NM PIT-RC line 16a: rent paid in 2025 on the principal residence (6% counts as property tax for the 65+ rebate)"),
+  nmRebateCounty: z.boolean().optional().describe("NM PIT-RC Section 4: the owner-occupied principal residence is in Los Alamos, Santa Fe, Doña Ana, or Bernalillo County — additional low income property tax rebate (MGI ≤ $24,000)"),
+  nmChildDayCareWorksheet: usd.optional().describe("NM PIT-RC line 19 base: the sum of column G on the Child Day Care Credit Worksheet (40% of caregiver pay at up to $8 per day, up to $480 per child) — the composer caps at $1,200, subtracts the federal child care credit, and applies the $30,160 MGI limit"),
+  nmFederalChildCareCredit: usd.optional().describe("NM PIT-RC line 21: the federal child and dependent care credit applied on Schedule 3 line 2 — subtracted from the New Mexico day care credit"),
+  nmSpecialNeedsAdoptedChildren: z.number().int().optional().describe("NM PIT-RC line 24: certified special needs adopted children claimed as dependents — $1,500 each ($750 MFS), refundable"),
+  nmQualifyingChildren: z.number().int().optional().describe("NM PIT-RC line 25: qualifying children (§ 152(c)) — child income tax credit $637 to $26 each by AGI, refundable"),
+  nmExpansionEic: usd.optional().describe("NM PIT-1 line 25a (NM Expansion, box 25b): the federal EIC the filer WOULD have received but for the SSN or under-25 age rule — used when federalEITC is 0"),
+  nmOilGasWithholding: usd.optional().describe("NM PIT-1 line 28: New Mexico tax withheld from oil and gas proceeds (1099-MISC / RPD-41285)"),
+  nmPteWithholding: usd.optional().describe("NM PIT-1 line 29: New Mexico tax withheld by or paid as entity-level/composite tax by pass-through entities (RPD-41359)"),
+  nmUnderpaymentPenalty: usd.optional().describe("NM PIT-1 line 34: penalty on underpayment of estimated tax (RPD-41272 / PIT-ES instructions)"),
+  nmLatePenalty: usd.optional().describe("NM PIT-1 line 36: late filing/payment penalty — 2% of the unpaid line 33 tax per month or part, maximum 20%"),
+  nmInterest: usd.optional().describe("NM PIT-1 line 37: interest at the IRC rate, daily, from the original due date"),
+  nmContributions: usd.optional().describe("NM PIT-1 line 40: PIT-D voluntary contributions from the overpayment"),
+  nmCreditForward: usd.optional().describe("NM PIT-1 line 41: overpayment applied to 2026 estimated tax"),
+  // PIT-ADJ additions (lines 1-5) use the shared `additions`; the transcribed
+  // PIT-ADJ deductions (lines 7-12, 14, 15, 17, 19-23, 26, 27) use the shared
+  // `subtractions`; PIT-CR line A uses nonrefundableCredits and line B
+  // refundableCredits; taxableSocialSecurity, federalEITC, dependents,
+  // claimedAsDependent, stateWithholding, estimatedPayments,
+  // priorYearOverpaymentCredited, and extensionPayment are shared.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape };

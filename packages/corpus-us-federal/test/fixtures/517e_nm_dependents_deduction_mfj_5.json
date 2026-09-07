@@ -1,0 +1,13 @@
+{
+  "description": "NM MFJ with 5 dependents -> $16,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmDependents": 5,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.dependents_deduction",
+  "expect": {
+    "valueCents": "1600000"
+  }
+}

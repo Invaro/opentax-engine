@@ -1,0 +1,12 @@
+{
+  "description": "NM working families tax credit: 25% of a $4,000 federal EIC = $1,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "nmFederalEic": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.working_families_credit",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

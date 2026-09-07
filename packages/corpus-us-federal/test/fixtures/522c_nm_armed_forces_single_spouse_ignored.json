@@ -1,0 +1,13 @@
+{
+  "description": "NM single: the spouse field is ignored -> $30,000.",
+  "facts": {
+    "filingStatus": "single",
+    "nmArmedForcesRetirementPay": 40000,
+    "nmArmedForcesRetirementPaySpouse": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.armed_forces_retirement_exemption",
+  "expect": {
+    "valueCents": "3000000"
+  }
+}

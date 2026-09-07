@@ -1,0 +1,15 @@
+{
+  "description": "NM 65+ renter: 6% of $1,008.33 = 60.4998 -> $60 (one rounding, not 60.50 -> 61); MGI $500 liability $20 -> $40.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 500,
+    "nmPropertyTaxBilled": 0,
+    "nmRentPaid": "1008.33",
+    "nmAge65Count": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.property_tax_rebate_65",
+  "expect": {
+    "valueCents": "4000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "NM no qualifying person -> $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": 20000,
+    "nmAge65OrBlindPersons": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.age65_blind_exemption",
+  "expect": {
+    "valueCents": "0"
+  }
+}

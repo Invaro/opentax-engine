@@ -1,0 +1,14 @@
+{
+  "description": "NM: not a rebate-county resident -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 19000,
+    "nmPropertyTaxBilled": 800,
+    "nmRebateCounty": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.county_property_tax_rebate",
+  "expect": {
+    "valueCents": "0"
+  }
+}

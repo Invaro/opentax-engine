@@ -1094,7 +1094,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "STATE taxable income (e.g. CA Form 540 line 19, VA Form 760 line 15, IL net income line 11) — computed by the preparer under state law, then fed to the state tax targets (us.ca.income_tax, us.va.income_tax, us.il.income_tax) so the rate-schedule arithmetic is engine-pinned instead of recalled. In dollars.",
+      "STATE taxable income (e.g. CA Form 540 line 19, VA Form 760 line 15, IL net income line 11) — computed by the preparer under state law, then fed to the state tax targets (us.ca.income_tax, us.va.income_tax, us.il.income_tax) so the rate-schedule arithmetic is engine-pinned instead of recalled. In dollars. NM: PIT-1 line 17 (us.nm.income_tax).",
     default: {
       value: "0",
       rationale: "Assumed no state taxable income absent contrary input",
@@ -1601,7 +1601,7 @@ export const facts: FactSpec[] = [
     id: "useFormulaMethod",
     type: "bool",
     description:
-      "Compute with exact continuous formulas instead of the printed-form methods (analysis/comparison mode — filed returns use the forms). Affects: the IRS Tax Table below $100,000, the § 32(f) EIC Table ($50-bracket midpoints), and Schedule SE's per-line whole-dollar rounding.",
+      "Compute with exact continuous formulas instead of the printed-form methods (analysis/comparison mode — filed returns use the forms). Affects: the IRS Tax Table below $100,000, the § 32(f) EIC Table ($50-bracket midpoints), Schedule SE's per-line whole-dollar rounding, and the state packs that print a table or worksheet (KS us.ks.income_tax, NM us.nm.income_tax — exact § 7-2-7 schedule instead of the midpoint table and the printed over-$100,000 worksheet).",
     default: {
       value: false,
       rationale:
@@ -3604,6 +3604,197 @@ export const facts: FactSpec[] = [
     description:
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
+  },
+  // ---- New Mexico (Form PIT-1) ----
+  {
+    id: "nmAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, PIT-1 line 9 (Form 1040 line 11) — the base of the low- and middle-income exemption (us.nm.low_middle_income_exemption), the 65-or-older/blind exemption table (us.nm.age65_blind_exemption), the Social Security exemption cliff (us.nm.social_security_exemption), and the child income tax credit tiers (us.nm.child_income_tax_credit). May be negative. In dollars.",
+  },
+  {
+    id: "nmExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "PIT-1 line 5 exemptions: yourself (unless you can be claimed as a dependent) + spouse on a joint return + dependents and other dependents reported on the federal return — each worth up to $2,500 (us.nm.low_middle_income_exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "nmDependents",
+    type: "int",
+    min: "0",
+    description:
+      "Dependents and other dependents on PIT-1 line 8 / Schedule PIT-S (federal § 152) — $4,000 for each beyond the first for a head of household or MFJ filer (us.nm.dependents_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "nmAge65OrBlindPersons",
+    type: "int",
+    min: "0",
+    max: "2",
+    description:
+      "Taxpayer and spouse who are 65 or older OR blind (PIT-1 boxes 1c/1d/2c/2d) — one exemption per person, never two for the same person (us.nm.age65_blind_exemption); at most 1 unless married filing jointly.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "nmAge65Count",
+    type: "int",
+    min: "0",
+    max: "2",
+    description:
+      "Taxpayer and spouse who are 65 or older — gates the $3,000 medical care expense exemption, the $2,800 refundable medical care credit, and the property tax rebate for persons 65 or older (us.nm.medical_expense_exemption_65, us.nm.medical_care_credit_65, us.nm.property_tax_rebate_65).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "nmTaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description:
+      "Federally taxable Social Security benefits (Form 1040 line 6b) — exempt in full when AGI is not over the § 7-2-5.14 limit (us.nm.social_security_exemption). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmNetCapitalGain",
+    type: "money",
+    min: "0",
+    description:
+      "Net capital gain per IRC § 1222(11) — the excess of net long-term capital gain over net short-term capital loss (us.nm.capital_gains_deduction: up to $2,500). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmBusinessSaleGain",
+    type: "money",
+    min: "0",
+    description:
+      "Net capital gain from the sale of a business allocated or apportioned to New Mexico under § 7-2-11 (us.nm.capital_gains_deduction: 40% of up to $1,000,000). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmArmedForcesRetirementPay",
+    type: "money",
+    min: "0",
+    description:
+      "The primary taxpayer's armed forces retirement pay (or survivor pay of an armed forces retiree) included in federal AGI — $30,000 exempt (us.nm.armed_forces_retirement_exemption). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmArmedForcesRetirementPaySpouse",
+    type: "money",
+    min: "0",
+    description:
+      "The spouse's armed forces retirement pay on a joint return — its own $30,000 exemption (us.nm.armed_forces_retirement_exemption). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmMedicalExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Unreimbursed and uncompensated medical care expenses paid in the year for the taxpayer, spouse, or dependents (§ 7-2-5.9 definition; includes Medicare Part B premiums) — $28,000 or more with a taxpayer 65+ unlocks the $3,000 exemption and the $2,800 credit (us.nm.medical_expense_exemption_65, us.nm.medical_care_credit_65). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmModifiedGrossIncome",
+    type: "money",
+    min: "0",
+    description:
+      "PIT-RC line 12 modified gross income (§ 7-2-2(L)): ALL income of the taxpayer, spouse, and dependents, taxable or not, undiminished by losses — wages, gross Social Security and pensions, unemployment, public assistance, business profit (no losses), gross capital gains, gifts, interest, child support (us.nm.lictr, us.nm.property_tax_rebate_65, us.nm.county_property_tax_rebate). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmRebateExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "PIT-RC line 13a rebate exemptions: PIT-1 line 5 exemptions minus non-qualifying household members, plus 1 for each blind person and 2 for each person 65 or older (§ 7-2-14(C)) — selects the LICTR column (us.nm.lictr).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "nmFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "Federal earned income credit (Form 1040 line 27), or the EIC computed under the NM Expansion for a filer denied federally only by the SSN or under-25 age rule — New Mexico allows 25% (us.nm.working_families_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmQualifyingChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Qualifying children under IRC § 152(c) (plus public-assistance-supported minor children) — one child income tax credit each (us.nm.child_income_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "nmPropertyTaxBilled",
+    type: "money",
+    min: "0",
+    description:
+      "Property tax billed for the calendar year on the principal place of residence (dwelling plus up to five acres) (us.nm.property_tax_rebate_65 line 15, us.nm.county_property_tax_rebate line 18a). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmRentPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Rent paid during the year on the principal place of residence, including government subsidies paid to the landlord — 6% counts as property tax (us.nm.property_tax_rebate_65 lines 16a-16c). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmRebateCounty",
+    type: "bool",
+    description:
+      "The taxpayer OWNS and occupies a principal residence in Los Alamos, Santa Fe, Doña Ana, or Bernalillo County — enables the additional low income property tax rebate (us.nm.county_property_tax_rebate).",
+    default: { value: false, rationale: "Assumed not a resident of one of the four rebate counties absent contrary input" },
+  },
+  {
+    id: "nmSaltIncomeTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5a: state and local INCOME taxes (or general sales taxes) claimed — PIT-1 line 10 worksheet line 1 (us.nm.salt_addback). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmSaltTotal",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5d: total state and local taxes before the SALT cap — worksheet line 2 (us.nm.salt_addback). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmSaltAllowed",
+    type: "money",
+    min: "0",
+    description:
+      "Federal Schedule A line 5e: state and local taxes actually deducted after the cap — worksheet line 4 (us.nm.salt_addback). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmFederalStandardDeduction",
+    type: "money",
+    min: "0",
+    description:
+      "The federal standard deduction the filer could have claimed on Form 1040 line 12 had they not itemized — worksheet line 7 (us.nm.salt_addback). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmFederalItemizedDeductions",
+    type: "money",
+    min: "0",
+    description:
+      "Total federal itemized deductions actually claimed on Form 1040 line 12 — worksheet line 8 (us.nm.salt_addback). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "nmFederalItemized",
+    type: "bool",
+    description:
+      "The filer itemized deductions on the 2025 federal return (PIT-1 box 12a) — the state and local tax add-back applies only then (us.nm.salt_addback).",
+    default: { value: false, rationale: "Assumed the federal standard deduction was taken absent contrary input" },
   },
   // ---- Arkansas (Form AR1000F) ----
   {

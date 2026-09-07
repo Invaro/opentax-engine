@@ -1,0 +1,12 @@
+{
+  "description": "NM HOH $25,325 -> $679: heads of household share the joint schedule (\u00a7 7-2-7(A)); the printed HOH column equals the MFJ column.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "67900"
+  }
+}

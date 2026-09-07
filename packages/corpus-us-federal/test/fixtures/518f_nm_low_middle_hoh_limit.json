@@ -1,0 +1,13 @@
+{
+  "description": "NM HOH AGI $55,000 -> 2,500 - 10% x 25,000 = $0.",
+  "facts": {
+    "filingStatus": "hoh",
+    "nmAgi": 55000,
+    "nmExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.low_middle_income_exemption",
+  "expect": {
+    "valueCents": "0"
+  }
+}

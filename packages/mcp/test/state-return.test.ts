@@ -1653,3 +1653,134 @@ describe("composeAR — 2025 Form AR1000F (real corpus targets)", () => {
     expect(notes.some((n) => n.includes("65 Special"))).toBe(true);
   });
 });
+
+describe("composeNM — 2025 Form PIT-1 (real corpus targets)", () => {
+  it("single wage earner: federal deduction, no exemptions phase, rate table, refund", () => {
+    // 17 = 50,000 − 15,750 = 34,250 → row (34,200, 34,300] midpoint 34,250: 1,165.50 + 4.7% × 750 = 1,200.75 → $1,201;
+    // low/middle exemption: AGI 50,000 > 36,667 → 0; withholding 1,500 → refund 299.
+    const input = { jurisdiction: "nm" as const, filingStatus: "single", federalAGI: 50000, nmFederalDeduction: 15750, stateWithholding: 1500 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._filing_status).toBe("1");
+    expect(lines["5_exemptions"]).toBe("1");
+    expect(dollars(lines, "17_taxable_income")).toBe("$34,250");
+    expect(dollars(lines, "18_tax")).toBe("$1,201");
+    expect(dollars(lines, "22_net_tax")).toBe("$1,201");
+    expect(dollars(lines, "42_refund")).toBe("$299");
+    expect(lines["14_low_middle_income_exemption"]).toBeUndefined();
+    expect(notes.some((n) => n.includes("nmModifiedGrossIncome"))).toBe(false); // AGI over the LICTR limit, nothing to skip
+  });
+
+  it("MFJ family of five: $4,000 dependents deduction, child income tax credit, refund", () => {
+    // line 5 = 5; line 13 = 4,000 × (3 − 1) = 8,000; line 14: AGI 60,000 > 55,000 → 0;
+    // 17 = 60,000 − 31,500 − 8,000 = 20,500 → row (20,400, 20,500] midpoint 20,450: 120 + 3.2% × 12,450 = 518.40 → $518;
+    // child credit: AGI 60,000 → $212 × 3 = 636 (LICTR skipped: MGI 60,000 > 36,000); payments 636 + 800 → refund 918.
+    const input = {
+      jurisdiction: "nm" as const, filingStatus: "mfj", federalAGI: 60000, nmFederalDeduction: 31500, dependents: 3,
+      nmQualifyingChildren: 3, nmModifiedGrossIncome: 60000, stateWithholding: 800,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["5_exemptions"]).toBe("5");
+    expect(dollars(lines, "13_dependents_deduction")).toBe("$8,000");
+    expect(dollars(lines, "17_taxable_income")).toBe("$20,500");
+    expect(dollars(lines, "18_tax")).toBe("$518");
+    expect(dollars(lines, "RC25_child_income_tax_credit")).toBe("$636");
+    expect(dollars(lines, "24_rebates_and_credits")).toBe("$636");
+    expect(dollars(lines, "42_refund")).toBe("$918");
+  });
+
+  it("low-income HOH: low/middle exemption zeroes the tax; LICTR, child credit, and working families credit refund", () => {
+    // line 5 = 2; line 13 = 0 (one dependent); line 14: AGI 18,000 ≤ 30,000 → 2,500 × 2 = 5,000; 17 = 18,000 − 23,625 − 5,000 < 0 → 0;
+    // LICTR: MGI 20,000, 2 exemptions → row 19,501-21,000 col 2 = $120; child credit AGI 18,000 → $637; WFTC 25% × 3,000 = 750;
+    // payments 120 + 637 + 750 + 100 = 1,607 → refund 1,607.
+    const input = {
+      jurisdiction: "nm" as const, filingStatus: "hoh", federalAGI: 18000, nmFederalDeduction: 23625, dependents: 1,
+      nmModifiedGrossIncome: 20000, nmQualifyingChildren: 1, federalEITC: 3000, stateWithholding: 100,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "14_low_middle_income_exemption")).toBe("$5,000");
+    expect(dollars(lines, "17_taxable_income")).toBe("$0");
+    expect(dollars(lines, "RC14_lictr")).toBe("$120");
+    expect(dollars(lines, "RC25_child_income_tax_credit")).toBe("$637");
+    expect(dollars(lines, "25_working_families_credit")).toBe("$750");
+    expect(dollars(lines, "42_refund")).toBe("$1,607");
+    expect(notes.some((n) => n.includes("Cannot be less than zero"))).toBe(true);
+  });
+
+  it("MFJ retirees: Social Security exemption, 65+/blind exemption, armed forces retirement, medical credit, property tax rebate", () => {
+    // line 5 = 2; line 14: AGI 40,000 → (2,500 − 10% × 10,000) × 2 = 3,000; PIT-ADJ: SS 15,000 + 65+ (AGI 40,000 → 4,000 × 2 = 8,000)
+    // + armed forces 20,000 + medical 3,000 = 46,000; 17 = 40,000 − 35,200 − 3,000 − 46,000 < 0 → 0; tax 0.
+    // PIT-RC: LICTR MGI 45,000 > 36,000 → skipped; 65+ property rebate MGI > 16,000 → 0; medical credit $2,800 → refund 2,800.
+    const input = {
+      jurisdiction: "nm" as const, filingStatus: "mfj", federalAGI: 40000, nmFederalDeduction: 35200, taxableSocialSecurity: 15000,
+      nmAge65OrBlindPersons: 2, nmAge65Count: 2, nmArmedForcesRetirementPay: 20000, nmMedicalExpenses: 30000,
+      nmModifiedGrossIncome: 45000, nmPropertyTaxBilled: 900,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "14_low_middle_income_exemption")).toBe("$3,000");
+    expect(dollars(lines, "ADJ25_social_security_exemption")).toBe("$15,000");
+    expect(dollars(lines, "ADJ13_age65_blind_exemption")).toBe("$8,000");
+    expect(dollars(lines, "ADJ24_armed_forces_retirement")).toBe("$20,000");
+    expect(dollars(lines, "ADJ18_medical_exemption_65")).toBe("$3,000");
+    expect(dollars(lines, "15_deductions_exemptions")).toBe("$46,000");
+    expect(dollars(lines, "17_taxable_income")).toBe("$0");
+    expect(dollars(lines, "RC23_medical_care_credit_65")).toBe("$2,800");
+    expect(lines["RC17c_property_tax_rebate_65"]).toBeUndefined();
+    expect(dollars(lines, "42_refund")).toBe("$2,800");
+    expect(notes.some((n) => n.includes("exceeds $16,000"))).toBe(true);
+  });
+
+  it("itemizer with other-state income: SALT add-back, other-state credit worksheet, PIT-CR cap, tax due", () => {
+    // 10: 5a 12,000 / 5d 20,000 = 0.6 × 5e 10,000 = 6,000; itemized 30,000 − standard 15,750 = 14,250 → 6,000;
+    // 17 = 120,000 + 6,000 − 30,000 = 96,000 → row (95,900, 96,000] midpoint 95,950: 2,716.50 + 4.9% × 29,450 = 4,159.55 → $4,160 (printed 4,160);
+    // line 20: NM rate 4,160 / 96,000 = 0.0433; other state 2,000 / 40,000 = 0.0500; dual 40,000 → 1,732 vs 2,000 → 1,732;
+    // PIT-CR 3,000 capped at 4,160 − 1,732 = 2,428 → 22 = 0; payments 0 → due 0.
+    const input = {
+      jurisdiction: "nm" as const, filingStatus: "single", federalAGI: 120000, nmFederalDeduction: 30000, nmFederalItemized: true,
+      nmSaltIncomeTaxes: 12000, nmSaltTotal: 20000, nmSaltAllowed: 10000, nmFederalStandardDeduction: 15750,
+      nmOtherStateTax: 2000, nmOtherStateTaxableIncome: 40000, nmIncomeTaxedByBothStates: 40000, nonrefundableCredits: 3000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "10_salt_addback")).toBe("$6,000");
+    expect(dollars(lines, "17_taxable_income")).toBe("$96,000");
+    expect(dollars(lines, "18_tax")).toBe("$4,160");
+    expect(dollars(lines, "20_other_state_credit")).toBe("$1,732");
+    expect(dollars(lines, "21_business_credits_applied")).toBe("$2,428");
+    expect(dollars(lines, "22_net_tax")).toBe("$0");
+    expect(notes.some((n) => n.includes("may not exceed the sum of PIT-1, lines 18 and 19"))).toBe(true);
+    expect(() => composeStateReturn({ jurisdiction: "nm" as const, filingStatus: "single", federalAGI: 50000 }, realPaEval({}))).toThrow(/nmFederalDeduction is required/);
+  });
+});
+
+describe("composeNM — review follow-ups", () => {
+  it("counts a 65-year-old taxpayer and a blind spouse as two exemptions by default, and says so", () => {
+    // AGI 45,000 → joint table: ceil(15,000 / 3,000) = 5 → $3,000 per person × 2 = $6,000; low/middle: (2,500 − 10% × 15,000) × 2 = 2,000;
+    // 17 = 45,000 − 31,500 − 6,000 − 2,000 = 5,500
+    const input = { jurisdiction: "nm" as const, filingStatus: "mfj", federalAGI: 45000, nmFederalDeduction: 31500, nmAge65Count: 1, nmBlindCount: 1 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "ADJ13_age65_blind_exemption")).toBe("$6,000");
+    expect(dollars(lines, "14_low_middle_income_exemption")).toBe("$2,000");
+    expect(dollars(lines, "17_taxable_income")).toBe("$5,500");
+    expect(notes.some((n) => n.includes("assumed the 1 person(s) 65 or older and the 1 blind person(s) are different people"))).toBe(true);
+    const same = composeStateReturn({ ...input, nmAge65OrBlindPersons: 1 }, realPaEval(input));
+    expect(dollars(same.lines, "ADJ13_age65_blind_exemption")).toBe("$3,000");
+  });
+
+  it("nets penalty and interest against an overpayment on line 39 without also showing them due on line 38", () => {
+    // 17 = 40,000 − 15,750 = 24,250 → midpoint 24,250: 434.50 + 4.3% × 7,750 = 767.75 → $768; withholding 1,500 → overpayment 732 − 75 = 657
+    const input = { jurisdiction: "nm" as const, filingStatus: "single", federalAGI: 40000, nmFederalDeduction: 15750, stateWithholding: 1500, nmLatePenalty: 50, nmInterest: 25 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "18_tax")).toBe("$768");
+    expect(dollars(lines, "39_overpayment")).toBe("$657");
+    expect(dollars(lines, "38_total_due")).toBe("$0");
+    expect(dollars(lines, "42_refund")).toBe("$657");
+  });
+
+  it("MFS subtracts the spouse's PIT-RC line 2g exemptions, and the exemptions never go negative", () => {
+    // line 5 = 1 (MFS, no dependents); rebate exemptions = 1 − 0 + 0 + 0 − 1 = 0 → LICTR $0
+    const input = { jurisdiction: "nm" as const, filingStatus: "mfs", federalAGI: 12000, nmFederalDeduction: 15750, nmModifiedGrossIncome: 12000, nmSpouseRebateExemptionsClaimed: 1 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["RC14_lictr"]).toBeUndefined();
+    const withEx = composeStateReturn({ ...input, nmSpouseRebateExemptionsClaimed: 0 }, realPaEval(input));
+    expect(dollars(withEx.lines, "RC14_lictr")).toBe("$75"); // row 11,501-13,000 col 1 = 149 → half 74.50 → $75
+  });
+});

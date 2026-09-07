@@ -1,0 +1,13 @@
+{
+  "description": "NM MFJ AGI $30,000.50 -> 'over $30,000 but not over $33,000' -> $7,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": "30000.50",
+    "nmAge65OrBlindPersons": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.age65_blind_exemption",
+  "expect": {
+    "valueCents": "700000"
+  }
+}

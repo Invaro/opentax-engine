@@ -1,0 +1,14 @@
+{
+  "description": "NM: AGI $350,000, 1 child -> $53.",
+  "facts": {
+    "filingStatus": "mfj",
+    "nmAgi": 350000,
+    "nmQualifyingChildren": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.child_income_tax_credit",
+  "expect": {
+    "valueCents": "5300"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "NM $60 -> row (0, 60] midpoint $30 x 1.5% = 0.45 -> $0 (printed 0).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 60
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

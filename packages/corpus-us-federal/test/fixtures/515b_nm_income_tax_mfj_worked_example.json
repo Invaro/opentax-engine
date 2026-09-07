@@ -1,0 +1,12 @@
+{
+  "description": "NM MFJ $25,325 -> $679 (PIT-TRT worked example, Mr. and Mrs. Brown): 664 + 4.3% x 350 = 679.05 -> $679.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 25325
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "67900"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "NM renter: rent $6,000 x 6% = $360; MGI $5,000 liability $40 -> 320 -> $250 cap.",
+  "facts": {
+    "filingStatus": "single",
+    "nmModifiedGrossIncome": 5000,
+    "nmPropertyTaxBilled": 0,
+    "nmRentPaid": 6000,
+    "nmAge65Count": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.property_tax_rebate_65",
+  "expect": {
+    "valueCents": "25000"
+  }
+}

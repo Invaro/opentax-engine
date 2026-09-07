@@ -1,0 +1,12 @@
+{
+  "description": "NM MFS $157,501 -> 7,310 + 5.9% x 1 = 7,310.06 -> $7,310.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 157501
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "731000"
+  }
+}

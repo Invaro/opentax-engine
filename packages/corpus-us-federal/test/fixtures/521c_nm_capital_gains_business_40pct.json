@@ -1,0 +1,13 @@
+{
+  "description": "NM net capital gain $10,000 of which $20,000 is claimed as business-sale gain: the business gain is capped at the net capital gain -> 40% x 10,000 = $4,000 beats the $2,500 cap.",
+  "facts": {
+    "filingStatus": "single",
+    "nmNetCapitalGain": 10000,
+    "nmBusinessSaleGain": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.capital_gains_deduction",
+  "expect": {
+    "valueCents": "400000"
+  }
+}

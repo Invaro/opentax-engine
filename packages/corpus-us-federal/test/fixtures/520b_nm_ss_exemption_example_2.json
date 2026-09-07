@@ -1,0 +1,13 @@
+{
+  "description": "NM PIT-ADJ Example 2: single AGI $150,000 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAgi": 150000,
+    "nmTaxableSocialSecurity": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.social_security_exemption",
+  "expect": {
+    "valueCents": "0"
+  }
+}

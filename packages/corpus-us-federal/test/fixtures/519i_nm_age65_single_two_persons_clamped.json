@@ -1,0 +1,13 @@
+{
+  "description": "NM single claiming 2 persons -> clamped to 1: AGI $20,000 -> $6,000.",
+  "facts": {
+    "filingStatus": "single",
+    "nmAgi": 20000,
+    "nmAge65OrBlindPersons": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.age65_blind_exemption",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

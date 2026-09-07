@@ -1,0 +1,12 @@
+{
+  "description": "NM single $210,000 -> 4,356 + 4.9% x 110,000 = $9,746 (= the printed top-tier base).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 210000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nm.income_tax",
+  "expect": {
+    "valueCents": "974600"
+  }
+}
