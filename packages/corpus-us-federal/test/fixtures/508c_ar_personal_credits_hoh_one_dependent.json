@@ -1,0 +1,13 @@
+{
+  "description": "AR HOH with 1 dependent: yourself + HOH box + 1 dependent = 3 x $29 = $87.",
+  "facts": {
+    "filingStatus": "hoh",
+    "arCreditBoxes": 0,
+    "arDependents": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.personal_tax_credits",
+  "expect": {
+    "valueCents": "8700"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "AR federal QSS = Arkansas status 6 with 2 dependents, AGI $26,350 -> $280 (HOH/Surviving Spouse 2-or-more row '26,301 26,400 280').",
+  "facts": {
+    "filingStatus": "qss",
+    "arAgi": 26350,
+    "arDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "28000"
+  }
+}

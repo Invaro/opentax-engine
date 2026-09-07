@@ -1,0 +1,13 @@
+{
+  "description": "AR surviving spouse, 65 or over, 2 dependents: yourself + surviving-spouse box + 65 box + 2 dependents = 5 x $29 = $145.",
+  "facts": {
+    "filingStatus": "qss",
+    "arCreditBoxes": 1,
+    "arDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.personal_tax_credits",
+  "expect": {
+    "valueCents": "14500"
+  }
+}

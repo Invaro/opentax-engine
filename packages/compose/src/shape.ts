@@ -8,18 +8,18 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks — the composer refuses without it. NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
   subtractions: usd.optional().describe("total state subtractions OTHER than the automatic ones (taxable social security / unemployment have their own inputs below; e.g. NY S-136 alimony paid, IL retirement subtraction)"),
   exemptions: z.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
   ageOrBlindBoxes: z.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box)"),
-  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions)"),
+  dependents: z.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column)"),
   stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 — Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
@@ -599,4 +599,65 @@ const ksShape = {
   // line 15 uses nonrefundableCredits and line 23 uses refundableCredits.
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape };
+const arShape = {
+  arStatus4: z.boolean().optional().describe("AR: elect Filing Status 4 — married filing separately on the SAME return (each spouse's own column, $2,470 deduction each, one rate table). Omit with arSpouseIncome given to let the composer take the LOWER of status 2 (joint) and status 4; false forces joint"),
+  arSpouseIncome: usd.optional().describe("AR status 4 column B: the SPOUSE's share of lines 8-22 (wages, interest, dividends, business, capital gains, rents, other) — the primary's column A is the household total minus this; line 18B (spouse pension) is added automatically. Business/farm income cannot be split without a partnership"),
+  arSpouseAdjustments: usd.optional().describe("AR status 4 column B: the spouse's share of the AR1000ADJ adjustments (line 24B); column A gets arAdjustments minus this"),
+  arInterest: usd.optional().describe("AR line 10: interest income (AR4 if over $1,500; U.S. and Arkansas obligation interest is exempt — exclude it)"),
+  arDividends: usd.optional().describe("AR line 11: dividend income (no dividend exclusion)"),
+  arAlimonyReceived: usd.optional().describe("AR line 12: alimony and separate maintenance received under a court order"),
+  arBusinessIncome: usd.optional().describe("AR line 13: net business or professional income (federal Schedule C), may be negative"),
+  arLongTermGain: usd.optional().describe("AR line 14 via AR1000D: net LONG-TERM capital gain or loss (federal Schedule D line 15, adjusted for Arkansas depreciation) — 50% of a net long-term gain is exempt; gain over $10,000,000 exempt"),
+  arShortTermGain: usd.optional().describe("AR line 14 via AR1000D: net SHORT-TERM capital gain (100% taxed) or loss (federal Schedule D line 7); the net loss is limited to $3,000 ($1,500 per taxpayer for status 4/5). For a status-4 comparison this is the PRIMARY's own column — the spouse's gains go in arSpouseLongTermGain / arSpouseShortTermGain"),
+  arSpouseLongTermGain: usd.optional().describe("AR status 4 column B (AR1000D): the SPOUSE's net long-term capital gain or loss — its own 50% exclusion and $1,500 loss floor; added to the primary's for a status 2 (joint) return"),
+  arSpouseShortTermGain: usd.optional().describe("AR status 4 column B (AR1000D): the spouse's net short-term capital gain or loss"),
+  arOtherGains: usd.optional().describe("AR line 15: other gains or losses (federal Form 4797 Part II; no capital loss limit)"),
+  arIraTaxable: usd.optional().describe("AR line 16: taxable NON-qualified IRA distributions (premature withdrawals), lump sums, and annuities — no $6,000 exclusion; pass the federal Form 5329 tax in arFederalEarlyWithdrawalTax"),
+  arPensionTaxablePrimary: usd.optional().describe("AR line 18A: the primary's TAXABLE employer-plan pension and qualified traditional IRA distributions (1099-R box 2a; IRA after 59½ or on death/disability) — the composer applies the $6,000 exclusion"),
+  arPensionTaxableSpouse: usd.optional().describe("AR line 18B: the spouse's taxable employer pension / qualified IRA (status 2 or 4 only) — its own $6,000 exclusion"),
+  arMilitaryRetirementPrimary: usd.optional().describe("AR line 17: the primary's military retirement (100% exempt; informational box) — reduces the primary's $6,000 pension exclusion dollar for dollar"),
+  arMilitaryRetirementSpouse: usd.optional().describe("AR line 17: the spouse's military retirement (exempt) — reduces the spouse's $6,000 exclusion"),
+  arMilitaryPay: usd.optional().describe("AR line 9: U.S. active-duty military compensation, household total (100% exempt; informational box; the W-2 wages must be excluded from `wages`). Under the Low Income Tax Table election it is counted as income in the primary's column"),
+  arRentsRoyalties: usd.optional().describe("AR line 19: rents, royalties, partnerships, estates, trusts (federal Schedule E), may be negative"),
+  arFarmIncome: usd.optional().describe("AR line 20: farm income (federal Schedule F), may be negative"),
+  arOtherIncome: usd.optional().describe("AR line 22: net other income and depreciation differences from Form AR-OI (gambling winnings, cancellation of debt, taxable scholarships/stipends, HSA/MSA taxable distributions, PET back-outs, NOL carryforward as a negative, federal-vs-Arkansas depreciation), may be negative"),
+  arAdjustments: usd.optional().describe("AR line 24: TOTAL adjustments from AR1000ADJ (IRA payments, HSA/MSA, student loan interest ≤ $2,500 with the $85,000-$100,000 / $170,000-$200,000 phase-out, tuition savings ≤ $5,000 per taxpayer, intergenerational trust ≤ $4,000, moving expenses, self-employed health insurance, Keogh/SEP/SIMPLE, early-withdrawal penalty, alimony paid, disabled-individual support $500, organ donor ≤ $10,000, reserve expenses, reforestation, teacher classroom expense, ABLE ≤ $5,000) — transcribed"),
+  arExemptIncome: usd.optional().describe("AR Low Income Tax Table test only: income NOT on lines 8-22 (Social Security, VA benefits, workers' compensation, Railroad Retirement, U.S./Arkansas obligation interest, the $250,000/$500,000 residence gain) — qualification 1 counts 'total income from all sources (regardless of whether the income is taxable to Arkansas)'; the exempt half of long-term capital gains and the forgone retirement/military exclusions are added automatically"),
+  arAge65Count: z.number().int().optional().describe("AR: number of taxpayers on the return who are 65 or over (0-2) — lets the composer add the '65 Special' $29 box when the Low Income Tax Table path forgoes the line 18 retirement exclusion (on the regular path count 65 Special yourself in arCreditBoxes)"),
+  arUseLowIncomeTable: z.boolean().optional().describe("AR line 26: force the Low Income Tax Table (true; statuses 1, 2, 3, 6 within the income limits, no itemizing — the retirement/military exclusions are then NOT used) or the Regular Income Tax Table (false). Omit to let the composer take the LOWER net tax"),
+  arItemize: z.boolean().optional().describe("AR line 26/27: force AR3 itemized deductions (true) or the standard deduction (false). Omit to take the LARGER (independent of the federal election; married spouses must match under § 26-51-430(a)(2))"),
+  arMedicalExpenses: usd.optional().describe("AR3 line 1: medical and dental expenses paid — the 10%-of-AGI floor is applied by the rule"),
+  arTaxesPaid: usd.optional().describe("AR3 lines 5-6: real estate tax plus personal property and other deductible taxes (city income, foreign income taxes) — NEVER Arkansas/federal income tax or sales tax"),
+  arInterestPaid: usd.optional().describe("AR3 lines 8-11: home mortgage interest, deductible points, investment interest (≤ investment income)"),
+  arContributions: usd.optional().describe("AR3 lines 13-16: cash, art/literary, other, and carryover contributions"),
+  arCasualtyLosses: usd.optional().describe("AR3 line 18: casualty and theft losses from AR4684 (after the $100 exclusion and 10%-of-AGI test)"),
+  arTuitionDeduction: usd.optional().describe("AR3 line 19: post-secondary education tuition deduction from AR1075"),
+  arMiscExpenses: usd.optional().describe("AR3 lines 20-21: unreimbursed employee business expenses (AR2106), union dues, tax preparation fees, and other deductions SUBJECT to the 2%-of-AGI floor (applied by the rule)"),
+  arOtherMiscDeductions: usd.optional().describe("AR3 lines 26-28: volunteer firefighter expenses (≤ $1,000), gambling losses (≤ winnings), other deductions not subject to the 2% floor"),
+  arCreditBoxes: z.number().int().optional().describe("AR line 7A: count of '65 or over', '65 Special' (65+ and NOT claiming the line 18 retirement exclusion), 'Blind', and 'Deaf' boxes for the taxpayer and spouse (0-8) — $29 each; the Yourself/Spouse/head-of-household boxes are added automatically"),
+  arChildCareExpenses: usd.optional().describe("AR2441 line 3 base: qualified child and dependent care expenses paid (capped at $3,000 / $6,000 by arChildCareQualifyingPersons); the credit is 20% of the 2013-law federal computation — requires federalAGI (AR2441 line 7)"),
+  arChildCareQualifyingPersons: z.number().int().optional().describe("AR2441 line 2: number of qualifying persons (1 → $3,000 cap; 2 or more → $6,000); defaults to 1"),
+  arEarnedIncome: usd.optional().describe("AR2441 line 4: the taxpayer's earned income"),
+  arSpouseEarnedIncome: usd.optional().describe("AR2441 line 5: the spouse's earned income (status 2 or 4; student/disabled deemed amounts per the instructions)"),
+  arEarlyChildhoodApproved: z.boolean().optional().describe("AR line 43: the qualifying child attends an APPROVED early childhood program (Form AR1000EC certificate) — the 20% AR2441 credit becomes REFUNDABLE on line 43 instead of nonrefundable on line 35"),
+  arConsideredUnmarried: z.boolean().optional().describe("AR2441 status 5 only: the filer meets the 'considered unmarried' tests (lived apart the last 6 months, kept up the qualifying person's home) — otherwise a status 5 filer cannot claim the child care credit"),
+  arPoliticalContributions: usd.optional().describe("AR1000TC line 1: cash contributions to Arkansas state/local candidates, approved PACs, or parties (by April 15, 2026) — credit capped at $50 per taxpayer ($100 status 2/4)"),
+  arOtherStateTaxPaid: usd.optional().describe("AR1000TC line 2: income tax actually paid to another state on income also taxed by Arkansas (attach that state's signed return) — credit is the LESSER of this or the Arkansas tax on that income"),
+  arOtherStateIncome: usd.optional().describe("AR1000TC line 2: the other state's income included on this return — the composer approximates the three-step method by recomputing the line 29 tax with this removed from line 28 (or line 25 on the low-income table); status 4 takes it from the primary's column"),
+  arDevelopmentallyDisabledDependents: z.number().int().optional().describe("AR1000TC line 7: dependents with a certified developmental disability (AR1000-DD on file) — $500 each"),
+  arLumpSumTax: usd.optional().describe("AR line 31: tax from the Lump Sum Distribution Averaging Schedule AR1000TD (transcribed)"),
+  arFederalEarlyWithdrawalTax: usd.optional().describe("AR line 32 base: the FEDERAL Form 5329 Part I additional tax on early IRA/qualified plan distributions (plus Part II Coverdell) — Arkansas adds 10% of it"),
+  arWithholding1099: usd.optional().describe("AR line 39B: Arkansas tax withheld on 1099-R, 1099-PT, and AR-K1 forms (new separate line for 2025; W-2 withholding goes in stateWithholding → line 39A)"),
+  arAmendedPaid: usd.optional().describe("AR line 42 (amended return only): previous payments with the original return and billing notices"),
+  arAmendedRefund: usd.optional().describe("AR line 45 (amended return only): previous refund(s) from the original and earlier amended returns (subtracted)"),
+  arCreditForward: usd.optional().describe("AR line 48: overpayment to apply to 2026 estimated tax (credited to the primary filer only)"),
+  arCheckoffs: usd.optional().describe("AR line 49: AR1000CO check-off contributions (Disaster Relief, Game and Fish, Schools for the Blind/Deaf, Baby Sharon's, Organ Donor, Area Agencies on Aging, Military Family Relief, Cord Blood, Law Enforcement Family Relief, Brighter Future 529) — whole dollars, from the overpayment"),
+  arUnderestimatePenalty: usd.optional().describe("AR line 52B: underestimate penalty from AR2210 line 17 or AR2210A line 48 (required when line 51 is over $1,000 unless an exception applies)"),
+  // AR1000TC lines 3-5 and 8 (adoption 20% of federal, phenylketonuria,
+  // stillborn child ≤ $500, business incentive certificates) use the shared
+  // nonrefundableCredits; W-2 withholding uses stateWithholding (line 39A);
+  // wages, dependents, unemploymentCompensation, estimatedPayments,
+  // priorYearOverpaymentCredited, and extensionPayment are shared.
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape };

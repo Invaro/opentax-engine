@@ -1,0 +1,14 @@
+{
+  "description": "AR status 4 (separately on the same return) has no Low Income Tax Table \u2014 'Married couples must file a joint return (Filing Status 2) to qualify'.",
+  "facts": {
+    "filingStatus": "mfj",
+    "arAgi": 20000,
+    "arDependents": 0,
+    "arStatus4": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

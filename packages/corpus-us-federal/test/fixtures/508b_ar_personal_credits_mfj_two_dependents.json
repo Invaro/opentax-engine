@@ -1,0 +1,13 @@
+{
+  "description": "AR MFJ with 2 dependents: yourself + spouse + 2 dependents = 4 x $29 = $116.",
+  "facts": {
+    "filingStatus": "mfj",
+    "arCreditBoxes": 0,
+    "arDependents": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.personal_tax_credits",
+  "expect": {
+    "valueCents": "11600"
+  }
+}

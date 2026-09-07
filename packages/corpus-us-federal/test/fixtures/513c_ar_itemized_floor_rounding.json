@@ -1,0 +1,14 @@
+{
+  "description": "AR3: AGI $33,333 -> 10% = 3,333.30 -> $3,333, medical 5,000 -> 1,667; 2% = 666.66 -> $667, misc 1,000 -> 333 -> $2,000.",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": 33333,
+    "arMedicalExpenses": 5000,
+    "arMiscExpenses": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.itemized_deductions",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

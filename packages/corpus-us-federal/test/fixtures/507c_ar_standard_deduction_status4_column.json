@@ -1,0 +1,13 @@
+{
+  "description": "AR status 4: '$2,470 each' \u2014 one column evaluates to $2,470.",
+  "facts": {
+    "filingStatus": "mfj",
+    "arAgi": 30000,
+    "arStatus4": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.standard_deduction",
+  "expect": {
+    "valueCents": "247000"
+  }
+}

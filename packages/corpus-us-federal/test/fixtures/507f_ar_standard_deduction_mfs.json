@@ -1,0 +1,12 @@
+{
+  "description": "AR married filing separately on different returns (status 5): $2,470.",
+  "facts": {
+    "filingStatus": "mfs",
+    "arAgi": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.standard_deduction",
+  "expect": {
+    "valueCents": "247000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "AR status 5 with 1 dependent: yourself + 1 dependent = $58 (the spouse's credit is on the spouse's own return).",
+  "facts": {
+    "filingStatus": "mfs",
+    "arCreditBoxes": 0,
+    "arDependents": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.personal_tax_credits",
+  "expect": {
+    "valueCents": "5800"
+  }
+}

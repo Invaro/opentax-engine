@@ -1,0 +1,13 @@
+{
+  "description": "AR no pension -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "arPensionTaxable": 0,
+    "arMilitaryRetirement": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.retirement_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

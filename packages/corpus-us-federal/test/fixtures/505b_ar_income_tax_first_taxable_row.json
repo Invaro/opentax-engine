@@ -1,0 +1,12 @@
+{
+  "description": "AR $5,600 -> $1: row [5,600-5,700) midpoint 5,650 x 2% = 113.00 - 111.98 = 1.02 -> $1 (printed row '5,600 5,700 1').",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 5600
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "AR Low Income Tax Table looks up WHOLE-dollar AGI ('Round all amounts to the nearest dollar'): $14,700.49 -> $14,700 -> $29 (unrounded it would fall in the $33 row).",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": "14700.49",
+    "arDependents": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "2900"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "AR $26,501 -> $55 ('$26,501 - $26,600 $55').",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 26501
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.additional_tax_credit",
+  "expect": {
+    "valueCents": "5500"
+  }
+}

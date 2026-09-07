@@ -1,0 +1,16 @@
+{
+  "description": "AR2441 MFJ: $8,000, two children -> $6,000; smallest of 6,000 / 40,000 / spouse 5,000 = $5,000; AGI $45,000 -> 20%; line 9 $1,000; credit $200.",
+  "facts": {
+    "filingStatus": "mfj",
+    "arChildCareExpenses": 8000,
+    "arChildCareQualifyingPersons": 2,
+    "arEarnedIncome": 40000,
+    "arSpouseEarnedIncome": 5000,
+    "arFederalAgi": 45000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.child_care_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

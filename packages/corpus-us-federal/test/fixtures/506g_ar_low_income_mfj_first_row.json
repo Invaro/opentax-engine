@@ -1,0 +1,13 @@
+{
+  "description": "AR MFJ (status 2) no dependents, AGI $24,696 -> $77 (row '24,696 24,700 77').",
+  "facts": {
+    "filingStatus": "mfj",
+    "arAgi": 24696,
+    "arDependents": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "7700"
+  }
+}

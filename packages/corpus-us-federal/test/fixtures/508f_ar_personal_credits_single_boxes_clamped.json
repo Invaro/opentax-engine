@@ -1,0 +1,13 @@
+{
+  "description": "AR single with 6 boxes claimed: an unmarried filer has at most 4 (65, 65 Special, blind, deaf) -> 5 x $29 = $145.",
+  "facts": {
+    "filingStatus": "single",
+    "arCreditBoxes": 6,
+    "arDependents": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.personal_tax_credits",
+  "expect": {
+    "valueCents": "14500"
+  }
+}

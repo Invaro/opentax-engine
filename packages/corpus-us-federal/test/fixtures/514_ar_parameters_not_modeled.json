@@ -1,0 +1,11 @@
+{
+  "description": "AR parameters rule is documentation only.",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.parameters",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

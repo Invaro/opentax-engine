@@ -1,0 +1,12 @@
+{
+  "description": "AR $150,000 -> $3,809 + 3.9% x 50,000 = $5,759.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "575900"
+  }
+}

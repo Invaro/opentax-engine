@@ -1,0 +1,12 @@
+{
+  "description": "AR surviving spouse (status 6): $2,470.",
+  "facts": {
+    "filingStatus": "qss",
+    "arAgi": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.standard_deduction",
+  "expect": {
+    "valueCents": "247000"
+  }
+}

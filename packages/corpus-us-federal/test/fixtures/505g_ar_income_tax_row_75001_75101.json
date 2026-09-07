@@ -1,0 +1,12 @@
+{
+  "description": "AR $75,001 -> $2,507: from $75,001 the rows are [100k+1, 100k+101), midpoint 75,051 x .039 = 2,926.99 - 419.96 = 2,507.03 -> $2,507.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 75001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "250700"
+  }
+}

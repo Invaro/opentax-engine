@@ -1,0 +1,12 @@
+{
+  "description": "AR MFJ $30,000 -> $752: one table for every status \u2014 row [30,000-30,100) midpoint 30,050 x .039 = 1,171.95 - 419.96 = 751.99 -> $752.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "75200"
+  }
+}

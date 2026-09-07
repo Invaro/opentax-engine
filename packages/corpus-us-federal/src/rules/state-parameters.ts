@@ -32,6 +32,7 @@ import { orRules } from "./state-or.js";
 import { okRules } from "./state-ok.js";
 import { ctRules } from "./state-ct.js";
 import { ksRules } from "./state-ks.js";
+import { arRules } from "./state-ar.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -54,5 +55,6 @@ export const stateParameterRules: Rule[] = [
   ...okRules,
   ...ctRules,
   ...ksRules,
+  ...arRules,
   ...otherStateRules,
 ];

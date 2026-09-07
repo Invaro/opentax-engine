@@ -1,0 +1,16 @@
+{
+  "description": "AR2441 federal AGI $100,000 -> 20% floor ('43,000 \u2013 No limit .20'): $2,000 x 20% = $400 -> $80.",
+  "facts": {
+    "filingStatus": "single",
+    "arChildCareExpenses": 2000,
+    "arChildCareQualifyingPersons": 1,
+    "arEarnedIncome": 20000,
+    "arSpouseEarnedIncome": 0,
+    "arFederalAgi": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.child_care_credit",
+  "expect": {
+    "valueCents": "8000"
+  }
+}

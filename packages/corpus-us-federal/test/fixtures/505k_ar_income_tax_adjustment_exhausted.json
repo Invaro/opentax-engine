@@ -1,0 +1,12 @@
+{
+  "description": "AR $97,801 -> $3,727: midpoint 97,851, bracket adjustment $0 ('$97,801 and over \u2026 $89.30'): 3,726.89 -> $3,727.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 97801
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "372700"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "AR Low Income Tax Table: $14,700.50 -> $14,701 -> $33.",
+  "facts": {
+    "filingStatus": "single",
+    "arAgi": "14700.50",
+    "arDependents": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.low_income_tax",
+  "expect": {
+    "valueCents": "3300"
+  }
+}

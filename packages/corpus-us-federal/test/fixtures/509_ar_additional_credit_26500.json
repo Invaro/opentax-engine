@@ -1,0 +1,12 @@
+{
+  "description": "AR additional tax credit: net taxable income $26,500 -> $60 (table '$0 - $26,500 $60').",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 26500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.additional_tax_credit",
+  "expect": {
+    "valueCents": "6000"
+  }
+}

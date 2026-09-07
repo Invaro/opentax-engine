@@ -1,0 +1,12 @@
+{
+  "description": "AR $100,001 -> $3,809: 'For $100,001 and over, your tax is $3,809 + 3.9% of the excess over $100,000' = 3,809.04 -> $3,809 (the exact upper schedule would give $3,810.74 \u2014 the printed note governs).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ar.income_tax",
+  "expect": {
+    "valueCents": "380900"
+  }
+}
