@@ -1,0 +1,12 @@
+{
+  "description": "WV Tax Table, widow(er) with dependent child $7,000 -> printed row '7,000 7,100 $157' (7,050 x 2.22% = 156.51).",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 7000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "15700"
+  }
+}

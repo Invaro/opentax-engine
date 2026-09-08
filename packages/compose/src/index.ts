@@ -33,6 +33,7 @@ import { composeAR } from "./ar.js";
 import { composeNM } from "./nm.js";
 import { composeNE } from "./ne.js";
 import { composeID } from "./id.js";
+import { composeWV } from "./wv.js";
 import { composeSC } from "./sc.js";
 import { composeVA } from "./va.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
@@ -96,7 +97,7 @@ export function composeStateReturn(
   // Arkansas AGI from its own lines 8-24 (federalAGI only feeds AR2441) — none
   // of the five requires federalAGI.
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
@@ -120,5 +121,6 @@ export function composeStateReturn(
   if (j === "nm") return { lines: composeNM(input, evalStateTax, notes), notes };
   if (j === "ne") return { lines: composeNE(input, evalStateTax, notes), notes };
   if (j === "id") return { lines: composeID(input, evalStateTax, notes), notes };
+  if (j === "wv") return { lines: composeWV(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

@@ -1,0 +1,16 @@
+{
+  "description": "WV SCTC: income $23,476 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wvHouseholdSize": 1,
+    "wvHouseholdIncome": 23476,
+    "wvSeniorCitizenCreditAmount": 450,
+    "wvFederalAmt": false,
+    "wvDisabledVeteranCreditClaimed": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.senior_citizens_tax_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

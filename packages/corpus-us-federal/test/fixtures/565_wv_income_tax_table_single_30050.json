@@ -1,0 +1,12 @@
+{
+  "description": "WV Tax Table, single $30,050 -> row [30,040, 30,100) (the $60 rows run from $25,000) midpoint 30,070: $666 + 3.33% x 5,070 = 834.831 -> $835 (the schedule at 30,050 gives 834.165 -> $834).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 30050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "83500"
+  }
+}

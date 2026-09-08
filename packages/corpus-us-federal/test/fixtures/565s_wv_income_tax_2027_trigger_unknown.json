@@ -1,0 +1,12 @@
+{
+  "description": "WV TY2027: rates depend on the \u00a7 11-21-4h August 2026 determination -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2027-06-30",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

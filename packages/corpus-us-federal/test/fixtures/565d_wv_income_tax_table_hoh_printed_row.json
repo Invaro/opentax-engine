@@ -1,0 +1,12 @@
+{
+  "description": "WV Tax Table, HOH $12,345 -> printed row '12,300 12,400 $292' (midpoint 12,350: $222 + 2.96% x 2,350 = 291.56).",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 12345
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "29200"
+  }
+}

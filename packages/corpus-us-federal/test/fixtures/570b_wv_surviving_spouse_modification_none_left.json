@@ -1,0 +1,13 @@
+{
+  "description": "WV line 48: lines 29-34 of $9,000 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wvSurvivingSpouseEligible": true,
+    "wvLines29to34": 9000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.surviving_spouse_modification",
+  "expect": {
+    "valueCents": "0"
+  }
+}

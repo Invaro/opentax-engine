@@ -1,0 +1,12 @@
+{
+  "description": "WV child and dependent care credit: 50% of $600 federal = $300.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvFederalChildCareCredit": 600
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.child_care_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

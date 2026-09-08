@@ -1,0 +1,12 @@
+{
+  "description": "WV exemptions: 3 x $2,000 = $6,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.exemption_deduction",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

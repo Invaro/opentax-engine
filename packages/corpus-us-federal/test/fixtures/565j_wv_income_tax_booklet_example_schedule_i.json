@@ -1,0 +1,12 @@
+{
+  "description": "WV booklet Rate Schedule I example: $117,635 -> $2,053.50 + 4.82% x 57,635 = 4,831.51 -> $4,832.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 117635
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "483200"
+  }
+}

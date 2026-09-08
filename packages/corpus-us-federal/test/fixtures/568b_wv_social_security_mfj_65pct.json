@@ -1,0 +1,13 @@
+{
+  "description": "WV Social Security modification MFJ, federal AGI $100,001: 65% of $20,000 = $13,000 (TY2025).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvAgi": 100001,
+    "wvTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.social_security_modification",
+  "expect": {
+    "valueCents": "1300000"
+  }
+}

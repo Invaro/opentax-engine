@@ -1,0 +1,17 @@
+{
+  "description": "WV Schedule E: 1,500 x 20,001 / 60,000 = 500.025 -> $500.",
+  "facts": {
+    "filingStatus": "single",
+    "wvOtherStateTax": 800,
+    "wvTaxBeforeCredits": 1500,
+    "wvOtherStateIncome": 20001,
+    "wvAdjustedGrossIncome": 60000,
+    "wvAlternativeTax": 900,
+    "wvOtherRecapCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.other_state_credit",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

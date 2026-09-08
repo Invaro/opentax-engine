@@ -1,0 +1,14 @@
+{
+  "description": "WV use tax: 6% of $1,000 = $60.",
+  "facts": {
+    "filingStatus": "single",
+    "wvUseTaxPurchases": 1000,
+    "wvMunicipalUseTaxPurchases": 0,
+    "wvMunicipalUseTaxRateBps": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.use_tax",
+  "expect": {
+    "valueCents": "6000"
+  }
+}

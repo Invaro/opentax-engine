@@ -1,0 +1,15 @@
+{
+  "description": "WV FTC size 1, MFAGI $15,950 ('Equal To or Less Than') -> still 90% -> $270.",
+  "facts": {
+    "filingStatus": "single",
+    "wvFamilySize": 1,
+    "wvModifiedAgi": 15950,
+    "wvTaxBeforeCredits": 300,
+    "wvFederalAmt": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "valueCents": "27000"
+  }
+}

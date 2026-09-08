@@ -1,0 +1,12 @@
+{
+  "description": "WV zero exemptions (claimable as a dependent) -> $500.",
+  "facts": {
+    "filingStatus": "single",
+    "wvExemptions": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.exemption_deduction",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

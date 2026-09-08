@@ -1,0 +1,13 @@
+{
+  "description": "WV HOH uses the $50,000 limit: federal AGI $60,000 -> 65% of $8,000 = $5,200.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wvAgi": 60000,
+    "wvTaxableSocialSecurity": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.social_security_modification",
+  "expect": {
+    "valueCents": "520000"
+  }
+}

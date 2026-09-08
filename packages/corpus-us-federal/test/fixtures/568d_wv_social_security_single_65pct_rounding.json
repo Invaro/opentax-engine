@@ -1,0 +1,13 @@
+{
+  "description": "WV single, federal AGI $50,001: 65% of $10,001 = 6,500.65 -> $6,501.",
+  "facts": {
+    "filingStatus": "single",
+    "wvAgi": 50001,
+    "wvTaxableSocialSecurity": 10001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.social_security_modification",
+  "expect": {
+    "valueCents": "650100"
+  }
+}

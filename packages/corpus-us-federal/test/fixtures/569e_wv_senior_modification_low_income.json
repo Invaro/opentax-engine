@@ -1,0 +1,14 @@
+{
+  "description": "WV line 47: other income only $5,000, no lines 29-34 -> $5,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvSeniorOrDisabled": true,
+    "wvIncomeNotOnLines35to46": 5000,
+    "wvLines29to34": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.senior_citizen_modification",
+  "expect": {
+    "valueCents": "500000"
+  }
+}

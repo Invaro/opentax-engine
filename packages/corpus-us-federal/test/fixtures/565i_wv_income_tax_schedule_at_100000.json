@@ -1,0 +1,12 @@
+{
+  "description": "WV single $100,000 (table ends below $100,000) -> Schedule I: $2,053.50 + 4.82% x 40,000 = 3,981.50 -> $3,982.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "398200"
+  }
+}

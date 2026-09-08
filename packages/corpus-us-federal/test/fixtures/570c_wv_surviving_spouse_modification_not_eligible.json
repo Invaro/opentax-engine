@@ -1,0 +1,13 @@
+{
+  "description": "WV line 48: not eligible -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wvSurvivingSpouseEligible": false,
+    "wvLines29to34": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.surviving_spouse_modification",
+  "expect": {
+    "valueCents": "0"
+  }
+}

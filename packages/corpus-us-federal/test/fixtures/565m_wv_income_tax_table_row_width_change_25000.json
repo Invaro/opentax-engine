@@ -1,0 +1,12 @@
+{
+  "description": "WV Tax Table, single $25,000 -> row '25,000 25,060 $667' (midpoint 25,030: $666 + 3.33% x 30 = 666.999).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "66700"
+  }
+}

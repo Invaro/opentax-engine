@@ -1,0 +1,17 @@
+{
+  "description": "WV Schedule E with West Virginia AGI $0 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wvOtherStateTax": 800,
+    "wvTaxBeforeCredits": 1500,
+    "wvOtherStateIncome": 20000,
+    "wvAdjustedGrossIncome": 0,
+    "wvAlternativeTax": 900,
+    "wvOtherRecapCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.other_state_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

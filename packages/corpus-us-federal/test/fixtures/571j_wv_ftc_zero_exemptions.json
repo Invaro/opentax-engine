@@ -1,0 +1,15 @@
+{
+  "description": "WV FTC with zero exemptions -> no credit.",
+  "facts": {
+    "filingStatus": "single",
+    "wvFamilySize": 0,
+    "wvModifiedAgi": 5000,
+    "wvTaxBeforeCredits": 300,
+    "wvFederalAmt": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

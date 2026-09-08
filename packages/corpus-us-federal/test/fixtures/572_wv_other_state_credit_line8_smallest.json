@@ -1,0 +1,17 @@
+{
+  "description": "WV Schedule E: other tax $800, WV tax $1,500, line 5 = 1,500 x 20,000 / 60,000 = $500, line 8 = 1,500 \u2212 alt 1,100 = $400, line 9 = 1,500 -> smallest $400.",
+  "facts": {
+    "filingStatus": "single",
+    "wvOtherStateTax": 800,
+    "wvTaxBeforeCredits": 1500,
+    "wvOtherStateIncome": 20000,
+    "wvAdjustedGrossIncome": 60000,
+    "wvAlternativeTax": 1100,
+    "wvOtherRecapCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.other_state_credit",
+  "expect": {
+    "valueCents": "40000"
+  }
+}

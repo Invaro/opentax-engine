@@ -1,0 +1,15 @@
+{
+  "description": "WV Family Tax Credit, single size 1, MFAGI $15,650 (equal to or less than) -> 100% of $300 tax = $300.",
+  "facts": {
+    "filingStatus": "single",
+    "wvFamilySize": 1,
+    "wvModifiedAgi": 15650,
+    "wvTaxBeforeCredits": 300,
+    "wvFederalAmt": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

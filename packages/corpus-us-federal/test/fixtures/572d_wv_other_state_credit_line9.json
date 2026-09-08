@@ -1,0 +1,17 @@
+{
+  "description": "WV Schedule E: other Recap credits $1,300 -> line 9 = $200 -> $200.",
+  "facts": {
+    "filingStatus": "single",
+    "wvOtherStateTax": 800,
+    "wvTaxBeforeCredits": 1500,
+    "wvOtherStateIncome": 20000,
+    "wvAdjustedGrossIncome": 60000,
+    "wvAlternativeTax": 900,
+    "wvOtherRecapCredits": 1300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.other_state_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

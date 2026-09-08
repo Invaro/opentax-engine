@@ -1979,3 +1979,93 @@ describe("composeID — 2025 Form 40 (real corpus targets)", () => {
     expect(dollars(lq, "19_idaho_taxable_income")).toBe("$0");
   });
 });
+
+describe("composeWV — 2025 Form IT-140 (real corpus targets)", () => {
+  it("single wage earner: $2,000 exemption, Tax Table, small balance due", () => {
+    // 4 = 50,000; 6 = 2,000; 7 = 48,000 → row [48,000, 48,050) midpoint 48,025: 1,165.50 + 4.44% × 8,025 = 1,521.81 → $1,522; withholding 1,500 → due $22
+    const input = { jurisdiction: "wv" as const, filingStatus: "single", federalAGI: 50000, stateWithholding: 1500 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines.e_total_exemptions).toBe("1");
+    expect(dollars(lines, "7_wv_taxable_income")).toBe("$48,000");
+    expect(dollars(lines, "8_income_tax")).toBe("$1,522");
+    expect(lines._tax_method).toBe("tax table");
+    expect(dollars(lines, "24_balance_due")).toBe("$22");
+  });
+
+  it("MFJ retirees both 65+: Social Security in full, $2,000 PERS cap, no senior modification left, family credit phased out", () => {
+    // SS 20,000 (spouse 8,000) subtracted in full (AGI ≤ 100,000); line 33 PERS 5,000 → 2,000; col A lines 29-34 = 14,000, col B = 8,000 → both ≥ 8,000 → line 47 = 0;
+    // 3 = 22,000; 4 = 38,000; 6 = 4,000; 7 = 34,000 → row [34,000, 34,060) midpoint 34,030: 666 + 3.33% × 9,030 = 966.70 → $967; FTC size 2 MFAGI 60,000 → 0%; refund 1,000 − 967 = 33
+    const input = {
+      jurisdiction: "wv" as const, filingStatus: "mfj", federalAGI: 60000, taxableSocialSecurity: 20000, wvSpouseTaxableSocialSecurity: 8000, wvPersTrsFederalRetirement: 5000,
+      wvTaxpayerAge65OrDisabled: true, wvSpouseAge65OrDisabled: true, stateWithholding: 1000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "M34_social_security")).toBe("$20,000");
+    expect(lines.M47_senior_citizen_modification).toBeUndefined();
+    expect(dollars(lines, "3_subtractions")).toBe("$22,000");
+    expect(dollars(lines, "7_wv_taxable_income")).toBe("$34,000");
+    expect(dollars(lines, "8_income_tax")).toBe("$967");
+    expect(dollars(lines, "28_refund")).toBe("$33");
+    expect(notes.some((n) => n.includes("capped at $2,000 per person"))).toBe(true);
+  });
+
+  it("low-income HOH: Family Tax Credit wipes the tax, child care credit unused, withholding refunded", () => {
+    // exemptions 2 → 4,000; 7 = 14,000 → row [14,000, 14,100) midpoint 14,050: 222 + 2.96% × 4,050 = 341.88 → $342; FTC size 2, MFAGI 18,000 ≤ 21,150 → 100% = 342;
+    // child care 50% × 500 = 250; Recap 592 > 342 → line 10 = 0; refund = 400
+    const input = { jurisdiction: "wv" as const, filingStatus: "hoh", federalAGI: 18000, dependents: 1, wvEarnedIncome: 18000, wvFederalChildCareCredit: 500, stateWithholding: 400 };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_income_tax")).toBe("$342");
+    expect(dollars(lines, "recap2_family_tax_credit")).toBe("$342");
+    expect(dollars(lines, "recap18_child_care_credit")).toBe("$250");
+    expect(dollars(lines, "10_total_income_tax_due")).toBe("$0");
+    expect(dollars(lines, "28_refund")).toBe("$400");
+    expect(notes.some((n) => n.includes("exceed the tax"))).toBe(true);
+  });
+
+  it("other-state credit, use tax, and the motor vehicle property tax credit", () => {
+    // 7 = 78,000 → row [78,000, 78,050) midpoint 78,025: 2,053.50 + 4.82% × 18,025 = 2,922.305 → $2,922; Schedule E: line 5 = 2,922 × 20,000 / 80,000 = 730.5 → 731;
+    // alt tax on 58,000 = 1,165.50 + 4.44% × 18,000 = 1,964.70 → 1,965 → line 8 = 957; credit = min(900, 2,922, 731, 957, 2,922) = 731; 10 = 2,191; 13 = 30; 14 = 2,221;
+    // payments 2,000 + MV 350 = 2,350 → overpayment 129
+    const input = {
+      jurisdiction: "wv" as const, filingStatus: "single", federalAGI: 80000, wvOtherStateTax: 900, wvOtherStateIncome: 20000, wvUseTaxPurchases: 500, wvMotorVehicleTaxPaid: 350, stateWithholding: 2000,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_income_tax")).toBe("$2,922");
+    expect(dollars(lines, "recap1_other_state_credit")).toBe("$731");
+    expect(dollars(lines, "10_total_income_tax_due")).toBe("$2,191");
+    expect(dollars(lines, "13_use_tax")).toBe("$30");
+    expect(dollars(lines, "21_property_tax_adjustment_credits")).toBe("$350");
+    expect(dollars(lines, "25_overpayment")).toBe("$129");
+    expect(dollars(lines, "28_refund")).toBe("$129");
+  });
+
+  it("MFS uses Rate Schedule II; a dependent filer gets the $500 allowance; low-income exclusion", () => {
+    // MFS: 30,000 − 2,000 = 28,000 → Schedule II: 582.75 + 4.44% × 8,000 = 937.95 → $938
+    const m = { jurisdiction: "wv" as const, filingStatus: "mfs", federalAGI: 30000 };
+    const lm = composeStateReturn(m, realPaEval(m)).lines;
+    expect(dollars(lm, "8_income_tax")).toBe("$938");
+    expect(lm._tax_method).toBe("rate schedule II");
+    // dependent filer: exemptions 0 → $500; AGI 9,000 wages → low-income exclusion 9,000; taxable 0
+    const d = { jurisdiction: "wv" as const, filingStatus: "single", federalAGI: 9000, claimedAsDependent: true, wvEarnedIncome: 9000, stateWithholding: 120 };
+    const ld = composeStateReturn(d, realPaEval(d)).lines;
+    expect(ld.e_total_exemptions).toBe("0");
+    expect(dollars(ld, "6_exemptions")).toBe("$500");
+    expect(dollars(ld, "5_low_income_exclusion")).toBe("$9,000");
+    expect(dollars(ld, "7_wv_taxable_income")).toBe("$0");
+    expect(dollars(ld, "28_refund")).toBe("$120");
+  });
+
+  it("surviving spouse: lines 47 and 48 together capped at $8,000; box (c) capped at income on a single return", () => {
+    // single, 65+, surviving spouse; U.S. interest 1,000; AGI 30,000 → line 47 = 8,000 − 1,000 = 7,000; line 48 = 8,000 − (1,000 + 7,000) = 0
+    const a = { jurisdiction: "wv" as const, filingStatus: "single", federalAGI: 30000, wvUsInterest: 1000, wvTaxpayerAge65OrDisabled: true, wvSurvivingSpouseModification: true };
+    const la = composeStateReturn(a, realPaEval(a)).lines;
+    expect(dollars(la, "M47_senior_citizen_modification")).toBe("$7,000");
+    expect(la.M48_surviving_spouse_modification).toBeUndefined();
+    expect(dollars(la, "3_subtractions")).toBe("$8,000");
+    // single, 65+, AGI 5,000 → box (c) defaults to the $5,000 of income, not $8,000; line 4 = 0
+    const b = { jurisdiction: "wv" as const, filingStatus: "single", federalAGI: 5000, wvTaxpayerAge65OrDisabled: true };
+    const lb = composeStateReturn(b, realPaEval(b)).lines;
+    expect(dollars(lb, "M47_senior_citizen_modification")).toBe("$5,000");
+    expect(dollars(lb, "4_wv_adjusted_gross_income")).toBe("$0");
+  });
+});

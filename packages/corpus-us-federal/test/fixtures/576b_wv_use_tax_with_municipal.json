@@ -1,0 +1,14 @@
+{
+  "description": "WV use tax: $60 state + 1% of $1,000 municipal = $70.",
+  "facts": {
+    "filingStatus": "single",
+    "wvUseTaxPurchases": 1000,
+    "wvMunicipalUseTaxPurchases": 1000,
+    "wvMunicipalUseTaxRateBps": 100
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.use_tax",
+  "expect": {
+    "valueCents": "7000"
+  }
+}

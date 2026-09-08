@@ -1,0 +1,23 @@
+{
+  "description": "WV HEPTC-1: household 2, federal AGI $40,000 (\u2264 $63,450); property tax $3,000 \u2212 SCTC $500 = $2,500; gross income 40,000 + 200 + 5,000 = 45,200 x 4% = $1,808 -> $692.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvHouseholdSize": 2,
+    "wvHouseholdIncome": 40000,
+    "wvAgi": 40000,
+    "wvPropertyTaxPaid": 3000,
+    "wvSeniorCitizenCredit": 500,
+    "wvAdditions": 0,
+    "wvTaxExemptInterest": 200,
+    "wvWorkersCompensation": 0,
+    "wvNontaxableSocialSecurity": 5000,
+    "wvOtherHouseholdIncome": 0,
+    "wvFederalAmt": false,
+    "wvDisabledVeteranCreditClaimed": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.homestead_excess_property_tax_credit",
+  "expect": {
+    "valueCents": "69200"
+  }
+}

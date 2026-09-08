@@ -1,0 +1,12 @@
+{
+  "description": "WV child care credit: 50% of $601 = 300.50 -> $301.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvFederalChildCareCredit": 601
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.child_care_credit",
+  "expect": {
+    "valueCents": "30100"
+  }
+}

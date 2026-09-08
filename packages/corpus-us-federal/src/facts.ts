@@ -3605,6 +3605,262 @@ export const facts: FactSpec[] = [
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
   },
+  // ---- West Virginia (Form IT-140) ----
+  {
+    id: "wvUseRateSchedule",
+    type: "bool",
+    description:
+      "Compute Form IT-140 line 8 from the Rate Schedule at the exact income instead of the printed Tax Table (statuses 1, 2, 3, 5 under $100,000 use the table by instruction; MFS and $100,000+ always use the schedule) (us.wv.income_tax).",
+    default: { value: false, rationale: "The line 8 instruction directs table users to the Tax Table" },
+  },
+  {
+    id: "wvExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Form IT-140 exemption box (e): yourself (unless claimable as a dependent), spouse (MFJ), dependents, and the surviving-spouse extra exemption — $2,000 each; $500 when zero (us.wv.exemption_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "wvAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, Form IT-140 line 1 — the low-income exclusion and Social Security thresholds, and HEPTC-1 line 4 gross household income (us.wv.low_income_exclusion, us.wv.social_security_modification, us.wv.homestead_excess_property_tax_credit); the SCTC/HEPTC poverty tests use wvHouseholdIncome. May be negative. In dollars.",
+  },
+  {
+    id: "wvEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Low-income exclusion worksheet line B: wages, salaries, tips, other employee compensation, and net self-employment earnings (us.wv.low_income_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvTaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule M line 34(c): Social Security benefits taxable federally (Form 1040 line 6b) for the column (us.wv.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvSeniorOrDisabled",
+    type: "bool",
+    description:
+      "The person for this Schedule M column is 65 or older on December 31 or certified permanently and totally disabled (us.wv.senior_citizen_modification).",
+    default: { value: false, rationale: "Eligibility must be affirmed; assumed not met" },
+  },
+  {
+    id: "wvIncomeNotOnLines35to46",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule M line 47 box (c): the person's income not reported on lines 35 through 46 (the rule caps it at $8,000) (us.wv.senior_citizen_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvLines29to34",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule M line 47 box (d): the person's lines 29 through 34 subtractions (obligation interest, law enforcement / police / fire / military retirement, the $2,000 PERS-TRS-federal modification, Social Security); for line 48 (us.wv.surviving_spouse_modification) pass lines 29-34 PLUS the line 47 modification, since the two together may not exceed $8,000. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvSurvivingSpouseEligible",
+    type: "bool",
+    description:
+      "Schedule M line 48: the filer is the unremarried surviving spouse of a decedent who was 65 or disabled, in the taxable year following the death (us.wv.surviving_spouse_modification).",
+    default: { value: false, rationale: "Eligibility must be affirmed; assumed not met" },
+  },
+  {
+    id: "wvFamilySize",
+    type: "int",
+    min: "0",
+    description:
+      "Schedule FTC-1 line 5: exemptions in boxes (a), (b), and (c) — the family size (0 → no credit; over 8 uses the size-8 column) (us.wv.family_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "wvModifiedAgi",
+    type: "money",
+    description:
+      "Schedule FTC-1 line 4: federal AGI + increasing modifications + federal tax-exempt interest (us.wv.family_tax_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form IT-140 line 8 income tax (us.wv.family_tax_credit, us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvFederalAmt",
+    type: "bool",
+    description:
+      "The filer paid federal alternative minimum tax — disqualifies the Family Tax Credit, SCTC, and HEPTC (us.wv.family_tax_credit, us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit).",
+    default: { value: false, rationale: "Assumed no federal AMT" },
+  },
+  {
+    id: "wvOtherStateTax",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule E line 1: income tax computed on the other state's 2025 return (not withholding) (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvOtherStateIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule E line 3: net income derived from the other state included in West Virginia total income (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvAdjustedGrossIncome",
+    type: "money",
+    description:
+      "Schedule E line 4: West Virginia adjusted gross income, Form IT-140 line 4 (us.wv.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvAlternativeTax",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule E line 7: the Rate Schedule tax on West Virginia taxable income minus the other-state income (line 6) (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvOtherRecapCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule E line 9: the sum of Tax Credit Recap lines 2 through 26 (Family Tax Credit, child care, business credits) (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Federal child and dependent care credit, Form 2441 — West Virginia allows 50% (us.wv.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvHouseholdSize",
+    type: "int",
+    min: "0",
+    description:
+      "Number of people living in the household — the SCTC (150% of poverty) and HEPTC (300%) income limits (us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit).",
+    default: { value: "1", rationale: "Assumed a one-person household" },
+  },
+  {
+    id: "wvHouseholdIncome",
+    type: "money",
+    description:
+      "Federal AGI (or income less Social Security when not required to file federally) tested against the SCTC / HEPTC poverty-guideline limits (us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvDisabledVeteranCreditClaimed",
+    type: "bool",
+    description:
+      "The Disabled Veteran real property tax credit (line 21B) is claimed — bars the SCTC and HEPTC (us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit).",
+    default: { value: false, rationale: "Assumed not claimed" },
+  },
+  {
+    id: "wvSeniorCitizenCreditAmount",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule SCTC-A Part III line 2: the Senior Citizens Tax Credit computed on the Tax Division's mailed form (property tax on up to the first $20,000 of taxable assessed value) (us.wv.senior_citizens_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 1: West Virginia property tax paid on the owner-occupied home in 2025, after discount and before interest (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvSeniorCitizenCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 2: the allowable Senior Citizens Tax Credit (subtracted from the property tax) (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvAdditions",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 4a: increasing modifications, Schedule M line 59 (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvTaxExemptInterest",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 4b: federal tax-exempt interest (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvWorkersCompensation",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 4c: earnings replacement insurance (workers' compensation) received (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvNontaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 4d: Social Security, SSI, and SSDI received but not in federal AGI (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvOtherHouseholdIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule HEPTC-1 line 4e: income of other household members who would file separately (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule UT line 1: purchases subject to the 6% state use tax on which no sales tax was paid (us.wv.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvMunicipalUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule UT Part II: purchases used in a municipality that imposes a municipal use tax (us.wv.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "wvMunicipalUseTaxRateBps",
+    type: "int",
+    min: "0",
+    max: "100",
+    description:
+      "Schedule UT Part II tax rate in basis points (50 for 0.5%, 100 for 1%) (us.wv.use_tax).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
   // ---- Idaho (Form 40) ----
   {
     id: "idAgeBlindBoxes",
