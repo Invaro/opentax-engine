@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, HOH $50,000 -> $2,332 + 6.75% x 9,850 = 2,996.875 -> $2,997 (printed 2,997).",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "299700"
+  }
+}

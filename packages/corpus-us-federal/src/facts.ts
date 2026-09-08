@@ -3605,6 +3605,311 @@ export const facts: FactSpec[] = [
       "Taxable IRA distributions other than Roth (Form 1040 line 4b) — 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" },
   },
+  // ---- Maine (Form 1040ME) ----
+  {
+    id: "meUseRateSchedule",
+    type: "bool",
+    description:
+      "Compute Form 1040ME line 20 from the rate schedule at the exact income instead of the tax table (taxable income under $100,000 uses the table's $100-row midpoint by default) (us.me.income_tax).",
+    default: { value: false, rationale: "The form directs filers to the tax table, so it is the default" },
+  },
+  {
+    id: "meAgeBlindBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description:
+      "Form 1040ME lines 12a-12d boxes checked (you 65+, you blind, spouse 65+, spouse blind) — $2,000 each for single/HOH, $1,600 each for MFJ/QSS/MFS (us.me.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "meFederalItemizedDeductions",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 1: federal Schedule A line 17 (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meSaltTaxes5e",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 2a: taxes paid, federal Schedule A line 5e (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meExemptIncomeCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 2b: deductible costs of producing Maine-exempt income included in the federal itemized total (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meFinancialInstitutionCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 2c: itemized amounts attributable to a pass-through financial institution ownership interest (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meMedicalDeduction",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 2d: medical and dental expenses deducted, federal Schedule A line 4 — removed from the capped total and added back uncapped (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meMaineTaxableIncomeCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 3a: deductible costs of producing income exempt federally but taxable by Maine (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meRealEstateTaxes5b",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 3b: state and local real estate taxes, federal Schedule A line 5b (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mePersonalPropertyTaxes5c",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule 2 line 3c: personal property taxes, federal Schedule A line 5c (us.me.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meAgi",
+    type: "money",
+    description:
+      "Maine adjusted gross income, Form 1040ME line 16 — the deduction and exemption phase-outs, dependent credit phase-out, other-jurisdiction ratio, and use tax estimate (us.me.deduction_phaseout, us.me.personal_exemption, us.me.dependent_exemption_credit, us.me.other_jurisdiction_credit, us.me.use_tax). May be negative. In dollars.",
+  },
+  {
+    id: "meDeductionBeforePhaseout",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040ME line 17 worksheet line 6: the standard deduction from the chart or Schedule 2 line 7 itemized deductions, before the phase-out (us.me.deduction_phaseout). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meExemptions",
+    type: "int",
+    min: "0",
+    max: "2",
+    description:
+      "Form 1040ME line 13: personal exemptions (0, 1, or 2) — $5,150 each (us.me.personal_exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "meFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, Form 1040ME line 14 — the pension deduction phase-out and the adult dependent care percentage (us.me.pension_deduction, us.me.adult_dependent_care_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meNonMilitaryPension",
+    type: "money",
+    min: "0",
+    description:
+      "Pension Income Deduction Worksheet line P1 for one recipient: eligible non-military employee retirement plan and IRA benefits in federal AGI (us.me.pension_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meSocialSecurityReceived",
+    type: "money",
+    min: "0",
+    description:
+      "Pension Income Deduction Worksheet line P3: the recipient's total Social Security and railroad retirement benefits received, whether taxable or not (us.me.pension_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meMilitaryRetirement",
+    type: "money",
+    min: "0",
+    description:
+      "Pension Income Deduction Worksheet line P9: eligible military retirement pay in federal AGI — 100% deductible (us.me.pension_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meDependentsSixPlus",
+    type: "int",
+    min: "0",
+    description:
+      "Dependent Exemption Tax Credit Worksheet line 1: qualifying children and dependents (line 13a) at least 6 years old at any time in the year — $305 each (us.me.dependent_exemption_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "meDependentsUnderSix",
+    type: "int",
+    min: "0",
+    description:
+      "Dependent Exemption Tax Credit Worksheet line 3: qualifying children and dependents under 6 at the end of the year — $610 each (us.me.dependent_exemption_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "meFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description:
+      "Child Care Credit Worksheet line 2: the federal child and dependent care credit, Schedule 3 line 2 (us.me.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meChildCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Child Care Credit Worksheet line 1: total expenses on federal Form 2441 line 2 column (d) (us.me.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meStar5ChildCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Child Care Credit Worksheet line 1a column B: expenses paid to a Star 5 quality certificate provider — that share of the credit is 50% instead of 25% (us.me.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meAdultCareExpenses",
+    type: "money",
+    min: "0",
+    description:
+      "Adult Dependent Care Credit Worksheet line 1 column C: adult day care, hospice, and respite expenses not used for the federal credit (us.me.adult_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meAdultCareQualifyingIndividuals",
+    type: "int",
+    min: "0",
+    description:
+      "Adult Dependent Care Credit Worksheet: qualifying individuals (1 → $3,000 cap; 2 or more → $6,000) (us.me.adult_dependent_care_credit).",
+    default: { value: "1", rationale: "Assumed one qualifying individual when expenses are given" },
+  },
+  {
+    id: "meFederalEic",
+    type: "money",
+    min: "0",
+    description:
+      "Earned Income Tax Credit Worksheet line 1: federal EIC, Form 1040 line 27a (or the pro forma amount) (us.me.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meHasQualifyingChild",
+    type: "bool",
+    description:
+      "Earned Income Tax Credit Worksheet: at least one qualifying child for the federal EIC — 25% instead of 50% (us.me.eitc).",
+    default: { value: false, rationale: "Assumed no qualifying child unless stated" },
+  },
+  {
+    id: "meTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040ME line 20 income tax (us.me.other_jurisdiction_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meOtherJurisdictionIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Other Jurisdiction worksheet line 2d: income sourced to and taxed by the other jurisdiction, adjusted for Maine modifications (us.me.other_jurisdiction_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meOtherJurisdictionTax",
+    type: "money",
+    min: "0",
+    description:
+      "Other Jurisdiction worksheet line 4b: income tax paid to the other jurisdiction on that income (not withholding) (us.me.other_jurisdiction_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meTotalIncome",
+    type: "money",
+    description:
+      "Schedule PTFC/STFC line 3: total income — federal total income plus nontaxable Social Security/railroad benefits, tax-exempt interest, and loss add-backs (us.me.property_tax_fairness_credit, us.me.sales_tax_fairness_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mePropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule PTFC/STFC line 4: property tax paid on the Maine home in 2025 (up to 10 acres) (us.me.property_tax_fairness_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meRentPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule PTFC/STFC line 5a: rent paid on the Maine home in 2025 (us.me.property_tax_fairness_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meRentIncludesUtilities",
+    type: "bool",
+    description:
+      "Schedule PTFC/STFC line 5b: the rent includes heat, utilities, furniture, or similar items (us.me.property_tax_fairness_credit).",
+    default: { value: false, rationale: "Assumed rent excludes utilities" },
+  },
+  {
+    id: "meUtilitiesAmount",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule PTFC/STFC line 5c: the known amount of heat, utilities, furniture, or similar items in the rent; $0 with meRentIncludesUtilities means unknown → 15% of the rent (us.me.property_tax_fairness_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meAge65",
+    type: "bool",
+    description:
+      "Schedule PTFC/STFC line 7: you or your spouse (MFJ) were at least 65 during the tax year — $4,100 benefit base and $2,000 cap (us.me.property_tax_fairness_credit).",
+    default: { value: false, rationale: "Assumed under 65" },
+  },
+  {
+    id: "meDisabledVeteran",
+    type: "bool",
+    description:
+      "Schedule PTFC/STFC line 14: you or your spouse are rated 100% permanently and totally disabled by the VA — the credit doubles (us.me.property_tax_fairness_credit).",
+    default: { value: false, rationale: "Assumed not a disabled veteran" },
+  },
+  {
+    id: "meDependents13a",
+    type: "int",
+    min: "0",
+    description:
+      "Form 1040ME line 13a: qualifying children and dependents for the federal child tax credit or credit for other dependents (us.me.property_tax_fairness_credit, us.me.sales_tax_fairness_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "meUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description:
+      "Form 1040ME line 30: purchases for use in Maine on which no sales tax was paid — 5.5% (us.me.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "meUseTaxEstimate",
+    type: "bool",
+    description:
+      "Form 1040ME line 30: use the 0.04% of Maine AGI estimate for unknown untaxed purchases (us.me.use_tax).",
+    default: { value: false, rationale: "Assumed exact purchases are reported" },
+  },
   // ---- West Virginia (Form IT-140) ----
   {
     id: "wvUseRateSchedule",

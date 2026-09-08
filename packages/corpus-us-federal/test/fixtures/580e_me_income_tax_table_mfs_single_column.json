@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, MFS $50,000 -> the 'Single or Married-Filing Separately' column -> $3,123.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "312300"
+  }
+}

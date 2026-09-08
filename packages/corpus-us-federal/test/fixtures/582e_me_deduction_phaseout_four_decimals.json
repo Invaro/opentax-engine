@@ -1,0 +1,13 @@
+{
+  "description": "ME deduction phase-out: HOH Maine AGI $150,001 -> 1 / 112,500 = .0000089 -> .0000 -> $22,500 intact.",
+  "facts": {
+    "filingStatus": "hoh",
+    "meAgi": 150001,
+    "meDeductionBeforePhaseout": 22500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.deduction_phaseout",
+  "expect": {
+    "valueCents": "2250000"
+  }
+}

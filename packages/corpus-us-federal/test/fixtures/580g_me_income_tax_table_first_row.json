@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, $75 -> booklet row '50 100 3 3 3' (midpoint 75 x 5.8% = 4.35 would be $4; the printed $3 is the $0-100 midpoint) -> $3.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 75
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "300"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ME MFJ, 4 boxes: $30,000 + 4 x $1,600 = $36,400 (chart).",
+  "facts": {
+    "filingStatus": "mfj",
+    "meAgeBlindBoxes": 4
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "3640000"
+  }
+}

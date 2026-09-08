@@ -1,0 +1,13 @@
+{
+  "description": "ME deduction phase-out: single Maine AGI $120,000, itemized $36,300 -> 20,000 / 75,000 = .2667 -> 36,300 x .2667 = 9,681.21 -> 9,681 -> $26,619.",
+  "facts": {
+    "filingStatus": "single",
+    "meAgi": 120000,
+    "meDeductionBeforePhaseout": 36300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.deduction_phaseout",
+  "expect": {
+    "valueCents": "2661900"
+  }
+}

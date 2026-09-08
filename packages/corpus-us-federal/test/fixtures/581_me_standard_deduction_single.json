@@ -1,0 +1,12 @@
+{
+  "description": "ME 2025 standard deduction single -> $15,000 (pre-OBBBA federal amount; Maine conforms to the IRC as of 12/31/2024).",
+  "facts": {
+    "filingStatus": "single",
+    "meAgeBlindBoxes": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1500000"
+  }
+}

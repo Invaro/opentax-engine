@@ -1,0 +1,13 @@
+{
+  "description": "ME deduction phase-out: single Maine AGI $137,500 -> (137,500 \u2212 100,000) / 75,000 = .5000 -> $15,000 x .5 = 7,500 reduction -> $7,500.",
+  "facts": {
+    "filingStatus": "single",
+    "meAgi": 137500,
+    "meDeductionBeforePhaseout": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.deduction_phaseout",
+  "expect": {
+    "valueCents": "750000"
+  }
+}

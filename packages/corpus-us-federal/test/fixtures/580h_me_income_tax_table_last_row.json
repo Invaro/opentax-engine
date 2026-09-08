@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, single $99,950 -> row [99,900, 100,000) midpoint 99,950: $4,028 + 7.15% x 36,500 = 6,637.75 -> $6,638 (printed).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 99950
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "663800"
+  }
+}

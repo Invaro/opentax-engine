@@ -1,0 +1,13 @@
+{
+  "description": "ME deduction phase-out: MFJ Maine AGI $275,050 -> 75,000 / 150,000 = .5000 -> $15,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meAgi": 275050,
+    "meDeductionBeforePhaseout": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.deduction_phaseout",
+  "expect": {
+    "valueCents": "1500000"
+  }
+}

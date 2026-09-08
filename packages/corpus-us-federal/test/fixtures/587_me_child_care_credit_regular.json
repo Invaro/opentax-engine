@@ -1,0 +1,14 @@
+{
+  "description": "ME child care credit: 25% of the $600 federal credit = $150.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meFederalChildCareCredit": 600,
+    "meChildCareExpenses": 4000,
+    "meStar5ChildCareExpenses": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.child_care_credit",
+  "expect": {
+    "valueCents": "15000"
+  }
+}

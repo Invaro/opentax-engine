@@ -1,0 +1,12 @@
+{
+  "description": "ME $0 taxable income -> $0 (booklet row '0 50 0 0 0'; the standalone table's '0 100 3' is not applied below $50).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "ME MFS Maine AGI $200,050 -> not over the $200,050 threshold -> $5,150.",
+  "facts": {
+    "filingStatus": "mfs",
+    "meExemptions": 1,
+    "meAgi": 200050
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.personal_exemption",
+  "expect": {
+    "valueCents": "515000"
+  }
+}

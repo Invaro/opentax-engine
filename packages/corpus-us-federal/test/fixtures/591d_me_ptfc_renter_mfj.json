@@ -1,0 +1,19 @@
+{
+  "description": "ME PTFC renter MFJ 1 dependent: rent $12,000 incl. utilities (unknown) -> 5c 1,800; 5d 10,200; 5e 1,530; base min(1,530, 4,050) = 1,530; 4% x 30,000 = 1,200 -> $330.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meTotalIncome": 30000,
+    "mePropertyTaxPaid": 0,
+    "meRentPaid": 12000,
+    "meRentIncludesUtilities": true,
+    "meUtilitiesAmount": 0,
+    "meAge65": false,
+    "meDisabledVeteran": false,
+    "meDependents13a": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.property_tax_fairness_credit",
+  "expect": {
+    "valueCents": "33000"
+  }
+}

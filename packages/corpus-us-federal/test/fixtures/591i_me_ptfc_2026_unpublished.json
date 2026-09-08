@@ -1,0 +1,19 @@
+{
+  "description": "ME TY2026 PTFC bases re-index and the under-65 cap becomes $1,500 (P.L. 2025, c. 650) \u2014 unpublished bases -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 40000,
+    "mePropertyTaxPaid": 3000,
+    "meRentPaid": 0,
+    "meRentIncludesUtilities": false,
+    "meUtilitiesAmount": 0,
+    "meAge65": false,
+    "meDisabledVeteran": false,
+    "meDependents13a": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.property_tax_fairness_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

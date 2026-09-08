@@ -1,0 +1,13 @@
+{
+  "description": "ME dependent filer 65+ (single) -> $15,000 + $2,000 = $17,000 (no dependent limitation).",
+  "facts": {
+    "filingStatus": "single",
+    "meAgeBlindBoxes": 1,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1700000"
+  }
+}

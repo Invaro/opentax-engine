@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 MFJ, both 65+: $31,400 + 2 x $1,650 = $34,700.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meAgeBlindBoxes": 2
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "3470000"
+  }
+}

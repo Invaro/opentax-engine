@@ -1,0 +1,12 @@
+{
+  "description": "ME MFJ $200,000 -> the table says 'See the tax rate schedule' -> $8,057 + 7.15% x 73,100 = 13,283.65 -> $13,284.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "1328400"
+  }
+}

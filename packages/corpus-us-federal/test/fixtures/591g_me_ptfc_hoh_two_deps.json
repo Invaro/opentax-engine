@@ -1,0 +1,19 @@
+{
+  "description": "ME PTFC HOH 2 dependents: base cap $4,050; property tax 5,000 -> 4,050; income 60,000 x 4% = 2,400 -> 1,650 -> $1,000 cap.",
+  "facts": {
+    "filingStatus": "hoh",
+    "meTotalIncome": 60000,
+    "mePropertyTaxPaid": 5000,
+    "meRentPaid": 0,
+    "meRentIncludesUtilities": false,
+    "meUtilitiesAmount": 0,
+    "meAge65": false,
+    "meDisabledVeteran": false,
+    "meDependents13a": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.property_tax_fairness_credit",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

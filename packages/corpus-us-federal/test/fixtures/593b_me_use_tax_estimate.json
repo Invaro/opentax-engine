@@ -1,0 +1,14 @@
+{
+  "description": "ME use tax estimate: .04% of $60,000 Maine AGI = $24.",
+  "facts": {
+    "filingStatus": "single",
+    "meUseTaxPurchases": 0,
+    "meUseTaxEstimate": true,
+    "meAgi": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.use_tax",
+  "expect": {
+    "valueCents": "2400"
+  }
+}

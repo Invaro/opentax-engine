@@ -1,0 +1,13 @@
+{
+  "description": "ME rate schedule, HOH $95,150 -> the $6,041 anchor.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 95150,
+    "meUseRateSchedule": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "604100"
+  }
+}

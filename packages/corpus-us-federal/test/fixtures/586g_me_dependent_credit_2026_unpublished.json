@@ -1,0 +1,14 @@
+{
+  "description": "ME TY2026 dependent credit amount and thresholds re-index (unpublished) -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "meDependentsSixPlus": 1,
+    "meDependentsUnderSix": 0,
+    "meAgi": 50000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.dependent_exemption_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

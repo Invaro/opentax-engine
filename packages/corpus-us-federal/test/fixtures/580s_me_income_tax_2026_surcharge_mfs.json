@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 MFS $800,000: $4,117 + 7.15% x 735,150 = 56,680.225; surcharge 2% x 50,000 over $750,000 = 1,000 -> 57,680.225 -> $57,680.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 800000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "5768000"
+  }
+}

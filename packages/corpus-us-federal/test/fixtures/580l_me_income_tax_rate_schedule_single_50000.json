@@ -1,0 +1,13 @@
+{
+  "description": "ME rate schedule at the exact income, single $50,000: $1,554 + 6.75% x 23,200 = $3,120.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000,
+    "meUseRateSchedule": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "312000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ME MFS, 3 boxes: $15,000 + 3 x $1,600 = $19,800 (chart).",
+  "facts": {
+    "filingStatus": "mfs",
+    "meAgeBlindBoxes": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1980000"
+  }
+}

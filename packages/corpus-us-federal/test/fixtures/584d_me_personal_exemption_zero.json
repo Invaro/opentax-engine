@@ -1,0 +1,13 @@
+{
+  "description": "ME zero exemptions (claimable as a dependent) -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "meExemptions": 0,
+    "meAgi": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.personal_exemption",
+  "expect": {
+    "valueCents": "0"
+  }
+}

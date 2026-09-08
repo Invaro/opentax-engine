@@ -1,0 +1,13 @@
+{
+  "description": "ME TY2026 deduction phase-out: single Maine AGI $139,750 -> (139,750 \u2212 102,250) / 75,000 = .5000 -> $15,700 x .5 = 7,850 -> $7,850.",
+  "facts": {
+    "filingStatus": "single",
+    "meAgi": 139750,
+    "meDeductionBeforePhaseout": 15700
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.deduction_phaseout",
+  "expect": {
+    "valueCents": "785000"
+  }
+}

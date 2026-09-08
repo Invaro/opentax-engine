@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, qualifying surviving spouse $50,000 -> the joint column -> $2,903.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "290300"
+  }
+}

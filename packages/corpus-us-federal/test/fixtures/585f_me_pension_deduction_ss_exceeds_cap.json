@@ -1,0 +1,15 @@
+{
+  "description": "ME pension deduction: Social Security received $50,000 exceeds $48,216 -> $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meFederalAgi": 60000,
+    "meNonMilitaryPension": 40000,
+    "meSocialSecurityReceived": 50000,
+    "meMilitaryRetirement": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.pension_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

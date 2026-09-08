@@ -1,0 +1,13 @@
+{
+  "description": "ME TY2026 MFJ Maine AGI $204,550 -> not over -> $31,400 intact.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meAgi": 204550,
+    "meDeductionBeforePhaseout": 31400
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.deduction_phaseout",
+  "expect": {
+    "valueCents": "3140000"
+  }
+}

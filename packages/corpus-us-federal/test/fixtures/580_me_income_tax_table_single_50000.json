@@ -1,0 +1,12 @@
+{
+  "description": "ME 2025 tax table, single $50,000 -> row [50,000, 50,100) midpoint 50,050: $1,554 + 6.75% x 23,250 = 3,123.375 -> $3,123 (printed '50,000 50,100 3,123').",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "312300"
+  }
+}

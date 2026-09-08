@@ -2069,3 +2069,100 @@ describe("composeWV — 2025 Form IT-140 (real corpus targets)", () => {
     expect(dollars(lb, "4_wv_adjusted_gross_income")).toBe("$0");
   });
 });
+
+describe("composeME — 2025 Form 1040ME (real corpus targets)", () => {
+  it("single wage earner: $15,000 deduction, $5,150 exemption, tax table, small balance due", () => {
+    // 16 = 60,000; 17 = 15,000; 18 = 5,150; 19 = 39,850 → row [39,800, 39,900) midpoint 39,850: 1,554 + 6.75% × 13,050 = 2,434.875 → $2,435 (printed);
+    // STFC: single income 60,000 → 0; withholding 2,000 → underpaid 435
+    const input = { jurisdiction: "me" as const, filingStatus: "single", federalAGI: 60000, stateWithholding: 2000 };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["13_exemptions"]).toBe("1");
+    expect(dollars(lines, "17_deduction")).toBe("$15,000");
+    expect(dollars(lines, "18_exemption")).toBe("$5,150");
+    expect(dollars(lines, "19_taxable_income")).toBe("$39,850");
+    expect(dollars(lines, "20_income_tax")).toBe("$2,435");
+    expect(lines._tax_method).toBe("tax table");
+    expect(lines["25e_sales_tax_fairness_credit"]).toBeUndefined();
+    expect(dollars(lines, "35_total_due")).toBe("$435");
+  });
+
+  it("MFJ retirees: Social Security and pension deduction, age boxes, no taxable income, Property Tax Fairness Credit", () => {
+    // 15b = SS 20,000 + pension min(40,000, 48,216 − 25,000 = 23,216) = 43,216; 16 = 36,784; 17 = 30,000 + 2 × 1,600 = 33,200; 18 = 10,300; 19 = 0;
+    // PTFC 65+: total income 85,000; base min(4,000, 4,100) = 4,000; 4% × 85,000 = 3,400 → 600 → min(600, 2,000) = 600; STFC: income 85,000 > 63,950 → 0
+    // payments 500 + 600 = 1,100 → refund 1,100
+    const input = {
+      jurisdiction: "me" as const, filingStatus: "mfj", federalAGI: 80000, taxableSocialSecurity: 20000, meSocialSecurityReceived: 25000, meNonMilitaryPension: 40000,
+      ageOrBlindBoxes: 2, meAge65: true, meTotalIncome: 85000, mePropertyTaxPaid: 4000, stateWithholding: 500,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "1S4_pension_deduction")).toBe("$23,216");
+    expect(dollars(lines, "16_maine_agi")).toBe("$36,784");
+    expect(dollars(lines, "17_deduction")).toBe("$33,200");
+    expect(dollars(lines, "19_taxable_income")).toBe("$0");
+    expect(dollars(lines, "25d_property_tax_fairness_credit")).toBe("$600");
+    expect(dollars(lines, "34b_refund")).toBe("$1,100");
+  });
+
+  it("low-income HOH with two children (one under 6): dependent credit, child care, EITC, Sales Tax Fairness Credit", () => {
+    // 17 = 22,500; 18 = 5,150; 19 = 2,350 → midpoint 2,350 × 5.8% = 136.3 → $136 (printed '2,300 2,400 136');
+    // child care 25% × 500 = 125 → all refundable (≤ 500), nonrefundable 0 → 24 = 136; dependent credit 305 + 610 = 915; EITC 25% × 2,000 = 500;
+    // 25c = 915 + 125 + 500 = 1,540; STFC HOH 2 deps income 30,000 → 250; 25f = 300 + 1,540 + 250 = 2,090; 28 = 1,954
+    const input = {
+      jurisdiction: "me" as const, filingStatus: "hoh", federalAGI: 30000, dependents: 2, meDependentsUnderSix: 1, federalEITC: 2000, meHasQualifyingChild: true, meFederalChildCareCredit: 500, meChildCareExpenses: 3000,
+      meTotalIncome: 30000, stateWithholding: 300,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "20_income_tax")).toBe("$136");
+    expect(dollars(lines, "A1_dependent_exemption_credit")).toBe("$915");
+    expect(dollars(lines, "A2_child_care_refundable")).toBe("$125");
+    expect(lines.A11_child_care_nonrefundable).toBeUndefined();
+    expect(dollars(lines, "A4_earned_income_credit")).toBe("$500");
+    expect(dollars(lines, "25e_sales_tax_fairness_credit")).toBe("$250");
+    expect(dollars(lines, "34b_refund")).toBe("$1,954");
+  });
+
+  it("high-income itemizer: Schedule 2 cap, deduction phase-out, rate schedule, other-jurisdiction credit, use tax", () => {
+    // Schedule 2: 40,000 − 10,000 + 9,000 = 39,000 → capped 36,300 > 15,000 → itemized; phase-out (150,000 − 100,000) / 75,000 = .6667 → 36,300 × .6667 = 24,201.21 → 24,201 → 17 = 12,099;
+    // 18 = 5,150; 19 = 132,751 → rate schedule (≥ 100,000; single hand-off 6,638 + 7.15% × 32,751 = 8,979.70 → $8,980); other jurisdiction: 30,000 / 150,000 = .2000 × 8,980 = 1,796; paid 2,500 → 1,796;
+    // 24 = 7,184; withholding 8,000 → 28 = 816; use tax 200 → 11; 33 = 805
+    const input = {
+      jurisdiction: "me" as const, filingStatus: "single", federalAGI: 150000, meFederalItemized: true, meFederalItemizedDeductions: 40000, meSaltTaxes5e: 10000, meRealEstateTaxes5b: 9000,
+      meOtherJurisdictionIncome: 30000, meOtherJurisdictionTax: 2500, meUseTaxPurchases: 200, stateWithholding: 8000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._deduction_method).toBe("itemized");
+    expect(lines._tax_method).toBe("tax table hand-off");
+    expect(dollars(lines, "sched2_itemized")).toBe("$36,300");
+    expect(dollars(lines, "17_deduction")).toBe("$12,099");
+    expect(dollars(lines, "19_taxable_income")).toBe("$132,751");
+    expect(dollars(lines, "20_income_tax")).toBe("$8,980");
+    expect(dollars(lines, "A14_other_jurisdiction_credit")).toBe("$1,796");
+    expect(dollars(lines, "24_net_tax")).toBe("$7,184");
+    expect(dollars(lines, "30_use_tax")).toBe("$11");
+    expect(dollars(lines, "33_net_overpayment")).toBe("$805");
+    expect(notes.some((n) => n.includes("reduced to $12,099 by the phase-out"))).toBe(true);
+  });
+
+  it("MFS with a no-income spouse gets two exemptions; a dependent filer gets zero and no Sales Tax Fairness Credit", () => {
+    // MFS: 17 = 15,000; 18 = 10,300; 19 = 14,700 → single column midpoint 14,750 × 5.8% = 855.5 → $856 (printed '14,700 14,800 856'); no STFC (MFS)
+    const m = { jurisdiction: "me" as const, filingStatus: "mfs", federalAGI: 40000, meSpouseNoIncomeMfs: true };
+    const lm = composeStateReturn(m, realPaEval(m)).lines;
+    expect(lm["13_exemptions"]).toBe("2");
+    expect(dollars(lm, "18_exemption")).toBe("$10,300");
+    expect(dollars(lm, "20_income_tax")).toBe("$856");
+    expect(lm["25e_sales_tax_fairness_credit"]).toBeUndefined();
+    // dependent filer: full $15,000 chart deduction (amended § 5124-C(1-B)); exemption 0; taxable 0; no STFC
+    const d = { jurisdiction: "me" as const, filingStatus: "single", federalAGI: 6000, claimedAsDependent: true, stateWithholding: 90 };
+    const ld = composeStateReturn(d, realPaEval(d)).lines;
+    expect(ld["13_exemptions"]).toBe("0");
+    expect(dollars(ld, "17_deduction")).toBe("$15,000");
+    expect(dollars(ld, "19_taxable_income")).toBe("$0");
+    expect(ld["25e_sales_tax_fairness_credit"]).toBeUndefined();
+    expect(dollars(ld, "34b_refund")).toBe("$90");
+    // EITC without meHasQualifyingChild stays at the 50% childless rate even with a dependent (e.g. a parent), with a note
+    const e = { jurisdiction: "me" as const, filingStatus: "hoh", federalAGI: 20000, dependents: 1, federalEITC: 600, meTotalIncome: 20000 };
+    const re = composeStateReturn(e, realPaEval(e));
+    expect(dollars(re.lines, "A4_earned_income_credit")).toBe("$300");
+    expect(re.notes.some((n) => n.includes("pass meHasQualifyingChild"))).toBe(true);
+  });
+});

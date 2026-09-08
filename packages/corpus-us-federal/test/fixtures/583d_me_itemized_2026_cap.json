@@ -1,0 +1,19 @@
+{
+  "description": "ME TY2026 Schedule 2: $60,000 \u2212 10,000 + 9,000 = 59,000 -> capped at $37,100.",
+  "facts": {
+    "filingStatus": "single",
+    "meFederalItemizedDeductions": 60000,
+    "meSaltTaxes5e": 10000,
+    "meMedicalDeduction": 0,
+    "meRealEstateTaxes5b": 9000,
+    "mePersonalPropertyTaxes5c": 0,
+    "meExemptIncomeCosts": 0,
+    "meFinancialInstitutionCosts": 0,
+    "meMaineTaxableIncomeCosts": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.itemized_deductions",
+  "expect": {
+    "valueCents": "3710000"
+  }
+}

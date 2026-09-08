@@ -1,0 +1,15 @@
+{
+  "description": "ME pension deduction: single federal AGI $225,000 -> ratio 1.0000 -> $0 non-military + $10,000 military = $10,000.",
+  "facts": {
+    "filingStatus": "single",
+    "meFederalAgi": 225000,
+    "meNonMilitaryPension": 60000,
+    "meSocialSecurityReceived": 20000,
+    "meMilitaryRetirement": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.pension_deduction",
+  "expect": {
+    "valueCents": "1000000"
+  }
+}

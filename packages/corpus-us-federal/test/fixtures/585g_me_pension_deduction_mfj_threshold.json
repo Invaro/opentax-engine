@@ -1,0 +1,15 @@
+{
+  "description": "ME pension deduction MFJ: federal AGI $250,000 -> not over the threshold -> min(40,000, 48,216 \u2212 25,000) = $23,216.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meFederalAgi": 250000,
+    "meNonMilitaryPension": 40000,
+    "meSocialSecurityReceived": 25000,
+    "meMilitaryRetirement": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.pension_deduction",
+  "expect": {
+    "valueCents": "2321600"
+  }
+}

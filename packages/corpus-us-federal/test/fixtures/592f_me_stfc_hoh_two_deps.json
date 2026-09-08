@@ -1,0 +1,14 @@
+{
+  "description": "ME STFC HOH 2 dependents, income $45,000 -> 250 \u2212 ceil(6,800/750) x 15 = 250 \u2212 150 = $100 (table row 44,951-45,700 column 2: 100).",
+  "facts": {
+    "filingStatus": "hoh",
+    "meTotalIncome": 45000,
+    "meDependents13a": 2,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.sales_tax_fairness_credit",
+  "expect": {
+    "valueCents": "10000"
+  }
+}

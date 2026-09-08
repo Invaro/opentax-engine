@@ -71,6 +71,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
   "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund",
   "us.wv": "west virginia wv it-140 schedule m charleston family tax credit senior citizens tax credit homestead excess",
+  "us.me": "maine me 1040me portland augusta property tax fairness credit sales tax fairness credit pension income deduction",
 };
 
 export function lookupParameters(

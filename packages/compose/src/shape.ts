@@ -8,11 +8,11 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv", "me"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id/wv — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id/wv/me — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -881,4 +881,59 @@ const wvShape = {
   // 19-26), stateWithholding/spouseStateWithholding (line 15), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 16).
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape };
+const meShape = {
+  meUseRateSchedule: z.boolean().optional().describe("ME line 20: compute from the rate schedule at the exact income instead of the tax table (the table's $100-row midpoint applies under $100,000 by default)"),
+  meSpouseClaimedAsDependent: z.boolean().optional().describe("ME line 13: the spouse can be claimed as a dependent on another return (MFJ → 1 exemption instead of 2)"),
+  meSpouseNoIncomeMfs: z.boolean().optional().describe("ME line 13 (married filing separately): your spouse had no federal gross income and you would claim a federal personal exemption for them — 2 exemptions"),
+  meFederalItemized: z.boolean().optional().describe("ME line 17: the filer itemized on the federal return — Schedule 2 is computed and the LARGER of it and the standard deduction is used (pass meFederalItemizedDeductions and the Schedule 2 amounts)"),
+  meFederalItemizedDeductions: usd.optional().describe("ME Schedule 2 line 1: federal Schedule A line 17"),
+  meSaltTaxes5e: usd.optional().describe("ME Schedule 2 line 2a: taxes paid included in the federal total (Schedule A line 5e) — removed"),
+  meMedicalDeduction: usd.optional().describe("ME Schedule 2 line 2d: medical and dental expenses deducted (Schedule A line 4) — removed from the $36,300-capped total and added back uncapped"),
+  meRealEstateTaxes5b: usd.optional().describe("ME Schedule 2 line 3b: real estate taxes (Schedule A line 5b) — added back"),
+  mePersonalPropertyTaxes5c: usd.optional().describe("ME Schedule 2 line 3c: personal property taxes (Schedule A line 5c) — added back"),
+  meExemptIncomeCosts: usd.optional().describe("ME Schedule 2 line 2b: costs of producing Maine-exempt income"),
+  meMaineTaxableIncomeCosts: usd.optional().describe("ME Schedule 2 line 3a: costs of producing federally-exempt, Maine-taxable income"),
+  meFinancialInstitutionCosts: usd.optional().describe("ME Schedule 2 line 2c: itemized amounts attributable to a pass-through financial institution ownership interest (removed)"),
+  meNonMaineBondInterest: usd.optional().describe("ME Schedule 1A line 1: income from municipal and state bonds other than Maine (added)"),
+  meUsInterest: usd.optional().describe("ME Schedule 1S line 1: U.S. Government bond interest in federal AGI"),
+  meStateRefund: usd.optional().describe("ME Schedule 1S line 2: state income tax refund in federal AGI"),
+  meNonMilitaryPension: usd.optional().describe("ME Schedule 1S line 4 worksheet P1 (taxpayer): eligible non-military employee retirement plan and IRA benefits in federal AGI (not distributions before 55 outside a periodic series, not Roth conversions)"),
+  meSpouseNonMilitaryPension: usd.optional().describe("ME pension worksheet P1 (spouse column, MFJ only — the spouse's own earned pension)"),
+  meSocialSecurityReceived: usd.optional().describe("ME pension worksheet P3 (taxpayer): total Social Security and railroad retirement benefits RECEIVED, taxable or not — reduces the $48,216 cap"),
+  meSpouseSocialSecurityReceived: usd.optional().describe("ME pension worksheet P3 (spouse column)"),
+  meMilitaryRetirement: usd.optional().describe("ME pension worksheet P9: eligible military retirement pay in federal AGI (100% deductible; taxpayer and spouse combined)"),
+  meMilitaryPay: usd.optional().describe("ME Schedule 1S line 5: non-Maine active duty military pay of a Maine resident"),
+  me529Contributions: usd.optional().describe("ME Schedule 1S line 8: contributions to 529 plans — the composer caps at $1,000 per beneficiary (me529Beneficiaries) and allows it only when federal AGI is not over $100,000 single/MFS or $200,000 otherwise"),
+  me529Beneficiaries: z.number().int().optional().describe("ME Schedule 1S line 8: number of 529 beneficiaries (defaults to 1)"),
+  meDependentsUnderSix: z.number().int().optional().describe("ME dependent exemption credit: how many of the line 13a dependents were under 6 at the end of 2025 ($610 each instead of $305)"),
+  meFederalChildCareCredit: usd.optional().describe("ME child care credit: the federal child and dependent care credit (Schedule 3 line 2) — 25% (50% for Star 5 provider expenses), up to $500 refundable"),
+  meChildCareExpenses: usd.optional().describe("ME child care worksheet line 1: total expenses on Form 2441 line 2(d)"),
+  meStar5ChildCareExpenses: usd.optional().describe("ME child care worksheet line 1a column B: expenses paid to a Star 5 quality certificate provider"),
+  meAdultCareExpenses: usd.optional().describe("ME adult dependent care credit: adult day care, hospice, and respite expenses for a disabled adult dependent (not used for the federal credit) — 25% × the federal percentage, up to $500 refundable"),
+  meAdultCareQualifyingIndividuals: z.number().int().optional().describe("ME adult dependent care: qualifying individuals (1 → $3,000 cap; 2+ → $6,000); defaults to 1"),
+  meHasQualifyingChild: z.boolean().optional().describe("ME EITC: the filer had at least one qualifying child for the federal EIC (25% of the federal credit; 50% without)"),
+  meStudentLoanCredit: usd.optional().describe("ME Schedule A line 5: Student Loan Repayment Tax Credit from its worksheet (≤ $2,500, refundable)"),
+  meOtherJurisdictionIncome: usd.optional().describe("ME other-jurisdiction credit worksheet line 2d: income sourced to and taxed by the other jurisdiction, adjusted for Maine modifications"),
+  meOtherJurisdictionTax: usd.optional().describe("ME other-jurisdiction credit worksheet line 4b: income tax paid to the other jurisdiction on that income (not withholding) — enclose that return"),
+  meTotalIncome: usd.optional().describe("ME Schedule PTFC/STFC line 3: total income = federal total income (Form 1040 line 9) + Social Security/railroad benefits not in it + tax-exempt interest + loss add-backs — REQUIRED for the Property Tax Fairness Credit and used for the Sales Tax Fairness Credit (defaults to federal AGI when omitted, with a note)"),
+  mePropertyTaxPaid: usd.optional().describe("ME Schedule PTFC/STFC line 4: property tax paid in 2025 on the Maine principal residence (house and up to 10 acres)"),
+  meRentPaid: usd.optional().describe("ME Schedule PTFC/STFC line 5a: rent paid in 2025 on the Maine principal residence"),
+  meRentIncludesUtilities: z.boolean().optional().describe("ME Schedule PTFC/STFC line 5b: the rent includes heat, utilities, furniture, or similar items"),
+  meUtilitiesAmount: usd.optional().describe("ME Schedule PTFC/STFC line 5c: the known amount of heat/utilities/furniture in the rent (omit if unknown → 15% of the rent)"),
+  meAge65: z.boolean().optional().describe("ME Schedule PTFC/STFC line 7: you or your spouse (MFJ) were at least 65 during the tax year — $4,100 benefit base and $2,000 cap"),
+  meDisabledVeteran: z.boolean().optional().describe("ME Schedule PTFC/STFC line 14: you or your spouse are rated 100% permanently and totally disabled by the VA — the credit doubles"),
+  meCreditRecapture: usd.optional().describe("ME line 20a: tax credit recapture amounts"),
+  meCasualRentalSalesTax: usd.optional().describe("ME line 30a: sales tax collected on casual rentals of living quarters (9%; $2,000 or less)"),
+  meContributions: usd.optional().describe("ME line 31: Schedule CP charitable contributions and park passes"),
+  meUnderpaymentPenalty: usd.optional().describe("ME line 32: Form 2210ME underpayment of estimated tax penalty"),
+  meUseTaxPurchases: usd.optional().describe("ME line 30: purchases for use in Maine on which no sales tax was paid (5.5%)"),
+  meUseTaxEstimate: z.boolean().optional().describe("ME line 30: also add the 0.04%-of-Maine-AGI estimate for unknown untaxed purchases"),
+  meCreditForward: usd.optional().describe("ME line 34a: overpayment to credit to 2026 estimated tax"),
+  meAmendedOverpayment: usd.optional().describe("ME line 26 (amended only): overpayment on the original return"),
+  // Shared inputs used by Form 1040ME: federalAGI (line 14), additions/subtractions (other Schedule 1A/1S lines), taxableSocialSecurity
+  // (Schedule 1S line 3, 100%), dependents (line 13a), claimedAsDependent (line 13 → 0 exemptions), ageOrBlindBoxes (lines 12a-12d),
+  // federalEITC (EITC worksheet line 1), nonrefundableCredits (Schedule A lines 15-20), refundableCredits (Schedule A lines 6-8),
+  // stateWithholding/spouseStateWithholding (line 25a), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 25b).
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape, ...meShape };

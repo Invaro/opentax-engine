@@ -1,0 +1,14 @@
+{
+  "description": "ME child care credit, $1,000 of $4,000 Star 5: Star 5 share 600 x 1,000 / 4,000 = 150 -> 50% = 75; regular share 450 -> 25% = 112.50 -> 113; total $188.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meFederalChildCareCredit": 600,
+    "meChildCareExpenses": 4000,
+    "meStar5ChildCareExpenses": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.child_care_credit",
+  "expect": {
+    "valueCents": "18800"
+  }
+}

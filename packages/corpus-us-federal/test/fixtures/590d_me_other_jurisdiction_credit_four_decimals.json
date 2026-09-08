@@ -1,0 +1,15 @@
+{
+  "description": "ME other jurisdiction credit: 12,346 / 100,000 = .12346 -> .1235 x $5,000 = 617.5 -> $618; paid $900 -> $618.",
+  "facts": {
+    "filingStatus": "single",
+    "meAgi": 100000,
+    "meTaxBeforeCredits": 5000,
+    "meOtherJurisdictionIncome": 12346,
+    "meOtherJurisdictionTax": 900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.other_jurisdiction_credit",
+  "expect": {
+    "valueCents": "61800"
+  }
+}

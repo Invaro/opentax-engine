@@ -1,0 +1,19 @@
+{
+  "description": "ME Schedule 2: $40,000 \u2212 (10,000 taxes + 4,000 medical) + (8,000 real estate + 500 personal property) = 34,500 -> under the $36,300 cap -> + medical 4,000 = $38,500.",
+  "facts": {
+    "filingStatus": "single",
+    "meFederalItemizedDeductions": 40000,
+    "meSaltTaxes5e": 10000,
+    "meMedicalDeduction": 4000,
+    "meRealEstateTaxes5b": 8000,
+    "mePersonalPropertyTaxes5c": 500,
+    "meExemptIncomeCosts": 0,
+    "meFinancialInstitutionCosts": 0,
+    "meMaineTaxableIncomeCosts": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.itemized_deductions",
+  "expect": {
+    "valueCents": "3850000"
+  }
+}

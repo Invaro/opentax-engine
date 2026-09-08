@@ -1,0 +1,14 @@
+{
+  "description": "ME adult dependent care credit: $8,000 for two -> $6,000 x .35 (AGI $10,000) = 2,100; 25% = $525 (the composer refunds $500, $25 nonrefundable).",
+  "facts": {
+    "filingStatus": "single",
+    "meAdultCareExpenses": 8000,
+    "meAdultCareQualifyingIndividuals": 2,
+    "meFederalAgi": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.adult_dependent_care_credit",
+  "expect": {
+    "valueCents": "52500"
+  }
+}
