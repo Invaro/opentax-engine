@@ -1,0 +1,14 @@
+{
+  "description": "ME STFC single, income $33,000 -> 16 steps -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 33000,
+    "meDependents13a": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.sales_tax_fairness_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

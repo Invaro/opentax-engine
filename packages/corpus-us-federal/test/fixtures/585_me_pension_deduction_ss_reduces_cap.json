@@ -1,0 +1,15 @@
+{
+  "description": "ME pension deduction: single, pension $60,000, Social Security received $20,000 -> min(60,000, 48,216 \u2212 20,000 = 28,216) = $28,216.",
+  "facts": {
+    "filingStatus": "single",
+    "meFederalAgi": 80000,
+    "meNonMilitaryPension": 60000,
+    "meSocialSecurityReceived": 20000,
+    "meMilitaryRetirement": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.pension_deduction",
+  "expect": {
+    "valueCents": "2821600"
+  }
+}

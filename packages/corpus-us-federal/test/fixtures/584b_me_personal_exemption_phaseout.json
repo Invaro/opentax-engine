@@ -1,0 +1,13 @@
+{
+  "description": "ME personal exemption phase-out: single Maine AGI $400,000 -> (400,000 \u2212 333,450) / 125,000 = .5324 -> 5,150 x .5324 = 2,741.86 -> 2,742 -> $2,408.",
+  "facts": {
+    "filingStatus": "single",
+    "meExemptions": 1,
+    "meAgi": 400000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.personal_exemption",
+  "expect": {
+    "valueCents": "240800"
+  }
+}

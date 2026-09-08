@@ -1,0 +1,14 @@
+{
+  "description": "ME dependent exemption credit: MFJ Maine AGI $150,000 -> no reduction -> $305.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meDependentsSixPlus": 1,
+    "meDependentsUnderSix": 0,
+    "meAgi": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.dependent_exemption_credit",
+  "expect": {
+    "valueCents": "30500"
+  }
+}

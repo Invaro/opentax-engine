@@ -1,0 +1,19 @@
+{
+  "description": "ME PTFC 65+: base cap $4,100 -> 3,000; 3,000 \u2212 1,600 = 1,400 -> min(1,400, 2,000) = $1,400.",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 40000,
+    "mePropertyTaxPaid": 3000,
+    "meRentPaid": 0,
+    "meRentIncludesUtilities": false,
+    "meUtilitiesAmount": 0,
+    "meAge65": true,
+    "meDisabledVeteran": false,
+    "meDependents13a": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.property_tax_fairness_credit",
+  "expect": {
+    "valueCents": "140000"
+  }
+}

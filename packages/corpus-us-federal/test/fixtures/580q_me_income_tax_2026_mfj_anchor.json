@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 MFJ $129,750 -> the $8,237 anchor.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 129750
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "823700"
+  }
+}

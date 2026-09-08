@@ -1,0 +1,13 @@
+{
+  "description": "ME EITC: 50% of the $600 federal EIC with no qualifying child = $300.",
+  "facts": {
+    "filingStatus": "single",
+    "meFederalEic": 600,
+    "meHasQualifyingChild": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.eitc",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

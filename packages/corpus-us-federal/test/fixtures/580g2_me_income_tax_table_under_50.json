@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, $49 -> booklet row '0 50 0 0 0' -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 49
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

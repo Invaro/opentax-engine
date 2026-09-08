@@ -1,0 +1,14 @@
+{
+  "description": "ME child care credit, all Star 5: 50% of $600 = $300.",
+  "facts": {
+    "filingStatus": "mfj",
+    "meFederalChildCareCredit": 600,
+    "meChildCareExpenses": 4000,
+    "meStar5ChildCareExpenses": 4000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.child_care_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

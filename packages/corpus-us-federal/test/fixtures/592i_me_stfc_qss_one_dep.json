@@ -1,0 +1,14 @@
+{
+  "description": "ME STFC qualifying surviving spouse, 1 dependent, income $50,950 -> $250 (joint table, 1 column).",
+  "facts": {
+    "filingStatus": "qss",
+    "meTotalIncome": 50950,
+    "meDependents13a": 1,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.sales_tax_fairness_credit",
+  "expect": {
+    "valueCents": "25000"
+  }
+}

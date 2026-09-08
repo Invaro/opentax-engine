@@ -1,0 +1,14 @@
+{
+  "description": "ME adult dependent care credit: $4,000 for one person -> $3,000 cap; federal AGI $20,000 -> .32 -> 960; 25% = $240.",
+  "facts": {
+    "filingStatus": "single",
+    "meAdultCareExpenses": 4000,
+    "meAdultCareQualifyingIndividuals": 1,
+    "meFederalAgi": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.adult_dependent_care_credit",
+  "expect": {
+    "valueCents": "24000"
+  }
+}

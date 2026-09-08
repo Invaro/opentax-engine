@@ -1,0 +1,12 @@
+{
+  "description": "ME single, 65+ and blind: $15,000 + 2 x $2,000 = $19,000 (chart).",
+  "facts": {
+    "filingStatus": "single",
+    "meAgeBlindBoxes": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1900000"
+  }
+}

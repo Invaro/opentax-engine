@@ -1,0 +1,14 @@
+{
+  "description": "ME STFC married filing separately -> $0.",
+  "facts": {
+    "filingStatus": "mfs",
+    "meTotalIncome": 20000,
+    "meDependents13a": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.sales_tax_fairness_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 standard deduction single -> $15,700 (\u00a7 5124-C(1-C), P.L. 2025, c. 650).",
+  "facts": {
+    "filingStatus": "single",
+    "meAgeBlindBoxes": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1570000"
+  }
+}

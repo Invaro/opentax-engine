@@ -1,0 +1,13 @@
+{
+  "description": "ME TY2026 personal exemption: 2 x $5,300 = $10,600 (MFJ, Maine AGI $409,150 \u2014 at the threshold, no reduction).",
+  "facts": {
+    "filingStatus": "mfj",
+    "meExemptions": 2,
+    "meAgi": 409150
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.personal_exemption",
+  "expect": {
+    "valueCents": "1060000"
+  }
+}

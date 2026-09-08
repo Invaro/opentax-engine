@@ -1,0 +1,13 @@
+{
+  "description": "ME rate schedule, single $100,000 -> $4,028 + 7.15% x 36,550 = 6,641.325 -> $6,641.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000,
+    "meUseRateSchedule": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "664100"
+  }
+}

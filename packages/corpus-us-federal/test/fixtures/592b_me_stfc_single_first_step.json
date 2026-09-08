@@ -1,0 +1,14 @@
+{
+  "description": "ME STFC single, income $25,451 -> 1 step -> $145 (table row 25,451-25,950).",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 25451,
+    "meDependents13a": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.sales_tax_fairness_credit",
+  "expect": {
+    "valueCents": "14500"
+  }
+}

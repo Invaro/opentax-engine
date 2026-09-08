@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 (MRS May 2026 rate sheet): single $50,000 -> $1,589 + 6.75% x 22,600 = 3,114.50 -> $3,115 (no 2026 table; schedule for all).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "311500"
+  }
+}

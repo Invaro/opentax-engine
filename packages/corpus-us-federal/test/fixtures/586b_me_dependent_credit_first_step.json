@@ -1,0 +1,14 @@
+{
+  "description": "ME dependent exemption credit: single Maine AGI $100,001 -> 1 step -> $1,220 \u2212 $20 = $1,200.",
+  "facts": {
+    "filingStatus": "single",
+    "meDependentsSixPlus": 2,
+    "meDependentsUnderSix": 1,
+    "meAgi": 100001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.dependent_exemption_credit",
+  "expect": {
+    "valueCents": "120000"
+  }
+}

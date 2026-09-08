@@ -37,6 +37,7 @@ import { nmRules } from "./state-nm.js";
 import { neRules } from "./state-ne.js";
 import { idRules } from "./state-id.js";
 import { wvRules } from "./state-wv.js";
+import { meRules } from "./state-me.js";
 import { otherStateRules } from "./state-other.js";
 
 export const stateParameterRules: Rule[] = [
@@ -64,5 +65,6 @@ export const stateParameterRules: Rule[] = [
   ...neRules,
   ...idRules,
   ...wvRules,
+  ...meRules,
   ...otherStateRules,
 ];

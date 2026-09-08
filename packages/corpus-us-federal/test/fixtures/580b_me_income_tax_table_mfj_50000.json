@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table, MFJ $50,000 -> 5.8% x 50,050 = 2,902.9 -> $2,903 (printed 2,903).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "290300"
+  }
+}

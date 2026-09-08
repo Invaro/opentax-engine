@@ -1,0 +1,19 @@
+{
+  "description": "ME PTFC: single, income $40,000, property tax $3,000 -> base min(3,000, 2,550) = 2,550; 4% x 40,000 = 1,600 -> 950 -> min(950, 1,000) = $950.",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 40000,
+    "mePropertyTaxPaid": 3000,
+    "meRentPaid": 0,
+    "meRentIncludesUtilities": false,
+    "meUtilitiesAmount": 0,
+    "meAge65": false,
+    "meDisabledVeteran": false,
+    "meDependents13a": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.property_tax_fairness_credit",
+  "expect": {
+    "valueCents": "95000"
+  }
+}

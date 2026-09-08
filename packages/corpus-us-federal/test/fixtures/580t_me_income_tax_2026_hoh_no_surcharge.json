@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 HOH $1,500,000 -> $6,178 + 7.15% x 1,402,700 = 106,471.05 -> $106,471; no surcharge at exactly $1,500,000.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 1500000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "10647100"
+  }
+}

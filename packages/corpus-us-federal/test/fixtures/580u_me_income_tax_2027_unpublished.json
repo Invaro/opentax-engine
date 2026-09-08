@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2027: brackets and the surcharge thresholds re-index -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2027-06-30",
+  "target": "us.me.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

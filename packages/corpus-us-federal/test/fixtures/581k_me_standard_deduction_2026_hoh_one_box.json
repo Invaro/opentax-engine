@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 HOH, 65+: $23,550 + $2,050 = $25,600.",
+  "facts": {
+    "filingStatus": "hoh",
+    "meAgeBlindBoxes": 1
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "2560000"
+  }
+}

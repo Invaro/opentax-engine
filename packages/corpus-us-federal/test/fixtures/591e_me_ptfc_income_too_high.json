@@ -1,0 +1,19 @@
+{
+  "description": "ME PTFC: single income $70,000 -> 4% = 2,800 > $2,550 base cap -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 70000,
+    "mePropertyTaxPaid": 3000,
+    "meRentPaid": 0,
+    "meRentIncludesUtilities": false,
+    "meUtilitiesAmount": 0,
+    "meAge65": false,
+    "meDisabledVeteran": false,
+    "meDependents13a": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.property_tax_fairness_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

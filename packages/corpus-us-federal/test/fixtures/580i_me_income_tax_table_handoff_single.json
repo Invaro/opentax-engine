@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table hand-off, single $100,000 -> '6,638 plus 7.15% of excess over 100,000' -> $6,638 (the rate schedule would give 6,641.325 -> $6,641).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "663800"
+  }
+}

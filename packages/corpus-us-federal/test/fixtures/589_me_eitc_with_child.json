@@ -1,0 +1,13 @@
+{
+  "description": "ME EITC: 25% of the $3,000 federal EIC with a qualifying child = $750.",
+  "facts": {
+    "filingStatus": "hoh",
+    "meFederalEic": 3000,
+    "meHasQualifyingChild": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.eitc",
+  "expect": {
+    "valueCents": "75000"
+  }
+}

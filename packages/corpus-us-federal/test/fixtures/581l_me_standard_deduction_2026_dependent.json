@@ -1,0 +1,12 @@
+{
+  "description": "ME TY2026 dependent filer -> the full $15,700 chart amount (no dependent limitation).",
+  "facts": {
+    "filingStatus": "single",
+    "meAgeBlindBoxes": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1570000"
+  }
+}

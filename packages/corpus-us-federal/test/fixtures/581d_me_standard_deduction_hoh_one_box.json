@@ -1,0 +1,12 @@
+{
+  "description": "ME HOH, 1 box: $22,500 + $2,000 = $24,500 (chart).",
+  "facts": {
+    "filingStatus": "hoh",
+    "meAgeBlindBoxes": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "2450000"
+  }
+}

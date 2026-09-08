@@ -1,0 +1,13 @@
+{
+  "description": "ME dependent filer (single) -> the full $15,000 chart amount: the amended \u00a7 5124-C(1-B) incorporates only the \u00a7 63(c)(3) age/blind amounts, and the booklet chart has no dependent row.",
+  "facts": {
+    "filingStatus": "single",
+    "meAgeBlindBoxes": 0,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.standard_deduction",
+  "expect": {
+    "valueCents": "1500000"
+  }
+}

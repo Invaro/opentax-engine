@@ -1,0 +1,15 @@
+{
+  "description": "ME TY2026 pension deduction: $49,824 cap but the M-3 phase-out thresholds re-index (unpublished) -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "meFederalAgi": 80000,
+    "meNonMilitaryPension": 60000,
+    "meSocialSecurityReceived": 20000,
+    "meMilitaryRetirement": 0
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.pension_deduction",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

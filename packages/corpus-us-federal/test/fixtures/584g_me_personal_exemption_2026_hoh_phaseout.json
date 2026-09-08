@@ -1,0 +1,13 @@
+{
+  "description": "ME TY2026 HOH Maine AGI $437,550: (437,550 \u2212 375,050) / 125,000 = .5000 -> $5,300 x .5 = 2,650 -> $2,650.",
+  "facts": {
+    "filingStatus": "hoh",
+    "meExemptions": 1,
+    "meAgi": 437550
+  },
+  "asOf": "2026-06-30",
+  "target": "us.me.personal_exemption",
+  "expect": {
+    "valueCents": "265000"
+  }
+}

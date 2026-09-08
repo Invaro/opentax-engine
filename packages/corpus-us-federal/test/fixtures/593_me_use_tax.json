@@ -1,0 +1,14 @@
+{
+  "description": "ME use tax: 5.5% of $1,000 = $55.",
+  "facts": {
+    "filingStatus": "single",
+    "meUseTaxPurchases": 1000,
+    "meUseTaxEstimate": false,
+    "meAgi": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.use_tax",
+  "expect": {
+    "valueCents": "5500"
+  }
+}

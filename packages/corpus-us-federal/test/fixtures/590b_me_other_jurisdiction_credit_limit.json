@@ -1,0 +1,15 @@
+{
+  "description": "ME other jurisdiction credit: limitation 1,500 < paid 2,000 -> $1,500.",
+  "facts": {
+    "filingStatus": "single",
+    "meAgi": 100000,
+    "meTaxBeforeCredits": 5000,
+    "meOtherJurisdictionIncome": 30000,
+    "meOtherJurisdictionTax": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.other_jurisdiction_credit",
+  "expect": {
+    "valueCents": "150000"
+  }
+}

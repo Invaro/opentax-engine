@@ -1,0 +1,14 @@
+{
+  "description": "ME STFC claimed as a dependent -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "meTotalIncome": 20000,
+    "meDependents13a": 0,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.sales_tax_fairness_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

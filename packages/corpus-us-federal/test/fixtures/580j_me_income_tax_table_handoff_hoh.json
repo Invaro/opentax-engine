@@ -1,0 +1,12 @@
+{
+  "description": "ME tax table hand-off, HOH $120,000 -> $6,384 + 7.15% x 20,000 = $7,814.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 120000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.income_tax",
+  "expect": {
+    "valueCents": "781400"
+  }
+}
