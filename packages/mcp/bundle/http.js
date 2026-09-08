@@ -578,7 +578,7 @@ var require_codegen = __commonJS({
             return e instanceof _If ? e : e.nodes;
           if (this.nodes.length)
             return this;
-          return new _If(not4(cond), e instanceof _If ? [e] : e.nodes);
+          return new _If(not5(cond), e instanceof _If ? [e] : e.nodes);
         }
         if (cond === false || !this.nodes.length)
           return void 0;
@@ -1030,20 +1030,20 @@ var require_codegen = __commonJS({
       for (const n in from)
         names[n] = (names[n] || 0) - (from[n] || 0);
     }
-    function not4(x) {
+    function not5(x) {
       return typeof x == "boolean" || typeof x == "number" || x === null ? !x : (0, code_1._)`!${par(x)}`;
     }
-    exports.not = not4;
+    exports.not = not5;
     var andCode = mappend(exports.operators.AND);
-    function and4(...args) {
+    function and5(...args) {
       return args.reduce(andCode);
     }
-    exports.and = and4;
+    exports.and = and5;
     var orCode = mappend(exports.operators.OR);
-    function or6(...args) {
+    function or7(...args) {
       return args.reduce(orCode);
     }
-    exports.or = or6;
+    exports.or = or7;
     function mappend(op) {
       return (x, y) => x === code_1.nil ? y : y === code_1.nil ? x : (0, code_1._)`${par(x)} ${op} ${par(y)}`;
     }
@@ -8637,12 +8637,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub16 of error2.issues) {
-    if (sub16.path.length > 0) {
-      fieldErrors[sub16.path[0]] = fieldErrors[sub16.path[0]] || [];
-      fieldErrors[sub16.path[0]].push(mapper(sub16));
+  for (const sub17 of error2.issues) {
+    if (sub17.path.length > 0) {
+      fieldErrors[sub17.path[0]] = fieldErrors[sub17.path[0]] || [];
+      fieldErrors[sub17.path[0]].push(mapper(sub17));
     } else {
-      formErrors.push(mapper(sub16));
+      formErrors.push(mapper(sub17));
     }
   }
   return { formErrors, fieldErrors };
@@ -15040,8 +15040,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub16) => {
-      this.issues = [...this.issues, sub16];
+    this.addIssue = (sub17) => {
+      this.issues = [...this.issues, sub17];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -15108,13 +15108,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub16 of this.issues) {
-      if (sub16.path.length > 0) {
-        const firstEl = sub16.path[0];
+    for (const sub17 of this.issues) {
+      if (sub17.path.length > 0) {
+        const firstEl = sub17.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub16));
+        fieldErrors[firstEl].push(mapper(sub17));
       } else {
-        formErrors.push(mapper(sub16));
+        formErrors.push(mapper(sub17));
       }
     }
     return { formErrors, fieldErrors };
@@ -24166,7 +24166,8 @@ var JURISDICTION_NAMES = {
   "us.ar": "arkansas ar ar1000f little rock fayetteville fort smith low income tax table",
   "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
   "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
-  "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund"
+  "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund",
+  "us.wv": "west virginia wv it-140 schedule m charleston family tax credit senior citizens tax credit homestead excess"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -25007,7 +25008,7 @@ function composeMO(input, evalStateTax, notes) {
   const l2124 = rd(c(input.moOtherDeductions));
   const l25 = l8 + l13 + l14 + l15 + l16 + l17 + l18 + l19 + l2124;
   const l26 = l6 - l25;
-  const alloc = (pct6) => rd((l26 * pct6 + 50n) / 100n);
+  const alloc = (pct7) => rd((l26 * pct7 + 50n) / 100n);
   const l27Y = pctY === 100n ? rd(l26) : alloc(pctY);
   const l27S = pctS === 0n ? 0n : pctS === 100n ? rd(l26) : alloc(pctS);
   const l28Y = rd(c(input.moEnterpriseZoneYou));
@@ -26970,7 +26971,7 @@ function composeAR(input, evalStateTax, notes) {
     const stS = married ? c(input.arSpouseShortTermGain) : 0n;
     if (!married && c(input.arSpouseLongTermGain) + c(input.arSpouseShortTermGain) !== 0n)
       n.push("AR line 14: arSpouseLongTermGain / arSpouseShortTermGain ignored \u2014 only a married couple on one return has a spouse column");
-    const cg = (lt15, st, s4) => lt15 !== 0n || st !== 0n ? rd(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt15, arShortTermGain: st, arStatus4: s4 })) : 0n;
+    const cg = (lt16, st, s4) => lt16 !== 0n || st !== 0n ? rd(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt16, arShortTermGain: st, arStatus4: s4 })) : 0n;
     const l14A = status4 ? cg(ltP, stP, true) : cg(ltP + ltS, stP + stS, false);
     const l14B = status4 ? cg(ltS, stS, true) : 0n;
     const l14 = l14A + l14B;
@@ -27057,10 +27058,10 @@ function composeAR(input, evalStateTax, notes) {
       if (itemize) {
         method = "itemized";
         if (status4) {
-          const pct6 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
-          a27 = (itemized * pct6 + 50n) / 100n;
+          const pct7 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
+          a27 = (itemized * pct7 + 50n) / 100n;
           b27 = itemized - a27;
-          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct6}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
+          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct7}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
         } else
           a27 = itemized;
         if (fs === "mfs")
@@ -28060,6 +28061,219 @@ function composeID(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/wv.js
+var D5 = (x) => rd(c(x));
+function composeWV(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the West Virginia Form IT-140 composer");
+  const mfj = fs === "mfj";
+  const mfs = fs === "mfs";
+  const dependentFiler = input.claimedAsDependent === true;
+  const deps = dependentFiler ? 0 : input.dependents ?? 0;
+  if (dependentFiler && (input.dependents ?? 0) > 0)
+    notes.push("WV exemptions: 'You cannot claim any dependents if you can be claimed as a dependent on another person's return' \u2014 dependents dropped");
+  if (fs === "qss")
+    notes.push("WV filing status 5 'Widow(er) with dependent child' \u2014 Rate Schedule I and the Tax Table, like single and joint filers");
+  if (mfs)
+    notes.push("WV married filing separately: Rate Schedule II (half brackets) is mandatory \u2014 the Tax Table may not be used; Family Tax Credit Table 2 and the $5,000 low-income exclusion apply");
+  const boxA = dependentFiler ? 0 : 1;
+  const boxB = mfj && input.wvSpouseClaimedAsDependent !== true ? 1 : 0;
+  const boxC = deps;
+  const boxD = input.wvSurvivingSpouseExemption === true ? 1 : 0;
+  const boxE = boxA + boxB + boxC + boxD;
+  if (boxD)
+    notes.push("WV exemption box (d): surviving spouse extra $2,000 exemption \u2014 allowed for the two taxable years after the year of the spouse's death if not remarried (\xA7 11-21-16(c))");
+  const l1 = rd(c(input.federalAGI));
+  const l2 = D5(input.wvNonWvBondInterest) + D5(input.additions);
+  if (l2 > 0n)
+    notes.push(`WV line 2 (Schedule M lines 51-59): additions ${fmtD(l2)} \u2014 non-West Virginia state and local bond interest ${fmtD(D5(input.wvNonWvBondInterest))} plus other additions ${fmtD(D5(input.additions))}`);
+  const ssTotal = D5(input.taxableSocialSecurity);
+  const ssB = mfj ? min2(D5(input.wvSpouseTaxableSocialSecurity), ssTotal) : 0n;
+  const ssA = ssTotal - ssB;
+  const ssMod = (x) => x > 0n ? rd(evalStateTax("us.wv.social_security_modification", 0n, { wvAgi: l1, wvTaxableSocialSecurity: x })) : 0n;
+  const l34A = ssMod(ssA);
+  const l34B = ssMod(ssB);
+  const ssLimit = mfj ? 10000000n : 5000000n;
+  if (ssTotal > 0n)
+    notes.push(l1 <= ssLimit ? `WV Schedule M line 34: Social Security ${fmtD(ssTotal)} subtracted in full \u2014 federal AGI is not over ${fmtD(ssLimit)} (\xA7 11-21-12(c)(8)(A)-(B))` : `WV Schedule M line 34: 65% of the ${fmtD(ssTotal)} taxable Social Security subtracted (${fmtD(l34A + l34B)}) \u2014 federal AGI exceeds ${fmtD(ssLimit)}; 100% for tax years beginning in 2026 (\xA7 11-21-12(c)(8)(D)-(E))`);
+  const l33A = min2(D5(input.wvPersTrsFederalRetirement), 200000n);
+  const l33B = mfj ? min2(D5(input.wvSpousePersTrsFederalRetirement), 200000n) : 0n;
+  if (D5(input.wvPersTrsFederalRetirement) > 200000n || mfj && D5(input.wvSpousePersTrsFederalRetirement) > 200000n)
+    notes.push("WV Schedule M line 33: PERS / Teachers' Retirement / federal retirement modification capped at $2,000 per person");
+  if (!mfj && (D5(input.wvSpouseTaxableSocialSecurity) + D5(input.wvSpouseUsInterest) + D5(input.wvSpouseFederalLawEnforcementRetirement) + D5(input.wvSpousePoliceFireRetirement) + D5(input.wvSpouseMilitaryRetirement) + D5(input.wvSpousePersTrsFederalRetirement) > 0n || input.wvSpouseAge65OrDisabled === true))
+    notes.push("WV Schedule M column B: spouse inputs ignored \u2014 column B applies only to a joint return");
+  const colA2934 = D5(input.wvUsInterest) + D5(input.wvFederalLawEnforcementRetirement) + D5(input.wvPoliceFireRetirement) + D5(input.wvMilitaryRetirement) + l33A + l34A;
+  const colB2934 = mfj ? D5(input.wvSpouseUsInterest) + D5(input.wvSpouseFederalLawEnforcementRetirement) + D5(input.wvSpousePoliceFireRetirement) + D5(input.wvSpouseMilitaryRetirement) + l33B + l34B : 0n;
+  const jumpstart = min2(D5(input.wvJumpstartDeposits), 2500000n);
+  if (D5(input.wvJumpstartDeposits) > jumpstart)
+    notes.push("WV Schedule M line 44: Jumpstart Savings deposits capped at $25,000");
+  const other3546 = D5(input.wvActiveDutyPay) + D5(input.wvStateRefund) + D5(input.wvSmart529Contributions) + D5(input.wvRailroadRetirement) + D5(input.wvLongTermCarePremiums) + D5(input.wvAbleContributions) + jumpstart + D5(input.wvGamblingLosses) + D5(input.subtractions);
+  const seniorMod = (eligible, otherIncome, lines2934) => eligible ? rd(evalStateTax("us.wv.senior_citizen_modification", 0n, { wvSeniorOrDisabled: true, wvIncomeNotOnLines35to46: typeof otherIncome === "number" ? c(otherIncome) : 800000n, wvLines29to34: lines2934 })) : 0n;
+  const defaultOtherIncomeA = mfj ? 800000n : max02(l1 + l2 - other3546);
+  const l47A = seniorMod(input.wvTaxpayerAge65OrDisabled === true, typeof input.wvTaxpayerIncomeNotOnLines35to46 === "number" ? input.wvTaxpayerIncomeNotOnLines35to46 : Number(defaultOtherIncomeA) / 100, colA2934);
+  const l47B = mfj ? seniorMod(input.wvSpouseAge65OrDisabled === true, input.wvSpouseIncomeNotOnLines35to46, colB2934) : 0n;
+  if (l47A + l47B > 0n)
+    notes.push(`WV Schedule M line 47: senior citizen / disability modification ${fmtD(l47A + l47B)} \u2014 up to $8,000 of each eligible person's other income, less that person's lines 29-34 (${fmtD(colA2934)} you${mfj ? `, ${fmtD(colB2934)} spouse` : ""})${typeof input.wvTaxpayerIncomeNotOnLines35to46 !== "number" ? "; box (c) assumed at the $8,000 cap \u2014 pass wvTaxpayerIncomeNotOnLines35to46 if the person's other income is under $8,000" : ""}`);
+  else if (input.wvTaxpayerAge65OrDisabled === true || input.wvSpouseAge65OrDisabled === true)
+    notes.push("WV Schedule M line 47: no senior citizen modification \u2014 the eligible person's lines 29-34 subtractions already reach $8,000");
+  const l48 = input.wvSurvivingSpouseModification === true ? rd(evalStateTax("us.wv.surviving_spouse_modification", 0n, { wvSurvivingSpouseEligible: true, wvLines29to34: colA2934 + l47A })) : 0n;
+  if (l48 > 0n)
+    notes.push(`WV Schedule M line 48: surviving spouse modification ${fmtD(l48)} \u2014 $8,000 less lines 29-34 and the line 47 modification (the two together may not exceed $8,000); one time, in the taxable year after the death`);
+  const l3 = colA2934 + colB2934 + other3546 + l47A + l47B + l48;
+  if (other3546 > 0n)
+    notes.push(`WV Schedule M lines 35-46: other subtractions ${fmtD(other3546)} (active duty pay, state refunds, SMART529, Railroad Retirement, long-term care premiums, ABLE, Jumpstart, gambling losses, other)`);
+  const l4 = l1 + l2 - l3;
+  let l5 = 0n;
+  const lowCap = mfs ? 500000n : 1000000n;
+  if (l1 <= lowCap) {
+    if (typeof input.wvEarnedIncome === "number") {
+      l5 = rd(evalStateTax("us.wv.low_income_exclusion", 0n, { wvAgi: l1, wvEarnedIncome: c(input.wvEarnedIncome) }));
+      notes.push(`WV line 5: low-income earned income exclusion ${fmtD(l5)} \u2014 federal AGI ${fmtD(l1)} is not over ${fmtD(lowCap)}; the smaller of federal AGI, earned income ${fmtD(D5(input.wvEarnedIncome))}, and ${fmtD(lowCap)}`);
+    } else
+      notes.push(`WV line 5: federal AGI ${fmtD(l1)} qualifies for the low-income earned income exclusion (up to ${fmtD(lowCap)}) \u2014 pass wvEarnedIncome to claim it (assumed $0)`);
+  }
+  const l6 = rd(evalStateTax("us.wv.exemption_deduction", 0n, { wvExemptions: boxE }));
+  if (boxE === 0)
+    notes.push("WV line 6: zero exemptions (claimable as a dependent) \u2014 the $500 allowance applies");
+  const l7 = max02(l4 - l5 - l6);
+  const useSchedule = input.wvUseRateSchedule === true;
+  const l8 = rd(evalStateTax("us.wv.income_tax", l7, { wvUseRateSchedule: useSchedule }));
+  const tableUsed = !useSchedule && !mfs && l7 >= 2500n && l7 < 10000000n;
+  notes.push(tableUsed ? "WV line 8: Tax Table (Rate Schedule I at the row midpoint) \u2014 'apply the amount of taxable income shown on line 7 to the Tax Table'; pass wvUseRateSchedule for the schedule at the exact income" : `WV line 8: Rate Schedule ${mfs ? "II" : "I"} applied at the exact income${!mfs && !useSchedule ? l7 >= 10000000n ? " (taxable income $100,000 or more)" : " (below the table's first row)" : ""}`);
+  const otherRecap = D5(input.nonrefundableCredits);
+  const fedCdcc = D5(input.wvFederalChildCareCredit);
+  const recap18 = fedCdcc > 0n ? rd(evalStateTax("us.wv.child_care_credit", 0n, { wvFederalChildCareCredit: fedCdcc })) : 0n;
+  if (recap18 > 0n)
+    notes.push(`WV Recap line 18: child and dependent care credit ${fmtD(recap18)} = 50% of the ${fmtD(fedCdcc)} federal credit (attach federal Form 2441); nonrefundable`);
+  const familySize = boxA + boxB + boxC;
+  const mfagi = l1 + l2 + D5(input.wvFederalTaxExemptInterest);
+  const amt = input.wvFederalAmt === true;
+  const recap2 = rd(evalStateTax("us.wv.family_tax_credit", 0n, { wvFamilySize: familySize, wvModifiedAgi: mfagi, wvTaxBeforeCredits: l8, wvFederalAmt: amt }));
+  if (recap2 > 0n)
+    notes.push(`WV Recap line 2 (Schedule FTC-1): Family Tax Credit ${fmtD(recap2)} \u2014 family size ${familySize}, modified federal AGI ${fmtD(mfagi)} against the 2025 poverty-guideline table${mfs ? " (Table 2)" : ""}`);
+  else if (familySize === 0 && l8 > 0n)
+    notes.push("WV Recap line 2: no Family Tax Credit \u2014 'Individuals who file their income tax return with zero exemptions cannot claim the credit'");
+  else if (amt)
+    notes.push("WV Recap line 2: no Family Tax Credit \u2014 federal alternative minimum tax paid");
+  let recap1 = 0n;
+  if (D5(input.wvOtherStateTax) > 0n && D5(input.wvOtherStateIncome) > 0n) {
+    const altTaxable = max02(l7 - D5(input.wvOtherStateIncome));
+    const altTax = rd(evalStateTax("us.wv.income_tax", altTaxable, { wvUseRateSchedule: true }));
+    recap1 = rd(evalStateTax("us.wv.other_state_credit", 0n, { wvOtherStateTax: c(input.wvOtherStateTax), wvTaxBeforeCredits: l8, wvOtherStateIncome: c(input.wvOtherStateIncome), wvAdjustedGrossIncome: l4, wvAlternativeTax: altTax, wvOtherRecapCredits: recap2 + recap18 + otherRecap }));
+    notes.push(`WV Recap line 1 (Schedule E): credit for income tax paid to another state ${fmtD(recap1)} \u2014 the smallest of the other state's tax ${fmtD(D5(input.wvOtherStateTax))}, the WV tax ${fmtD(l8)}, ${fmtD(l8)} \xD7 ${fmtD(D5(input.wvOtherStateIncome))} \xF7 ${fmtD(l4)}, the WV tax less the Rate Schedule tax on ${fmtD(altTaxable)} (${fmtD(altTax)}), and the WV tax less the other Recap credits; one Schedule E per state; no credit for city or foreign taxes`);
+  }
+  if (otherRecap > 0n)
+    notes.push(`WV Recap lines 3-17, 19-26: other nonrefundable credits ${fmtD(otherRecap)} transcribed`);
+  const recap27 = recap1 + recap2 + recap18 + otherRecap;
+  const l9 = recap27;
+  const l10 = max02(l8 - l9);
+  if (l9 > l8)
+    notes.push(`WV line 10: Recap credits ${fmtD(l9)} exceed the tax ${fmtD(l8)} \u2014 nonrefundable, the excess is lost`);
+  const l11 = D5(input.wvAmendedRefund);
+  const l12 = D5(input.wvUnderpaymentPenalty);
+  const munBps = Math.round((input.wvMunicipalUseTaxRate ?? 0) * 100);
+  const l13 = D5(input.wvUseTaxPurchases) + D5(input.wvMunicipalUseTaxPurchases) > 0n ? rd(evalStateTax("us.wv.use_tax", 0n, { wvUseTaxPurchases: c(input.wvUseTaxPurchases), wvMunicipalUseTaxPurchases: c(input.wvMunicipalUseTaxPurchases), wvMunicipalUseTaxRateBps: munBps })) : 0n;
+  if (l13 > 0n)
+    notes.push(`WV line 13 (Schedule UT): use tax ${fmtD(l13)} \u2014 6% state${munBps > 0 ? ` plus ${(munBps / 100).toFixed(1)}% municipal` : ""} on untaxed purchases`);
+  const l14 = l10 + l11 + l12 + l13;
+  const l15 = D5(input.stateWithholding) + D5(input.spouseStateWithholding);
+  const l16 = D5(input.estimatedPayments) + D5(input.priorYearOverpaymentCredited) + D5(input.extensionPayment);
+  const l17 = D5(input.wvNonFamilyAdoptionCredit);
+  const householdSize = Math.max(1, input.wvHouseholdSize ?? boxA + boxB + boxC);
+  const householdIncome2 = input.wvNotRequiredToFileFederally === true && typeof input.wvHouseholdIncomeLessSocialSecurity === "number" ? D5(input.wvHouseholdIncomeLessSocialSecurity) : l1;
+  const dvClaimed = D5(input.wvDisabledVeteranPropertyTax) > 0n;
+  let l18 = 0n;
+  if (D5(input.wvSeniorCitizenCreditAmount) > 0n) {
+    l18 = rd(evalStateTax("us.wv.senior_citizens_tax_credit", 0n, { wvHouseholdSize: householdSize, wvHouseholdIncome: householdIncome2, wvFederalAmt: amt, wvDisabledVeteranCreditClaimed: dvClaimed, wvSeniorCitizenCreditAmount: c(input.wvSeniorCitizenCreditAmount) }));
+    notes.push(l18 > 0n ? `WV line 18: Senior Citizens Tax Credit ${fmtD(l18)} from the mailed Schedule SCTC-A (household of ${householdSize}, income ${fmtD(householdIncome2)} within 150% of the poverty guideline); refundable; not refunded if under $10` : `WV line 18: no Senior Citizens Tax Credit \u2014 ${dvClaimed ? "the Disabled Veteran credit is claimed" : amt ? "federal AMT paid" : `income ${fmtD(householdIncome2)} exceeds 150% of the poverty guideline for a household of ${householdSize}`}`);
+  }
+  let l19 = 0n;
+  if (D5(input.wvPropertyTaxPaid) > 0n) {
+    l19 = rd(evalStateTax("us.wv.homestead_excess_property_tax_credit", 0n, {
+      wvHouseholdSize: householdSize,
+      wvHouseholdIncome: householdIncome2,
+      wvFederalAmt: amt,
+      wvDisabledVeteranCreditClaimed: dvClaimed,
+      wvPropertyTaxPaid: c(input.wvPropertyTaxPaid),
+      wvSeniorCitizenCredit: l18,
+      wvAgi: l1,
+      wvAdditions: l2,
+      wvTaxExemptInterest: c(input.wvFederalTaxExemptInterest),
+      wvWorkersCompensation: c(input.wvWorkersCompensation),
+      wvNontaxableSocialSecurity: c(input.wvNontaxableSocialSecurity),
+      wvOtherHouseholdIncome: c(input.wvOtherHouseholdIncome)
+    }));
+    notes.push(l19 > 0n ? `WV line 19 (Schedule HEPTC-1): Homestead Excess Property Tax Credit ${fmtD(l19)} \u2014 property tax ${fmtD(D5(input.wvPropertyTaxPaid))} less the SCTC ${fmtD(l18)}, over 4% of gross household income, capped at $1,000; refundable; attach the Class 2 receipt` : `WV line 19: no Homestead Excess Property Tax Credit \u2014 ${dvClaimed ? "the Disabled Veteran credit is claimed" : amt ? "federal AMT paid" : "property tax does not exceed 4% of gross household income, or income exceeds 300% of the poverty guideline"}`);
+  }
+  const l20 = D5(input.wvBuildWvCredit);
+  const l21a = D5(input.wvMotorVehicleTaxPaid);
+  const l21b = D5(input.wvDisabledVeteranPropertyTax);
+  const l21c = rd(c(input.wvSmallBusinessPropertyTax) / 2n);
+  const l21 = l21a + l21b + l21c;
+  if (l21a > 0n)
+    notes.push(`WV line 21A: motor vehicle property tax adjustment credit ${fmtD(l21a)} \u2014 100% of the personal property tax timely paid on owned vehicles (\xA7 11-13MM-3), refundable; attach Schedule MV-1`);
+  if (l21b > 0n)
+    notes.push(`WV line 21B: disabled veteran real property tax credit ${fmtD(l21b)} \u2014 100% of the timely paid homestead tax (\xA7 11-13MM-4), refundable; the SCTC and HEPTC may not also be claimed`);
+  if (l21c > 0n)
+    notes.push(`WV line 21C: small business property tax adjustment credit ${fmtD(l21c)} \u2014 50% of ${fmtD(D5(input.wvSmallBusinessPropertyTax))} of timely paid personal property tax (\xA7 11-13MM-5)`);
+  const l22 = D5(input.wvAmendedPaid);
+  const l23 = l15 + l16 + l17 + l18 + l19 + l20 + l21 + l22;
+  const l24 = max02(l14 - l23);
+  const l25 = max02(l23 - l14);
+  const l26 = D5(input.wvDonations);
+  const l27 = min2(D5(input.wvCreditForward), max02(l25 - l26));
+  const l28 = max02(l25 - l26 - l27);
+  if (l26 > 0n && l25 < l26)
+    notes.push(`WV line 26: donations ${fmtD(l26)} exceed the overpayment \u2014 the excess is added to the balance due`);
+  const dueWithDonations = l24 + (l26 > l25 ? l26 - l25 : 0n);
+  if (l28 > 0n && l28 <= 200n)
+    notes.push("WV line 28: 'To receive a refund of $2 or less, you must enclose a signed statement with your return requesting that the refund be sent to you'");
+  if (dueWithDonations > 0n && l12 === 0n && l8 - l9 - l15 - l17 - l18 - l19 - l20 - l21 > 60000n)
+    notes.push("WV line 12: line 8 minus lines 9, 15, 17-21 exceeds $600 \u2014 check Form IT-210 for an underpayment penalty (90% of this year's or 100% of last year's tax)");
+  notes.push("WV scope: Form IT-140 is composed for a full-year RESIDENT \u2014 nonresidents and part-year residents apportion on Schedule A (not composed); Schedules SCTC-A, HEPTC-1 receipts, MV-1, NFA-1, PVA-2, IT-210, and the Recap business credits are inputs; West Virginia has no standard or itemized deduction (only gambling losses) and no local income tax");
+  const put = (k, v) => v !== 0n ? { [k]: fmtD(v) } : {};
+  return {
+    e_total_exemptions: String(boxE),
+    "1_federal_agi": fmtD(l1),
+    ...put("2_additions", l2),
+    ...put("3_subtractions", l3),
+    ...put("M34_social_security", l34A + l34B),
+    ...put("M47_senior_citizen_modification", l47A + l47B),
+    ...put("M48_surviving_spouse_modification", l48),
+    "4_wv_adjusted_gross_income": fmtD(l4),
+    ...put("5_low_income_exclusion", l5),
+    "6_exemptions": fmtD(l6),
+    "7_wv_taxable_income": fmtD(l7),
+    "8_income_tax": fmtD(l8),
+    _tax_method: tableUsed ? "tax table" : mfs ? "rate schedule II" : "rate schedule I",
+    ...put("recap1_other_state_credit", recap1),
+    ...put("recap2_family_tax_credit", recap2),
+    ...put("recap18_child_care_credit", recap18),
+    ...put("recap_other_credits", otherRecap),
+    "9_total_credits": fmtD(l9),
+    "10_total_income_tax_due": fmtD(l10),
+    ...put("11_amended_prior_refund", l11),
+    ...put("12_underpayment_penalty", l12),
+    ...put("13_use_tax", l13),
+    "14_total_amount_due": fmtD(l14),
+    ...put("15_withholding", l15),
+    ...put("16_estimated_payments", l16),
+    ...put("17_nonfamily_adoption_credit", l17),
+    ...put("18_senior_citizens_tax_credit", l18),
+    ...put("19_homestead_excess_property_tax_credit", l19),
+    ...put("20_build_wv_credit", l20),
+    ...put("21_property_tax_adjustment_credits", l21),
+    ...put("22_amended_paid", l22),
+    "23_payments_and_refundable_credits": fmtD(l23),
+    "24_balance_due": fmtD(dueWithDonations),
+    "25_overpayment": fmtD(l25),
+    ...put("26_donations", l26),
+    ...put("27_credit_forward", l27),
+    "28_refund": fmtD(l28)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -28449,11 +28663,11 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id/wv \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -29230,7 +29444,67 @@ var idShape = {
   // (Form 39R Part B line 7, 100%), dependents (line 6c → Food Tax Credit), claimedAsDependent (line 12c), ageOrBlindBoxes (lines 12a-12b),
   // stateWithholding/spouseStateWithholding (line 46), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 47).
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape };
+var wvShape = {
+  wvUseRateSchedule: external_exports.boolean().optional().describe("WV line 8: compute from the Rate Schedule at the exact income instead of the printed Tax Table (single/HOH/MFJ/widow(er) under $100,000 use the table by instruction; MFS and $100,000+ always use the schedule)"),
+  wvSpouseClaimedAsDependent: external_exports.boolean().optional().describe("WV exemption box (b): the spouse can be claimed as a dependent on another return \u2014 no spouse exemption"),
+  wvSurvivingSpouseExemption: external_exports.boolean().optional().describe("WV exemption box (d): an unremarried surviving spouse in one of the two taxable years after the year of the spouse's death \u2014 one extra $2,000 exemption"),
+  wvSurvivingSpouseModification: external_exports.boolean().optional().describe("WV Schedule M line 48: unremarried surviving spouse of a decedent who was 65 or disabled, in the taxable year after the death \u2014 up to $8,000 less lines 29-34"),
+  wvEarnedIncome: usd.optional().describe("WV line 5 low-income exclusion: earned income (wages, salaries, tips, net self-employment) \u2014 REQUIRED when federal AGI is $10,000 or less ($5,000 MFS) for the exclusion to be computed"),
+  wvNonWvBondInterest: usd.optional().describe("WV Schedule M line 52: interest or dividends on non-West Virginia state and local bonds (added)"),
+  wvSpouseTaxableSocialSecurity: usd.optional().describe("WV Schedule M line 34 column B: the SPOUSE's share of federally taxable Social Security (taxableSocialSecurity is the joint total; the taxpayer's column is the remainder)"),
+  wvUsInterest: usd.optional().describe("WV Schedule M line 29 column A: interest/dividends on U.S. and West Virginia obligations exempt from state tax"),
+  wvSpouseUsInterest: usd.optional().describe("WV Schedule M line 29 column B (spouse)"),
+  wvFederalLawEnforcementRetirement: usd.optional().describe("WV Schedule M line 30 column A: retired federal law enforcement officer / firefighter retirement benefits (100%)"),
+  wvSpouseFederalLawEnforcementRetirement: usd.optional().describe("WV Schedule M line 30 column B (spouse)"),
+  wvPoliceFireRetirement: usd.optional().describe("WV Schedule M line 31 column A: West Virginia state or local police, deputy sheriffs', or firemen's retirement (100%, excluding PERS)"),
+  wvSpousePoliceFireRetirement: usd.optional().describe("WV Schedule M line 31 column B (spouse)"),
+  wvMilitaryRetirement: usd.optional().describe("WV Schedule M line 32 column A: military retirement including survivorship annuities (100%)"),
+  wvSpouseMilitaryRetirement: usd.optional().describe("WV Schedule M line 32 column B (spouse)"),
+  wvPersTrsFederalRetirement: usd.optional().describe("WV Schedule M line 33 column A: West Virginia PERS / Teachers' Retirement plus federal retirement not on line 30 \u2014 the composer caps the combined amount at $2,000 per person"),
+  wvSpousePersTrsFederalRetirement: usd.optional().describe("WV Schedule M line 33 column B (spouse), capped at $2,000"),
+  wvActiveDutyPay: usd.optional().describe("WV Schedule M lines 36-37: qualifying active duty (Title 10 contingency operations) and active military separation pay"),
+  wvStateRefund: usd.optional().describe("WV Schedule M line 38: state and local income tax refunds included in federal income"),
+  wvSmart529Contributions: usd.optional().describe("WV Schedule M line 39: SMART529 / Prepaid Tuition Trust contributions (no cap; annual statement required)"),
+  wvRailroadRetirement: usd.optional().describe("WV Schedule M line 40: Railroad Retirement Board income in federal AGI (100%)"),
+  wvLongTermCarePremiums: usd.optional().describe("WV Schedule M line 41: long-term care insurance premiums"),
+  wvAbleContributions: usd.optional().describe("WV Schedule M line 43: ABLE account contributions"),
+  wvJumpstartDeposits: usd.optional().describe("WV Schedule M line 44: Jumpstart Savings Program deposits \u2014 the composer caps at $25,000"),
+  wvGamblingLosses: usd.optional().describe("WV Schedule M line 46: gambling losses (not more than winnings; federal itemizers only)"),
+  wvTaxpayerAge65OrDisabled: external_exports.boolean().optional().describe("WV Schedule M line 47 column A: the taxpayer is 65 or older on December 31 or certified permanently and totally disabled \u2014 up to $8,000 modification net of lines 29-34"),
+  wvSpouseAge65OrDisabled: external_exports.boolean().optional().describe("WV Schedule M line 47 column B: the spouse is 65 or older or certified disabled (joint returns)"),
+  wvTaxpayerIncomeNotOnLines35to46: usd.optional().describe("WV Schedule M line 47 box (c) column A: the taxpayer's income not reported on lines 35-46 (defaults to $8,000, the cap)"),
+  wvSpouseIncomeNotOnLines35to46: usd.optional().describe("WV Schedule M line 47 box (c) column B (defaults to $8,000)"),
+  wvFederalTaxExemptInterest: usd.optional().describe("WV Schedule FTC-1 line 3 / HEPTC-1 line 4b: federal tax-exempt interest not already in line 2"),
+  wvFederalAmt: external_exports.boolean().optional().describe("WV: the filer paid federal alternative minimum tax \u2014 no Family Tax Credit, SCTC, or HEPTC"),
+  wvFederalChildCareCredit: usd.optional().describe("WV Recap line 18: the federal child and dependent care credit (Form 2441) \u2014 50% nonrefundable"),
+  wvOtherStateTax: usd.optional().describe("WV Schedule E line 1: income tax computed on the other state's return (not withholding; not city taxes) \u2014 attach nothing, keep the return"),
+  wvOtherStateIncome: usd.optional().describe("WV Schedule E line 3: net income derived from the other state included in West Virginia total income"),
+  wvHouseholdSize: external_exports.number().int().optional().describe("WV SCTC / HEPTC: number of people living in the household (defaults to 1 + spouse + dependents)"),
+  wvSeniorCitizenCreditAmount: usd.optional().describe("WV line 18: the Senior Citizens Tax Credit from the mailed Schedule SCTC-A Part III line 2 (Homestead Exemption participants; federal AGI \u2264 150% of poverty)"),
+  wvPropertyTaxPaid: usd.optional().describe("WV Schedule HEPTC-1 line 1: West Virginia property tax paid on the owner-occupied home in 2025 (after discount, before interest; Class 2 receipt required)"),
+  wvWorkersCompensation: usd.optional().describe("WV Schedule HEPTC-1 line 4c: workers' compensation received"),
+  wvNontaxableSocialSecurity: usd.optional().describe("WV Schedule HEPTC-1 line 4d: Social Security, SSI, and SSDI received but not in federal AGI"),
+  wvOtherHouseholdIncome: usd.optional().describe("WV Schedule HEPTC-1 line 4e: income of other household members who would file separately"),
+  wvNotRequiredToFileFederally: external_exports.boolean().optional().describe("WV SCTC / HEPTC eligibility: not required to file a federal return \u2014 the poverty-guideline test then uses income less Social Security benefits (pass wvHouseholdIncomeLessSocialSecurity)"),
+  wvHouseholdIncomeLessSocialSecurity: usd.optional().describe("WV SCTC / HEPTC: income excluding Social Security when not required to file federally"),
+  wvNonFamilyAdoptionCredit: usd.optional().describe("WV line 17: Non-Family Adoption Tax Credit (Schedule NFA-1)"),
+  wvBuildWvCredit: usd.optional().describe("WV line 20: Build WV Property Value Adjustment refundable credit (Schedule PVA-2)"),
+  wvMotorVehicleTaxPaid: usd.optional().describe("WV line 21A: personal property tax timely paid to the sheriff on owned motor vehicles \u2014 100% refundable credit (\xA7 11-13MM-3; Schedule MV-1)"),
+  wvDisabledVeteranPropertyTax: usd.optional().describe("WV line 21B: real property tax timely paid on a disabled veteran's (or eligible widowed spouse's) homestead \u2014 100% refundable (\xA7 11-13MM-4); bars the SCTC and HEPTC"),
+  wvSmallBusinessPropertyTax: usd.optional().describe("WV line 21C: personal property tax timely paid by an eligible small business (\u2264 $1 million appraised), net of vehicle tax claimed in 21A \u2014 50% credit (\xA7 11-13MM-5)"),
+  wvUnderpaymentPenalty: usd.optional().describe("WV line 12: Form IT-210 underpayment penalty"),
+  wvUseTaxPurchases: usd.optional().describe("WV line 13 / Schedule UT line 1: purchases subject to the 6% state use tax on which no sales tax was paid (net of credit for sales tax paid elsewhere)"),
+  wvMunicipalUseTaxPurchases: usd.optional().describe("WV Schedule UT Part II: purchases used in a municipality with a municipal use tax"),
+  wvMunicipalUseTaxRate: external_exports.number().optional().describe("WV Schedule UT Part II: municipal use tax rate in percent (0.5 or 1)"),
+  wvDonations: usd.optional().describe("WV line 26: donations to the Children's Trust Fund, Division of Veterans Assistance, and State Veterans Cemetery"),
+  wvCreditForward: usd.optional().describe("WV line 27: overpayment to credit to 2026 estimated tax"),
+  wvAmendedRefund: usd.optional().describe("WV line 11 (amended only): overpayment previously refunded or credited"),
+  wvAmendedPaid: usd.optional().describe("WV line 22 (amended only): amount paid with the original return")
+  // Shared inputs used by IT-140: federalAGI (line 1), additions (other Schedule M Part A lines), subtractions (other Part B lines 35, 42, 45),
+  // taxableSocialSecurity (line 34 joint total), dependents (box c), claimedAsDependent (box a), nonrefundableCredits (Recap lines 3-17,
+  // 19-26), stateWithholding/spouseStateWithholding (line 15), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 16).
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -29260,7 +29534,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -29306,6 +29580,8 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeNE(input, evalStateTax, notes), notes };
   if (j === "id")
     return { lines: composeID(input, evalStateTax, notes), notes };
+  if (j === "wv")
+    return { lines: composeWV(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -32707,6 +32983,229 @@ var facts = [
     description: "Taxable IRA distributions other than Roth (Form 1040 line 4b) \u2014 75% enters the Pension and Annuity Worksheet line 2 for TY2025, 100% for TY2026 (us.ct.pension_annuity_subtraction). In dollars.",
     default: { value: "0", rationale: "Assumed no IRA distributions absent contrary input" }
   },
+  // ---- West Virginia (Form IT-140) ----
+  {
+    id: "wvUseRateSchedule",
+    type: "bool",
+    description: "Compute Form IT-140 line 8 from the Rate Schedule at the exact income instead of the printed Tax Table (statuses 1, 2, 3, 5 under $100,000 use the table by instruction; MFS and $100,000+ always use the schedule) (us.wv.income_tax).",
+    default: { value: false, rationale: "The line 8 instruction directs table users to the Tax Table" }
+  },
+  {
+    id: "wvExemptions",
+    type: "int",
+    min: "0",
+    description: "Form IT-140 exemption box (e): yourself (unless claimable as a dependent), spouse (MFJ), dependents, and the surviving-spouse extra exemption \u2014 $2,000 each; $500 when zero (us.wv.exemption_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "wvAgi",
+    type: "money",
+    description: "Federal adjusted gross income, Form IT-140 line 1 \u2014 the low-income exclusion and Social Security thresholds, and HEPTC-1 line 4 gross household income (us.wv.low_income_exclusion, us.wv.social_security_modification, us.wv.homestead_excess_property_tax_credit); the SCTC/HEPTC poverty tests use wvHouseholdIncome. May be negative. In dollars."
+  },
+  {
+    id: "wvEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Low-income exclusion worksheet line B: wages, salaries, tips, other employee compensation, and net self-employment earnings (us.wv.low_income_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvTaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description: "Schedule M line 34(c): Social Security benefits taxable federally (Form 1040 line 6b) for the column (us.wv.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvSeniorOrDisabled",
+    type: "bool",
+    description: "The person for this Schedule M column is 65 or older on December 31 or certified permanently and totally disabled (us.wv.senior_citizen_modification).",
+    default: { value: false, rationale: "Eligibility must be affirmed; assumed not met" }
+  },
+  {
+    id: "wvIncomeNotOnLines35to46",
+    type: "money",
+    min: "0",
+    description: "Schedule M line 47 box (c): the person's income not reported on lines 35 through 46 (the rule caps it at $8,000) (us.wv.senior_citizen_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvLines29to34",
+    type: "money",
+    min: "0",
+    description: "Schedule M line 47 box (d): the person's lines 29 through 34 subtractions (obligation interest, law enforcement / police / fire / military retirement, the $2,000 PERS-TRS-federal modification, Social Security); for line 48 (us.wv.surviving_spouse_modification) pass lines 29-34 PLUS the line 47 modification, since the two together may not exceed $8,000. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvSurvivingSpouseEligible",
+    type: "bool",
+    description: "Schedule M line 48: the filer is the unremarried surviving spouse of a decedent who was 65 or disabled, in the taxable year following the death (us.wv.surviving_spouse_modification).",
+    default: { value: false, rationale: "Eligibility must be affirmed; assumed not met" }
+  },
+  {
+    id: "wvFamilySize",
+    type: "int",
+    min: "0",
+    description: "Schedule FTC-1 line 5: exemptions in boxes (a), (b), and (c) \u2014 the family size (0 \u2192 no credit; over 8 uses the size-8 column) (us.wv.family_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "wvModifiedAgi",
+    type: "money",
+    description: "Schedule FTC-1 line 4: federal AGI + increasing modifications + federal tax-exempt interest (us.wv.family_tax_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvTaxBeforeCredits",
+    type: "money",
+    min: "0",
+    description: "Form IT-140 line 8 income tax (us.wv.family_tax_credit, us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvFederalAmt",
+    type: "bool",
+    description: "The filer paid federal alternative minimum tax \u2014 disqualifies the Family Tax Credit, SCTC, and HEPTC (us.wv.family_tax_credit, us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit).",
+    default: { value: false, rationale: "Assumed no federal AMT" }
+  },
+  {
+    id: "wvOtherStateTax",
+    type: "money",
+    min: "0",
+    description: "Schedule E line 1: income tax computed on the other state's 2025 return (not withholding) (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvOtherStateIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule E line 3: net income derived from the other state included in West Virginia total income (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvAdjustedGrossIncome",
+    type: "money",
+    description: "Schedule E line 4: West Virginia adjusted gross income, Form IT-140 line 4 (us.wv.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvAlternativeTax",
+    type: "money",
+    min: "0",
+    description: "Schedule E line 7: the Rate Schedule tax on West Virginia taxable income minus the other-state income (line 6) (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvOtherRecapCredits",
+    type: "money",
+    min: "0",
+    description: "Schedule E line 9: the sum of Tax Credit Recap lines 2 through 26 (Family Tax Credit, child care, business credits) (us.wv.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description: "Federal child and dependent care credit, Form 2441 \u2014 West Virginia allows 50% (us.wv.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvHouseholdSize",
+    type: "int",
+    min: "0",
+    description: "Number of people living in the household \u2014 the SCTC (150% of poverty) and HEPTC (300%) income limits (us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit).",
+    default: { value: "1", rationale: "Assumed a one-person household" }
+  },
+  {
+    id: "wvHouseholdIncome",
+    type: "money",
+    description: "Federal AGI (or income less Social Security when not required to file federally) tested against the SCTC / HEPTC poverty-guideline limits (us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvDisabledVeteranCreditClaimed",
+    type: "bool",
+    description: "The Disabled Veteran real property tax credit (line 21B) is claimed \u2014 bars the SCTC and HEPTC (us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit).",
+    default: { value: false, rationale: "Assumed not claimed" }
+  },
+  {
+    id: "wvSeniorCitizenCreditAmount",
+    type: "money",
+    min: "0",
+    description: "Schedule SCTC-A Part III line 2: the Senior Citizens Tax Credit computed on the Tax Division's mailed form (property tax on up to the first $20,000 of taxable assessed value) (us.wv.senior_citizens_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 1: West Virginia property tax paid on the owner-occupied home in 2025, after discount and before interest (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvSeniorCitizenCredit",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 2: the allowable Senior Citizens Tax Credit (subtracted from the property tax) (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvAdditions",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 4a: increasing modifications, Schedule M line 59 (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvTaxExemptInterest",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 4b: federal tax-exempt interest (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvWorkersCompensation",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 4c: earnings replacement insurance (workers' compensation) received (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvNontaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 4d: Social Security, SSI, and SSDI received but not in federal AGI (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvOtherHouseholdIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule HEPTC-1 line 4e: income of other household members who would file separately (us.wv.homestead_excess_property_tax_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description: "Schedule UT line 1: purchases subject to the 6% state use tax on which no sales tax was paid (us.wv.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvMunicipalUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description: "Schedule UT Part II: purchases used in a municipality that imposes a municipal use tax (us.wv.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "wvMunicipalUseTaxRateBps",
+    type: "int",
+    min: "0",
+    max: "100",
+    description: "Schedule UT Part II tax rate in basis points (50 for 0.5%, 100 for 1%) (us.wv.use_tax).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
   // ---- Idaho (Form 40) ----
   {
     id: "idAgeBlindBoxes",
@@ -33987,7 +34486,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt15 = (cents) => ({
+  const lt16 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -34006,22 +34505,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt15("500"),
+    cond: lt16("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt15("1500"),
+      cond: lt16("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt15("2500"),
+        cond: lt16("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt15("300000"),
+          cond: lt16("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -42873,7 +43372,7 @@ var njRules = [
     },
     formula: (() => {
       const ti = max05(fact36("stateTaxableIncome"));
-      const pct6 = (num) => ({
+      const pct7 = (num) => ({
         kind: "mulRate",
         base: fact36("njFederalCdcc"),
         rate: { num, den: "100" },
@@ -42882,7 +43381,7 @@ var njRules = [
       const tier = (max2, num, next) => ({
         kind: "if",
         cond: le(ti, param17(max2)),
-        then: pct6(num),
+        then: pct7(num),
         else: next
       });
       return rd3(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money33("0")))))));
@@ -43354,7 +43853,7 @@ var ohRules = [
       // $75,000 → 10%; above → 5%
     },
     formula: (() => {
-      const pct6 = (num) => ({
+      const pct7 = (num) => ({
         kind: "mulRate",
         base: max06(fact36("ohTaxLessCredits")),
         rate: { num, den: "100" },
@@ -43363,16 +43862,16 @@ var ohRules = [
       const tiered = {
         kind: "if",
         cond: le2(magiLessExemptions, param18("tier1Max")),
-        then: pct6("20"),
+        then: pct7("20"),
         else: {
           kind: "if",
           cond: le2(magiLessExemptions, param18("tier2Max")),
-          then: pct6("15"),
+          then: pct7("15"),
           else: {
             kind: "if",
             cond: le2(magiLessExemptions, param18("tier3Max")),
-            then: pct6("10"),
-            else: pct6("5")
+            then: pct7("10"),
+            else: pct7("5")
           }
         }
       };
@@ -44199,7 +44698,7 @@ var rowMidpoint = (base) => ({
     money33("2500")
   ]
 });
-var tableAtMidpoint = (base, sched, sub50) => iff(lt4(base, money33("5000")), sub50, iff(lt4(base, money33("7500")), sched(money33("6250")), iff(lt4(base, money33("10000")), sched(money33("8750")), sched(rowMidpoint(base)))));
+var tableAtMidpoint = (base, sched2, sub50) => iff(lt4(base, money33("5000")), sub50, iff(lt4(base, money33("7500")), sched2(money33("6250")), iff(lt4(base, money33("10000")), sched2(money33("8750")), sched2(rowMidpoint(base)))));
 var isOneOf = (values) => ({
   kind: "or",
   args: values.map((v) => ({
@@ -44238,11 +44737,11 @@ var mdRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
-      const sched = (b) => iff(isOneOf(["mfj", "hoh", "qss"]), printedSchedule(b, SCHEDULE_II), printedSchedule(b, SCHEDULE_I));
+      const sched2 = (b) => iff(isOneOf(["mfj", "hoh", "qss"]), printedSchedule(b, SCHEDULE_II), printedSchedule(b, SCHEDULE_I));
       return rd7(iff({
         kind: "and",
         args: [lt4(base, money33("10000000")), { kind: "not", arg: fact36("useFormulaMethod") }]
-      }, tableAtMidpoint(base, sched, money33("0")), sched(base)));
+      }, tableAtMidpoint(base, sched2, money33("0")), sched2(base)));
     })()
   },
   {
@@ -44608,8 +45107,8 @@ var moRules = [
     formula: (() => {
       const magi2 = fact36("moMagi");
       const total = { kind: "max0", arg: fact36("moFederalTaxTotal") };
-      const pct6 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
-      const uncapped = iff2(le5(magi2, money33("2500000")), pct6("35"), iff2(le5(magi2, money33("5000000")), pct6("25"), iff2(le5(magi2, money33("10000000")), pct6("15"), iff2(le5(magi2, money33("12500000")), pct6("5"), money33("0")))));
+      const pct7 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
+      const uncapped = iff2(le5(magi2, money33("2500000")), pct7("35"), iff2(le5(magi2, money33("5000000")), pct7("25"), iff2(le5(magi2, money33("10000000")), pct7("15"), iff2(le5(magi2, money33("12500000")), pct7("5"), money33("0")))));
       const cap = iff2({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } }, money33("1000000"), money33("500000"));
       return { kind: "min", args: [uncapped, cap] };
     })()
@@ -44803,7 +45302,7 @@ var wiRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
-      const sched = (b) => iff3(isStatus11("mfj"), printedSchedule(b, MFJ), iff3(isStatus11("mfs"), printedSchedule(b, MFS), printedSchedule(b, SINGLE_HOH)));
+      const sched2 = (b) => iff3(isStatus11("mfj"), printedSchedule(b, MFJ), iff3(isStatus11("mfs"), printedSchedule(b, MFS), printedSchedule(b, SINGLE_HOH)));
       const mid = {
         kind: "add",
         args: [
@@ -44811,8 +45310,8 @@ var wiRules = [
           money33("5000")
         ]
       };
-      const table2 = iff3(lt5(base, money33("2000")), sched(money33("1000")), iff3(lt5(base, money33("4000")), sched(money33("3000")), iff3(lt5(base, money33("10000")), sched(money33("7000")), sched(mid))));
-      return rd9(iff3({ kind: "and", args: [lt5(base, money33("10000000")), { kind: "not", arg: fact36("useFormulaMethod") }] }, table2, sched(base)));
+      const table2 = iff3(lt5(base, money33("2000")), sched2(money33("1000")), iff3(lt5(base, money33("4000")), sched2(money33("3000")), iff3(lt5(base, money33("10000")), sched2(money33("7000")), sched2(mid))));
+      return rd9(iff3({ kind: "and", args: [lt5(base, money33("10000000")), { kind: "not", arg: fact36("useFormulaMethod") }] }, table2, sched2(base)));
     })()
   },
   {
@@ -44927,8 +45426,8 @@ var wiRules = [
     formula: (() => {
       const eic = { kind: "max0", arg: fact36("wiFederalEicForWi") };
       const kids = fact36("wiQualifyingChildren");
-      const pct6 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
-      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct6("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct6("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct6("4"), money33("0"))));
+      const pct7 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct7("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct7("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct7("4"), money33("0"))));
     })()
   },
   {
@@ -45148,7 +45647,7 @@ var mnRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
-      const sched = (b) => iff4(isStatus12("mfs"), printedSchedule(b, MFS2), iff4(isStatus12("hoh"), printedSchedule(b, HOH), iff4({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, printedSchedule(b, MFJ2), printedSchedule(b, SINGLE))));
+      const sched2 = (b) => iff4(isStatus12("mfs"), printedSchedule(b, MFS2), iff4(isStatus12("hoh"), printedSchedule(b, HOH), iff4({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, printedSchedule(b, MFJ2), printedSchedule(b, SINGLE))));
       const mid = {
         kind: "add",
         args: [
@@ -45156,8 +45655,8 @@ var mnRules = [
           money33("5000")
         ]
       };
-      const table2 = iff4(lt6(base, money33("2000")), money33("0"), iff4(lt6(base, money33("10000")), sched(money33("6000")), sched(mid)));
-      return rd10(iff4({ kind: "and", args: [lt6(base, money33("8680000")), { kind: "not", arg: fact36("useFormulaMethod") }] }, table2, sched(base)));
+      const table2 = iff4(lt6(base, money33("2000")), money33("0"), iff4(lt6(base, money33("10000")), sched2(money33("6000")), sched2(mid)));
+      return rd10(iff4({ kind: "and", args: [lt6(base, money33("8680000")), { kind: "not", arg: fact36("useFormulaMethod") }] }, table2, sched2(base)));
     })()
   },
   {
@@ -45416,7 +45915,7 @@ var scRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
-      const sched = (b) => printedSchedule(b, SCHED_2025);
+      const sched2 = (b) => printedSchedule(b, SCHED_2025);
       const mid50 = {
         kind: "add",
         args: [mulInt4(money33("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money33("2500")]
@@ -45425,9 +45924,9 @@ var scRules = [
         kind: "add",
         args: [mulInt4(money33("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money33("5000")]
       };
-      const table2 = iff5(lt7(base, money33("700000")), sched(mid50), sched(mid100));
+      const table2 = iff5(lt7(base, money33("700000")), sched2(mid50), sched2(mid100));
       const over100k = sub6({ kind: "mulRate", base, rate: { num: "6", den: "100" }, round: "half-up" }, money33("64200"));
-      return rd11(iff5(lt7(base, money33("10000000")), iff5(fact36("useFormulaMethod"), sched(base), table2), { kind: "max0", arg: over100k }));
+      return rd11(iff5(lt7(base, money33("10000000")), iff5(fact36("useFormulaMethod"), sched2(base), table2), { kind: "max0", arg: over100k }));
     })()
   },
   {
@@ -45727,7 +46226,7 @@ var alRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
-      const sched = (b) => iff6(isMfjExpr, printedSchedule(b, SCHED_MFJ), printedSchedule(b, SCHED_SINGLE));
+      const sched2 = (b) => iff6(isMfjExpr, printedSchedule(b, SCHED_MFJ), printedSchedule(b, SCHED_SINGLE));
       const mid100 = {
         kind: "add",
         args: [mulInt5(money33("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money33("5000")]
@@ -45736,7 +46235,7 @@ var alRules = [
         lt8(base, money33("5000")),
         money33("0"),
         // printed row [0, 50) -> $0
-        iff6(lt8(base, money33("10000")), money33("100"), sched(mid100))
+        iff6(lt8(base, money33("10000")), money33("100"), sched2(mid100))
       );
       const over100k = {
         kind: "add",
@@ -45745,7 +46244,7 @@ var alRules = [
           { kind: "mulRate", base: sub7(base, money33("10000000")), rate: { num: "5", den: "100" }, round: "half-up" }
         ]
       };
-      return rd12(iff6(lt8(base, money33("10000000")), iff6(fact36("useFormulaMethod"), sched(base), table2), over100k));
+      return rd12(iff6(lt8(base, money33("10000000")), iff6(fact36("useFormulaMethod"), sched2(base), table2), over100k));
     })()
   },
   {
@@ -45966,25 +46465,25 @@ var orRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact36("stateTaxableIncome") };
-      const sched = (b) => iff7(isColumnS, printedSchedule(b, SCHED_S), printedSchedule(b, SCHED_J));
+      const sched2 = (b) => iff7(isColumnS, printedSchedule(b, SCHED_S), printedSchedule(b, SCHED_J));
       const mid = (width, offset) => ({
         kind: "add",
         args: [mulInt6(money33(width), { kind: "stepUnits", value: base, unitCents: width, mode: "floor" }), money33(offset)]
       });
       const table2 = iff7(
         lt9(base, money33("2000")),
-        sched(money33("1000")),
+        sched2(money33("1000")),
         // [0,20) midpoint $10
         iff7(
           lt9(base, money33("5000")),
-          sched(money33("3500")),
+          sched2(money33("3500")),
           // [20,50) midpoint $35
-          iff7(lt9(base, money33("10000")), sched(money33("7500")), sched(mid("10000", "5000")))
+          iff7(lt9(base, money33("10000")), sched2(money33("7500")), sched2(mid("10000", "5000")))
         )
       );
       const chart = (a50k, top, aTop) => iff7({ kind: "cmp", op: "le", left: base, right: money33(top) }, { kind: "add", args: [money33(a50k), { kind: "mulRate", base: sub8(base, money33("5000000")), rate: { num: "875", den: "10000" }, round: "half-up" }] }, { kind: "add", args: [money33(aTop), { kind: "mulRate", base: sub8(base, money33(top)), rate: { num: "99", den: "1000" }, round: "half-up" }] });
       const charts = iff7(isColumnS, chart("406500", "12500000", "1062700"), chart("375600", "25000000", "2125600"));
-      return rd13(iff7(fact36("useFormulaMethod"), sched(base), iff7(lt9(base, money33("5000000")), table2, charts)));
+      return rd13(iff7(fact36("useFormulaMethod"), sched2(base), iff7(lt9(base, money33("5000000")), table2, charts)));
     })()
   },
   {
@@ -46392,11 +46891,11 @@ var okRules = [
     },
     formula: (() => {
       const base = max09(fact36("stateTaxableIncome"));
-      const sched = (b) => iff8(isJointColumn, dollarsFromScaled(scaledSchedule(b, SCHED_2025_J)), dollarsFromScaled(scaledSchedule(b, SCHED_2025_S)));
+      const sched2 = (b) => iff8(isJointColumn, dollarsFromScaled(scaledSchedule(b, SCHED_2025_J)), dollarsFromScaled(scaledSchedule(b, SCHED_2025_S)));
       const mid = add5(mulInt7(money33("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money33("2500"));
       const excess475 = times(sub9(base, money33("10000000")), "475");
       const worksheet = iff8(isJointColumn, dollarsFromScaled(add5(scaled("437300"), excess475)), dollarsFromScaled(add5(scaled("456200"), excess475)));
-      return iff8(fact36("useFormulaMethod"), sched(base), iff8(lt10(base, money33("10000000")), sched(mid), worksheet));
+      return iff8(fact36("useFormulaMethod"), sched2(base), iff8(lt10(base, money33("10000000")), sched2(mid), worksheet));
     })()
   },
   {
@@ -47018,15 +47517,15 @@ var tcsFor = (agi2, s, method) => {
   const taxable3 = max010(sub10(agi2, exemptionFor(agi2, s)));
   const scaledTax = scaledSchedule2(taxable3, SCHED[s]);
   const cAndD = add6(addbackFor(agi2, s), recaptureFor(agi2, s));
-  const pct6 = creditPctFor(agi2, s);
+  const pct7 = creditPctFor(agi2, s);
   if (method === "schedule") {
     const line4 = dollarsFromScaled2(scaledTax, "1000000");
     const line7 = add6(line4, cAndD);
-    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct6), c: money33("100"), round: "half-up" });
+    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct7), c: money33("100"), round: "half-up" });
     return sub10(line7, line92);
   }
   const totalScaled = add6(scaledTax, times2(cAndD, "10000"));
-  const keep = sub10(int5("100"), pct6);
+  const keep = sub10(int5("100"), pct7);
   const scaledAfterCredit = mulInt8(totalScaled, keep);
   return dollarsFromScaled2(scaledAfterCredit, "100000000");
 };
@@ -47353,12 +47852,12 @@ var ksRules = [
     },
     formula: (() => {
       const base = max011(fact36("stateTaxableIncome"));
-      const sched = (b) => iff10(isMfj, dollarsFromScaled3(scaledSchedule3(b, SCHED_MFJ2), "1000000"), dollarsFromScaled3(scaledSchedule3(b, SCHED_OTHER), "1000000"));
+      const sched2 = (b) => iff10(isMfj, dollarsFromScaled3(scaledSchedule3(b, SCHED_MFJ2), "1000000"), dollarsFromScaled3(scaledSchedule3(b, SCHED_OTHER), "1000000"));
       const units = { kind: "stepUnits", value: sub11(base, money33("100")), unitCents: "5000", mode: "floor" };
       const mid = add7(mulInt9(money33("5000"), units), money33("2550"));
-      const table2 = iff10(lt12(base, money33("2600")), sched(base), iff10(le9(base, money33("5000")), sched(money33("3800")), sched(mid)));
+      const table2 = iff10(lt12(base, money33("2600")), sched2(base), iff10(le9(base, money33("5000")), sched2(money33("3800")), sched2(mid)));
       const worksheet = iff10(isMfj, dollarsFromScaled3(sub11(times3(base, "558"), times3(money33("17500"), "10000")), "1000000"), dollarsFromScaled3(sub11(times3(base, "558"), times3(money33("8700"), "10000")), "1000000"));
-      return iff10(fact36("useFormulaMethod"), sched(base), iff10(le9(base, money33("10000000")), table2, worksheet));
+      return iff10(fact36("useFormulaMethod"), sched2(base), iff10(le9(base, money33("10000000")), table2, worksheet));
     })()
   },
   {
@@ -48011,8 +48510,8 @@ var arRules = [
       const earned2 = max012(fact36("arEarnedIncome"));
       const l6 = iff11(isMfj2, minE(l3, earned2, max012(fact36("arSpouseEarnedIncome"))), minE(l3, earned2));
       const steps = stepUnits2(max012(sub12(fact36("arFederalAgi"), money33("1500000"))), "200000", "ceil");
-      const pct6 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
-      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct6, c: money33("100"), round: "half-up" });
+      const pct7 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
+      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct7, c: money33("100"), round: "half-up" });
       return rd17({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
     })()
   },
@@ -48337,13 +48836,13 @@ var nmRules = [
     },
     formula: (() => {
       const x = max013(fact36("stateTaxableIncome"));
-      const sched = (b) => iff12(isJointSchedule, dollarsFromScaled5(scaledSchedule5(b, SCHED_JOINT), "1000000"), iff12(isMfs4, dollarsFromScaled5(scaledSchedule5(b, SCHED_MFS), "1000000"), dollarsFromScaled5(scaledSchedule5(b, SCHED_SINGLE2), "1000000")));
+      const sched2 = (b) => iff12(isJointSchedule, dollarsFromScaled5(scaledSchedule5(b, SCHED_JOINT), "1000000"), iff12(isMfs4, dollarsFromScaled5(scaledSchedule5(b, SCHED_MFS), "1000000"), dollarsFromScaled5(scaledSchedule5(b, SCHED_SINGLE2), "1000000")));
       const k = stepUnits3(x, "10000", "ceil");
       const mid100 = sub13(mulInt11(money33("10000"), k), money33("5000"));
       const mid = iff12(le11(x, money33("6000")), money33("3000"), iff12(le11(x, money33("10000")), money33("8000"), mid100));
       const ws = (baseCents, topCents, topBaseCents) => iff12(le11(x, money33(topCents)), dollarsFromScaled5(add9(times5(money33(baseCents), "10000"), times5(sub13(x, money33("10000000")), "490")), "1000000"), dollarsFromScaled5(add9(times5(money33(topBaseCents), "10000"), times5(sub13(x, money33(topCents)), "590")), "1000000"));
       const worksheet = iff12(isJointSchedule, ws("408700", "31500000", "1462200"), iff12(isMfs4, ws("449200", "15750000", "731000"), ws("435600", "21000000", "974600")));
-      return iff12(fact36("useFormulaMethod"), sched(x), iff12(le11(x, money33("10000000")), sched(mid), worksheet));
+      return iff12(fact36("useFormulaMethod"), sched2(x), iff12(le11(x, money33("10000000")), sched2(mid), worksheet));
     })()
   },
   {
@@ -49615,6 +50114,388 @@ var idRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/rules/state-wv.js
+var rd21 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp8 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var le14 = (l, r) => cmp8("le", l, r);
+var lt15 = (l, r) => cmp8("lt", l, r);
+var gt7 = (l, r) => cmp8("gt", l, r);
+var ge5 = (l, r) => cmp8("ge", l, r);
+var iff15 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add12 = (...args) => ({ kind: "add", args });
+var sub16 = (left, right) => ({ kind: "sub", left, right });
+var max016 = (arg) => ({ kind: "max0", arg });
+var minE5 = (...args) => ({ kind: "min", args });
+var and4 = (...args) => ({ kind: "and", args });
+var or6 = (...args) => ({ kind: "or", args });
+var not4 = (arg) => ({ kind: "not", arg });
+var int9 = (value) => ({ kind: "int", value });
+var mulInt14 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits5 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus24 = (v) => cmp8("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isMfs5 = isStatus24("mfs");
+var isMfj4 = isStatus24("mfj");
+var times7 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var pct5 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var dollarsFromScaled7 = (n) => times7({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var scaledSchedule7 = (base, rows) => add12(...rows.map((r, i) => {
+  const excess = sub16(base, money33(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money33("0"), hi: money33(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max016(excess);
+  return times7(portion, r.rateNum);
+}));
+var sched = (rates, mfs) => {
+  const th = mfs ? ["0", "500000", "1250000", "2000000", "3000000"] : ["0", "1000000", "2500000", "4000000", "6000000"];
+  return th.map((t, i) => ({ thresholdCents: t, rateNum: rates[i] }));
+};
+var RATES_2025 = ["222", "296", "333", "444", "482"];
+var RATES_2026 = ["211", "281", "316", "422", "458"];
+var scheduleTax = (x, rates) => iff15(isMfs5, dollarsFromScaled7(scaledSchedule7(x, sched(rates, true))), dollarsFromScaled7(scaledSchedule7(x, sched(rates, false))));
+var tableMidpoint = (x) => {
+  const band = (unitCents, offsetCents, from) => add12(money33(from), mulInt14(money33(unitCents), stepUnits5(sub16(x, money33(from)), unitCents, "floor")), money33(offsetCents));
+  return iff15(lt15(x, money33("10000")), band("2500", "1250", "0"), iff15(lt15(x, money33("2500000")), band("10000", "5000", "0"), iff15(lt15(x, money33("4000000")), band("6000", "3000", "2500000"), band("5000", "2500", "4000000"))));
+};
+var BOOKLET_URL6 = "https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf";
+var CODE2 = (s) => `https://code.wvlegislature.gov/${s}/`;
+var wvRules = [
+  {
+    id: "us.wv.income_tax",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia income tax \u2014 2025 Rate Schedule I (2.22 / 2.96 / 3.33 / 4.44 / 4.82% at $10,000 / $25,000 / $40,000 / $60,000; single, HOH, MFJ, widow(er)) and Schedule II (MFS, half brackets); the printed Tax Table (statuses 1, 2, 3, 5 under $100,000) is Schedule I at the row midpoint (Form IT-140 line 8)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-4i (2024 2nd Ex. Sess. SB 2033: 'Rate of tax \u2014 Taxable years beginning on and after January 1, 2025'); 2025 booklet p. 35 '2025 TAX RATE SCHEDULES' and pp. 36-40 '2025 WEST VIRGINIA TAX TABLE'; line 8 instructions p. 24",
+      section: "\xA7 11-21-4i; Form IT-140 line 8; Rate Schedules I and II; Tax Table",
+      url: CODE2("11-21-4I"),
+      excerpt: `STATUTE (verbatim): '(a) \u2026 every individual (except married individuals filing separate returns); every individual who is a head of a household \u2026; every husband and wife who file a joint return under this article; every individual who is entitled to file his or her federal income tax return for the taxable year as a surviving spouse \u2026 shall be determined in accordance with the following table: Not over $10,000 \u2014 2.22% of the taxable income; Over $10,000 but not over $25,000 \u2014 $222 plus 2.96% of excess over $10,000; Over $25,000 but not over $40,000 \u2014 $666 plus 3.33% of excess over $25,000; Over $40,000 but not over $60,000 \u2014 $1,165.50 plus 4.44% of excess over $40,000; Over $60,000 \u2014 $2,053.50 plus 4.82% of excess over $60,000. (b) Rate of tax on married individuals filing separate returns. \u2014 \u2026 Not over $5,000 \u2014 2.22% of the taxable income; Over $5,000 but not over $12,500 \u2014 $111 plus 2.96% of excess over $5,000; Over $12,500 but not over $20,000 \u2014 $333 plus 3.33% of excess over $12,500; Over $20,000 but not over $30,000 \u2014 $582.75 plus 4.44% of excess over $20,000; Over $30,000 \u2014 $1,026.75 plus 4.82% of excess over $30,000.' '(e) \u2026 shall apply for all taxable years beginning on and after January 1, 2025, and shall be in lieu of the rates of tax specified in \xA711-21-4g of this code and as those rates were modified by the application of \xA711-21-4h of this code in 2024.' BOOKLET p. 35 (verbatim): 'RATE SCHEDULE I \u2014 Use this schedule if you checked 1 (Single), 2 (Head of household), 3 (Married filing joint), or 5 (Widow[er] with dependent child) under "FILING STATUS". Less than $10,000 \u2026 2.22% of the taxable income; $10,000\u2013$25,000 $222.00 plus 2.96% of excess over $10,000; $25,000\u2013$40,000 $666.00 plus 3.33% of excess over $25,000; $40,000\u2013$60,000 $1,165.50 plus 4.44% of excess over $40,000; $60,000 $2,053.50 plus 4.82% of excess over $60,000. EXAMPLE With a taxable income of $117,635: $57,635.00 Income in excess of $60,000 \xD7 .0482 = $2,778.01 \u2026 + 2,053.50 \u2026 $4,831.51 Total Tax on $117,635 (Round to nearest whole dollar). RATE SCHEDULE II \u2014 Use this schedule if you checked box 4 (Married filing separately) \u2026 Less than $5,000 \u2026 2.22% \u2026; $5,000\u2013$12,500 $111.00 plus 2.96% of excess over $5,000; $12,500\u2013$20,000 $333 plus 3.33% of excess over $12,500; $20,000\u2013$30,000 $582.75 plus 4.44% of excess over $20,000; $30,000 $1,026.75 plus 4.82% of excess over $30,000. EXAMPLE With a taxable income of $118,460 \u2026 $5,290.52 Total Tax on $118,460 (Round to nearest whole dollar).' LINE 8 (pp. 24-25, verbatim): 'If your filing status is single, head of household, widow(er) with a dependent child or married filing jointly and your taxable income is less than $100,000, apply the amount of taxable income shown on line 7 to the Tax Table on page 36 and enter your tax on this line. \u2026 and your taxable income is over $100,000, use Rate Schedule I on page 35 to compute your tax. If your filing status is Married Filling Separately you MUST use RATE SCHEDULE II to compute your tax.' TAX TABLE notes (p. 36, verbatim): '4. If your filing status is Married Filing Separately, you cannot use this table. Use Rate Schedule II on page 35. 5. Make sure your taxable income is LESS than and NOT equal to the income shown in the "LESS THAN" column. 6. If your taxable income is over $100,000 refer to the Tax Rate Schedules on page 35.' Rows (verbatim): '25 50 $1', '50 75 $1', '75 100 $2', '100 200 $3', '12,300 12,400 $292', '25,000 25,060 $667', '25,060 25,120 $669', '99,950 100,000 $3,980'. CONVENTION (verified on all 1,702 rows): each cell is Rate Schedule I at the row midpoint (rows [lo, hi): $25 wide to $100, $100 wide to $25,000, $60 wide to $40,000, $50 wide to $100,000), rounded half-up \u2014 the schedule's anchors are exact, so the table is the statute at the midpoint. ENCODING: default for single/HOH/MFJ/QSS under $100,000 = the table (the line 8 instruction); taxable income under $25 (no printed row) and $100,000 or more use Schedule I on the income; MFS always uses Schedule II; wvUseRateSchedule = true applies the schedule at any income (the electronic computation; differs from the table by up to about $2). A federal QSS files as 'Widow(er) with dependent child' (status 5, Schedule I). Nonresidents and part-year residents apportion on Schedule A (not composed). TY2026: version 2 (\xA7 11-21-4j).`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "222", type: "int" },
+      rate2Bps: { value: "296", type: "int" },
+      rate3Bps: { value: "333", type: "int" },
+      rate4Bps: { value: "444", type: "int" },
+      rate5Bps: { value: "482", type: "int" },
+      bracket1: { value: "1000000", type: "money" },
+      bracket2: { value: "2500000", type: "money" },
+      bracket3: { value: "4000000", type: "money" },
+      bracket4: { value: "6000000", type: "money" },
+      mfsBracket1: { value: "500000", type: "money" },
+      mfsBracket2: { value: "1250000", type: "money" },
+      mfsBracket3: { value: "2000000", type: "money" },
+      mfsBracket4: { value: "3000000", type: "money" },
+      tableTop: { value: "10000000", type: "money" }
+    },
+    formula: (() => {
+      const x = max016(fact36("stateTaxableIncome"));
+      const schedule = scheduleTax(x, RATES_2025);
+      const table2 = dollarsFromScaled7(scaledSchedule7(tableMidpoint(x), sched(RATES_2025, false)));
+      const useTable = and4(not4(fact36("wvUseRateSchedule")), not4(isMfs5), ge5(x, money33("2500")), lt15(x, money33("10000000")));
+      return iff15(useTable, table2, schedule);
+    })()
+  },
+  {
+    id: "us.wv.income_tax",
+    version: 2,
+    jurisdiction: "us.wv",
+    title: "West Virginia income tax TY2026 \u2014 \xA7 11-21-4j (2026 SB 392, 5% cut): 2.11 / 2.81 / 3.16 / 4.22 / 4.58% at $10,000 / $25,000 / $40,000 / $60,000 (Schedule I) and half brackets for MFS (Schedule II)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-4j ('Rate of tax \u2014 Taxable years beginning on and after January 1, 2026'), added by Enrolled Committee Substitute for SB 392 (2026 Regular Session, passed March 14, 2026, in effect June 12, 2026); WV Tax Division, '2026 Income Tax Rate Cut' page; \xA7 11-21-4h as amended (next trigger determination August 15, 2026 for taxable years beginning on and after January 1, 2027)",
+      section: "\xA7 11-21-4j; \xA7 11-21-4h(b), (e)",
+      url: CODE2("11-21-4J"),
+      excerpt: "STATUTE (verbatim): '(a) \u2026 For taxable years beginning on and after January 1, 2026, the tax \u2026 shall be determined in accordance with the following table: Not over $10,000 \u2014 2.11% of the taxable income; Over $10,000 but not over $25,000 \u2014 $211 plus 2.81% of excess over $10,000; Over $25,000 but not over $40,000 \u2014 $632.50 plus 3.16% of excess over $25,000; Over $40,000 but not over $60,000 \u2014 $1,106.50 plus 4.22% of excess over $40,000; Over $60,000 \u2014 $1,950.50 plus 4.58% of excess over $60,000. (b) Rate of tax on married individuals filing separate returns. \u2014 For taxable years beginning on and after January 1, 2026 \u2026 Not over $5,000 \u2014 2.11% of the taxable income; Over $5,000 but not over $12,500 \u2014 $105.50 plus 2.81% of excess over $5,000; Over $12,500 but not over $20,000 \u2014 $316.25 plus 3.16% of excess over $12,500; Over $20,000 but not over $30,000 \u2014 $553.25 plus 4.22% of excess over $20,000; Over $30,000 \u2014 $975.25 plus 4.58% of excess over $30,000.' '(e) \u2026 shall apply for all taxable years beginning on and after January 1, 2026, and shall be in lieu of the rates of tax specified in \xA711-21-4i of this code.' SB 392 title (verbatim): 'AN ACT to amend and reenact \xA711-21-4h \u2026 and to amend the code by adding a new section, designated \xA711-21-4j, relating to providing a reduction in personal income tax; \u2026 applying reduced rates beginning on and after January 1, 2026; providing for contingent additional future reductions in the personal income tax rates when certain criteria have been met'; '[Passed March 14, 2026; in effect 90 days from passage (June 12, 2026)]'. \xA7 11-21-4h(b) (verbatim): 'Beginning on August 15, 2026, and every August 15 thereafter, the Secretary of Revenue will determine whether the total fiscal year adjusted general revenue fund collections from the immediately preceding fiscal year are in excess of the inflation adjusted base year revenues. If \u2026 then there will be a reduction in the personal income tax rates as determined under this section beginning the second taxable year following the determination.' '(e) \u2026 shall apply for all taxable years beginning on and after January 1, 2027, and shall be in lieu of the rates of tax specified in \xA711-21-4j of this code.' TAX DIVISION (verbatim): 'During the 2026 Legislative Session, Governor Morrisey promoted SB 392 to deliver an across the board income tax rate cut. It was passed and signed into law on March 31, 2026.' The 2026 Tax Table is unpublished \u2014 this version applies the schedule for every filer (the Tax Table's row-midpoint rounding is not available for 2026; wvUseRateSchedule is moot). Any August 2026 trigger certification affects TY2027, not this rule."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "211", type: "int" },
+      rate2Bps: { value: "281", type: "int" },
+      rate3Bps: { value: "316", type: "int" },
+      rate4Bps: { value: "422", type: "int" },
+      rate5Bps: { value: "458", type: "int" }
+    },
+    formula: scheduleTax(max016(fact36("stateTaxableIncome")), RATES_2026)
+  },
+  {
+    id: "us.wv.exemption_deduction",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia personal exemptions \u2014 $2,000 per exemption (yourself, spouse, dependents, and the surviving-spouse extra exemption for two years); $500 when no exemption can be claimed (Form IT-140 line 6)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-16(a), (c), (d); 2025 booklet, EXEMPTIONS pp. 19 and 24; printed Form IT-140 exemption boxes (a)-(e) and line 6",
+      section: "\xA7 11-21-16; Form IT-140 boxes (a)-(e), line 6",
+      url: CODE2("11-21-16"),
+      excerpt: `STATUTE (verbatim): '(a) \u2026 with respect to any taxable year beginning on or after January 1, 1987, said exemption shall be $2,000.' '(c) Surviving spouse. -- For taxable years beginning after December 31, 1986, a surviving spouse shall be allowed one additional exemption of $2,000 for the two taxable years beginning after the year of death of the deceased spouse. \u2026 a surviving spouse means a taxpayer whose spouse died during the taxable year prior to the taxable year for which the annual return is being filed and who has not remarried at any time before the end of the taxable year for which the annual return is being filed.' '(d) Certain dependents. -- \u2026 a resident individual whose exemption amount for federal tax purposes is zero by virtue of section 151(d)(2) of the Internal Revenue Code of 1986, shall be allowed a single West Virginia exemption in the amount of $500.' FORM (verbatim): '(a) YOURSELF \u2014 To claim an exemption for yourself, enter 1. If someone can claim you as a dependent, leave box (a) blank. (b) SPOUSE \u2014 To claim an exemption for your spouse, enter 1. They may not be claimed as an exemption by anyone else. (c) DEPENDENTS \u2026 (d) SURVIVING SPOUSE (See page 21) \u2026 (e) Total Exemptions (add boxes a, b, c, and d). Enter here and on line 6 below. If box e is zero, enter $500 on line 6 below.' '6. Total Exemptions as shown above on Exemption Box (e) ____ x $2,000'. BOOKLET p. 24: '(b) SPOUSE - Enter "1" in box (b) for your spouse only if your filing status is married filing jointly and your spouse can't be claimed as a dependent on another person's return.' 'You cannot claim any dependents if you can be claimed as a dependent on another person's return.' p. 19: 'You can no longer claim personal exemptions on your federal income tax return. West Virginia has retained personal exemptions under the same rules applicable under federal law in prior years.' 'The State of West Virginia does not recognize most itemized deductions for personal income tax purposes. Consequently, the only itemized deductions allowed \u2026 are gambling losses.'`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "200000", type: "money" }, zeroExemptionAllowance: { value: "50000", type: "money" } },
+    formula: iff15(cmp8("eq", fact36("wvExemptions"), int9("0")), money33("50000"), mulInt14(money33("200000"), fact36("wvExemptions")))
+  },
+  {
+    id: "us.wv.low_income_exclusion",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia low-income earned income exclusion \u2014 up to $10,000 ($5,000 MFS) of earned income when federal AGI is $10,000 ($5,000) or less (Form IT-140 line 5 worksheet)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-10(a)-(c); 2025 booklet, 'WEST VIRGINIA LOW-INCOME EARNED INCOME EXCLUSION WORKSHEET' p. 29 and line 5 instruction p. 24",
+      section: "\xA7 11-21-10; Form IT-140 line 5",
+      url: CODE2("11-21-10"),
+      excerpt: `STATUTE (verbatim): '(a) Earned income exclusion. -- In the case of an eligible taxpayer, there shall be allowed as a deduction from federal adjusted gross income the amount of his or her earned income included therein, not to exceed $10,000, except that when a husband and wife file separate returns under this article this exclusion shall not exceed $5,000 per separate return \u2026 (b) "Eligible taxpayer" defined. -- The term "eligible taxpayer" means: (1) Any unmarried individual and any husband and wife filing a joint return under this article who has or have federal adjusted gross income of $10,000 or less for the taxable year; or (2) Any husband or wife filing a separate return under this article who has federal adjusted gross income of $5,000 or less. (c) "Earned income" defined. -- (1) The term "earned income" means: (A) Wages, salaries, tips, and other employee compensation; plus (B) The amount of the taxpayer's net earnings from self-employment \u2026 (B) No amount received as pension or annuity shall be taken into account; and (c) No amount received for services provided by an individual while the individual is an inmate at a penal institution shall be taken into account.' WORKSHEET (verbatim): 'A. Enter your Federal Adjusted Gross income from line 1 of Form IT-140. STOP \u2014 If Line A is greater than $10,000 ($5,000 if married filing separate returns), you are not eligible for the exclusion. B. List the source and amount of your earned income. Enter the total amount on Line B. C. Maximum exclusion. Enter $5,000 if your filing status is married filing separately; otherwise enter $10,000. D. Enter the smaller of the amounts shown on Line A, Line B, or Line C here and on Line 5 of Form IT-140.' 'This exclusion may be taken even if you are claimed as a dependent on someone else's return.'`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "1000000", type: "money" }, capMfs: { value: "500000", type: "money" } },
+    formula: (() => {
+      const cap = iff15(isMfs5, money33("500000"), money33("1000000"));
+      const agi2 = fact36("wvAgi");
+      return iff15(gt7(agi2, cap), money33("0"), minE5(max016(agi2), max016(fact36("wvEarnedIncome")), cap));
+    })()
+  },
+  {
+    id: "us.wv.social_security_modification",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia Social Security decreasing modification \u2014 100% of federally taxable benefits when federal AGI is $100,000 (MFJ) / $50,000 (single, HOH, widow(er), MFS) or less, otherwise 65% for TY2025 (Schedule M line 34)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-12(c)(8)(A)-(F) (as amended 2024 HB 4880); 2025 booklet, Schedule M line 34 instructions p. 26 and 'IMPORTANT INFORMATION FOR 2025' p. 15; printed Schedule M line 34",
+      section: "\xA7 11-21-12(c)(8); Schedule M line 34",
+      url: CODE2("11-21-12"),
+      excerpt: "STATUTE (verbatim): '(8) Decreasing modification for social security income. (A) For taxable years beginning on or after January 1, 2022, 100 percent of the social security benefits received pursuant to Chapter 7 of Title 42 of the United States Code \u2026 included in federal adjusted gross income for the taxable year shall be allowed as a decreasing modification \u2026 subject to the limitation in \xA711-21-12(c)(8)(B) of this code. (B) The deduction allowed by \xA711-21-12(c)(8)(A) of this code are allowable only when the federal adjusted gross income of a married couple filing a joint return does not exceed $100,000, or $50,000 in the case of a single individual or a married individual filing a separate return. \u2026 (D) For taxable years beginning on or after January 1, 2025, 65 percent of the social security benefits received \u2026 included in federal adjusted gross income for the taxable year shall be allowed as a decreasing modification \u2026 subject to the limitation in \xA711-21-12(c)(8)(F) of this code. (E) For taxable years beginning on or after January 1, 2026, 100 percent \u2026 (F) The deduction allowed by \xA711-21-12(c)(8)(C), \xA711-21-12(c)(8)(D), and \xA711-21-12(c)(8)(E) of this code are allowable only when the federal adjusted gross income of a married couple filing a joint return exceeds $100,000, or $50,000 in the case of a single individual or a married individual filing a separate return.' SCHEDULE M (verbatim): '34. Social Security Benefits (a) TOTAL Social Security Benefits (b) Benefits exempt for Federal tax purposes (c) Benefits taxable for Federal tax purposes (line a minus line b) \u2026 Multiply 34(c) by 0.65 if your Federal AGI exceeds $50,000 for SINGLE or MARRIED SEPARATE filers $100,000 for MARRIED JOINT filers. Enter 34(c) on Line 34 below.' INSTRUCTIONS (p. 26, verbatim): '\u2026 100 percent (100%) of the amount of social security benefits received and included in federal adjusted gross income \u2026 The deduction may be claimed only when the federal adjusted gross income of a married couple filing a joint return does not exceed $100,000, or $50,000 in the case of a single, head of household, widow(er), or a married individual filing a separate return. Additionally, for taxable year 2025, 65% of social security benefits received and included in the federal adjusted gross income shall be allowed as a decreasing modification \u2026 when the federal adjusted gross income of a married couple filing jointly exceeds $100,000 or $50,000 in the case of a single, head of household, widow(er), or married individual filing a separate return.' ENCODING: the fact is the federally taxable amount (Form 1040 line 6b, Schedule M 34(c)) for the column; 65% is rounded to whole dollars. TY2026: version 2 (100% at any income)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { agiLimitJoint: { value: "10000000", type: "money" }, agiLimitOther: { value: "5000000", type: "money" }, pctOverLimit: { value: "65", type: "int" } },
+    formula: (() => {
+      const limit = iff15(isMfj4, money33("10000000"), money33("5000000"));
+      const ss2 = max016(fact36("wvTaxableSocialSecurity"));
+      return iff15(le14(fact36("wvAgi"), limit), ss2, rd21(pct5(ss2, "65", "100")));
+    })()
+  },
+  {
+    id: "us.wv.social_security_modification",
+    version: 2,
+    jurisdiction: "us.wv",
+    title: "West Virginia Social Security decreasing modification TY2026 \u2014 100% of federally taxable benefits at any income (Schedule M line 34)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-12(c)(8)(A)-(B), (E)-(F) (2024 HB 4880 phase-in complete)",
+      section: "\xA7 11-21-12(c)(8)(E)",
+      url: CODE2("11-21-12"),
+      excerpt: "STATUTE (verbatim): '(E) For taxable years beginning on or after January 1, 2026, 100 percent of the social security benefits received pursuant to Chapter 7 of Title 42 of the United States Code \u2026 included in federal adjusted gross income for the taxable year shall be allowed as a decreasing modification from federal adjusted gross income when determining West Virginia taxable income subject to the tax imposed by this article, subject to the limitation in \xA711-21-12(c)(8)(F) of this code. (F) The deduction allowed by \u2026 \xA711-21-12(c)(8)(E) of this code are allowable only when the federal adjusted gross income of a married couple filing a joint return exceeds $100,000, or $50,000 \u2026' Together with (A)-(B) (100% at or below the thresholds), every filer subtracts 100% of federally taxable Social Security for taxable years beginning in 2026."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "100", type: "int" } },
+    formula: max016(fact36("wvTaxableSocialSecurity"))
+  },
+  {
+    id: "us.wv.senior_citizen_modification",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia senior citizen or disability modification \u2014 up to $8,000 of a 65-or-older or permanently and totally disabled person's income, reduced by that person's Schedule M lines 29-34 subtractions (Schedule M line 47, per column)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-12(c)(9); 2025 booklet, Schedule M line 47 instructions and 'EXAMPLE OF SENIOR CITIZEN DEDUCTION CALCULATION' pp. 27-28; printed Schedule M line 47 columns (a)-(d)",
+      section: "\xA7 11-21-12(c)(9); Schedule M line 47",
+      url: CODE2("11-21-12"),
+      excerpt: "STATUTE (verbatim): '(9) Federal adjusted gross income in the amount of $8,000 received from any source after December 31, 1986, by any person who has attained the age of 65 on or before the last day of the taxable year, or by any person certified by proper authority as permanently and totally disabled, regardless of age, on or before the last day of the taxable year, to the extent includable in federal adjusted gross income for federal tax purposes: \u2026 Provided, however, That: (i) Where the total modification under subdivisions (1), (2), (5), (6), (7), and (8) of this subsection is $8,000 per person or more, no deduction shall be allowed under this subdivision; and (ii) Where the total modification under subdivisions (1), (2), (5), (6), (7), and (8) of this subsection is less than $8,000 per person, the total modification allowed under this subdivision for all gross income received by that person shall be limited to the difference between $8,000 and the sum of modifications under subdivisions (1), (2), (5), (6), (7), and (8) of this subsection'. SCHEDULE M line 47 (verbatim): '(a) Year of birth (65 or older) (b) Year of disability (c) Income not included in lines 35 to 46 (NOT TO EXCEED $8000) (d) Add lines 29 through 34 \u2014 Subtract line 47 column (d) from (c) (If less than zero, enter zero)'. INSTRUCTIONS (verbatim): 'Taxpayers MUST be at least age 65 OR certified as permanently and totally disabled to receive this deduction. \u2026 Joint income must be divided between spouses with regard to their respective percentage of ownership. ONLY THE INCOME OF THE SPOUSE WHO MEETS THE ELIGIBILITY REQUIREMENTS QUALIFIES FOR THE MODIFICATION. \u2026 Box (c) Enter all income (for each spouse, if joint return) not reported on lines 35 through 48. Box (d) Add lines 29 through 34 for each spouse and enter on this line. Subtract BOX (d) from BOX (c) for each. If BOX (d) is larger than BOX(c), enter zero.' EXAMPLE (verbatim): 'John Doe, age 69, and Mary Doe, age 65, file a joint tax return \u2026 Mr. Doe reported his police pension on line 31 and his share of their joint savings bond interest on line 29. He enters $7,500 in column (d). \u2026 Mrs. Doe \u2026 enters $500 in column (d). \u2026 Therefore, Mr. Doe enters $500 in column A and Mrs. Doe enters $7,500 in column B.' ENCODING per person: eligible ? max0(min($8,000, income not on lines 35-46) \u2212 lines 29-34) : $0."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "800000", type: "money" } },
+    formula: iff15(fact36("wvSeniorOrDisabled"), max016(sub16(minE5(money33("800000"), max016(fact36("wvIncomeNotOnLines35to46"))), max016(fact36("wvLines29to34")))), money33("0"))
+  },
+  {
+    id: "us.wv.surviving_spouse_modification",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia surviving spouse modification \u2014 one-time subtraction of up to $8,000 in the year after the death of a spouse who was 65 or disabled, reduced by the Schedule M lines 29-34 subtractions (Schedule M line 48)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-12(c)(10); 2025 booklet, Schedule M line 48 instructions p. 28 and 'SURVIVING SPOUSE' p. 21",
+      section: "\xA7 11-21-12(c)(10); Schedule M line 48",
+      url: CODE2("11-21-12"),
+      excerpt: "STATUTE (verbatim): '(10) Federal adjusted gross income in the amount of $8,000 received from any source after December 31, 1986, by the surviving spouse of any person who had attained the age of 65 or who had been certified as permanently and totally disabled, to the extent includable in federal adjusted gross income for federal tax purposes: Provided, That: (i) Where the total modification under subdivisions (1), (2), (5), (6), (7), and (8) of this subsection is $8,000 or more, no deduction shall be allowed under this subdivision; and (ii) Where the total modification under subdivisions (1), (2), (5), (6), (7), and (8) of this subsection is less than $8,000 per person, the total modification allowed under this subdivision for all gross income received by that person shall be limited to the difference between $8,000 and the sum of subdivisions (1), (2), (5), (6), (7), and (8) of this subsection'. BOOKLET (line 48, verbatim): 'The surviving spouse may claim a one-time subtraction from his/her income of up to $8,000 for the taxable year following the year of the spouse's death if all of the following conditions are met: The decedent was 65 years of age or older OR was certified as permanently and totally disabled prior to his death. The surviving spouse did not remarry before the end of the taxable year. The total deductions from income shown on lines 29 through 34 and line 49 of Schedule M are less than $8,000. If under $8,000, enter only the difference on the Surviving Spouse Line. The combined total of Line 49 and 50 can not exceed $8,000.' (The instructions' Schedule M line numbers run two higher than the printed 2025 form \u2014 'line 49' is the printed line 47 senior citizen modification and 'Line 49 and 50' are printed lines 47 and 48.) p. 21: 'Regardless of age, a surviving spouse of a decedent may be eligible for a modification reducing his/her income up to $8,000 provided he/she did not remarry before the end of the taxable year.' ENCODING: eligible ? max0($8,000 \u2212 wvLines29to34) : $0, where the composer passes lines 29-34 PLUS the line 47 modification so that lines 47 and 48 together never exceed $8,000 (the booklet's combined cap; \xA7 11-21-12(c)(10) itself lists only subdivisions (1), (2), (5), (6), (7), (8) = lines 29-34). Schedule H (p. 13) also lets the surviving spouse of a certified-disabled decedent who died during 2025 take a modification; the composer follows line 48's 'taxable year following the year of the spouse's death'."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "800000", type: "money" } },
+    formula: iff15(fact36("wvSurvivingSpouseEligible"), max016(sub16(money33("800000"), max016(fact36("wvLines29to34")))), money33("0"))
+  },
+  {
+    id: "us.wv.family_tax_credit",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia Family Tax Credit \u2014 a percentage of the line 8 tax from the 2025 tables: 100% at or below the poverty guideline ($15,650 + $5,500 per family member), falling 10 points per $300 of modified federal AGI above it (MFS: half the guideline, $150 steps); none with zero exemptions or federal AMT (Schedule FTC-1)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-22; 2025 Schedule FTC-1 lines 1-8 (p. 11) and '2025 FAMILY TAX CREDIT TABLES' Table 1 and Table 2 (p. 12); Tax Credit Recap line 2",
+      section: "\xA7 11-21-22; Schedule FTC-1; Recap line 2",
+      url: BOOKLET_URL6,
+      excerpt: "STATUTE (verbatim): 'In order to eliminate West Virginia personal income tax on families with incomes below the federal poverty guidelines and to reduce the West Virginia personal income tax on families with incomes that are immediately above the federal poverty guidelines, there is hereby created a nonrefundable tax credit, to be known as the low-income family tax credit \u2026 The low-income family tax credit is based upon family size and the federal poverty guidelines. \u2026 Provided, That for tax years beginning on and after January 1, 2009, any person who is required to pay the federal alternative minimum income tax in the current tax year is disqualified from receiving any tax credit provided under this section.' FTC-1 (verbatim): 'Individuals who file their income tax return with zero exemptions cannot claim the credit. Persons who pay the federal alternative minimum tax are not eligible to claim this credit. \u2026 If filing status is married filing separate use Family Tax Credit Table 2. 1. Federal Adjusted Gross Income (enter the amount from line 1 of Form IT-140); 2. Increasing West Virginia modifications (enter the amount from line 2 of Form IT-140); 3. Tax-exempt interest reported on federal tax return (enter the amount shown on Federal Form 1040 that is not already included on line 2 of Form IT-140); 4. Add lines 1 through 3. This is your Modified Federal Adjusted Gross Income for the Family Tax Credit; 5. Enter the number of exemptions claimed from Form IT-140, sum of boxes a, b, and c (This is your Family Size for the Family Tax Credit); 6. Enter the Family Tax Credit Percentage for your family size AND Modified Federal Adjusted Gross Income level from the tables on page 12. If the exemptions on line 5 are greater than 8, use the table for a family size of 8; 7. Enter your income tax due from line 8 of Form IT-140; 8. Multiply the amount on line 7 by the percentage shown on line 6. This is your Family Tax Credit.' TABLE 1 (verbatim, family size 1): 'Greater Than $0 Equal To or Less Than $15,650 100%; $15,650 $15,950 90%; $15,950 $16,250 80%; $16,250 $16,550 70%; $16,550 $16,850 60%; $16,850 $17,150 50%; $17,150 $17,450 40%; $17,450 $17,750 30%; $17,750 $18,050 20%; $18,050 $18,350 10%; $18,350 0%'; size 2 starts '$0 $21,150 100%', size 3 '$26,650', size 4 '$32,150', size 5 '$37,650', size 6 '$43,150', size 7 '$48,650', '8 or More' '$54,150'. TABLE 2 (Married Filing Separately, verbatim, size 1): '$0 $7,825 100%; $7,825 $7,975 90%; \u2026 $9,025 $9,175 10%; $9,175 0%'; sizes 2-8 start at $10,575 / $13,325 / $16,075 / $18,825 / $21,575 / $24,325 / $27,075. STRUCTURE (verified on all 176 printed cells): Table 1's 100% ceiling is the 2025 HHS poverty guideline ($15,650 for one person plus $5,500 for each additional person) and each 10-point step is $300 of modified federal AGI ('Greater Than' exclusive, 'Equal To or Less Than' inclusive); Table 2 is exactly half ($150 steps). ENCODING: pct = 100 \u2212 10 \xD7 ceil(max0(MFAGI \u2212 ceiling) \xF7 step), floored at 0; credit = round(line 8 tax \xD7 pct). The tables follow the annual poverty guidelines \u2014 this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      povertyGuidelineOne: { value: "1565000", type: "money" },
+      povertyGuidelinePerAdditional: { value: "550000", type: "money" },
+      step: { value: "30000", type: "money" },
+      stepMfs: { value: "15000", type: "money" },
+      maxFamilySize: { value: "8", type: "int" }
+    },
+    formula: (() => {
+      const size = iff15(gt7(fact36("wvFamilySize"), int9("8")), int9("8"), fact36("wvFamilySize"));
+      const ceilingFull = add12(money33("1565000"), mulInt14(money33("550000"), sub16(size, int9("1"))));
+      const ceiling = iff15(isMfs5, pct5(ceilingFull, "1", "2"), ceilingFull);
+      const steps = iff15(isMfs5, stepUnits5(max016(sub16(fact36("wvModifiedAgi"), ceiling)), "15000", "ceil"), stepUnits5(max016(sub16(fact36("wvModifiedAgi"), ceiling)), "30000", "ceil"));
+      const pctPoints = max016(sub16(money33("100"), mulInt14(money33("10"), steps)));
+      const credit = rd21({ kind: "mulDiv", a: max016(fact36("wvTaxBeforeCredits")), b: pctPoints, c: money33("100"), round: "half-up" });
+      return iff15(or6(cmp8("eq", fact36("wvFamilySize"), int9("0")), fact36("wvFederalAmt")), money33("0"), credit);
+    })()
+  },
+  {
+    id: "us.wv.other_state_credit",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia credit for income tax paid to another state \u2014 Schedule E: the smallest of the other state's tax, the West Virginia tax, the tax \xD7 (other-state income \xF7 West Virginia AGI), the tax minus the tax on income excluding the other-state income, and the tax minus the other Recap credits (Recap line 1)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-20(a)-(c); 2025 Schedule E lines 1-10 (p. 14); Tax Credit Recap line 1",
+      section: "\xA7 11-21-20; Schedule E lines 1-10",
+      url: CODE2("11-21-20"),
+      excerpt: "STATUTE (verbatim): '(a) General. \u2014 A resident shall be allowed a credit against the tax otherwise due under this article for any income tax paid to another state of the United States or by the District of Columbia for the taxable year \u2026 upon income both derived therefrom and subject to tax under this article. \u2026 (b) Limitations. \u2014 (1) The credit under this section shall not exceed the percentage of the tax otherwise due under this article determined by dividing the portion of the taxpayer's West Virginia income subject to taxation by such other jurisdiction by the total amount of the taxpayer's West Virginia income. (2) The credit under this section shall not reduce the tax otherwise due under this article to an amount less than would have been due if the income subject to taxation by such other jurisdiction were excluded from the taxpayer's West Virginia income. (c) Exception. \u2014 No credit shall be allowed under this section for a tax of a jurisdiction which allows residents of this state a credit against the taxes imposed by such other jurisdiction for the tax under this article \u2026' SCHEDULE E (verbatim): 'A Separate Schedule E must be completed for each state for which credit is claimed. \u2026 No credit is allowed for income tax imposed by a city, township, borough, or any other political subdivision of a state or any other country. 1 INCOME TAX COMPUTED ON YOUR 2025 [state] RETURN. DO NOT REPORT TAX WITHHELD; 2 WEST VIRGINIA TOTAL INCOME TAX DUE (LINE 8 OF FORM IT-140); 3 NET INCOME DERIVED FROM ABOVE STATE INCLUDED IN WEST VIRGINIA TOTAL INCOME; 4 TOTAL WEST VIRGINIA ADJUSTED GROSS INCOME (RESIDENTS\u2013FORM IT-140, LINE 4 \u2026); 5 LIMITATION OF CREDIT (LINE 2 MULTIPLIED BY LINE 3 DIVIDED BY LINE 4); 6 ALTERNATIVE WEST VIRGINIA TAXABLE INCOME (RESIDENTS \u2013 SUBTRACT LINE 3 FROM LINE 7, FORM IT-140); 7 ALTERNATIVE WEST VIRGINIA TOTAL INCOME TAX (APPLY THE TAX RATE SCHEDULE TO THE AMOUNT SHOWN ON LINE 6); 8 LIMITATION OF CREDIT (LINE 2 MINUS LINE 7); 9 MAXIMUM CREDIT (LINE 2 MINUS THE SUM OF LINES 2 THROUGH 26 OF THE TAX CREDIT RECAP SCHEDULE); 10 TOTAL CREDIT (SMALLEST OF LINES 1,2, 5, 8, OR 9) ENTER HERE AND ON LINE 1 OF THE TAX CREDIT RECAP SCHEDULE'. ENCODING: line 5 = round(line 2 \xD7 line 3 \xF7 line 4); line 7 (wvAlternativeTax) is supplied by the composer from us.wv.income_tax applied with the RATE SCHEDULE (as the form directs) to line 7 minus line 3; credit = min(lines 1, 2, 5, 8, 9), $0 when line 4 is not positive."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: (() => {
+      const l1 = max016(fact36("wvOtherStateTax"));
+      const l2 = max016(fact36("wvTaxBeforeCredits"));
+      const l3 = max016(fact36("wvOtherStateIncome"));
+      const l4 = fact36("wvAdjustedGrossIncome");
+      const l5 = rd21({ kind: "mulDiv", a: l2, b: l3, c: l4, round: "half-up" });
+      const l8 = max016(sub16(l2, max016(fact36("wvAlternativeTax"))));
+      const l9 = max016(sub16(l2, max016(fact36("wvOtherRecapCredits"))));
+      return iff15(gt7(l4, money33("0")), minE5(l1, l2, l5, l8, l9), money33("0"));
+    })()
+  },
+  {
+    id: "us.wv.child_care_credit",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia child and dependent care credit \u2014 50% of the federal \xA7 21 credit, nonrefundable (Tax Credit Recap line 18)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-26 (2024); 2025 Tax Credit Recap line 18; booklet 'IMPORTANT INFORMATION FOR 2025' p. 15",
+      section: "\xA7 11-21-26; Recap line 18",
+      url: CODE2("11-21-26"),
+      excerpt: "STATUTE (verbatim): 'For tax years beginning on and after January 1, 2024, a person who is allowed a federal tax credit for child and dependent care pursuant to 26 U.S.C. \xA7 21 is also allowed a nonrefundable credit against the tax imposed by \xA711-21-1 et seq of this code. The amount of the credit allowed to the person claiming the credit under this section is 50 percent of the federal child and dependent care tax credit allowed to the person under the provisions of 26 U.S.C. \xA7 21. This section shall have retrospective effect to apply to taxable years beginning on and after January 1, 2024.' RECAP (verbatim): '18. Child and Dependent Care Expenses Credit (\xA711-21-26) \u2014 Must have a copy of federal form 2441'. BOOKLET p. 15: 'The Child and Dependent Care Credit can be claimed on Line 18 of Tax Credit Recap Schedule (RECAP). The allowable credit is 50% of the credit taken on Form 2441 of the federal return. Paper filers will need to submit the federal Form 2441 in order to take this credit.'"
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "50", type: "int" } },
+    formula: rd21(pct5(max016(fact36("wvFederalChildCareCredit")), "1", "2"))
+  },
+  {
+    id: "us.wv.senior_citizens_tax_credit",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia Senior Citizens Tax Credit \u2014 the property tax paid on up to the first $20,000 of taxable assessed value of a Homestead Exemption home (from the mailed Schedule SCTC-A), refundable, when federal AGI is at or below 150% of the poverty guideline ($23,475 + $8,250 per additional household member) (Form IT-140 line 18)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-21(a)(2)-(3), (b)(1); 2025 booklet, 'SENIOR CITIZENS TAX CREDIT INFORMATION' p. 34 and pp. 19-20; Form IT-140 line 18",
+      section: "\xA7 11-21-21; Form IT-140 line 18; Schedule SCTC-A",
+      url: CODE2("11-21-21"),
+      excerpt: `STATUTE (verbatim): '(2) For tax years beginning on or after January 1, 2007, a low-income person who is allowed a $20,000 homestead exemption from the assessed value of his or her homestead for ad valorem property tax purposes \u2026 shall be allowed a refundable credit against the taxes imposed by this article equal to the amount of ad valorem property taxes paid on up to the first $20,000 of taxable assessed value of the homestead \u2026 Provided, That for tax years beginning on and after January 1, 2009, any person who is required to pay the federal alternative minimum income tax in the current tax year is disqualified \u2026 (3) Due to the administrative cost of processing, the refundable credit authorized by this section may not be refunded if less than $10.' '(b)(1) "Low income" means federal adjusted gross income for the taxable year that is one hundred fifty percent or less of the federal poverty guideline for the year in which property tax was paid, based upon the number of individuals in the family unit residing in the homestead'. BOOKLET p. 34 (verbatim): 'The credit is based on the amount of ad valorem property taxes paid (Class II) on the first $20,000, or portion thereof, of the taxable assessed value over the $20,000 Homestead Exemption. \u2026 # OF PEOPLE IN HOUSEHOLD / 150% OF POVERTY GUIDELINES: 1 $23,475; 2 $31,725; 3 $39,975; 4 $48,225 **FOR EACH ADDITIONAL PERSON, ADD $8,250'. p. 19: 'Credit eligibility is restricted to taxpayers who participate in the Homestead Exemption program (administered by the county assessor's office), who incur and pay property taxes and whose federal adjusted gross income is less than 150% of federal poverty guidelines. \u2026 You will receive form WV SCTC-A by mail if you participate in the Homestead Exemption program. \u2026 If you are claiming the Disabled Veteran Property Tax Credit, you cannot take the Senior Citizen Tax Credit or the Homestead Excess Property Tax Credit.' ENCODING: the credit amount (SCTC-A Part III line 2) is an input; the rule returns it when household income is at or below the 150% guideline for the household size and the filer is not claiming the disabled veteran credit or paying federal AMT, else $0. The guideline changes yearly \u2014 this rule ends 2026-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { limitOne: { value: "2347500", type: "money" }, limitPerAdditional: { value: "825000", type: "money" }, minimumRefund: { value: "1000", type: "money" } },
+    formula: (() => {
+      const size = iff15(lt15(fact36("wvHouseholdSize"), int9("1")), int9("1"), fact36("wvHouseholdSize"));
+      const limit = add12(money33("2347500"), mulInt14(money33("825000"), sub16(size, int9("1"))));
+      return iff15(and4(le14(fact36("wvHouseholdIncome"), limit), not4(fact36("wvFederalAmt")), not4(fact36("wvDisabledVeteranCreditClaimed"))), max016(fact36("wvSeniorCitizenCreditAmount")), money33("0"));
+    })()
+  },
+  {
+    id: "us.wv.homestead_excess_property_tax_credit",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia Homestead Excess Property Tax Credit \u2014 owner-occupied real property tax (less the Senior Citizens Tax Credit) above 4% of gross household income, up to $1,000, refundable, when federal AGI is at or below 300% of the poverty guideline ($46,950 + $16,500 per additional person) (Schedule HEPTC-1, Form IT-140 line 19)",
+    citation: {
+      source: "W. Va. Code \xA7 11-21-23(a), (b), (d), (f), (g), (h); 2025 Schedule HEPTC-1 Parts I-II (p. 9); booklet p. 19",
+      section: "\xA7 11-21-23; Schedule HEPTC-1; Form IT-140 line 19",
+      url: CODE2("11-21-23"),
+      excerpt: `STATUTE (verbatim): '(a) \u2026 for the tax years beginning on or after January 1, 2012, any low income homeowner living in his or her homestead in this state shall be allowed a refundable credit against the taxes imposed by this article equal to the amount by which the difference between West Virginia real property taxes paid for the tax year, minus the amount of credit authorized in section twenty-one of this article, exceeds four percent of the taxpayer's gross household income for the tax year \u2026 (b) Due to the administrative cost of processing, the refundable credit authorized by this section may not be refunded if less than $10. \u2026 (d)(1) "Gross household income" is defined as federal adjusted gross income plus the sum of the following: (A) Modifications in subsection (b), section twelve of this article increasing federal adjusted gross income; (B) Federal tax-exempt interest reported on federal tax return; (C) Workers' compensation and loss of earnings insurance; and (D) Nontaxable Social Security benefits \u2026 (f) No homeowner may receive a refundable tax credit imposed by this article in excess of $1,000. \u2026 (g) \u2026 no credit may be taken under this section for any homestead which is owned, in whole or in part, by any person who is not a low income person. (h)(2) "Low income" means federal adjusted gross income for the tax year that is three hundred percent or less of the federal poverty guideline'. SCHEDULE HEPTC-1 (verbatim): 'Part I \u2026 YES \u2013 Your federal adjusted gross income reported to the IRS must meet the following guidelines for you to qualify for this credit: If there is only 1 person living in your home, your federal adjusted gross income must be $46,950 or less. If there are 2 people \u2026 $63,450 or less. If there are 3 people \u2026 $79,950 or less. If there are 4 people \u2026 $96,450 or less. **For each additional person add $16,500. Part II \u2026 1. Enter the total West Virginia property tax paid on your OWNER-OCCUPIED home during 2025 (Amount to be used is after discount and before interest is added); 2. If eligible for the Senior Citizen Tax Credit enter allowable credit from line 2 of Form SCTC-A; 3. Subtract line 2 from line 1 \u2026; 4. Enter your Federal Adjusted Gross Income; a. Enter the amount of increasing income modifications reported on line 61 of Schedule M; b. Enter federal tax-exempt interest income; c. Enter amount received in 2025 in the form of earnings replacement insurance (Workers' Compensation Benefits); d. Enter the amount of Social Security benefits, including SSI and SSDI, received that are NOT included in your Federal Adjusted Gross Income; e. Enter the income of all individuals living in the household but would file a separate tax return; 5. Add amounts on lines 4a, 4b, 4c, 4d, and 4e; 6. Total Gross Income: Add amount entered on line 4 and line 5; 7. Multiply amount on line 6 by 4% (0.04); 8. Is the amount on line 3 greater than the amount on line 7? Yes. Continue to line 9 below. No. Stop \u2014 you are not eligible for this tax credit; 9. Subtract the amount on line 7 from the amount on line 3 and enter the result or $1,000, whichever is lower, and enter on line 19 of IT-140.' 'Check here if you were required to pay Federal Alternative Minimum Tax.' 'If you are claiming the Disabled Veterans Property Credit, you are not eligible to also claim this credit.' The guideline changes yearly \u2014 this rule ends 2026-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { limitOne: { value: "4695000", type: "money" }, limitPerAdditional: { value: "1650000", type: "money" }, pctOfIncome: { value: "4", type: "int" }, cap: { value: "100000", type: "money" }, minimumRefund: { value: "1000", type: "money" } },
+    formula: (() => {
+      const size = iff15(lt15(fact36("wvHouseholdSize"), int9("1")), int9("1"), fact36("wvHouseholdSize"));
+      const limit = add12(money33("4695000"), mulInt14(money33("1650000"), sub16(size, int9("1"))));
+      const l3 = max016(sub16(max016(fact36("wvPropertyTaxPaid")), max016(fact36("wvSeniorCitizenCredit"))));
+      const l6 = add12(fact36("wvAgi"), max016(fact36("wvAdditions")), max016(fact36("wvTaxExemptInterest")), max016(fact36("wvWorkersCompensation")), max016(fact36("wvNontaxableSocialSecurity")), max016(fact36("wvOtherHouseholdIncome")));
+      const l7 = rd21(pct5(max016(l6), "4", "100"));
+      const eligible = and4(le14(fact36("wvHouseholdIncome"), limit), not4(fact36("wvFederalAmt")), not4(fact36("wvDisabledVeteranCreditClaimed")), gt7(l3, l7));
+      return iff15(eligible, minE5(money33("100000"), sub16(l3, l7)), money33("0"));
+    })()
+  },
+  {
+    id: "us.wv.use_tax",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia purchaser's use tax \u2014 6% state use tax on untaxed purchases plus the municipal use tax (0.5% or 1%) on purchases used in a municipality that imposes it (Schedule UT, Form IT-140 line 13)",
+    citation: {
+      source: "2025 Schedule UT Parts I-III (p. 44) and Schedule UT instructions (p. 43); Form IT-140 line 13",
+      section: "Schedule UT; Form IT-140 line 13",
+      url: BOOKLET_URL6,
+      excerpt: "SCHEDULE UT (verbatim): 'Part I State Use Tax Calculation: 1. Amount of purchases subject to West Virginia Use Tax; 2. West Virginia Use Tax Rate; 3. West Virginia State Use Tax (Multiply line 1 by rate on line 2. Enter amount here and on line 9 below). Part II Municipal Use Tax Calculation: City/Town Name / Purchases Subject to Municipal Use Tax / Tax Rate / Municipal Tax Due (Purchases multiplied by rate) \u2026' INSTRUCTIONS (verbatim): 'LINE 1 Enter the total dollar amount of all purchases made during the 2025 tax year that are subject to the 6% use tax rate. LINE 3 Multiply the amount on line 1 by the use tax rate on line 2. PART II. MUNICIPAL USE TAX CALCULATION \u2014 You owe municipal use tax on the total purchase price of taxable tangible personal property or taxable services that you used, stored, or consumed in a municipality that has imposed sales and use tax upon which you have not previously paid sales or use tax. \u2026 LINE 4C - 7C. Enter the tax rate. See www.tax.wv.gov for a complete list of municipalities and rates. LINE 4D - 7D. Multiply total purchases by the tax rate and enter total. \u2026 LINE 11 Enter total Use Tax due. Add lines 9 and 10 and enter total here and on line 13 of Form IT 140.' Example: '2. 6.0% West Virginia State use tax ($10,000 x .06) 600.00 \u2026 2. 1.0% Municipality A sales/use tax ($10,000 x .01) 100.00'. Credit for sales tax paid to another state or municipality is netted before entry (the 'measure of tax' worksheet) \u2014 supply the net measure as the purchases. ENCODING: round(6% \xD7 purchases) + round(municipal bps \xD7 municipal purchases)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { stateRateBps: { value: "600", type: "int" } },
+    formula: add12(rd21(pct5(max016(fact36("wvUseTaxPurchases")), "6", "100")), rd21({ kind: "mulDiv", a: max016(fact36("wvMunicipalUseTaxPurchases")), b: mulInt14(money33("1"), fact36("wvMunicipalUseTaxRateBps")), c: money33("10000"), round: "half-up" }))
+  },
+  {
+    id: "us.wv.parameters",
+    version: 1,
+    jurisdiction: "us.wv",
+    title: "West Virginia 2025 Form IT-140 parameters \u2014 line structure, Schedule M lines and caps, the Recap credits, the property tax adjustment credits, and the enacted TY2026 position",
+    citation: {
+      source: "2025 West Virginia Personal Income Tax Forms & Instructions (IT-140, Schedules M, Recap, HEPTC-1, FTC-1, E, UT); W. Va. Code \xA7\xA7 11-21-4i, 4j, 4h, 10, 12, 16, 20, 21, 22, 23, 26; 11-13MM-3, -4, -5; 2026 SB 392; web-verified September 2026",
+      section: "Form IT-140 lines 1-28; Schedule M lines 29-59; Recap lines 1-27",
+      url: BOOKLET_URL6,
+      excerpt: "STRUCTURE (printed 2025 IT-140): filing status 1 Single, 2 Head of Household, 3 Married Filing Joint, 4 Married Filing Separate, 5 Widow(er) with dependent child ('Your filing status is generally the same filing status shown on your federal return'; a joint federal return may elect state MFS under Rate Schedule II); exemptions (a)-(e) (\u2192 us.wv.exemption_deduction); 1 federal AGI ('or income to claim senior citizen tax credit from Schedule SCTC-A'); 2 additions (Schedule M line 59 \u2014 the printed IT-140 line 2 caption says 'line 61 of Schedule M' and line 3 says 'line 52', two higher than the printed Schedule M: 51 interest on federal obligations taxable by the state, 52 non-West Virginia state and local bond interest, 53 interest on debt carrying exempt bonds, 54 \xA7 402(e) lump sums, 55 other income excluded federally, 56-58 nonqualified SMART529 / ABLE / Jumpstart withdrawals); 3 subtractions (Schedule M line 50, columns A (You) and B (Spouse): 29 U.S. and West Virginia obligation interest, 30 federal law enforcement retirement, 31 West Virginia police / deputy sheriff / firemen's retirement (100%), 32 military retirement (100%, \xA7 11-21-12(c)(7)(C)), 33 PERS / Teachers' Retirement and federal retirement \u2014 combined 'not to exceed $2,000' per person (\xA7 11-21-12(c)(5)), 34 Social Security (\u2192 us.wv.social_security_modification), 35 S corporation bank assets, 36 active duty military pay (Title 10 contingency operations), 37 active military separation pay, 38 state and local income tax refunds in federal income, 39 SMART529 / Prepaid Tuition contributions (no cap), 40 Railroad Retirement Board income (100%), 41 long-term care insurance premiums, 42 IRC 1341 repayments over $3,000, 43 ABLE contributions, 44 Jumpstart Savings deposits 'not to exceed $25,000', 45 PBGC modification, 46 gambling losses (\u2264 winnings, itemizers only), 47 senior citizen / disability modification (\u2192 us.wv.senior_citizen_modification), 48 surviving spouse (\u2192 us.wv.surviving_spouse_modification)); 4 West Virginia AGI = 1 + 2 \u2212 3; 5 low-income earned income exclusion (\u2192 us.wv.low_income_exclusion); 6 exemptions \xD7 $2,000; 7 taxable income (not below zero); 8 tax \u2014 Tax Table / Rate Schedule (\u2192 us.wv.income_tax); 9 Recap credits (1 other state \u2192 us.wv.other_state_credit; 2 Family Tax Credit \u2192 us.wv.family_tax_credit; 3-17 and 19-26 business/certificated credits; 18 child and dependent care \u2192 us.wv.child_care_credit; 27 total); 10 = 8 \u2212 9 (not below zero); 11 amended: prior refund; 12 Form IT-210 underpayment penalty ('If line 8 minus line 9, 15, 17, 18, 19, 20 and 21 is greater than $600, you may be subject to a penalty'); 13 use tax (\u2192 us.wv.use_tax); 14 total due = 10 + 11 + 12 + 13; 15 withholding; 16 estimated payments and WV-4868 payments; 17 Non-Family Adoption credit (NFA-1); 18 Senior Citizens Tax Credit (\u2192 us.wv.senior_citizens_tax_credit); 19 HEPTC (\u2192 us.wv.homestead_excess_property_tax_credit); 20 Build WV property value adjustment credit (PVA-2); 21 property tax adjustment credits \u2014 A motor vehicle (\xA7 11-13MM-3: 'the amount of West Virginia ad valorem property tax timely paid \u2026 on the value of a motor vehicle owned by the eligible taxpayer', refundable), B disabled veteran real property (\xA7 11-13MM-4: 'equal to the amount of West Virginia ad valorem real property taxes timely paid \u2026 on a homestead', refundable; bars the SCTC and HEPTC), C small business (\xA7 11-13MM-5: '50% of the amount of West Virginia ad valorem property tax due and owing and timely paid \u2026 on personal property', aggregate appraised value \u2264 $1 million); 22 amended: paid with original; 23 payments and refundable credits = 15-22; 24 balance due = 14 \u2212 23; 25 overpayment = 23 \u2212 14; 26 donations (Children's Trust Fund, Division of Veterans Assistance, Donel C. Kinnard Memorial State Veterans Cemetery); 27 credited to 2026 estimated tax; 28 refund = 25 \u2212 26 \u2212 27 ('To receive a refund of $2 or less, you must enclose a signed statement with your return requesting that the refund be sent to you'). ROUNDING: 'Round off amounts to WHOLE DOLLARS \u2013 NO CENTS.' RESIDENCY: nonresidents and part-year residents complete Schedule A (income ratio \xD7 Rate Schedule tax) \u2014 not composed; Special Nonresidents (KY, MD, OH, PA, VA wage earners) use Schedule A Part II. PENALTIES: late filing 5% per month to 25%; late payment \xBD% per month to 25%; interest at prime + 3. TY2026 (enacted): \xA7 11-21-4j rates 2.11 / 2.81 / 3.16 / 4.22 / 4.58% (SB 392, effective June 12, 2026, retroactive to January 1, 2026) \u2014 version 2 of us.wv.income_tax; Social Security 100% exempt at any income (\xA7 11-21-12(c)(8)(E)) \u2014 version 2 of us.wv.social_security_modification; the Family Tax Credit, SCTC, and HEPTC guidelines re-index to the 2026 poverty guidelines (unpublished) \u2014 those rules end 2026-01-01; the \xA7 11-21-4h trigger determination on August 15, 2026 can only change TY2027."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      persTrsFederalRetirementCap: { value: "200000", type: "money" },
+      jumpstartDepositCap: { value: "2500000", type: "money" },
+      irc1341Minimum: { value: "300000", type: "money" },
+      motorVehicleCreditPct: { value: "100", type: "int" },
+      disabledVeteranCreditPct: { value: "100", type: "int" },
+      smallBusinessCreditPct: { value: "50", type: "int" },
+      underpaymentPenaltyThreshold: { value: "60000", type: "money" },
+      smallRefundStatementThreshold: { value: "200", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: West Virginia Form IT-140 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.wv.income_tax, us.wv.exemption_deduction, us.wv.low_income_exclusion, us.wv.social_security_modification, us.wv.senior_citizen_modification, us.wv.surviving_spouse_modification, us.wv.family_tax_credit, us.wv.other_state_credit, us.wv.child_care_credit, us.wv.senior_citizens_tax_credit, us.wv.homestead_excess_property_tax_credit, and us.wv.use_tax"
+    }
+  }
+];
+
 // ../corpus-us-federal/dist/rules/state-other.js
 var flatBase = { kind: "max0", arg: fact36("stateTaxableIncome") };
 function flatTax(args) {
@@ -50076,6 +50957,7 @@ var stateParameterRules = [
   ...nmRules,
   ...neRules,
   ...idRules,
+  ...wvRules,
   ...otherStateRules
 ];
 
@@ -50085,7 +50967,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus24 = (status) => ({
+var isStatus25 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -50157,7 +51039,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus24("mfj"),
+    cond: isStatus25("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -50256,7 +51138,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus24("mfj"),
+      cond: isStatus25("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -50444,7 +51326,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus25 = (status) => ({
+var isStatus26 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -50500,7 +51382,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus25("mfs"),
+      cond: isStatus26("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -50511,7 +51393,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus25("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus26("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -50531,7 +51413,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus25("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus26("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -50580,7 +51462,7 @@ var fact40 = (factId) => ({ kind: "fact", factId });
 var money37 = (cents) => ({ kind: "money", cents });
 var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
 var param24 = (name) => ({ kind: "param", name });
-var pct5 = (num, base) => ({
+var pct6 = (num, base) => ({
   kind: "mulRate",
   base,
   rate: { num, den: "100" },
@@ -50629,14 +51511,14 @@ var magiBase = {
   }
 };
 var ss = fact40("socialSecurityBenefits");
-var provisional = { kind: "add", args: [magiBase, pct5("50", ss)] };
-var isMfs5 = {
+var provisional = { kind: "add", args: [magiBase, pct6("50", ss)] };
+var isMfs6 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
   right: { kind: "enum", value: "mfs" }
 };
-var isMfj4 = {
+var isMfj5 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
@@ -50644,7 +51526,7 @@ var isMfj4 = {
 };
 var byJoint = (joint, other) => ({
   kind: "if",
-  cond: isMfj4,
+  cond: isMfj5,
   then: param24(joint),
   else: param24(other)
 });
@@ -50684,19 +51566,19 @@ var socialSecurityRules = [
       then: money37("0"),
       else: {
         kind: "if",
-        cond: isMfs5,
+        cond: isMfs6,
         then: {
           kind: "min",
-          args: [pct5("85", ss), pct5("85", { kind: "max0", arg: provisional })]
+          args: [pct6("85", ss), pct6("85", { kind: "max0", arg: provisional })]
         },
         else: {
           kind: "min",
           args: [
-            pct5("85", ss),
+            pct6("85", ss),
             {
               kind: "add",
               args: [
-                pct5("85", {
+                pct6("85", {
                   kind: "max0",
                   arg: {
                     kind: "sub",
@@ -50710,8 +51592,8 @@ var socialSecurityRules = [
                     {
                       kind: "min",
                       args: [
-                        pct5("50", ss),
-                        pct5("50", {
+                        pct6("50", ss),
+                        pct6("50", {
                           kind: "max0",
                           arg: {
                             kind: "sub",
@@ -50738,7 +51620,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus26 = (status) => ({
+var isStatus27 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -50877,7 +51759,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus26("mfs"),
+      cond: isStatus27("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -50966,11 +51848,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus26("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus27("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus26("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus27("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -50980,7 +51862,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus27 = (status) => ({
+var isStatus28 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -51028,7 +51910,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus27("mfs") },
+        { kind: "not", arg: isStatus28("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -51043,13 +51925,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus28 = (status) => ({
+var isStatus29 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus28("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus29("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -51080,7 +51962,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus28("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus28("mfj"),
+                    cond: isStatus29("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -51152,7 +52034,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus28("mfj"),
+      cond: isStatus29("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -51318,7 +52200,7 @@ function compileDocuments(docs, asOf) {
   const ints = {};
   const bools = {};
   const notes = [];
-  const add12 = (id, c2) => {
+  const add13 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -51340,20 +52222,20 @@ function compileDocuments(docs, asOf) {
   }
   let w2Box1Cents = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add12("wages", toCents(w.box1));
+    add13("wages", toCents(w.box1));
     w2Box1Cents += toCents(w.box1);
     if (w.box2 !== void 0)
-      add12("federalTaxWithheld", toCents(w.box2));
+      add13("federalTaxWithheld", toCents(w.box2));
     if (w.box3 !== void 0 && !multiW2)
-      add12("socialSecurityWages", toCents(w.box3));
+      add13("socialSecurityWages", toCents(w.box3));
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add12("medicareWages", b5);
+      add13("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add12("federalTaxWithheld", excess);
+          add13("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars4(excess)}; added to withholding`);
         }
       }
@@ -51365,72 +52247,72 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(r.box4));
+      add13("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.disabilityBeforeRetirementAge) {
-      add12("wages", taxable3);
-      add12("scheduleRDisabilityIncome", taxable3);
+      add13("wages", taxable3);
+      add13("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars4(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add12("taxableIraDistributions", taxable3);
+      add13("taxableIraDistributions", taxable3);
     else
-      add12("taxablePensionsAndAnnuities", taxable3);
+      add13("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add12("earlyDistributionSubjectToPenalty", taxable3);
+        add13("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars4(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add12("socialSecurityBenefits", toCents(s.box5));
+    add13("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add12("federalTaxWithheld", toCents(s.box6));
+      add13("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(n.box4));
+      add13("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(k.box4));
+      add13("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add12("selfEmploymentNetProfit", net);
+        add13("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars4(seGross)} gross (1099-NEC/K) \u2212 $${dollars4(expenses)} expenses = $${dollars4(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add12("scheduleCNetLoss", -net);
+      add13("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars4(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add12("taxableInterest", toCents(t.box1));
+      add13("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add12("taxableInterest", toCents(t.box3));
+      add13("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars4(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add12("taxExemptInterest", toCents(t.box8));
+      add13("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(t.box4));
+      add13("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -51439,15 +52321,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars4(qualified2)}) exceeds box 1a (total, $${dollars4(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add12("qualifiedDividends", qualified2);
+      add13("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add12("ordinaryDividends", total - qualified2);
+      add13("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add12("__ltProceeds", toCents(d3.box2a));
+      add13("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars4(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(d3.box4));
+      add13("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -51462,24 +52344,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(b.box4));
+      add13("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add12("shortTermCapitalGains", stNet);
+      add13("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add12("shortTermCapitalLoss", -stNet);
+      add13("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add12("longTermCapitalGains", ltNet);
+      add13("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add12("longTermCapitalLoss", -ltNet);
+      add13("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars4(stNet)}, long-term net $${dollars4(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add12("unemploymentCompensation", toCents(g.box1));
+      add13("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add12("federalTaxWithheld", toCents(g.box4));
+      add13("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars4(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -52032,7 +52914,40 @@ var INDIVIDUAL_GROUPS = {
     "idRequiredToFile",
     "idHomeFamilyMembers",
     "idHomeFamilyPartialMonths",
-    "idUseTaxPurchases"
+    "idUseTaxPurchases",
+    "wvUseRateSchedule",
+    "wvExemptions",
+    "wvAgi",
+    "wvEarnedIncome",
+    "wvTaxableSocialSecurity",
+    "wvSeniorOrDisabled",
+    "wvIncomeNotOnLines35to46",
+    "wvLines29to34",
+    "wvSurvivingSpouseEligible",
+    "wvFamilySize",
+    "wvModifiedAgi",
+    "wvTaxBeforeCredits",
+    "wvFederalAmt",
+    "wvOtherStateTax",
+    "wvOtherStateIncome",
+    "wvAdjustedGrossIncome",
+    "wvAlternativeTax",
+    "wvOtherRecapCredits",
+    "wvFederalChildCareCredit",
+    "wvHouseholdSize",
+    "wvHouseholdIncome",
+    "wvDisabledVeteranCreditClaimed",
+    "wvSeniorCitizenCreditAmount",
+    "wvPropertyTaxPaid",
+    "wvSeniorCitizenCredit",
+    "wvAdditions",
+    "wvTaxExemptInterest",
+    "wvWorkersCompensation",
+    "wvNontaxableSocialSecurity",
+    "wvOtherHouseholdIncome",
+    "wvUseTaxPurchases",
+    "wvMunicipalUseTaxPurchases",
+    "wvMunicipalUseTaxRateBps"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -52322,7 +53237,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -52349,7 +53264,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd21 = (c2) => {
+      const rd22 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -52376,11 +53291,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd21(after) + rd21(other);
-      const payments = rd21(withheld) + rd21(refundable) + rd21(extension) + rd21(estimated);
+      const total24 = rd22(after) + rd22(other);
+      const payments = rd22(withheld) + rd22(refundable) + rd22(extension) + rd22(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd21(c2));
+      const d3 = (c2) => fmt2(rd22(c2));
       return ok({
         ok: true,
         asOf,
@@ -52407,7 +53322,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd21(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd22(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

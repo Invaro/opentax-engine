@@ -1,0 +1,12 @@
+{
+  "description": "WV Tax Table, single $30 -> first row '25 50 $1' (37.50 x 2.22% = 0.8325 -> $1).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 30
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

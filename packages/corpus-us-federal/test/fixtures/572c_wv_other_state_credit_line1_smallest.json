@@ -1,0 +1,17 @@
+{
+  "description": "WV Schedule E: other state's tax $300 is the smallest.",
+  "facts": {
+    "filingStatus": "single",
+    "wvOtherStateTax": 300,
+    "wvTaxBeforeCredits": 1500,
+    "wvOtherStateIncome": 20000,
+    "wvAdjustedGrossIncome": 60000,
+    "wvAlternativeTax": 900,
+    "wvOtherRecapCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.other_state_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

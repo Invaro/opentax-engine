@@ -1,0 +1,12 @@
+{
+  "description": "WV MFS $12,345 -> Rate Schedule II (table not allowed): $111 + 2.96% x 7,345 = 328.412 -> $328.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 12345
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "32800"
+  }
+}

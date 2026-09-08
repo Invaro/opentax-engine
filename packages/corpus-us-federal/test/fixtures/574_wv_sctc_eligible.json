@@ -1,0 +1,16 @@
+{
+  "description": "WV SCTC: one-person household, income $23,475 (150% of poverty) -> the $450 SCTC-A credit.",
+  "facts": {
+    "filingStatus": "single",
+    "wvHouseholdSize": 1,
+    "wvHouseholdIncome": 23475,
+    "wvSeniorCitizenCreditAmount": 450,
+    "wvFederalAmt": false,
+    "wvDisabledVeteranCreditClaimed": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.senior_citizens_tax_credit",
+  "expect": {
+    "valueCents": "45000"
+  }
+}

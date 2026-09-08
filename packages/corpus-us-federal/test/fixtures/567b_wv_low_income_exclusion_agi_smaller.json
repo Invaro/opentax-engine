@@ -1,0 +1,13 @@
+{
+  "description": "WV low-income exclusion: federal AGI $9,000, earned income $12,000 -> $9,000 (line A).",
+  "facts": {
+    "filingStatus": "hoh",
+    "wvAgi": 9000,
+    "wvEarnedIncome": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.low_income_exclusion",
+  "expect": {
+    "valueCents": "900000"
+  }
+}

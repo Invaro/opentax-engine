@@ -1,0 +1,15 @@
+{
+  "description": "WV FTC when federal AMT was paid -> no credit.",
+  "facts": {
+    "filingStatus": "single",
+    "wvFamilySize": 1,
+    "wvModifiedAgi": 10000,
+    "wvTaxBeforeCredits": 300,
+    "wvFederalAmt": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,8 +1,8 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.39.0",
-  "merkleRoot": "sha256:a9a9e3aafe390bc7797f42c07add0c0ecaafdd70467fda57d6df51bff056aa5e",
-  "ruleCount": 429,
+  "merkleRoot": "sha256:c3f886df148bf553fec6808debbd69ee4279cfb83a464a5f23bb3f9a7bc1134a",
+  "ruleCount": 444,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
     "us.al.dependent_exemption@1": "sha256:4fd9c66405f99f4d23b11625974bad13e951ca09abaf94827c00d6f07ca4fa70",
@@ -432,6 +432,21 @@
     "us.wi.retirement_subtraction_67@1": "sha256:f1376c1e376da46f9c708738dcb01a58b1a9b48647ec5dc445ed5bec8a2b5480",
     "us.wi.school_property_tax_credit@1": "sha256:bb3a6d924e2c549c0799718a53d3382e8b62f69ff12a2e606474703ecae3d8bf",
     "us.wi.standard_deduction@1": "sha256:964cd5ffcdbbc26fea0b6500821bf794dfa17de70b073415fb02163afb4f6121",
+    "us.wv.child_care_credit@1": "sha256:f3b4fb283850f11ed31b736674f54c549e5d4622e7c72d1bb103acb5e612f96c",
+    "us.wv.exemption_deduction@1": "sha256:db73cf9d958a42c80eb0e00bfac26be5be878fd8d233908bed6e59fc15a2d786",
+    "us.wv.family_tax_credit@1": "sha256:59455452c4c88d982862e709951ee8ae90c5204a1006520287188b0fa05b357f",
+    "us.wv.homestead_excess_property_tax_credit@1": "sha256:30ceab292db17489cd5c74a820185cdab129eb6496ae2ffb6cce77fd730ecaa5",
+    "us.wv.income_tax@1": "sha256:dc1b919ee46dc69dd05e944318ee617123cf5ee01c43c3c933b8fff59c07bfcc",
+    "us.wv.income_tax@2": "sha256:f73bbc8d907d2e9d902a8ac45e4c462ea7244a35cbc2a3e58545822515d88ca3",
+    "us.wv.low_income_exclusion@1": "sha256:6670b5e07bf3368ec8ef0a44a2fecbecd7f0fab0fdead5257382ff3b155520aa",
+    "us.wv.other_state_credit@1": "sha256:7f7ee8abc050284abd87fa0eeae0b0e9e345bb898d26cc9fcf424203b577160c",
+    "us.wv.parameters@1": "sha256:4308d9a7378fbaf4f09bb42b83dc981e42363101cc04c18e0c3108f13108e9ae",
+    "us.wv.senior_citizen_modification@1": "sha256:fdbbe0f631fa623428bf22ef8cd1c954a9cf4ca91eaeea23fc3354ec962ee370",
+    "us.wv.senior_citizens_tax_credit@1": "sha256:fb2021f77e8727f540023e1ea2aff3038189e670a90ed4d3df491b46833b2539",
+    "us.wv.social_security_modification@1": "sha256:3a08bc14f24845de6e11758f4ba12b87076ff001570bdbf207c6e852454dc245",
+    "us.wv.social_security_modification@2": "sha256:fb231564aaf104431b9c279215663b42d954afca15fe21fcb23292b9b11d941b",
+    "us.wv.surviving_spouse_modification@1": "sha256:08047909a8058b67b11069dfad4d272655ef29db3e53ef311715f1351d68be70",
+    "us.wv.use_tax@1": "sha256:5a5ab158b46bc412557f9f51cd025821f450b96be1c8d3601baf6add9edd33f9",
     "us.wy.income_tax@1": "sha256:11f094fd4b19b7648f18eeb74b57412a85369f40d3431c739040bceb0f1d5882"
   }
 }

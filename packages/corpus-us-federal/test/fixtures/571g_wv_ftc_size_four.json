@@ -1,0 +1,15 @@
+{
+  "description": "WV FTC MFJ size 4, MFAGI $33,000: 850 over $32,150 -> 3 steps -> 70% of $500 = $350.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvFamilySize": 4,
+    "wvModifiedAgi": 33000,
+    "wvTaxBeforeCredits": 500,
+    "wvFederalAmt": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "valueCents": "35000"
+  }
+}

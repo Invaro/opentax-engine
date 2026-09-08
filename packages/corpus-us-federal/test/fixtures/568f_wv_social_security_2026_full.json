@@ -1,0 +1,13 @@
+{
+  "description": "WV TY2026: 100% at any income \u2014 MFJ federal AGI $150,000, $20,000 taxable -> $20,000 (\u00a7 11-21-12(c)(8)(E)).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvAgi": 150000,
+    "wvTaxableSocialSecurity": 20000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.wv.social_security_modification",
+  "expect": {
+    "valueCents": "2000000"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "WV use tax: 0.5% of $999 = 4.995 -> $5 municipal only.",
+  "facts": {
+    "filingStatus": "single",
+    "wvUseTaxPurchases": 0,
+    "wvMunicipalUseTaxPurchases": 999,
+    "wvMunicipalUseTaxRateBps": 50
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.use_tax",
+  "expect": {
+    "valueCents": "500"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "WV TY2026 (\u00a7 11-21-4j, SB 392): single $50,000 -> $1,106.50 + 4.22% x 10,000 = 1,528.50 -> $1,529 (no 2026 table; schedule for all).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "152900"
+  }
+}

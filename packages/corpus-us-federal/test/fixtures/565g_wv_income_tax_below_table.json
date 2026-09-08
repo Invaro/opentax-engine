@@ -1,0 +1,12 @@
+{
+  "description": "WV single $10 (no printed row below $25) -> schedule 10 x 2.22% = 0.22 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 10
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

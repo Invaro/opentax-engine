@@ -70,6 +70,7 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.nm": "new mexico nm pit-1 pit-adj pit-rc albuquerque santa fe las cruces lictr working families",
   "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
   "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund",
+  "us.wv": "west virginia wv it-140 schedule m charleston family tax credit senior citizens tax credit homestead excess",
 };
 
 export function lookupParameters(

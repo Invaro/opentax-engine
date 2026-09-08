@@ -1,0 +1,12 @@
+{
+  "description": "WV Tax Table, single $40,049 -> row [40,000, 40,050) midpoint 40,025: $1,165.50 + 4.44% x 25 = 1,166.61 -> $1,167.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 40049
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "116700"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "WV TY2026 HOH $8,000 -> 2.11% x 8,000 = $168.80 -> $169.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 8000
+  },
+  "asOf": "2026-06-30",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "16900"
+  }
+}

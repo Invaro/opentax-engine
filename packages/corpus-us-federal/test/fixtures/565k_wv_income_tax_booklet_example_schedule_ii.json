@@ -1,0 +1,12 @@
+{
+  "description": "WV booklet Rate Schedule II example: MFS $118,460 -> $1,026.75 + 4.82% x 88,460 = 5,290.52 -> $5,291.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 118460
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.income_tax",
+  "expect": {
+    "valueCents": "529100"
+  }
+}

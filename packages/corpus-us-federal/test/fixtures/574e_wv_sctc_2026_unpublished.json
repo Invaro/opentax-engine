@@ -1,0 +1,16 @@
+{
+  "description": "WV TY2026 SCTC poverty guideline unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "wvHouseholdSize": 1,
+    "wvHouseholdIncome": 20000,
+    "wvSeniorCitizenCreditAmount": 450,
+    "wvFederalAmt": false,
+    "wvDisabledVeteranCreditClaimed": false
+  },
+  "asOf": "2026-06-30",
+  "target": "us.wv.senior_citizens_tax_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "WV TY2026 Family Tax Credit tables (2026 poverty guidelines) unpublished -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "wvFamilySize": 1,
+    "wvModifiedAgi": 15000,
+    "wvTaxBeforeCredits": 300,
+    "wvFederalAmt": false
+  },
+  "asOf": "2026-06-30",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

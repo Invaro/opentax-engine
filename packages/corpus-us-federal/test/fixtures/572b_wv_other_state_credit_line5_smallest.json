@@ -1,0 +1,17 @@
+{
+  "description": "WV Schedule E: line 5 $500 smallest (alt tax 900 -> line 8 600).",
+  "facts": {
+    "filingStatus": "single",
+    "wvOtherStateTax": 800,
+    "wvTaxBeforeCredits": 1500,
+    "wvOtherStateIncome": 20000,
+    "wvAdjustedGrossIncome": 60000,
+    "wvAlternativeTax": 900,
+    "wvOtherRecapCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.other_state_credit",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

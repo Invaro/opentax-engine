@@ -1,0 +1,15 @@
+{
+  "description": "WV FTC size 9 uses the size-8 column: MFAGI $54,150 -> 100% of $400 = $400.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvFamilySize": 9,
+    "wvModifiedAgi": 54150,
+    "wvTaxBeforeCredits": 400,
+    "wvFederalAmt": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.family_tax_credit",
+  "expect": {
+    "valueCents": "40000"
+  }
+}

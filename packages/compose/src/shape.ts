@@ -8,11 +8,11 @@ import { z } from "zod";
 const usd = z.number().finite();
 
 const shared = {
-  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id"]),
+  jurisdiction: z.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv"]),
   filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status — drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id/wv — the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) — transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -820,4 +820,65 @@ const idShape = {
   // stateWithholding/spouseStateWithholding (line 46), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 47).
 };
 
-export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape };
+const wvShape = {
+  wvUseRateSchedule: z.boolean().optional().describe("WV line 8: compute from the Rate Schedule at the exact income instead of the printed Tax Table (single/HOH/MFJ/widow(er) under $100,000 use the table by instruction; MFS and $100,000+ always use the schedule)"),
+  wvSpouseClaimedAsDependent: z.boolean().optional().describe("WV exemption box (b): the spouse can be claimed as a dependent on another return — no spouse exemption"),
+  wvSurvivingSpouseExemption: z.boolean().optional().describe("WV exemption box (d): an unremarried surviving spouse in one of the two taxable years after the year of the spouse's death — one extra $2,000 exemption"),
+  wvSurvivingSpouseModification: z.boolean().optional().describe("WV Schedule M line 48: unremarried surviving spouse of a decedent who was 65 or disabled, in the taxable year after the death — up to $8,000 less lines 29-34"),
+  wvEarnedIncome: usd.optional().describe("WV line 5 low-income exclusion: earned income (wages, salaries, tips, net self-employment) — REQUIRED when federal AGI is $10,000 or less ($5,000 MFS) for the exclusion to be computed"),
+  wvNonWvBondInterest: usd.optional().describe("WV Schedule M line 52: interest or dividends on non-West Virginia state and local bonds (added)"),
+  wvSpouseTaxableSocialSecurity: usd.optional().describe("WV Schedule M line 34 column B: the SPOUSE's share of federally taxable Social Security (taxableSocialSecurity is the joint total; the taxpayer's column is the remainder)"),
+  wvUsInterest: usd.optional().describe("WV Schedule M line 29 column A: interest/dividends on U.S. and West Virginia obligations exempt from state tax"),
+  wvSpouseUsInterest: usd.optional().describe("WV Schedule M line 29 column B (spouse)"),
+  wvFederalLawEnforcementRetirement: usd.optional().describe("WV Schedule M line 30 column A: retired federal law enforcement officer / firefighter retirement benefits (100%)"),
+  wvSpouseFederalLawEnforcementRetirement: usd.optional().describe("WV Schedule M line 30 column B (spouse)"),
+  wvPoliceFireRetirement: usd.optional().describe("WV Schedule M line 31 column A: West Virginia state or local police, deputy sheriffs', or firemen's retirement (100%, excluding PERS)"),
+  wvSpousePoliceFireRetirement: usd.optional().describe("WV Schedule M line 31 column B (spouse)"),
+  wvMilitaryRetirement: usd.optional().describe("WV Schedule M line 32 column A: military retirement including survivorship annuities (100%)"),
+  wvSpouseMilitaryRetirement: usd.optional().describe("WV Schedule M line 32 column B (spouse)"),
+  wvPersTrsFederalRetirement: usd.optional().describe("WV Schedule M line 33 column A: West Virginia PERS / Teachers' Retirement plus federal retirement not on line 30 — the composer caps the combined amount at $2,000 per person"),
+  wvSpousePersTrsFederalRetirement: usd.optional().describe("WV Schedule M line 33 column B (spouse), capped at $2,000"),
+  wvActiveDutyPay: usd.optional().describe("WV Schedule M lines 36-37: qualifying active duty (Title 10 contingency operations) and active military separation pay"),
+  wvStateRefund: usd.optional().describe("WV Schedule M line 38: state and local income tax refunds included in federal income"),
+  wvSmart529Contributions: usd.optional().describe("WV Schedule M line 39: SMART529 / Prepaid Tuition Trust contributions (no cap; annual statement required)"),
+  wvRailroadRetirement: usd.optional().describe("WV Schedule M line 40: Railroad Retirement Board income in federal AGI (100%)"),
+  wvLongTermCarePremiums: usd.optional().describe("WV Schedule M line 41: long-term care insurance premiums"),
+  wvAbleContributions: usd.optional().describe("WV Schedule M line 43: ABLE account contributions"),
+  wvJumpstartDeposits: usd.optional().describe("WV Schedule M line 44: Jumpstart Savings Program deposits — the composer caps at $25,000"),
+  wvGamblingLosses: usd.optional().describe("WV Schedule M line 46: gambling losses (not more than winnings; federal itemizers only)"),
+  wvTaxpayerAge65OrDisabled: z.boolean().optional().describe("WV Schedule M line 47 column A: the taxpayer is 65 or older on December 31 or certified permanently and totally disabled — up to $8,000 modification net of lines 29-34"),
+  wvSpouseAge65OrDisabled: z.boolean().optional().describe("WV Schedule M line 47 column B: the spouse is 65 or older or certified disabled (joint returns)"),
+  wvTaxpayerIncomeNotOnLines35to46: usd.optional().describe("WV Schedule M line 47 box (c) column A: the taxpayer's income not reported on lines 35-46 (defaults to $8,000, the cap)"),
+  wvSpouseIncomeNotOnLines35to46: usd.optional().describe("WV Schedule M line 47 box (c) column B (defaults to $8,000)"),
+  wvFederalTaxExemptInterest: usd.optional().describe("WV Schedule FTC-1 line 3 / HEPTC-1 line 4b: federal tax-exempt interest not already in line 2"),
+  wvFederalAmt: z.boolean().optional().describe("WV: the filer paid federal alternative minimum tax — no Family Tax Credit, SCTC, or HEPTC"),
+  wvFederalChildCareCredit: usd.optional().describe("WV Recap line 18: the federal child and dependent care credit (Form 2441) — 50% nonrefundable"),
+  wvOtherStateTax: usd.optional().describe("WV Schedule E line 1: income tax computed on the other state's return (not withholding; not city taxes) — attach nothing, keep the return"),
+  wvOtherStateIncome: usd.optional().describe("WV Schedule E line 3: net income derived from the other state included in West Virginia total income"),
+  wvHouseholdSize: z.number().int().optional().describe("WV SCTC / HEPTC: number of people living in the household (defaults to 1 + spouse + dependents)"),
+  wvSeniorCitizenCreditAmount: usd.optional().describe("WV line 18: the Senior Citizens Tax Credit from the mailed Schedule SCTC-A Part III line 2 (Homestead Exemption participants; federal AGI ≤ 150% of poverty)"),
+  wvPropertyTaxPaid: usd.optional().describe("WV Schedule HEPTC-1 line 1: West Virginia property tax paid on the owner-occupied home in 2025 (after discount, before interest; Class 2 receipt required)"),
+  wvWorkersCompensation: usd.optional().describe("WV Schedule HEPTC-1 line 4c: workers' compensation received"),
+  wvNontaxableSocialSecurity: usd.optional().describe("WV Schedule HEPTC-1 line 4d: Social Security, SSI, and SSDI received but not in federal AGI"),
+  wvOtherHouseholdIncome: usd.optional().describe("WV Schedule HEPTC-1 line 4e: income of other household members who would file separately"),
+  wvNotRequiredToFileFederally: z.boolean().optional().describe("WV SCTC / HEPTC eligibility: not required to file a federal return — the poverty-guideline test then uses income less Social Security benefits (pass wvHouseholdIncomeLessSocialSecurity)"),
+  wvHouseholdIncomeLessSocialSecurity: usd.optional().describe("WV SCTC / HEPTC: income excluding Social Security when not required to file federally"),
+  wvNonFamilyAdoptionCredit: usd.optional().describe("WV line 17: Non-Family Adoption Tax Credit (Schedule NFA-1)"),
+  wvBuildWvCredit: usd.optional().describe("WV line 20: Build WV Property Value Adjustment refundable credit (Schedule PVA-2)"),
+  wvMotorVehicleTaxPaid: usd.optional().describe("WV line 21A: personal property tax timely paid to the sheriff on owned motor vehicles — 100% refundable credit (§ 11-13MM-3; Schedule MV-1)"),
+  wvDisabledVeteranPropertyTax: usd.optional().describe("WV line 21B: real property tax timely paid on a disabled veteran's (or eligible widowed spouse's) homestead — 100% refundable (§ 11-13MM-4); bars the SCTC and HEPTC"),
+  wvSmallBusinessPropertyTax: usd.optional().describe("WV line 21C: personal property tax timely paid by an eligible small business (≤ $1 million appraised), net of vehicle tax claimed in 21A — 50% credit (§ 11-13MM-5)"),
+  wvUnderpaymentPenalty: usd.optional().describe("WV line 12: Form IT-210 underpayment penalty"),
+  wvUseTaxPurchases: usd.optional().describe("WV line 13 / Schedule UT line 1: purchases subject to the 6% state use tax on which no sales tax was paid (net of credit for sales tax paid elsewhere)"),
+  wvMunicipalUseTaxPurchases: usd.optional().describe("WV Schedule UT Part II: purchases used in a municipality with a municipal use tax"),
+  wvMunicipalUseTaxRate: z.number().optional().describe("WV Schedule UT Part II: municipal use tax rate in percent (0.5 or 1)"),
+  wvDonations: usd.optional().describe("WV line 26: donations to the Children's Trust Fund, Division of Veterans Assistance, and State Veterans Cemetery"),
+  wvCreditForward: usd.optional().describe("WV line 27: overpayment to credit to 2026 estimated tax"),
+  wvAmendedRefund: usd.optional().describe("WV line 11 (amended only): overpayment previously refunded or credited"),
+  wvAmendedPaid: usd.optional().describe("WV line 22 (amended only): amount paid with the original return"),
+  // Shared inputs used by IT-140: federalAGI (line 1), additions (other Schedule M Part A lines), subtractions (other Part B lines 35, 42, 45),
+  // taxableSocialSecurity (line 34 joint total), dependents (box c), claimedAsDependent (box a), nonrefundableCredits (Recap lines 3-17,
+  // 19-26), stateWithholding/spouseStateWithholding (line 15), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 16).
+};
+
+export const stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape };

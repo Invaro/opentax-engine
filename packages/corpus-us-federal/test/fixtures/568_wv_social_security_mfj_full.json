@@ -1,0 +1,13 @@
+{
+  "description": "WV Social Security modification MFJ, federal AGI $90,000 (not over $100,000): 100% of $20,000 taxable = $20,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wvAgi": 90000,
+    "wvTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.wv.social_security_modification",
+  "expect": {
+    "valueCents": "2000000"
+  }
+}
