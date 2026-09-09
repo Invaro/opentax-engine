@@ -9,6 +9,8 @@
 
 ## Use it
 
+- REST: POST https://opentax.invaro.ai/v1/tools/{tool} with the tool arguments as the JSON body; docs at https://opentax.invaro.ai/docs; OpenAPI at https://opentax.invaro.ai/v1/openapi.json
+- API keys (free evaluation plan, email sign-in): https://opentax.invaro.ai/console
 - Remote MCP connector (Streamable HTTP, stateless): https://opentax.invaro.ai/mcp
 - Local stdio MCP server: `npx -y @invaro/opentax`
 - Claude Code: `claude mcp add opentax -- npx -y @invaro/opentax`

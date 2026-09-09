@@ -1,5 +1,20 @@
 # OpenTax hosted API
 
+Rendered documentation: <https://opentax.invaro.ai/docs>. API keys: <https://opentax.invaro.ai/console> (sign in with an email code; the evaluation plan is free).
+
+## REST
+
+`POST https://opentax.invaro.ai/v1/tools/{tool}` with the tool's arguments as the JSON body; the decoded engine result is the response body. `GET /v1/tools` lists the tools, `GET /v1/openapi.json` is the REST-shaped OpenAPI 3.1 document generated from the running server. Same authentication and rate budgets as the MCP endpoint below; `400` for a schema rejection or unknown tool, `200` with `ok: false` when the engine refuses. An optional `X-OpenTax-Return-Id` header tags the call with your taxpayer-year identifier (stored hashed).
+
+```bash
+curl -s https://opentax.invaro.ai/v1/tools/calculate_tax \
+  -H "Authorization: Bearer $OPENTAX_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"filing":{"filingStatus":"mfj"},"income":{"wages":120000},"credits":{"qualifyingChildren":2},"asOf":"2025-12-31"}'
+```
+
+## MCP
+
 **Endpoint:** `POST https://opentax.invaro.ai/mcp`
 **Protocol:** [Model Context Protocol](https://modelcontextprotocol.io) over Streamable HTTP — JSON-RPC 2.0, stateless (no sessions, every request self-contained). Any MCP client library works; so does plain `curl`.
 **Spec:** [openapi.json](openapi.json) (OpenAPI 3.1, generated from the live server — the tool input schemas are the server's own validation schemas) and [tools.json](tools.json) (the raw `tools/list` result).
@@ -11,7 +26,7 @@
 Authorization: Bearer <your key>
 ```
 
-Keys are issued per account (an email address) by Invaro and attribute usage to that account. Calls without a key are accepted at the anonymous rate budget (the endpoint also serves public MCP connectors); calls with an unknown key are refused with HTTP 401 and JSON-RPC error `-32001`. Keys never appear in logs; usage records hold the account email, the tool name and a timestamp — **never the tool arguments**, so no taxpayer data is retained (see [data handling](#data-handling)).
+Keys are issued per account (an email address) at <https://opentax.invaro.ai/console> and attribute usage to that account. Calls without a key are accepted at the anonymous rate budget (the endpoint also serves public MCP connectors); calls with an unknown key are refused with HTTP 401 and JSON-RPC error `-32001`. Keys never appear in logs; usage records hold the account email, the tool name and a timestamp — **never the tool arguments**, so no taxpayer data is retained (see [data handling](#data-handling)).
 
 Rate budgets (per hour, per serving instance): 600 anonymous, 6,000 keyed. HTTP 429 with `Retry-After` when exceeded.
 

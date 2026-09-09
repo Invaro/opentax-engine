@@ -9,6 +9,7 @@ const ITEMS = [
   { key: "U", label: "Use cases", href: "#usecases" },
   { key: "I", label: "Install", href: "#install" },
   { key: "S", label: "Source", href: "#source" },
+  { key: "D", label: "Docs", href: "/docs" },
 ] as const;
 
 export function KeysNav() {
@@ -22,6 +23,8 @@ export function KeysNav() {
       e.preventDefault();
       if ("external" in item && item.external) {
         window.open(item.href, "_blank", "noopener");
+      } else if (item.href.startsWith("/")) {
+        window.location.assign(item.href);
       } else {
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         document.querySelector(item.href)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });

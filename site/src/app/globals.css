@@ -108,3 +108,59 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* documentation typography */
+.docs-prose h1 {
+  @apply font-serif text-[32px] md:text-[44px] leading-tight tracking-tight mb-3;
+}
+.docs-prose h2 {
+  @apply font-serif text-xl md:text-2xl mt-12 mb-3 scroll-mt-20;
+}
+.docs-prose h3 {
+  @apply text-sm mt-8 mb-2 scroll-mt-20;
+}
+.docs-prose p,
+.docs-prose {
+  /* long rule ids, hashes and paths wrap rather than widen the page on phones */
+  overflow-wrap: anywhere;
+}
+.docs-prose li {
+  @apply text-sm text-muted-foreground leading-relaxed;
+}
+.docs-prose p {
+  @apply mb-3;
+}
+.docs-prose p strong,
+.docs-prose li strong {
+  @apply text-foreground font-normal;
+}
+.docs-prose ul {
+  @apply list-disc pl-5 mb-3 space-y-1;
+}
+.docs-prose ol {
+  @apply list-decimal pl-5 mb-3 space-y-1;
+}
+.docs-prose a:not(.no-underline) {
+  @apply underline underline-offset-4 decoration-border hover:decoration-foreground;
+}
+.docs-prose .lede {
+  @apply text-base md:text-lg text-muted-foreground leading-relaxed mb-8;
+}
+.docs-prose .kicker {
+  @apply font-mono text-[10px] text-muted-foreground mb-3;
+}
+.docs-prose table.data {
+  @apply w-full text-left text-xs my-4;
+}
+.docs-prose table.data th {
+  @apply font-mono text-[10px] text-muted-foreground font-normal px-3 py-2 bg-accent/60;
+}
+.docs-prose table.data td {
+  @apply px-3 py-2 align-top border-t border-border text-muted-foreground leading-relaxed;
+}
+.docs-prose table.data td:first-child {
+  @apply text-foreground;
+}
+.docs-prose .table-wrap {
+  @apply border border-border overflow-x-auto my-4;
+}

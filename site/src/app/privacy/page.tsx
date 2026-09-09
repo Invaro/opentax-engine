@@ -55,6 +55,17 @@ export default function PrivacyPage() {
           </p>
         </Section>
 
+        <Section label="00b" title="The API console">
+          <p>
+            If you sign in at <Link href="/console" className="underline underline-offset-2 hover:text-foreground">/console</Link>,
+            we send a one-time code to the address you enter and, on success, keep three things: that address,
+            the API key we issue you (so the console can show it again), and a usage record per keyed call
+            holding the tool name, a hash of the return id you optionally send, and a timestamp. Never the
+            arguments of a call, so never a taxpayer&apos;s facts. The session is a signed cookie that expires
+            after thirty days. Rotating the key deletes the old one; emailing us deletes the account.
+          </p>
+        </Section>
+
         <Section label="01" title="This website">
           <p>
             We use PostHog for product analytics: page views, anonymous usage events (clicks and

@@ -269,6 +269,12 @@ export default function Page() {
           </div>
           <KeysNav />
           <div className="flex items-center gap-3">
+            <Link
+              href="/docs"
+              className="hidden sm:block text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Docs
+            </Link>
             <ThemeToggle />
             <GithubStars />
             <Link
@@ -794,6 +800,16 @@ export default function Page() {
               <div>
                 <h3 className="text-sm mb-4">Engine</h3>
                 <ul className="space-y-2.5">
+                  <li>
+                    <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      api docs
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/console" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      api console
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       href="https://github.com/Invaro/opentax-engine"
