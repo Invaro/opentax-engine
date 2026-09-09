@@ -1,0 +1,12 @@
+{
+  "description": "VT standard deduction, head of household with one box: 11,450 + 1,250 = $12,700.",
+  "facts": {
+    "filingStatus": "hoh",
+    "vtAdditionalDeductionBoxes": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.standard_deduction",
+  "expect": {
+    "valueCents": "1270000"
+  }
+}

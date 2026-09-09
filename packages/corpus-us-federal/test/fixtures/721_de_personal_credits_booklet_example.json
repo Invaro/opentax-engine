@@ -1,0 +1,14 @@
+{
+  "description": "DE line 27a, the booklet's own example: 'If you filed your federal return as married filing jointly and have no dependents, enter $220.'",
+  "facts": {
+    "filingStatus": "mfj",
+    "deExemptions": 2,
+    "deAge60Persons": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.personal_credits",
+  "expect": {
+    "valueCents": "22000"
+  }
+}

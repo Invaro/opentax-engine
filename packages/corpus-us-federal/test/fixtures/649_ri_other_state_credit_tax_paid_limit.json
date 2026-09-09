@@ -1,0 +1,15 @@
+{
+  "description": "RI Schedule II line 29 when the tax actually paid to the other state is the smallest of the three: $900.",
+  "facts": {
+    "filingStatus": "single",
+    "riIncomeTaxAfterFederalCredit": 3000,
+    "riModifiedAgi": 100000,
+    "riOtherStateIncome": 40000,
+    "riOtherStateTaxPaid": 900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.other_state_credit",
+  "expect": {
+    "valueCents": "90000"
+  }
+}

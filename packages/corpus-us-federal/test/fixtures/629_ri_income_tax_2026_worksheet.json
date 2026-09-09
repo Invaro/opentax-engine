@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 (ADV 2025-22 / 2026 Form RI-1040ES): brackets $82,050 / $186,450. At $100,000: 100,000 x 4.75% - 820.50 = 3,929.50 -> $3,930.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "393000"
+  }
+}

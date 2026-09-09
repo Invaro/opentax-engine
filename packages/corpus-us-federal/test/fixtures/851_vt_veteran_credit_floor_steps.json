@@ -1,0 +1,13 @@
+{
+  "description": "VT veteran tax credit phase-out rounds DOWN per full $100: AGI $25,099 is 0 steps ($250); $25,100 is 1 step ($245).",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 25100,
+    "vtVeteranDischargeRecord": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.veteran_credit",
+  "expect": {
+    "valueCents": "24500"
+  }
+}

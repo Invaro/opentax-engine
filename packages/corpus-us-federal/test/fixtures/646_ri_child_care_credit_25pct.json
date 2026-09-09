@@ -1,0 +1,13 @@
+{
+  "description": "RI Schedule I: line 21 = 25% x $2,000 federal credit = $500; line 22 = the smaller of that and the $1,000 line 8 tax -> $500.",
+  "facts": {
+    "filingStatus": "single",
+    "riFederalChildCareCredit": 2000,
+    "riIncomeTax": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

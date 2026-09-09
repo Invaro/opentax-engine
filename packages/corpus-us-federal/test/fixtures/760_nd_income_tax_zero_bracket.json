@@ -1,0 +1,12 @@
+{
+  "description": "ND has a ZERO-PERCENT first bracket (House Bill 1158 of 2023): a single filer with $48,475 of North Dakota taxable income owes nothing at all.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 48475
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

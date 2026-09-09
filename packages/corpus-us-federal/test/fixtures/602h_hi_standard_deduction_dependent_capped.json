@@ -1,0 +1,13 @@
+{
+  "description": "HI dependent filer, earned income $9,000 -> capped at the full $4,400.",
+  "facts": {
+    "filingStatus": "single",
+    "isClaimedAsDependent": true,
+    "hiEarnedIncome": 9000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "440000"
+  }
+}

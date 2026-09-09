@@ -1,0 +1,13 @@
+{
+  "description": "MT Form 2 page 2: taxable income $50,000 with $20,000 of net long-term capital gains. Ordinary income is 30,000, which exceeds the $21,100 threshold, so line 6 is zero and ALL the gain is taxed at 4.1% = $820 (line 11); ordinary tax on 30,000 = 5.9% x 30,000 - 253 = $1,517 (line 12); line 13 = $2,337.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000,
+    "mtNetLongTermCapitalGains": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "233700"
+  }
+}

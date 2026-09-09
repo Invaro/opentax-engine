@@ -578,7 +578,7 @@ var require_codegen = __commonJS({
             return e instanceof _If ? e : e.nodes;
           if (this.nodes.length)
             return this;
-          return new _If(not5(cond), e instanceof _If ? [e] : e.nodes);
+          return new _If(not8(cond), e instanceof _If ? [e] : e.nodes);
         }
         if (cond === false || !this.nodes.length)
           return void 0;
@@ -1030,20 +1030,20 @@ var require_codegen = __commonJS({
       for (const n in from)
         names[n] = (names[n] || 0) - (from[n] || 0);
     }
-    function not5(x) {
+    function not8(x) {
       return typeof x == "boolean" || typeof x == "number" || x === null ? !x : (0, code_1._)`!${par(x)}`;
     }
-    exports.not = not5;
+    exports.not = not8;
     var andCode = mappend(exports.operators.AND);
-    function and5(...args) {
+    function and11(...args) {
       return args.reduce(andCode);
     }
-    exports.and = and5;
+    exports.and = and11;
     var orCode = mappend(exports.operators.OR);
-    function or8(...args) {
+    function or11(...args) {
       return args.reduce(orCode);
     }
-    exports.or = or8;
+    exports.or = or11;
     function mappend(op) {
       return (x, y) => x === code_1.nil ? y : y === code_1.nil ? x : (0, code_1._)`${par(x)} ${op} ${par(y)}`;
     }
@@ -8637,12 +8637,12 @@ var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
 function flattenError(error2, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub18 of error2.issues) {
-    if (sub18.path.length > 0) {
-      fieldErrors[sub18.path[0]] = fieldErrors[sub18.path[0]] || [];
-      fieldErrors[sub18.path[0]].push(mapper(sub18));
+  for (const sub24 of error2.issues) {
+    if (sub24.path.length > 0) {
+      fieldErrors[sub24.path[0]] = fieldErrors[sub24.path[0]] || [];
+      fieldErrors[sub24.path[0]].push(mapper(sub24));
     } else {
-      formErrors.push(mapper(sub18));
+      formErrors.push(mapper(sub24));
     }
   }
   return { formErrors, fieldErrors };
@@ -15040,8 +15040,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub18) => {
-      this.issues = [...this.issues, sub18];
+    this.addIssue = (sub24) => {
+      this.issues = [...this.issues, sub24];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -15108,13 +15108,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = {};
     const formErrors = [];
-    for (const sub18 of this.issues) {
-      if (sub18.path.length > 0) {
-        const firstEl = sub18.path[0];
+    for (const sub24 of this.issues) {
+      if (sub24.path.length > 0) {
+        const firstEl = sub24.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub18));
+        fieldErrors[firstEl].push(mapper(sub24));
       } else {
-        formErrors.push(mapper(sub18));
+        formErrors.push(mapper(sub24));
       }
     }
     return { formErrors, fieldErrors };
@@ -23478,8 +23478,8 @@ function validateExpressions(rule, knownRuleIds, factById2, issues) {
               break;
             }
           }
-          for (const row of e.table) {
-            if (BigInt(row.rate.den) === 0n) {
+          for (const row2 of e.table) {
+            if (BigInt(row2.rate.den) === 0n) {
               issues.push(`rule "${key}": bracket rate with zero denominator`);
             }
           }
@@ -23826,8 +23826,8 @@ function evalExpr(expr, rule, ctx, children) {
         throw new EngineError(`rule "${rule.id}": cmp between ${l.type} and ${r.type}`);
       }
       if (expr.op === "eq" || expr.op === "ne") {
-        const eq2 = canonicalScalar(l) === canonicalScalar(r);
-        return { type: "bool", value: expr.op === "eq" ? eq2 : !eq2 };
+        const eq3 = canonicalScalar(l) === canonicalScalar(r);
+        return { type: "bool", value: expr.op === "eq" ? eq3 : !eq3 };
       }
       const ln = numericOf(l, rule, "cmp");
       const rn = numericOf(r, rule, "cmp");
@@ -24168,7 +24168,13 @@ var JURISDICTION_NAMES = {
   "us.ne": "nebraska ne 1040n omaha lincoln nest personal exemption credit",
   "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund",
   "us.wv": "west virginia wv it-140 schedule m charleston family tax credit senior citizens tax credit homestead excess",
-  "us.me": "maine me 1040me portland augusta property tax fairness credit sales tax fairness credit pension income deduction"
+  "us.me": "maine me 1040me portland augusta property tax fairness credit sales tax fairness credit pension income deduction",
+  "us.hi": "hawaii hi n-11 honolulu maui kauai food excise tax credit low-income household renters credit capital gains alternative tax",
+  "us.nd": "north dakota nd form nd-1 fargo bismarck grand forks marriage penalty credit capital gain exclusion college save social security exclusion",
+  "us.vt": "vermont vt form in-111 burlington montpelier rutland social security exclusion military retirement capital gains exclusion child tax credit veteran credit charitable credit renter credit",
+  "us.de": "delaware de pit-res wilmington dover newark pension exclusion personal credits combined separate return volunteer firefighter",
+  "us.mt": "montana mt form 2 billings missoula bozeman helena elderly homeowner renter credit net long-term capital gains ordinary income",
+  "us.ri": "rhode island ri ri-1040 providence warwick cranston property tax relief credit 1040h social security modification pension modification"
 };
 function lookupParameters(corpus2, query, asOf) {
   const tokens = tokenize(query);
@@ -24643,9 +24649,10 @@ function ilNonrefundableCredits(input, taxDue, notes) {
     return credit > 75000n ? 75000n : credit;
   })();
   const teacher = (() => {
-    const t = rd(c(input.ilTeacherExpenses));
-    const cap = isJoint(input) ? 100000n : 50000n;
-    return t > cap ? cap : t;
+    const cap1 = (x) => x > 50000n ? 50000n : x;
+    const own = cap1(rd(c(input.ilTeacherExpenses)));
+    const spouse = isJoint(input) ? cap1(rd(c(input.ilSpouseTeacherExpenses))) : 0n;
+    return own + spouse;
   })();
   const available = propertyTax + k12 + teacher + rd(c(input.nonrefundableCredits));
   const allowed = available > taxDue ? taxDue : available;
@@ -25009,7 +25016,7 @@ function composeMO(input, evalStateTax, notes) {
   const l2124 = rd(c(input.moOtherDeductions));
   const l25 = l8 + l13 + l14 + l15 + l16 + l17 + l18 + l19 + l2124;
   const l26 = l6 - l25;
-  const alloc = (pct8) => rd((l26 * pct8 + 50n) / 100n);
+  const alloc = (pct11) => rd((l26 * pct11 + 50n) / 100n);
   const l27Y = pctY === 100n ? rd(l26) : alloc(pctY);
   const l27S = pctS === 0n ? 0n : pctS === 100n ? rd(l26) : alloc(pctS);
   const l28Y = rd(c(input.moEnterpriseZoneYou));
@@ -26630,10 +26637,10 @@ function composeCT(input, evalStateTax, notes) {
   if (ojIncome > 0n && ojPaid > 0n) {
     const l51 = l5;
     const l55 = max02(l6 - l11raw);
-    const ratio42 = l51 <= 0n || ojIncome >= l51 ? 10000n : (ojIncome * 10000n + l51 / 2n) / l51;
-    const l56 = rd(l55 * ratio42 / 10000n);
+    const ratio43 = l51 <= 0n || ojIncome >= l51 ? 10000n : (ojIncome * 10000n + l51 / 2n) / l51;
+    const l56 = rd(l55 * ratio43 / 10000n);
     l7 = min2(l56, ojPaid);
-    notes.push(`CT line 7: credit for taxes paid to a qualifying jurisdiction ${fmtD(l7)} (Schedule 2: ${fmtD(ojIncome)} \xF7 ${fmtD(l51)} = ${(Number(ratio42) / 1e4).toFixed(4)} \xD7 (line 6 \u2212 line 11 ${fmtD(l55)}) = ${fmtD(l56)}, limited to the ${fmtD(ojPaid)} paid; attach the other jurisdiction's return)`);
+    notes.push(`CT line 7: credit for taxes paid to a qualifying jurisdiction ${fmtD(l7)} (Schedule 2: ${fmtD(ojIncome)} \xF7 ${fmtD(l51)} = ${(Number(ratio43) / 1e4).toFixed(4)} \xD7 (line 6 \u2212 line 11 ${fmtD(l55)}) = ${fmtD(l56)}, limited to the ${fmtD(ojPaid)} paid; attach the other jurisdiction's return)`);
   }
   const l8 = max02(l6 - l7);
   const l9 = rd(c(input.ctAmt));
@@ -26972,7 +26979,7 @@ function composeAR(input, evalStateTax, notes) {
     const stS = married ? c(input.arSpouseShortTermGain) : 0n;
     if (!married && c(input.arSpouseLongTermGain) + c(input.arSpouseShortTermGain) !== 0n)
       n.push("AR line 14: arSpouseLongTermGain / arSpouseShortTermGain ignored \u2014 only a married couple on one return has a spouse column");
-    const cg = (lt17, st, s4) => lt17 !== 0n || st !== 0n ? rd(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt17, arShortTermGain: st, arStatus4: s4 })) : 0n;
+    const cg = (lt23, st, s4) => lt23 !== 0n || st !== 0n ? rd(evalStateTax("us.ar.capital_gains", 0n, { arLongTermGain: lt23, arShortTermGain: st, arStatus4: s4 })) : 0n;
     const l14A = status4 ? cg(ltP, stP, true) : cg(ltP + ltS, stP + stS, false);
     const l14B = status4 ? cg(ltS, stS, true) : 0n;
     const l14 = l14A + l14B;
@@ -27059,10 +27066,10 @@ function composeAR(input, evalStateTax, notes) {
       if (itemize) {
         method = "itemized";
         if (status4) {
-          const pct8 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
-          a27 = (itemized * pct8 + 50n) / 100n;
+          const pct11 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
+          a27 = (itemized * pct11 + 50n) / 100n;
           b27 = itemized - a27;
-          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct8}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
+          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct11}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
         } else
           a27 = itemized;
         if (fs === "mfs")
@@ -28501,6 +28508,1416 @@ function composeME(input, evalStateTax, notes) {
   };
 }
 
+// ../compose/dist/ri.js
+var D7 = (x) => rd(c(x));
+var isNoApplicableRule2 = (err) => err instanceof Error && /no applicable rule/i.test(err.message);
+function composeRI(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Rhode Island Form RI-1040 composer");
+  if (typeof input.federalAGI !== "number")
+    throw new Error("federalAGI is required for the Rhode Island Form RI-1040 composer \u2014 federal Form 1040 line 11 is RI-1040 line 1");
+  const mfj = fs === "mfj";
+  const qss = fs === "qss";
+  const joint = mfj || qss;
+  const mfs = fs === "mfs";
+  const dependentFiler = input.claimedAsDependent === true;
+  const deps = Math.max(0, input.dependents ?? 0);
+  if (qss)
+    notes.push("RI filing status 'Qualifying widow(er)' \u2014 the instructions (p. I-4) direct a federal Qualifying Surviving Spouse to file as Qualifying Widow(er); the $21,800 standard deduction and the $133,750 modification threshold apply, and the rate schedule is the same for every status");
+  let unpublished = false;
+  const tryEval = (target, base, extra, label) => {
+    try {
+      return rd(evalStateTax(target, base, extra));
+    } catch (err) {
+      if (!isNoApplicableRule2(err))
+        throw err;
+      unpublished = true;
+      notes.push(`RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date \u2014 they publish in the ~November advisory) \u2014 line left blank; re-run once the advisory is out`);
+      return null;
+    }
+  };
+  const l1 = D7(input.federalAGI);
+  const ssBenefits = D7(input.riSocialSecurityBenefits);
+  const ssTaxable = D7(input.taxableSocialSecurity);
+  const tpFra = input.riTaxpayerFullRetirementAge === true;
+  const spFra = input.riSpouseFullRetirementAge === true;
+  const mfjOneSpouseFra = mfj && tpFra !== spFra;
+  const fraShare = input.riSocialSecurityBenefitsFraPerson !== void 0 ? D7(input.riSocialSecurityBenefitsFraPerson) : mfjOneSpouseFra ? 0n : ssBenefits;
+  const m1s = ssTaxable > 0n ? tryEval("us.ri.social_security_modification", 0n, {
+    riFederalAgi: l1,
+    riTaxpayerFullRetirementAge: tpFra,
+    riSpouseFullRetirementAge: mfj && spFra,
+    riSocialSecurityBenefits: ssBenefits,
+    riSocialSecurityBenefitsFraPerson: fraShare,
+    riTaxableSocialSecurity: ssTaxable
+  }, "Schedule M line 1s") ?? 0n : 0n;
+  if (ssTaxable > 0n && !tpFra && !(mfj && spFra))
+    notes.push("RI Schedule M line 1s: no Social Security modification \u2014 the worksheet's Step 1 question 5 (born on or before 03/01/1959, i.e. full retirement age) is not attested; pass riTaxpayerFullRetirementAge / riSpouseFullRetirementAge");
+  else if (mfjOneSpouseFra && input.riSocialSecurityBenefitsFraPerson === void 0 && ssTaxable > 0n)
+    notes.push("RI Social Security Worksheet line 9: only one spouse reached full retirement age, so the modification is prorated by that person's share of the Form 1040 line 6a benefits \u2014 riSocialSecurityBenefitsFraPerson was not supplied, so the modification is $0. Pass it to claim the modification");
+  else if (ssTaxable > 0n && m1s === 0n && !unpublished)
+    notes.push(`RI Schedule M line 1s: no Social Security modification \u2014 federal AGI ${fmtD(l1)} is not LESS THAN the ${fmtD(joint ? 13375000n : 10700000n)} filing-status amount (worksheet line 7; \xA7 44-30-12(c)(8) says "less than", so exactly the threshold does not qualify)`);
+  else if (m1s > 0n && mfjOneSpouseFra)
+    notes.push(`RI Schedule M line 1s: only one spouse has reached full retirement age \u2014 the modification is the taxable Social Security \xD7 the eligible percentage (worksheet lines 8-12, four decimals), ${fmtD(m1s)} of ${fmtD(ssTaxable)}`);
+  else if (m1s > 0n)
+    notes.push(`RI Schedule M line 1s: taxable Social Security modification ${fmtD(m1s)} (eligible percentage 1.0000)`);
+  const tpPension = D7(input.riTaxpayerPensionIncome);
+  const spPension = D7(input.riSpousePensionIncome);
+  const m1t = tpPension + spPension > 0n ? tryEval("us.ri.pension_modification", 0n, {
+    riFederalAgi: l1,
+    riTaxpayerFullRetirementAge: tpFra,
+    riSpouseFullRetirementAge: mfj && spFra,
+    riTaxpayerPensionIncome: tpPension,
+    riSpousePensionIncome: mfj ? spPension : 0n
+  }, "Schedule M line 1t") ?? 0n : 0n;
+  if (!mfj && spPension > 0n)
+    notes.push("RI Schedule M line 1t: riSpousePensionIncome ignored \u2014 the (b) Spouse column of the line 1t table exists only on a joint return (a qualifying widow(er) has no spouse)");
+  if (tpPension + spPension > 0n && m1t === 0n && !unpublished)
+    notes.push(`RI Schedule M line 1t: no pension/annuity modification \u2014 either no listed person reached full retirement age or federal AGI ${fmtD(l1)} is not less than ${fmtD(joint ? 13375000n : 10700000n)}. NOTE: the booklet's question 2 reads "less than or equal to", but \xA7 44-30-12(c)(9) and the Social Security worksheet both say "less than" \u2014 the statute is applied`);
+  else if (m1t > 0n)
+    notes.push(`RI Schedule M line 1t: pension and annuity modification ${fmtD(m1t)} \u2014 up to $50,000 per qualifying person (Form 1040 line 5b only; NOT IRAs on line 4b, NOT railroad retirement, NOT a military service pension)`);
+  const m1d = D7(input.riRailroadRetirementBenefits);
+  const m1g = min2(D7(input.riTuitionSavingsContributions), mfj ? 100000n : 50000n);
+  if (D7(input.riTuitionSavingsContributions) > m1g)
+    notes.push(`RI Schedule M line 1g: tuition savings (\xA7 529) contributions capped at ${fmtD(mfj ? 100000n : 50000n)} ("Not to exceed $500 ($1,000 if joint return)", regardless of the number of accounts)`);
+  const m1v = D7(input.riMilitaryServicePension);
+  if (m1v > 0n)
+    notes.push(`RI Schedule M line 1v: military service pension ${fmtD(m1v)} subtracted in full (\xA7 44-30-12(c)(11), 20 C.F.R. \xA7 212.2 \u2014 no dollar cap, no age or income test); it must NOT also appear on line 1t`);
+  const m1other = D7(input.subtractions);
+  const decreases = m1s + m1t + m1d + m1g + m1v + m1other;
+  const m2a = D7(input.riOutOfStateBondInterest);
+  const m2k = D7(input.riHr1Addback);
+  if (m2k > 0n)
+    notes.push(`RI Schedule M line 2k: H.R. 1 (P.L. 119-21) add-back ${fmtD(m2k)} from RI Schedule HR1 - Individual, line 1f (\xA7 44-30-12(b)(9)) \u2014 new for tax year 2025`);
+  const m2other = D7(input.additions);
+  const increases = m2a + m2k + m2other;
+  const l2 = increases - decreases;
+  notes.push(`RI line 2 (RI Schedule M line 3): net modifications ${fmtD(l2)} \u2014 decreases ${fmtD(decreases)} (line 1y), increases ${fmtD(increases)} (line 2m). "If a modification is not listed, it is not an allowable Rhode Island adjustment to Federal AGI."`);
+  const l3 = l1 + l2;
+  const l4 = rd(evalStateTax("us.ri.standard_deduction", 0n, { riModifiedAgi: l3 }));
+  const l4Full = rd(evalStateTax("us.ri.standard_deduction", 0n, { riModifiedAgi: 0n }));
+  if (l4 < l4Full)
+    notes.push(`RI line 4/6: modified federal AGI ${fmtD(l3)} is over this year's phase-out threshold \u2014 the Standard Deduction and Exemption Worksheets reduce both amounts by 20 points for each step (or fraction) of the excess; the standard deduction falls from ${fmtD(l4Full)} to ${fmtD(l4)}`);
+  notes.push("RI line 4: Rhode Island does not allow the use of federal itemized deductions, and there is no additional standard deduction for age 65 or blindness");
+  const selfExemptions = dependentFiler ? 0 : 1;
+  const spouseExemption = mfj && input.riSpouseClaimedAsDependent !== true ? 1 : 0;
+  const l6count = selfExemptions + spouseExemption + deps;
+  if (dependentFiler)
+    notes.push('RI Schedule E line 1a / line 6: no exemption for yourself \u2014 "If someone else can claim you on their return, your exemption amount is zero" (\xA7 44-30-2.6(c)(3)(C)(II))');
+  const l6 = rd(evalStateTax("us.ri.exemption", 0n, { riModifiedAgi: l3, riExemptions: l6count }));
+  notes.push(`RI line 6 (RI Schedule E line 5): ${l6count} exemption(s) \u2192 ${fmtD(l6)}`);
+  const l5 = max02(l3 - l4);
+  const l7 = max02(l5 - l6);
+  const useSchedule = input.riUseRateSchedule === true;
+  const l8 = rd(evalStateTax("us.ri.income_tax", l7, { riUseRateSchedule: useSchedule }));
+  const asOf = input.asOf;
+  const taxYear = typeof asOf === "string" && /^\d{4}/.test(asOf) ? Number(asOf.slice(0, 4)) : NaN;
+  const tablePublished = taxYear === 2025;
+  notes.push(l7 >= 10000000n || useSchedule ? `RI line 8: the uniform rate schedule applied at ${fmtD(l7)} \u2014 the same schedule for every filing status, one half-up rounding to whole dollars${useSchedule ? " (riUseRateSchedule)" : " (taxable income is $100,000 or more, so the Tax Table does not apply)"}` : tablePublished ? `RI line 8: Rhode Island Tax Table \u2014 the $50 row containing ${fmtD(l7)}, priced at the row midpoint${l7 < 5000n ? "; the printed first row (0 to 50) is $0" : ""}` : Number.isNaN(taxYear) ? `RI line 8: ${fmtD(l7)} is inside the range the Tax Table covers when one is published, but no asOf was supplied, so this note cannot say whether the table or the schedule produced the tax. Pass asOf (the year-end date) to resolve it` : `RI line 8: the uniform rate schedule applied at the exact ${fmtD(l7)}, NOT the Tax Table \u2014 the ${taxYear} RI-1040 booklet and its $50 table are not published, so the corpus applies the schedule exactly. Expect at most half a row of divergence from the eventual printed table, and re-run when it publishes`);
+  const l20fed = D7(input.riFederalChildCareCredit);
+  const l21 = rd((l20fed + 2n) / 4n);
+  const l22 = l20fed > 0n ? rd(evalStateTax("us.ri.child_dependent_care_credit", 0n, { riFederalChildCareCredit: l20fed, riIncomeTax: l8 })) : 0n;
+  const l9a = l22;
+  if (l20fed > 0n)
+    notes.push(`RI Schedule I lines 19-22: 25% of the ${fmtD(l20fed)} federal child and dependent care credit (Form 1040 Schedule 3 line 2) = ${fmtD(l21)}, capped at the ${fmtD(l8)} line 8 tax \u2192 ${fmtD(l9a)} (nonrefundable)`);
+  const l23 = max02(l8 - l22);
+  const otherStateIncome = D7(input.riOtherStateIncome);
+  const otherStateTax = D7(input.riOtherStateTaxPaid);
+  const l9b = otherStateIncome > 0n || otherStateTax > 0n ? rd(evalStateTax("us.ri.other_state_credit", 0n, { riIncomeTaxAfterFederalCredit: l23, riModifiedAgi: l3, riOtherStateIncome: otherStateIncome, riOtherStateTaxPaid: otherStateTax })) : 0n;
+  if (l9b > 0n || otherStateTax > 0n)
+    notes.push(`RI Schedule II lines 23-29: the SMALLEST of the ${fmtD(l23)} tax after the Schedule I credit, that tax \xD7 (${fmtD(otherStateIncome)} \xF7 the ${fmtD(l3)} modified federal AGI, four decimals, capped at 1.0000), and the ${fmtD(otherStateTax)} tax due and paid to the other state \u2192 ${fmtD(l9b)}. Attach a copy of the other state's return; more than one state uses Form RI-1040MU`);
+  const l9c = D7(input.nonrefundableCredits);
+  if (l9c > 0n)
+    notes.push('RI line 9c (RI Schedule CR line 9): certificate credits only \u2014 "If the credit you are trying to use is not listed below, that means the credit is no longer allowed as a credit against personal income tax." \xA7 44-30-2.6(c)(3)(F) is a closed list');
+  const l9d = l9a + l9b + l9c;
+  const l10a = max02(l8 - l9d);
+  const l10b = D7(input.riCreditRecapture);
+  const l11 = D7(input.riCheckoffContributions);
+  if (l11 > 0n)
+    notes.push(`RI line 11 (RI Checkoff Schedule lines 30-38): ${fmtD(l11)} of voluntary contributions \u2014 these INCREASE the balance due or reduce the refund`);
+  const useLookup = input.riUseTaxLookupTable === true;
+  const purchases = D7(input.riUseTaxPurchases);
+  const sharedUseTax = D7(input.useTax);
+  const l12a = sharedUseTax > 0n && !useLookup && purchases === 0n ? sharedUseTax : useLookup || purchases > 0n ? tryEval("us.ri.use_tax", 0n, {
+    riFederalAgi: l1,
+    riUseTaxLookupTable: useLookup,
+    riUseTaxPurchases: purchases,
+    riSalesTaxPaidOtherStates: D7(input.riSalesTaxPaidOtherStates),
+    riLargePurchasesNetUseTax: D7(input.riLargePurchasesNetUseTax)
+  }, "Schedule U") ?? 0n : 0n;
+  if (l12a > 0n)
+    notes.push(useLookup ? `RI Schedule U lines 5-8: safe-harbor lookup on the ${fmtD(l1)} federal AGI plus the net use tax on each single purchase of $1,000 or more \u2192 ${fmtD(l12a)} (\xA7 44-30-100). The taxpayer must proactively check the line 12a attestation box` : `RI Schedule U lines 1-4: 7% of ${fmtD(purchases)} less sales tax paid to other states \u2192 ${fmtD(l12a)}. The taxpayer must proactively check the line 12a attestation box`);
+  else if (!useLookup && purchases === 0n)
+    notes.push("RI line 12a: $0 use tax assumed \u2014 pass riUseTaxPurchases (actual) or riUseTaxLookupTable (the \xA7 44-30-100 safe harbor). The line 12a certification box is the taxpayer's to check");
+  const l12b = D7(input.riIndividualMandatePenalty);
+  const l13a = l10a + l10b + l11 + l12a + l12b;
+  const l14a = D7(input.stateWithholding) + D7(input.spouseStateWithholding);
+  const l14b = D7(input.estimatedPayments) + D7(input.priorYearOverpaymentCredited);
+  const hhIncome = D7(input.riHouseholdIncome);
+  const hhIncomeGiven = input.riHouseholdIncome !== void 0;
+  const claims1040H = input.riAge65OrDisabled === true && hhIncomeGiven && (D7(input.riPropertyTaxPaid) > 0n || D7(input.riRentPaid) > 0n);
+  const l14c = claims1040H ? tryEval("us.ri.property_tax_relief_credit", 0n, {
+    riHouseholdIncome: hhIncome,
+    riHouseholdMembers: Math.max(1, input.riHouseholdMembers ?? 1),
+    riAge65OrDisabled: true,
+    riPropertyTaxPaid: D7(input.riPropertyTaxPaid),
+    riRentPaid: D7(input.riRentPaid),
+    isClaimedAsDependent: dependentFiler
+  }, "Form RI-1040H") ?? 0n : 0n;
+  if (input.riAge65OrDisabled === true && !hhIncomeGiven && (D7(input.riPropertyTaxPaid) > 0n || D7(input.riRentPaid) > 0n))
+    notes.push("RI line 14c: property tax relief credit NOT claimed \u2014 Form RI-1040H Part 1 question E requires total household income of $40,730 or less, and riHouseholdIncome was not supplied. Household income is ALL income of ALL household members including non-taxable Social Security, public assistance and pensions (Part 5 line 32) \u2014 it is NOT federal AGI, and there is no safe default, so the credit is $0 until it is passed");
+  if (claims1040H && l14c > 0n)
+    notes.push(`RI line 14c (Form RI-1040H line 13): property tax relief credit ${fmtD(l14c)} \u2014 refundable, maximum $700, household income ${fmtD(hhIncome)} of the $40,730 limit`);
+  if (claims1040H && D7(input.riPropertyTaxPaid) > 0n && D7(input.riRentPaid) > 0n)
+    notes.push(`RI Form RI-1040H: both property tax and rent were passed \u2014 the composer adds 20% of the rent to the property tax (the form's own rule for rented LAND). A homeowner who separately rents another dwelling completes Part 3 OR Part 4, line 13 being "line 6 or line 12, whichever applies" \u2014 check which part applies`);
+  if (input.riAge65OrDisabled === true && !claims1040H)
+    notes.push("RI line 14c: no property tax relief credit computed \u2014 pass riPropertyTaxPaid or riRentPaid (Form RI-1040H must be filed by April 15, 2026 regardless of any extension)");
+  const federalEic = D7(input.federalEITC);
+  const l14d = federalEic > 0n ? rd(evalStateTax("us.ri.eitc", 0n, { riFederalEic: federalEic })) : 0n;
+  if (l14d > 0n)
+    notes.push(`RI line 14d (RI Schedule EIC lines 39-41): 16% of the ${fmtD(federalEic)} federal earned income credit \u2192 ${fmtD(l14d)}, fully refundable (\xA7 44-30-2.6(c)(2)(N))`);
+  const l14e = D7(input.riLeadPaintCredit);
+  if (l14e > 0n)
+    notes.push("RI line 14e (Form RI-6238 line 7): residential lead abatement credit \u2014 refundable, but the program is capped at $250,000 statewide per year and lower-priority claimants are paid proportionately from whatever remains, so the amount actually received can be less. Maximums are $5,000 per unit for removal/abatement and $1,500 for reduction/mitigation, up to three units; the form is due April 15, 2026");
+  const l14f = D7(input.refundableCredits) + D7(input.extensionPayment);
+  if (D7(input.extensionPayment) > 0n)
+    notes.push(`RI line 14f: ${fmtD(D7(input.extensionPayment))} paid with Form RI-4868 is included in "Other payments"`);
+  const l14g = l14a + l14b + l14c + l14d + l14e + l14f;
+  const l14h = D7(input.riPreviouslyIssuedOverpayment);
+  const l14i = l14g - l14h;
+  const l15b = D7(input.riUnderestimatingInterest);
+  const net = l13a + l15b - l14i;
+  const due = net > 0n;
+  const l15a = due ? max02(l13a - l14i) : 0n;
+  const l15c = due ? net : 0n;
+  const l16 = due ? max02(l14i - l13a) : max02(l14i - l13a - l15b);
+  const applied = min2(D7(input.riAppliedToNextYear), l16);
+  const l18 = due ? 0n : applied;
+  const l17 = due ? 0n : l16 - l18;
+  if (!due && l15b > 0n)
+    notes.push(`RI line 15b: ${fmtD(l15b)} of underestimating interest (Form RI-2210/RI-2210A) is subtracted in arriving at line 16 \u2014 the gross overpayment is ${fmtD(l14i - l13a)} and the printed line 16 is net of it ("If there is an amount due for underestimating interest on line 15b, subtract line 15b from line 16")`);
+  if (due)
+    notes.push(`RI line 15c: total amount due ${fmtD(l15c)} \u2014 file Form RI-1040V with the payment`);
+  else
+    notes.push(`RI line 16: overpayment ${fmtD(l16)}${l18 > 0n ? `, ${fmtD(l18)} applied to 2026 estimated tax` : ""} \u2014 refund ${fmtD(l17)}`);
+  const out = {
+    "1_federal_agi": fmtD(l1),
+    "2_net_modifications": fmtD(l2),
+    "3_modified_federal_agi": fmtD(l3),
+    "4_standard_deduction": fmtD(l4),
+    "5_agi_less_deduction": fmtD(l5),
+    "6_exemptions": fmtD(l6),
+    "7_ri_taxable_income": fmtD(l7),
+    "8_ri_income_tax": fmtD(l8),
+    "9a_allowable_federal_credit": fmtD(l9a),
+    "9b_other_state_credit": fmtD(l9b),
+    "9c_other_ri_credits": fmtD(l9c),
+    "9d_total_credits": fmtD(l9d),
+    "10a_tax_after_credits": fmtD(l10a),
+    "10b_recapture": fmtD(l10b),
+    "11_checkoff_contributions": fmtD(l11),
+    "12a_use_tax": fmtD(l12a),
+    "12b_individual_mandate_penalty": fmtD(l12b),
+    "13a_total_tax_and_checkoffs": fmtD(l13a),
+    "13b_total_tax_and_checkoffs": fmtD(l13a),
+    "14a_ri_withholding": fmtD(l14a),
+    "14b_estimated_payments": fmtD(l14b),
+    "14c_property_tax_relief_credit": fmtD(l14c),
+    "14d_ri_earned_income_credit": fmtD(l14d),
+    "14e_lead_paint_credit": fmtD(l14e),
+    "14f_other_payments": fmtD(l14f),
+    "14g_total_payments_and_credits": fmtD(l14g),
+    "14h_previously_issued_overpayments": fmtD(l14h),
+    "14i_net_payments": fmtD(l14i),
+    "15a_amount_due": fmtD(l15a),
+    "15b_underestimating_interest": fmtD(l15b),
+    "15c_total_amount_due": fmtD(l15c),
+    "16_amount_overpaid": fmtD(l16),
+    "17_refund": fmtD(l17),
+    "18_applied_to_2026": fmtD(l18)
+  };
+  out["M_1s_social_security_modification"] = fmtD(m1s);
+  out["M_1t_pension_modification"] = fmtD(m1t);
+  out["M_1y_total_decreasing"] = fmtD(-decreases);
+  out["M_2m_total_increasing"] = fmtD(increases);
+  out["I_21_tentative_federal_credit"] = fmtD(l21);
+  out["I_22_maximum_credit"] = fmtD(l22);
+  out["II_23_tax_less_federal_credit"] = fmtD(l23);
+  out["E_5_total_exemptions"] = String(l6count);
+  return out;
+}
+
+// ../compose/dist/mt.js
+var D8 = (x) => rd(c(x));
+var isNoApplicableRule3 = (err) => err instanceof Error && /no applicable rule/i.test(err.message);
+function composeMT(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Montana Form 2 composer");
+  if (typeof input.federalAGI !== "number")
+    throw new Error("federalAGI is required for the Montana Form 2 composer \u2014 federal Form 1040 line 11b is Form 2 line 1");
+  if (typeof input.mtFederalDeductions !== "number") {
+    throw new Error("mtFederalDeductions is required for the Montana Form 2 composer \u2014 Form 2 line 2 is the total of federal Form 1040 lines 12e and 13b (the federal standard OR itemized deduction plus the Schedule 1-A deductions for qualified tips, qualified overtime, passenger vehicle loan interest and the enhanced senior deduction). Montana has no standard deduction of its own, so without this line there is no Montana taxable income. Do NOT include the federal qualified business income deduction.");
+  }
+  const mfj = fs === "mfj";
+  const qss = fs === "qss";
+  const mfs = fs === "mfs";
+  if (qss)
+    notes.push("MT filing status 'Qualifying Surviving Spouse' \u2014 Montana pairs it with married filing jointly in every rate table, but it is NOT a joint return: the doubled age-65 subtraction and the doubled 529 and ABLE caps all require both spouses on a joint return");
+  if (mfs)
+    notes.push("MT married filing separately uses the SINGLE rate column \u2014 Montana does not halve the single brackets for separate filers");
+  const missing = /* @__PURE__ */ new Set();
+  const tryEval = (target, base, extra, label) => {
+    try {
+      return rd(evalStateTax(target, base, extra));
+    } catch (err) {
+      if (!isNoApplicableRule3(err))
+        throw err;
+      missing.add(target);
+      notes.push(`MT ${label}: ${target} has no applicable rule as of this date \u2014 this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) \u2014 line left blank; re-run once the booklet is out`);
+      return null;
+    }
+  };
+  const l1 = D8(input.federalAGI);
+  const l2 = D8(input.mtFederalDeductions);
+  const l3 = max02(l1 - l2);
+  notes.push(`MT line 2: ${fmtD(l2)} of federal deductions (Form 1040 lines 12e and 13b) \u2014 Montana has NO standard deduction and NO personal exemption of its own; the federal amount flows through, EXCLUDING the \xA7 199A qualified business income deduction, which \xA7 15-30-2120(2)(i) adds back`);
+  const s529 = D8(input.mtTuitionSavingsContributions) > 0n ? tryEval("us.mt.tuition_savings_subtraction", 0n, { mtTuitionSavingsContributions: D8(input.mtTuitionSavingsContributions) }, "Schedule I line 16 (529)") ?? 0n : 0n;
+  if (D8(input.mtTuitionSavingsContributions) > s529 && s529 > 0n)
+    notes.push(`MT Schedule I line 16: \xA7 529 contributions capped at ${fmtD(s529)} (${mfj ? "$9,000 on a joint return" : "$4,500"} for 2025 \u2014 House Bill 845 raised it from $3,000)`);
+  const sAble = D8(input.mtAbleContributions) > 0n ? tryEval("us.mt.able_subtraction", 0n, { mtAbleContributions: D8(input.mtAbleContributions) }, "Schedule I line 17 (ABLE)") ?? 0n : 0n;
+  const sMil = D8(input.mtMilitaryRetirementIncome) > 0n ? tryEval("us.mt.military_retirement_subtraction", 0n, {
+    mtMilitaryRetireeEligible: input.mtMilitaryRetireeEligible === true,
+    mtMilitaryRetireeWithinFiveYears: input.mtMilitaryRetireeWithinFiveYears === true,
+    mtMilitaryRetirementIncome: D8(input.mtMilitaryRetirementIncome),
+    mtMontanaSourceWageIncome: D8(input.mtMontanaSourceWageIncome)
+  }, "Schedule I line 13 (military retirement)") ?? 0n : 0n;
+  if (D8(input.mtMilitaryRetirementIncome) > 0n && sMil === 0n) {
+    notes.push(input.mtMilitaryRetireeEligible !== true || input.mtMilitaryRetireeWithinFiveYears !== true ? "MT Schedule I line 13: no military retirement subtraction \u2014 \xA7 15-30-2120(9) limits it to a retiree who became a Montana resident on or after June 30, 2023 (or was a resident before and after receiving the pension) and only for five consecutive years; pass mtMilitaryRetireeEligible and mtMilitaryRetireeWithinFiveYears" : "MT Schedule I line 13: no military retirement subtraction \u2014 it is the LESSER of Montana source wage income or 50% of the pension, and no Montana source wage income was passed. \xA7 15-30-2120(8)(b) counts wages, salary and tips for services performed in Montana AND net income from a Montana trade, business, profession or occupation AND Montana farm net income, so pass mtMontanaSourceWageIncome with all three; a fully retired veteran with none of them gets nothing");
+  } else if (sMil > 0n)
+    notes.push(`MT Schedule I line 13: military retirement subtraction ${fmtD(sMil)} \u2014 the lesser of Montana source wage income and 50% of the pension (Form WMRE)`);
+  const l4 = D8(input.additions) + D8(input.mtOutOfStateBondInterest) + D8(input.mtStateIncomeTaxAddback);
+  if (D8(input.mtStateIncomeTaxAddback) > 0n)
+    notes.push(`MT Schedule I Part I line 4: ${fmtD(D8(input.mtStateIncomeTaxAddback))} of state income tax included in federal itemized deductions added back (Worksheet B) \u2014 capped so it never reduces the federal itemized total below the federal standard deduction (\xA7 15-30-2120(2)(j)). New placement for TY2025`);
+  const l5 = D8(input.subtractions) + s529 + sAble + sMil + D8(input.mtActiveDutyMilitaryPay) + D8(input.mtExemptTribalIncome) + D8(input.mtRailroadRetirementBenefits);
+  if (D8(input.mtActiveDutyMilitaryPay) > 0n)
+    notes.push("MT Schedule I line 12: active-duty military salary is subtracted in full (\xA7 15-30-2120(3)(c)) \u2014 basic, special and incentive pay only; annual training, inactive duty training and 'active Guard and Reserve duty' pay do NOT qualify");
+  if (D8(input.taxableSocialSecurity) > 0n)
+    notes.push(`MT: ${fmtD(D8(input.taxableSocialSecurity))} of federally taxable Social Security is taxed by Montana with NO state subtraction \u2014 the pre-2024 Montana Social Security worksheet was repealed by SB 399 and no replacement exists`);
+  const l6 = tryEval("us.mt.age65_subtraction", 0n, {
+    mtTaxpayerAge65: input.mtTaxpayerAge65 === true,
+    mtSpouseAge65: mfj && input.mtSpouseAge65 === true
+  }, "line 6 (age-65 subtraction)") ?? 0n;
+  if (l6 > 0n)
+    notes.push(`MT line 6: ${fmtD(l6)} age-65 subtraction \u2014 $5,660 per taxpayer 65 or older for 2025, doubled only when BOTH spouses on a joint return qualify. The Department calls this the "65 and over exemption", but Montana's personal exemption is repealed; this is a subtraction from federal taxable income`);
+  if (!mfj && input.mtSpouseAge65 === true)
+    notes.push("MT line 6: mtSpouseAge65 ignored \u2014 the doubled $11,320 subtraction requires a joint return");
+  const l7 = max02(l3 + l4 - l5 - l6);
+  const gains = D8(input.mtNetLongTermCapitalGains);
+  const l8 = rd(evalStateTax("us.mt.income_tax", l7, { mtNetLongTermCapitalGains: gains }));
+  const wsOrdinaryTax = rd(evalStateTax("us.mt.ordinary_income_tax", l7, { mtNetLongTermCapitalGains: gains }));
+  const wsGainsTax = rd(evalStateTax("us.mt.capital_gains_tax", l7, { mtNetLongTermCapitalGains: gains }));
+  const ordinaryIncome = max02(l7 - min2(l7, max02(gains)));
+  if (gains > 0n) {
+    notes.push(`MT page 2 worksheet: Montana ordinary income ${fmtD(ordinaryIncome)} (line 4) is taxed on the rate schedule \u2192 ${fmtD(wsOrdinaryTax)} (line 12); net long-term capital gains ${fmtD(min2(l7, gains))} are taxed at 3% for the part that fits below the filing-status threshold and 4.1% above \u2192 ${fmtD(wsGainsTax)} (line 11); line 13 = ${fmtD(l8)}`);
+    notes.push("MT: qualified dividends are ORDINARY income in Montana ('Montana Ordinary Income \u2026 includes qualified dividends'), unlike the federal treatment \u2014 only \xA7 1222 net long-term capital gains get the 3% / 4.1% rates");
+  } else {
+    notes.push(`MT line 8: ${fmtD(l7)} taxed on the rate schedule \u2192 ${fmtD(l8)}. Montana has no tax table at any income level \u2014 the rate schedule is the only method for every filer at every income`);
+  }
+  const oscInputs = D8(input.mtOtherStateOrdinaryIncome) + D8(input.mtOtherStateCapitalGains);
+  const osc = oscInputs > 0n ? tryEval("us.mt.other_state_credit", 0n, {
+    mtOtherStateOrdinaryIncome: D8(input.mtOtherStateOrdinaryIncome),
+    mtOtherStateCapitalGains: D8(input.mtOtherStateCapitalGains),
+    mtOtherStateTotalIncome: D8(input.mtOtherStateTotalIncome),
+    mtOrdinaryIncomeSourcedToMontana: D8(input.mtOrdinaryIncomeSourcedToMontana),
+    mtFederalNetLongTermCapitalGains: D8(input.mtFederalNetLongTermCapitalGains),
+    mtOtherStateTaxPaid: D8(input.mtOtherStateTaxPaid),
+    mtOrdinaryIncomeTax: wsOrdinaryTax,
+    mtCapitalGainsTax: wsGainsTax
+  }, "Schedule III Part II (other-state credit)") ?? 0n : 0n;
+  if (osc > 0n)
+    notes.push(`MT Schedule III Part II: other-state credit ${fmtD(osc)} \u2014 computed SEPARATELY for ordinary income (lines 1-10) and for net long-term capital gains (lines 11-20) and summed on line 21, each block taking the least of the tax paid, the tax paid times the sourced ratio, and the Montana tax times the sourced ratio, at six decimal places. North Dakota WAGES are not eligible (reciprocity)`);
+  if (oscInputs > 0n && osc === 0n && !missing.has("us.mt.other_state_credit")) {
+    notes.push("MT Schedule III Part II: other-state credit computed as $0 \u2014 check that the DENOMINATORS were supplied: mtOtherStateTotalIncome (lines 2 and 12), mtOrdinaryIncomeSourcedToMontana (line 3) and mtFederalNetLongTermCapitalGains (line 13). Each block returns $0 when its ratio has no denominator");
+  }
+  const otherNonrefundable = D8(input.nonrefundableCredits);
+  const l9raw = osc + otherNonrefundable;
+  const l9 = min2(l9raw, l8);
+  if (l9raw > l8)
+    notes.push(`MT line 9: nonrefundable credits ${fmtD(l9raw)} exceed the ${fmtD(l8)} tax and are limited to it \u2014 the printed line 10 is a bare subtraction, but Schedule III credits are nonrefundable by definition and cannot produce a negative liability`);
+  const l10 = max02(l8 - l9);
+  const l11 = D8(input.stateWithholding) + D8(input.spouseStateWithholding) + D8(input.mtPassThroughEntityTaxCredit) + D8(input.mtScheduleK1Withholding) + D8(input.mtLoanOutWithholding);
+  const l12 = D8(input.estimatedPayments);
+  const l13 = D8(input.priorYearOverpaymentCredited);
+  const l14 = D8(input.extensionPayment);
+  const federalEic = D8(input.federalEITC);
+  const l15 = federalEic > 0n ? tryEval("us.mt.eitc", 0n, { mtFederalEic: federalEic }, "line 15 (earned income credit)") ?? 0n : 0n;
+  if (l15 > 0n)
+    notes.push(`MT line 15: earned income credit ${fmtD(l15)} of the ${fmtD(federalEic)} federal credit \u2014 refundable, and payable even with no Montana tax. Nonresidents do not qualify, and Worksheet A prorates it for part-year and mixed-residency filers, enrolled tribal members living on their own reservation, IRC \xA7 501(d) members and resident active-duty servicemembers (none of which this full-year-resident composer models)`);
+  const claimsElderly = input.mtAge62 === true && input.mtGrossHouseholdIncome !== void 0 && (D8(input.mtPropertyTaxBilled) > 0n || D8(input.mtRentPaid) > 0n);
+  const l16 = claimsElderly ? tryEval("us.mt.elderly_homeowner_renter_credit", 0n, {
+    mtAge62: true,
+    mtResided9Months: input.mtResided9Months === true,
+    mtOccupied6Months: input.mtOccupied6Months === true,
+    mtSoleHouseholdClaimant: input.mtSoleHouseholdClaimant === true,
+    mtGrossHouseholdIncome: D8(input.mtGrossHouseholdIncome),
+    mtPropertyTaxBilled: D8(input.mtPropertyTaxBilled),
+    mtRentPaid: D8(input.mtRentPaid)
+  }, "line 16 (Schedule 2EC)") ?? 0n : 0n;
+  if (input.mtAge62 === true && input.mtGrossHouseholdIncome === void 0 && (D8(input.mtPropertyTaxBilled) > 0n || D8(input.mtRentPaid) > 0n)) {
+    notes.push("MT line 16: elderly homeowner/renter credit NOT claimed \u2014 Schedule 2EC keys off GROSS HOUSEHOLD INCOME (all income of all household members, taxable and non-taxable, including the full amount of Social Security and pensions, public assistance and the 2024 Montana property tax rebate), which is not federal AGI and has no safe default. Pass mtGrossHouseholdIncome");
+  } else if (claimsElderly && l16 === 0n && !missing.has("us.mt.elderly_homeowner_renter_credit")) {
+    notes.push("MT line 16: no elderly homeowner/renter credit \u2014 Schedule 2EC requires ALL of its attestations \u2014 age 62 by year end, nine months of Montana residency, six months of occupancy, and being the only household member claiming it (mtSoleHouseholdClaimant) \u2014 plus gross household income under $45,000");
+  } else if (l16 > 0n)
+    notes.push(`MT line 16: elderly homeowner/renter credit ${fmtD(l16)} \u2014 refundable, maximum $1,150, and claimable even with no Montana tax liability (\xA7 15-30-2340(7))`);
+  const l17 = D8(input.refundableCredits);
+  const l18 = D8(input.mtAmendedPaymentsWithOriginal);
+  const l19 = D8(input.mtScheduleIvOtherTaxes);
+  const l20 = D8(input.mtAmendedPreviousOverpayment);
+  const l21 = l11 + l12 + l13 + l14 + l15 + l16 + l17 + l18 - l19 - l20;
+  if (l19 > 0n)
+    notes.push(`MT line 19: ${fmtD(l19)} of contributions, penalties, interest and other taxes from Schedule IV is SUBTRACTED from total payments rather than added to the tax`);
+  const due = l21 < l10;
+  const l22 = due ? l10 - l21 : 0n;
+  const l23 = due ? 0n : l21 - l10;
+  const l24 = min2(D8(input.mtAppliedToNextYear), l23);
+  const l25 = min2(D8(input.mt529Deposit), max02(l23 - l24));
+  const l26 = max02(l23 - l24 - l25);
+  notes.push(due ? `MT line 22: tax due ${fmtD(l22)}` : `MT line 23: overpaid ${fmtD(l23)}${l24 > 0n ? `, ${fmtD(l24)} applied to 2026 estimated taxes` : ""}${l25 > 0n ? `, ${fmtD(l25)} deposited to a 529/529A account` : ""} \u2014 refund ${fmtD(l26)}`);
+  return {
+    "1_federal_agi": fmtD(l1),
+    "2_federal_deductions": fmtD(l2),
+    "3_federal_taxable_income": fmtD(l3),
+    "4_montana_additions": fmtD(l4),
+    "5_montana_subtractions": fmtD(l5),
+    "6_age65_subtraction": fmtD(l6),
+    "7_montana_taxable_income": fmtD(l7),
+    "8_tax_before_credits": fmtD(l8),
+    "9_nonrefundable_credits": fmtD(l9),
+    "10_tax_after_nonrefundable_credits": fmtD(l10),
+    // printed line 11 is "Add lines 11a through 11e" (W-2, 1099, pass-through entity credit, K-1
+    // withholding, LOWCERT); the composer carries the TOTAL from stateWithholding + spouseStateWithholding
+    // and does not break out the five sub-lines
+    "11_montana_withholding": fmtD(l11),
+    "12_estimated_payments": fmtD(l12),
+    "13_overpayment_applied_from_2024": fmtD(l13),
+    "14_extension_payment": fmtD(l14),
+    "15_earned_income_credit": fmtD(l15),
+    "16_elderly_homeowner_renter_credit": fmtD(l16),
+    "17_refundable_credits": fmtD(l17),
+    "18_amended_payments_with_original": fmtD(l18),
+    "19_schedule_iv_other_taxes": fmtD(l19),
+    "20_amended_previous_overpayment": fmtD(l20),
+    "21_total_payments": fmtD(l21),
+    "22_tax_due": fmtD(l22),
+    "23_tax_overpaid": fmtD(l23),
+    "24_applied_to_2026": fmtD(l24),
+    "25_529_deposit": fmtD(l25),
+    "26_refund": fmtD(l26),
+    // page 2 worksheet and Schedule I detail the form itself prints
+    "W_11_capital_gains_tax": fmtD(wsGainsTax),
+    "W_12_ordinary_income_tax": fmtD(wsOrdinaryTax),
+    "W_4_montana_ordinary_income": fmtD(ordinaryIncome),
+    "III_1_other_state_credit": fmtD(osc),
+    "I_16_tuition_savings_subtraction": fmtD(s529),
+    "I_13_military_retirement_subtraction": fmtD(sMil)
+  };
+}
+
+// ../compose/dist/de.js
+var D9 = (x) => rd(c(x));
+var isNoApplicableRule4 = (err) => err instanceof Error && /no applicable rule/i.test(err.message);
+function composeDE(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Delaware Form PIT-RES composer");
+  if (typeof input.federalAGI !== "number")
+    throw new Error("federalAGI is required for the Delaware Form PIT-RES composer \u2014 federal Form 1040 line 11 is Form PIT-RES line 1");
+  const mfj = fs === "mfj";
+  const combinedSeparate = input.deCombinedSeparate === true;
+  if (combinedSeparate && mfj)
+    throw new Error("deCombinedSeparate (Delaware filing status 4, married filing combined separate) cannot be used with filingStatus 'mfj' \u2014 status 4 is an alternative to the joint return, so pass filingStatus 'mfs' with deCombinedSeparate: true");
+  if (combinedSeparate && typeof input.deSpouseFederalAgi !== "number") {
+    throw new Error("deSpouseFederalAgi is required for Delaware filing status 4 \u2014 column A is the spouse's own federal AGI. The printed Line 1 Worksheet requires each spouse to report their own income plus one half of income from jointly titled securities, bank accounts and real estate.");
+  }
+  const missing = /* @__PURE__ */ new Set();
+  const tryEvalTo = (sink) => (target, base, extra, label) => {
+    try {
+      return rd(evalStateTax(target, base, extra));
+    } catch (err) {
+      if (!isNoApplicableRule4(err))
+        throw err;
+      missing.add(target);
+      sink.push(`DE ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms are published`);
+      return null;
+    }
+  };
+  const tryEval = tryEvalTo(notes);
+  if (combinedSeparate) {
+    notes.push('DE filing status 4 (Married & Filing Combined Separate on this form): the Division treats this as "in fact filing two separate returns which have been combined on the same form for convenience". Column A is the spouse and column B the taxpayer; each column takes its own $3,250 standard deduction, its own trip through the brackets and its own personal credits. Income from jointly titled securities, bank accounts and real estate must be split one half to each column by the caller (the printed Line 1 Worksheet)');
+    notes.push('DE filing status 3 or 4: "both you and your spouse must compute your taxable income the same way. This means if one itemizes deductions, the other must itemize. If one takes the standard deduction, the other must take the standard deduction" (30 Del. C. \xA7 1109(b))');
+  }
+  if (mfj)
+    notes.push("DE filing status 2 (Joint) is the ONLY status with the doubled $6,500 standard deduction \u2014 statuses 1, 3, 4 and 5 each take $3,250, and on a combined separate return EACH column takes its own $3,250");
+  const itemizes = input.deItemizes === true;
+  const itemized = D9(input.deItemizedDeductions);
+  if (itemizes)
+    notes.push(`DE line 20b: itemizing ${fmtD(itemized)} on Form PIT-RSA. Delaware's election is INDEPENDENT of the federal one \u2014 "If you claimed a standard deduction on your federal return, you may still elect to itemize your deductions on the Delaware return" \u2014 but itemizing forfeits the line 21 additional standard deduction entirely, even at 65 or blind`);
+  const buildColumn = (label, p, sink = notes) => {
+    const tryEval2 = tryEvalTo(sink);
+    const l1 = D9(p.federalAgi);
+    const l4 = l1 + D9(p.additions);
+    const l5 = D9(p.usObligations);
+    const excl = (pension, eligible, age60, military, domiciled, who) => D9(pension) > 0n || D9(eligible) > 0n ? tryEval2("us.de.pension_exclusion", 0n, {
+      deAge60OrOver: age60,
+      deMilitaryPension: military,
+      deDomiciledForPensionExclusion: domiciled,
+      dePensionIncome: D9(pension),
+      deEligibleRetirementIncome: D9(eligible)
+    }, `line 6 pension exclusion (${who})`) ?? 0n : 0n;
+    const l6self = excl(p.pensionIncome, p.eligibleRetirementIncome, p.age60, p.militaryPension, p.domiciled, label);
+    const l6spouse = p.includeSpousePension ? excl(input.deSpousePensionIncome, input.deSpouseEligibleRetirementIncome, input.deSpouseAge60OrOver === true, input.deSpouseMilitaryPension === true, input.deSpouseDomiciledForPensionExclusion === true, "spouse") : 0n;
+    const l6 = l6self + l6spouse;
+    const l7 = D9(p.otherSubtractions);
+    const l8a = D9(p.socialSecurity);
+    const l8b = D9(p.tuitionAble);
+    const l9 = l5 + l6 + l7 + l8a + l8b;
+    const l10 = l4 - l9;
+    const l11 = p.qualifiesElderly ? tryEval2("us.de.elderly_disabled_exclusion", 0n, {
+      deQualifiesElderlyDisabled: true,
+      deSpouseQualifiesElderlyDisabled: p.spouseQualifiesElderly,
+      deEarnedIncome: D9(p.earnedIncome),
+      deAgiBeforeExclusion: l10
+    }, `line 11 elderly/disabled exclusion (${label})`) ?? 0n : 0n;
+    const l12 = l10 - l11;
+    const l22 = itemizes ? D9(p.itemizedDeductions) : tryEval2("us.de.standard_deduction", 0n, { deAdditionalDeductionBoxes: Math.max(0, p.deductionBoxes ?? 0), deItemizes: false }, `line 20a standard deduction (${label})`) ?? 0n;
+    const l23 = max02(l12 - l22);
+    const l24 = rd(evalStateTax("us.de.income_tax", l23, { deUseRateSchedule: input.deUseRateSchedule === true }));
+    const l27 = tryEval2("us.de.personal_credits", 0n, {
+      deExemptions: Math.max(0, p.exemptions ?? 0),
+      deAge60Persons: Math.max(0, p.age60Persons ?? 0),
+      isClaimedAsDependent: input.claimedAsDependent === true
+    }, `lines 27a-27b personal credits (${label})`) ?? 0n;
+    const l28 = D9(p.otherStateIncome) > 0n && D9(p.otherStateTaxPaid) > 0n ? tryEval2("us.de.other_state_credit", 0n, {
+      deAdjustedGrossIncome: l12,
+      deIncomeTax: l24,
+      deOtherStateIncome: D9(p.otherStateIncome),
+      deOtherStateTaxPaid: D9(p.otherStateTaxPaid)
+    }, `line 28 other-state credit (${label})`) ?? 0n : 0n;
+    const l29 = Math.max(0, p.firefighters ?? 0) > 0 ? tryEval2("us.de.volunteer_firefighter_credit", 0n, { deVolunteerFirefighters: Math.max(0, p.firefighters ?? 0) }, `line 29 volunteer firefighter credit (${label})`) ?? 0n : 0n;
+    const l31 = D9(p.federalChildCareCredit) > 0n ? tryEval2("us.de.child_care_credit", 0n, { deFederalChildCareCredit: D9(p.federalChildCareCredit) }, `line 31 child care credit (${label})`) ?? 0n : 0n;
+    const earned2 = l27 + l28 + l29 + l31 + (p.includeGenericNonrefundable ? D9(input.nonrefundableCredits) : 0n);
+    const l32 = min2(earned2, l24);
+    const l33 = max02(l24 - l32);
+    const fed = D9(p.federalEic);
+    const l34 = fed > 0n ? tryEval2("us.de.eitc", 0n, { deFederalEic: fed, deEitcTaxAfterCredits: l33 }, `line 34 earned income credit (${label})`) ?? 0n : 0n;
+    const refundable45 = fed > 0n ? tryEval2("us.de.eitc", 0n, { deFederalEic: fed, deEitcTaxAfterCredits: 0n }, `line 34 branch probe (${label})`) ?? 0n : 0n;
+    const refundableBranch = fed > 0n && refundable45 >= l33;
+    if (earned2 > l24)
+      sink.push(`DE line 32 (${label}): non-refundable credits ${fmtD(earned2)} exceed the ${fmtD(l24)} tax and are limited to it \u2014 "The total of all non-refundable credits (Lines 27a through 31) is limited to the amount of your Delaware tax liability"`);
+    return {
+      label,
+      federalAgi: l1,
+      additions: D9(p.additions),
+      usObligations: l5,
+      pensionExclusion: l6,
+      otherSubtractions: l7,
+      socialSecurity: l8a,
+      tuitionAble: l8b,
+      elderlyExclusion: l11,
+      deductions: l22,
+      taxableIncome: l23,
+      tax: l24,
+      personalCredits: l27,
+      otherStateCredit: l28,
+      firefighterCredit: l29,
+      childCareCredit: l31,
+      nonrefundableTotal: l32,
+      taxAfterNonrefundable: l33,
+      eitc: l34,
+      eitcRefundable: refundableBranch
+    };
+  };
+  const boxCount = (raw) => Math.max(0, raw ?? 0);
+  const clampBoxes = (raw, who) => {
+    const n = boxCount(raw);
+    if (combinedSeparate && n > 2)
+      notes.push(`DE line 21 (${who}): ${n} boxes reduced to 2 \u2014 each column of a combined separate return is ONE person, and "a maximum of $5,000 per individual" is two boxes`);
+    return combinedSeparate ? Math.min(2, n) : n;
+  };
+  if (fs === "mfs" && !combinedSeparate && boxCount(input.deAdditionalDeductionBoxes) > 2)
+    notes.push("DE line 21 (status 3): more than two boxes are the SPOUSE's boxes under \xA7 1108(b)(2) and (b)(4) \u2014 allowed only if that spouse is 65 or over (or blind), has NO gross income, and is not another taxpayer's dependent");
+  const paramsB = {
+    federalAgi: input.federalAGI,
+    additions: input.additions,
+    usObligations: input.deUsObligationInterest,
+    otherSubtractions: input.subtractions,
+    socialSecurity: input.taxableSocialSecurity,
+    tuitionAble: input.deTuitionAbleContributions,
+    pensionIncome: input.dePensionIncome,
+    eligibleRetirementIncome: input.deEligibleRetirementIncome,
+    age60: input.deAge60OrOver === true,
+    militaryPension: input.deMilitaryPension === true,
+    domiciled: input.deDomiciledForPensionExclusion === true,
+    deductionBoxes: clampBoxes(input.deAdditionalDeductionBoxes, "Column B"),
+    exemptions: input.deExemptions,
+    age60Persons: input.deAge60Persons,
+    earnedIncome: input.deEarnedIncome,
+    qualifiesElderly: input.deQualifiesElderlyDisabled === true,
+    spouseQualifiesElderly: input.deSpouseQualifiesElderlyDisabled === true,
+    firefighters: input.deVolunteerFirefighters,
+    includeSpousePension: !combinedSeparate,
+    itemizedDeductions: input.deItemizedDeductions,
+    includeGenericNonrefundable: true,
+    otherStateIncome: input.deOtherStateIncome,
+    otherStateTaxPaid: input.deOtherStateTaxPaid,
+    federalChildCareCredit: input.deFederalChildCareCredit,
+    federalEic: input.federalEITC
+  };
+  const paramsA = {
+    federalAgi: input.deSpouseFederalAgi,
+    additions: input.deSpouseAdditions,
+    usObligations: input.deSpouseUsObligationInterest,
+    otherSubtractions: input.deSpouseSubtractions,
+    socialSecurity: input.deSpouseTaxableSocialSecurity,
+    tuitionAble: input.deSpouseTuitionAbleContributions,
+    pensionIncome: input.deSpousePensionIncome,
+    eligibleRetirementIncome: input.deSpouseEligibleRetirementIncome,
+    age60: input.deSpouseAge60OrOver === true,
+    militaryPension: input.deSpouseMilitaryPension === true,
+    domiciled: input.deSpouseDomiciledForPensionExclusion === true,
+    deductionBoxes: clampBoxes(input.deSpouseAdditionalDeductionBoxes, "Column A"),
+    exemptions: input.deSpouseExemptions,
+    age60Persons: input.deSpouseAge60Persons,
+    earnedIncome: input.deSpouseEarnedIncome,
+    qualifiesElderly: input.deSpouseQualifiesElderlyDisabled === true,
+    spouseQualifiesElderly: input.deQualifiesElderlyDisabled === true,
+    firefighters: input.deSpouseVolunteerFirefighters,
+    includeSpousePension: false,
+    itemizedDeductions: input.deSpouseItemizedDeductions,
+    includeGenericNonrefundable: false,
+    otherStateIncome: input.deSpouseOtherStateIncome,
+    otherStateTaxPaid: input.deSpouseOtherStateTaxPaid,
+    federalChildCareCredit: 0,
+    federalEic: 0
+  };
+  let colA = null;
+  let colB;
+  if (combinedSeparate) {
+    const scratch = [];
+    const a0 = buildColumn("Column A", paramsA, scratch);
+    const b0 = buildColumn("Column B", { ...paramsB, federalChildCareCredit: 0, federalEic: 0 }, scratch);
+    const eicToA = a0.taxableIncome > b0.taxableIncome;
+    const childCareToA = a0.taxableIncome < b0.taxableIncome;
+    colA = buildColumn("Column A", { ...paramsA, federalEic: eicToA ? input.federalEITC : 0, federalChildCareCredit: childCareToA ? input.deFederalChildCareCredit : 0 });
+    colB = buildColumn("Column B", { ...paramsB, federalEic: eicToA ? 0 : input.federalEITC, federalChildCareCredit: childCareToA ? 0 : input.deFederalChildCareCredit });
+    if (D9(input.federalEITC) > 0n)
+      notes.push(`DE line 34 (status 4): the earned income credit is taken ONCE, in Column ${eicToA ? "A" : "B"} \u2014 the column with the higher taxable income (${fmtD(eicToA ? a0.taxableIncome : b0.taxableIncome)} vs ${fmtD(eicToA ? b0.taxableIncome : a0.taxableIncome)}), per \xA7 1117(b) and Schedule II line 12; there is one federal credit on the joint federal return, not one per spouse`);
+    if (D9(input.deFederalChildCareCredit) > 0n)
+      notes.push(`DE line 31 (status 4): the child care credit is applied ONCE, against Column ${childCareToA ? "A" : "B"} \u2014 the spouse with the LOWER taxable income (${fmtD(childCareToA ? a0.taxableIncome : b0.taxableIncome)}), and limited to that spouse's tax, per \xA7 1114(b)`);
+  } else {
+    colB = buildColumn("Column B", paramsB);
+  }
+  const cols = colA ? [colA, colB] : [colB];
+  const sum = (pick2) => cols.reduce((t, col) => t + pick2(col), 0n);
+  for (const col of cols) {
+    if (col.pensionExclusion > 0n) {
+      const colAge60 = col === colA ? input.deSpouseAge60OrOver === true : input.deAge60OrOver === true;
+      notes.push(`DE line 6 (${col.label}): pension exclusion ${fmtD(col.pensionExclusion)} \u2014 ${colAge60 ? "the 60-or-over tier caps pension PLUS eligible retirement income at $12,500" : "under 60, so only the pension itself counts and eligible retirement income does not"}. Each taxpayer receives ONLY ONE exclusion even with several pensions; spouses who each receive a pension get one each, computed separately`);
+    }
+    if (col.socialSecurity > 0n)
+      notes.push(`DE line 8a (${col.label}): ${fmtD(col.socialSecurity)} of taxable Social Security and Railroad Retirement is subtracted IN FULL \u2014 no cap, no age test, no phase-out, and independent of the line 6 pension exclusion`);
+    if (col.eitc > 0n)
+      notes.push(`DE line 34 (${col.label}): earned income credit ${fmtD(col.eitc)}, taken on the ${col.eitcRefundable ? "REFUNDABLE 4.5%" : "NON-REFUNDABLE 20%"} branch. 30 Del. C. \xA7 1117(a)(2) gives the taxpayer the choice; DE Schedule II prescribes the comparison, and it is provably the larger of the two in every case`);
+  }
+  if (cols.some((col) => col.pensionExclusion > 0n)) {
+    notes.push("DE line 6, 85 Del. Laws c. 426 (Senate Bill 219 with Senate Amendment 1, signed and effective August 17, 2026): for TY2026 the 60-or-over pension exclusion requires the person to have been legally domiciled in Delaware for at least three years (\xA7 1106(b)(3)f.4) \u2014 the corpus applies that gate to a 2026 return through deDomiciledForPensionExclusion / deSpouseDomiciledForPensionExclusion, and a 60-or-over person without the attestation gets NO exclusion. The same Act raises the MILITARY pension exclusion to $15,000 for 2027, $20,000 for 2028 and $25,000 for 2029 and after. Neither touches a TY2025 return, which was due before enactment");
+  }
+  const withholding = D9(input.stateWithholding) + D9(input.spouseStateWithholding);
+  const estimated = D9(input.estimatedPayments) + D9(input.priorYearOverpaymentCredited) + D9(input.extensionPayment);
+  const totalTax = sum((col) => col.taxAfterNonrefundable);
+  const totalEitc = sum((col) => col.eitc);
+  const refundableBusiness = D9(input.refundableCredits);
+  const contributions = D9(input.deCharitableContributions);
+  const l40 = withholding + estimated + refundableBusiness;
+  const payments = l40 + totalEitc;
+  const balance = totalTax + contributions - payments;
+  const due = balance > 0n;
+  if (contributions > 0n)
+    notes.push(`DE line 43: ${fmtD(contributions)} of DE Schedule III special-fund contributions INCREASE the balance due or reduce the refund \u2014 they are contributions, not credits`);
+  const out = {
+    "1_federal_agi": fmtD(sum((col) => col.federalAgi)),
+    "4_total_additions": fmtD(sum((col) => col.federalAgi + col.additions)),
+    "6_pension_exclusion": fmtD(sum((col) => col.pensionExclusion)),
+    "8a_social_security_rr": fmtD(sum((col) => col.socialSecurity)),
+    "11_elderly_disabled_exclusion": fmtD(sum((col) => col.elderlyExclusion)),
+    "12_delaware_agi": fmtD(sum((col) => col.federalAgi + col.additions - col.usObligations - col.pensionExclusion - col.otherSubtractions - col.socialSecurity - col.tuitionAble - col.elderlyExclusion)),
+    "22_total_deductions": fmtD(sum((col) => col.deductions)),
+    "23_taxable_income": fmtD(sum((col) => col.taxableIncome)),
+    "24_tax": fmtD(sum((col) => col.tax)),
+    "27_personal_credits": fmtD(sum((col) => col.personalCredits)),
+    "28_other_state_credit": fmtD(sum((col) => col.otherStateCredit)),
+    "29_volunteer_firefighter_credit": fmtD(sum((col) => col.firefighterCredit)),
+    "31_child_care_credit": fmtD(sum((col) => col.childCareCredit)),
+    "32_total_nonrefundable_credits": fmtD(sum((col) => col.nonrefundableTotal)),
+    "33_tax_after_nonrefundable_credits": fmtD(totalTax),
+    "34_earned_income_credit": fmtD(totalEitc),
+    "35_withholding": fmtD(withholding),
+    "36_estimated_and_extension_payments": fmtD(estimated),
+    "38_refundable_business_credits": fmtD(refundableBusiness),
+    "40_total_refundable_credits": fmtD(l40),
+    "43_contributions": fmtD(contributions),
+    "balance_due": fmtD(due ? balance : 0n),
+    "refund": fmtD(due ? 0n : -balance)
+  };
+  if (colA) {
+    for (const [col, suffix] of [[colA, "A"], [colB, "B"]]) {
+      out[`23_taxable_income_col${suffix}`] = fmtD(col.taxableIncome);
+      out[`24_tax_col${suffix}`] = fmtD(col.tax);
+      out[`22_deductions_col${suffix}`] = fmtD(col.deductions);
+      out[`27_personal_credits_col${suffix}`] = fmtD(col.personalCredits);
+      out[`33_tax_after_nonrefundable_col${suffix}`] = fmtD(col.taxAfterNonrefundable);
+    }
+    notes.push(`DE combined separate: column A taxable income ${fmtD(colA.taxableIncome)} \u2192 tax ${fmtD(colA.tax)}; column B taxable income ${fmtD(colB.taxableIncome)} \u2192 tax ${fmtD(colB.tax)}. Each column climbs the brackets on its own, which is why status 4 usually beats a joint return once both spouses have Delaware AGI over $9,400`);
+  }
+  if (D9(input.deOtherStateIncome) > 0n && sum((col) => col.otherStateCredit) === 0n && !missing.has("us.de.other_state_credit")) {
+    notes.push("DE line 28: the other-state credit computed as $0 \u2014 check that deOtherStateTaxPaid was supplied (the credit is the LESSER of the ratio-limited amount and the tax actually PAID to that state), and note that city and county taxes do not qualify");
+  }
+  if (input.deQualifiesElderlyDisabled === true && sum((col) => col.elderlyExclusion) === 0n && !missing.has("us.de.elderly_disabled_exclusion")) {
+    notes.push("DE line 11: no elderly/disabled exclusion \u2014 all three tests are CLIFFS: at least 60 or totally and permanently disabled, earned income strictly under $2,500 ($5,000 joint), and line 10 income of $10,000 or less ($20,000 joint). On a JOINT return BOTH spouses must qualify; with only one, the booklet advises filing status 3 or 4 instead");
+  }
+  notes.push(due ? `DE: balance due ${fmtD(balance)}` : `DE: refund ${fmtD(-balance)}`);
+  return out;
+}
+
+// ../compose/dist/nd.js
+var D10 = (x) => rd(c(x));
+var isNoApplicableRule5 = (err) => err instanceof Error && /no applicable rule/i.test(err.message);
+function composeND(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the North Dakota Form ND-1 composer");
+  if (typeof input.ndFederalTaxableIncome !== "number") {
+    throw new Error("ndFederalTaxableIncome is required for the North Dakota Form ND-1 composer \u2014 Form ND-1 line 1b is federal Form 1040 line 15, and North Dakota starts from federal TAXABLE income, not AGI. It may be NEGATIVE: the booklet directs a filer whose federal taxable income calculates below zero to enter the negative number on line 1b even though Form 1040 line 15 shows 0.");
+  }
+  const mfj = fs === "mfj";
+  const qss = fs === "qss";
+  const tryEval = (target, base, extra, label) => {
+    try {
+      return rd(evalStateTax(target, base, extra));
+    } catch (err) {
+      if (!isNoApplicableRule5(err))
+        throw err;
+      notes.push(`ND ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish`);
+      return null;
+    }
+  };
+  const asOf = input.asOf;
+  const taxYear = typeof asOf === "string" && /^\d{4}/.test(asOf) ? Number(asOf.slice(0, 4)) : NaN;
+  const tablePublished = taxYear === 2025;
+  if (qss)
+    notes.push("ND filing status Qualifying surviving spouse: the Tax Table's footnote sends it to the Married filing jointly COLUMN and it shares the joint rate schedule, but it is NOT a joint return \u2014 the College SAVE cap stays at $5,000 and the marriage penalty credit is unavailable");
+  const l1a = D10(input.federalAGI);
+  const l1b = D10(input.ndFederalTaxableIncome);
+  if (l1b < 0n)
+    notes.push(`ND line 1b: federal taxable income is negative (${fmtD(l1b)}). The booklet directs the filer to enter the negative number even though federal Form 1040 line 15 shows 0 ("Enter a minus sign (-) to the left of the number") \u2014 and gives the identical instruction for Form ND-EZ line 1b, so the negative entry does not by itself force Form ND-1`);
+  notes.push("ND line 1a: federal adjusted gross income is captured but feeds NOTHING \u2014 North Dakota starts from federal TAXABLE income on line 1b. There is no North Dakota standard deduction and no personal exemption; the federal amounts flow through by perpetual conformity");
+  const l2 = D10(input.ndPlannedGiftAdjustment);
+  const l3 = D10(input.additions);
+  const l4a = l2 + l3;
+  const l4b = l1b + l4a;
+  const l5 = D10(input.ndUsObligationInterest);
+  const gain = D10(input.ndNetLongTermCapitalGain);
+  const l6 = gain > 0n ? tryEval("us.nd.capital_gain_exclusion", 0n, { ndNetLongTermCapitalGain: gain, ndCapitalGainAlreadyExcluded: D10(input.ndCapitalGainAlreadyExcluded) }, "line 6 capital gain exclusion") ?? 0n : 0n;
+  if (l6 > 0n)
+    notes.push(`ND line 6: 40% net long-term capital gain exclusion ${fmtD(l6)}. The worksheet takes the SMALLER of federal Schedule D lines 15 and 16 and stops outright if either is zero or less, so a net loss produces no exclusion`);
+  const l7 = D10(input.ndExemptTribalIncome);
+  const l8 = D10(input.ndRailroadRetirementBenefits);
+  const l9 = D10(input.ndPeaceOfficerRetirement);
+  const l11 = D10(input.ndMilitaryPay);
+  const l12 = D10(input.ndCollegeSaveContributions) > 0n ? tryEval("us.nd.college_save_deduction", 0n, { ndCollegeSaveContributions: D10(input.ndCollegeSaveContributions) }, "line 12 College SAVE deduction") ?? 0n : 0n;
+  if (D10(input.ndCollegeSaveContributions) > l12 && l12 > 0n)
+    notes.push(`ND line 12: College SAVE contributions capped at ${fmtD(l12)} (${mfj ? "$10,000 on a joint return" : "$5,000"}). Rollovers from another section 529 plan do NOT qualify`);
+  const l13 = D10(input.ndQualifiedDividends) > 0n ? tryEval("us.nd.qualified_dividend_exclusion", 0n, { ndQualifiedDividends: D10(input.ndQualifiedDividends) }, "line 13 qualified dividend exclusion") ?? 0n : 0n;
+  const l14 = D10(input.ndMilitaryRetirement);
+  const l15 = D10(input.taxableSocialSecurity);
+  if (l15 > 0n)
+    notes.push(`ND line 15: the entire ${fmtD(l15)} of federally taxable Social Security is excluded \u2014 no cap, no age test, no phase-out. Tier 1 Railroad Retirement goes on line 8 instead; a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 in the ratio of gross benefits of each type to combined gross benefits`);
+  if (l11 > 0n)
+    notes.push("ND line 11: military pay is excluded IN FULL \u2014 the exclusion covers federal pay for training, education, mobilization and bonuses, and state pay when called to state active duty");
+  if (l14 > 0n)
+    notes.push("ND line 14: military retirement benefits are excluded IN FULL, for the retiree or a surviving spouse, and also cover a dual-status military technician's federal civil-service retirement");
+  const l16 = D10(input.subtractions);
+  const l17 = l5 + l6 + l7 + l8 + l9 + l11 + l12 + l13 + l14 + l15 + l16;
+  const l18 = max02(l4b - l17);
+  const l19 = l18;
+  notes.push("ND line 10: the nonresident Servicemembers Civil Relief Act adjustment is $0 \u2014 this composer produces a FULL-YEAR RESIDENT Form ND-1. A part-year or nonresident filer (including a joint return with one nonresident spouse) must use Schedule ND-1NR, which prorates the tax by the ratio of North Dakota federal AGI to total federal AGI under section 57-38-30.3(1)(f); that schedule is out of scope here");
+  const useSchedule = input.ndUseRateSchedule === true;
+  const l20 = rd(evalStateTax("us.nd.income_tax", l19, { ndUseRateSchedule: useSchedule }));
+  const inTableRange = l19 < 10000000n && !useSchedule;
+  notes.push(!inTableRange ? `ND line 20: the rate schedule applied at ${fmtD(l19)}${useSchedule ? " (ndUseRateSchedule)" : " (taxable income is $100,000 or more, above the Tax Table)"} \u2014 0.00% / 1.95% / 2.50%` : tablePublished ? `ND line 20: the Tax Table \u2014 the $50 row containing ${fmtD(l19)}, priced at the row midpoint. Section 57-38-30.3(10) makes the table MANDATORY in its range: "the tables must be followed by every individual, estate, or trust determining a tax under this section"` : Number.isNaN(taxYear) ? `ND line 20: ${fmtD(l19)} is inside the range the Tax Table covers when one is published, but no asOf was supplied, so this note cannot say whether the table or the rate schedule produced the tax. Pass asOf (the year-end date) to resolve it` : `ND line 20: the RATE SCHEDULE applied at the exact ${fmtD(l19)}, NOT the Tax Table \u2014 the ${taxYear} Form ND-1 booklet and its $50 table are not published, so the corpus applies the schedule at the exact income. Section 57-38-30.3(10) will make the table mandatory in this range once it publishes; expect at most the value of half a row (about $0.49 at 1.95%) of divergence, and re-run then`);
+  if (l19 > 0n && l20 === 0n)
+    notes.push(`ND: no tax at all \u2014 ${fmtD(l19)} of North Dakota taxable income falls entirely within the ZERO-PERCENT first bracket (House Bill 1158 of 2023)`);
+  const doubled = D10(input.ndDoublyTaxedIncome);
+  const l21 = doubled > 0n && D10(input.ndOtherStateTaxPaid) > 0n ? tryEval("us.nd.other_state_credit", 0n, {
+    ndDoublyTaxedIncome: doubled,
+    ndOtherStateIncomeBase: input.ndOtherStateIncomeBase !== void 0 ? D10(input.ndOtherStateIncomeBase) : max02(l1a - l5),
+    ndIncomeTaxBeforeCredits: l20,
+    ndOtherStateTaxPaid: D10(input.ndOtherStateTaxPaid)
+  }, "line 21 other-state credit") ?? 0n : 0n;
+  if (l21 > 0n)
+    notes.push(`ND line 21 (Schedule ND-1CR): other-state credit ${fmtD(l21)} \u2014 the line 20 tax times the four-decimal ratio of doubly taxed income to the base, limited to the NET tax actually paid to that state. A SEPARATE Schedule ND-1CR is required per state and the results are summed. Montana and Minnesota WAGES are excluded by reciprocity (take a refund on that state's return instead); foreign country tax never qualifies`);
+  let l22 = 0n;
+  if (mfj && D10(input.ndLowerQualifiedIncome) > 0n) {
+    const lower = D10(input.ndLowerQualifiedIncome);
+    const w5 = 1575000n;
+    const w6 = max02(lower - w5);
+    const single = (amount) => rd(evalStateTax("us.nd.income_tax", amount, { ndUseRateSchedule: true, filingStatus: "single" }));
+    const w7 = single(w6);
+    const w8 = max02(l18 - w6);
+    const w9 = single(w8);
+    const w10 = rd(evalStateTax("us.nd.income_tax", l18, { ndUseRateSchedule: true, filingStatus: "mfj" }));
+    const credit = tryEval("us.nd.marriage_penalty_credit", 0n, {
+      ndTaxableIncome: l18,
+      ndLowerQualifiedIncome: lower,
+      ndSingleScheduleTaxA: w7,
+      ndSingleScheduleTaxB: w9,
+      ndJointScheduleTax: w10
+    }, "line 22 marriage penalty credit");
+    l22 = credit ?? 0n;
+    if (credit !== null)
+      notes.push(l22 > 0n ? `ND line 22: marriage penalty credit ${fmtD(l22)} \u2014 worksheet line 6 is ${fmtD(w6)} (the lower spouse's ${fmtD(lower)} of qualified income less the preprinted $15,750, which is half the federal joint standard deduction), lines 7 and 9 run ${fmtD(w6)} and ${fmtD(w8)} through the SINGLE schedule for ${fmtD(w7)} and ${fmtD(w9)}, line 10 runs ${fmtD(l18)} through the JOINT schedule for ${fmtD(w10)}, and line 12 takes the excess, capped at $312` : `ND line 22: no marriage penalty credit. The worksheet gates on a joint return, taxable income over $81,036 and the lower-earning spouse's qualified income over $47,550 \u2014 and the booklet warns that even meeting all of them, "your fact situation may not produce a credit under the calculation formula prescribed by law". NOTE: those screening gates do not line up with the 2025 bracket boundaries ($80,975 joint and $48,475 single zero-bracket tops); they are the Commissioner's printed figures and are applied as printed`);
+  } else if (mfj && input.ndLowerQualifiedIncome === void 0) {
+    notes.push("ND line 22: marriage penalty credit not computed \u2014 pass ndLowerQualifiedIncome (the qualified income of the lower-earning spouse: wages and tips from federal line 1z, net self-employment income less the self-employment tax deduction, and the taxable IRA, pension, annuity and Social Security amounts, reduced by the Form ND-1 line 8 and line 15 exclusions)");
+  } else if (mfj) {
+    notes.push("ND line 22: no marriage penalty credit \u2014 the lower-earning spouse has no qualified income, so worksheet line 4 is $0 and the line 5 gate ($47,550) fails. This is a computed $0, not a missing input");
+  }
+  const l23 = D10(input.nonrefundableCredits);
+  if (l23 > 0n)
+    notes.push("ND line 23 (Schedule ND-1TC): every North Dakota credit is NONREFUNDABLE \u2014 line 25 floors at zero and the form has no refundable credit line. Several credits also require a property tax clearance record under section 57-01-15.1");
+  const l24 = l21 + l22 + l23;
+  const l25 = max02(l20 - l24);
+  if (l24 > l20)
+    notes.push(`ND line 25: credits of ${fmtD(l24)} exceed the ${fmtD(l20)} tax; the excess is lost \u2014 "Net tax liability. Subtract line 24 from line 20. If less than zero, enter 0"`);
+  const l26 = D10(input.stateWithholding) + D10(input.spouseStateWithholding);
+  const l27 = D10(input.estimatedPayments) + D10(input.priorYearOverpaymentCredited) + D10(input.extensionPayment);
+  const l28 = l26 + l27;
+  const contributions = D10(input.ndVoluntaryContributions);
+  const deMinimis = 500n;
+  const overpaidRaw = l28 > l25 ? l28 - l25 : 0n;
+  const l29 = overpaidRaw < deMinimis ? 0n : overpaidRaw;
+  if (overpaidRaw > 0n && l29 === 0n)
+    notes.push(`ND line 29: the ${fmtD(overpaidRaw)} overpayment is under the printed $5.00 floor \u2014 "If less than $5.00, enter 0" \u2014 so no refund is issued`);
+  const l30 = l29 > 0n ? min2(D10(input.ndAppliedToNextYear), l29) : 0n;
+  const l31 = l29 > 0n ? min2(contributions, l29 - l30) : 0n;
+  const refundRaw = l29 - l30 - l31;
+  const l32 = refundRaw < deMinimis ? 0n : refundRaw;
+  if (refundRaw > 0n && l32 === 0n)
+    notes.push(`ND line 32: the ${fmtD(refundRaw)} left after lines 30 and 31 is under the printed $5.00 floor, so the refund prints as $0`);
+  const dueRaw = l28 < l25 ? l25 - l28 : 0n;
+  const l33 = dueRaw < deMinimis ? 0n : dueRaw;
+  if (dueRaw > 0n && l33 === 0n)
+    notes.push(`ND line 33: the ${fmtD(dueRaw)} of tax due is under the printed $5.00 floor \u2014 "If less than $5.00, enter 0" \u2014 so nothing is owed on it`);
+  const l34 = D10(input.ndPenalty) + D10(input.ndInterest);
+  const l35 = l29 > 0n ? 0n : contributions;
+  const l37 = D10(input.ndUnderpaymentInterest);
+  const l36 = l33 + l34 + l35 + l37;
+  if (contributions > 0n && l29 > 0n && l31 < contributions)
+    notes.push(`ND line 31: voluntary contributions limited to the ${fmtD(l31)} of overpayment left after line 30 \u2014 a larger gift on an overpaid return cannot be taken from the refund; pay it with the return instead`);
+  if (l36 > 0n)
+    notes.push(`ND line 36: balance due ${fmtD(l36)}${l34 > 0n ? ` including ${fmtD(l34)} of penalty and interest` : ""}${l37 > 0n ? ` and ${fmtD(l37)} of Schedule ND-1UT underpayment interest` : ""} \u2014 pay to the ND Office of State Tax Commissioner`);
+  else if (l32 > 0n)
+    notes.push(`ND line 32: refund ${fmtD(l32)}${l30 > 0n ? ` after ${fmtD(l30)} applied to 2026 estimated tax` : ""}${l31 > 0n ? ` and ${fmtD(l31)} of voluntary contributions` : ""}`);
+  return {
+    "1a_federal_agi": fmtD(l1a),
+    "1b_federal_taxable_income": fmtD(l1b),
+    "2_planned_gift_adjustment": fmtD(l2),
+    "3_other_additions": fmtD(l3),
+    "4a_total_additions": fmtD(l4a),
+    "4b_income_plus_additions": fmtD(l4b),
+    "5_us_obligation_interest": fmtD(l5),
+    "6_capital_gain_exclusion": fmtD(l6),
+    "7_exempt_tribal_income": fmtD(l7),
+    "8_railroad_retirement": fmtD(l8),
+    "9_peace_officer_retirement": fmtD(l9),
+    "10_nonresident_scra_adjustment": fmtD(0n),
+    "11_military_pay_exclusion": fmtD(l11),
+    "12_college_save_deduction": fmtD(l12),
+    "13_qualified_dividend_exclusion": fmtD(l13),
+    "14_military_retirement_exclusion": fmtD(l14),
+    "15_social_security_exclusion": fmtD(l15),
+    "16_other_subtractions": fmtD(l16),
+    "17_total_subtractions": fmtD(l17),
+    "18_nd_taxable_income": fmtD(l18),
+    "19_nd_taxable_income_page_2": fmtD(l19),
+    "20_tax": fmtD(l20),
+    "21_other_state_credit": fmtD(l21),
+    "22_marriage_penalty_credit": fmtD(l22),
+    "23_other_credits": fmtD(l23),
+    "24_total_credits": fmtD(l24),
+    "25_net_tax_liability": fmtD(l25),
+    "26_withholding": fmtD(l26),
+    "27_estimated_payments": fmtD(l27),
+    "28_total_payments": fmtD(l28),
+    "29_overpayment": fmtD(l29),
+    "30_applied_to_2026": fmtD(l30),
+    "31_voluntary_contributions": fmtD(l31),
+    "32_refund": fmtD(l32),
+    "33_tax_due": fmtD(l33),
+    "34_penalty_and_interest": fmtD(l34),
+    "35_voluntary_contributions": fmtD(l35),
+    "36_balance_due": fmtD(l36),
+    "37_underpayment_interest": fmtD(l37)
+  };
+}
+
+// ../compose/dist/vt.js
+var D11 = (x) => rd(c(x));
+var isNoApplicableRule6 = (err) => err instanceof Error && /no applicable rule/i.test(err.message);
+function composeVT(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Vermont Form IN-111 composer");
+  const mfj = fs === "mfj";
+  const qss = fs === "qss";
+  const l1 = D11(input.federalAGI);
+  const tryEval = (target, base, extra, label) => {
+    try {
+      return rd(evalStateTax(target, base, extra));
+    } catch (err) {
+      if (!isNoApplicableRule6(err))
+        throw err;
+      notes.push(`VT ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish`);
+      return null;
+    }
+  };
+  const agiFacts = { vtFederalAgi: l1 };
+  if (qss)
+    notes.push(`VT filing status Qualifying Widow(er): takes the joint $15,300 standard deduction and the joint rate column (Schedule Y-1; the Tax Table footnote), but NO spouse exemption on line 5b ("Do not enter '1' if your filing status is Qualifying Widow(er)"), the single-filer retirement thresholds ($55,000 / $65,000), and the $120,000 student loan limit. Note: 32 V.S.A. \xA7 5811(21)(C)(i) grants an exemption for 'the deceased spouse' of a surviving spouse \u2014 the printed form instruction forbids it and governs the filed return`);
+  const m3 = D11(input.vtNonVermontBondInterest);
+  const m4 = D11(input.vtBonusDepreciationAddback) + D11(input.additions);
+  const m6 = m3 + m4;
+  const m7 = D11(input.vtUsObligationInterest);
+  const m8 = D11(input.vtNetAdjustedCapitalGain) > 0n || D11(input.vtEligibleLongTermGain) > 0n ? tryEval("us.vt.capital_gains_exclusion", 0n, {
+    vtNetAdjustedCapitalGain: D11(input.vtNetAdjustedCapitalGain),
+    vtEligibleLongTermGain: D11(input.vtEligibleLongTermGain),
+    vtFederalTaxableIncome: D11(input.vtFederalTaxableIncome)
+  }, "Schedule IN-112 line 8 (IN-153 capital gains exclusion)") ?? 0n : 0n;
+  if (m8 > 0n)
+    notes.push(`VT Schedule IN-112 line 8 (Schedule IN-153 line 21): capital gains exclusion ${fmtD(m8)} \u2014 the greater of the $5,000 flat exclusion and 40% of eligible gain on assets held over three years (up to $350,000), limited to 40% of federal taxable income (${fmtD(D11(input.vtFederalTaxableIncome))}). Qualified dividends, a primary or nonprimary residence, depreciable personal property and publicly traded securities never qualify for the 40% method`);
+  if ((D11(input.vtNetAdjustedCapitalGain) > 0n || D11(input.vtEligibleLongTermGain) > 0n) && input.vtFederalTaxableIncome === void 0)
+    notes.push("VT Schedule IN-153 line 20: vtFederalTaxableIncome was not supplied, so the 40%-of-federal-taxable-income cap is $0 and the exclusion is $0 \u2014 pass federal Form 1040 line 15");
+  const m9 = D11(input.vtPriorYearBonusDepreciation);
+  const m10 = D11(input.vtTaxableStateRefunds);
+  const m14 = D11(input.vtRailroadRetirement);
+  const m15 = D11(input.vtExemptBondInterest);
+  const election = input.vtRetirementElection ?? "none";
+  const ssTaxable = D11(input.taxableSocialSecurity);
+  const m12 = election !== "none" ? tryEval("us.vt.retirement_income_exclusion", 0n, {
+    ...agiFacts,
+    vtRetirementElection: election,
+    vtTaxableSocialSecurity: ssTaxable,
+    vtContributorySystemIncome: D11(input.vtContributorySystemIncome)
+  }, "Schedule IN-112 line 12 (retirement income exclusion)") ?? 0n : 0n;
+  if (election === "none" && (ssTaxable > 0n || D11(input.vtContributorySystemIncome) > 0n))
+    notes.push("VT Schedule IN-112 line 12: no retirement income exclusion \u2014 32 V.S.A. \xA7 5830e(e)(1) requires the filer to ELECT one of the Social Security exclusion and the $10,000 Civil Service / contributory-system exclusion; pass vtRetirementElection ('social_security' or 'contributory_system')");
+  if (election !== "none")
+    notes.push(m12 > 0n ? `VT Schedule IN-112 line 12: ${election === "social_security" ? "Social Security" : "Civil Service / contributory retirement system"} exclusion ${fmtD(m12)} \u2014 in full at federal AGI up to ${mfj ? "$70,000" : "$55,000"}, proportional to ${mfj ? "$80,000" : "$65,000"} (the worksheet rounds the ratio to two decimals), nothing beyond. Only ONE of the two may be elected` : `VT Schedule IN-112 line 12: the ${election === "social_security" ? "Social Security" : "contributory-system"} election produces $0 \u2014 federal AGI ${fmtD(l1)} is at or above the ${mfj ? "$80,000" : "$65,000"} ceiling, or the elected income is $0`);
+  const m13 = D11(input.vtMilitaryRetirementIncome) > 0n ? tryEval("us.vt.military_retirement_exclusion", 0n, { ...agiFacts, vtMilitaryRetirementIncome: D11(input.vtMilitaryRetirementIncome) }, "Schedule IN-112 line 13 (military retirement exclusion)") ?? 0n : 0n;
+  if (D11(input.vtMilitaryRetirementIncome) > 0n)
+    notes.push(m13 > 0n ? `VT Schedule IN-112 line 13: military retirement and survivor benefit exclusion ${fmtD(m13)} (2025 Act 71) \u2014 in full at federal AGI up to $125,000, phased out to $175,000 for every filing status, and claimable IN ADDITION to the line 12 election` : `VT Schedule IN-112 line 13: no military retirement exclusion \u2014 federal AGI ${fmtD(l1)} is at or above $175,000`);
+  const m16 = D11(input.vtStudentLoanInterestPaid) > 0n ? tryEval("us.vt.student_loan_interest_subtraction", 0n, { ...agiFacts, vtStudentLoanInterestPaid: D11(input.vtStudentLoanInterestPaid), vtStudentLoanInterestDeductedFederally: D11(input.vtStudentLoanInterestDeductedFederally) }, "Schedule IN-112 line 16c (student loan interest)") ?? 0n : 0n;
+  if (D11(input.vtStudentLoanInterestPaid) > 0n && m16 === 0n)
+    notes.push(`VT Schedule IN-112 line 16c: no student loan interest subtraction \u2014 either it was all deducted federally, or federal AGI ${fmtD(l1)} exceeds the ${mfj ? "$200,000 joint" : "$120,000"} limit (\xA7 5811(29)(B))`);
+  const m18base = m7 + m8 + m9 + m10 + m12 + m13 + m14 + m15 + m16 + D11(input.subtractions);
+  const boxes = Math.max(0, input.ageOrBlindBoxes ?? 0);
+  const l4 = tryEval("us.vt.standard_deduction", 0n, { vtAdditionalDeductionBoxes: boxes }, "line 4 (standard deduction)");
+  const boxCap = mfj || qss || fs === "mfs" ? 4 : 2;
+  if (l4 === null)
+    throw new Error("The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) \u2014 Form IN-111 line 4 cannot be composed. The 2026 Form IN-111 publishes around December 2026; re-run then");
+  if (boxes > 0)
+    notes.push(`VT line 4: standard deduction ${fmtD(l4)} \u2014 ${fmtD(l4 - 125000n * BigInt(Math.min(boxes, boxCap)))} for the filing status plus $1,250 for each of ${Math.min(boxes, boxCap)} federal age-65/blind box(es) (the chart allows at most two for single and head of household, four for the joint / qualifying widow(er) row and for separate)`);
+  const dependentFiler = input.claimedAsDependent === true;
+  const l5a = dependentFiler ? 0 : 1;
+  const l5b = mfj && input.vtSpouseClaimedAsDependent !== true ? 1 : 0;
+  const l5c = Math.max(0, input.dependents ?? 0);
+  const l5d = l5a + l5b + l5c;
+  const l5e = tryEval("us.vt.personal_exemption", 0n, { vtExemptions: l5d }, "line 5e (personal exemptions)") ?? 0n;
+  notes.push(`VT line 5: ${l5d} exemption(s) x ${l5d > 0 ? fmtD(l5e / BigInt(l5d)) : "$5,300"} = ${fmtD(l5e)}${dependentFiler ? " \u2014 no exemption for yourself because someone can claim you" : ""}${!mfj && !qss && fs !== "single" && fs !== "hoh" ? " \u2014 married filing separately takes no spouse exemption" : ""}`);
+  const l6 = l4 + l5e;
+  const medGross = D11(input.vtFederalMedicalExpenses) - D11(input.vtNonAllowableMedicalExpenses);
+  const m11 = medGross > l6 ? medGross - l6 : 0n;
+  if (D11(input.vtFederalMedicalExpenses) > 0n)
+    notes.push(m11 > 0n ? `VT Schedule IN-112 line 11: medical expense deduction ${fmtD(m11)} \u2014 federal Schedule A line 4 medical and dental expenses (${fmtD(medGross)} after non-allowable continuing-care fees) in excess of the ${fmtD(l6)} Vermont standard deduction plus exemptions (\xA7 5811(21)(C)(iv))` : `VT Schedule IN-112 line 11: no medical expense deduction \u2014 ${fmtD(medGross)} of allowable medical expenses does not exceed the ${fmtD(l6)} of line 6 (the worksheet stops when line 3 is negative)`);
+  const m18 = m18base + m11;
+  const m19 = m6 - m18;
+  const l2 = m19;
+  const l3 = l1 + l2;
+  const l7 = max02(l3 - l6);
+  const useSchedule = input.vtUseRateSchedule === true;
+  const l8 = rd(evalStateTax("us.vt.income_tax", l7, { ...agiFacts, vtUsObligationInterest: m7, vtUseRateSchedule: useSchedule }));
+  const asOf = input.asOf;
+  const taxYear = typeof asOf === "string" && /^\d{4}/.test(asOf) ? Number(asOf.slice(0, 4)) : NaN;
+  const tablePublished = taxYear === 2025;
+  const pureTax = rd(evalStateTax("us.vt.income_tax", l7, { vtFederalAgi: 0n, vtUsObligationInterest: 0n, vtUseRateSchedule: useSchedule || l1 > 15000000n }));
+  const floor3 = l1 > 15000000n ? rd(c(Number((l1 - m7) * 3n) / 100 / 100)) : 0n;
+  const inTableRange = l7 < 7500000n && !useSchedule && l1 <= 15000000n;
+  if (l1 > 15000000n && floor3 > pureTax) {
+    notes.push(`VT line 8: the 3% MINIMUM TAX applies \u2014 federal AGI ${fmtD(l1)} exceeds $150,000, and 3% of AGI less U.S. obligation interest (${fmtD(l1 - m7)} x 3% = ${fmtD(floor3)}) is more than the ${fmtD(pureTax)} rate-schedule tax on ${fmtD(l7)} of taxable income (\xA7 5822(a)(6); the booklet subtracts U.S. obligation interest first where the statute does not, and names only the rate schedule for this comparison)`);
+  } else if (l1 > 15000000n && l7 < 7500000n) {
+    notes.push(`VT line 8: the rate schedule applied at ${fmtD(l7)} even though that is under $75,000 \u2014 federal AGI ${fmtD(l1)} exceeds $150,000, and the line 8 instruction for that case compares the 3% minimum (${fmtD(floor3)}) with "tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule", not the Tax Table`);
+  } else {
+    notes.push(!inTableRange ? `VT line 8: the rate schedule applied at ${fmtD(l7)}${useSchedule ? " (vtUseRateSchedule)" : " (taxable income is $75,000 or more, above the Tax Table)"} \u2014 the printed VT Base Tax anchor plus the rate on the excess, one whole-dollar rounding${l1 > 15000000n ? `; the 3% minimum (${fmtD(floor3)}) did not exceed it` : ""}` : tablePublished ? `VT line 8: the 2025 Vermont Tax Table \u2014 the $100 row containing ${fmtD(l7)}, priced at the row midpoint through the printed schedule ("TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES")${l7 < 10000n ? "; the first row (0 to 100) prints $0" : ""}${l1 > 15000000n ? `; the 3% minimum (${fmtD(floor3)}) did not exceed it` : ""}` : Number.isNaN(taxYear) ? `VT line 8: ${fmtD(l7)} is inside the range the Tax Table covers when one is published, but no asOf was supplied, so this note cannot say whether the table or the schedule produced the tax` : `VT line 8: the rate schedule applied at the exact ${fmtD(l7)}, NOT a Tax Table \u2014 the ${taxYear} Vermont Tax Tables are not published, and the ${taxYear} rates are the Department's PRELIMINARY schedules from the 2026 Form IN-114 instructions; re-run when the ${taxYear} Form IN-111 publishes`);
+  }
+  const addBase = D11(input.vtFederalAdditionalTaxes);
+  const p5 = addBase > 0n ? tryEval("us.vt.federal_tax_adjustment", 0n, { vtFederalTaxAdjustmentBase: addBase }, "Schedule IN-119 line 5") ?? 0n : 0n;
+  const p7 = p5 + D11(input.vtVermontCreditRecapture);
+  const credBase = D11(input.vtFederalElderlyDisabledCredit) + D11(input.vtVermontInvestmentCredit) + D11(input.vtFarmIncomeAveragingCredit);
+  const p12 = credBase > 0n ? tryEval("us.vt.federal_tax_adjustment", 0n, { vtFederalTaxAdjustmentBase: credBase }, "Schedule IN-119 line 12") ?? 0n : 0n;
+  const p14 = p12 + D11(input.vtSolarCreditCarryforward);
+  const l9 = p7 - p14;
+  if (p7 > 0n || p14 > 0n)
+    notes.push(`VT line 9 (Schedule IN-119 Part I): net adjustment ${fmtD(l9)} \u2014 24% of ${fmtD(addBase)} of federal additional taxes (qualified plans, investment credit recapture, Form 4972) plus ${fmtD(D11(input.vtVermontCreditRecapture))} of Vermont credit recapture, less 24% of ${fmtD(credBase)} of federal elderly/disabled, Vermont investment and farm income averaging credits and ${fmtD(D11(input.vtSolarCreditCarryforward))} of solar carryforward (\xA7 5822(c), (d))`);
+  const l10 = max02(l8 + l9);
+  const l11 = D11(input.vtCharitableContributions);
+  const l13 = l11 > 0n ? tryEval("us.vt.charitable_credit", 0n, { vtCharitableContributions: l11 }, "line 13 (charitable credit)") ?? 0n : 0n;
+  const l12 = l11 > 0n ? rd(c(Number(l11) * 5 / 100 / 100)) : 0n;
+  if (l13 > 0n)
+    notes.push(`VT line 13: charitable contribution credit ${fmtD(l13)} \u2014 5% of the first $20,000 of contributions allowable under IRC \xA7 170, whether or not itemized federally, maximum $1,000; the form labels it a "Deduction" but it is subtracted from the tax (\xA7 5822(d)(3))`);
+  const l14 = max02(l10 - l13);
+  const l16 = l14;
+  notes.push("VT line 15: 100.0000% \u2014 this composer produces a FULL-YEAR RESIDENT return; a part-year resident or nonresident needs Schedule IN-113, whose line 35 percentage multiplies line 14 and whose lines 14A/14B prorate the refundable credits, and which 2026 Act 164 \xA7\xA7 56-57 recast onto modified AGI retroactively for 2025 \u2014 out of scope here");
+  const otherIncome = D11(input.vtOtherStateIncome);
+  const l17 = otherIncome > 0n && D11(input.vtOtherStateTaxPaid) > 0n ? tryEval("us.vt.other_state_credit", 0n, {
+    // IN-117 lines 10-17: AGI ("If less than zero, enter -0-") plus the WHOLE of IN-112 lines 3 and 4, less lines 7 and 9
+    vtOtherStateIncome: otherIncome,
+    vtModifiedAgi: max02(l1) + m3 + m4 - m7 - m9,
+    vtIncomeTax: l14,
+    vtOtherStateTaxPaid: D11(input.vtOtherStateTaxPaid)
+  }, "line 17 (Schedule IN-117 other-state credit)") ?? 0n : 0n;
+  if (l17 > 0n)
+    notes.push(`VT line 17 (Schedule IN-117): credit for tax paid to another state or Canadian province ${fmtD(l17)} \u2014 the line 14 tax times the ratio of the doubly-taxed modified AGI to Vermont modified AGI, capped at 100%, limited to the tax actually PAID there (not withholding; no city or county tax). One schedule per state, summed`);
+  const vheip = D11(input.vtVheipContributions) > 0n ? tryEval("us.vt.vheip_credit", 0n, { vtVheipContributions: D11(input.vtVheipContributions), vtVheipBeneficiaries: Math.max(0, input.vtVheipBeneficiaries ?? 0) }, "Schedule IN-119 Part II line 1 (VHEIP credit)") ?? 0n : 0n;
+  if (D11(input.vtVheipContributions) > 0n && vheip === 0n)
+    notes.push("VT Schedule IN-119 Part II line 1: no VHEIP credit \u2014 pass vtVheipBeneficiaries (the credit is 10% of the first $2,500 per beneficiary, $5,000 on a joint return)");
+  const l18 = vheip + D11(input.nonrefundableCredits);
+  if (l18 > 0n)
+    notes.push(`VT line 18 (Schedule IN-119 Part II line 9): nonrefundable credits ${fmtD(l18)}${vheip > 0n ? ` including ${fmtD(vheip)} of Vermont Higher Education Investment Plan credit` : ""}`);
+  const l19 = l17 + l18;
+  const l20 = max02(l16 - l19);
+  if (l19 > l16)
+    notes.push(`VT line 20: credits of ${fmtD(l19)} exceed the ${fmtD(l16)} tax; the excess is lost \u2014 "If Line 19 is greater than Line 16, enter -0-"`);
+  const se = D11(input.vtSelfEmploymentIncome);
+  const l21 = se > 0n ? tryEval("us.vt.child_care_contribution", 0n, { vtSelfEmploymentIncome: se, vtSelfEmploymentIncomeOutsideVermont: D11(input.vtSelfEmploymentIncomeOutsideVermont) }, "line 21 (child care contribution)") ?? 0n : 0n;
+  if (l21 > 0n)
+    notes.push(`VT line 21: child care contribution ${fmtD(l21)} \u2014 0.11% of ${fmtD(se - D11(input.vtSelfEmploymentIncomeOutsideVermont))} of Vermont-source self-employment income (2023 Act 76; Schedule SE line 6 less work performed outside Vermont)`);
+  const useInputs = input.vtUseTaxEstimateFromTable === true || D11(input.vtUseTaxSmallPurchases) > 0n || D11(input.vtUseTaxLargePurchases) > 0n;
+  const l22 = useInputs ? tryEval("us.vt.use_tax", 0n, {
+    ...agiFacts,
+    vtUseTaxEstimateFromTable: input.vtUseTaxEstimateFromTable === true,
+    vtUseTaxSmallPurchases: D11(input.vtUseTaxSmallPurchases),
+    vtUseTaxLargePurchases: D11(input.vtUseTaxLargePurchases),
+    vtUseTaxPaidOtherState: D11(input.vtUseTaxPaidOtherState)
+  }, "line 22 (use tax)") ?? 0n : 0n;
+  if (useInputs)
+    notes.push(`VT line 22: use tax ${fmtD(l22)} \u2014 ${input.vtUseTaxEstimateFromTable === true ? "the Estimated Use Tax Table on federal AGI (no records kept)" : "6% of recorded purchases under $1,000"}, plus 6% of items of $1,000 or more, less sales tax paid to another state`);
+  else
+    notes.push("VT line 22: use tax $0 \u2014 no untaxed purchases were reported; the form requires the filer to check the certification box if no use tax is due");
+  const l23 = l20 + l21 + l22;
+  const l24e = D11(input.vtVoluntaryContributions);
+  const l25 = l23 + l24e;
+  const l26a = D11(input.stateWithholding) + (mfj ? D11(input.spouseStateWithholding) : 0n);
+  const l26b = D11(input.estimatedPayments) + D11(input.priorYearOverpaymentCredited) + D11(input.extensionPayment);
+  const cdcc = D11(input.vtFederalChildCareCredit) > 0n ? tryEval("us.vt.child_dependent_care_credit", 0n, { vtFederalChildCareCredit: D11(input.vtFederalChildCareCredit) }, "Schedule IN-112 line 2 (child and dependent care credit)") ?? 0n : 0n;
+  const kids = Math.max(0, input.vtChildrenSixOrUnder ?? 0);
+  const ctc = kids > 0 ? tryEval("us.vt.child_tax_credit", 0n, { ...agiFacts, vtChildrenSixOrUnder: kids }, "Schedule IN-112 line 4 (child tax credit)") ?? 0n : 0n;
+  const fedEic = D11(input.federalEITC);
+  const eitc = fedEic > 0n ? tryEval("us.vt.eitc", 0n, { vtFederalEic: fedEic, vtEitcQualifyingChildren: Math.max(0, input.vtEitcQualifyingChildren ?? 0) }, "Schedule IN-112 line 7 (earned income credit)") ?? 0n : 0n;
+  const veteran = input.vtVeteranDischargeRecord === true ? tryEval("us.vt.veteran_credit", 0n, { ...agiFacts, vtVeteranDischargeRecord: true }, "Schedule IN-112 line 12 (veteran credit)") ?? 0n : 0n;
+  if (cdcc > 0n)
+    notes.push(`VT Schedule IN-112 line 2: child and dependent care credit ${fmtD(cdcc)} \u2014 72% of the federal credit, REFUNDABLE (\xA7 5828c)`);
+  if (kids > 0)
+    notes.push(ctc > 0n ? `VT Schedule IN-112 line 4: child tax credit ${fmtD(ctc)} for ${kids} child(ren) six or younger \u2014 $1,000 each less $20 per $1,000 or fraction of federal AGI over $125,000 regardless of filing status, REFUNDABLE (\xA7 5830f; 2025 Act 71 raised the age from five to six)` : `VT Schedule IN-112 line 4: no child tax credit \u2014 federal AGI ${fmtD(l1)} is above $174,000, where the $20-per-$1,000 reduction exhausts the $1,000`);
+  if (fedEic > 0n)
+    notes.push(`VT Schedule IN-112 line 7: earned income credit ${fmtD(eitc)} \u2014 ${input.vtEitcQualifyingChildren > 0 ? "38% of the federal credit with qualifying children" : "100% of the federal credit with NO qualifying children (2025 Act 71 \xA7 2, up from 38%)"}, REFUNDABLE`);
+  if (input.vtVeteranDischargeRecord === true)
+    notes.push(veteran > 0n ? `VT Schedule IN-112 line 12: veteran tax credit ${fmtD(veteran)} \u2014 $250 less $5 per full $100 of federal AGI over $25,000, REFUNDABLE (\xA7 5830g, new for 2025)` : `VT Schedule IN-112 line 12: no veteran credit \u2014 federal AGI ${fmtD(l1)} is $30,000 or more`);
+  const l26c = cdcc + ctc + eitc + veteran + D11(input.refundableCredits);
+  const l26d = D11(input.vtRealEstateWithholding);
+  const l26e = D11(input.vtNonresidentEstimatedPayments);
+  const l26f = l26a + l26b + l26c + l26d + l26e;
+  const l27 = l26f > l25 ? l26f - l25 : 0n;
+  const l28a = l27 > 0n ? min2(D11(input.vtAppliedToNextYear), l27) : 0n;
+  const l28b = l27 > 0n ? min2(D11(input.vtAppliedToPropertyTaxBill), l27 - l28a) : 0n;
+  const l29 = l27 - l28a - l28b;
+  const l30 = l25 > l26f ? l25 - l26f : 0n;
+  const l31 = D11(input.vtUnderpaymentInterestPenalty);
+  const l32 = l30 + l31;
+  if (l32 > 0n)
+    notes.push(`VT line 32: amount due ${fmtD(l32)}${l31 > 0n ? ` including ${fmtD(l31)} of Worksheet IN-152 underpayment interest and penalty` : ""}`);
+  else
+    notes.push(`VT line 29: refund ${fmtD(l29)}${l28a > 0n ? `, ${fmtD(l28a)} credited to ${Number.isNaN(taxYear) ? "next year's" : `${taxYear + 1}`} estimated tax` : ""}${l28b > 0n ? `, ${fmtD(l28b)} credited to the ${Number.isNaN(taxYear) ? "next" : `${taxYear + 1}`} property tax bill` : ""}`);
+  notes.push("VT: the Renter Credit (Form RCC-146) and the Property Tax Credit (Form HS-122 / HI-144) are separate claims computed by the Department from household income, family size and county figures \u2014 they are not lines of Form IN-111 and are not composed here");
+  return {
+    "1_federal_agi": fmtD(l1),
+    "IN112_3_non_vermont_obligations": fmtD(m3),
+    "IN112_4_bonus_depreciation_and_other_additions": fmtD(m4),
+    "IN112_6_total_additions": fmtD(m6),
+    "IN112_7_us_obligation_interest": fmtD(m7),
+    "IN112_8_capital_gains_exclusion": fmtD(m8),
+    "IN112_9_prior_year_bonus_depreciation": fmtD(m9),
+    "IN112_10_taxable_state_refunds": fmtD(m10),
+    "IN112_11_medical_expense_deduction": fmtD(m11),
+    "IN112_12_retirement_exclusion": fmtD(m12),
+    "IN112_13_military_retirement_exclusion": fmtD(m13),
+    "IN112_14_railroad_retirement": fmtD(m14),
+    "IN112_15_exempt_bond_interest": fmtD(m15),
+    "IN112_16c_student_loan_interest": fmtD(m16),
+    "IN112_18_total_subtractions": fmtD(m18),
+    "2_net_modifications": fmtD(l2),
+    "3_agi_with_modifications": fmtD(l3),
+    "4_standard_deduction": fmtD(l4),
+    "5d_total_exemptions": String(l5d),
+    "5e_personal_exemptions": fmtD(l5e),
+    "6_deduction_plus_exemptions": fmtD(l6),
+    "7_vt_taxable_income": fmtD(l7),
+    "8_vt_income_tax": fmtD(l8),
+    "IN119_5_24pct_of_federal_additional_taxes": fmtD(p5),
+    "IN119_7_additions_to_vt_tax": fmtD(p7),
+    "IN119_12_24pct_of_federal_credits": fmtD(p12),
+    "IN119_14_subtractions_from_vt_tax": fmtD(p14),
+    "9_net_adjustment": fmtD(l9),
+    "10_tax_with_adjustment": fmtD(l10),
+    "11_charitable_contributions": fmtD(l11),
+    "12_five_percent": fmtD(l12),
+    "13_charitable_credit": fmtD(l13),
+    "14_vt_income_tax": fmtD(l14),
+    "15_income_adjustment_pct": "100.0000%",
+    "16_adjusted_vt_income_tax": fmtD(l16),
+    "17_other_state_credit": fmtD(l17),
+    "IN119_II_1_vheip_credit": fmtD(vheip),
+    "18_vt_tax_credits": fmtD(l18),
+    "19_total_credits": fmtD(l19),
+    "20_tax_after_credits": fmtD(l20),
+    "21_child_care_contribution": fmtD(l21),
+    "22_use_tax": fmtD(l22),
+    "23_total_vt_taxes": fmtD(l23),
+    "24e_voluntary_contributions": fmtD(l24e),
+    "25_total_taxes_and_contributions": fmtD(l25),
+    "26a_withholding": fmtD(l26a),
+    "26b_estimated_and_extension_payments": fmtD(l26b),
+    "IN112_II_2_child_dependent_care_credit": fmtD(cdcc),
+    "IN112_II_4_child_tax_credit": fmtD(ctc),
+    "IN112_II_7_earned_income_credit": fmtD(eitc),
+    "IN112_II_12_veteran_credit": fmtD(veteran),
+    "IN112_II_13_total_refundable_credits": fmtD(l26c),
+    "26c_refundable_credits": fmtD(l26c),
+    "26d_real_estate_withholding": fmtD(l26d),
+    "26e_nonresident_estimated_payments": fmtD(l26e),
+    "26f_total_payments_and_credits": fmtD(l26f),
+    "27_overpayment": fmtD(l27),
+    "28a_credited_to_2026_estimated_tax": fmtD(l28a),
+    "28b_credited_to_2026_property_tax": fmtD(l28b),
+    "29_refund": fmtD(l29),
+    "30_tax_due": fmtD(l30),
+    "31_underpayment_interest_penalty": fmtD(l31),
+    "32_amount_due": fmtD(l32)
+  };
+}
+
+// ../compose/dist/hi.js
+var D12 = (x) => rd(c(x));
+function composeHI(input, evalStateTax, notes) {
+  const fs = input.filingStatus;
+  if (!fs)
+    throw new Error("filingStatus is required for the Hawaii Form N-11 composer");
+  const mfj = fs === "mfj";
+  const mfs = fs === "mfs";
+  const joint = mfj || fs === "qss";
+  const dependentFiler = input.claimedAsDependent === true;
+  const deps = Math.max(0, input.dependents ?? 0);
+  const age65 = input.hiTaxpayerAge65 === true;
+  const spouse65 = input.hiSpouseAge65 === true;
+  if (fs === "qss")
+    notes.push("HI filing status oval 5 'Qualifying surviving spouse' \u2014 Tax Rate Schedule II / the married filing jointly column and the $8,800 standard deduction");
+  if (mfs)
+    notes.push("HI married filing separate return (oval 3): Schedule I / the single column, the $4,400 standard deduction, the food/excise and renters credits add the spouse's AGI, the child care credit only if considered unmarried, and the EITC only if the federal EIC was allowed");
+  let l6a = dependentFiler ? 0 : 1 + (age65 ? 1 : 0);
+  let l6b = 0;
+  if (mfj && !dependentFiler && input.hiSpouseClaimedAsDependent !== true)
+    l6b = 1 + (spouse65 ? 1 : 0);
+  else if (mfs && input.hiSpouseExemptionMfs === true)
+    l6b = 1 + (spouse65 ? 1 : 0);
+  const disabilityClaimed = Math.max(0, input.hiDisabledPersons ?? 0) > 0;
+  if (disabilityClaimed) {
+    if (l6a > 1)
+      l6a = 1;
+    if (l6b > 1)
+      l6b = 1;
+  }
+  const l6e = l6a + l6b + (disabilityClaimed ? 0 : deps);
+  if (disabilityClaimed && (deps > 0 || age65 || spouse65))
+    notes.push("HI line 6: the disability exemption is claimed, so the age-65 extra exemptions and the exemptions for dependents are NOT available \u2014 lines 6a-6e print without them, and line 25 carries the $7,000-per-person amount in lieu of $1,144");
+  if (dependentFiler)
+    notes.push(`HI line 6a${mfj ? "-6b" : ""}: claimable as a dependent on another return \u2014 no exemption for yourself${mfj ? " or your spouse ('do not fill in the ovals on lines 6a and 6b')" : ""} (oval above line 21 filled); the standard deduction is the greater of $500 or earned income`);
+  if (mfs && input.hiSpouseExemptionMfs === true)
+    notes.push("HI line 6b: spouse exemption on a separate return \u2014 the spouse had no income, is not filing, and cannot be claimed as a dependent");
+  if (mfs && input.hiSpouseAge65 === true && input.hiSpouseExemptionMfs !== true)
+    notes.push("HI line 6b: the spouse's 'Age 65 or over' oval counts only with the spouse exemption (pass hiSpouseExemptionMfs)");
+  const l7 = rd(c(input.federalAGI));
+  const l8 = D12(input.hiWageDifference);
+  const l9 = D12(input.hiOutOfStateBondInterest);
+  const l10 = D12(input.additions);
+  const l11 = l8 + l9 + l10;
+  const l12 = l7 + l11;
+  if (l11 > 0n)
+    notes.push(`HI line 11: Hawaii additions ${fmtD(l11)} \u2014 state/federal wage difference ${fmtD(l8)}, out-of-state bond interest ${fmtD(l9)}, other additions (Hawaii Additions Worksheet) ${fmtD(l10)}`);
+  const l13 = D12(input.hiPensionExclusion);
+  const l14 = D12(input.taxableSocialSecurity);
+  const reserve = D12(input.hiReservePay) + (mfj ? D12(input.hiSpouseReservePay) : 0n);
+  const l15 = reserve > 0n ? rd(evalStateTax("us.hi.reserve_pay_exclusion", 0n, { hiReservePay: c(input.hiReservePay), hiSpouseReservePay: mfj ? c(input.hiSpouseReservePay) : 0n })) : 0n;
+  const ihaCap = mfj ? 1000000n : 500000n;
+  const l16 = min2(D12(input.hiIhaPayments), ihaCap);
+  const l17 = D12(input.hiExceptionalTreesDeduction);
+  const l18 = D12(input.subtractions);
+  const l19 = l13 + l14 + l15 + l16 + l17 + l18;
+  const l20 = l12 - l19;
+  if (l13 > 0n)
+    notes.push(`HI line 13: employer-funded pension distributions ${fmtD(l13)} excluded (\xA7 235-7(a)(3) \u2014 government retirement systems, military pensions, and private plans the employee did not contribute to; deferred compensation, 401(k), TSP, and IRA distributions stay taxable)`);
+  if (l14 > 0n)
+    notes.push(`HI line 14: taxable Social Security ${fmtD(l14)} subtracted in full (\xA7 235-2.3(b)(3))`);
+  if (l15 > 0n)
+    notes.push(`HI line 15: military reserve / National Guard duty pay exclusion ${fmtD(l15)} (first $8,636 per member)`);
+  if (D12(input.hiIhaPayments) > l16)
+    notes.push(`HI line 16: individual housing account payments capped at ${fmtD(ihaCap)}`);
+  if (l17 > 0n)
+    notes.push(`HI line 17: exceptional trees deduction ${fmtD(l17)} (up to $3,000 per tree; notarized arborist affidavit)`);
+  if (l18 > 0n)
+    notes.push(`HI line 18: other Hawaii subtractions ${fmtD(l18)} (Hawaii Subtractions Worksheet \u2014 U.S. obligation interest, refund adjustment, moving expenses, etc.)`);
+  if (l20 < 0n)
+    notes.push("HI line 20: Hawaii AGI is negative \u2014 a net operating loss may exist (carryforward only, 80% limit)");
+  const spouseItemizes = mfs && input.hiSpouseItemizes === true;
+  const earned2 = c(input.hiEarnedIncome);
+  const l23std = rd(evalStateTax("us.hi.standard_deduction", 0n, { isClaimedAsDependent: dependentFiler, hiEarnedIncome: earned2 }));
+  if (dependentFiler && input.hiEarnedIncome === void 0)
+    notes.push("HI line 23: dependent filer's standard deduction assumes $0 earned income \u2192 $500 \u2014 pass hiEarnedIncome");
+  const itemInputs = ["hiMedicalExpenses", "hiStateLocalIncomeTaxes", "hiRealEstateTaxes", "hiPersonalPropertyTaxes", "hiOtherTaxes", "hiHomeMortgageInterest", "hiInvestmentInterest", "hiCharitableContributions", "hiCasualtyLosses", "hiJobAndMiscExpenses", "hiOtherMiscDeductions"];
+  const hasItemized = input.hiItemize === true || spouseItemizes || itemInputs.some((k) => c(input[k]) > 0n);
+  let l22 = 0n;
+  let itemLines = {};
+  if (hasItemized) {
+    const extra = { hiAgi: l20, hiFederalAgi: l7, hiGamblingLossesInMisc: c(input.hiGamblingLossesInMisc) };
+    for (const k of itemInputs)
+      extra[k] = c(input[k]);
+    l22 = rd(evalStateTax("us.hi.itemized_deductions", 0n, extra));
+    const agiPos = max02(l20);
+    const pctOf3 = (base, num, den) => rd((base * num + den / 2n) / den);
+    const saltLimit = joint ? 20000000n : fs === "hoh" ? 15000000n : 10000000n;
+    const saltAllowed = l7 < saltLimit;
+    const l21a = max02(D12(input.hiMedicalExpenses) - pctOf3(agiPos, 75n, 1000n));
+    const l21b = (saltAllowed ? D12(input.hiStateLocalIncomeTaxes) : 0n) + D12(input.hiRealEstateTaxes) + D12(input.hiPersonalPropertyTaxes) + D12(input.hiOtherTaxes);
+    const l21c = D12(input.hiHomeMortgageInterest) + D12(input.hiInvestmentInterest);
+    const l21d = D12(input.hiCharitableContributions);
+    const l21e = max02(D12(input.hiCasualtyLosses) - pctOf3(agiPos, 10n, 100n));
+    const l21f = max02(D12(input.hiJobAndMiscExpenses) - pctOf3(agiPos, 2n, 100n)) + D12(input.hiOtherMiscDeductions);
+    itemLines = { "21a_medical": l21a, "21b_taxes": l21b, "21c_interest": l21c, "21d_contributions": l21d, "21e_casualty": l21e, "21f_miscellaneous": l21f };
+    const sum = l21a + l21b + l21c + l21d + l21e + l21f;
+    if (!saltAllowed && D12(input.hiStateLocalIncomeTaxes) > 0n)
+      notes.push(`HI Worksheet A-2 line 5: state and local income (or sales) taxes not deductible \u2014 federal AGI ${fmtD(l7)} is not under ${fmtD(saltLimit)} (\xA7 235-2.4(k)(2))`);
+    if (l22 < sum)
+      notes.push(`HI line 22: itemized deductions ${fmtD(sum)} reduced to ${fmtD(l22)} by the overall limitation \u2014 Hawaii AGI ${fmtD(l20)} exceeds ${mfs ? "$83,400" : "$166,800"} (Total Itemized Deductions Worksheet: the smaller of 3% of the excess or 80% of the deductions other than medical, investment interest, casualty, and gambling losses)`);
+  }
+  const itemize = spouseItemizes || hasItemized && l22 > l23std;
+  if (spouseItemizes)
+    notes.push("HI line 21: married filing separately and the spouse itemizes \u2014 you must itemize (no standard deduction)");
+  else if (hasItemized)
+    notes.push(itemize ? `HI line 22: itemized deductions ${fmtD(l22)} exceed the ${fmtD(l23std)} standard deduction \u2014 itemizing` : `HI line 23: the ${fmtD(l23std)} standard deduction is used \u2014 itemized deductions are ${fmtD(l22)}`);
+  const ded = itemize ? l22 : l23std;
+  const l24 = l20 - ded;
+  const disabled = Math.min(2, Math.max(0, input.hiDisabledPersons ?? 0));
+  const spouseIsDisabled = input.hiSpouseDisabled === true;
+  const nonDisabledSpouse65 = disabled === 1 && mfj && (spouseIsDisabled ? age65 : spouse65);
+  const l25 = rd(evalStateTax("us.hi.personal_exemption", 0n, { hiExemptions: l6e, hiDisabledPersons: disabled, hiNonDisabledSpouseAge65: nonDisabledSpouse65 }));
+  if (disabled > 0)
+    notes.push(`HI line 25: disability exemption \u2014 $7,000 for each blind, deaf, or totally disabled person (Form N-172 certified) in lieu of the $1,144 regular exemptions; no dependent or age-65 exemptions with it${disabled === 1 && mfj ? ` (the non-disabled ${spouseIsDisabled ? "taxpayer" : "spouse"} keeps ${nonDisabledSpouse65 ? "$2,288 at 65 or older" : "$1,144"}${input.hiSpouseDisabled === void 0 ? "; the taxpayer is assumed to be the disabled person \u2014 pass hiSpouseDisabled if it is the spouse" : ""})` : ""}`);
+  else
+    notes.push(`HI line 25: ${l6e} exemption(s) \xD7 $1,144${age65 || spouse65 ? " (including the extra exemption for age 65 or over)" : ""}`);
+  const l26 = max02(l24 - l25);
+  const useSched = input.hiUseRateSchedule === true;
+  const ordinary2 = rd(evalStateTax("us.hi.income_tax", l26, { hiUseRateSchedule: useSched }));
+  const ncg = c(input.hiNetCapitalGain);
+  const ltcg = c(input.hiNetLongTermCapitalGain);
+  const n158 = c(input.hiInvestmentInterestN158);
+  const statutory = input.hiCapitalGainsStatutoryThreshold === true;
+  const printedThr = joint ? 4800000n : fs === "hoh" ? 3600000n : 2400000n;
+  const statutoryThr = joint ? 9600000n : fs === "hoh" ? 7200000n : 4800000n;
+  const thr = statutory ? statutoryThr : printedThr;
+  let tax = ordinary2;
+  let method = useSched || l26 >= 10000000n ? "tax rate schedule" : "tax table";
+  let l27a = 0n;
+  const l10cg = max02(min2(ltcg, ncg) - max02(n158));
+  if (l10cg > 0n && l26 > thr) {
+    const cg = rd(evalStateTax("us.hi.capital_gains_tax", l26, { hiNetLongTermCapitalGain: ltcg, hiNetCapitalGain: ncg, hiInvestmentInterestN158: n158, hiCapitalGainsStatutoryThreshold: statutory, hiUseRateSchedule: useSched }));
+    const l13cg = l26 - l10cg > thr ? l26 - l10cg : thr;
+    const l14cg = max02(l26 - l13cg);
+    if (cg < ordinary2) {
+      tax = cg;
+      method = "capital gains worksheet";
+      l27a = l14cg;
+      notes.push(`HI line 27: Tax on Capital Gains Worksheet \u2014 ${fmtD(l14cg)} of net capital gain at 7.25% plus the ${method === "capital gains worksheet" && (useSched || l13cg >= 10000000n) ? "schedule" : "table"} tax on ${fmtD(l13cg)} = ${fmtD(cg)}, below the ${fmtD(ordinary2)} regular tax; line 27a = ${fmtD(l14cg)}`);
+    } else
+      notes.push(`HI line 27: the Tax on Capital Gains Worksheet (${fmtD(cg)}) does not beat the regular tax ${fmtD(ordinary2)}`);
+    notes.push(statutory ? "HI capital gains worksheet line 12: the statutory \xA7 235-51(f)(1)(B) amount (income taxed below 7.25% under the 2025 brackets: $48,000 / $72,000 / $96,000) is used instead of the printed $24,000 / $36,000 / $48,000 \u2014 disclose the departure from the printed worksheet" : "HI capital gains worksheet line 12: the PRINTED 2025 amounts ($24,000 single/MFS, $36,000 HOH, $48,000 joint) are used; they predate Act 46's wider 7.2% bracket \u2014 pass hiCapitalGainsStatutoryThreshold to apply \xA7 235-51(f)(1)(B)'s $48,000 / $72,000 / $96,000 (lower tax by up to about $60 / $120)");
+  }
+  notes.push(method === "tax table" ? `HI line 27: 2025 Tax Table ($50-row midpoint on the printed rate schedule) on taxable income ${fmtD(l26)} \u2014 pass hiUseRateSchedule for the schedule at the exact income (differs by at most $3)` : method === "tax rate schedule" ? `HI line 27: Tax Rate Schedule ${joint ? "II" : fs === "hoh" ? "III" : "I"} at the exact income${l26 >= 10000000n ? " (taxable income of $100,000 or more must use the schedules)" : ""}` : "");
+  const otherFormsTax = D12(input.hiOtherFormsTax);
+  const l27 = tax + otherFormsTax;
+  if (otherFormsTax > 0n)
+    notes.push(`HI line 27: additional tax from other forms (Tax Computation Worksheet lines c-m) ${fmtD(otherFormsTax)} included`);
+  const present = input.hiPresentOverNineMonths === true;
+  const personsPresent = (l6a >= 1 ? 1 : 0) + (l6b >= 1 ? 1 : 0) + deps;
+  const publicChildren = Math.max(0, input.hiPublicSupportMinorChildren ?? 0);
+  const feCount = typeof input.hiFoodExciseQualifiedExemptions === "number" ? input.hiFoodExciseQualifiedExemptions : personsPresent + publicChildren;
+  let l28 = 0n;
+  if (!dependentFiler && present && feCount > 0) {
+    l28 = rd(evalStateTax("us.hi.food_excise_credit", 0n, { hiFederalAgi: l7, hiSpouseFederalAgi: mfs ? c(input.hiSpouseFederalAgi) : 0n, hiFoodExciseQualifiedExemptions: feCount, isClaimedAsDependent: false }));
+    notes.push(l28 > 0n ? `HI line 28 (Form N-311): refundable food/excise tax credit ${fmtD(l28)} \u2014 ${feCount} qualified exemption(s) \xD7 the per-exemption amount for federal AGI ${fmtD(l7 + (mfs ? D12(input.hiSpouseFederalAgi) : 0n))}${publicChildren > 0 ? ` (including ${publicChildren} minor child(ren) supported by public agencies)` : ""}` : `HI line 28: no food/excise tax credit \u2014 federal AGI ${fmtD(l7 + (mfs ? D12(input.hiSpouseFederalAgi) : 0n))}${mfs ? " (yours plus your spouse's)" : ""} is ${fs === "single" ? "$40,000" : "$60,000"} or more`);
+  } else if (!dependentFiler && !present)
+    notes.push("HI line 28: food/excise tax credit not claimed \u2014 pass hiPresentOverNineMonths (each qualified exemption must have been physically present in Hawaii more than nine months in 2025)");
+  else if (dependentFiler)
+    notes.push("HI lines 28-30: no food/excise, renters, or child care credit for a filer claimable as a dependent");
+  let l29 = 0n;
+  const rent = D12(input.hiRentPaid);
+  if (rent > 0n && !dependentFiler) {
+    if (present) {
+      const rCount = typeof input.hiRentersExemptions === "number" ? input.hiRentersExemptions : l6e;
+      l29 = rd(evalStateTax("us.hi.renters_credit", 0n, { hiAgi: l20, hiSpouseAgi: mfs ? c(input.hiSpouseAgi) : 0n, hiRentPaid: rent, hiRentersExemptions: rCount, isClaimedAsDependent: false }));
+      notes.push(l29 > 0n ? `HI line 29 (Schedule X Part I): credit for low-income household renters ${fmtD(l29)} \u2014 ${rCount} qualified exemption(s) \xD7 $50 (rent ${fmtD(rent)} net of exclusions; Hawaii AGI ${fmtD(l20)} under $30,000)` : `HI line 29: no renters credit \u2014 ${rent <= 100000n ? "rent net of exclusions is not more than $1,000" : "Hawaii AGI is $30,000 or more"}`);
+    } else
+      notes.push("HI line 29: renters credit not claimed \u2014 pass hiPresentOverNineMonths");
+  }
+  let l30 = 0n;
+  if (c(input.hiChildCareExpenses) > 0n && !dependentFiler) {
+    l30 = rd(evalStateTax("us.hi.child_dependent_care_credit", 0n, {
+      hiChildCareExpenses: c(input.hiChildCareExpenses),
+      hiChildCareQualifyingPersons: input.hiChildCareQualifyingPersons ?? 1,
+      hiDependentCareBenefits: c(input.hiDependentCareBenefits),
+      hiEarnedIncome: earned2,
+      hiSpouseEarnedIncome: c(input.hiSpouseEarnedIncome),
+      hiAgi: l20,
+      hiMfsConsideredUnmarried: input.hiMfsConsideredUnmarried === true,
+      isClaimedAsDependent: false
+    }));
+    notes.push(l30 > 0n ? `HI line 30 (Schedule X Part II): credit for child and dependent care expenses ${fmtD(l30)} \u2014 qualified expenses up to $10,000 / $20,000, limited to earned income, \xD7 the Hawaii AGI percentage (25% to 15%); refundable` : mfs && input.hiMfsConsideredUnmarried !== true ? "HI line 30: no child care credit \u2014 married filing separately unless considered unmarried (pass hiMfsConsideredUnmarried)" : `HI line 30: no child care credit \u2014 the earned income limit${input.hiEarnedIncome === void 0 ? " (pass hiEarnedIncome" + (mfj ? " and hiSpouseEarnedIncome" : "") + ")" : ""} or the expense cap net of benefits is zero`);
+  }
+  const l31 = input.hiChildRestraintSystemPurchased === true ? 2500n : 0n;
+  if (l31 > 0n)
+    notes.push("HI line 31: $25 child passenger restraint system credit (\xA7 235-15; attach the invoice)");
+  const fedEic = D12(input.federalEITC);
+  const eitc = fedEic > 0n ? rd(evalStateTax("us.hi.eitc", 0n, { hiFederalEic: fedEic })) : 0n;
+  if (eitc > 0n)
+    notes.push(`HI Schedule CR line 8 (Form N-356): earned income tax credit ${fmtD(eitc)} = 40% of the ${fmtD(fedEic)} federal EIC; refundable (same filing status and dependents as the federal return${mfs ? " \u2014 a separate filer qualifies only when the federal EIC was allowed under \xA7 32(d)(2)" : ""})`);
+  const otherRef = D12(input.refundableCredits);
+  const l32 = eitc + otherRef;
+  const l33 = l28 + l29 + l30 + l31 + l32;
+  const l34 = l27 - l33;
+  let osc = 0n;
+  if (c(input.hiOtherStateTaxEligible) > 0n) {
+    osc = rd(evalStateTax("us.hi.other_state_credit", l26, { hiNetCapitalGainLine27a: l27a, hiOutOfStateIncome: c(input.hiOutOfStateIncome), hiOutOfStateLtcg: c(input.hiOutOfStateLtcg), hiOtherStateTaxEligible: c(input.hiOtherStateTaxEligible), hiTaxLine13: tax, hiAdjustedTaxLiability: l34, hiUseRateSchedule: useSched }));
+    notes.push(`HI Schedule CR line 12: credit for income taxes paid to other states and countries ${fmtD(osc)} \u2014 the smaller of the ${fmtD(D12(input.hiOtherStateTaxEligible))} paid and the Hawaii tax less the tax on Hawaii-source income (worksheet), limited to line 34; those taxes cannot also be itemized`);
+  }
+  const eitcCarry = D12(input.hiEitcCarryover2022);
+  const nonref = osc + eitcCarry + D12(input.nonrefundableCredits);
+  const l35 = min2(nonref, max02(l34));
+  if (nonref > l35)
+    notes.push(`HI line 35: nonrefundable credits ${fmtD(nonref)} limited to the ${fmtD(max02(l34))} adjusted tax liability ('If line 34 is zero or less, no tax credit may be used')`);
+  if (eitcCarry > 0n)
+    notes.push("HI Schedule CR line 24: the 2022 nonrefundable EITC carryover is usable through TY2025 only (Act 25, SLH 2025)");
+  const l36 = l34 - l35;
+  const l37 = D12(input.stateWithholding) + (mfj ? D12(input.spouseStateWithholding) : 0n);
+  const l38 = D12(input.estimatedPayments);
+  const l39 = D12(input.priorYearOverpaymentCredited);
+  const l40 = D12(input.extensionPayment);
+  const l41 = l37 + l38 + l39 + l40;
+  const l42 = l36 < 0n ? -l36 + l41 : l41 > l36 ? l41 - l36 : 0n;
+  const l44 = min2(D12(input.hiFundContributions), l42);
+  const l45 = l42 - l44;
+  const l46 = min2(D12(input.hiCreditForward), l45);
+  const penalty = D12(input.hiEstimatedTaxPenalty);
+  let l47a = l45 - l46;
+  const l48 = l36 > l41 ? l36 - l41 : 0n;
+  let l49 = l48;
+  if (penalty > 0n) {
+    if (l48 > 0n)
+      l49 = l48 + penalty;
+    else {
+      l47a = max02(l47a - penalty);
+      notes.push(`HI line 50: the ${fmtD(penalty)} estimated tax penalty reduces the refund automatically`);
+    }
+  }
+  if (l44 > 0n)
+    notes.push(`HI line 44: ${fmtD(l44)} contributed to the Hawaii schools, libraries, and violence/child abuse funds from the overpayment`);
+  if (l42 > 0n && l42 < 100n)
+    notes.push("HI line 42: refunds and credit payments under $1 are not made");
+  notes.push("HI scope: Form N-11 is composed for a full-year RESIDENT (part-year and nonresidents file Form N-15, not composed); additions and subtractions other than lines 8, 9, 13-17 are transcribed totals (Hawaii Additions / Subtractions Worksheets); Schedule CR credits other than the EITC and the other-state credit are inputs; Hawaii conforms to the IRC as of December 31, 2024 for 2025 (no OBBBA items, no QBI, no bonus depreciation); no county or local income tax");
+  const put = (k, v) => v !== 0n ? { [k]: fmtD(v) } : {};
+  return {
+    "6a_yourself": String(l6a),
+    "6b_spouse": String(l6b),
+    "6cd_dependents": String(deps),
+    "6e_total_exemptions": String(l6e),
+    "7_federal_agi": fmtD(l7),
+    ...put("8_wage_difference", l8),
+    ...put("9_out_of_state_bond_interest", l9),
+    ...put("10_other_additions", l10),
+    ...put("11_total_additions", l11),
+    "12_federal_agi_plus_additions": fmtD(l12),
+    ...put("13_pension_exclusion", l13),
+    ...put("14_social_security", l14),
+    ...put("15_reserve_pay_exclusion", l15),
+    ...put("16_individual_housing_account", l16),
+    ...put("17_exceptional_trees", l17),
+    ...put("18_other_subtractions", l18),
+    ...put("19_total_subtractions", l19),
+    "20_hawaii_agi": fmtD(l20),
+    ...itemize ? Object.fromEntries(Object.entries(itemLines).map(([k, v]) => [k, fmtD(v)])) : {},
+    ...itemize ? { "22_total_itemized_deductions": fmtD(l22) } : {},
+    ...itemize ? {} : { "23_standard_deduction": fmtD(l23std) },
+    _deduction_method: itemize ? "itemized" : "standard",
+    "24_agi_less_deductions": fmtD(l24),
+    "25_exemptions": fmtD(l25),
+    "26_taxable_income": fmtD(l26),
+    "27_tax": fmtD(l27),
+    _tax_method: method,
+    ...put("27a_net_capital_gain", l27a),
+    ...put("28_food_excise_credit", l28),
+    ...put("29_renters_credit", l29),
+    ...put("30_child_dependent_care_credit", l30),
+    ...put("31_child_passenger_restraint_credit", l31),
+    ...put("CR8_earned_income_credit", eitc),
+    ...put("32_schedule_cr_refundable_credits", l32),
+    "33_total_refundable_credits": fmtD(l33),
+    "34_adjusted_tax_liability": fmtD(l34),
+    ...put("CR12_other_state_credit", osc),
+    "35_nonrefundable_credits": fmtD(l35),
+    "36_balance": fmtD(l36),
+    ...put("37_withholding", l37),
+    ...put("38_estimated_payments", l38),
+    ...put("39_prior_year_overpayment_applied", l39),
+    ...put("40_extension_payment", l40),
+    "41_total_payments": fmtD(l41),
+    "42_overpaid": fmtD(l42),
+    ...put("44_fund_contributions", l44),
+    ...put("45_overpaid_less_contributions", l45),
+    ...put("46_applied_to_2026", l46),
+    "47a_refund": fmtD(l47a),
+    "48_amount_owed": fmtD(l48),
+    ...put("49_payment_amount", l49),
+    ...put("50_estimated_tax_penalty", penalty)
+  };
+}
+
 // ../compose/dist/sc.js
 var SUBSISTENCE_PER_DAY = 1600n;
 var CONSUMER_PROTECTION_INDIVIDUAL = 30000n;
@@ -28854,7 +30271,8 @@ function composeVA(input, evalStateTax, notes) {
       vagi: l9,
       familyVagi: input.vaFamilyVagi !== void 0 ? rd(c(input.vaFamilyVagi)) : void 0,
       exemptions: n,
-      barred: age > 0n || (input.ageOrBlindBoxes ?? 0) > 0
+      barred: age > 0n || abBoxes > 0
+      // same per-spouse boxes line 12 uses (not only the flat count)
     }, notes);
   }
   const l26 = l19a + l19b + l20 + l21 + l22 + l23 + rd(c(input.refundableCredits));
@@ -28890,11 +30308,11 @@ function composeVA(input, evalStateTax, notes) {
 // ../compose/dist/shape.js
 var usd = external_exports.number().finite();
 var shared = {
-  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv", "me"]),
+  jurisdiction: external_exports.enum(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv", "me", "hi", "ri", "mt", "de", "nd", "vt"]),
   filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional().describe("REQUIRED in practice: the federal filing status \u2014 drives the state bracket schedule, standard deduction column, and exemption structure. The filingJoint/filingHoh/filingHohOrQss booleans are legacy aliases; when filingStatus is present it wins."),
   // federal substrate values, computed by compute_return in the SAME session
   // (pass them verbatim — whole dollars)
-  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id/wv/me \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
+  federalAGI: usd.optional().describe("federal Form 1040 line 11 (from compute_return, verbatim). REQUIRED for il/va/ca/ny/or/ok/ct/ks/nm/ne/id/wv/me/hi \u2014 the composer refuses without it (AR needs it only for the AR2441 child care credit). NOT used by PA (class-based: pass the pa* class fields instead)."),
   federalEITC: usd.optional().describe("federal EIC, line 27a (from compute_return)"),
   wages: usd.optional().describe("federal line 1a wages (NY IT-201 line 1)"),
   additions: usd.optional().describe("total state additions to federal AGI (e.g. NY 414(h) A-104 + IRC-125 A-101; VA Schedule ADJ line 2 codes). GATE RULE: coded addition/subtraction line-item arrays sitting under a false 'do you have additions/subtractions' boolean are inactive template rows (especially $1-$4 placeholder amounts) \u2014 transcribe $0 for them and disclose; the gate controls for these arrays"),
@@ -28902,7 +30320,7 @@ var shared = {
   exemptions: external_exports.number().int().optional().describe("personal + dependent exemption COUNT (self + spouse + dependents)"),
   ageOrBlindBoxes: external_exports.number().int().optional().describe("count of age-65+/blind boxes checked (taxpayer/spouse, per box); NE line 2a: +$2,000 single/HOH or +$1,650 married/QSS each"),
   dependents: external_exports.number().int().optional().describe("dependent count (CA dependent exemption credits; NY $1,000 exemptions; KS $2,320 exemptions; AR $29 personal credits and the Low Income Tax Table column; NM line 5 exemptions and the $4,000 dependents deduction; NE $171 exemption credits \u2014 count only federal CTC/ODC dependents)"),
-  stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = W-2 box 17 NYS withholding PLUS NY-coded state withholding from 1099s whose PAYER has an in-state (NY) address; NY-coded withholding printed by an OUT-OF-STATE-addressed payer is NOT included; disclose any excluded amount in notes. VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 \u2014 Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
+  stateWithholding: usd.optional().describe("state income tax withheld (IL line 25 / VA 19a / CA 71 / NY 72). CONVENTIONS: IL line 25 sums state withholding from EVERY document (W-2s + all 1099s). NY line 72 = total NYS tax withheld from EVERY W-2 box 17, 1099-R box 14, 1099-G box 11, 1099-NEC/MISC state boxes and W-2G \u2014 wherever the state box reads NY; the PAYER'S mailing address is irrelevant (an out-of-state payer's NY-coded withholding IS included \u2014 IT-201-I line 72). VA 19a = the PRIMARY taxpayer's withholding from EVERY document type (W-2, 1099, VK-1 \u2014 Form 760 line 19 instructions name all three; the payer's address does NOT matter for VA, unlike NY); a jointly-issued document's state withholding splits 50/50 between 19a/19b with the odd dollar to the primary."),
   spouseStateWithholding: usd.optional().describe("VA line 19b spouse withholding (spouse's own W-2/1099/VK-1 boxes + spouse's half of jointly-issued documents' withholding, odd dollar to the primary)"),
   cityWithholding: usd.optional().describe("NY line 73 NYC withholding"),
   yonkersWithholding: usd.optional().describe("NY line 74 Yonkers withholding (W-2 box 19 with a Yonkers locality)"),
@@ -28918,8 +30336,9 @@ var shared = {
 };
 var il = {
   ilPropertyTaxPaid: usd.optional().describe("IL property tax on principal residence, net of business-use portion"),
-  ilK12Expenses: usd.optional().describe("IL qualified K-12 education expenses (before the $250 floor)"),
-  ilTeacherExpenses: usd.optional().describe("IL Schedule 1299-C educator materials expenses"),
+  ilK12Expenses: usd.optional().describe("IL Schedule ICR Section B qualified K-12 education expenses before the $250 floor \u2014 tuition, book/lab fees at a public, nonpublic OR home school that satisfies the truancy law (105 ILCS 5/26-1; IDOR Pub. 112); the composer takes 25% of the excess over $250, maximum $750"),
+  ilTeacherExpenses: usd.optional().describe("IL Schedule 1299-C / 1299-I Instructional Materials and Supplies Credit: the TAXPAYER's own classroom materials expenses as an eligible K-12 educator (900+ hours) \u2014 capped at $500 per educator, not $1,000 per return"),
+  ilSpouseTeacherExpenses: usd.optional().describe("IL Schedule 1299-I column B: the SPOUSE's own educator materials expenses on a joint return \u2014 its own $500 cap"),
   ilChildUnder12: external_exports.boolean().optional().describe("IL CTC gate: a QUALIFYING CHILD (\xA7 152(c) lineage \u2014 child/stepchild/foster/sibling or their descendants) under age 12. A qualifying-relative/ODC-only dependent does NOT satisfy this even if under 12; leave false."),
   ilEitcOverride: usd.optional().describe("us.il.eitc oracle target's answer (35 ILCS 5/212(a)(vi), (b-5), (b-10): 20% of the federal EITC recomputed WITHOUT the \xA7 32(c)(1)(A)(ii) childless age gate) \u2014 WINS over the generic 20%-of-federalEITC line-29 computation when present. MUST be used (not merely optional) for a taxpayer age 18-24 or 65+ with NO qualifying children: federalEITC alone is correctly $0 for that population under federal law, so line 29 = 20% x federalEITC would wrongly zero out Illinois' decoupled credit \u2014 pass us.il.eitc's computed answer instead. Safe to pass for every IL EITC claimant (agrees with the generic computation outside the decoupled population).")
 };
@@ -29785,7 +31204,272 @@ var meShape = {
   // federalEITC (EITC worksheet line 1), nonrefundableCredits (Schedule A lines 15-20), refundableCredits (Schedule A lines 6-8),
   // stateWithholding/spouseStateWithholding (line 25a), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 25b).
 };
-var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape, ...meShape };
+var hiShape = {
+  hiUseRateSchedule: external_exports.boolean().optional().describe("HI line 27: compute from the Tax Rate Schedules at the exact income instead of the Tax Table (taxable income under $100,000 uses the table by instruction; $100,000 or more always uses the schedules)"),
+  hiTaxpayerAge65: external_exports.boolean().optional().describe("HI line 6a 'Age 65 or over' oval: you were 65 or older as of January 1, 2026 \u2014 one extra $1,144 exemption"),
+  hiSpouseAge65: external_exports.boolean().optional().describe("HI line 6b 'Age 65 or over' oval for the spouse (joint returns, or MFS with the spouse exemption)"),
+  hiSpouseClaimedAsDependent: external_exports.boolean().optional().describe("HI line 6b: the spouse can be claimed as a dependent on another return \u2014 no spouse exemption (joint returns)"),
+  hiSpouseExemptionMfs: external_exports.boolean().optional().describe("HI line 6b on a married filing separate return: the spouse had no income, is not filing a return, and cannot be claimed as a dependent by another \u2014 one $1,144 exemption (plus the age-65 extra)"),
+  hiDisabledPersons: external_exports.number().int().optional().describe("HI line 25 ovals: taxpayers (you and/or your spouse, 0-2) claiming the $7,000 blind/deaf/totally disabled exemption (Form N-172) in lieu of ALL regular exemptions \u2014 no dependent or age-65 exemptions with it"),
+  hiSpouseDisabled: external_exports.boolean().optional().describe("HI line 25: with ONE disabled person on a joint return, the disabled person is the spouse (default: the taxpayer) \u2014 decides whose age-65 status gives the non-disabled spouse $2,288 instead of $1,144"),
+  hiWageDifference: usd.optional().describe("HI line 8: W-2 Box 16 state wages over Box 1 federal wages (COLA, LQA, ERS contributory/hybrid plan members)"),
+  hiOutOfStateBondInterest: usd.optional().describe("HI line 9: interest on bonds of other states and their subdivisions (including mutual fund distributions from them)"),
+  hiPensionExclusion: usd.optional().describe("HI line 13: pension distributions taxed federally but not by Hawaii \u2014 employer-funded plans (public retirement systems, military pensions, private plans the employee did not contribute to; Schedule J for hybrid plans)"),
+  hiReservePay: usd.optional().describe("HI line 15: your military reserve / Hawaii National Guard duty pay (W-2 Box 16 from the reserve component) \u2014 the composer excludes the first $8,636"),
+  hiSpouseReservePay: usd.optional().describe("HI line 15: the spouse's reserve / National Guard duty pay on a joint return (its own $8,636)"),
+  hiIhaPayments: usd.optional().describe("HI line 16: cash paid into an individual housing account \u2014 the composer caps at $5,000 ($10,000 joint)"),
+  hiExceptionalTreesDeduction: usd.optional().describe("HI line 17: exceptional trees deduction (up to $3,000 per tree, once every three years; notarized arborist affidavit)"),
+  hiItemize: external_exports.boolean().optional().describe("HI line 21: itemize deductions (the composer takes the larger of the Worksheets A-1 to A-6 total and the standard deduction; any hi* itemized amount also triggers the comparison)"),
+  hiSpouseItemizes: external_exports.boolean().optional().describe("HI line 21: married filing separately and the spouse itemizes \u2014 you MUST itemize (no standard deduction)"),
+  hiMedicalExpenses: usd.optional().describe("HI Worksheet A-1 line 1: medical and dental expenses before the 7.5%-of-Hawaii-AGI floor"),
+  hiStateLocalIncomeTaxes: usd.optional().describe("HI Worksheet A-2 line 5: state and local income taxes (or the elected general sales taxes) \u2014 deductible only when federal AGI is under $100,000 single/MFS, $150,000 HOH, $200,000 MFJ/QSS; exclude taxes claimed under the other-state credit"),
+  hiRealEstateTaxes: usd.optional().describe("HI Worksheet A-2 line 6: real estate taxes (no foreign real property taxes; no $10,000 cap)"),
+  hiPersonalPropertyTaxes: usd.optional().describe("HI Worksheet A-2 line 7: personal property taxes paid to other states"),
+  hiOtherTaxes: usd.optional().describe("HI Worksheet A-2 line 8: other deductible taxes"),
+  hiHomeMortgageInterest: usd.optional().describe("HI Worksheet A-3 lines 10-12: home mortgage interest and points (pre-TCJA $1,000,000 / $100,000 limits; home equity interest allowed)"),
+  hiInvestmentInterest: usd.optional().describe("HI Worksheet A-3 line 13: investment interest (Form N-158) \u2014 protected from the overall limitation"),
+  hiCharitableContributions: usd.optional().describe("HI Worksheet A-4 lines 15-17: gifts to charity within the 60% / 30% / 20% Hawaii AGI limits"),
+  hiCasualtyLosses: usd.optional().describe("HI Worksheet A-5 line 19: casualty and theft losses after $100 per casualty, before the 10%-of-AGI floor (any casualty, not only federal disasters, for 2025)"),
+  hiJobAndMiscExpenses: usd.optional().describe("HI Worksheet A-6 lines 23-25: unreimbursed employee business expenses, tax preparation fees, investment expenses \u2014 subject to the 2%-of-AGI floor"),
+  hiOtherMiscDeductions: usd.optional().describe("HI Worksheet A-6 line 30: deductions not subject to the 2% floor (gambling losses to the extent of winnings, impairment-related work expenses)"),
+  hiGamblingLossesInMisc: usd.optional().describe("HI Total Itemized Deductions Worksheet line 2d: the gambling and casualty/theft losses inside hiOtherMiscDeductions (protected from the overall limitation)"),
+  hiEarnedIncome: usd.optional().describe("HI earned income (wages, tips, net self-employment less the SE tax deduction) \u2014 REQUIRED for a dependent filer's standard deduction and for the Schedule X child care credit earned-income limit"),
+  hiSpouseEarnedIncome: usd.optional().describe("HI Schedule X line 24: the spouse's earned income on a joint return (use the $200 / $400 per-month deemed amount for a student or disabled spouse)"),
+  hiNetLongTermCapitalGain: usd.optional().describe("HI Tax on Capital Gains Worksheet line 4: Hawaii net long-term capital gain (federal Schedule D line 15 plus Hawaii adjustments)"),
+  hiNetCapitalGain: usd.optional().describe("HI Tax on Capital Gains Worksheet line 7: Hawaii net capital gain (federal Schedule D line 16 plus Hawaii adjustments) \u2014 with hiNetLongTermCapitalGain triggers the 7.25% alternative tax when taxable income exceeds the worksheet threshold"),
+  hiInvestmentInterestN158: usd.optional().describe("HI Tax on Capital Gains Worksheet line 9: Form N-158 line 4e (net capital gain elected as investment income)"),
+  hiCapitalGainsStatutoryThreshold: external_exports.boolean().optional().describe("HI capital gains worksheet line 12: apply \xA7 235-51(f)(1)(B)'s statutory amount under the 2025 brackets ($48,000 / $72,000 / $96,000) instead of the printed $24,000 / $36,000 / $48,000 \u2014 an election to disclose"),
+  hiOtherFormsTax: usd.optional().describe("HI line 27: additional tax from Forms N-2, N-103, N-152, N-168, N-312, N-325, N-338, N-344, N-348, N-405, N-586, N-615, N-814 (Tax Computation Worksheet lines c-m)"),
+  hiPresentOverNineMonths: external_exports.boolean().optional().describe("HI Form N-311 / Schedule X attestation: every claimed exemption (you, spouse, dependents) was physically present in Hawaii more than nine months in 2025 \u2014 REQUIRED for the food/excise and renters credits (unattested \u2192 not claimed)"),
+  hiFoodExciseQualifiedExemptions: external_exports.number().int().optional().describe("HI Form N-311 line 8 override: qualified exemptions (persons, not the age-65 extra) plus public-agency-supported minor children \u2014 defaults to yourself + spouse (when claimed on line 6b) + dependents + hiPublicSupportMinorChildren"),
+  hiPublicSupportMinorChildren: external_exports.number().int().optional().describe("HI Form N-311 line 3: minor children receiving more than half their support from public agencies (DHS, Social Security survivor benefits) who are NOT already counted in the shared `dependents` input (the form lists them on line 3 instead of line 2; a DHS-supported child claimed on line 6c is already in the default count)"),
+  hiSpouseFederalAgi: usd.optional().describe("HI Form N-311 line 5 (married filing separately): the spouse's federal AGI, added for the credit table"),
+  hiSpouseAgi: usd.optional().describe("HI Schedule X Part I (married filing separately): the spouse's Hawaii AGI, added for the $30,000 renters test"),
+  hiRentPaid: usd.optional().describe("HI Schedule X line 7: rent paid in 2025 for the Hawaii residence NOT exempt from real property tax, net of utilities, parking, ground rent, and subsidies \u2014 must exceed $1,000"),
+  hiRentersExemptions: external_exports.number().int().optional().describe("HI Schedule X line 11 override: qualified persons present more than nine months plus 1 for you and 1 for your spouse if 65 or older \u2014 defaults to the line 6e count"),
+  hiChildCareExpenses: usd.optional().describe("HI Schedule X line 20/22: qualified child and dependent care expenses paid in 2025 (a child under 13 or a disabled dependent/spouse; A+ Program payments qualify)"),
+  hiChildCareQualifyingPersons: external_exports.number().int().optional().describe("HI Schedule X line 17: qualifying persons (1 \u2192 $10,000 cap; 2 or more \u2192 $20,000); defaults to 1"),
+  hiDependentCareBenefits: usd.optional().describe("HI Schedule X line 18: employer dependent care benefits deducted or excluded (Section B lines 14 + 15) \u2014 reduce the expense cap"),
+  hiMfsConsideredUnmarried: external_exports.boolean().optional().describe("HI Schedule X Part II checkbox: married filing separately but lived apart from the spouse the last six months of 2025, kept the qualifying person's home, and paid over half its cost"),
+  hiChildRestraintSystemPurchased: external_exports.boolean().optional().describe("HI line 31: bought one or more new child passenger restraint systems in 2025 \u2014 $25 per return (attach the invoice)"),
+  hiEitcCarryover2022: usd.optional().describe("HI Schedule CR line 24 column (c): the 2022 nonrefundable EITC carryover applied this year (Form N-356 Part III; last usable in 2025)"),
+  hiOtherStateTaxEligible: usd.optional().describe("HI Other State and Foreign Tax Credit Worksheet line 9: income tax paid to other states plus foreign tax not credited federally (exclude tax on Hawaii-exempt income; attach the other returns)"),
+  hiOutOfStateIncome: usd.optional().describe("HI other-state worksheet line 3: out-of-state income including capital gains (not Hawaii-exempt income such as employer-funded pensions)"),
+  hiOutOfStateLtcg: usd.optional().describe("HI other-state worksheet line 4: long-term capital gains from sources outside Hawaii"),
+  hiFundContributions: usd.optional().describe("HI lines 43a-43c: contributions from the overpayment to the Hawaii schools repairs ($2 / $4 joint), public libraries ($5 / $10), and domestic violence / child abuse ($5 / $10) funds \u2014 the total"),
+  hiCreditForward: usd.optional().describe("HI line 46: overpayment to apply to 2026 estimated tax"),
+  hiEstimatedTaxPenalty: usd.optional().describe("HI line 50: Form N-210 estimated tax penalty (added to the payment, or subtracted from the refund)")
+  // Shared inputs used by Form N-11: federalAGI (line 7), additions (line 10), subtractions (line 18), taxableSocialSecurity (line 14),
+  // dependents (lines 6c-6d), claimedAsDependent (line 6a / oval above line 21), federalEITC (Form N-356 → Schedule CR line 8),
+  // nonrefundableCredits (other Schedule CR Part II credits), refundableCredits (other Schedule CR Part I credits),
+  // stateWithholding/spouseStateWithholding (line 37), estimatedPayments (38), priorYearOverpaymentCredited (39), extensionPayment (40).
+};
+var riShape = {
+  riUseRateSchedule: external_exports.boolean().optional().describe("RI line 8: compute with the Tax Computation Worksheet arithmetic at the exact taxable income instead of the Tax Table (taxable income under $100,000 uses the table's $50-row midpoint by instruction; $100,000 or more always uses the worksheet)"),
+  riSpouseClaimedAsDependent: external_exports.boolean().optional().describe("RI Schedule E line 1b: the spouse can be claimed as a dependent on another return \u2014 no spouse exemption on a joint return"),
+  riTaxpayerFullRetirementAge: external_exports.boolean().optional().describe("RI Schedule M lines 1s/1t: you reached Social Security full retirement age \u2014 the Division's 2025 bright line is BORN ON OR BEFORE MARCH 1, 1959. Required for both the Social Security and the pension/annuity modification (unattested \u2192 no modification)"),
+  riSpouseFullRetirementAge: external_exports.boolean().optional().describe("RI Schedule M lines 1s/1t: the spouse was born on or before March 1, 1959 (joint returns only \u2014 the (b) Spouse column and the worksheet's 'either you or your spouse' test)"),
+  riSocialSecurityBenefits: usd.optional().describe("RI Social Security Modification Worksheet line 8: TOTAL Social Security benefits, federal Form 1040 line 6a (the denominator of the eligible percentage). Exclude Railroad Retirement"),
+  riSocialSecurityBenefitsFraPerson: usd.optional().describe("RI Social Security Modification Worksheet line 9: the part of line 6a attributable to the person born on or before 03/01/1959 \u2014 only needed on a joint return where ONE spouse qualifies; defaults to the full line 6a (percentage 1.0000)"),
+  riTaxpayerPensionIncome: usd.optional().describe("RI Schedule M line 1t table, column (a): YOUR federally taxable pension and annuity income from Form 1040 line 5b ONLY. Do NOT include IRAs (line 4b), Railroad Retirement (line 1d), or a military service pension (line 1v). Capped at $50,000 per person for 2025"),
+  riSpousePensionIncome: usd.optional().describe("RI Schedule M line 1t table, column (b): the SPOUSE's Form 1040 line 5b pension and annuity income (joint returns only), separately capped at $50,000"),
+  riMilitaryServicePension: usd.optional().describe("RI Schedule M line 1v: military service pension benefits as defined in 20 C.F.R. \xA7 212.2, from Form 1040 line 5b (\xA7 44-30-12(c)(11)) \u2014 no cap, no age or income test; must not also appear in riTaxpayerPensionIncome"),
+  riRailroadRetirementBenefits: usd.optional().describe("RI Schedule M line 1d: Railroad Retirement benefits taxed federally (1974 Railroad Retirement Act) \u2014 subtracted in full, and excluded from the Social Security and pension modifications"),
+  riTuitionSavingsContributions: usd.optional().describe("RI Schedule M line 1g: contributions to a Rhode Island CollegeBound (\xA7 529) account \u2014 the composer caps the CONTRIBUTION modification at $500 ($1,000 on a joint return), 'regardless of the number of accounts'. Qualified withdrawals included in federal AGI are a separate, uncapped line 1g item \u2014 pass those in `subtractions`"),
+  riOutOfStateBondInterest: usd.optional().describe("RI Schedule M line 2a: interest on obligations of any state or its political subdivisions OTHER than Rhode Island (\xA7 44-30-12(b)(1), (b)(2))"),
+  riHr1Addback: usd.optional().describe("RI Schedule M line 2k: add-back of federal H.R. 1 (P.L. 119-21) provisions from RI Schedule HR1 - Individual, line 1f (\xA7 44-30-12(b)(9)) \u2014 new for tax year 2025"),
+  riFederalChildCareCredit: usd.optional().describe("RI Schedule I line 20: the federal credit for child and dependent care expenses from federal Form 1040 Schedule 3, line 2 \u2014 Rhode Island allows 25% of it, capped at the line 8 tax (nonrefundable)"),
+  riOtherStateIncome: usd.optional().describe("RI Schedule II line 24: income derived from the other state, determined as it would be for federal purposes. More than one state uses Form RI-1040MU (sum the line 29 amounts)"),
+  riOtherStateTaxPaid: usd.optional().describe("RI Schedule II line 28: income tax actually due and paid to the other state (not the amount withheld \u2014 if it was all refunded, enter $0). Attach a copy of the other state's return"),
+  riCheckoffContributions: usd.optional().describe("RI Checkoff Schedule line 38: voluntary contributions (drug program, Olympic $1/$2 joint, organ transplant, arts council, nongame wildlife, childhood disease, military family relief, behavioral health) \u2014 these INCREASE the balance due or reduce the refund"),
+  riCreditRecapture: usd.optional().describe("RI-1040 line 10b: recapture of prior year other Rhode Island credits, from RI Schedule CR line 12"),
+  riIndividualMandatePenalty: usd.optional().describe("RI-1040 line 12b: individual mandate (health insurance) shared responsibility penalty \u2014 leave $0 and certify full-year coverage where it applies"),
+  riUseTaxLookupTable: external_exports.boolean().optional().describe("RI Schedule U: use the \xA7 44-30-100 safe-harbor lookup table (0.08% of federal AGI, or the printed $5-$60 band) instead of actual purchases. Either way the taxpayer must PROACTIVELY check the line 12a attestation box \u2014 software may not pre-check it"),
+  riUseTaxPurchases: usd.optional().describe("RI Schedule U line 1: total price of purchases subject to the 7% use tax (the actual method)"),
+  riSalesTaxPaidOtherStates: usd.optional().describe("RI Schedule U line 3: sales tax paid to other states on those purchases"),
+  riLargePurchasesNetUseTax: usd.optional().describe("RI Schedule U line 7e: net use tax on each SINGLE purchase of $1,000 or more (cost \xD7 7% less sales tax paid), which must be listed individually and is added on top of the lookup-table amount"),
+  riAge65OrDisabled: external_exports.boolean().optional().describe("Form RI-1040H Part 1 question D: you or your spouse were 65 or older and/or disabled (receiving Social Security disability) as of December 31, 2025 \u2014 required for the property tax relief credit (unattested \u2192 not claimed)"),
+  riHouseholdIncome: usd.optional().describe("Form RI-1040H Part 5 line 32: TOTAL household income of ALL persons in the household \u2014 taxable AND non-taxable (gross Social Security and pensions, cash public assistance, workers' compensation, unemployment), with rental/business/capital losses added back. This is NOT federal AGI. Must be $40,730 or less for 2025"),
+  riHouseholdMembers: external_exports.number().int().optional().describe("Form RI-1040H line 1f: number of persons in the household \u2014 selects the '1 person' or '2 or more' column of the computation table (they differ only in the $13,971-$17,460 band). Defaults to 1"),
+  riPropertyTaxPaid: usd.optional().describe("Form RI-1040H line 2: property taxes paid or payable for 2025 on the homestead (homeowners, Part 3)"),
+  riRentPaid: usd.optional().describe("Form RI-1040H line 7: rent paid in 2025 (renters, Part 4) \u2014 20% of it counts as property tax. For rented LAND the form adds 20% of the rent to the property tax on line 2"),
+  riLeadPaintCredit: usd.optional().describe("RI-1040 line 14e: residential lead abatement credit from Form RI-6238 line 7 (max $5,000 per unit for removal/abatement, $1,500 for reduction/mitigation, up to three units). Refundable, but rationed against a $250,000 statewide annual fund \u2014 the amount received may be prorated"),
+  riPreviouslyIssuedOverpayment: usd.optional().describe("RI-1040 line 14h: previously issued overpayments (amended returns only)"),
+  riUnderestimatingInterest: usd.optional().describe("RI-1040 line 15b: underestimating interest from Form RI-2210 or RI-2210A \u2014 added to the amount due, or subtracted from the overpayment"),
+  riAppliedToNextYear: usd.optional().describe("RI-1040 line 18: amount of the overpayment to apply to 2026 estimated tax (capped at the overpayment remaining after line 15b)")
+  // Shared inputs used by Form RI-1040: federalAGI (line 1), additions / subtractions (RI Schedule M other increases / decreases),
+  // taxableSocialSecurity (Social Security Worksheet line 11), dependents and claimedAsDependent (RI Schedule E),
+  // federalEITC (RI Schedule EIC line 39), nonrefundableCredits (RI Schedule CR line 9 → line 9c), refundableCredits (line 14f),
+  // stateWithholding / spouseStateWithholding (line 14a), estimatedPayments + priorYearOverpaymentCredited (line 14b),
+  // extensionPayment (Form RI-4868, line 14f), and useTax as a fallback for line 12a when neither
+  // riUseTaxPurchases nor riUseTaxLookupTable is supplied.
+};
+var mtShape = {
+  mtFederalDeductions: usd.optional().describe("REQUIRED for Montana. Form 2 line 2: the total of federal Form 1040 lines 12e and 13b \u2014 the federal standard OR itemized deduction plus the Schedule 1-A deductions (qualified tips, qualified overtime, passenger vehicle loan interest, the enhanced senior deduction). Montana has NO standard deduction of its own, so this is the only deduction. Do NOT include the federal qualified business income deduction \u2014 \xA7 15-30-2120(2)(i) adds it back"),
+  mtNetLongTermCapitalGains: usd.optional().describe("Form 2 page 2 line 2: net long-term capital gains subject to the federal tax \u2014 generally the LESSER of federal Schedule D line 15 or line 16. Montana taxes these at 3% / 4.1%. Qualified dividends are NOT included: they are Montana ordinary income"),
+  mtTaxpayerAge65: external_exports.boolean().optional().describe("Form 2 line 6: you attained age 65 \u2014 a $5,660 subtraction for 2025"),
+  mtSpouseAge65: external_exports.boolean().optional().describe("Form 2 line 6: your spouse attained age 65 \u2014 a second $5,660 subtraction, on a JOINT return only (a qualifying surviving spouse has no spouse)"),
+  mtStateIncomeTaxAddback: usd.optional().describe("Schedule I Part I line 4: state income tax included in federal ITEMIZED deductions, added back \u2014 computed on Worksheet B and capped so it never reduces the federal itemized total below the federal standard deduction (\xA7 15-30-2120(2)(j)). New placement for TY2025"),
+  mtOutOfStateBondInterest: usd.optional().describe("Schedule I Part I line 1: interest and mutual fund dividends from state, county or municipal bonds of states OTHER than Montana"),
+  mtActiveDutyMilitaryPay: usd.optional().describe("Schedule I line 12: active-duty military salary, subtracted in full (\xA7 15-30-2120(3)(c)) \u2014 basic, special and incentive pay only. Annual training, inactive duty training and 'active Guard and Reserve duty' pay do NOT qualify"),
+  mtMilitaryRetirementIncome: usd.optional().describe("Schedule I line 13: military pension, military retirement income or military survivor benefits (Form WMRE). The subtraction is the LESSER of Montana source wage income or 50% of this \u2014 it is for WORKING military retirees"),
+  mtMontanaSourceWageIncome: usd.optional().describe("MCA 15-30-2120(8)(i): Montana source WAGE income, which caps the military retirement subtraction. A fully retired veteran with no wages gets $0"),
+  mtMilitaryRetireeEligible: external_exports.boolean().optional().describe("MCA 15-30-2120(9)(a): the retiree became a Montana resident on or after June 30, 2023, or was a resident both before and after receiving the pension (unattested \u2192 no subtraction)"),
+  mtMilitaryRetireeWithinFiveYears: external_exports.boolean().optional().describe("MCA 15-30-2120(9)(b): the subtraction is within the five consecutive years allowed after first qualifying (unattested \u2192 no subtraction)"),
+  mtExemptTribalIncome: usd.optional().describe("Schedule I line 11: exempt tribal income of an enrolled member living on the reservation of their tribe (Form ETM)"),
+  mtRailroadRetirementBenefits: usd.optional().describe("Schedule I lines 22-23: Tier I and Tier II Railroad Retirement benefits included in federal taxable income, exempt by federal law"),
+  mtTuitionSavingsContributions: usd.optional().describe("Schedule I line 16: contributions to a Montana family education savings (\xA7 529) account \u2014 capped at $4,500, or $9,000 on a JOINT return, for 2025 (House Bill 845 raised it from $3,000)"),
+  mtAbleContributions: usd.optional().describe("Schedule I line 17: contributions to an ABLE account \u2014 capped at $3,000, or $6,000 on a JOINT return. Not inflation-indexed"),
+  mtAge62: external_exports.boolean().optional().describe("Schedule 2EC: the claimant reached age 62 by December 31 \u2014 required for the elderly homeowner/renter credit (unattested \u2192 not claimed)"),
+  mtResided9Months: external_exports.boolean().optional().describe("Schedule 2EC: the claimant resided in Montana at least nine months during the year"),
+  mtOccupied6Months: external_exports.boolean().optional().describe("Schedule 2EC: the claimant occupied a Montana residence as owner, renter or lessee at least six months during the year"),
+  mtSoleHouseholdClaimant: external_exports.boolean().optional().describe("Schedule 2EC: you are the only member of your household claiming the elderly homeowner/renter credit \u2014 only one per household (unattested \u2192 not claimed)"),
+  mtGrossHouseholdIncome: usd.optional().describe("Schedule 2EC line 18: GROSS household income \u2014 ALL income of ALL household members, taxable and non-taxable: the full amount of pensions and annuities, Railroad Retirement and veterans' disability benefits, excluded capital gains, alimony, support money, cash public assistance, tax-exempt interest, ALL Social Security, and refundable credits received in cash (expressly including the 2024 Montana property tax rebate). This is NOT federal AGI. Must be under $45,000"),
+  mtPropertyTaxBilled: usd.optional().describe("Schedule 2EC line 23: property tax billed on the Montana residence and up to one acre, including special assessments and fees but excluding penalties and interest"),
+  mtRentPaid: usd.optional().describe("Schedule 2EC line 24: rent paid for the Montana residence \u2014 15% counts as rent-equivalent tax. Excludes mortgage payments, nursing home costs paid directly from Social Security, and rent paid by a rental assistance program"),
+  mtOtherStateOrdinaryIncome: usd.optional().describe("Schedule III Part II line 1: income sourced and taxable to the other state or country included in Montana taxable income, EXCLUDING net long-term capital gains"),
+  mtOtherStateCapitalGains: usd.optional().describe("Schedule III Part II line 11: net long-term capital gain sourced and taxable to the other state or country"),
+  mtOtherStateTotalIncome: usd.optional().describe("Schedule III Part II lines 2 and 12: ALL income sourced and taxable to the other state or country \u2014 the denominator of the first ratio"),
+  mtOrdinaryIncomeSourcedToMontana: usd.optional().describe("Schedule III Part II line 3: income sourced and taxable to Montana excluding net long-term capital gains (full-year residents: federal Form 1040 line 9 excluding those gains, less related expenses)"),
+  mtFederalNetLongTermCapitalGains: usd.optional().describe("Schedule III Part II line 13: federal net long-term capital gains \u2014 the denominator of the capital gains block's Montana ratio"),
+  mtOtherStateTaxPaid: usd.optional().describe("Schedule III Part II lines 4 AND 14: the TOTAL income tax liability actually paid to the other state or country, excluding penalties and interest \u2014 the same figure feeds both blocks; the line 16 ratio attributes the capital-gains share. North Dakota WAGES are not eligible (reciprocity \u2014 file an ND return for a refund); foreign tax is ineligible if a federal Form 1116 credit was claimed"),
+  mtPassThroughEntityTaxCredit: usd.optional().describe("Form 2 line 11c: total pass-through entity tax credit from Montana Schedule(s) K-1, Part V line 1"),
+  mtScheduleK1Withholding: usd.optional().describe("Form 2 line 11d: total withholding from Montana Schedule(s) K-1, including mineral royalty withholding"),
+  mtLoanOutWithholding: usd.optional().describe("Form 2 line 11e: loan-out withholding from Form LOWCERT"),
+  mtScheduleIvOtherTaxes: usd.optional().describe("Form 2 line 19: contributions, penalties, interest and other taxes from Schedule IV line 8 \u2014 SUBTRACTED from total payments on line 21 rather than added to the tax"),
+  mtAmendedPaymentsWithOriginal: usd.optional().describe("Form 2 line 18 (amended returns): payments made with the original return"),
+  mtAmendedPreviousOverpayment: usd.optional().describe("Form 2 line 20 (amended returns): previous overpayment"),
+  mtAppliedToNextYear: usd.optional().describe("Form 2 line 24: amount of the overpayment applied to 2026 estimated taxes"),
+  mt529Deposit: usd.optional().describe("Form 2 line 25: amount of the refund deposited into a 529 or 529A account (must exceed $25 per account)")
+  // Shared inputs used by Form 2: federalAGI (line 1), additions / subtractions (Schedule I other items),
+  // taxableSocialSecurity (taxed by Montana with NO state subtraction), claimedAsDependent (Schedule 2EC),
+  // federalEITC (line 15), nonrefundableCredits (Schedule III Part I), refundableCredits (Part I line 17),
+  // stateWithholding / spouseStateWithholding (line 11a-11b), estimatedPayments (12),
+  // priorYearOverpaymentCredited (13), extensionPayment (14).
+};
+var deShape = {
+  deUseRateSchedule: external_exports.boolean().optional().describe("Form PIT-RES line 24: compute from the rate schedule at the exact taxable income instead of the printed Tax Table (under $60,000 the table's row midpoint governs by instruction; $60,000 or more always uses the schedule)"),
+  deCombinedSeparate: external_exports.boolean().optional().describe("Delaware FILING STATUS 4, 'Married & Filing Combined Separate on this form' \u2014 two separate returns combined on one form. Column A is the spouse, column B the taxpayer, and each column takes its own $3,250 standard deduction and its own trip through the brackets. Pass filingStatus 'mfs' alongside this, and supply the deSpouse* column-A inputs"),
+  deItemizes: external_exports.boolean().optional().describe("Form PIT-RES line 20b: itemize Delaware deductions (Form PIT-RSA) instead of the standard deduction. INDEPENDENT of the federal election, but it forfeits the line 21 additional standard deduction entirely. On status 3 or 4 both spouses must make the same election (30 Del. C. 1109(b))"),
+  deItemizedDeductions: usd.optional().describe("Form PIT-RES line 19: net Delaware itemized deductions from Form PIT-RSA \u2014 federal itemized less Delaware income tax and other-state tax taken as a credit, plus foreign taxes paid, the charitable mileage differential and up to $500 of labor organization dues"),
+  deAdditionalDeductionBoxes: external_exports.number().int().optional().describe("Form PIT-RES line 21: boxes checked for age 65 or over and blindness \u2014 $2,500 each, at most two per person: up to four on a joint return, or on a married-filing-SEPARATE return (status 3) when the spouse's boxes qualify under \xA7 1108(b)(2)/(4) (spouse 65+/blind with NO gross income, not another's dependent); two otherwise. On a combined separate return (status 4) this is COLUMN B's own two-box count"),
+  deExemptions: external_exports.number().int().optional().describe("Form PIT-RES line 27a: number of federal exemptions (yourself, your spouse on a joint return, and dependents) at $110 each. A childless joint return enters 2. Enter 0 if you are claimed as a dependent on another return"),
+  deAge60Persons: external_exports.number().int().optional().describe("Form PIT-RES line 27b: persons 60 or over on December 31 (you and/or your spouse) \u2014 an additional $110 each"),
+  deAge60OrOver: external_exports.boolean().optional().describe("Form PIT-RES line 6: 60 or over on December 31 \u2014 the 60-or-over pension tier allows $12,500 of pension PLUS eligible retirement income; under 60 allows only $2,000 of pension"),
+  deMilitaryPension: external_exports.boolean().optional().describe("Form PIT-RES line 6 checkbox: the pension is a United States military pension \u2014 raises the UNDER-60 exclusion from $2,000 to $12,500. Since 84 Del. Laws c. 437 the definition covers the Army, Navy, Air Force, Marine Corps, Space Force, Coast Guard, the NOAA and Public Health Service commissioned corps, and the National Guard"),
+  dePensionIncome: usd.optional().describe("Form PIT-RES line 6: pensions from employers, the United States, this State or its subdivisions. Excludes early distributions (1099-R box 7 code 1, or an early-withdrawal penalty) and employer-paid disability pension income before minimum retirement age"),
+  deEligibleRetirementIncome: usd.optional().describe("Form PIT-RES line 6, 60-or-over worksheet: dividends, capital gains net of losses, interest, net rental income from real property, and qualified plan distributions (IRA, 401(k), Keogh, IRC 457). Counts ONLY at 60 or over"),
+  deUsObligationInterest: usd.optional().describe("Form PIT-RES line 5: interest on United States obligations, including the attributable share of regulated investment company dividends"),
+  deTuitionAbleContributions: usd.optional().describe("Form PIT-RES line 8b: DE529 contributions (up to $1,000, $2,000 joint, phased out entirely above $100,000 of federal AGI / $200,000 joint, K-12 tuition excluded) plus Delaware ABLE contributions (up to $5,000, $10,000 joint)"),
+  deEarnedIncome: usd.optional().describe("Form PIT-RES line 11 worksheet: earned income (wages, tips, farm or business income) \u2014 must be under $2,500, or under $5,000 on a joint return, for the elderly/disabled exclusion"),
+  deQualifiesElderlyDisabled: external_exports.boolean().optional().describe("Form PIT-RES line 11 worksheet: at least 60 years old OR totally and permanently disabled on December 31"),
+  deSpouseQualifiesElderlyDisabled: external_exports.boolean().optional().describe("Form PIT-RES line 11 worksheet: the spouse was at least 60 or totally and permanently disabled \u2014 the $4,000 joint tier requires BOTH spouses to qualify"),
+  deVolunteerFirefighters: external_exports.number().int().optional().describe("Form PIT-RES line 29: qualifying active volunteer firefighters or volunteer fire company auxiliary, ambulance or rescue squad members on the return (0-2) at $1,000 each. The Division verifies this credit before processing, so it defaults to none"),
+  deFederalChildCareCredit: usd.optional().describe("Form PIT-RES line 31 worksheet: the federal child and dependent care credit (federal Form 2441 line 11). Delaware allows 50%, capped at $3,000 and at the tax"),
+  deOtherStateIncome: usd.optional().describe("Other-state credit worksheet line 1: adjusted gross income from the other state's return. The ratio to Delaware AGI is capped at 100%. More than one state uses DE Schedule I, highest credit first"),
+  deOtherStateTaxPaid: usd.optional().describe("Other-state credit worksheet line 6: income tax paid to the other state net of its credits. EXCLUDES city and county taxes; the District of Columbia counts as a state"),
+  deCharitableContributions: usd.optional().describe("Form PIT-RES line 43: DE Schedule III contributions to special funds \u2014 these INCREASE the balance due or reduce the refund; they are contributions, not credits"),
+  deSpouseItemizedDeductions: usd.optional().describe("COLUMN A (filing status 4): the spouse's own net Delaware itemized deductions. Section 1109(b) requires both spouses to make the SAME itemize-or-standard election, but each column deducts its own amount"),
+  deSpouseFederalAgi: usd.optional().describe("COLUMN A (filing status 4): the spouse's own federal adjusted gross income, including one half of income from jointly titled securities, bank accounts and real estate (the printed Line 1 Worksheet). REQUIRED when deCombinedSeparate is set"),
+  deSpouseAdditions: usd.optional().describe("COLUMN A: the spouse's Delaware additions (non-Delaware municipal bond interest, oil depletion, fiduciary adjustment)"),
+  deSpouseSubtractions: usd.optional().describe("COLUMN A: the spouse's other Delaware subtractions (line 7 items)"),
+  deSpouseUsObligationInterest: usd.optional().describe("COLUMN A: the spouse's interest on United States obligations"),
+  deSpouseTaxableSocialSecurity: usd.optional().describe("COLUMN A: the spouse's taxable Social Security and Railroad Retirement, subtracted in full"),
+  deSpouseTuitionAbleContributions: usd.optional().describe("COLUMN A: the spouse's DE529 and Delaware ABLE contributions"),
+  deSpousePensionIncome: usd.optional().describe("COLUMN A: the spouse's pension income for the line 6 exclusion \u2014 spouses each receive their own exclusion"),
+  deSpouseEligibleRetirementIncome: usd.optional().describe("COLUMN A: the spouse's eligible retirement income (60 or over only)"),
+  deSpouseEarnedIncome: usd.optional().describe("COLUMN A: the spouse's earned income for the line 11 test"),
+  deSpouseOtherStateIncome: usd.optional().describe("COLUMN A: the spouse's income from another state"),
+  deSpouseOtherStateTaxPaid: usd.optional().describe("COLUMN A: income tax the spouse paid to another state"),
+  deSpouseAge60OrOver: external_exports.boolean().optional().describe("COLUMN A: the spouse was 60 or over on December 31 \u2014 the 60-or-over pension tier"),
+  deDomiciledForPensionExclusion: external_exports.boolean().optional().describe("TY2026+: the taxpayer has been legally domiciled in Delaware for at least three years \u2014 required for the 60-or-over pension exclusion under \xA7 1106(b)(3)f.4 (85 Del. Laws c. 426, effective August 17, 2026); a 60-or-over person without it gets no pension exclusion. Not needed for TY2025"),
+  deSpouseDomiciledForPensionExclusion: external_exports.boolean().optional().describe("COLUMN A / joint spouse: the spouse has been legally domiciled in Delaware for at least three years (TY2026+ 60-or-over pension exclusion gate)"),
+  deSpouseMilitaryPension: external_exports.boolean().optional().describe("COLUMN A: the spouse's pension is a United States military pension"),
+  deSpouseAdditionalDeductionBoxes: external_exports.number().int().optional().describe("COLUMN A: boxes checked for the spouse being 65 or over and/or blind \u2014 $2,500 each"),
+  deSpouseExemptions: external_exports.number().int().optional().describe('COLUMN A: federal exemptions allocated to the spouse. The instructions require status 4 filers to split the total between columns "in increments of $110"'),
+  deSpouseAge60Persons: external_exports.number().int().optional().describe("COLUMN A: persons 60 or over counted in the spouse column ($110 each)"),
+  deSpouseVolunteerFirefighters: external_exports.number().int().optional().describe("COLUMN A: qualifying volunteer firefighters in the spouse column ($1,000 each)")
+  // Shared inputs used by Form PIT-RES: federalAGI (line 1, column B), additions / subtractions (Section A / line 7),
+  // taxableSocialSecurity (line 8a), claimedAsDependent (zeroes the personal credits), federalEITC (DE Schedule II line 13),
+  // nonrefundableCredits (PIT-CRS line 24 -> line 30), refundableCredits (PIT-CRS line 30 -> line 38),
+  // stateWithholding / spouseStateWithholding (line 35), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 36).
+};
+var ndShape = {
+  ndFederalTaxableIncome: usd.optional().describe("REQUIRED for North Dakota. Form ND-1 line 1b: federal TAXABLE income from federal Form 1040 line 15 \u2014 North Dakota starts here, not from AGI. May be NEGATIVE: the booklet directs a filer whose federal taxable income calculates below zero to enter the negative number even though Form 1040 line 15 shows 0 \u2014 and gives Form ND-EZ line 1b the identical instruction"),
+  ndUseRateSchedule: external_exports.boolean().optional().describe("Form ND-1 line 20: apply the rate schedule at the exact taxable income instead of the printed Tax Table. Below $100,000 the table is MANDATORY by section 57-38-30.3(10); at $100,000 or more the schedule applies anyway"),
+  ndPlannedGiftAdjustment: usd.optional().describe("Form ND-1 line 2: the planned gift or endowment tax credit adjustment to income, from Schedule ND-1PG line 15 or Schedule ND-1QEC line 16 \u2014 an ADDITION, because the contribution that earned the credit also reduced federal taxable income"),
+  ndUsObligationInterest: usd.optional().describe("Form ND-1 line 5: interest from United States obligations. The booklet's enumerated list EXCLUDES Freddie Mac, Fannie Mae, Ginnie Mae, federal tax refunds and repurchase agreements"),
+  ndNetLongTermCapitalGain: usd.optional().describe("Net long-term capital gain worksheet line 3: the SMALLER of federal Schedule D lines 15 and 16 \u2014 or the capital gain distributions from Form 1040 line 7 when no Schedule D was required. North Dakota excludes 40%. The worksheet stops if either Schedule D figure is zero or less, so a net loss gives no exclusion"),
+  ndCapitalGainAlreadyExcluded: usd.optional().describe("Net long-term capital gain worksheet line 6: the portion of that gain already included on Form ND-1 line 7 or line 16, which is removed BEFORE the 40% is applied"),
+  ndQualifiedDividends: usd.optional().describe("Form ND-1 line 13: qualified dividends from federal Form 1040 line 3a \u2014 North Dakota excludes 40%"),
+  ndExemptTribalIncome: usd.optional().describe("Form ND-1 line 7: exempt income of an enrolled member of a federally recognized tribe who lived on a North Dakota reservation all year (includes the North Dakota portions of Standing Rock and Lake Traverse that lie in South Dakota)"),
+  ndRailroadRetirementBenefits: usd.optional().describe("Form ND-1 line 8: Railroad Retirement Board benefits \u2014 unemployment, sick pay or retirement \u2014 to the extent federally taxable. Tier 1 Railroad Retirement belongs HERE, not on line 15"),
+  ndPeaceOfficerRetirement: usd.optional().describe("Form ND-1 line 9: the licensed peace officer retirement benefit exclusion \u2014 20 years of licensed service or medical retirement for disability, employer plan benefits only"),
+  ndMilitaryPay: usd.optional().describe("Form ND-1 line 11: military pay of a member of the armed forces on active or reserve duty or of the national guard, excluded IN FULL with no cap \u2014 including federal pay for training, education, mobilization and bonuses, and state pay on state active duty"),
+  ndCollegeSaveContributions: usd.optional().describe("Form ND-1 line 12: contributions to a North Dakota College SAVE account (Bank of North Dakota) \u2014 capped at $5,000, or $10,000 on a JOINT return. Rollovers from another section 529 plan do NOT qualify"),
+  ndMilitaryRetirement: usd.optional().describe("Form ND-1 line 14: military retirement benefits, excluded IN FULL with no cap, for the retiree or a surviving spouse, and covering a dual-status military technician's federal civil-service retirement"),
+  ndAppliedToNextYear: usd.optional().describe("Form ND-1 line 30: the amount of the line 29 overpayment to apply to 2026 estimated tax"),
+  ndVoluntaryContributions: usd.optional().describe("Form ND-1 line 31 (when overpaid) or line 35 (when tax is due): total voluntary contributions to the Veterans' Postwar Trust Fund, Watchable Wildlife Fund and Trees for ND Trust Fund"),
+  ndPenalty: usd.optional().describe("Form ND-1 line 34 box AK: penalty"),
+  ndInterest: usd.optional().describe("Form ND-1 line 34 box AL: interest"),
+  ndUnderpaymentInterest: usd.optional().describe("Form ND-1 line 37: interest on underpaid estimated tax from Schedule ND-1UT \u2014 added into the line 36 balance due"),
+  ndLowerQualifiedIncome: usd.optional().describe("Marriage Penalty Credit Worksheet lines 3-4: the qualified income of the LOWER-earning spouse \u2014 wages and tips from federal line 1z, net self-employment income less the self-employment tax deduction, and the taxable IRA, pension, annuity and Social Security amounts, all reduced by the Form ND-1 line 8 and line 15 exclusions. Must exceed $47,550 for 2025"),
+  ndDoublyTaxedIncome: usd.optional().describe("Schedule ND-1CR line 1c: the part of federal AGI sourced to the other state that was received or earned while a North Dakota resident"),
+  ndOtherStateIncomeBase: usd.optional().describe("Schedule ND-1CR line 2: the ratio denominator. Defaults to federal AGI less the line 5 United States obligation interest, which is the printed full-year-resident rule; a part-year resident uses Schedule ND-1NR line 18 instead"),
+  ndOtherStateTaxPaid: usd.optional().describe("Schedule ND-1CR line 6: the NET income tax on the other state's return \u2014 after that state's credits but before its withholding and estimated payments \u2014 plus local jurisdiction tax in that same state. A separate Schedule ND-1CR is required per state. Montana and Minnesota WAGES are excluded by reciprocity; foreign country tax never qualifies"),
+  // ---- Vermont (Form IN-111) ----
+  vtUseRateSchedule: external_exports.boolean().optional().describe("Form IN-111 line 8: apply the rate schedule at the exact taxable income instead of the printed Tax Table (mandatory below $75,000: 'TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES')"),
+  vtNonVermontBondInterest: usd.optional().describe("Schedule IN-112 Part I line 3: interest and dividends from NON-Vermont state and local obligations exempt from federal tax (line 1 less the Vermont-obligation portion on line 2) \u2014 an ADDITION"),
+  vtBonusDepreciationAddback: usd.optional().describe("Schedule IN-112 Part I line 4: federal bonus depreciation allowed under IRC \xA7 168(k) (and, per the 2025 Federal Conformity Supplement, \xA7 168(n) and large-business \xA7 174A) \u2014 an ADDITION; use `additions` for anything else the Supplement routes here"),
+  vtUsObligationInterest: usd.optional().describe("Schedule IN-112 Part I line 7: interest income from U.S. government obligations \u2014 also subtracted from federal AGI before the 3% minimum tax on line 8"),
+  vtNetAdjustedCapitalGain: usd.optional().describe("Schedule IN-153 Part I line 8: net adjusted capital gain (the smaller of federal Schedule D lines 15 and 16, less qualified dividends and allocated investment interest) \u2014 the base of the $5,000 flat exclusion; $0 when the federal return shows a net capital loss"),
+  vtEligibleLongTermGain: usd.optional().describe("Schedule IN-153 Part II line 17: net adjusted capital gain on assets held MORE than three years, excluding a primary or nonprimary residence, depreciable personal property (other than farm property and standing timber) and publicly traded stocks, bonds and financial instruments \u2014 40% is excludable up to $350,000"),
+  vtFederalTaxableIncome: usd.optional().describe("Schedule IN-153 line 20: federal taxable income (Form 1040 line 15) \u2014 the capital gains exclusion cannot exceed 40% of it; REQUIRED whenever a capital gain is passed"),
+  vtPriorYearBonusDepreciation: usd.optional().describe("Schedule IN-112 Part I line 9: the subtraction for prior years' bonus depreciation (standard MACRS less the federal amount; Technical Bulletin TB-44)"),
+  vtTaxableStateRefunds: usd.optional().describe("Schedule IN-112 Part I line 10: taxable refunds of state and local income taxes reported on federal Form 1040 \u2014 subtracted"),
+  vtFederalMedicalExpenses: usd.optional().describe("Medical Deduction Worksheet line 1a: medical and dental expenses from federal Schedule A line 4 \u2014 only the excess over the Vermont standard deduction plus exemptions (Form IN-111 line 6) is subtracted on Schedule IN-112 line 11"),
+  vtNonAllowableMedicalExpenses: usd.optional().describe("Medical Deduction Worksheet line 1b: continuing care retirement community entrance fees and recurring monthly payments included in line 1a, which Vermont disallows"),
+  vtRetirementElection: external_exports.enum(["none", "social_security", "contributory_system"]).optional().describe("Schedule IN-112 line 12: the \xA7 5830e(e)(1) election \u2014 exclude EITHER federally taxable Social Security ('social_security', using taxableSocialSecurity) OR up to $10,000 of Civil Service / other non-Social-Security contributory system income ('contributory_system', using vtContributorySystemIncome). Only one may be elected; the military exclusion is separate and additional"),
+  vtContributorySystemIncome: usd.optional().describe("Retirement Income Exemption Worksheet line 11: income from the Civil Service Retirement System or another U.S., Vermont or other-state contributory system based on earnings NOT covered by Social Security \u2014 the first $10,000 is excludable under the 'contributory_system' election"),
+  vtMilitaryRetirementIncome: usd.optional().describe("Schedule IN-112 line 13: federally taxable U.S. military retirement and military survivor benefit income (Form 1040 line 5b, DFAS 1099-R) \u2014 excluded in full at federal AGI up to $125,000, phased out to $175,000, any filing status"),
+  vtRailroadRetirement: usd.optional().describe("Schedule IN-112 Part I line 14: Railroad Retirement Tier 1 and Tier 2 benefits included in federal AGI \u2014 exempt in full"),
+  vtExemptBondInterest: usd.optional().describe("Schedule IN-112 Part I line 15: interest from Vermont Student Assistance Corporation, Build America, Vermont Telecommunications Authority and Vermont Public Power Supply Authority bonds included in federal AGI"),
+  vtStudentLoanInterestPaid: usd.optional().describe("Schedule IN-112 line 16a: total interest paid in the year on qualified student loans \u2014 the excess over the federal deduction is subtracted, unless federal AGI exceeds $200,000 (joint) or $120,000 (all others)"),
+  vtStudentLoanInterestDeductedFederally: usd.optional().describe("Schedule IN-112 line 16b: student loan interest already deducted on federal Schedule 1 line 21"),
+  vtSpouseClaimedAsDependent: external_exports.boolean().optional().describe("Form IN-111 line 5b: another person can claim the spouse as a dependent, so the joint return takes no spouse exemption"),
+  vtFederalAdditionalTaxes: usd.optional().describe("Schedule IN-119 Part I line 4: federal additional tax on qualified plans, IRAs, HSAs and MSAs, recapture of the federal investment credit (Vermont portion) and Form 4972 lump-sum tax \u2014 24% is ADDED to the Vermont tax on line 9"),
+  vtVermontCreditRecapture: usd.optional().describe("Schedule IN-119 Part I line 6: recapture of Vermont credits \u2014 added on line 9"),
+  vtFederalElderlyDisabledCredit: usd.optional().describe("Schedule IN-119 Part II line 8: the federal credit for the elderly or the disabled (Schedule R) \u2014 24% is a nonrefundable Vermont credit through line 9"),
+  vtVermontInvestmentCredit: usd.optional().describe("Schedule IN-119 line 9: the federal investment tax credit attributable to Vermont property \u2014 24% is credited"),
+  vtFarmIncomeAveragingCredit: usd.optional().describe("Schedule IN-119 line 10: the reduction in federal tax from farm income averaging (Schedule J) \u2014 24% is credited"),
+  vtSolarCreditCarryforward: usd.optional().describe("Schedule IN-119 line 13: Vermont-based solar energy credit carryforward (at 24%)"),
+  vtCharitableContributions: usd.optional().describe("Form IN-111 line 11: charitable contributions allowable under IRC \xA7 170, whether or not itemized federally \u2014 the credit is 5% of the first $20,000"),
+  vtOtherStateIncome: usd.optional().describe("Schedule IN-117 line 9: modified AGI taxed by the other state or Canadian province AND by Vermont (the AGI taxed there, adjusted for its bonus depreciation, non-Vermont obligation and U.S. interest items); one schedule per state, pass the sum"),
+  vtOtherStateTaxPaid: usd.optional().describe("Schedule IN-117 line 20: income tax PAID to the other state or Canadian province \u2014 not withholding, not city or county tax, not the part of Canadian tax taken as a federal foreign tax credit"),
+  vtVheipContributions: usd.optional().describe("Schedule IN-119 Part II line 1: contributions to Vermont Higher Education Investment Plan (VT529) accounts \u2014 the credit is 10% of the first $2,500 per beneficiary ($5,000 joint)"),
+  vtVheipBeneficiaries: external_exports.number().int().optional().describe("Schedule IN-119 Part II line 1: the number of VHEIP beneficiaries contributed for"),
+  vtSelfEmploymentIncome: usd.optional().describe("Form IN-111 line 21 worksheet line 1: net earnings from self-employment, federal Schedule SE line 6 \u2014 the child care contribution is 0.11% of the Vermont-source portion"),
+  vtSelfEmploymentIncomeOutsideVermont: usd.optional().describe("Form IN-111 line 21 worksheet line 2: the part of Schedule SE line 6 earned for work performed outside Vermont"),
+  vtUseTaxEstimateFromTable: external_exports.boolean().optional().describe("Use Tax Worksheet Part 1: no records of untaxed purchases under $1,000 were kept \u2014 estimate them from the AGI table ($0 to $45 by $10,000 band; 0.05% of AGI, at most $150, above $100,000)"),
+  vtUseTaxSmallPurchases: usd.optional().describe("Use Tax Worksheet line 2a: total recorded untaxed purchases of items under $1,000 each (6%)"),
+  vtUseTaxLargePurchases: usd.optional().describe("Use Tax Worksheet line 3a: total untaxed purchases of items of $1,000 or more each (6%, always itemized)"),
+  vtUseTaxPaidOtherState: usd.optional().describe("Use Tax Worksheet line 3d: sales tax paid to another state on those purchases"),
+  vtVoluntaryContributions: usd.optional().describe("Form IN-111 line 24e: total voluntary contributions to the Vermont Veterans Fund, Green Up Vermont, Nongame Wildlife Fund and Vermont Children's Trust Foundation (lines 24a-24d) \u2014 added to the balance due or taken from the refund"),
+  vtRealEstateWithholding: usd.optional().describe("Form IN-111 line 26d: 2025 Vermont real estate withholding from Form RW-171"),
+  vtNonresidentEstimatedPayments: usd.optional().describe("Form IN-111 line 26e: nonresident estimated tax payments (nonresident withholding) allocated on Schedule K-1VT line 30"),
+  vtAppliedToNextYear: usd.optional().describe("Form IN-111 line 28a: refund to be credited to 2026 estimated tax"),
+  vtAppliedToPropertyTaxBill: usd.optional().describe("Form IN-111 line 28b: refund to be credited to the 2026 property tax bill"),
+  vtUnderpaymentInterestPenalty: usd.optional().describe("Form IN-111 line 31: interest and penalty on underpayment of estimated tax from Worksheet IN-152 or IN-152A"),
+  vtEitcQualifyingChildren: external_exports.number().int().optional().describe("Schedule IN-112 Part II line 5: number of qualifying children from federal Schedule EIC \u2014 one or more makes the Vermont credit 38% of federalEITC; none makes it 100%"),
+  vtChildrenSixOrUnder: external_exports.number().int().optional().describe("Schedule IN-112 Part II line 3: qualifying children six or younger at the close of the calendar year (born 2019-2025 for tax year 2025) \u2014 $1,000 each, phased out $20 per $1,000 of federal AGI over $125,000"),
+  vtFederalChildCareCredit: usd.optional().describe("Schedule IN-112 Part II line 1: the federal child and dependent care credit from Form 2441 line 11 \u2014 Vermont pays 72%, refundable"),
+  vtVeteranDischargeRecord: external_exports.boolean().optional().describe("Schedule IN-112 Part II lines 8-12: the filer has a discharge record or other record of separation from active duty verifying service in the uniformed services \u2014 the $250 refundable veteran credit, phased out between $25,000 and $30,000 of federal AGI (new for 2025)")
+  // Shared inputs used by Form ND-1: federalAGI (line 1a, informational only), additions (line 3, Schedule ND-1SA),
+  // subtractions (line 16, Schedule ND-1SA), taxableSocialSecurity (line 15, excluded in full),
+  // nonrefundableCredits (line 23, Schedule ND-1TC — every North Dakota credit is nonrefundable),
+  // stateWithholding / spouseStateWithholding (line 26), estimatedPayments + priorYearOverpaymentCredited + extensionPayment (line 27).
+};
+var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape, ...meShape, ...hiShape, ...riShape, ...mtShape, ...deShape, ...ndShape };
 
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input) {
@@ -29815,7 +31499,7 @@ function composeStateReturn(input, evalStateTax) {
   }
   const j = input.jurisdiction;
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me/hi/vt state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
     return { lines: composeIL(input, evalStateTax, notes), notes };
@@ -29865,6 +31549,18 @@ function composeStateReturn(input, evalStateTax) {
     return { lines: composeWV(input, evalStateTax, notes), notes };
   if (j === "me")
     return { lines: composeME(input, evalStateTax, notes), notes };
+  if (j === "hi")
+    return { lines: composeHI(input, evalStateTax, notes), notes };
+  if (j === "ri")
+    return { lines: composeRI(input, evalStateTax, notes), notes };
+  if (j === "mt")
+    return { lines: composeMT(input, evalStateTax, notes), notes };
+  if (j === "de")
+    return { lines: composeDE(input, evalStateTax, notes), notes };
+  if (j === "nd")
+    return { lines: composeND(input, evalStateTax, notes), notes };
+  if (j === "vt")
+    return { lines: composeVT(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }
 
@@ -30773,7 +32469,7 @@ var facts = [
   {
     id: "mfsLivedApartAllYear",
     type: "bool",
-    description: "MFS filer lived apart from the spouse AT ALL TIMES during the year \u2014 \xA7 469(i)(5) (halves the special allowance to $12,500/$50,000; living together at any time = NO allowance) AND \xA7 219(g)(4) (an MFS filer who lived apart all year is NOT treated as married for the IRA-deduction phaseout: the single ranges apply and no spousal-coverage attribution occurs).",
+    description: "MFS filer lived apart from the spouse AT ALL TIMES during the year \u2014 \xA7 469(i)(5) (halves the special allowance to $12,500/$50,000; living together at any time = NO allowance) AND \xA7 219(g)(4) (an MFS filer who lived apart all year is NOT treated as married for the IRA-deduction phaseout: the single ranges apply and no spousal-coverage attribution occurs) AND \xA7 86(c)(1)(C)(ii) (the $0 social-security base amount applies only to an MFS filer who did NOT live apart all year; one who did uses the $25,000/$34,000 unmarried amounts).",
     default: {
       value: false,
       rationale: "Assumed the spouses lived together at some point (zero MFS allowance \u2014 conservative)"
@@ -31020,6 +32716,12 @@ var facts = [
       value: "0",
       rationale: "Approximated by box 1 wages absent contrary input (Schedule SE line 8a wants box 3)"
     }
+  },
+  {
+    id: "socialSecurityWagesProvided",
+    type: "bool",
+    description: "socialSecurityWages is an EXPLICIT figure for the self-employment earner \u2014 set it (with socialSecurityWages, even $0) when that person's own W-2 box 3 is known, so Schedule SE line 8a uses it instead of falling back to box-1 wages. The documents compiler sets it from W-2 recipients; a joint return where the SE earner has no W-2 needs it with socialSecurityWages 0 (us.federal.se_tax).",
+    default: { value: false, rationale: "Not provided \u2014 Schedule SE line 8a falls back to box-1 wages when box 3 is absent" }
   },
   {
     id: "stateTaxableIncome",
@@ -33532,6 +35234,464 @@ var facts = [
     description: "Form 1040ME line 30: use the 0.04% of Maine AGI estimate for unknown untaxed purchases (us.me.use_tax).",
     default: { value: false, rationale: "Assumed exact purchases are reported" }
   },
+  // ---- Hawaii (Form N-11) ----
+  {
+    id: "hiUseRateSchedule",
+    type: "bool",
+    description: "Compute Form N-11 line 27 from the Tax Rate Schedules at the exact income instead of the Tax Table (taxable income under $100,000 uses the table's $50-row midpoint by default; $100,000 or more always uses the schedules) (us.hi.income_tax, us.hi.capital_gains_tax, us.hi.other_state_credit).",
+    default: { value: false, rationale: "The line 27 instruction directs filers under $100,000 to the Tax Table" }
+  },
+  {
+    id: "hiNetLongTermCapitalGain",
+    type: "money",
+    description: "Tax on Capital Gains Worksheet line 4: Hawaii net long-term capital gain (federal Schedule D line 15 plus Hawaii long-term adjustments) (us.hi.capital_gains_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no long-term capital gain absent contrary input" }
+  },
+  {
+    id: "hiNetCapitalGain",
+    type: "money",
+    description: "Tax on Capital Gains Worksheet line 7: Hawaii net capital gain (federal Schedule D line 16 plus Hawaii adjustments) (us.hi.capital_gains_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no net capital gain absent contrary input" }
+  },
+  {
+    id: "hiInvestmentInterestN158",
+    type: "money",
+    min: "0",
+    description: "Tax on Capital Gains Worksheet line 9: Form N-158 line 4e \u2014 net capital gain elected as investment income (us.hi.capital_gains_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed no Form N-158 election absent contrary input" }
+  },
+  {
+    id: "hiCapitalGainsStatutoryThreshold",
+    type: "bool",
+    description: "Tax on Capital Gains Worksheet line 12: use HRS \xA7 235-51(f)(1)(B)'s 'taxable income taxed at a rate below 7.25 per cent' under the 2025 brackets ($48,000 single/MFS, $72,000 HOH, $96,000 MFJ/QSS) instead of the printed $24,000 / $36,000 / $48,000 (us.hi.capital_gains_tax).",
+    default: { value: false, rationale: "The printed 2025 worksheet amounts are the default; the statutory amounts are an election to disclose" }
+  },
+  {
+    id: "hiEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Earned income (wages, salaries, tips, professional fees, taxable scholarships, net business and farm income less the SE tax deduction) \u2014 the dependent-filer standard deduction (us.hi.standard_deduction) and Schedule X line 23 (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiAgi",
+    type: "money",
+    description: "Hawaii adjusted gross income, Form N-11 line 20 \u2014 the medical, casualty, and miscellaneous floors and the overall limitation (us.hi.itemized_deductions), the renters credit AGI test (us.hi.renters_credit), and the child care percentage (us.hi.child_dependent_care_credit). May be negative. In dollars."
+  },
+  {
+    id: "hiFederalAgi",
+    type: "money",
+    description: "Federal adjusted gross income, Form N-11 line 7 \u2014 the state income/sales tax deduction gate (us.hi.itemized_deductions) and the food/excise credit table (us.hi.food_excise_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiMedicalExpenses",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-1 line 1: medical and dental expenses before the 7.5% floor (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiStateLocalIncomeTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 5: state and local income taxes (or the elected general sales taxes) \u2014 allowed only when federal AGI is under $100,000 single/MFS, $150,000 HOH, $200,000 MFJ/QSS; exclude amounts claimed under the other-state credit (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiRealEstateTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 6: real estate taxes (no foreign real property taxes) (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiPersonalPropertyTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 7: personal property taxes paid to other states (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiOtherTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 8: other deductible taxes (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiHomeMortgageInterest",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-3 lines 10-12: home mortgage interest and points (pre-TCJA limits) (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiInvestmentInterest",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-3 line 13: investment interest from Form N-158 \u2014 protected from the overall limitation (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiCharitableContributions",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-4 line 18: gifts to charity (cash, other, carryover) within the AGI limits (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiCasualtyLosses",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-5 line 19: casualty and theft losses after the $100-per-casualty reduction, before the 10% floor (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiJobAndMiscExpenses",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-6 line 26: unreimbursed employee business expenses, tax preparation fees, and other expenses subject to the 2% floor (us.hi.itemized_deductions; ignored for TY2026). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiOtherMiscDeductions",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-6 line 30: other deductions not subject to the 2% limit (gambling losses to the extent of winnings, impairment-related work expenses) (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiGamblingLossesInMisc",
+    type: "money",
+    min: "0",
+    description: "Total Itemized Deductions Worksheet line 2d: gambling and casualty or theft losses included in Worksheet A-6 line 30 \u2014 protected from the overall limitation (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiExemptions",
+    type: "int",
+    min: "0",
+    description: "Form N-11 line 6e: total exemptions (yourself, spouse, dependents, plus one more for each taxpayer or spouse 65 or older) \u2014 $1,144 each (us.hi.personal_exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "hiDisabledPersons",
+    type: "int",
+    min: "0",
+    max: "2",
+    description: "Form N-11 line 25 ovals: taxpayers (you and/or your spouse) claiming the $7,000 blind, deaf, or totally disabled exemption in lieu of all regular exemptions (Form N-172 certified) (us.hi.personal_exemption).",
+    default: { value: "0", rationale: "Assumed no disability exemption absent contrary input" }
+  },
+  {
+    id: "hiNonDisabledSpouseAge65",
+    type: "bool",
+    description: "With one disabled spouse on a joint return, the non-disabled spouse is 65 or older \u2014 $9,288 instead of $8,144 (us.hi.personal_exemption).",
+    default: { value: false, rationale: "Assumed the non-disabled spouse is under 65" }
+  },
+  {
+    id: "hiReservePay",
+    type: "money",
+    min: "0",
+    description: "Form N-11 line 15: the taxpayer's military reserve or Hawaii National Guard duty pay (W-2 Box 16 from the reserve component) \u2014 the first $8,636 is excluded (us.hi.reserve_pay_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no reserve pay absent contrary input" }
+  },
+  {
+    id: "hiSpouseReservePay",
+    type: "money",
+    min: "0",
+    description: "Form N-11 line 15: the spouse's reserve or National Guard duty pay on a joint return (us.hi.reserve_pay_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no spouse reserve pay absent contrary input" }
+  },
+  {
+    id: "hiSpouseFederalAgi",
+    type: "money",
+    description: "Form N-311 line 5: the spouse's federal AGI, added for married filing separately (us.hi.food_excise_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiFoodExciseQualifiedExemptions",
+    type: "int",
+    min: "0",
+    description: "Form N-311 line 8: qualified exemptions \u2014 yourself, spouse, and dependents present in Hawaii more than nine months and not claimable by another (not the extra age-65 exemption), plus minor children supported by public agencies (us.hi.food_excise_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input \u2014 the nine-month presence test is an attestation" }
+  },
+  {
+    id: "hiSpouseAgi",
+    type: "money",
+    description: "Schedule X Part I: the spouse's Hawaii adjusted gross income, added for married filing separately (us.hi.renters_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiRentPaid",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 7: rent paid in 2025 for the Hawaii residence (not exempt from real property tax) net of utilities, parking, ground rent, and subsidies \u2014 must exceed $1,000 (us.hi.renters_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no rent paid absent contrary input" }
+  },
+  {
+    id: "hiRentersExemptions",
+    type: "int",
+    min: "0",
+    description: "Schedule X line 11: qualified exemptions (yourself, spouse, dependents present more than nine months and not claimable by another) plus one more for you and one for your spouse if 65 or older \u2014 $50 each (us.hi.renters_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input \u2014 the nine-month presence test is an attestation" }
+  },
+  {
+    id: "hiChildCareExpenses",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 20/22: qualified child and dependent care expenses paid in 2025 (before the $10,000 / $20,000 cap) (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiChildCareQualifyingPersons",
+    type: "int",
+    min: "0",
+    description: "Schedule X line 17: qualifying persons (1 \u2192 $10,000 cap; 2 or more \u2192 $20,000) (us.hi.child_dependent_care_credit).",
+    default: { value: "1", rationale: "Assumed one qualifying person when expenses are given" }
+  },
+  {
+    id: "hiDependentCareBenefits",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 18: deductible and excluded dependent care benefits (lines 14 + 15) that reduce the expense cap (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no dependent care benefits absent contrary input" }
+  },
+  {
+    id: "hiSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 24: the spouse's earned income on a joint return (or the $200 / $400 monthly deemed amount for a student or disabled spouse) (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiMfsConsideredUnmarried",
+    type: "bool",
+    description: "Schedule X Part II checkbox: a married-filing-separately filer who lived apart from the spouse the last six months, kept the qualifying person's home, and paid over half its cost (us.hi.child_dependent_care_credit).",
+    default: { value: false, rationale: "MFS filers are married for the credit unless attested" }
+  },
+  {
+    id: "hiFederalEic",
+    type: "money",
+    min: "0",
+    description: "Form N-356 line 2: the federal earned income credit claimed on the federal return (Form 1040 line 27a) \u2014 40% (us.hi.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiNetCapitalGainLine27a",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 2: the net capital gain beside Form N-11 line 27a (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiOutOfStateIncome",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 3: out-of-state income including capital gains, excluding Hawaii-exempt income (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiOutOfStateLtcg",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 4: long-term capital gains from sources outside Hawaii (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiOtherStateTaxEligible",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 9: tax paid to other states plus foreign tax not credited federally (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiTaxLine13",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 13: the Form N-11 line 27 tax from the table, schedule, or capital gains worksheet (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "hiAdjustedTaxLiability",
+    type: "money",
+    description: "Other State and Foreign Tax Credit Worksheet line 19: Form N-11 line 34 adjusted tax liability (us.hi.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  // ---- Rhode Island (Form RI-1040) ----
+  {
+    id: "riUseRateSchedule",
+    type: "bool",
+    description: "Compute Form RI-1040 line 8 with the Tax Computation Worksheet arithmetic at the exact income instead of the Tax Table (taxable income under $100,000 uses the table's $50-row midpoint by default; $100,000 or more always uses the worksheet) (us.ri.income_tax).",
+    default: { value: false, rationale: "The line 8 instruction directs filers under $100,000 to the Tax Table" }
+  },
+  {
+    id: "riModifiedAgi",
+    type: "money",
+    description: "Modified federal adjusted gross income, Form RI-1040 line 3 (federal AGI plus RI Schedule M net modifications) \u2014 the standard deduction and exemption phase-outs (us.ri.standard_deduction, us.ri.exemption) and the other-state credit ratio (us.ri.other_state_credit). May be negative. In dollars."
+  },
+  {
+    id: "riExemptions",
+    type: "int",
+    min: "0",
+    description: "RI Schedule E line 5: total exemptions \u2014 yourself (unless claimable by another), your spouse on a joint return, and dependents \u2014 $5,100 each (us.ri.exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "riFederalAgi",
+    type: "money",
+    description: "Federal adjusted gross income, Form RI-1040 line 1 \u2014 the Social Security and pension modification income tests and the use tax lookup table (us.ri.social_security_modification, us.ri.pension_modification, us.ri.use_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riTaxpayerFullRetirementAge",
+    type: "bool",
+    description: "The taxpayer has reached Social Security full retirement age \u2014 born on or before March 1, 1959 for 2025 (Social Security Worksheet line 5; Schedule M line 1t question 1) (us.ri.social_security_modification, us.ri.pension_modification).",
+    default: { value: false, rationale: "Assumed under full retirement age unless stated" }
+  },
+  {
+    id: "riSpouseFullRetirementAge",
+    type: "bool",
+    description: "The spouse has reached Social Security full retirement age \u2014 born on or before March 1, 1959 for 2025 (joint returns) (us.ri.social_security_modification, us.ri.pension_modification).",
+    default: { value: false, rationale: "Assumed under full retirement age unless stated" }
+  },
+  {
+    id: "riSocialSecurityBenefits",
+    type: "money",
+    min: "0",
+    description: "Social Security Worksheet line 8: total Social Security benefits, Form 1040 line 6a (us.ri.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riSocialSecurityBenefitsFraPerson",
+    type: "money",
+    min: "0",
+    description: "Social Security Worksheet line 9: the part of line 8 attributed to the spouse who has reached full retirement age when only one spouse has (us.ri.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riTaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description: "Social Security Worksheet line 11: taxable Social Security, Form 1040 line 6b (us.ri.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riTaxpayerPensionIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule M line 1t table line 2 column (a): the taxpayer's federally taxable pension and annuity income (Form 1040 line 5b), not IRA distributions or military service pensions (us.ri.pension_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riSpousePensionIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule M line 1t table line 2 column (b): the spouse's taxable pension and annuity income on a joint return (us.ri.pension_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description: "RI Schedule I line 20: the federal child and dependent care credit, Schedule 3 line 2 \u2014 25% (us.ri.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riIncomeTax",
+    type: "money",
+    min: "0",
+    description: "RI Schedule I line 19: Form RI-1040 line 8 income tax \u2014 the cap on the child care credit (us.ri.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riIncomeTaxAfterFederalCredit",
+    type: "money",
+    min: "0",
+    description: "RI Schedule II line 23: line 8 income tax less the Schedule I line 22 credit (us.ri.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riOtherStateIncome",
+    type: "money",
+    min: "0",
+    description: "RI Schedule II line 24: income derived from the other state (Form RI-1040MU line 29 for several states) (us.ri.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riOtherStateTaxPaid",
+    type: "money",
+    min: "0",
+    description: "RI Schedule II line 28: income tax due and paid to the other state (not withholding; $0 if fully refunded) (us.ri.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riFederalEic",
+    type: "money",
+    min: "0",
+    description: "RI Schedule EIC line 39: the federal earned income credit, Form 1040 line 27a \u2014 16% (us.ri.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riHouseholdIncome",
+    type: "money",
+    description: "Form RI-1040H line 32: total 2025 household income of every household member, taxable and nontaxable, with losses added back (us.ri.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riHouseholdMembers",
+    type: "int",
+    min: "1",
+    description: "Form RI-1040H line 1f: persons in the household \u2014 the '1 person' or '2 or more' percentage column (us.ri.property_tax_relief_credit).",
+    default: { value: "1", rationale: "Assumed a one-person household absent contrary input" }
+  },
+  {
+    id: "riAge65OrDisabled",
+    type: "bool",
+    description: "Form RI-1040H Part 1 question D: you or your spouse were 65 or older, or receiving Social Security disability benefits, as of December 31, 2025 \u2014 plus domicile for the whole year and current taxes/rent (us.ri.property_tax_relief_credit).",
+    default: { value: false, rationale: "Eligibility is an attestation; absent it the credit is $0" }
+  },
+  {
+    id: "riPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description: "Form RI-1040H line 2: property taxes paid or payable for 2025 on the homestead (the owner's share) (us.ri.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riRentPaid",
+    type: "money",
+    min: "0",
+    description: "Form RI-1040H line 7: rent paid in 2025 for occupancy only (net of utilities and furnishings), also rented land under a taxed home \u2014 20% counts as property tax (us.ri.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riUseTaxLookupTable",
+    type: "bool",
+    description: "RI Schedule U Option #2: use the safe-harbor lookup table on federal AGI instead of actual purchases (us.ri.use_tax).",
+    default: { value: false, rationale: "Actual purchases (Option #1) unless the lookup table is elected" }
+  },
+  {
+    id: "riUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description: "RI Schedule U line 1: total price of purchases subject to use tax \u2014 7% (us.ri.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riSalesTaxPaidOtherStates",
+    type: "money",
+    min: "0",
+    description: "RI Schedule U line 3: sales taxes paid in other states on the line 1 purchases (us.ri.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "riLargePurchasesNetUseTax",
+    type: "money",
+    min: "0",
+    description: "RI Schedule U line 7e: net use tax due on single purchases of $1,000 or more (7% less sales tax paid) added to the lookup amount (us.ri.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
   // ---- West Virginia (Form IT-140) ----
   {
     id: "wvUseRateSchedule",
@@ -34674,6 +36834,581 @@ var facts = [
     min: "0",
     description: "Federal child and dependent care credit ALLOWED (Form 2441 / Schedule 3 line 2) \u2014 Kansas allows 50%, nonrefundable, residents only (us.ks.child_care_credit). In dollars.",
     default: { value: "0", rationale: "Assumed no federal child care credit absent contrary input" }
+  },
+  // ---- Montana (Form 2) ----
+  {
+    id: "mtNetLongTermCapitalGains",
+    type: "money",
+    description: "Form 2 page 2 line 2: net long-term capital gains subject to the federal net long-term capital gains tax \u2014 generally the LESSER of federal Schedule D line 15 or line 16 (us.mt.income_tax, us.mt.capital_gains_tax). Montana taxes these at 3% / 4.1%; qualified dividends are NOT included (they are Montana ordinary income). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtTaxpayerAge65",
+    type: "bool",
+    description: "Form 2 line 6: you attained age 65 \u2014 a $5,660 subtraction from federal taxable income for 2025 (us.mt.age65_subtraction).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtSpouseAge65",
+    type: "bool",
+    description: "Form 2 line 6: your spouse attained age 65 \u2014 a second $5,660 subtraction, on a JOINT return only (us.mt.age65_subtraction).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtFederalEic",
+    type: "money",
+    description: "Form 2 line 15: the federal earned income credit from federal Form 1040 line 27 \u2014 Montana allows 10% of it for 2025, 20% from 2026, refundable (us.mt.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtAge62",
+    type: "bool",
+    description: "Schedule 2EC eligibility: the claimant reached age 62 by December 31 of the tax year (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtResided9Months",
+    type: "bool",
+    description: "Schedule 2EC eligibility: the claimant resided in Montana for at least nine months during the tax year (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtOccupied6Months",
+    type: "bool",
+    description: "Schedule 2EC eligibility: the claimant occupied a Montana residence as an owner, renter or lessee for at least six months during the tax year (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtSoleHouseholdClaimant",
+    type: "bool",
+    description: "Schedule 2EC attestation: 'I am the only member of my household claiming this credit' \u2014 only one elderly homeowner/renter credit is allowed per household (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtGrossHouseholdIncome",
+    type: "money",
+    description: "Schedule 2EC line 18: GROSS household income \u2014 all income of ALL household members, taxable and non-taxable, including the full amount of pensions and annuities, Railroad Retirement and veterans' disability benefits, excluded capital gains, alimony, support money, cash public assistance, tax-exempt interest, all Social Security, and refundable credits received in cash (expressly including the 2024 Montana property tax rebate). This is NOT federal AGI. Must be under $45,000 (us.mt.elderly_homeowner_renter_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtPropertyTaxBilled",
+    type: "money",
+    description: "Schedule 2EC line 23: property tax billed on the Montana residence and up to one acre, including special assessments and fees but excluding penalties and interest (us.mt.elderly_homeowner_renter_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtRentPaid",
+    type: "money",
+    description: "Schedule 2EC line 24: rent paid in the tax year for the Montana residence \u2014 15% of it is the rent-equivalent tax paid. Excludes mortgage payments, nursing home costs paid directly from Social Security, and rent paid by a rental assistance program (us.mt.elderly_homeowner_renter_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtOrdinaryIncomeTax",
+    type: "money",
+    description: "Schedule III Part II line 5: Montana ordinary income tax from Form 2 page 2 line 12 \u2014 the base the other-state credit's ordinary block is limited by (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtCapitalGainsTax",
+    type: "money",
+    description: "Schedule III Part II line 15: Montana net long-term capital gains tax from Form 2 page 2 line 11 \u2014 the base the other-state credit's capital gains block is limited by (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtOtherStateOrdinaryIncome",
+    type: "money",
+    description: "Schedule III Part II line 1: income sourced and taxable to the other state or country that is included in Montana taxable income, EXCLUDING net long-term capital gains (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtOtherStateCapitalGains",
+    type: "money",
+    description: "Schedule III Part II line 11: net long-term capital gain sourced and taxable to the other state or country and included in Montana taxable income (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtOtherStateTotalIncome",
+    type: "money",
+    description: "Schedule III Part II lines 2 and 12: ALL income sourced and taxable to the other state or country \u2014 the denominator of the first ratio (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtOrdinaryIncomeSourcedToMontana",
+    type: "money",
+    description: "Schedule III Part II line 3: income sourced and taxable to Montana excluding net long-term capital gains (full-year residents: federal Form 1040 line 9 excluding net long-term capital gains, less related expenses) \u2014 the denominator of the second ratio (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtFederalNetLongTermCapitalGains",
+    type: "money",
+    description: "Schedule III Part II line 13: federal net long-term capital gains \u2014 the denominator of the capital gains block's second ratio (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtOtherStateTaxPaid",
+    type: "money",
+    description: "Schedule III Part II lines 4 AND 14: the TOTAL income tax liability actually paid to the other state or country, excluding penalties and interest (us.mt.other_state_credit). The same figure feeds both blocks \u2014 the line 16 ratio attributes the capital-gains share; do not pre-attribute. North Dakota WAGES are not eligible (reciprocity); foreign tax is not eligible if a federal Form 1116 credit was claimed. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtTuitionSavingsContributions",
+    type: "money",
+    description: "Schedule I line 16: contributions to a Montana family education savings (section 529) account \u2014 up to $4,500, or $9,000 on a joint return, for 2025 (us.mt.tuition_savings_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtAbleContributions",
+    type: "money",
+    description: "Schedule I line 17: contributions to an Achieving a Better Life Experience (ABLE) account \u2014 up to $3,000, or $6,000 on a joint return (us.mt.able_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtMilitaryRetirementIncome",
+    type: "money",
+    description: "Schedule I line 13: military pension, military retirement income, or military survivor benefits (Form WMRE) \u2014 the subtraction is the LESSER of Montana source wage income or 50% of this amount (us.mt.military_retirement_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtMontanaSourceWageIncome",
+    type: "money",
+    description: "MCA 15-30-2120(8)(b): Montana source wage income \u2014 the cap on the military retirement subtraction. The statute defines it as wages, salary, tips and other compensation for services performed in Montana PLUS net income from a trade, business, profession or occupation carried on in Montana PLUS net income from Montana farming, so Schedule C and F net income count; a fully retired veteran with none of the three gets nothing (us.mt.military_retirement_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "mtMilitaryRetireeEligible",
+    type: "bool",
+    description: "MCA 15-30-2120(9)(a): the military retiree either became a Montana resident on or after June 30, 2023, or was a resident before receiving the pension and remained one after (us.mt.military_retirement_subtraction).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  {
+    id: "mtMilitaryRetireeWithinFiveYears",
+    type: "bool",
+    description: "MCA 15-30-2120(9)(b): the subtraction is being claimed within the five consecutive years allowed after first qualifying (us.mt.military_retirement_subtraction).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Montana attestations produce $0 unless stated" }
+  },
+  // ---- Delaware (Form PIT-RES) ----
+  {
+    id: "deUseRateSchedule",
+    type: "bool",
+    description: "Form PIT-RES line 24: compute from the rate schedule at the exact taxable income instead of the printed Tax Table (taxable income under $60,000 uses the table's row midpoint by instruction; $60,000 or more always uses the schedule) (us.de.income_tax).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "deItemizes",
+    type: "bool",
+    description: "Form PIT-RES line 20b: itemizing Delaware deductions instead of the standard deduction. Delaware's election is INDEPENDENT of the federal one, but it disallows the line 21 additional standard deduction entirely (us.de.standard_deduction).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "deAdditionalDeductionBoxes",
+    type: "int",
+    description: "Form PIT-RES line 21: the number of boxes checked for age 65 or over and blindness \u2014 $2,500 each, maximum two boxes ($5,000) per person. Four boxes are possible on a joint return, and on a married-filing-separate return (status 3) when the spouse's boxes qualify under 30 Del. C. \xA7 1108(b)(2)/(4): that spouse is 65 or over or blind, has NO gross income, and is not another taxpayer's dependent. Two boxes for every other status, and per column of a combined separate return. Not allowed with itemized deductions (us.de.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deExemptions",
+    type: "int",
+    description: "Form PIT-RES line 27a: the number of federal exemptions (yourself, your spouse on a joint return, and dependents) \u2014 $110 each. A childless joint return enters 2 (us.de.personal_credits).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deAge60Persons",
+    type: "int",
+    description: "Form PIT-RES line 27b: the number of persons 60 or over on December 31 (you and/or your spouse) \u2014 an additional $110 each (us.de.personal_credits).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deAge60OrOver",
+    type: "bool",
+    description: "Form PIT-RES line 6: the person claiming the pension exclusion was 60 or over on December 31 of the tax year \u2014 the 60-or-over tier allows $12,500 of pension PLUS eligible retirement income, while under 60 allows only $2,000 of pension (us.de.pension_exclusion).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "deDomiciledForPensionExclusion",
+    type: "bool",
+    description: "TY2026 and after: the person claiming the 60-or-over pension exclusion has been legally domiciled in Delaware (a 'resident individual' under 30 Del. C. \xA7 1103) for at least three years \u2014 30 Del. C. \xA7 1106(b)(3)f.4, added by 85 Del. Laws c. 426 effective August 17, 2026. A 60-or-over person who does not meet it gets NO pension exclusion at all, not the under-60 tier (us.de.pension_exclusion version 2). Not needed for TY2025.",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "deMilitaryPension",
+    type: "bool",
+    description: "Form PIT-RES line 6 checkbox: the pension is a United States military pension \u2014 raises the UNDER-60 exclusion from $2,000 to $12,500. Since 84 Del. Laws c. 437 the definition covers the Army, Navy, Air Force, Marine Corps, Space Force, Coast Guard, the NOAA and Public Health Service commissioned corps, and the National Guard (us.de.pension_exclusion).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "dePensionIncome",
+    type: "money",
+    description: "Form PIT-RES line 6: amounts received as pensions from employers, the United States, this State or its subdivisions. Excludes early distributions (1099-R box 7 code 1, or an early-withdrawal penalty) and employer-paid disability pension income before minimum retirement age (us.de.pension_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deEligibleRetirementIncome",
+    type: "money",
+    description: "Form PIT-RES line 6, 60-or-over worksheet: eligible retirement income \u2014 dividends, capital gains net of losses, interest, net rental income from real property, and qualified retirement plan distributions (IRA, 401(k), Keogh, and IRC 457 government deferred compensation). Counts ONLY for a person 60 or over (us.de.pension_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deAgiBeforeExclusion",
+    type: "money",
+    description: "Form PIT-RES line 10: adjusted gross income after the Section B subtractions but BEFORE the line 11 exclusion \u2014 the statutory 'adjusted gross income (without reduction by this exclusion)' income test (us.de.elderly_disabled_exclusion). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deEarnedIncome",
+    type: "money",
+    description: "Form PIT-RES line 11 worksheet: earned income (wages, tips, farm or business income) \u2014 must be under $2,500, or under $5,000 on a joint return, for the elderly/disabled exclusion (us.de.elderly_disabled_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deQualifiesElderlyDisabled",
+    type: "bool",
+    description: "Form PIT-RES line 11 worksheet: you were at least 60 years old OR totally and permanently disabled on December 31 (us.de.elderly_disabled_exclusion).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "deSpouseQualifiesElderlyDisabled",
+    type: "bool",
+    description: "Form PIT-RES line 11 worksheet: your spouse was at least 60 years old OR totally and permanently disabled on December 31 \u2014 the $4,000 joint tier requires BOTH spouses to qualify (us.de.elderly_disabled_exclusion).",
+    default: { value: false, rationale: "Assumed not attested \u2014 Delaware attestations produce $0 unless stated" }
+  },
+  {
+    id: "deFederalEic",
+    type: "money",
+    description: "DE Schedule II line 13: the federal earned income credit from federal Form 1040 line 27. Delaware allows either 20% limited to the tax or 4.5% fully refundable (us.de.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deEitcTaxAfterCredits",
+    type: "money",
+    description: "DE Schedule II line 12: Form PIT-RES line 33 \u2014 the Delaware tax after ALL other non-refundable credits, which decides which earned income credit branch applies (us.de.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deFederalChildCareCredit",
+    type: "money",
+    description: "Form PIT-RES line 31 worksheet: the federal child and dependent care credit from federal Form 2441 line 11. Delaware allows 50% of it, capped at $3,000 and at the tax (us.de.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deAdjustedGrossIncome",
+    type: "money",
+    description: "Form PIT-RES line 12: Delaware adjusted gross income \u2014 the denominator of the other-state credit ratio (us.de.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deIncomeTax",
+    type: "money",
+    description: "Form PIT-RES line 24: the Delaware tax before credits, which the other-state credit ratio is applied to (us.de.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deOtherStateIncome",
+    type: "money",
+    description: "Other-state credit worksheet line 1: adjusted gross income from the other state's return. The ratio to Delaware AGI is capped at 100% (us.de.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deOtherStateTaxPaid",
+    type: "money",
+    description: "Other-state credit worksheet line 6: income tax paid to the other state net of its credits. EXCLUDES city and county taxes; the District of Columbia counts as a state (us.de.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "deVolunteerFirefighters",
+    type: "int",
+    description: "Form PIT-RES line 29: the number of qualifying active volunteer firefighters or members of a volunteer fire company auxiliary, ambulance or rescue squad on the return (0, 1 or 2) \u2014 $1,000 each. The Division verifies this credit before processing, so it defaults to none (us.de.volunteer_firefighter_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  // ---- North Dakota (Form ND-1) ----
+  {
+    id: "ndUseRateSchedule",
+    type: "bool",
+    description: "Form ND-1 line 20: compute from the rate schedule at the exact taxable income instead of the printed Tax Table (taxable income under $100,000 uses the table's $50-row midpoint, which section 57-38-30.3(10) makes mandatory; $100,000 or more always uses the schedule) (us.nd.income_tax).",
+    default: { value: false, rationale: "Assumed not elected \u2014 the Tax Table governs below $100,000" }
+  },
+  {
+    id: "ndNetLongTermCapitalGain",
+    type: "money",
+    description: "Net long-term capital gain worksheet line 3: the SMALLER of federal Schedule D lines 15 and 16 \u2014 or, when no Schedule D was required, the capital gain distributions from Form 1040 line 7. The worksheet stops outright if either Schedule D figure is zero or less, so a net loss yields no exclusion (us.nd.capital_gain_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndCapitalGainAlreadyExcluded",
+    type: "money",
+    description: "Net long-term capital gain worksheet line 6: the portion of that gain already included in an amount entered on Form ND-1 line 7 (exempt Native American income) or line 16 (Schedule ND-1SA subtractions), which is not eligible for the 40% exclusion (us.nd.capital_gain_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndQualifiedDividends",
+    type: "money",
+    description: "Form ND-1 line 13: qualified dividends from federal Form 1040 or 1040-SR line 3a \u2014 North Dakota excludes 40%. A part-year resident or nonresident uses the portion reported to North Dakota (us.nd.qualified_dividend_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndCollegeSaveContributions",
+    type: "money",
+    description: "Form ND-1 line 12: contributions to a North Dakota College SAVE account administered by the Bank of North Dakota \u2014 capped at $5,000, or $10,000 on a joint return. Rollovers from another section 529 plan do NOT qualify (us.nd.college_save_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndTaxableIncome",
+    type: "money",
+    description: "Form ND-1 line 18: North Dakota taxable income \u2014 the marriage penalty credit requires it to exceed $81,036 for 2025 (us.nd.marriage_penalty_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndLowerQualifiedIncome",
+    type: "money",
+    description: "Marriage Penalty Credit Worksheet: the qualified income of the LOWER-earning spouse, which must exceed $47,550 for 2025 (us.nd.marriage_penalty_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndSingleScheduleTaxA",
+    type: "money",
+    description: "Marriage Penalty Credit Worksheet line 7: the tax on WORKSHEET LINE 6 computed on the SINGLE rate schedule (us.nd.marriage_penalty_credit). Line 6 is the lower-earning spouse's qualified income MINUS the worksheet's preprinted $15,750 (half the federal joint standard deduction) \u2014 the rule takes this line as a computed amount and does NOT subtract the $15,750 itself, so a caller supplying the tax on the unreduced income overstates the credit. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndSingleScheduleTaxB",
+    type: "money",
+    description: "Marriage Penalty Credit Worksheet line 9: the tax on WORKSHEET LINE 8 computed on the SINGLE rate schedule (us.nd.marriage_penalty_credit). Line 8 is Form ND-1 line 18 taxable income MINUS that same worksheet line 6 amount (the lower-earning spouse's qualified income less the preprinted $15,750). The rule takes this line as a computed amount and performs neither subtraction itself. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndJointScheduleTax",
+    type: "money",
+    description: "Marriage Penalty Credit Worksheet line 10: the tax on WORKSHEET LINE 1 \u2014 the couple's Form ND-1 line 18 taxable income, NOT their qualified income \u2014 computed on the MARRIED FILING JOINTLY rate schedule (us.nd.marriage_penalty_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndDoublyTaxedIncome",
+    type: "money",
+    description: "Schedule ND-1CR line 1c: the part of federal AGI sourced to the other state that was received or earned while a North Dakota resident \u2014 the numerator of the four-decimal ratio (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndOtherStateIncomeBase",
+    type: "money",
+    description: "Schedule ND-1CR line 2: for a full-year resident, federal AGI (Form ND-1 line 1a) LESS the line 5 United States obligation interest \u2014 the denominator of the ratio (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndIncomeTaxBeforeCredits",
+    type: "money",
+    description: "Schedule ND-1CR line 4: the North Dakota tax from Form ND-1 line 20, which the ratio is applied to (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "ndOtherStateTaxPaid",
+    type: "money",
+    description: "Schedule ND-1CR line 6: the NET income tax shown on the other state's return \u2014 after that state's credits but before its withholding and estimated payments \u2014 plus any local jurisdiction tax in that same state. Foreign countries do not qualify, and Montana and Minnesota WAGES are excluded by reciprocity (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  // ---- Vermont (Form IN-111) ----
+  {
+    id: "vtUseRateSchedule",
+    type: "bool",
+    description: "Form IN-111 line 8: apply the rate schedule at the exact taxable income instead of the printed Tax Table (taxable income under $75,000 uses the $100-row midpoint; 'TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES') (us.vt.income_tax).",
+    default: { value: false, rationale: "Assumed not elected \u2014 the Tax Table governs below $75,000" }
+  },
+  {
+    id: "vtFederalAgi",
+    type: "money",
+    description: "Form IN-111 line 1: federal adjusted gross income \u2014 the base for the 3% minimum tax above $150,000, the retirement and military exclusion phase-outs, the child tax credit and veteran credit phase-outs, the student loan interest limit and the estimated use tax table (us.vt.income_tax and the Vermont credit and exclusion rules). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtUsObligationInterest",
+    type: "money",
+    description: "Schedule IN-112 Part I line 7: interest income from U.S. government obligations \u2014 subtracted from federal AGI before the 3% minimum tax is figured, per the Form IN-111 line 8 instruction (us.vt.income_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtAdditionalDeductionBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description: "Form IN-111 line 4: the number of standard deduction boxes checked on federal Form 1040 (born before January 2, 1961, or blind) \u2014 $1,250 each; the chart allows at most two for single and head of household and four for the 'Married Filing Jointly or Qualifying Widow(er)' row and for married filing separately (us.vt.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "vtExemptions",
+    type: "int",
+    min: "0",
+    description: "Form IN-111 line 5d: total personal exemptions \u2014 1 for yourself unless someone can claim you, 1 for a spouse on a joint return only (NOT a qualifying widow(er) or married filing separately), plus other dependents (us.vt.personal_exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "vtRetirementElection",
+    type: "enum",
+    enumValues: ["none", "social_security", "contributory_system"],
+    description: "Schedule IN-112 line 12 election under 32 V.S.A. \xA7 5830e(e)(1): exclude EITHER federally taxable Social Security ('social_security') OR up to $10,000 of Civil Service Retirement System / other non-Social-Security contributory system income ('contributory_system'); only one may be elected (us.vt.retirement_income_exclusion).",
+    default: { value: "none", rationale: "Assumed no election \u2014 the exclusion is claimed only when the filer elects it" }
+  },
+  {
+    id: "vtTaxableSocialSecurity",
+    type: "money",
+    description: "Federal Form 1040 line 6b: federally taxable Social Security benefits \u2014 excluded in full at federal AGI up to $55,000 ($70,000 joint), phased out to $65,000 ($80,000 joint), when the Social Security election is made (us.vt.retirement_income_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtContributorySystemIncome",
+    type: "money",
+    description: "Retirement Income Exemption Worksheet line 11: income received from the Civil Service Retirement System or another contributory system of the U.S., Vermont or another state based on earnings NOT covered by Social Security \u2014 the first $10,000 is excludable on the same AGI thresholds as Social Security, when that election is made (us.vt.retirement_income_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtMilitaryRetirementIncome",
+    type: "money",
+    description: "Schedule IN-112 line 13: federally taxable U.S. military retirement income and military survivor benefit income (federal Form 1040 line 5b, DFAS 1099-R) \u2014 excluded in full at federal AGI up to $125,000, phased out to $175,000, for every filing status (us.vt.military_retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtNetAdjustedCapitalGain",
+    type: "money",
+    description: "Schedule IN-153 Part I line 8: net adjusted capital gain \u2014 the smaller of federal Schedule D lines 15 and 16, less qualified dividends and other ineligible amounts, less allocated investment interest expense; the base of the $5,000 flat exclusion. Zero when the federal return shows a net capital loss (us.vt.capital_gains_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtEligibleLongTermGain",
+    type: "money",
+    description: "Schedule IN-153 Part II line 17: net adjusted capital gain from assets held MORE than three years, excluding gain on a primary or nonprimary residence, depreciable personal property (other than farm property and standing timber), and publicly traded stocks, bonds and financial instruments, less allocated investment interest \u2014 40% is excludable up to $350,000 (us.vt.capital_gains_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtFederalTaxableIncome",
+    type: "money",
+    description: "Schedule IN-153 line 20 base: federal taxable income (Form 1040 line 15) \u2014 the capital gains exclusion cannot exceed 40% of it (us.vt.capital_gains_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input \u2014 with no federal taxable income the exclusion is $0" }
+  },
+  {
+    id: "vtStudentLoanInterestPaid",
+    type: "money",
+    description: "Schedule IN-112 line 16a: total interest paid in the year on qualified student loans (us.vt.student_loan_interest_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtStudentLoanInterestDeductedFederally",
+    type: "money",
+    description: "Schedule IN-112 line 16b: student loan interest already deducted on federal Form 1040 Schedule 1 line 21 \u2014 only the excess is subtracted for Vermont (us.vt.student_loan_interest_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtCharitableContributions",
+    type: "money",
+    description: "Form IN-111 line 11: charitable contributions allowable under IRC \xA7 170, whether or not itemized federally \u2014 the credit is 5% of the first $20,000 (us.vt.charitable_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtFederalTaxAdjustmentBase",
+    type: "money",
+    description: "Schedule IN-119 Part I line 4 (federal tax on qualified plans and tax-favored accounts, investment credit recapture, Form 4972 lump-sum tax) or Part II line 11 (federal credit for the elderly or disabled, Vermont-based investment credit, farm income averaging) \u2014 24% of it is the Vermont adjustment (us.vt.federal_tax_adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtOtherStateIncome",
+    type: "money",
+    description: "Schedule IN-117 line 9: modified adjusted gross income taxed by the other state or Canadian province AND by Vermont \u2014 the AGI taxed there plus its bonus depreciation and non-Vermont obligation addbacks, less bonus depreciation and U.S. government interest subtracted there (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtModifiedAgi",
+    type: "money",
+    description: "Schedule IN-117 line 17: modified Vermont adjusted gross income \u2014 federal AGI plus Schedule IN-112 lines 3 and 4, less lines 7 and 9 (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtIncomeTax",
+    type: "money",
+    description: "Schedule IN-117 line 18: Vermont income tax from Form IN-111 line 14 (after the charitable credit, before the income adjustment and credits) (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtOtherStateTaxPaid",
+    type: "money",
+    description: "Schedule IN-117 line 20: income tax PAID to the other state or Canadian province on the line 9 income \u2014 not withholding, not city or county tax, and not the portion of Canadian tax taken as a federal foreign tax credit (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtFederalEic",
+    type: "money",
+    description: "Schedule IN-112 Part II line 6: the federal earned income credit from Form 1040 \u2014 Vermont allows 38% with qualifying children, 100% without (us.vt.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtEitcQualifyingChildren",
+    type: "int",
+    min: "0",
+    description: "Schedule IN-112 Part II line 5: number of qualifying children from federal Schedule EIC \u2014 one or more makes the Vermont credit 38% of the federal credit; none makes it 100% (us.vt.eitc).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "vtChildrenSixOrUnder",
+    type: "int",
+    min: "0",
+    description: "Schedule IN-112 Part II line 3: number of qualifying children (IRC \xA7 152(c)) who were six years of age or younger at the close of the calendar year \u2014 born 2019 through 2025 for tax year 2025 \u2014 $1,000 each before the AGI phase-out (us.vt.child_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
+  },
+  {
+    id: "vtFederalChildCareCredit",
+    type: "money",
+    description: "Schedule IN-112 Part II line 1: the federal child and dependent care credit from Form 2441 line 11 \u2014 Vermont allows 72%, refundable (us.vt.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtVeteranDischargeRecord",
+    type: "bool",
+    description: "Schedule IN-112 Part II lines 8-12: the filer has a discharge record or other record of separation from active duty verifying service in the uniformed services \u2014 the eligibility condition for the $250 veteran credit under 32 V.S.A. \xA7 5830g(b) (us.vt.veteran_credit).",
+    default: { value: false, rationale: "Assumed not attested \u2014 the credit is claimed only with the record" }
+  },
+  {
+    id: "vtUseTaxEstimateFromTable",
+    type: "bool",
+    description: "Use Tax Worksheet Part 1: the filer did NOT keep records of untaxed purchases under $1,000 and uses the Estimated Use Tax Table on federal AGI instead of 6% of recorded purchases (us.vt.use_tax).",
+    default: { value: false, rationale: "Assumed records were kept \u2014 the table is an estimate the filer elects" }
+  },
+  {
+    id: "vtUseTaxSmallPurchases",
+    type: "money",
+    description: "Use Tax Worksheet line 2a: total untaxed purchases of items under $1,000 each, from records (us.vt.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtUseTaxLargePurchases",
+    type: "money",
+    description: "Use Tax Worksheet line 3a: total untaxed purchases of items $1,000 or more each \u2014 always reported item by item, even when the table estimates the small purchases (us.vt.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtUseTaxPaidOtherState",
+    type: "money",
+    description: "Use Tax Worksheet line 3d: sales tax paid to another state on the purchases reported on lines 2a and 3a (us.vt.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtSelfEmploymentIncome",
+    type: "money",
+    description: "Child Care Contribution Worksheet line 1: net earnings from self-employment, federal Schedule SE line 6 (us.vt.child_care_contribution). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtSelfEmploymentIncomeOutsideVermont",
+    type: "money",
+    description: "Child Care Contribution Worksheet line 2: the part of Schedule SE line 6 earned for work performed outside Vermont (us.vt.child_care_contribution). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtVheipContributions",
+    type: "money",
+    description: "Schedule IN-119 Part II line 1: contributions during the year to Vermont Higher Education Investment Plan (VHEIP / VT529) accounts \u2014 the credit is 10% of the first $2,500 per beneficiary ($5,000 on a joint return) (us.vt.vheip_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" }
+  },
+  {
+    id: "vtVheipBeneficiaries",
+    type: "int",
+    min: "0",
+    description: "Schedule IN-119 Part II line 1: the number of VHEIP account beneficiaries contributed for \u2014 each carries its own $2,500 ($5,000 joint) contribution cap (us.vt.vheip_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" }
   }
 ];
 
@@ -35035,7 +37770,7 @@ function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, 
   };
 }
 function bandMidpoint(o) {
-  const lt17 = (cents) => ({
+  const lt23 = (cents) => ({
     kind: "cmp",
     op: "lt",
     left: o,
@@ -35054,22 +37789,22 @@ function bandMidpoint(o) {
   });
   return {
     kind: "if",
-    cond: lt17("500"),
+    cond: lt23("500"),
     // under $5
     then: money2("250"),
     else: {
       kind: "if",
-      cond: lt17("1500"),
+      cond: lt23("1500"),
       // $5–15
       then: money2("1000"),
       else: {
         kind: "if",
-        cond: lt17("2500"),
+        cond: lt23("2500"),
         // $15–25
         then: money2("2000"),
         else: {
           kind: "if",
-          cond: lt17("300000"),
+          cond: lt23("300000"),
           // $25 bands to $3,000
           then: banded("2500", "1250"),
           else: banded("5000", "2500")
@@ -35232,7 +37967,7 @@ var d2 = (dollars5) => money3(String(BigInt(dollars5) * 100n));
 var taxable2 = ruleRef3("us.federal.taxable_income");
 var regOrdinary = ruleRef3("us.federal.ordinary_taxable_income");
 function amtRule(version2, from, to, year, p, cg, source, amountsNote) {
-  const byStatus = (single, joint, mfs) => ({
+  const byStatus4 = (single, joint, mfs) => ({
     kind: "match",
     on: fact3("filingStatus"),
     cases: [
@@ -35274,7 +38009,7 @@ function amtRule(version2, from, to, year, p, cg, source, amountsNote) {
     kind: "max0",
     arg: {
       kind: "sub",
-      left: byStatus("exemptSingle", "exemptJoint", "exemptMfs"),
+      left: byStatus4("exemptSingle", "exemptJoint", "exemptMfs"),
       right: {
         kind: "mulRate",
         base: {
@@ -35282,7 +38017,7 @@ function amtRule(version2, from, to, year, p, cg, source, amountsNote) {
           arg: {
             kind: "sub",
             left: amti,
-            right: byStatus("threshSingle", "threshJoint", "threshMfs")
+            right: byStatus4("threshSingle", "threshJoint", "threshMfs")
           }
         },
         rate: p.phaseRate,
@@ -38833,29 +41568,42 @@ function ptcRule(version2, from, to, fplFirstPersonCents, fplPerAdditionalCents,
     },
     formula: {
       kind: "if",
-      cond: { kind: "not", arg: gt06(fact20("slcspAnnualPremium")) },
-      then: {
-        kind: "if",
-        cond: gt06(fact20("advancePTC")),
-        then: {
-          kind: "unsupported",
-          reason: "advance PTC was paid but no SLCSP benchmark premium was provided \u2014 the \xA7 36B(f) reconciliation cannot be computed without slcspAnnualPremium (Form 1095-A line 33B)"
-        },
-        else: zero12
+      // § 36B(c)(1)(C) is decided FIRST: a married-filing-separately filer without the
+      // Reg. § 1.36B-2(b)(2) relief is not an applicable taxpayer at all, so the credit is $0 and
+      // any advance is repaid in full (subject only to the § 36B(f)(2)(B) cap by household income)
+      // — none of which needs the SLCSP benchmark premium. Refusing for a missing SLCSP here
+      // would block a reconciliation the statute fully determines.
+      cond: {
+        kind: "and",
+        args: [isStatus6("mfs"), { kind: "not", arg: fact20("mfsAbuseOrAbandonmentException") }]
       },
+      then: zero12,
       else: {
         kind: "if",
-        cond: {
-          kind: "and",
-          args: [
-            isStatus6("mfs"),
-            // Reg. § 1.36B-2(b)(2): abuse/abandonment relief waives § 36B(c)(1)(C)
-            { kind: "not", arg: fact20("mfsAbuseOrAbandonmentException") }
-          ]
+        cond: { kind: "not", arg: gt06(fact20("slcspAnnualPremium")) },
+        then: {
+          kind: "if",
+          cond: gt06(fact20("advancePTC")),
+          then: {
+            kind: "unsupported",
+            reason: "advance PTC was paid but no SLCSP benchmark premium was provided \u2014 the \xA7 36B(f) reconciliation cannot be computed without slcspAnnualPremium (Form 1095-A line 33B)"
+          },
+          else: zero12
         },
-        then: zero12,
-        // § 36B(c)(1)(C): MFS without the relief attestation gets no PTC
-        else: core
+        else: {
+          kind: "if",
+          cond: {
+            kind: "and",
+            args: [
+              isStatus6("mfs"),
+              // Reg. § 1.36B-2(b)(2): abuse/abandonment relief waives § 36B(c)(1)(C)
+              { kind: "not", arg: fact20("mfsAbuseOrAbandonmentException") }
+            ]
+          },
+          then: zero12,
+          // § 36B(c)(1)(C): MFS without the relief attestation gets no PTC
+          else: core
+        }
       }
     }
   };
@@ -41785,7 +44533,7 @@ var ilRules = [
       source: "35 ILCS 5/201(b)(5.4); 2025 Form IL-1040 instructions",
       section: "IL-1040 line 12",
       url: "https://tax.illinois.gov/content/dam/soi/en/web/tax/forms/incometax/documents/currentyear/individual/il-1040-instr.pdf",
-      excerpt: "Residents: Multiply Line 11 by 4.95% (.0495). Cannot be less than zero (2025 IL-1040 line 12, verbatim). LINE FLOORS (2025 instructions): line 9 base income AND line 11 net income 'may not be less than zero \u2014 if the result is a negative number, enter 0'. Related 2025 parameters (IDOR 2025 IL-1040 + Schedule ICR + Schedule 1299-C instructions + Pub-132, web-verified July 2026): exemption allowance $2,850 per exemption PLUS $1,000 per age-65+ box and $1,000 per blind box (taxpayer/spouse, per box \u2014 65 AND blind = $2,000); the ENTIRE line 10 allowance is $0 if federal AGI exceeds $500,000 MFJ / $250,000 all others. Schedule ICR (nonrefundable, total cannot exceed tax due, same AGI caps): property tax credit = 5% of IL property tax on the principal residence (exclude business-use portion); K-12 education expense credit = 25% of qualified expenses OVER $250, max $750 \u2014 HOME-SCHOOL expenses are NOT qualified (35 ILCS 5/201(m): public/nonpublic school tuition, book and lab fees only; exclude school_type home entries before summing). Schedule 1299-C K-12 Instructional Materials & Supplies credit (900+ hour educators): up to $500 ($1,000 MFJ both educators). Illinois EITC = 20% of the federal EITC (refundable) \u2014 BUT for a taxpayer age 18-24 or 65+ with NO qualifying children, 35 ILCS 5/212(b-5)/(b-10) (P.A. 102-700) decouples from the federal \xA7 32(c)(1)(A)(ii) childless age floor: use the us.il.eitc target (20% of us.federal.eitc_no_age_gate) instead of 20% x the ordinary federal EITC, which is correctly $0 for that population and would understate line 29. Illinois Child Tax Credit (TY2025) = 40% of the Illinois EITC for taxpayers with a dependent child under 12. [Input: IL net income (line 11 \u2014 base income minus exemptions), computed by the preparer; worked example: 30,485 \xD7 4.95% = 1,509.] ESTIMATED TAX (IL-2210, 2025): required if IL tax after withholding/credits will exceed $1,000. SCHEDULE NR: part-year and nonresidents apportion base income on Schedule NR \u2014 this target computes RESIDENT tax on already-apportioned net income only; the Schedule NR apportionment worksheet itself is not modeled (refuses/agent-composed)."
+      excerpt: "Residents: Multiply Line 11 by 4.95% (.0495). Cannot be less than zero (2025 IL-1040 line 12, verbatim). LINE FLOORS (2025 instructions): line 9 base income AND line 11 net income 'may not be less than zero \u2014 if the result is a negative number, enter 0'. Related 2025 parameters (IDOR 2025 IL-1040 + Schedule ICR + Schedule 1299-C instructions + Pub-132, web-verified July 2026): exemption allowance $2,850 per exemption PLUS $1,000 per age-65+ box and $1,000 per blind box (taxpayer/spouse, per box \u2014 65 AND blind = $2,000); the ENTIRE line 10 allowance is $0 if federal AGI exceeds $500,000 MFJ / $250,000 all others. Schedule ICR (nonrefundable, total cannot exceed tax due, same AGI caps): property tax credit = 5% of IL property tax on the principal residence (exclude business-use portion); K-12 education expense credit = 25% of qualified expenses OVER $250, max $750 \u2014 HOME-SCHOOL expenses DO qualify when the home school satisfies the truancy law (105 ILCS 5/26-1) \u2014 IDOR Publication 112 ('a school providing educational instruction in a home that satisfies the requirements of the truancy law') lists tuition, workbook and grade-book fees, book and curriculum rental fees, lab fees; items not used up during the year, mileage, and tutoring or enrichment outside the required curriculum do not qualify; exclude school_type home entries before summing). Schedule 1299-C K-12 Instructional Materials & Supplies credit (900+ hour educators): up to $500 ($1,000 MFJ both educators). Illinois EITC = 20% of the federal EITC (refundable) \u2014 BUT for a taxpayer age 18-24 or 65+ with NO qualifying children, 35 ILCS 5/212(b-5)/(b-10) (P.A. 102-700) decouples from the federal \xA7 32(c)(1)(A)(ii) childless age floor: use the us.il.eitc target (20% of us.federal.eitc_no_age_gate) instead of 20% x the ordinary federal EITC, which is correctly $0 for that population and would understate line 29. Illinois Child Tax Credit (TY2025) = 40% of the Illinois EITC for taxpayers with a dependent child under 12. [Input: IL net income (line 11 \u2014 base income minus exemptions), computed by the preparer; worked example: 30,485 \xD7 4.95% = 1,509.] ESTIMATED TAX (IL-2210, 2025): required if IL tax after withholding/credits will exceed $1,000. SCHEDULE NR: part-year and nonresidents apportion base income on Schedule NR \u2014 this target computes RESIDENT tax on already-apportioned net income only; the Schedule NR apportionment worksheet itself is not modeled (refuses/agent-composed)."
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
@@ -42441,15 +45189,15 @@ var caRules = [
   },
   {
     id: "us.ca.caleitc",
-    version: 5,
-    // v3's phase-in kept the floor-aligned midpoint, misplacing $50-multiple incomes into the next row; v4 aligns the phase-in to the table's true upper-bound rows (mid = ceil(x/50)*50 - 24.50), matching the post-peak segments; v5 recalibrates the 0-kid GENTLE phase-out anchor from an unverified construction ($216 @ mid $9,475.50, rate -43/4680, "unverified-but-consistent") to a printed-table-confirmed anchor ($183 @ mid $12,975.50 = bracket 12,951-13,000, rate -9/1000 = -0.9%/$1) — the prior anchor produced $184 for that row, one dollar off the 2025 FTB 3514 booklet's printed credit
+    version: 6,
+    // v5 read the EITC Table at earned income only; the FTB 3514 Step 6 worksheet (2025 booklet p. 7, lines 3-6) re-reads it at federal AGI when AGI differs from earned income and is at or above the line-5 floor ($4,661 / $6,998 / $9,823 by 0 / 1 / 2+ children) and keeps the SMALLER — v3's phase-in kept the floor-aligned midpoint, misplacing $50-multiple incomes into the next row; v4 aligns the phase-in to the table's true upper-bound rows (mid = ceil(x/50)*50 - 24.50), matching the post-peak segments; v5 recalibrates the 0-kid GENTLE phase-out anchor from an unverified construction ($216 @ mid $9,475.50, rate -43/4680, "unverified-but-consistent") to a printed-table-confirmed anchor ($183 @ mid $12,975.50 = bracket 12,951-13,000, rate -9/1000 = -0.9%/$1) — the prior anchor produced $184 for that row, one dollar off the 2025 FTB 3514 booklet's printed credit
     jurisdiction: "us.ca",
     title: "California Earned Income Tax Credit (R&TC \xA7 17052, FTB 3514) \u2014 2025, full range",
     citation: {
       source: "R&TC \xA7 17052; 2025 FTB 3514 booklet (EITC table + General Information)",
       section: "R&TC \xA7 17052",
       url: "https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.pdf",
-      excerpt: "2025 CalEITC: income ceiling $32,900 (all family sizes, both earned income AND federal AGI must be under $32,901 or the credit is $0); maximum credit $302 (0 kids, peak bracket $4,651-$4,700) / $2,016 (1 kid, peak $6,951-$7,000) / $3,339 (2 kids, peak $9,801-$9,850) / $3,756 (3+ kids, same $9,801-$9,850 peak). DECODED STRUCTURE (July 2026 web-verification: the printed table was parsed in full, all 658 $50-wide brackets from $1-$32,900, `pdftotext -layout`, and formula-fit): no plateau \u2014 every column peaks at a single $50 bracket and immediately begins declining. The decline is NOT one straight line: it has a KINK where the phase-out slope changes from steep to gentle, at 0 kids $5,450/$5,451, 1 kid $11,800/$11,801, 2 kids $17,800/$17,801, 3+ kids $18,000/$18,001 \u2014 confirmed by row-to-row deltas dropping from roughly $17-19 per $50 bracket (steep) to roughly $2-3 per bracket (gentle) exactly at each boundary. THIS RULE NOW COMPUTES ALL THREE SEGMENTS: (1) PHASE-IN (unchanged from v1): credit = round(bracket-midpoint \xD7 combined rate), combined rate = federal \xA7 32(b) phase-in rate \xD7 the 85% \xA7 17052(c) adjustment factor (7.65/34/40/45% \xD7 85% = 6.5025/28.90/34.00/38.25%), using the floor-aligned $50-bracket midpoint \u2014 verified against the printed row 2,201-2,250 \u2192 851 for 3+ children (2,225.50 \xD7 45% \xD7 85% = 851.25 \u2192 851). (2) STEEP PHASE-OUT (peak to kink): the printed table declines at (within rounding) the SAME rate magnitude as the phase-in line (a symmetric V through the peak) \u2014 credit = round(anchor value \u2212 combined phase-in rate \xD7 (bracket-midpoint \u2212 anchor-bracket-midpoint)), using the TRUE (upper-bound-aligned) $50-bracket midpoint. For 1/2/3+ kids the line is anchored to an actual printed table row (1 kid: bracket 9,451-9,500, $1,306; 2 kids and 3+ kids: bracket 9,951-10,000, $3,288/$3,699) rather than the theoretical peak itself \u2014 the peak POINT sits fractionally off this line for 1 kid specifically (a peak-anchored construction understates by roughly $13 there), so a real table row is used everywhere data exists. Verified EXACT against every printed row in this zone for 1/2/3+ kids (e.g. 2 kids: $10,000 \u2192 3,288 exact, $16,500 \u2192 1,078 exact, $17,500 \u2192 738 exact; 3+ kids: $16,500 \u2192 1,213 exact; 1 kid: $9,500 \u2192 1,306 exact, $11,000 \u2192 873 exact). (3) GENTLE PHASE-OUT (kink to ceiling): a SEPARATE, shallower line anchored to a printed table row just past the kink, at the independently-fit rate (0 kids = \u22120.9%/$1 i.e. \u22129/1000 per $1 of midpoint, CONFIRMED against the printed 2025 FTB 3514 booklet row $12,951-$13,000 \u2192 $183 exact, web-verified July 2026 \u2014 corrects a prior unverified anchor that produced $184 for that row; 1 kid \u2248 \u22123.01%/$1 i.e. \u2212541/18000, 2 kids \u2248 \u22124.19%/$1 i.e. \u221225/596, 3+ kids \u2248 \u22124.26%/$1 i.e. \u2212613/14400) \u2014 verified within \u2264$1 across every printed row from the kink to $32,900 (e.g. 0 kids: $17,000 \u2192 147 exact; 2 kids: $18,000 \u2192 626 exact, $25,000 \u2192 333 vs. computed 332, $30,000 \u2192 123 vs. computed 123). Max residual across all 658 rows, all four columns: \u2264 $2 pre-rounding (a single pre-existing phase-in-region anomaly just below the 2/3+-kid peak, at $9,500, runs to $17-19 \u2014 inherited from the v1 floor-aligned phase-in formula, unchanged here per the phase-in region's own design, and confined to that one boundary row). The 0-kid STEEP segment (peak to $5,450) has no printed table data in the range this session could source ($9,500+) to verify against; it uses the peak-anchor construction (disclosed as unverified-but-consistent with the confirmed symmetric-V structure elsewhere) \u2014 only the GENTLE segment's 0-kid anchor is table-confirmed as of v5. Earned income here = wages (line 1z, INCLUDING any taxable dependent-care benefits on line 1e) + max(0, SE profit \u2212 \xBDSE tax) \u2212 Schedule C loss, same composition as the federal \xA7 32(c)(2) input. CAUTION: when a spouse's own Schedule C loss makes that spouse's Form 2441 earned income zero or negative, the \xA7 129 exclusion for W-2 box 10 dependent care benefits is $0 \u2014 the FULL box-10 amount becomes taxable wages (line 1e), raising both federal AGI and this credit's earned income (federal earned 10,500 + 6,000 fully-taxable DCB \u2192 CA earned 16,500 \u2192 credit 1,078 from the printed row). Kids = qualifyingChildren + eitcAdditionalQualifyingChildren."
+      excerpt: "2025 CalEITC: income ceiling $32,900 (all family sizes, both earned income AND federal AGI must be under $32,901 or the credit is $0); Step 6 worksheet (booklet p. 7): line 2 looks the credit up at California earned income; line 4 'Are the amounts on line 1 and line 3 [federal AGI] the same?' \u2014 if not, line 5: unless AGI is below $4,661 (no children) / $6,998 (1) / $9,823 (2 or more), 'Look up the amount on line 3 in the EITC Table ... Compare the amounts on line 5 and line 2, enter the smaller amount on line 6'; maximum credit $302 (0 kids, peak bracket $4,651-$4,700) / $2,016 (1 kid, peak $6,951-$7,000) / $3,339 (2 kids, peak $9,801-$9,850) / $3,756 (3+ kids, same $9,801-$9,850 peak). DECODED STRUCTURE (July 2026 web-verification: the printed table was parsed in full, all 658 $50-wide brackets from $1-$32,900, `pdftotext -layout`, and formula-fit): no plateau \u2014 every column peaks at a single $50 bracket and immediately begins declining. The decline is NOT one straight line: it has a KINK where the phase-out slope changes from steep to gentle, at 0 kids $5,450/$5,451, 1 kid $11,800/$11,801, 2 kids $17,800/$17,801, 3+ kids $18,000/$18,001 \u2014 confirmed by row-to-row deltas dropping from roughly $17-19 per $50 bracket (steep) to roughly $2-3 per bracket (gentle) exactly at each boundary. THIS RULE NOW COMPUTES ALL THREE SEGMENTS: (1) PHASE-IN (unchanged from v1): credit = round(bracket-midpoint \xD7 combined rate), combined rate = federal \xA7 32(b) phase-in rate \xD7 the 85% \xA7 17052(c) adjustment factor (7.65/34/40/45% \xD7 85% = 6.5025/28.90/34.00/38.25%), using the floor-aligned $50-bracket midpoint \u2014 verified against the printed row 2,201-2,250 \u2192 851 for 3+ children (2,225.50 \xD7 45% \xD7 85% = 851.25 \u2192 851). (2) STEEP PHASE-OUT (peak to kink): the printed table declines at (within rounding) the SAME rate magnitude as the phase-in line (a symmetric V through the peak) \u2014 credit = round(anchor value \u2212 combined phase-in rate \xD7 (bracket-midpoint \u2212 anchor-bracket-midpoint)), using the TRUE (upper-bound-aligned) $50-bracket midpoint. For 1/2/3+ kids the line is anchored to an actual printed table row (1 kid: bracket 9,451-9,500, $1,306; 2 kids and 3+ kids: bracket 9,951-10,000, $3,288/$3,699) rather than the theoretical peak itself \u2014 the peak POINT sits fractionally off this line for 1 kid specifically (a peak-anchored construction understates by roughly $13 there), so a real table row is used everywhere data exists. Verified EXACT against every printed row in this zone for 1/2/3+ kids (e.g. 2 kids: $10,000 \u2192 3,288 exact, $16,500 \u2192 1,078 exact, $17,500 \u2192 738 exact; 3+ kids: $16,500 \u2192 1,213 exact; 1 kid: $9,500 \u2192 1,306 exact, $11,000 \u2192 873 exact). (3) GENTLE PHASE-OUT (kink to ceiling): a SEPARATE, shallower line anchored to a printed table row just past the kink, at the independently-fit rate (0 kids = \u22120.9%/$1 i.e. \u22129/1000 per $1 of midpoint, CONFIRMED against the printed 2025 FTB 3514 booklet row $12,951-$13,000 \u2192 $183 exact, web-verified July 2026 \u2014 corrects a prior unverified anchor that produced $184 for that row; 1 kid \u2248 \u22123.01%/$1 i.e. \u2212541/18000, 2 kids \u2248 \u22124.19%/$1 i.e. \u221225/596, 3+ kids \u2248 \u22124.26%/$1 i.e. \u2212613/14400) \u2014 verified within \u2264$1 across every printed row from the kink to $32,900 (e.g. 0 kids: $17,000 \u2192 147 exact; 2 kids: $18,000 \u2192 626 exact, $25,000 \u2192 333 vs. computed 332, $30,000 \u2192 123 vs. computed 123). Max residual across all 658 rows, all four columns: \u2264 $2 pre-rounding (a single pre-existing phase-in-region anomaly just below the 2/3+-kid peak, at $9,500, runs to $17-19 \u2014 inherited from the v1 floor-aligned phase-in formula, unchanged here per the phase-in region's own design, and confined to that one boundary row). The 0-kid STEEP segment (peak to $5,450) has no printed table data in the range this session could source ($9,500+) to verify against; it uses the peak-anchor construction (disclosed as unverified-but-consistent with the confirmed symmetric-V structure elsewhere) \u2014 only the GENTLE segment's 0-kid anchor is table-confirmed as of v5. Earned income here = wages (line 1z, INCLUDING any taxable dependent-care benefits on line 1e) + max(0, SE profit \u2212 \xBDSE tax) \u2212 Schedule C loss, same composition as the federal \xA7 32(c)(2) input. CAUTION: when a spouse's own Schedule C loss makes that spouse's Form 2441 earned income zero or negative, the \xA7 129 exclusion for W-2 box 10 dependent care benefits is $0 \u2014 the FULL box-10 amount becomes taxable wages (line 1e), raising both federal AGI and this credit's earned income (federal earned 10,500 + 6,000 fully-taxable DCB \u2192 CA earned 16,500 \u2192 credit 1,078 from the printed row). Kids = qualifyingChildren + eitcAdditionalQualifyingChildren."
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
@@ -42457,6 +45205,13 @@ var caRules = [
     parameters: {
       ceiling: { value: "3290000", type: "money" },
       // $32,900
+      // Step 6 worksheet line 5 floors (2025 booklet, verbatim amounts): AGI below these skips the AGI lookup
+      agiLookupFloor0kids: { value: "466100", type: "money" },
+      // $4,661
+      agiLookupFloor1kid: { value: "699800", type: "money" },
+      // $6,998
+      agiLookupFloor2kids: { value: "982300", type: "money" },
+      // $9,823 (2 or more)
       max0kids: { value: "30200", type: "money" },
       // $302 (also the steep segment's peak anchor)
       max1kid: { value: "201600", type: "money" },
@@ -42527,7 +45282,18 @@ var caRules = [
       // $614 printed
     },
     formula: (() => {
-      const earned2 = {
+      const kids = {
+        kind: "add",
+        args: [fact36("qualifyingChildren"), fact36("eitcAdditionalQualifyingChildren")]
+      };
+      const kidsEq = (n) => ({
+        kind: "cmp",
+        op: "eq",
+        left: kids,
+        right: { kind: "int", value: n }
+      });
+      const param26 = (name) => ({ kind: "param", name });
+      const earnedIncome2 = {
         kind: "max0",
         arg: {
           kind: "sub",
@@ -42548,103 +45314,113 @@ var caRules = [
           right: fact36("scheduleCNetLoss")
         }
       };
-      const midCeil = {
-        kind: "sub",
-        left: {
-          kind: "mulInt",
-          base: money33("5000"),
-          count: { kind: "stepUnits", value: earned2, unitCents: "5000", mode: "ceil" }
-        },
-        right: money33("2450")
-        // $24.50
-      };
-      const kids = {
-        kind: "add",
-        args: [fact36("qualifyingChildren"), fact36("eitcAdditionalQualifyingChildren")]
-      };
-      const kidsEq = (n) => ({
-        kind: "cmp",
-        op: "eq",
-        left: kids,
-        right: { kind: "int", value: n }
-      });
-      const tentative = (num, den) => ({
-        kind: "roundToDollar",
-        value: {
-          kind: "mulRate",
-          // v4: the FTB table's rows are upper-bound-aligned everywhere —
-          // "at least X, but not over Y" with Y a multiple of $50 — so the
-          // phase-in uses the same TRUE midpoint as the post-peak segments
-          // (the v2/v3 floor-aligned midpoint misplaced $50-multiple incomes
-          // into the NEXT row: earned 5,500 belongs to 5,451-5,500, mid
-          // 5,475.50, not 5,501-5,550). max0 guards the earned=0 corner.
-          base: { kind: "max0", arg: midCeil },
-          rate: { num, den },
-          round: "half-up"
-        },
-        mode: "half-up"
-      });
-      const linear = (anchorMid, anchorValue, num, den) => ({
-        kind: "roundToDollar",
-        value: {
-          kind: "add",
-          args: [
-            anchorValue,
-            {
-              kind: "mulRate",
-              base: { kind: "sub", left: midCeil, right: anchorMid },
-              rate: { num, den },
-              round: "half-up"
-            }
-          ]
-        },
-        mode: "half-up"
-      });
-      const param26 = (name) => ({ kind: "param", name });
-      const segment = (peakUpperParam, kinkUpperParam, phaseIn, steep, gentle) => ({
-        kind: "if",
-        cond: { kind: "cmp", op: "le", left: earned2, right: param26(peakUpperParam) },
-        then: phaseIn,
-        else: {
+      const creditAt = (earned2) => {
+        const midCeil = {
+          kind: "sub",
+          left: {
+            kind: "mulInt",
+            base: money33("5000"),
+            count: { kind: "stepUnits", value: earned2, unitCents: "5000", mode: "ceil" }
+          },
+          right: money33("2450")
+          // $24.50
+        };
+        const tentative = (num, den) => ({
+          kind: "roundToDollar",
+          value: {
+            kind: "mulRate",
+            // v4: the FTB table's rows are upper-bound-aligned everywhere —
+            // "at least X, but not over Y" with Y a multiple of $50 — so the
+            // phase-in uses the same TRUE midpoint as the post-peak segments
+            // (the v2/v3 floor-aligned midpoint misplaced $50-multiple incomes
+            // into the NEXT row: earned 5,500 belongs to 5,451-5,500, mid
+            // 5,475.50, not 5,501-5,550). max0 guards the earned=0 corner.
+            base: { kind: "max0", arg: midCeil },
+            rate: { num, den },
+            round: "half-up"
+          },
+          mode: "half-up"
+        });
+        const linear = (anchorMid, anchorValue, num, den) => ({
+          kind: "roundToDollar",
+          value: {
+            kind: "add",
+            args: [
+              anchorValue,
+              {
+                kind: "mulRate",
+                base: { kind: "sub", left: midCeil, right: anchorMid },
+                rate: { num, den },
+                round: "half-up"
+              }
+            ]
+          },
+          mode: "half-up"
+        });
+        const segment = (peakUpperParam, kinkUpperParam, phaseIn, steep, gentle) => ({
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: earned2, right: param26(kinkUpperParam) },
-          then: steep,
-          else: gentle
-        }
-      });
-      const col0 = segment(
-        "peakUpper0kids",
-        "kinkUpper0kids",
-        tentative("65025", "1000000"),
-        // 7.65% × 85%
-        linear(param26("peakMid0kids"), param26("max0kids"), "-2601", "40000"),
-        // mirror of the phase-in rate
-        linear(param26("gentleAnchorMid0kids"), param26("gentleAnchorValue0kids"), "-9", "1000")
-      );
-      const col1 = segment(
-        "peakUpper1kid",
-        "kinkUpper1kid",
-        tentative("2890", "10000"),
-        // 34% × 85%
-        linear(param26("steepAnchorMid1kid"), param26("steepAnchorValue1kid"), "-289", "1000"),
-        linear(param26("gentleAnchorMid1kid"), param26("gentleAnchorValue1kid"), "-541", "18000")
-      );
-      const col2 = segment(
-        "peakUpper2kids",
-        "kinkUpper2kids",
-        tentative("3400", "10000"),
-        // 40% × 85%
-        linear(param26("steepAnchorMid2kids"), param26("steepAnchorValue2kids"), "-17", "50"),
-        linear(param26("gentleAnchorMid2kids"), param26("gentleAnchorValue2kids"), "-25", "596")
-      );
-      const col3 = segment(
-        "peakUpper3kids",
-        "kinkUpper3kids",
-        tentative("3825", "10000"),
-        // 45% × 85%
-        linear(param26("steepAnchorMid3kids"), param26("steepAnchorValue3kids"), "-153", "400"),
-        linear(param26("gentleAnchorMid3kids"), param26("gentleAnchorValue3kids"), "-613", "14400")
-      );
+          cond: { kind: "cmp", op: "le", left: earned2, right: param26(peakUpperParam) },
+          then: phaseIn,
+          else: {
+            kind: "if",
+            cond: { kind: "cmp", op: "le", left: earned2, right: param26(kinkUpperParam) },
+            then: steep,
+            else: gentle
+          }
+        });
+        const col0 = segment(
+          "peakUpper0kids",
+          "kinkUpper0kids",
+          tentative("65025", "1000000"),
+          // 7.65% × 85%
+          linear(param26("peakMid0kids"), param26("max0kids"), "-2601", "40000"),
+          // mirror of the phase-in rate
+          linear(param26("gentleAnchorMid0kids"), param26("gentleAnchorValue0kids"), "-9", "1000")
+        );
+        const col1 = segment(
+          "peakUpper1kid",
+          "kinkUpper1kid",
+          tentative("2890", "10000"),
+          // 34% × 85%
+          linear(param26("steepAnchorMid1kid"), param26("steepAnchorValue1kid"), "-289", "1000"),
+          linear(param26("gentleAnchorMid1kid"), param26("gentleAnchorValue1kid"), "-541", "18000")
+        );
+        const col2 = segment(
+          "peakUpper2kids",
+          "kinkUpper2kids",
+          tentative("3400", "10000"),
+          // 40% × 85%
+          linear(param26("steepAnchorMid2kids"), param26("steepAnchorValue2kids"), "-17", "50"),
+          linear(param26("gentleAnchorMid2kids"), param26("gentleAnchorValue2kids"), "-25", "596")
+        );
+        const col3 = segment(
+          "peakUpper3kids",
+          "kinkUpper3kids",
+          tentative("3825", "10000"),
+          // 45% × 85%
+          linear(param26("steepAnchorMid3kids"), param26("steepAnchorValue3kids"), "-153", "400"),
+          linear(param26("gentleAnchorMid3kids"), param26("gentleAnchorValue3kids"), "-613", "14400")
+        );
+        return {
+          kind: "if",
+          cond: kidsEq("0"),
+          then: col0,
+          else: {
+            kind: "if",
+            cond: kidsEq("1"),
+            then: col1,
+            else: { kind: "if", cond: kidsEq("2"), then: col2, else: col3 }
+          }
+        };
+      };
+      const agi2 = ruleRef30("us.federal.agi");
+      const atEarned = creditAt(earnedIncome2);
+      const agiLookupFloor = {
+        kind: "if",
+        cond: kidsEq("0"),
+        then: param26("agiLookupFloor0kids"),
+        else: { kind: "if", cond: kidsEq("1"), then: param26("agiLookupFloor1kid"), else: param26("agiLookupFloor2kids") }
+      };
       return {
         kind: "if",
         // BOTH earned income AND federal AGI must be under the ceiling
@@ -42653,35 +45429,23 @@ var caRules = [
         cond: {
           kind: "or",
           args: [
-            {
-              kind: "cmp",
-              op: "ge",
-              left: earned2,
-              right: { kind: "param", name: "ceiling" }
-            },
-            {
-              kind: "cmp",
-              op: "ge",
-              left: ruleRef30("us.federal.agi"),
-              right: { kind: "param", name: "ceiling" }
-            }
+            { kind: "cmp", op: "ge", left: earnedIncome2, right: param26("ceiling") },
+            { kind: "cmp", op: "ge", left: agi2, right: param26("ceiling") }
           ]
         },
         then: money33("0"),
         else: {
           kind: "if",
-          cond: kidsEq("0"),
-          then: col0,
+          // worksheet line 4: earned income and federal AGI the same → line 2 is the credit
+          cond: { kind: "cmp", op: "eq", left: agi2, right: earnedIncome2 },
+          then: atEarned,
           else: {
             kind: "if",
-            cond: kidsEq("1"),
-            then: col1,
-            else: {
-              kind: "if",
-              cond: kidsEq("2"),
-              then: col2,
-              else: col3
-            }
+            cond: { kind: "cmp", op: "lt", left: agi2, right: agiLookupFloor },
+            then: atEarned,
+            // line 5: "Look up the amount on line 3 in the EITC Table ... Compare the amounts
+            // on line 5 and line 2, enter the smaller amount on line 6"
+            else: { kind: "min", args: [atEarned, creditAt(agi2)] }
           }
         }
       };
@@ -42689,7 +45453,8 @@ var caRules = [
   },
   {
     id: "us.ca.yctc",
-    version: 1,
+    version: 2,
+    // v1 gated on the child and earned income only and refused the phase-out band; v2 adds the Step 8 gates (CalEITC allowed, federal AGI ≤ $32,900, wages ≤ $35,640) and computes lines 25-28 verbatim from the 2025 form
     jurisdiction: "us.ca",
     title: "California Young Child Tax Credit (R&TC \xA7 17052.1, FTB 3514) \u2014 2025",
     citation: {
@@ -42705,9 +45470,13 @@ var caRules = [
       maxCredit: { value: "118900", type: "money" },
       // $1,189
       phaseOutStart: { value: "2742500", type: "money" },
-      // $27,425
-      phaseOutComplete: { value: "3290100", type: "money" }
-      // $32,901
+      // $27,425 (line 25 threshold)
+      reductionPer100: { value: "2171", type: "money" },
+      // $21.71 per $100 of excess (line 27)
+      agiCeiling: { value: "3290000", type: "money" },
+      // line 23b: "federal AGI exceeds $32,900" → no credit
+      wageCeiling: { value: "3564000", type: "money" }
+      // line 23a: wages over $35,640 → no credit
     },
     formula: (() => {
       const earned2 = {
@@ -42731,23 +45500,53 @@ var caRules = [
           right: fact36("scheduleCNetLoss")
         }
       };
-      return {
+      const param26 = (name) => ({ kind: "param", name });
+      const agi2 = ruleRef30("us.federal.agi");
+      const excess = { kind: "sub", left: earned2, right: param26("phaseOutStart") };
+      const line26Hundredths = { kind: "stepUnits", value: excess, unitCents: "100", mode: "floor" };
+      const line27Cents = {
+        kind: "mulInt",
+        base: money33("1"),
+        count: {
+          kind: "stepUnits",
+          value: { kind: "mulInt", base: param26("reductionPer100"), count: line26Hundredths },
+          // line 26 × 100 × 2,171 = line 27 × 100 (cents)
+          unitCents: "100",
+          mode: "floor"
+        }
+      };
+      const line28 = { kind: "sub", left: param26("maxCredit"), right: line27Cents };
+      const rounded = {
         kind: "if",
-        cond: { kind: "not", arg: fact36("hasChildUnderSix") },
+        cond: { kind: "cmp", op: "le", left: line28, right: money33("0") },
         then: money33("0"),
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "ge", left: earned2, right: { kind: "param", name: "phaseOutComplete" } },
-          then: money33("0"),
-          else: {
-            kind: "if",
-            cond: { kind: "cmp", op: "le", left: earned2, right: { kind: "param", name: "phaseOutStart" } },
-            then: { kind: "param", name: "maxCredit" },
-            else: {
-              kind: "unsupported",
-              reason: "YCTC phase-out band ($27,425\u2013$32,901 earned income): the per-increment reduction is table-published, not formula-published \u2014 read the 2025 FTB 3514 worksheet and disclose"
-            }
-          }
+          cond: { kind: "cmp", op: "le", left: line28, right: money33("100") },
+          then: money33("100"),
+          else: { kind: "roundToDollar", value: line28, mode: "half-up" }
+        }
+      };
+      return {
+        kind: "if",
+        cond: {
+          kind: "or",
+          args: [
+            { kind: "not", arg: fact36("hasChildUnderSix") },
+            // Step 8: "You have been allowed the California EITC on this form" (line 20 > 0) when
+            // earned income is greater than zero; line 23b: federal AGI over $32,900 → no credit
+            { kind: "and", args: [{ kind: "cmp", op: "gt", left: earned2, right: money33("0") }, { kind: "cmp", op: "le", left: ruleRef30("us.ca.caleitc"), right: money33("0") }] },
+            { kind: "cmp", op: "gt", left: agi2, right: param26("agiCeiling") },
+            { kind: "cmp", op: "gt", left: fact36("wages"), right: param26("wageCeiling") }
+            // line 23a
+          ]
+        },
+        then: money33("0"),
+        else: {
+          kind: "if",
+          cond: { kind: "cmp", op: "le", left: earned2, right: param26("phaseOutStart") },
+          then: param26("maxCredit"),
+          else: rounded
         }
       };
     })()
@@ -42872,7 +45671,7 @@ var caRules = [
       // $479,188
     },
     formula: (() => {
-      const byStatus = (single, joint, mfs) => ({
+      const byStatus4 = (single, joint, mfs) => ({
         kind: "match",
         on: fact36("filingStatus"),
         cases: [
@@ -42883,8 +45682,8 @@ var caRules = [
           { when: "mfs", value: { kind: "param", name: mfs } }
         ]
       });
-      const exemption3 = byStatus("exemptSingleHoh", "exemptMfj", "exemptMfs");
-      const threshold2 = byStatus("threshSingleHoh", "threshMfj", "threshMfs");
+      const exemption3 = byStatus4("exemptSingleHoh", "exemptMfj", "exemptMfs");
+      const threshold2 = byStatus4("threshSingleHoh", "threshMfj", "threshMfs");
       const exemptionPhased = {
         kind: "max0",
         arg: {
@@ -42985,15 +45784,15 @@ var caRules = [
 var nyRules = [
   {
     id: "us.ny.parameters",
-    version: 7,
-    // v2 had the credit/modification set with an IT-216 shorthand and only tables 1/2/5; v3 adds the full six household-credit tables, the verbatim IT-216 factor tables, IT-272, 529, pension exclusion, § 685(c), and IT-196; v4 wrongly claimed IT-214's adjusted-rent line has no fixed percentage table; v6 replaces the ambiguous NYC child-care proration shorthand with the verbatim Worksheet 2 order and points at us.ny.nyc_cdcc; v7 CORRECTS IT-214 line 12 to the printed form's FIXED PERCENTAGE MENU (50/75/80/85/100 by included services) and routes the whole Step 3-5 arithmetic to us.ny.it214 v2; v5 had corrected the flat Table A/B credit lookup mechanic (Form IT-214 (2025), IT-214-I (2025), web-verified July 2026): the credit is NOT 25%-of-rent scaled into a dollar amount — lines 8-19 (FAGI cap, line-9 rate x line-10, adjusted rent, the line-14 25% conversion, $450/month cap) are an ELIGIBILITY GATE ONLY; the credit itself (line 20) is a FLAT lookup from Table A (65+) / Table B (under 65) by FAGI bracket, now its own computable target us.ny.it214
+    version: 8,
+    // v7 stated IT-272 as 'lesser of $400 or 4% per student', omitting Form IT-272 Part 2 (line 3 under $5,000: lesser of expenses or $200 — verified on the 2025 form, September 2026); v2 had the credit/modification set with an IT-216 shorthand and only tables 1/2/5; v3 adds the full six household-credit tables, the verbatim IT-216 factor tables, IT-272, 529, pension exclusion, § 685(c), and IT-196; v4 wrongly claimed IT-214's adjusted-rent line has no fixed percentage table; v6 replaces the ambiguous NYC child-care proration shorthand with the verbatim Worksheet 2 order and points at us.ny.nyc_cdcc; v7 CORRECTS IT-214 line 12 to the printed form's FIXED PERCENTAGE MENU (50/75/80/85/100 by included services) and routes the whole Step 3-5 arithmetic to us.ny.it214 v2; v5 had corrected the flat Table A/B credit lookup mechanic (Form IT-214 (2025), IT-214-I (2025), web-verified July 2026): the credit is NOT 25%-of-rent scaled into a dollar amount — lines 8-19 (FAGI cap, line-9 rate x line-10, adjusted rent, the line-14 25% conversion, $450/month cap) are an ELIGIBILITY GATE ONLY; the credit itself (line 20) is a FLAT lookup from Table A (65+) / Table B (under 65) by FAGI bracket, now its own computable target us.ny.it214
     jurisdiction: "us.ny",
     title: "New York 2025 standard deductions (Tax Law \xA7 614 \u2014 statutory, unindexed)",
     citation: {
       source: "N.Y. Tax Law \xA7 614; 2025 Form IT-201 instructions",
       section: "Tax Law \xA7 614",
       url: "https://www.tax.ny.gov/pit/file/standard_deductions.htm",
-      excerpt: "Standard deductions (Tax Law \xA7 614, 2025-confirmed): $8,000 single; $16,050 MFJ/QSS; $11,200 HOH; $8,000 MFS; $3,100 dependent filer. Dependent exemptions $1,000 each (IT-201 line 36). CREDITS & MODIFICATIONS (all web-verified from the 2025 IT-201-I / IT-213-I / IT-215-I / IT-216-I / IT-214-I / IT-225-I / IT-272-I / IT-196-I): NYS EIC = 30% of federal EIC, reduced by the household credit ACTUALLY ABSORBED against NYS tax (min(line 39 tax, household credit) \u2014 when tax is $0 the reduction is $0 and the full 30% is refundable; IT-215 worksheet). NYC EIC = federal EIC \xD7 a sliding NYAGI rate: 30% \u2264 $7,500; 25% flat $7,500\u2013$15,000; phasing 25\u219220% to $17,500; 20% to $20,000; phasing 20\u219215% to $22,500; 15% to $40,000; phasing 15\u219210% to $42,500; 10% above. EMPIRE STATE CHILD CREDIT 2025 (IT-213, decoupled from federal): $1,000 per qualifying child UNDER FOUR + $330 per child 4\u201316 (TY2025; rises to $500 for the under-4 group's OLDER siblings \u2014 the ESCC ages-4-16 amount is $500 for TY2026-27 only, not yet in effect for TY2025), reduced $16.50 per $1,000 of FAGI (rounded DOWN to the nearest $1,000) over $110,000 MFJ / $75,000 single-HOH-QSS / $55,000 MFS.\n\nNYS HOUSEHOLD CREDIT (IT-201 line 40, IT-201-I p.13, keyed to FEDERAL AGI = Form IT-201 line 19) \u2014 THREE TABLES, verbatim 2025:\nTable 1 (single only): FAGI over \u2013$5,000 \u2192 $75; $5,000\u2013$6,000 \u2192 $60; $6,000\u2013$7,000 \u2192 $50; $7,000\u2013$20,000 \u2192 $45; $20,000\u2013$25,000 \u2192 $40; $25,000\u2013$28,000 \u2192 $20; over $28,000 \u2192 no credit.\nTable 2 (MFJ/HOH/QSS), by (dependents + 1 for filer + 1 for spouse if MFJ) = 1/2/3/4/5/6/7/each-over-7: FAGI \u2013$5,000 \u2192 90/105/120/135/150/165/180/+15; $5,000\u2013$6,000 \u2192 75/90/105/120/135/150/165/+15; $6,000\u2013$7,000 \u2192 65/80/95/110/125/140/155/+15; $7,000\u2013$20,000 \u2192 60/75/90/105/120/135/150/+15; $20,000\u2013$22,000 \u2192 60/70/80/90/100/110/120/+10; $22,000\u2013$25,000 \u2192 50/60/70/80/90/100/110/+10; $25,000\u2013$28,000 \u2192 40/45/50/55/60/65/70/+5; $28,000\u2013$32,000 \u2192 20/25/30/35/40/45/50/+5; over $32,000 \u2192 no credit.\nTable 3 (MFS only, dependents from BOTH returns + 1 for self + 1 for spouse), same 1-7/+over-7 columns: FAGI \u2013$5,000 \u2192 45/53/60/68/75/83/90/+8; $5,000\u2013$6,000 \u2192 38/45/53/60/68/75/83/+8; $6,000\u2013$7,000 \u2192 33/40/48/55/63/70/78/+8; $7,000\u2013$20,000 \u2192 30/38/45/53/60/68/75/+8; $20,000\u2013$22,000 \u2192 30/35/40/45/50/55/60/+5; $22,000\u2013$25,000 \u2192 25/30/35/40/45/50/55/+5; $25,000\u2013$28,000 \u2192 20/23/25/28/30/33/35/+3; $28,000\u2013$32,000 \u2192 10/13/15/18/20/23/25/+3; over $32,000 \u2192 no credit (table 3 amounts are pre-rounded per the form's Note 5).\n\nNYC HOUSEHOLD CREDIT (line 48, IT-201-I p.14) \u2014 THREE TABLES, verbatim 2025:\nTable 4 (single only): FAGI \u2013$10,000 \u2192 $15; $10,000\u2013$12,500 \u2192 $10; over $12,500 \u2192 no credit.\nTable 5 (MFJ/HOH/QSS), 1/2/3/4/5/6/7/each-over-7: FAGI \u2013$15,000 \u2192 30/60/90/120/150/180/210/+30; $15,000\u2013$17,500 \u2192 25/50/75/100/125/150/175/+25; $17,500\u2013$20,000 \u2192 15/30/45/60/75/90/105/+15; $20,000\u2013$22,500 \u2192 10/20/30/40/50/60/70/+10; over $22,500 \u2192 no credit.\nTable 6 (MFS only, dependents both returns + self + spouse), 1/2/3/4/5/6/7/each-over-7: FAGI \u2013$15,000 \u2192 15/30/45/60/75/90/105/+15; $15,000\u2013$17,500 \u2192 13/25/38/50/63/75/88/+13; $17,500\u2013$20,000 \u2192 8/15/23/30/38/45/53/+8; $20,000\u2013$22,500 \u2192 5/10/15/20/25/30/35/+5; over $22,500 \u2192 no credit (pre-rounded, Note 5).\n\nIT-216 CDCC (2025 IT-216-I, verbatim factor tables \u2014 replaces the earlier '1.10 \u2264 $25k' shorthand): base = qualifying expenses NET of employer dependent-care benefits excluded on W-2 box 10. NYS LINE-13 FACTOR (NYAGI-keyed, NON-MONOTONIC SAWTOOTH, IT-216-I p.7 'credit limitation table', $200-wide rows \u2014 segment anchors verbatim): flat 1.100 for NYAGI \u2013$25,000; descends in small ($0.001\u2013$0.002-per-$200) steps from 1.099 at $25,000 down to 1.000 by $40,000; FLAT 1.000 for $40,000\u2013$50,000; JUMPS to 1.162 at $50,000 and descends to 1.000 by $52,600\u2013$52,800, continuing down to 0.601 by $59,800\u2013$60,000; JUMPS AGAIN to 1.070 at $60,000 and descends to 0.476 by $64,800\u2013$65,000; FLAT 0.600 for $65,000\u2013$150,000; FLAT 0.200 above $150,000. NYS LINE-10 FACTOR (separate table, FAGI-keyed, monotonic): .35 for FAGI \u2013$15,000, stepping down by .01 per $2,000 of FAGI to .20 at $43,000 and above (verbatim anchors: $15,000\u2013$17,000 \u2192 .34 \u2026 $41,000\u2013$43,000 \u2192 .21; $43,000+ \u2192 .20). NYC CHILD CARE CREDIT (Worksheet 2 \u2014 now a standalone computable target, us.ny.nyc_cdcc): requires a qualifying child UNDER 4 and FAGI $30,000 or less; the worksheet PRORATES THE NYS CREDIT ITSELF (IT-216 line 14 \u2192 Worksheet 2 line 1) by the under-4 expense share (line 23 \xF7 line 3a, capped at 1.0000), THEN multiplies by the line-6 FAGI factor (0.750 for FAGI \u2013$25,000, descending 0.030 per $200 to 0.000 at $30,000). NEVER prorate the raw expenses and re-apply the line-10/line-13 factors \u2014 that understates the credit; feed nyIt216StateCredit/nyIt216Under4Expenses/nyIt216TotalExpenses to us.ny.nyc_cdcc and use its answer.\n\nNYC SCHOOL TAX CREDIT fixed (line 69, income \u2264 $250,000): $63 single/MFS/HOH, $125 MFJ/QSS; plus the line 69a rate-reduction amount (\u2264 $500,000): HOH 0.171% of city taxable income to $14,400 then $25 + 0.228% of excess (single/MFS threshold $12,000/$21; MFJ $21,600/$37). IT-214 REAL PROPERTY TAX CREDIT (Form IT-214 (2025), read directly from the printed form \u2014 SECOND CORRECTION, July 2026: line 12 uses a FIXED PERCENTAGE MENU, not actual utility dollar subtraction): line 8 FAGI \u2264 $18,000 stop; line 12 adjusted rent = line 11 total rent x the printed menu \u2014 rent includes heat+gas+electricity+furnishings+board \u2192 50%; heat+gas+electricity+furnishings \u2192 75%; heat+gas+electricity \u2192 80%; heat (or heat+gas) \u2192 85%; none \u2192 100%; line 13 average monthly adjusted rent (line 12 \xF7 months paid) \u2264 $450 stop; line 14 = 25% x line 12; homeowners line 17 = property taxes + special assessments; line 18 (renters' 14 / homeowners' 17) must be positive and must EXCEED line 19 = FAGI x Table 1 rate (0.035 to 0.065 by FAGI bracket). THE CREDIT (line 20) is a FLAT Table A/B lookup by FAGI. ALL of this arithmetic is COMPUTED by us.ny.it214 \u2014 feed it nyIt214Fagi, nyIt214TotalRent, nyIt214RentPercent (50/75/80/85/100 from the checkbox menu), nyIt214MonthsPaid, nyIt214HomeownerTaxes, isAge65OrOlder (any household member 65+ routes to Table A: $375/$330/$300/$260/$230/$200/$150), and nyIt214Eligible (Step 2 attestations only). Pass its answer into refundableCredits; never hand-compute any IT-214 line.\n\nIT-272 COLLEGE TUITION CREDIT (2025 IT-272-I): full-year NYS RESIDENTS only (part-year and nonresidents cannot claim it); qualified tuition expenses CAPPED at $10,000 per eligible student; credit = the LESSER of $400 or 4% of qualified expenses PER STUDENT (so the $400 max binds at $10,000 of expenses \u2014 confirm the 4% literal rate on the current worksheet before treating it as fixed across years); taxpayers may instead claim the college tuition ITEMIZED DEDUCTION on IT-201-D \u2014 mutually exclusive per student, elect whichever is larger.\n\nIT-229 REAL PROPERTY TAX RELIEF CREDIT: EXPIRED after TY2023 \u2014 DOES NOT EXIST for TY2025 or TY2026; do not encode or claim it. IT-214 (circuit breaker: FAGI \u2264 $18,000, property value \u2264 $85,000, rent \u2264 $450/month) is the live real-property-tax credit for TY2025.\n\n529 COLLEGE SAVINGS SUBTRACTION (Tax Law \xA7 612(c)(32)): up to $5,000 single/HOH/MFS, $10,000 MFJ, of contributions to a New York 529 account per year (recapture applies to nonqualified withdrawals of previously subtracted amounts). PENSION AND ANNUITY EXCLUSION (Tax Law \xA7 612(c)(3-a)): up to $20,000 EACH for taxpayer and spouse (no spousal sharing of unused exclusion) once age 59\xBD, for private/out-of-state pensions and annuities; NYS/local government and federal government pensions are excluded IN FULL regardless of age (a separate, unlimited subtraction, not capped at $20,000).\n\n\xA7 685(c) ESTIMATED TAX: no addition to tax if the amount owed after withholding is under $300 (de minimis); safe harbor is the LESSER of 90% of the current year's tax or 100% of the prior year's tax (110% of prior year's tax if the prior year's NYAGI exceeded $150,000).\n\nIT-196 ITEMIZED CHARITABLE LIMITATION (Tax Law \xA7 615, active through TY2029 per current law): for taxpayers with NYAGI over $1,000,000, the itemized charitable contribution deduction is limited to 50% of the federal amount; over $10,000,000 NYAGI, limited to 25% of the federal amount. UNRESOLVED (do NOT encode): the broader \xA7 615(f) general itemized-deduction phase-down for high-NYAGI filers could not be reconciled against the 2025 IT-196 instructions worksheet during this web-verification \u2014 pull the actual worksheet before modeling it; only the $1M/$10M charitable-specific limitation above is confirmed active.\n\nIT-225 MODIFICATIONS: \xA7 414(h) public-employee pickup = addition on IT-201 line 21 directly (code A-104, NOT via IT-225); NYC IRC \xA7 125 flexible-benefits = addition A-101; ALIMONY (NY did NOT conform to TCJA \xA7 11051): post-2018-instrument alimony PAID = subtraction S-136, alimony RECEIVED = addition A-119. S-120 \u2014 New York Higher Education Loan Program (HELP) loan interest (2025 IT-225-I p.6 subtraction-modifications chart and detail section, applicable to IT-201/IT-203 filers, not IT-204/IT-205), quoted verbatim: chart entry 'S-120  New York Higher Education Loan Program (HELP)'; detail text 'S-120: New York Higher Education Loan Program (HELP) \u2014 Enter any interest you paid in 2025 on loans made to you under HELP.' STATUTE CITE UNRESOLVED: the IT-225-I chart/detail text does not itself cite a Tax Law \xA7 612(c) paragraph number for S-120 (unlike some neighboring codes), and a web search of the codified \xA7 612 (nysenate.gov) did not turn up a matching paragraph as of this July 2026 verification \u2014 treat the CODE as confirmed-current for TY2025 via the 2025 IT-225-I form itself (the authority cited here), with the enabling paragraph number unresolved rather than guessed. Do not confuse with the separate, prospective, general student-loan-interest deduction tracked for a future Tax Law \xA7 612(c) paragraph (TY2026+, following 26 U.S.C. \xA7 221) \u2014 that is a different, not-yet-effective provision and does not affect the TY2025 S-120 answer.\n\nTY2026 ENACTED CHANGES (not encoded this pass \u2014 informational only, so a 2026 asOf refusal has useful context): a new subtraction for tips (up to $25,000, OBBBA conformity) begins TY2026; a new 'POWER credit' applies for TY2026 ONLY; a new REFUNDABLE CDCC under \xA7 606(c-2) replaces the nonrefundable IT-216 coupling for TY2026+ (55% of federal CDCC at NYAGI \u2264 $15,000, phasing down to a 4% floor, reduced further above $750,000 NYAGI); the Empire State Child Credit's $330 per-child (age 4-16) amount rises to $500 for TY2026-2027. Brackets, IT-272, the 529 subtraction, the household-credit tables, and IT-214 are UNCHANGED for TY2026 per the sources reviewed. Tax computation \u2192 us.ny.income_tax; NYC resident tax \u2192 us.ny.nyc_income_tax."
+      excerpt: "Standard deductions (Tax Law \xA7 614, 2025-confirmed): $8,000 single; $16,050 MFJ/QSS; $11,200 HOH; $8,000 MFS; $3,100 dependent filer. Dependent exemptions $1,000 each (IT-201 line 36). CREDITS & MODIFICATIONS (all web-verified from the 2025 IT-201-I / IT-213-I / IT-215-I / IT-216-I / IT-214-I / IT-225-I / IT-272-I / IT-196-I): NYS EIC = 30% of federal EIC, reduced by the household credit ACTUALLY ABSORBED against NYS tax (min(line 39 tax, household credit) \u2014 when tax is $0 the reduction is $0 and the full 30% is refundable; IT-215 worksheet). NYC EIC = federal EIC \xD7 a sliding NYAGI rate: 30% \u2264 $7,500; 25% flat $7,500\u2013$15,000; phasing 25\u219220% to $17,500; 20% to $20,000; phasing 20\u219215% to $22,500; 15% to $40,000; phasing 15\u219210% to $42,500; 10% above. EMPIRE STATE CHILD CREDIT 2025 (IT-213, decoupled from federal): $1,000 per qualifying child UNDER FOUR + $330 per child 4\u201316 (TY2025; rises to $500 for the under-4 group's OLDER siblings \u2014 the ESCC ages-4-16 amount is $500 for TY2026-27 only, not yet in effect for TY2025), reduced $16.50 per $1,000 of FAGI (rounded DOWN to the nearest $1,000) over $110,000 MFJ / $75,000 single-HOH-QSS / $55,000 MFS.\n\nNYS HOUSEHOLD CREDIT (IT-201 line 40, IT-201-I p.13, keyed to FEDERAL AGI = Form IT-201 line 19) \u2014 THREE TABLES, verbatim 2025:\nTable 1 (single only): FAGI over \u2013$5,000 \u2192 $75; $5,000\u2013$6,000 \u2192 $60; $6,000\u2013$7,000 \u2192 $50; $7,000\u2013$20,000 \u2192 $45; $20,000\u2013$25,000 \u2192 $40; $25,000\u2013$28,000 \u2192 $20; over $28,000 \u2192 no credit.\nTable 2 (MFJ/HOH/QSS), by (dependents + 1 for filer + 1 for spouse if MFJ) = 1/2/3/4/5/6/7/each-over-7: FAGI \u2013$5,000 \u2192 90/105/120/135/150/165/180/+15; $5,000\u2013$6,000 \u2192 75/90/105/120/135/150/165/+15; $6,000\u2013$7,000 \u2192 65/80/95/110/125/140/155/+15; $7,000\u2013$20,000 \u2192 60/75/90/105/120/135/150/+15; $20,000\u2013$22,000 \u2192 60/70/80/90/100/110/120/+10; $22,000\u2013$25,000 \u2192 50/60/70/80/90/100/110/+10; $25,000\u2013$28,000 \u2192 40/45/50/55/60/65/70/+5; $28,000\u2013$32,000 \u2192 20/25/30/35/40/45/50/+5; over $32,000 \u2192 no credit.\nTable 3 (MFS only, dependents from BOTH returns + 1 for self + 1 for spouse), same 1-7/+over-7 columns: FAGI \u2013$5,000 \u2192 45/53/60/68/75/83/90/+8; $5,000\u2013$6,000 \u2192 38/45/53/60/68/75/83/+8; $6,000\u2013$7,000 \u2192 33/40/48/55/63/70/78/+8; $7,000\u2013$20,000 \u2192 30/38/45/53/60/68/75/+8; $20,000\u2013$22,000 \u2192 30/35/40/45/50/55/60/+5; $22,000\u2013$25,000 \u2192 25/30/35/40/45/50/55/+5; $25,000\u2013$28,000 \u2192 20/23/25/28/30/33/35/+3; $28,000\u2013$32,000 \u2192 10/13/15/18/20/23/25/+3; over $32,000 \u2192 no credit (table 3 amounts are pre-rounded per the form's Note 5).\n\nNYC HOUSEHOLD CREDIT (line 48, IT-201-I p.14) \u2014 THREE TABLES, verbatim 2025:\nTable 4 (single only): FAGI \u2013$10,000 \u2192 $15; $10,000\u2013$12,500 \u2192 $10; over $12,500 \u2192 no credit.\nTable 5 (MFJ/HOH/QSS), 1/2/3/4/5/6/7/each-over-7: FAGI \u2013$15,000 \u2192 30/60/90/120/150/180/210/+30; $15,000\u2013$17,500 \u2192 25/50/75/100/125/150/175/+25; $17,500\u2013$20,000 \u2192 15/30/45/60/75/90/105/+15; $20,000\u2013$22,500 \u2192 10/20/30/40/50/60/70/+10; over $22,500 \u2192 no credit.\nTable 6 (MFS only, dependents both returns + self + spouse), 1/2/3/4/5/6/7/each-over-7: FAGI \u2013$15,000 \u2192 15/30/45/60/75/90/105/+15; $15,000\u2013$17,500 \u2192 13/25/38/50/63/75/88/+13; $17,500\u2013$20,000 \u2192 8/15/23/30/38/45/53/+8; $20,000\u2013$22,500 \u2192 5/10/15/20/25/30/35/+5; over $22,500 \u2192 no credit (pre-rounded, Note 5).\n\nIT-216 CDCC (2025 IT-216-I, verbatim factor tables \u2014 replaces the earlier '1.10 \u2264 $25k' shorthand): base = qualifying expenses NET of employer dependent-care benefits excluded on W-2 box 10. NYS LINE-13 FACTOR (NYAGI-keyed, NON-MONOTONIC SAWTOOTH, IT-216-I p.7 'credit limitation table', $200-wide rows \u2014 segment anchors verbatim): flat 1.100 for NYAGI \u2013$25,000; descends in small ($0.001\u2013$0.002-per-$200) steps from 1.099 at $25,000 down to 1.000 by $40,000; FLAT 1.000 for $40,000\u2013$50,000; JUMPS to 1.162 at $50,000 and descends to 1.000 by $52,600\u2013$52,800, continuing down to 0.601 by $59,800\u2013$60,000; JUMPS AGAIN to 1.070 at $60,000 and descends to 0.476 by $64,800\u2013$65,000; FLAT 0.600 for $65,000\u2013$150,000; FLAT 0.200 above $150,000. NYS LINE-10 FACTOR (separate table, FAGI-keyed, monotonic): .35 for FAGI \u2013$15,000, stepping down by .01 per $2,000 of FAGI to .20 at $43,000 and above (verbatim anchors: $15,000\u2013$17,000 \u2192 .34 \u2026 $41,000\u2013$43,000 \u2192 .21; $43,000+ \u2192 .20). NYC CHILD CARE CREDIT (Worksheet 2 \u2014 now a standalone computable target, us.ny.nyc_cdcc): requires a qualifying child UNDER 4 and FAGI $30,000 or less; the worksheet PRORATES THE NYS CREDIT ITSELF (IT-216 line 14 \u2192 Worksheet 2 line 1) by the under-4 expense share (line 23 \xF7 line 3a, capped at 1.0000), THEN multiplies by the line-6 FAGI factor (0.750 for FAGI \u2013$25,000, descending 0.030 per $200 to 0.000 at $30,000). NEVER prorate the raw expenses and re-apply the line-10/line-13 factors \u2014 that understates the credit; feed nyIt216StateCredit/nyIt216Under4Expenses/nyIt216TotalExpenses to us.ny.nyc_cdcc and use its answer.\n\nNYC SCHOOL TAX CREDIT fixed (line 69, income \u2264 $250,000): $63 single/MFS/HOH, $125 MFJ/QSS; plus the line 69a rate-reduction amount (\u2264 $500,000): HOH 0.171% of city taxable income to $14,400 then $25 + 0.228% of excess (single/MFS threshold $12,000/$21; MFJ $21,600/$37). IT-214 REAL PROPERTY TAX CREDIT (Form IT-214 (2025), read directly from the printed form \u2014 SECOND CORRECTION, July 2026: line 12 uses a FIXED PERCENTAGE MENU, not actual utility dollar subtraction): line 8 FAGI \u2264 $18,000 stop; line 12 adjusted rent = line 11 total rent x the printed menu \u2014 rent includes heat+gas+electricity+furnishings+board \u2192 50%; heat+gas+electricity+furnishings \u2192 75%; heat+gas+electricity \u2192 80%; heat (or heat+gas) \u2192 85%; none \u2192 100%; line 13 average monthly adjusted rent (line 12 \xF7 months paid) \u2264 $450 stop; line 14 = 25% x line 12; homeowners line 17 = property taxes + special assessments; line 18 (renters' 14 / homeowners' 17) must be positive and must EXCEED line 19 = FAGI x Table 1 rate (0.035 to 0.065 by FAGI bracket). THE CREDIT (line 20) is a FLAT Table A/B lookup by FAGI. ALL of this arithmetic is COMPUTED by us.ny.it214 \u2014 feed it nyIt214Fagi, nyIt214TotalRent, nyIt214RentPercent (50/75/80/85/100 from the checkbox menu), nyIt214MonthsPaid, nyIt214HomeownerTaxes, isAge65OrOlder (any household member 65+ routes to Table A: $375/$330/$300/$260/$230/$200/$150), and nyIt214Eligible (Step 2 attestations only). Pass its answer into refundableCredits; never hand-compute any IT-214 line.\n\nIT-272 COLLEGE TUITION CREDIT (2025 IT-272-I): full-year NYS RESIDENTS only (part-year and nonresidents cannot claim it); qualified tuition expenses CAPPED at $10,000 per eligible student (line I), summed to line 3; the credit is computed on the RETURN TOTAL, in two regimes printed on Form IT-272 (2025): Part 2 if line 3 is LESS THAN $5,000 \u2014 the lesser of line 3 or the $200 'credit limitation' (line 4); Part 3 if line 3 is $5,000 OR MORE \u2014 'Multiply line 6 by 4% (0.04)' (line 7), so the maximum is $400 per student at $10,000 each ($501 of expenses for one student -> $200, not $20); taxpayers may instead claim the college tuition ITEMIZED DEDUCTION on IT-201-D \u2014 mutually exclusive per student, elect whichever is larger.\n\nIT-229 REAL PROPERTY TAX RELIEF CREDIT: EXPIRED after TY2023 \u2014 DOES NOT EXIST for TY2025 or TY2026; do not encode or claim it. IT-214 (circuit breaker: FAGI \u2264 $18,000, property value \u2264 $85,000, rent \u2264 $450/month) is the live real-property-tax credit for TY2025.\n\n529 COLLEGE SAVINGS SUBTRACTION (Tax Law \xA7 612(c)(32)): up to $5,000 single/HOH/MFS, $10,000 MFJ, of contributions to a New York 529 account per year (recapture applies to nonqualified withdrawals of previously subtracted amounts). PENSION AND ANNUITY EXCLUSION (Tax Law \xA7 612(c)(3-a)): up to $20,000 EACH for taxpayer and spouse (no spousal sharing of unused exclusion) once age 59\xBD, for private/out-of-state pensions and annuities; NYS/local government and federal government pensions are excluded IN FULL regardless of age (a separate, unlimited subtraction, not capped at $20,000).\n\n\xA7 685(c) ESTIMATED TAX: no addition to tax if the amount owed after withholding is under $300 (de minimis); safe harbor is the LESSER of 90% of the current year's tax or 100% of the prior year's tax (110% of prior year's tax if the prior year's NYAGI exceeded $150,000).\n\nIT-196 ITEMIZED CHARITABLE LIMITATION (Tax Law \xA7 615, active through TY2029 per current law): for taxpayers with NYAGI over $1,000,000, the itemized charitable contribution deduction is limited to 50% of the federal amount; over $10,000,000 NYAGI, limited to 25% of the federal amount. UNRESOLVED (do NOT encode): the broader \xA7 615(f) general itemized-deduction phase-down for high-NYAGI filers could not be reconciled against the 2025 IT-196 instructions worksheet during this web-verification \u2014 pull the actual worksheet before modeling it; only the $1M/$10M charitable-specific limitation above is confirmed active.\n\nIT-225 MODIFICATIONS: \xA7 414(h) public-employee pickup = addition on IT-201 line 21 directly (code A-104, NOT via IT-225); NYC IRC \xA7 125 flexible-benefits = addition A-101; ALIMONY (NY did NOT conform to TCJA \xA7 11051): post-2018-instrument alimony PAID = subtraction S-136, alimony RECEIVED = addition A-119. S-120 \u2014 New York Higher Education Loan Program (HELP) loan interest (2025 IT-225-I p.6 subtraction-modifications chart and detail section, applicable to IT-201/IT-203 filers, not IT-204/IT-205), quoted verbatim: chart entry 'S-120  New York Higher Education Loan Program (HELP)'; detail text 'S-120: New York Higher Education Loan Program (HELP) \u2014 Enter any interest you paid in 2025 on loans made to you under HELP.' STATUTE CITE UNRESOLVED: the IT-225-I chart/detail text does not itself cite a Tax Law \xA7 612(c) paragraph number for S-120 (unlike some neighboring codes), and a web search of the codified \xA7 612 (nysenate.gov) did not turn up a matching paragraph as of this July 2026 verification \u2014 treat the CODE as confirmed-current for TY2025 via the 2025 IT-225-I form itself (the authority cited here), with the enabling paragraph number unresolved rather than guessed. Do not confuse with the separate, prospective, general student-loan-interest deduction tracked for a future Tax Law \xA7 612(c) paragraph (TY2026+, following 26 U.S.C. \xA7 221) \u2014 that is a different, not-yet-effective provision and does not affect the TY2025 S-120 answer.\n\nTY2026 ENACTED CHANGES (not encoded this pass \u2014 informational only, so a 2026 asOf refusal has useful context): a new subtraction for tips (up to $25,000, OBBBA conformity) begins TY2026; a new 'POWER credit' applies for TY2026 ONLY; a new REFUNDABLE CDCC under \xA7 606(c-2) replaces the nonrefundable IT-216 coupling for TY2026+ (55% of federal CDCC at NYAGI \u2264 $15,000, phasing down to a 4% floor, reduced further above $750,000 NYAGI); the Empire State Child Credit's $330 per-child (age 4-16) amount rises to $500 for TY2026-2027. Brackets, IT-272, the 529 subtraction, the household-credit tables, and IT-214 are UNCHANGED for TY2026 per the sources reviewed. Tax computation \u2192 us.ny.income_tax; NYC resident tax \u2192 us.ny.nyc_income_tax."
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
@@ -43383,7 +46182,7 @@ var nyRules = [
           money33("2500")
         ]
       };
-      const byStatus = (b) => ({
+      const byStatus4 = (b) => ({
         kind: "if",
         cond: { kind: "or", args: [isStatus10("mfj"), isStatus10("qss")] },
         then: scheduleFor(b, "mfj"),
@@ -43419,9 +46218,9 @@ var nyRules = [
             kind: "if",
             cond: { kind: "cmp", op: "lt", left: base, right: money33("1300") },
             then: money33("0"),
-            else: { kind: "roundToDollar", value: byStatus(mid50), mode: "half-up" }
+            else: { kind: "roundToDollar", value: byStatus4(mid50), mode: "half-up" }
           },
-          else: { kind: "roundToDollar", value: byStatus(base), mode: "half-up" }
+          else: { kind: "roundToDollar", value: byStatus4(base), mode: "half-up" }
         }
       };
     })()
@@ -43480,7 +46279,7 @@ var nyRules = [
           money33("2500")
         ]
       };
-      const byStatus = (b) => ({
+      const byStatus4 = (b) => ({
         kind: "if",
         cond: { kind: "or", args: [isStatus10("mfj"), isStatus10("qss")] },
         then: bracketsFor(b, "mfj"),
@@ -43494,8 +46293,8 @@ var nyRules = [
       return {
         kind: "if",
         cond: { kind: "cmp", op: "lt", left: base, right: { kind: "param", name: "tableThreshold" } },
-        then: { kind: "roundToDollar", value: byStatus(mid50), mode: "half-up" },
-        else: { kind: "roundToDollar", value: byStatus(base), mode: "half-up" }
+        then: { kind: "roundToDollar", value: byStatus4(mid50), mode: "half-up" },
+        else: { kind: "roundToDollar", value: byStatus4(base), mode: "half-up" }
       };
     })()
   },
@@ -43836,7 +46635,7 @@ var njRules = [
           money33("2500")
         ]
       };
-      const byStatus = (b) => ({
+      const byStatus4 = (b) => ({
         kind: "if",
         cond: tableB,
         then: scheduleFor(b, "b"),
@@ -43851,8 +46650,8 @@ var njRules = [
             { kind: "not", arg: fact36("useFormulaMethod") }
           ]
         },
-        then: rd3(byStatus(mid50)),
-        else: rd3(byStatus(base))
+        then: rd3(byStatus4(mid50)),
+        else: rd3(byStatus4(base))
       };
     })()
   },
@@ -43921,7 +46720,7 @@ var njRules = [
     },
     formula: (() => {
       const ti = max05(fact36("stateTaxableIncome"));
-      const pct8 = (num) => ({
+      const pct11 = (num) => ({
         kind: "mulRate",
         base: fact36("njFederalCdcc"),
         rate: { num, den: "100" },
@@ -43930,7 +46729,7 @@ var njRules = [
       const tier = (max2, num, next) => ({
         kind: "if",
         cond: le(ti, param17(max2)),
-        then: pct8(num),
+        then: pct11(num),
         else: next
       });
       return rd3(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money33("0")))))));
@@ -44016,7 +46815,7 @@ var njRules = [
       const income = fact36("njTotalIncome");
       const pension = max05(fact36("njPensionIncome"));
       const pctOfPension = (num, den) => rd3({ kind: "mulRate", base: pension, rate: { num, den }, round: "half-up" });
-      const byStatus = (capParam, mid, low) => ({
+      const byStatus4 = (capParam, mid, low) => ({
         kind: "if",
         cond: le(income, param17("fullTierMax")),
         then: { kind: "min", args: [pension, param17(capParam)] },
@@ -44040,11 +46839,11 @@ var njRules = [
         else: {
           kind: "if",
           cond: isStatus10("mfs"),
-          then: byStatus("capMfs", ["25", "100"], ["125", "1000"]),
+          then: byStatus4("capMfs", ["25", "100"], ["125", "1000"]),
           else: {
             kind: "if",
             cond: isStatus10("single"),
-            then: byStatus("capSingleHohQss", ["375", "1000"], ["1875", "10000"]),
+            then: byStatus4("capSingleHohQss", ["375", "1000"], ["1875", "10000"]),
             else: {
               kind: "if",
               cond: tableB,
@@ -44052,10 +46851,10 @@ var njRules = [
               then: {
                 kind: "if",
                 cond: isStatus10("mfj"),
-                then: byStatus("capJoint", ["50", "100"], ["25", "100"]),
-                else: byStatus("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
+                then: byStatus4("capJoint", ["50", "100"], ["25", "100"]),
+                else: byStatus4("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
               },
-              else: byStatus("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
+              else: byStatus4("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
             }
           }
         }
@@ -44402,7 +47201,7 @@ var ohRules = [
       // $75,000 → 10%; above → 5%
     },
     formula: (() => {
-      const pct8 = (num) => ({
+      const pct11 = (num) => ({
         kind: "mulRate",
         base: max06(fact36("ohTaxLessCredits")),
         rate: { num, den: "100" },
@@ -44411,16 +47210,16 @@ var ohRules = [
       const tiered = {
         kind: "if",
         cond: le2(magiLessExemptions, param18("tier1Max")),
-        then: pct8("20"),
+        then: pct11("20"),
         else: {
           kind: "if",
           cond: le2(magiLessExemptions, param18("tier2Max")),
-          then: pct8("15"),
+          then: pct11("15"),
           else: {
             kind: "if",
             cond: le2(magiLessExemptions, param18("tier3Max")),
-            then: pct8("10"),
-            else: pct8("5")
+            then: pct11("10"),
+            else: pct11("5")
           }
         }
       };
@@ -45656,8 +48455,8 @@ var moRules = [
     formula: (() => {
       const magi2 = fact36("moMagi");
       const total = { kind: "max0", arg: fact36("moFederalTaxTotal") };
-      const pct8 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
-      const uncapped = iff2(le5(magi2, money33("2500000")), pct8("35"), iff2(le5(magi2, money33("5000000")), pct8("25"), iff2(le5(magi2, money33("10000000")), pct8("15"), iff2(le5(magi2, money33("12500000")), pct8("5"), money33("0")))));
+      const pct11 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
+      const uncapped = iff2(le5(magi2, money33("2500000")), pct11("35"), iff2(le5(magi2, money33("5000000")), pct11("25"), iff2(le5(magi2, money33("10000000")), pct11("15"), iff2(le5(magi2, money33("12500000")), pct11("5"), money33("0")))));
       const cap = iff2({ kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfj" } }, money33("1000000"), money33("500000"));
       return { kind: "min", args: [uncapped, cap] };
     })()
@@ -45975,8 +48774,8 @@ var wiRules = [
     formula: (() => {
       const eic = { kind: "max0", arg: fact36("wiFederalEicForWi") };
       const kids = fact36("wiQualifyingChildren");
-      const pct8 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
-      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct8("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct8("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct8("4"), money33("0"))));
+      const pct11 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct11("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct11("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct11("4"), money33("0"))));
     })()
   },
   {
@@ -47338,17 +50137,17 @@ var SCHED_2026_J = [
 ];
 var PKT_URL = "https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf";
 var eicParams = (cpNum, ea, ppNum, ps, ce) => {
-  const row = (d3) => Math.floor(d3 / 50) * 50;
+  const row2 = (d3) => Math.floor(d3 / 50) * 50;
   return {
     cpNum,
     eaCents: String(ea * 100),
     ppNum,
     psCents: String(ps * 100),
     ceCents: String(ce * 100),
-    eaRowLo: String(row(ea) * 100),
-    psRowLo: String(row(ps) * 100),
-    ceRowLo: String(row(ce) * 100),
-    cePartialMidCents: String(Math.round((row(ce) + ce) / 2 * 100))
+    eaRowLo: String(row2(ea) * 100),
+    psRowLo: String(row2(ps) * 100),
+    ceRowLo: String(row2(ce) * 100),
+    cePartialMidCents: String(Math.round((row2(ce) + ce) / 2 * 100))
   };
 };
 var EIC_2020_OTHER = [
@@ -48066,15 +50865,15 @@ var tcsFor = (agi2, s, method) => {
   const taxable3 = max010(sub10(agi2, exemptionFor(agi2, s)));
   const scaledTax = scaledSchedule2(taxable3, SCHED[s]);
   const cAndD = add6(addbackFor(agi2, s), recaptureFor(agi2, s));
-  const pct8 = creditPctFor(agi2, s);
+  const pct11 = creditPctFor(agi2, s);
   if (method === "schedule") {
     const line4 = dollarsFromScaled2(scaledTax, "1000000");
     const line7 = add6(line4, cAndD);
-    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct8), c: money33("100"), round: "half-up" });
+    const line92 = rd15({ kind: "mulDiv", a: line7, b: mulInt8(money33("1"), pct11), c: money33("100"), round: "half-up" });
     return sub10(line7, line92);
   }
   const totalScaled = add6(scaledTax, times2(cAndD, "10000"));
-  const keep = sub10(int5("100"), pct8);
+  const keep = sub10(int5("100"), pct11);
   const scaledAfterCredit = mulInt8(totalScaled, keep);
   return dollarsFromScaled2(scaledAfterCredit, "100000000");
 };
@@ -48253,13 +51052,13 @@ var ctRules = [
       const line10 = rd15({ kind: "mulRate", base: max010(fact36("ctFederalEic")), rate: { num: "40", den: "100" }, round: "half-up" });
       const sep = fact36("ctEitcSeparateFagi");
       const joint = fact36("ctEitcJointFagi");
-      const ratio42 = iff9(ge2(sep, joint), int5("10000"), {
+      const ratio43 = iff9(ge2(sep, joint), int5("10000"), {
         kind: "stepUnits",
         value: { kind: "mulDiv", a: max010(sep), b: money33("10000"), c: joint, round: "half-up" },
         unitCents: "1",
         mode: "floor"
       });
-      const line15 = rd15({ kind: "mulDiv", a: line10, b: mulInt8(money33("1"), ratio42), c: money33("10000"), round: "floor" });
+      const line15 = rd15({ kind: "mulDiv", a: line10, b: mulInt8(money33("1"), ratio43), c: money33("10000"), round: "floor" });
       const base = iff9(gt2(joint, money33("0")), line15, line10);
       return add6(base, iff9(fact36("ctEitcQualifyingChild"), money33("25000"), money33("0")));
     })()
@@ -49059,8 +51858,8 @@ var arRules = [
       const earned2 = max012(fact36("arEarnedIncome"));
       const l6 = iff11(isMfj2, minE(l3, earned2, max012(fact36("arSpouseEarnedIncome"))), minE(l3, earned2));
       const steps = stepUnits2(max012(sub12(fact36("arFederalAgi"), money33("1500000"))), "200000", "ceil");
-      const pct8 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
-      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct8, c: money33("100"), round: "half-up" });
+      const pct11 = maxE(sub12(money33("35"), mulInt10(money33("1"), steps)), money33("20"));
+      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct11, c: money33("100"), round: "half-up" });
       return rd17({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
     })()
   },
@@ -49624,10 +52423,10 @@ var nmRules = [
     parameters: { mgiLimit: { value: "3600000", type: "money" }, maxExemptionsColumn: { value: "6", type: "int" } },
     formula: (() => {
       const ex = fact36("nmRebateExemptions");
-      const pick2 = (row) => {
-        let e = dollars3(row[7]);
+      const pick2 = (row2) => {
+        let e = dollars3(row2[7]);
         for (let n = 5; n >= 1; n--)
-          e = iff12(le11(ex, int7(String(n))), dollars3(row[n + 1]), e);
+          e = iff12(le11(ex, int7(String(n))), dollars3(row2[n + 1]), e);
         return e;
       };
       const table2 = rowLookup(fact36("nmModifiedGrossIncome"), NM_LICTR_2025, pick2, money33("0"));
@@ -49702,7 +52501,7 @@ var nmRules = [
     formula: (() => {
       const mgi = fact36("nmModifiedGrossIncome");
       const l17a = add9(rd18(max013(fact36("nmPropertyTaxBilled"))), dollarsFromScaled5(times5(max013(fact36("nmRentPaid")), "600"), "1000000"));
-      const liability = rowLookup(mgi, NM_PROPERTY_TAX_LIABILITY_2025, (row) => dollars3(row[2]), money33("0"));
+      const liability = rowLookup(mgi, NM_PROPERTY_TAX_LIABILITY_2025, (row2) => dollars3(row2[2]), money33("0"));
       const diff = max013(sub13(l17a, liability));
       const eligible = and3(ge4(fact36("nmAge65Count"), int7("1")), le11(mgi, money33("1600000")), not2(fact36("isClaimedAsDependent")));
       return iff12(eligible, iff12(isMfs4, minE2(rd18(pct2(diff, "1", "2")), money33("12500")), minE2(diff, money33("25000"))), money33("0"));
@@ -49726,7 +52525,7 @@ var nmRules = [
     formula: (() => {
       const mgi = fact36("nmModifiedGrossIncome");
       const billed = max013(fact36("nmPropertyTaxBilled"));
-      const amount = rowLookup(mgi, NM_COUNTY_PROPERTY_REBATE_PCT_2025, (row) => pct2(billed, String(row[2]), "100"), money33("0"));
+      const amount = rowLookup(mgi, NM_COUNTY_PROPERTY_REBATE_PCT_2025, (row2) => pct2(billed, String(row2[2]), "100"), money33("0"));
       const eligible = and3(fact36("nmRebateCounty"), le11(mgi, money33("2400000")), not2(fact36("isClaimedAsDependent")));
       return iff12(eligible, iff12(isMfs4, minE2(rd18(pct2(amount, "1", "2")), money33("17500")), minE2(rd18(amount), money33("35000"))), money33("0"));
     })()
@@ -49960,7 +52759,9 @@ var neRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pctTimes10: { value: "296", type: "int" } },
-    formula: rd19(pct3(max014(fact36("neFederalOtherTax")), "296", "1000"))
+    // Form 1040N line 16: "multiply line 16c by 29.6% (x .296)" into a whole-dollar box — ONE rounding.
+    // 29.6% is not an integer-cent rate: 76 x 0.296 = 22.496 prints $22, but cents-first gives 22.50 -> $23.
+    formula: times6({ kind: "mulDiv", a: max014(fact36("neFederalOtherTax")), b: money33("296"), c: money33("100000"), round: "half-up" }, "100")
   },
   {
     id: "us.ne.child_care_credit_nonrefundable",
@@ -50070,7 +52871,7 @@ var neRules = [
       const l1 = max014(fact36("neTaxBeforeCredits"));
       const denom = add10(fact36("neAgi"), fact36("neAdjustmentsIncreasing"), { kind: "sub", left: money33("0"), right: fact36("neAdjustmentsDecreasing") });
       const ratio = { kind: "mulDiv", a: max014(fact36("neOtherStateAgi")), b: money33("100000"), c: denom, round: "half-up" };
-      const l4 = rd19({ kind: "mulDiv", a: l1, b: ratio, c: money33("100000"), round: "half-up" });
+      const l4 = times6({ kind: "mulDiv", a: l1, b: ratio, c: money33("10000000"), round: "half-up" }, "100");
       return iff13(gt5(denom, money33("0")), minE3(l1, l4, max014(fact36("neOtherStateTaxPaid"))), money33("0"));
     })()
   },
@@ -50091,8 +52892,8 @@ var neRules = [
     parameters: { stateRateBps: { value: "550", type: "int" } },
     formula: (() => {
       const p = max014(fact36("neUseTaxPurchases"));
-      const state = rd19(pct3(p, "55", "1000"));
-      const local = rd19({ kind: "mulDiv", a: p, b: mulInt12(money33("1"), fact36("neLocalUseTaxRateBps")), c: money33("10000"), round: "half-up" });
+      const state = dollarsFromScaled6(times6(p, "550"), "1000000");
+      const local = dollarsFromScaled6({ kind: "mulDiv", a: p, b: mulInt12(money33("1"), fact36("neLocalUseTaxRateBps")), c: money33("1"), round: "half-up" }, "1000000");
       return add10(state, local);
     })()
   },
@@ -50246,6 +53047,8 @@ var isStatus23 = (v) => cmp7("eq", fact36("filingStatus"), { kind: "enum", value
 var isJointLike = or5(isStatus23("mfj"), isStatus23("qss"), isStatus23("hoh"));
 var isMfj3 = isStatus23("mfj");
 var pct4 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var timesNum = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled7 = (n) => timesNum({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
 var half2 = (x) => pct4(x, "1", "2");
 var BOOKLET_URL5 = "https://tax.idaho.gov/document-mngr/forms_EIN00046/";
 var FORM40_URL = "https://tax.idaho.gov/document-mngr/forms_EFO00089/";
@@ -50273,7 +53076,7 @@ var idRules = [
       statutoryBaseSingle: { value: "250000", type: "money" },
       statutoryBaseJoint: { value: "500000", type: "money" }
     },
-    formula: rd20(pct4(max015(sub15(max015(fact36("stateTaxableIncome")), iff14(isJointLike, money33("962200"), money33("481100")))), "53", "1000"))
+    formula: dollarsFromScaled7(timesNum(max015(sub15(max015(fact36("stateTaxableIncome")), iff14(isJointLike, money33("962200"), money33("481100")))), "530"))
   },
   {
     id: "us.id.standard_deduction",
@@ -50385,7 +53188,7 @@ var idRules = [
       const l1 = max015(fact36("idTaxBeforeCredits"));
       const l3 = fact36("idAdjustedIncome");
       const ratio = { kind: "mulDiv", a: max015(fact36("idOtherStateIncome")), b: money33("10000"), c: l3, round: "half-up" };
-      const l5 = rd20({ kind: "mulDiv", a: l1, b: ratio, c: money33("10000"), round: "half-up" });
+      const l5 = timesNum({ kind: "mulDiv", a: l1, b: ratio, c: money33("1000000"), round: "half-up" }, "100");
       return iff14(gt6(l3, money33("0")), minE4(l5, max015(fact36("idOtherStateTaxDue")), l1), money33("0"));
     })()
   },
@@ -50686,7 +53489,7 @@ var isMfs5 = isStatus24("mfs");
 var isMfj4 = isStatus24("mfj");
 var times7 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct5 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
-var dollarsFromScaled7 = (n) => times7({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var dollarsFromScaled8 = (n) => times7({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
 var scaledSchedule7 = (base, rows) => add12(...rows.map((r, i) => {
   const excess = sub16(base, money33(r.thresholdCents));
   const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money33("0"), hi: money33(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max016(excess);
@@ -50698,7 +53501,7 @@ var sched = (rates, mfs) => {
 };
 var RATES_2025 = ["222", "296", "333", "444", "482"];
 var RATES_2026 = ["211", "281", "316", "422", "458"];
-var scheduleTax = (x, rates) => iff15(isMfs5, dollarsFromScaled7(scaledSchedule7(x, sched(rates, true))), dollarsFromScaled7(scaledSchedule7(x, sched(rates, false))));
+var scheduleTax = (x, rates) => iff15(isMfs5, dollarsFromScaled8(scaledSchedule7(x, sched(rates, true))), dollarsFromScaled8(scaledSchedule7(x, sched(rates, false))));
 var tableMidpoint = (x) => {
   const band = (unitCents, offsetCents, from) => add12(money33(from), mulInt14(money33(unitCents), stepUnits5(sub16(x, money33(from)), unitCents, "floor")), money33(offsetCents));
   return iff15(lt15(x, money33("10000")), band("2500", "1250", "0"), iff15(lt15(x, money33("2500000")), band("10000", "5000", "0"), iff15(lt15(x, money33("4000000")), band("6000", "3000", "2500000"), band("5000", "2500", "4000000"))));
@@ -50739,7 +53542,7 @@ var wvRules = [
     formula: (() => {
       const x = max016(fact36("stateTaxableIncome"));
       const schedule = scheduleTax(x, RATES_2025);
-      const table2 = dollarsFromScaled7(scaledSchedule7(tableMidpoint(x), sched(RATES_2025, false)));
+      const table2 = dollarsFromScaled8(scaledSchedule7(tableMidpoint(x), sched(RATES_2025, false)));
       const useTable = and4(not4(fact36("wvUseRateSchedule")), not4(isMfs5), ge5(x, money33("2500")), lt15(x, money33("10000000")));
       return iff15(useTable, table2, schedule);
     })()
@@ -50928,7 +53731,7 @@ var wvRules = [
       const l2 = max016(fact36("wvTaxBeforeCredits"));
       const l3 = max016(fact36("wvOtherStateIncome"));
       const l4 = fact36("wvAdjustedGrossIncome");
-      const l5 = rd21({ kind: "mulDiv", a: l2, b: l3, c: l4, round: "half-up" });
+      const l5 = times7({ kind: "mulDiv", a: l2, b: l3, c: times7(l4, "100"), round: "half-up" }, "100");
       const l8 = max016(sub16(l2, max016(fact36("wvAlternativeTax"))));
       const l9 = max016(sub16(l2, max016(fact36("wvOtherRecapCredits"))));
       return iff15(gt7(l4, money33("0")), minE5(l1, l2, l5, l8, l9), money33("0"));
@@ -51067,17 +53870,17 @@ var isHoh3 = isStatus25("hoh");
 var isMfs6 = isStatus25("mfs");
 var times8 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct6 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
-var dollarsFromScaled8 = (n) => times8({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var dollarsFromScaled9 = (n) => times8({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
 var printedSchedule2 = (base, rows) => {
-  let expr = dollarsFromScaled8(add13(times8(money33(rows[0].fixedCents), "10000"), times8(sub17(base, money33(rows[0].thresholdCents)), rows[0].rateNum)));
+  let expr = dollarsFromScaled9(add13(times8(money33(rows[0].fixedCents), "10000"), times8(sub17(base, money33(rows[0].thresholdCents)), rows[0].rateNum)));
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
-    expr = iff16(ge6(base, money33(r.thresholdCents)), dollarsFromScaled8(add13(times8(money33(r.fixedCents), "10000"), times8(sub17(base, money33(r.thresholdCents)), r.rateNum))), expr);
+    expr = iff16(ge6(base, money33(r.thresholdCents)), dollarsFromScaled9(add13(times8(money33(r.fixedCents), "10000"), times8(sub17(base, money33(r.thresholdCents)), r.rateNum))), expr);
   }
   return expr;
 };
 var ratio4 = (num, den) => minE6({ kind: "mulDiv", a: max017(num), b: money33("10000"), c: money33(den), round: "half-up" }, money33("10000"));
-var applyRatio = (base, r) => rd22({ kind: "mulDiv", a: base, b: r, c: money33("10000"), round: "half-up" });
+var applyRatio = (base, r) => times8({ kind: "mulDiv", a: base, b: r, c: money33("1000000"), round: "half-up" }, "100");
 var SCHED_SINGLE3 = [
   { thresholdCents: "0", fixedCents: "0", rateNum: "580" },
   { thresholdCents: "2680000", fixedCents: "155400", rateNum: "675" },
@@ -51136,7 +53939,7 @@ var meRules = [
     formula: (() => {
       const x = max017(fact36("stateTaxableIncome"));
       const mid = add13(mulInt15(money33("10000"), stepUnits6(x, "10000", "floor")), money33("5000"));
-      const handoff = (baseCents) => dollarsFromScaled8(add13(times8(money33(baseCents), "10000"), times8(sub17(x, money33("10000000")), "715")));
+      const handoff = (baseCents) => dollarsFromScaled9(add13(times8(money33(baseCents), "10000"), times8(sub17(x, money33("10000000")), "715")));
       const under100 = iff16(lt16(x, money33("5000")), money33("0"), money33("300"));
       const tableMethod = iff16(lt16(x, money33("10000")), under100, iff16(lt16(x, money33("10000000")), scheduleTax2(mid), iff16(isJoint3, scheduleTax2(x), iff16(isHoh3, handoff("638400"), handoff("663800")))));
       return iff16(fact36("meUseRateSchedule"), scheduleTax2(x), tableMethod);
@@ -51487,7 +54290,13 @@ var meRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { rateBps: { value: "550", type: "int" }, estimateBps: { value: "4", type: "int" } },
-    formula: add13(rd22(pct6(max017(fact36("meUseTaxPurchases")), "55", "1000")), iff16(fact36("meUseTaxEstimate"), rd22(pct6(max017(fact36("meAgi")), "4", "10000")), money33("0")))
+    formula: add13(
+      // whole-dollar lines: ONE half-up rounding each. Rounding to cents first and then to
+      // dollars double-rounds — 5.5% of $209 is 11.495 ($11, not $12), and 0.04% of $1,238
+      // is 0.4952 ($0, not $1).
+      dollarsFromScaled9(times8(max017(fact36("meUseTaxPurchases")), "550")),
+      iff16(fact36("meUseTaxEstimate"), dollarsFromScaled9(times8(max017(fact36("meAgi")), "4")), money33("0"))
+    )
   },
   {
     id: "us.me.parameters",
@@ -51654,6 +54463,2351 @@ var meRules = [
       const l4 = max017(add13(sub17(max017(fact36("meFederalItemizedDeductions")), l2f), l3e));
       return add13(max017(fact36("meMedicalDeduction")), minE6(l4, money33("3710000")));
     })()
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-hi.js
+var rd23 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp10 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt17 = (l, r) => cmp10("lt", l, r);
+var le15 = (l, r) => cmp10("le", l, r);
+var gt9 = (l, r) => cmp10("gt", l, r);
+var ge7 = (l, r) => cmp10("ge", l, r);
+var eq2 = (l, r) => cmp10("eq", l, r);
+var iff17 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add14 = (...args) => ({ kind: "add", args });
+var sub18 = (left, right) => ({ kind: "sub", left, right });
+var max018 = (arg) => ({ kind: "max0", arg });
+var minE7 = (...args) => ({ kind: "min", args });
+var maxE5 = (...args) => ({ kind: "max", args });
+var and5 = (...args) => ({ kind: "and", args });
+var or8 = (...args) => ({ kind: "or", args });
+var not5 = (arg) => ({ kind: "not", arg });
+var int11 = (value) => ({ kind: "int", value });
+var mulInt16 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits7 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus26 = (v) => cmp10("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJoint4 = or8(isStatus26("mfj"), isStatus26("qss"));
+var isHoh4 = isStatus26("hoh");
+var isMfs7 = isStatus26("mfs");
+var isSingle = isStatus26("single");
+var times9 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var pct7 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var dollarsFromScaled10 = (n) => times9({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var pct725 = (x) => dollarsFromScaled10(times9(x, "725"));
+var printedSchedule3 = (base, rows) => {
+  let expr = dollarsFromScaled10(add14(times9(money33(rows[0].fixedCents), "10000"), times9(sub18(base, money33(rows[0].thresholdCents)), rows[0].rateBps)));
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    expr = iff17(ge7(base, money33(r.thresholdCents)), dollarsFromScaled10(add14(times9(money33(r.fixedCents), "10000"), times9(sub18(base, money33(r.thresholdCents)), r.rateBps))), expr);
+  }
+  return expr;
+};
+var row = (thr, fixed, bps) => ({ thresholdCents: String(thr * 100), fixedCents: String(fixed * 100), rateBps: String(bps) });
+var SCHED_I = [row(0, 0, 140), row(9600, 134, 320), row(14400, 288, 550), row(19200, 552, 640), row(24e3, 859, 680), row(36e3, 1675, 720), row(48e3, 2539, 760), row(125e3, 8391, 790), row(175e3, 12341, 825), row(225e3, 16466, 900), row(275e3, 20966, 1e3), row(325e3, 25966, 1100)];
+var SCHED_II = [row(0, 0, 140), row(19200, 269, 320), row(28800, 576, 550), row(38400, 1104, 640), row(48e3, 1718, 680), row(72e3, 3350, 720), row(96e3, 5078, 760), row(25e4, 16782, 790), row(35e4, 24682, 825), row(45e4, 32932, 900), row(55e4, 41932, 1e3), row(65e4, 51932, 1100)];
+var SCHED_III = [row(0, 0, 140), row(14400, 202, 320), row(21600, 432, 550), row(28800, 828, 640), row(36e3, 1289, 680), row(54e3, 2513, 720), row(72e3, 3809, 760), row(187500, 12587, 790), row(262500, 18512, 825), row(337500, 24699, 900), row(412500, 31449, 1e3), row(487500, 38949, 1100)];
+var scheduleTax3 = (x) => iff17(isJoint4, printedSchedule3(x, SCHED_II), iff17(isHoh4, printedSchedule3(x, SCHED_III), printedSchedule3(x, SCHED_I)));
+var ordinaryTax = (x) => {
+  const mid = add14(mulInt16(money33("5000"), stepUnits7(x, "5000", "floor")), money33("2500"));
+  const tableMethod = iff17(lt17(x, money33("10000000")), scheduleTax3(mid), scheduleTax3(x));
+  return iff17(fact36("hiUseRateSchedule"), scheduleTax3(x), tableMethod);
+};
+var FORMS2 = "https://files.hawaii.gov/tax/forms/2025/";
+var BOOKLET_URL8 = FORMS2 + "n11ins.pdf";
+var HRS = (s) => `https://www.capitol.hawaii.gov/hrscurrent/Vol04_Ch0201-0257/HRS0235/HRS_0235-${s}.htm`;
+var hiRules = [
+  {
+    id: "us.hi.income_tax",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii income tax \u2014 2025-2026 rate schedules (1.4% to 11% in twelve brackets; single and MFS to $9,600 \u2026 over $325,000; MFJ and QSS to $19,200 \u2026 over $650,000; HOH to $14,400 \u2026 over $487,500) and the Tax Table (printed-anchor schedule at the $50-row midpoint, under $100,000) (Form N-11 line 27)",
+    citation: {
+      source: "HRS \xA7 235-51(a)-(c) as amended by Act 46, SLH 2024 (HB 2404, \xA7 2; 'taxable year beginning after December 31, 2024'); 2025 Form N-11 Instructions p. 20 (Tax Table / Tax Rate Schedules), pp. 35-47 (Tax Table), p. 48 (2025 Tax Rate Schedules); DOTAX '2025 Tax Tables'; Act 24, SLH 2026 (SB 3125, \xA7 2, applies to taxable years beginning after December 31, 2026)",
+      section: "\xA7 235-51(a)-(c); Form N-11 line 27",
+      url: HRS("0051"),
+      excerpt: "STATUTE (\xA7 235-51(c), verbatim, 'In the case of any taxable year beginning after December 31, 2024'): 'Not over $9,600 \u2014 1.40% of taxable income; Over $9,600 but not over $14,400 \u2014 $134.00 plus 3.20% of excess over $9,600; Over $14,400 but not over $19,200 \u2014 $288.00 plus 5.50% of excess over $14,400; Over $19,200 but not over $24,000 \u2014 $552.00 plus 6.40% of excess over $19,200; Over $24,000 but not over $36,000 \u2014 $859.00 plus 6.80% of excess over $24,000; Over $36,000 but not over $48,000 \u2014 $1,675.00 plus 7.20% of excess over $36,000; Over $48,000 but not over $125,000 \u2014 $2,539.00 plus 7.60% of excess over $48,000; Over $125,000 but not over $175,000 \u2014 $8,391.00 plus 7.90% of excess over $125,000; Over $175,000 but not over $225,000 \u2014 $12,341.00 plus 8.25% of excess over $175,000; Over $225,000 but not over $275,000 \u2014 $16,466.00 plus 9.00% of excess over $225,000; Over $275,000 but not over $325,000 \u2014 $20,966.00 plus 10.00% of excess over $275,000; Over $325,000 \u2014 $25,966.00 plus 11.00% of excess over $325,000.' (a) joint returns and surviving spouses: 'Not over $19,200 \u2014 1.40%; Over $19,200 but not over $28,800 \u2014 $269.00 plus 3.20%; Over $28,800 but not over $38,400 \u2014 $576.00 plus 5.50%; Over $38,400 but not over $48,000 \u2014 $1,104.00 plus 6.40%; Over $48,000 but not over $72,000 \u2014 $1,718.00 plus 6.80%; Over $72,000 but not over $96,000 \u2014 $3,350.00 plus 7.20%; Over $96,000 but not over $250,000 \u2014 $5,078.00 plus 7.60%; Over $250,000 but not over $350,000 \u2014 $16,782.00 plus 7.90%; Over $350,000 but not over $450,000 \u2014 $24,682.00 plus 8.25%; Over $450,000 but not over $550,000 \u2014 $32,932.00 plus 9.00%; Over $550,000 but not over $650,000 \u2014 $41,932.00 plus 10.00%; Over $650,000 \u2014 $51,932.00 plus 11.00% of excess over $650,000.' (b) heads of household: 'Not over $14,400 \u2014 1.40%; Over $14,400 but not over $21,600 \u2014 $202.00 plus 3.20%; Over $21,600 but not over $28,800 \u2014 $432.00 plus 5.50%; Over $28,800 but not over $36,000 \u2014 $828.00 plus 6.40%; Over $36,000 but not over $54,000 \u2014 $1,289.00 plus 6.80%; Over $54,000 but not over $72,000 \u2014 $2,513.00 plus 7.20%; Over $72,000 but not over $187,500 \u2014 $3,809.00 plus 7.60%; Over $187,500 but not over $262,500 \u2014 $12,587.00 plus 7.90%; Over $262,500 but not over $337,500 \u2014 $18,512.00 plus 8.25%; Over $337,500 but not over $412,500 \u2014 $24,699.00 plus 9.00%; Over $412,500 but not over $487,500 \u2014 $31,449.00 plus 10.00%; Over $487,500 \u2014 $38,949.00 plus 11.00% of excess over $487,500.' The booklet's 2025 Tax Rate Schedules (p. 48) print the same three tables: 'Schedule I \u2014 Single taxpayers and married filing separate returns (Filing Status Oval 1 or 3)', 'Schedule II \u2014 Married taxpayers filing joint returns and qualifying surviving spouses (Oval 2 or 5)', 'Schedule III \u2014 Unmarried heads of household (Oval 4)'. BOOKLET (p. 20, verbatim): 'Tax Table: If your taxable income is less than $100,000, you MUST use the Tax Table on pages 36 through 47 \u2026 Be sure you use the correct column in the Tax Table.' 'Tax Rate Schedules: You must use the Tax Rate Schedules on page 48 to figure your tax if your taxable income is $100,000 or more.' TAX TABLE (verbatim rows, columns 'Single or Married filing separately / Married filing jointly* / Head of a household', '*This column must also be used by qualifying surviving spouse'): '0 50 0 0 0', '50 100 1 1 1', '23,250 23,300 813 399 524' (the printed example: 'Mr. & Mrs. Brown are filing a joint return. Their taxable income is $23,275 \u2026 The amount shown where the income line and filing status column meet is $399'), '62,900 62,950 3,673 2,733 3,156', '99,950 100,000 6,489 5,380 5,935', then '100,000 OR OVER \u2014 You MUST use the tax rate schedules.' CONVENTION (verified on all 2,000 $50 rows \xD7 3 columns, booklet and standalone table identical): each cell is the printed schedule at the row midpoint (at-least + $25) rounded half-up; the exact unrounded anchors ($134.40, $859.20, $1,675.20, $2,539.20 \u2026) miss 342 single, 454 joint, and 314 HOH cells. ROUNDING (p. 11): 'round off cents to the nearest whole dollar \u2026 drop amounts under 50 cents and increase amounts from 50 to 99 cents to the next dollar.' ENCODING: default = the table method under $100,000 (schedule at the row midpoint) and the schedule at the exact income from $100,000; hiUseRateSchedule = true applies the schedule at any income (differs from the table by at most the rate \xD7 $25). MFS uses Schedule I; a federal QSS uses Schedule II. CURRENCY: \xA7 235-51 keeps these tables for taxable years beginning after December 31, 2024 and before January 1, 2027 \u2014 Act 24, SLH 2026 (SB 3125 CD2, approved May 21, 2026) rewrote the 'after December 31, 2026' and 'after December 31, 2028' tables (2.5% / 5% low brackets and a 13% bracket over $1,000,000 joint / $750,000 HOH / $500,000 single) and 'shall apply to taxable years beginning after December 31, 2026' (\xA7 9(1); the enrolled bill's own file header reads 'C.D. 1' while DOTAX Announcement 2026-06 cites 'C.D. 2' \u2014 the two official sources disagree on the draft number, not on the text), so TY2026 uses the 2025 schedules (DOTAX Announcement 2024-03: 'For tax year 2026 \u2026 The income tax brackets will be the same as in tax year 2025'; Booklet A (Rev. 2025), effective for withholding from January 1, 2026, prints the same $9,600 / $134.00 \u2026 $2,539.00 plus 7.60% and $19,200 / $269.00 \u2026 $5,078.00 plus 7.60% schedules); the 2026 Tax Table is unpublished (~January 2027) and is expected to reproduce this convention \u2014 this rule ends 2027-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      ratesBps: { value: "140", type: "int" },
+      topRateBps: { value: "1100", type: "int" },
+      singleBracket1: { value: "960000", type: "money" },
+      singleTopBracket: { value: "32500000", type: "money" },
+      jointBracket1: { value: "1920000", type: "money" },
+      jointTopBracket: { value: "65000000", type: "money" },
+      hohBracket1: { value: "1440000", type: "money" },
+      hohTopBracket: { value: "48750000", type: "money" },
+      tableTop: { value: "10000000", type: "money" },
+      tableRowWidth: { value: "5000", type: "money" }
+    },
+    formula: ordinaryTax(max018(fact36("stateTaxableIncome")))
+  },
+  {
+    id: "us.hi.capital_gains_tax",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii alternative tax on net capital gain \u2014 the smaller of the regular tax and (the tax on the greater of taxable income less net capital gain or the printed $24,000 / $36,000 / $48,000, plus 7.25% of the rest); the printed line 12 amounts were not updated for Act 46 (\xA7 235-51(f) gives $48,000 / $72,000 / $96,000 \u2014 hiCapitalGainsStatutoryThreshold) (Tax on Capital Gains Worksheet, Form N-11 lines 27 and 27a)",
+    citation: {
+      source: "HRS \xA7 235-51(f); 2025 Form N-11 Instructions p. 20 ('Alternative Tax on Capital Gains') and p. 33 'Tax on Capital Gains Worksheet' lines 1-19; Form N-11 lines 27 and 27a",
+      section: "\xA7 235-51(f); Form N-11 lines 27, 27a",
+      url: BOOKLET_URL8,
+      excerpt: "STATUTE (verbatim): '(f) If a taxpayer has a net capital gain for any taxable year to which this subsection applies, then the tax imposed by this section shall not exceed the sum of: (1) The tax computed at the rates and in the same manner as if this subsection had not been enacted on the greater of: (A) The taxable income reduced by the amount of net capital gain, or (B) The amount of taxable income taxed at a rate below 7.25 per cent, plus (2) A tax of 7.25 per cent of the amount of taxable income in excess of the amount determined under paragraph (1).' WORKSHEET (verbatim): 'Note: If your taxable income is $48,000 ($24,000 for Single, and Married Filing Separately; or $36,000 for Head of Household classifications) or under, do not use this worksheet. 1. Enter your taxable income from Form N-11, line 26; 2. Enter your net long-term capital gain (federal Sch. D (Form 1040 or 1040-SR), line 15; or federal Form 1040 or 1040-SR, line 7 if Sch. D is not required); 3. Combine your Hawaii long-term adjustments, if any \u2026; 4. Combine lines 2 and 3. This is your Hawaii net long-term capital gain; 5. Enter your net capital gain (federal Sch. D \u2026, line 16; or federal Form 1040 or 1040-SR, line 7 \u2026); 6. Combine your Hawaii short-term adjustments \u2026; 7. Combine lines 3, 5, and 6. This is your Hawaii net capital gain; 8. Enter the smaller of line 4 or line 7; 9. If you are filing Form N-158, enter the amount from line 4e of Form N-158; 10. Line 8 minus line 9 (If this amount is zero or less, stop here; you cannot use this worksheet to figure your tax.); 11. Line 1 minus line 10; 12. Enter the amount shown below for the filing status you claimed: Single or Married filing separately \u2014 $24,000; Head of household \u2014 36,000; Married filing jointly or qualifying surviving spouse \u2014 48,000; 13. Enter the greater of line 11 or line 12; 14. Line 1 minus line 13. This is the amount of net capital gains eligible for alternative tax; 15. Compute the tax on the amount on line 13 using the Tax Table or Tax Rate Schedules, whichever applies; 16. Multiply line 14 by 7.25% (.0725) and enter the result; 17. Line 15 plus line 16; 18. Compute the tax on the amount on line 1 using the Tax Table or Tax Rate Schedules, whichever applies; 19. Enter the smaller of line 17 or line 18 here and on line a of the Tax Computation Worksheet on page 32. If line 17 is smaller, enter the amount from line 14 in the space provided beside Form N-11, line 27a.' DISCREPANCY: the printed line 12 amounts are the 2018-2024 figures (the 7.20% bracket then ended at $24,000 / $36,000 / $48,000 \u2014 the 2024 booklet prints the same worksheet); under the 2025 schedules the 7.20% bracket ends at $48,000 single/MFS, $72,000 HOH, $96,000 MFJ/QSS, which is the statute's 'amount of taxable income taxed at a rate below 7.25 per cent'. The printed worksheet is encoded as the default (it is the return as DOTAX instructs it be prepared, and its line 19 minimum never exceeds the regular tax); hiCapitalGainsStatutoryThreshold = true substitutes the statutory amounts (a lower tax by up to about $60 single / $120 joint). ENCODING: line 8 = min(line 4, line 7); line 10 = line 8 \u2212 line 9 (\u2264 0 \u2192 regular tax); 13 = max(1 \u2212 10, threshold); 15 and 18 use the same table-or-schedule method as us.hi.income_tax (hiUseRateSchedule); 16 (7.25% \xD7 line 14) rounded ONCE to whole dollars; result = min(17, 18). Amounts are unindexed and Act 24's rate changes begin TY2027 \u2014 this rule ends 2027-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rateBps: { value: "725", type: "int" },
+      printedThresholdSingleMfs: { value: "2400000", type: "money" },
+      printedThresholdHoh: { value: "3600000", type: "money" },
+      printedThresholdJoint: { value: "4800000", type: "money" },
+      statutoryThresholdSingleMfs: { value: "4800000", type: "money" },
+      statutoryThresholdHoh: { value: "7200000", type: "money" },
+      statutoryThresholdJoint: { value: "9600000", type: "money" }
+    },
+    formula: (() => {
+      const l1 = max018(fact36("stateTaxableIncome"));
+      const l8 = minE7(max018(fact36("hiNetLongTermCapitalGain")), max018(fact36("hiNetCapitalGain")));
+      const l10 = max018(sub18(l8, max018(fact36("hiInvestmentInterestN158"))));
+      const printedThr = iff17(isJoint4, money33("4800000"), iff17(isHoh4, money33("3600000"), money33("2400000")));
+      const statutoryThr = iff17(isJoint4, money33("9600000"), iff17(isHoh4, money33("7200000"), money33("4800000")));
+      const thr = iff17(fact36("hiCapitalGainsStatutoryThreshold"), statutoryThr, printedThr);
+      const l13 = maxE5(sub18(l1, l10), thr);
+      const l14 = max018(sub18(l1, l13));
+      const l17 = add14(ordinaryTax(minE7(l13, l1)), pct725(l14));
+      const l18 = ordinaryTax(l1);
+      return iff17(or8(le15(l1, thr), le15(l10, money33("0"))), l18, minE7(l17, l18));
+    })()
+  },
+  {
+    id: "us.hi.standard_deduction",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii standard deduction 2025 \u2014 $4,400 single and MFS, $8,800 MFJ and QSS, $6,424 HOH (\xA7 235-2.4(a)(2)(E)); a dependent filer's is limited to the greater of $500 or earned income, up to the full amount; no age or blindness addition (Form N-11 line 23)",
+    citation: {
+      source: "HRS \xA7 235-2.4(a)(1)-(3) as amended by Act 46, SLH 2024 (HB 2404, \xA7 1); 2025 Form N-11 Instructions p. 20 ('Standard Deduction', 'Standard Deduction for Dependents' worksheet lines A-E); printed Form N-11 line 23",
+      section: "\xA7 235-2.4(a)(2)(E), (a)(3); Form N-11 line 23",
+      url: HRS("0002_0004"),
+      excerpt: "STATUTE (verbatim): '(1) Section 63(c)(1)(B) (relating to the additional standard deduction), \u2026 63(c)(4) (relating to inflation adjustments), \u2026 and 63(f) (relating to additional amounts for the aged or blind) of the Internal Revenue Code shall not be operative for purposes of this chapter; (2) Section 63(c)(2) (relating to the basic standard deduction) of the Internal Revenue Code shall be operative, except that the standard deduction amounts provided therein shall instead mean: \u2026 (E) For taxable years beginning after December 31, 2023: (i) $8,800 in the case of a joint return as provided by section 235-93 or a surviving spouse (as defined in section 2(a) of the Internal Revenue Code); (ii) $6,424 in the case of a head of household (as defined in section 2(b) of the Internal Revenue Code); (iii) $4,400 in the case of an individual who is not married and who is not a surviving spouse or head of household; or (iv) $4,400 in the case of a married individual filing a separate return; \u2026 (3) Section 63(c)(5) (limiting the basic standard deduction in the case of certain dependents) of the Internal Revenue Code shall be operative, except that the limitation shall be the greater of $500 or the individual's earned income'. FORM (line 23, verbatim): 'If you checked filing status box: 1 or 3 enter $4,400; 2 or 5 enter $8,800; 4 enter $6,424. Standard Deduction'. BOOKLET (p. 20, verbatim): 'Hawaii did not adopt the federal provision that increases the standard deduction amounts for tax years 2018 through 2025.' 'Standard Deduction for Dependents. If you can be claimed as a dependent by someone else and you do not itemize your deductions, your standard deduction is limited to the greater of $500 or your earned income (up to the full standard deduction for your filing status). \u2026 A. Enter your earned income (defined below). If none, enter zero; B. Minimum amount 500.00; C. Compare the amounts on lines A and B above. Enter the LARGER of the two amounts here; D. Maximum amount. Enter the full standard deduction for your filing status, shown in the chart above, here; E. Compare the amounts on lines C and D above. Enter the SMALLER of the two amounts here and on Form N-11, line 23.' 'Earned income includes wages, salaries, tips, professional fees, and other compensation received for personal services you performed. It also includes any taxable scholarship or fellowship grant. Generally, your earned income is the total of the amounts you reported on federal Form 1040 or Form 1040-SR, line 1 (wages), federal Schedule 1 \u2026, lines 3 (business income) and 6 (farming income), minus the amount, if any, on federal Schedule 1 \u2026, line 15 (deduction for self-employment tax).' MFS: 'You must itemize deductions if: You are married, filing a separate return, and your spouse itemizes' (p. 15) \u2014 the composer handles the spouse-itemizes case. TY2026: \xA7 235-2.4(a)(2)(F) \u2014 version 2."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { single: { value: "440000", type: "money" }, joint: { value: "880000", type: "money" }, hoh: { value: "642400", type: "money" }, dependentMinimum: { value: "50000", type: "money" } },
+    formula: (() => {
+      const base = iff17(isJoint4, money33("880000"), iff17(isHoh4, money33("642400"), money33("440000")));
+      const dep = minE7(base, maxE5(money33("50000"), max018(fact36("hiEarnedIncome"))));
+      return iff17(fact36("isClaimedAsDependent"), dep, base);
+    })()
+  },
+  {
+    id: "us.hi.itemized_deductions",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii itemized deductions 2025 \u2014 Worksheets A-1 to A-6 (medical over 7.5% of Hawaii AGI; state income or sales taxes only when federal AGI is under $100,000 / $150,000 / $200,000, real estate, personal property, and other taxes; mortgage and investment interest; contributions; casualty losses over 10% of AGI; miscellaneous over 2% of AGI plus deductions not subject to the floor) and the \xA7 68 overall limitation over $166,800 ($83,400 MFS): the smaller of 3% of the excess or 80% of the non-protected deductions (Form N-11 lines 21a-21f, 22)",
+    citation: {
+      source: "HRS \xA7 235-2.4(b), (c), (k), (l); 2025 Form N-11 Instructions pp. 15-20 (lines 21a-21f, 22), p. 32 'Itemized Deductions Worksheet' A-1 to A-6 and 'Total Itemized Deductions Worksheet' lines 1-11",
+      section: "\xA7 235-2.4(b), (c), (k), (l); Form N-11 lines 21a-22",
+      url: HRS("0002_0004"),
+      excerpt: "STATUTE (verbatim): '(b) Section 67 (with respect to the 2-percent floor on miscellaneous itemized deductions) of the Internal Revenue Code shall be operative for purposes of this chapter, except that the suspension in section 67(g) shall not be operative for purposes of this chapter. (c) Section 68 (with respect to the overall limitation on itemized deductions) of the Internal Revenue Code shall be operative; provided that the: (1) Thresholds shall be those that were operative for federal tax year 2009; and (2) Suspension in section 68(f) shall not be operative for purposes of this chapter.' '(k) Section 164 (with respect to taxes) \u2026 shall be operative \u2026, except that: (1) Section 164(b)(6)(B) (limiting the deduction for state and local taxes) shall not be operative \u2026; (2) The deductions under section 164(a)(3) and (b)(5) shall not be operative for corporate taxpayers and shall be operative only for the following individual taxpayers: (A) A taxpayer filing a single return or a married person filing separately with a federal adjusted gross income of less than $100,000; (B) A taxpayer filing as a head of household with a federal adjusted gross income of less than $150,000; and (C) A taxpayer filing a joint return or as a surviving spouse with a federal adjusted gross income of less than $200,000; and (3) Section 164(a)(3) shall not be operative for any amounts for which the credit under section 235-55 has been claimed.' '(l) \u2026 (1) The amount prescribed by section 165(h)(1) (relating to the limitation per casualty) \u2026 shall be a $100 limitation per casualty; \u2026 (3) Section 165(h)(5) (relating to the limitation on the deductibility of personal casualty losses that are not attributable to federally declared disasters) shall not be operative'. \xA7 235-2.4(j)(3): \xA7 163(h)(3)(F) (limiting mortgage interest) is not operative. WORKSHEETS (verbatim): 'A-1 Medical and Dental Expenses: 1. Enter amount of medical and dental expenses; 2. Enter the amount from Form N-11, line 20 (Hawaii AGI); 3. Multiply line 2 by 7.5% (.075). If zero or less, enter zero; 4. Line 1 minus line 3. If zero or less, enter zero. Enter the result here and on Form N-11, line 21a. A-2 Taxes You Paid: 5. State and local (check only one box): a Income taxes, or b General sales taxes. Note: You can only claim this deduction if your federal AGI is less than $100,000 and you are single or married filing separately; or less than $150,000 and you are a head of household; or less than $200,000 and you are married filing jointly or a qualifying surviving spouse; 6. Real estate taxes; 7. Personal property taxes; 8. Other taxes; 9. Add lines 5 through 8 \u2026 Form N-11, line 21b. A-3 Interest You Paid: 10. Home mortgage interest and points reported to you on federal Form 1098; 11. Home mortgage interest not reported to you on federal Form 1098; 12. Points not reported \u2026; 13. Investment interest (attach Form N-158); 14. Add lines 10 through 13 \u2026 line 21c. A-4 Gifts to Charity: 15. \u2026 cash or check; 16. Other than by cash or check; 17. Carryover from prior year; 18. Add lines 15 through 17 \u2026 line 21d. A-5 Casualties and Thefts: 19. Total casualty and theft loss(es) from the 2017 federal Form 4684, line 16; 20. Enter the amount from Form N-11, line 20 (Hawaii AGI); 21. Multiply line 20 by 10% (.10). If zero or less, enter zero; 22. Line 19 minus line 21. If zero or less, enter zero \u2026 line 21e. A-6 Miscellaneous Deductions: 23. Unreimbursed employee business expenses \u2026; 24. Tax preparation fees; 25. Other expenses (investment, safe deposit box, etc.); 26. Add lines 23 to 25; 27. Enter the amount from Form N-11, line 20 (Hawaii AGI); 28. Multiply line 27 by 2% (.02). If zero or less, enter zero; 29. Line 26 minus line 28. If zero or less, enter zero; 30. Other deductions not subject to 2% AGI limit \u2026; 31. Add lines 29 and 30 \u2026 line 21f. 32. Total itemized deductions. Add lines 4, 9, 14, 18, 22, and 31.' 'Total Itemized Deductions Worksheet: 1. Enter the amount from line 32 of the Itemized Deductions Worksheet; 2. Enter from the Itemized Deductions Worksheet the following: a. Medical and dental expenses (Worksheet A-1, line 4); b. Investment interest (Worksheet A-3, line 13); c. Casualty and theft losses (Worksheet A-5, line 22); d. Any gambling and casualty or theft losses included in Worksheet A-6, line 30; 3. Add lines 2a through 2d; 4. Is the amount on line 3 less than the amount on line 1? No. Your deduction is not limited \u2026 Yes. Line 1 minus line 3; 5. Multiply line 4 by 80% (.80); 6. Enter the amount from Form N-11, line 20 (Hawaii AGI); 7. Enter $166,800 ($83,400 if married filing separately); 8. Is the amount on line 7 less than the amount on line 6? No. Your deduction is not limited \u2026 Yes. Line 6 minus line 7; 9. Multiply line 8 by 3% (.03); 10. Enter the smaller of line 5 or line 9; 11. Total itemized deductions. Line 1 minus line 10. Enter the result here and on Form N-11, line 22.' BOOKLET (p. 20): 'Add lines 21a through 21f, and enter the result on line 22 if the amount on line 20 (Hawaii adjusted gross income) is $166,800 or less ($83,400 if married filing separately).' (p. 16-17): 'Hawaii did not adopt the federal provision that limits the deduction for state and local taxes to $10,000 \u2026 but did adopt the federal provision that foreign real property taxes cannot be deducted.' 'Hawaii did not adopt the federal provisions that (1) suspends the deduction for interest paid on home equity loans, and (2) lowers the dollar limit on mortgages'. 'If you claim a credit for income taxes paid to other states and countries, you cannot also claim those amounts as an itemized deduction'. ENCODING: hiStateLocalIncomeTaxes is the elected income OR sales tax amount, allowed only when hiFederalAgi is under the status limit; casualty losses are entered after the $100-per-casualty reduction; hiJobAndMiscExpenses is subject to the 2% floor and hiOtherMiscDeductions is not (hiGamblingLossesInMisc is the line 2d protected share); each worksheet line rounded to whole dollars. TY2026 (Act 35, SLH 2026): \xA7 67(g)'s suspension and \xA7 165(h)(5) become operative \u2014 version 2."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      medicalFloorBps: { value: "750", type: "int" },
+      casualtyFloorBps: { value: "1000", type: "int" },
+      miscFloorBps: { value: "200", type: "int" },
+      saltAgiLimitSingleMfs: { value: "10000000", type: "money" },
+      saltAgiLimitHoh: { value: "15000000", type: "money" },
+      saltAgiLimitJoint: { value: "20000000", type: "money" },
+      overallLimitationThreshold: { value: "16680000", type: "money" },
+      overallLimitationThresholdMfs: { value: "8340000", type: "money" },
+      overallLimitationRateBps: { value: "300", type: "int" },
+      overallLimitationCapBps: { value: "8000", type: "int" }
+    },
+    formula: (() => {
+      const agi2 = fact36("hiAgi");
+      const fagi = fact36("hiFederalAgi");
+      const l21a = max018(sub18(max018(fact36("hiMedicalExpenses")), rd23(pct7(max018(agi2), "75", "1000"))));
+      const saltLimit = iff17(isJoint4, money33("20000000"), iff17(isHoh4, money33("15000000"), money33("10000000")));
+      const salt = iff17(lt17(fagi, saltLimit), max018(fact36("hiStateLocalIncomeTaxes")), money33("0"));
+      const l21b = add14(salt, max018(fact36("hiRealEstateTaxes")), max018(fact36("hiPersonalPropertyTaxes")), max018(fact36("hiOtherTaxes")));
+      const invInt = max018(fact36("hiInvestmentInterest"));
+      const l21c = add14(max018(fact36("hiHomeMortgageInterest")), invInt);
+      const l21d = max018(fact36("hiCharitableContributions"));
+      const l21e = max018(sub18(max018(fact36("hiCasualtyLosses")), rd23(pct7(max018(agi2), "10", "100"))));
+      const l29 = max018(sub18(max018(fact36("hiJobAndMiscExpenses")), rd23(pct7(max018(agi2), "2", "100"))));
+      const l30 = max018(fact36("hiOtherMiscDeductions"));
+      const l21f = add14(l29, l30);
+      const total = add14(l21a, l21b, l21c, l21d, l21e, l21f);
+      const protectedAmt = add14(l21a, invInt, l21e, minE7(max018(fact36("hiGamblingLossesInMisc")), l30));
+      const l5 = rd23(pct7(max018(sub18(total, protectedAmt)), "80", "100"));
+      const thr = iff17(isMfs7, money33("8340000"), money33("16680000"));
+      const l9 = rd23(pct7(max018(sub18(agi2, thr)), "3", "100"));
+      const l10 = minE7(l5, l9);
+      return iff17(and5(gt9(agi2, thr), lt17(protectedAmt, total)), max018(sub18(total, l10)), total);
+    })()
+  },
+  {
+    id: "us.hi.personal_exemption",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii personal exemptions \u2014 $1,144 \xD7 the line 6e count (yourself, spouse, dependents, plus one more for each taxpayer or spouse 65 or older); a blind, deaf, or totally disabled person takes $7,000 in lieu (no dependent or age exemptions with it) (Form N-11 line 25)",
+    citation: {
+      source: "HRS \xA7 235-54(a), (c); 2025 Form N-11 Instructions pp. 9-10 (lines 6a-6e) and p. 20 (line 25, 'Blind, Deaf, or Totally Disabled'); printed Form N-11 lines 6a-6e, 25",
+      section: "\xA7 235-54(a), (c); Form N-11 lines 6a-6e, 25",
+      url: HRS("0054"),
+      excerpt: `STATUTE (verbatim): '(a) In computing the taxable income of any individual, there shall be deducted, in lieu of the personal exemptions allowed by the Internal Revenue Code, personal exemptions computed as follows: Ascertain the number of exemptions which the individual can lawfully claim under the Internal Revenue Code, add an additional exemption for the taxpayer or the taxpayer's spouse who is sixty-five years of age or older within the taxable year, and multiply that number by $1,144, for taxable years beginning after December 31, 1984. \u2026 In the case of an individual with respect to whom an exemption under this section is allowable to another taxpayer \u2026, the personal exemption amount applicable to such individual under this subsection for such individual's taxable year shall be zero. \u2026 (c) A blind person, a deaf person, and any person totally disabled, in lieu of the personal exemptions allowed by the Internal Revenue Code, shall be allowed, and there shall be deducted in computing the taxable income of a blind person, a deaf person, or a totally disabled person, instead of the exemptions provided by subsection (a), the amount of $7,000.' FORM (line 25, verbatim): 'Multiply $1,144 by the total number of exemptions claimed on line 6e. If you and/or your spouse are blind, deaf, or disabled, fill in the applicable oval(s), and see page 20 of the Instructions.' BOOKLET (verbatim): 'Line 6a Yourself: Fill in the oval on line 6a if no one can claim you as a dependent on another person's tax return. Fill in the oval for "Age 65 or over" if you are age 65 or over as of January 1, 2026. If you can be claimed as a dependent on another person's tax return, do not fill in the ovals on lines 6a and 6b.' 'Line 6b Spouse: Fill in the oval on line 6b if either of the following applies. 1. Your filing status is married filing jointly and your spouse cannot be claimed as a dependent on another person's return. 2. You were married at the end of 2025, your filing status is married filing separately, and both of the following apply. a. Your spouse had no income and is not filing a return. b. Your spouse cannot be claimed as a dependent on another person's return. If your spouse meets these qualifications, fill in the oval under line 6b and fill in the oval for "Age 65 or over" if your spouse was age 65 or over as of January 1, 2026.' 'Line 6e: Add the numbers you entered in the boxes for 6a, 6b, 6c, and 6d.' 'Hawaii did not adopt the federal provision that suspends the deduction for personal exemptions for tax years 2018 through 2025. Regular Exemptions: Residents are allowed $1,144 for each exemption they can claim. Multiply $1,144 by the total number of exemptions you claimed on line 6e.' 'A blind, deaf or totally disabled person who qualifies, may be allowed a Disability Exemption of $7,000. The Disability Exemption is in lieu of the regular personal exemption of $1,144. If you claim the Disability Exemption, you will not be able to claim the additional exemptions for your children or other dependents, or for being 65 or older. The following maximum exemptions are allowed: One Individual (any filing status) \u2014 $7,000; Taxpayer and Spouse (non-disabled spouse under 65) \u2014 8,144; Taxpayer and Spouse (non-disabled spouse age 65 or over) \u2014 9,288; Taxpayer and Spouse (both disabled) \u2014 14,000.' Form N-172 certification must be filed before the return. ENCODING: hiExemptions is the line 6e count (0 when hiDisabledPersons > 0); with disability, $7,000 \xD7 disabled persons plus, on a joint return with one non-disabled spouse, $1,144 (plus $1,144 if that spouse is 65 or older per hiNonDisabledSpouseAge65). Unindexed (the last change was L 2009) \u2014 this rule ends 2027-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "114400", type: "money" }, disabilityExemption: { value: "700000", type: "money" } },
+    formula: (() => {
+      const disabled = fact36("hiDisabledPersons");
+      const regular = mulInt16(money33("114400"), fact36("hiExemptions"));
+      const spouseShare = iff17(and5(isStatus26("mfj"), eq2(disabled, int11("1"))), iff17(fact36("hiNonDisabledSpouseAge65"), money33("228800"), money33("114400")), money33("0"));
+      return iff17(ge7(disabled, int11("1")), add14(mulInt16(money33("700000"), disabled), spouseShare), regular);
+    })()
+  },
+  {
+    id: "us.hi.reserve_pay_exclusion",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii military reserve / National Guard duty pay exclusion 2025 \u2014 the first $8,636 received by each member (taxpayer and spouse) (Form N-11 line 15)",
+    citation: {
+      source: "HRS \xA7 235-7(a)(7) (Act 197, SLH 2004: pay for 48 drills and 15 days of annual duty at the E-5 pay grade after eight years of service); 2025 Form N-11 Instructions p. 13 (line 15) and 'Changes to Note'; printed Form N-11 line 15",
+      section: "\xA7 235-7(a)(7); Form N-11 line 15",
+      url: HRS("0007"),
+      excerpt: "STATUTE (verbatim): '(7) Income received by each member of the reserve components of the Army, Navy, Air Force, Marine Corps, or Coast Guard of the United States of America, and the Hawaii National Guard as compensation for performance of duty, equivalent to pay received for forty-eight drills (equivalent of twelve weekends) and fifteen days of annual duty, at an: \u2026 (E) E-5 pay grade after eight years of service; provided that this subparagraph shall apply to taxable years beginning after December 31, 2008'. FORM (line 15, verbatim): 'First $8,636 of military reserve or Hawaii national guard duty pay.' BOOKLET (p. 13, verbatim): 'Hawaii does not tax the first $8,636 received by each member of the reserve components of the army, navy, air force, marine corps, coast guard of the United States of America, and the Hawaii national guard, as compensation for performance of duty as such. If you qualify, enter the smaller of: $8,636, or Your pay, as shown on Box 16 of the Form W-2 sent to you by your reserve component. If you are married filing a joint return, and you and your spouse qualify, add the exclusions for both of you and enter the total on line 15.' 'Changes to Note: Taxpayers may exclude up to $8,636 of their military reserve or Hawaii National Guard duty pay from their income, effective for taxable years beginning after December 31, 2024. (Act 197, SLH 2004)'. The amount tracks E-5 pay and changes every year \u2014 this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { perMember: { value: "863600", type: "money" } },
+    formula: add14(minE7(max018(fact36("hiReservePay")), money33("863600")), iff17(isStatus26("mfj"), minE7(max018(fact36("hiSpouseReservePay")), money33("863600")), money33("0")))
+  },
+  {
+    id: "us.hi.food_excise_credit",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii refundable food/excise tax credit \u2014 $220 / $200 / $170 / $140 / $110 per qualified exemption by federal AGI under $15,000 / $20,000 / $25,000 / $30,000 / $40,000 (single), plus $90 under $50,000 and $70 under $60,000 for every other status; MFS adds the spouse's AGI; not for dependents of another (Form N-311, Form N-11 line 28)",
+    citation: {
+      source: "HRS \xA7 235-55.85(a)-(c), (g) (Act 163, SLH 2023 amounts, 'Repeal and reenactment on December 31, 2027'); 2025 Form N-311 lines 1-9 and instructions; 2025 Form N-11 Instructions p. 21 (line 28)",
+      section: "\xA7 235-55.85; Form N-311; Form N-11 line 28",
+      url: HRS("0055_0008_0005"),
+      excerpt: `STATUTE (verbatim): '(a) Each individual taxpayer, who files an individual income tax return for a taxable year, and who is not claimed or is not otherwise eligible to be claimed as a dependent by another taxpayer for federal or Hawaii state individual income tax purposes, may claim a refundable food/excise tax credit \u2026; provided that an individual who has no income or no income taxable under this chapter \u2026 may claim this credit. (b) Each individual taxpayer may claim a refundable food/excise tax credit multiplied by the number of qualified exemptions to which the taxpayer is entitled in accordance with the table below; provided that spouses filing separate tax returns for a taxable year for which a joint return could have been filed by them shall claim only the tax credit to which they would have been entitled had a joint return been filed. Adjusted gross income for taxpayers filing a single return \u2014 Credit per exemption: Under $15,000 $220; $15,000 under $20,000 $200; $20,000 under $25,000 $170; $25,000 under $30,000 $140; $30,000 under $40,000 $110; $40,000 and over $0. Adjusted gross income for heads of household, surviving spouses, spouses filing separate returns, and married couples filing joint returns \u2014 Under $15,000 $220; $15,000 under $20,000 $200; $20,000 under $25,000 $170; $25,000 under $30,000 $140; $30,000 under $40,000 $110; $40,000 under $50,000 $90; $50,000 under $60,000 $70; $60,000 and over $0. (c) \u2026 a qualified exemption is defined to include those exemptions permitted under this chapter; provided that no additional exemption may be claimed by a taxpayer who is sixty-five years of age or older; provided that a person for whom exemption is claimed has been physically present in the State for more than nine months during the taxable year; and provided further that multiple exemptions shall not be granted because of deficiencies in vision or hearing, or other disability. For purposes of claiming this credit only, a minor child receiving support from the department of human services of the State, social security survivor's benefits, and the like, may be considered a dependent and a qualified exemption of the parent or guardian.' '(g) \u2026 "adjusted gross income" means adjusted gross income as defined by the Internal Revenue Code.' FORM N-311 (verbatim): '1 Is your federal adjusted gross income less than $60,000 (less than $40,000 if your filing status is Single)? \u2026 If "No," STOP.'; '2 List YOURSELF, YOUR SPOUSE, AND YOUR DEPENDENTS that meet all of the following: a) Present in Hawaii for more than nine months in 2025, b) Not in prison, jail, or a youth correctional facility for entire taxable year, and c) Cannot be claimed as a dependent by another taxpayer.'; '3 List MINOR CHILDREN RECEIVING MORE THAN HALF OF THEIR SUPPORT FROM PUBLIC AGENCIES \u2026'; '4 Enter the amount of your federal adjusted gross income; 5 If you are married filing separately, enter your spouse's federal adjusted gross income; 6 Add lines 4 and 5; 7 Enter on line 7 the amount of the tax credit shown below that applies to the amount on line 6 [the two tables above]; 8 Add lines 2 and 3; 9 Multiply line 8 by line 7. Enter the result here and on Form N-11, line 28'. 'Enter your spouse's name if you are married filing jointly or married filing separately where your spouse is not filing a Hawaii return, had no income, and was not the dependent of someone else.' 'If married filing separately, only one spouse may claim the dependents.' ENCODING: hiFoodExciseQualifiedExemptions = Form N-311 line 8 (persons present over nine months, not counting the age-65 extra exemption); AGI = hiFederalAgi plus hiSpouseFederalAgi for MFS; $0 for a filer claimable as a dependent. The credit sunsets to the pre-2023 amounts after December 31, 2027 \u2014 this rule ends 2027-01-01 for re-verification.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      tier1: { value: "22000", type: "money" },
+      tier2: { value: "20000", type: "money" },
+      tier3: { value: "17000", type: "money" },
+      tier4: { value: "14000", type: "money" },
+      tier5: { value: "11000", type: "money" },
+      tier6NonSingle: { value: "9000", type: "money" },
+      tier7NonSingle: { value: "7000", type: "money" },
+      singleCutoff: { value: "4000000", type: "money" },
+      otherCutoff: { value: "6000000", type: "money" }
+    },
+    formula: (() => {
+      const agi2 = add14(fact36("hiFederalAgi"), iff17(isMfs7, fact36("hiSpouseFederalAgi"), money33("0")));
+      const common = iff17(lt17(agi2, money33("1500000")), money33("22000"), iff17(lt17(agi2, money33("2000000")), money33("20000"), iff17(lt17(agi2, money33("2500000")), money33("17000"), iff17(lt17(agi2, money33("3000000")), money33("14000"), iff17(lt17(agi2, money33("4000000")), money33("11000"), money33("0"))))));
+      const other = iff17(lt17(agi2, money33("4000000")), common, iff17(lt17(agi2, money33("5000000")), money33("9000"), iff17(lt17(agi2, money33("6000000")), money33("7000"), money33("0"))));
+      const per = iff17(isSingle, common, other);
+      return iff17(fact36("isClaimedAsDependent"), money33("0"), mulInt16(per, fact36("hiFoodExciseQualifiedExemptions")));
+    })()
+  },
+  {
+    id: "us.hi.renters_credit",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii credit for low-income household renters \u2014 $50 per qualified exemption (including the extra exemption for each qualified person 65 or older) when Hawaii AGI (plus the spouse's for MFS) is under $30,000 and rent net of exclusions exceeds $1,000; refundable; not for dependents of another (Schedule X Part I, Form N-11 line 29)",
+    citation: {
+      source: "HRS \xA7 235-55.7(a)-(e); 2025 Schedule X Part I lines 1-12; 2025 Form N-11 Instructions p. 21 (line 29) and p. 26 (Schedule X Part I)",
+      section: "\xA7 235-55.7; Schedule X Part I; Form N-11 line 29",
+      url: HRS("0055_0007"),
+      excerpt: `STATUTE (verbatim): '(c) Each taxpayer with an adjusted gross income of less than $30,000 who has paid more than $1,000 in rent during the taxable year for which the credit is claimed may claim a tax credit of $50 multiplied by the number of qualified exemptions to which the taxpayer is entitled; provided each taxpayer sixty-five years of age or over may claim double the tax credit; and provided that a resident individual who has no income or no income taxable under this chapter may also claim the tax credit'. '(2) "Qualified exemption" includes those exemptions permitted under this chapter; provided that a person for whom exemption is claimed has physically resided in the State for more than nine months during the taxable year; and provided that multiple exemption shall not be granted because of deficiencies in vision, hearing, or other disability.' '(3) "Rent" means the amount paid in cash \u2026 for the occupancy of a dwelling place \u2026 exclusive of charges for utilities, parking stalls, storage of goods, yard services, furniture, furnishings, and the like. Rent shall not include any rental claimed as a deduction \u2026, any ground rental paid for use of land only, and any rent allowance or subsidies received.' '(b) \u2026 which is not partially or wholly exempted from real property tax, who is not eligible to be claimed as a dependent for federal or state income taxes by another'. '(e) \u2026 a husband and wife filing separate returns for a taxable year for which a joint return could have been made by them shall claim only the tax credits to which they would have been entitled had a joint return been filed.' SCHEDULE X (verbatim): '1 Is your adjusted gross income (Form N-11, line 20 \u2026) less than $30,000? If "No," STOP.'; '2 Are you a resident who was present in Hawaii more than nine months in 2025? If "No," STOP.'; '3 Can you be claimed as a dependent by another taxpayer? If "Yes," STOP.'; '5 Add up your share of rent paid \u2026; 6 Enter the amount of your exclusions (e.g., utilities, parking stalls, ground rent, rental subsidies such as public assistance); 7 Line 5 minus line 6. If this amount is $1,000, or less, STOP.'; '8 List YOURSELF, YOUR SPOUSE, AND YOUR DEPENDENTS that meet all of the following: a) Resident of Hawaii, b) Present in Hawaii for more than nine months in 2025, and c) Cannot be claimed as a dependent by another taxpayer. Include minor children receiving more than half of their support from public agencies \u2026; 9 If you are a qualified exemption and you are age 65 or over, enter 1. Otherwise, enter -0-; 10 If you are married filing jointly or married filing separately where your spouse is not filing a Hawaii return, had no income, and was not the dependent of someone else; and your spouse is a qualified exemption; and your spouse is age 65 or over; enter 1 \u2026; 11 Add lines 8 through 10; 12 Multiply the number of exemptions on line 11 by $50 and enter the result here and on Form N-11, line 29'. BOOKLET (p. 26): 'Married filing separately. If you are married filing separately, you must add your spouse's adjusted gross income to your own. \u2026 If the total is $30,000 or more, you cannot claim this credit.' Rent for property partially or fully exempt from real property tax (public housing, military housing, dormitories, nonprofit-owned, owner-occupied homes) does not qualify. ENCODING: hiRentersExemptions = Schedule X line 11; hiRentPaid = line 7 (rent net of exclusions); AGI = hiAgi plus hiSpouseAgi for MFS. Unindexed \u2014 this rule ends 2027-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "5000", type: "money" }, agiLimit: { value: "3000000", type: "money" }, minimumRent: { value: "100000", type: "money" } },
+    formula: (() => {
+      const agi2 = add14(fact36("hiAgi"), iff17(isMfs7, fact36("hiSpouseAgi"), money33("0")));
+      const ok2 = and5(not5(fact36("isClaimedAsDependent")), lt17(agi2, money33("3000000")), gt9(fact36("hiRentPaid"), money33("100000")));
+      return iff17(ok2, mulInt16(money33("5000"), fact36("hiRentersExemptions")), money33("0"));
+    })()
+  },
+  {
+    id: "us.hi.child_dependent_care_credit",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii credit for child and dependent care expenses \u2014 25% (Hawaii AGI not over $25,000) stepping down one point per $5,000 to 20% at $50,000 and 15% over $50,000, of qualified expenses up to $10,000 (one qualifying person) or $20,000 (two or more) less dependent care benefits, limited to the lower earned income; refundable; MFS only if considered unmarried (Schedule X Part II, Form N-11 line 30)",
+    citation: {
+      source: "HRS \xA7 235-55.6(a)-(e) (Act 163, SLH 2023 percentages and $10,000 / $20,000 limits, 'Repeal and reenactment on December 31, 2027'); 2025 Schedule X Part II lines 17-28; 2025 Form N-11 Instructions pp. 26-28",
+      section: "\xA7 235-55.6; Schedule X Part II; Form N-11 line 30",
+      url: HRS("0055_0006"),
+      excerpt: "STATUTE (verbatim): '(a)(1) \u2026 there shall be allowed as a credit against the tax imposed by this chapter for the taxable year an amount equal to the applicable percentage of the employment-related expenses \u2026 If the tax credit claimed by a resident taxpayer exceeds the amount of income tax payment due from the resident taxpayer, the excess of the credit over payments due shall be refunded'. '(2) Applicable percentage: Adjusted gross income \u2014 Applicable percentage: Not over $25,000 25%; Over $25,000 but not over $30,000 24%; Over $30,000 but not over $35,000 23%; Over $35,000 but not over $40,000 22%; Over $40,000 but not over $45,000 21%; Over $45,000 but not over $50,000 20%; Over $50,000 15%.' '(c) Dollar limit on amount creditable. The amount of the employment-related expenses incurred during any taxable year which may be taken into account under subsection (a) shall not exceed: (1) $10,000 if there is one qualifying individual \u2026, or (2) $20,000 if there are two or more qualifying individuals \u2026 The amount determined under paragraph (1) or (2) \u2026 shall be reduced by the aggregate amount excludable from gross income under section 129'. '(d)(1) \u2026 shall not exceed: (A) In the case of an individual who is not married at the close of such year, such individual's earned income for such year, or (B) In the case of an individual who is married at the close of such year, the lesser of such individual's earned income or the earned income of the individual's spouse for such year.' '(e)(2) Married couples must file joint return \u2026 (4) Certain married individuals living apart. If: (A) An individual who is married and who files a separate return: (i) Maintains as the individual's home a household that constitutes for more than one-half of the taxable year the principal place of abode of a qualifying individual, and (ii) Furnishes over half of the cost of maintaining the household during the taxable year, and (B) During the last six months of the taxable year the individual's spouse is not a member of the household, the individual shall not be considered as married.' SCHEDULE X (verbatim): '17 Enter $10,000 ($20,000 if two or more qualifying persons); 18 Add lines 14 and 15; 19 Line 17 minus line 18. If zero or less, STOP.'; '22 Add the amounts in column (e) of line 21. Do not enter more than $10,000 for one qualifying person or $20,000 for two or more persons. If you completed Section B, enter the smaller of line 19 or 20; 23 Enter your earned income; 24 If married filing jointly, enter your spouse's earned income \u2026; all others, enter the amount from line 23; 25 Enter the smallest of line 22, 23, or 24; 26 Enter your adjusted gross income from Form N-11, line 20 \u2026; 27 Enter on line 27 the decimal amount shown below that applies to the amount on line 26. If line 26 is: Under $25,001 .25; $25,001 \u2013 30,000 .24; $30,001 \u2013 35,000 .23; $35,001 \u2013 40,000 .22; $40,001 \u2013 45,000 .21; $45,001 \u2013 50,000 .20; $50,001 and over .15; 28 Multiply line 25 by the decimal amount on line 27 \u2026 Enter the result here and on Form N-11, line 30'. Qualifying person: a dependent under 13, a disabled dependent, or a disabled spouse; a student or disabled spouse is deemed to earn $200 ($400 with two or more qualifying persons) per month (the composer takes the deemed amount as an input). ENCODING: cap = ($10,000 or $20,000) \u2212 hiDependentCareBenefits; line 22 = min(hiChildCareExpenses, cap); line 25 = min(22, hiEarnedIncome, spouse earned income on a joint return); $0 for MFS unless hiMfsConsideredUnmarried, and for a filer claimable as a dependent. This rule ends 2027-01-01 (Act 163 sunset re-verification)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { capOne: { value: "1000000", type: "money" }, capTwoPlus: { value: "2000000", type: "money" }, topPct: { value: "25", type: "int" }, bottomPct: { value: "15", type: "int" }, agiTop: { value: "5000000", type: "money" } },
+    formula: (() => {
+      const cap = max018(sub18(iff17(ge7(fact36("hiChildCareQualifyingPersons"), int11("2")), money33("2000000"), money33("1000000")), max018(fact36("hiDependentCareBenefits"))));
+      const l22 = minE7(max018(fact36("hiChildCareExpenses")), cap);
+      const l23 = max018(fact36("hiEarnedIncome"));
+      const l24 = iff17(isStatus26("mfj"), max018(fact36("hiSpouseEarnedIncome")), l23);
+      const l25 = minE7(l22, l23, l24);
+      const agi2 = fact36("hiAgi");
+      const pctPoints = iff17(le15(agi2, money33("2500000")), money33("25"), iff17(le15(agi2, money33("3000000")), money33("24"), iff17(le15(agi2, money33("3500000")), money33("23"), iff17(le15(agi2, money33("4000000")), money33("22"), iff17(le15(agi2, money33("4500000")), money33("21"), iff17(le15(agi2, money33("5000000")), money33("20"), money33("15")))))));
+      const credit = rd23({ kind: "mulDiv", a: l25, b: pctPoints, c: money33("100"), round: "half-up" });
+      const blocked = or8(fact36("isClaimedAsDependent"), and5(isMfs7, not5(fact36("hiMfsConsideredUnmarried"))));
+      return iff17(blocked, money33("0"), credit);
+    })()
+  },
+  {
+    id: "us.hi.eitc",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii earned income tax credit \u2014 40% of the federal earned income credit; refundable; same filing status and dependents as the federal return (Form N-356, Schedule CR line 8, Form N-11 line 32)",
+    citation: {
+      source: "HRS \xA7 235-55.75(a), (c), (d) (Act 114, SLH 2022 refundable 40%; Act 25, SLH 2025 ended the 2022 nonrefundable carryforward after 2025); 2025 Form N-356 lines 1-7 and instructions; 2025 Schedule CR line 8",
+      section: "\xA7 235-55.75; Form N-356; Schedule CR line 8",
+      url: HRS("0055_0007_0005"),
+      excerpt: `STATUTE (verbatim): '(a) Each qualifying individual taxpayer may claim a refundable earned income tax credit. Unless otherwise provided by law, the tax credit, for the appropriate taxable year, shall be forty per cent of the federal earned income tax credit allowed and properly claimed under section 32 of the Internal Revenue Code and reported as such on the individual's federal income tax return.' '(c) \u2026 "qualifying individual taxpayer" means a resident or nonresident individual that: (1) Files a federal income tax return for the taxable year claiming the earned income tax credit under section 32 of the Internal Revenue Code; and (2) Files a Hawaii income tax return using the filing status used on the federal income tax return for the taxable year and claiming the same dependents claimed on the federal income tax return for the taxable year.' '(d) \u2026 If the tax credit claimed by the taxpayer under this section exceeds the amount of the income tax payments due from the taxpayer, the excess of credit over payments due shall be refunded to the taxpayer; \u2026 no refunds or payments on account of the tax credit allowed by this section shall be made for amounts less than $1.' FORM N-356 (verbatim): '2 Enter the amount of your federal earned income credit claimed on your federal income tax return for this tax year; 3 Multiply line 2 by 40%; Note: Residents, skip lines 4 and 5, enter "1.00" on line 6, and go to line 7 \u2026 7 Total New Credit Claimed \u2014 Multiply line 3 by line 6. Also enter this amount on Schedule CR on the appropriate line for this tax credit.' 'The earned income tax credit is refundable and 40% of the federal earned income credit claimed on the taxpayer's federal income tax return.' 'Act 25, Session Laws of Hawaii 2025, eliminates the unlimited carryforward in the nonrefundable earned income tax credit from tax year 2022, effective for taxable years beginning after December 31, 2025.' ENCODING: round(40% \xD7 hiFederalEic). The 2022 carryover (Schedule CR line 24) is a transcribed input. Unindexed; the Act 163 sunset is December 31, 2027 \u2014 this rule ends 2027-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "40", type: "int" } },
+    formula: rd23(pct7(max018(fact36("hiFederalEic")), "40", "100"))
+  },
+  {
+    id: "us.hi.other_state_credit",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii credit for income taxes paid to other states and foreign countries \u2014 the smaller of the tax paid and the Hawaii tax less the tax on Hawaii-source income (ordinary income at the table or schedule, Hawaii-source long-term gain at 7.25%), limited to the adjusted tax liability (Other State and Foreign Tax Credit Worksheet, Schedule CR line 12)",
+    citation: {
+      source: "HRS \xA7 235-55(a)-(b); \xA7 235-2.4(k)(3); 2025 Form N-11 Instructions p. 33 'Other State and Foreign Tax Credit Worksheet' lines 1-20; 2025 Schedule CR line 12 and instructions",
+      section: "\xA7 235-55; Schedule CR line 12",
+      url: HRS("0055"),
+      excerpt: "STATUTE (verbatim): '(a) Whenever an individual \u2026 who is a resident of the State \u2026, has become liable for income taxes to a state, or to the District of Columbia, Puerto Rico, or any other territory or possession of the United States, or to a foreign country upon any part of the individual's or person's taxable income for the taxable year, derived or received from sources without the State and taxed under the laws of such other jurisdiction irrespective of the residence or domicile of the recipient, there shall be credited against the tax payable by the individual or person under this chapter the tax so paid by the individual or person to the other jurisdiction upon \u2026 satisfactory evidence: (1) Of such tax payment; and (2) That the laws of the other jurisdiction do not allow the individual or person a credit against the taxes imposed by such jurisdiction for the taxes paid or payable under this chapter \u2026 (b) The application of such credit, however: \u2026 (2) Shall not operate to reduce the tax payable under this chapter to an amount less than that which would have been payable had the taxpayer been taxable only on the income from property owned, personal services performed, trade or business carried on, and other sources in the State.' WORKSHEET (verbatim): 'Note: If you claim a credit for income taxes paid to other states and countries, you cannot also claim those amounts as an itemized deduction \u2026 1. Enter taxable income from Form N-11, line 26; 2. Enter amount of long-term capital gain from the space provided beside Form N-11, line 27a; 3. Enter the amount of your out-of-state income, including capital gains. Do not include any income that is exempt in Hawaii such as employer-funded pensions; 4. Enter the amount of long-term capital gains from sources outside the State; 5. Enter the amount of tax you paid to other States, except for tax paid on income that is exempt in Hawaii (attach a copy of the tax return(s) from the other state(s)); 6. Enter the amount of tax you paid to foreign countries or to U.S. possessions, except for tax paid on income that is exempt in Hawaii \u2026; 7. Enter the amount of the federal foreign tax credit you were allowed to take this year \u2026; 8. Line 6 minus line 7; 9. Line 5 plus line 8. This is the total amount of out-of-state tax eligible for the credit; 10. Line 1 minus line 3. This is your Hawaii source income; 11. Line 2 minus line 4. This is your Hawaii source long-term capital gain. If line 4 exceeds line 2, enter zero here; 12. Line 10 minus line 11. This is your Hawaii ordinary income; 13. Enter your tax amount from line a or line b of the Tax Computation Worksheet on page 32; 14. Figure the Hawaii tax on the amount on line 12. Use the Tax Table or Tax Rate Schedules; 15. Multiply the amount on line 11 by 7.25% (0.0725); 16. Add lines 14 and 15; 17. Line 13 minus line 16; 18. Enter the smaller of line 9 or line 17; 19. Enter the amount from Form N-11, line 34; 20. Enter the smaller of line 18 or line 19 here and on Schedule CR, line 12. Any excess cannot be carried forward.' ENCODING: hiOtherStateTaxEligible = line 9; hiOutOfStateIncome = line 3; hiOutOfStateLtcg = line 4; hiNetCapitalGainLine27a = line 2; hiTaxLine13 = the line 27 tax from the table, schedule, or capital gains worksheet; hiAdjustedTaxLiability = Form N-11 line 34; line 14 uses the same table-or-schedule method as us.hi.income_tax on line 12 (not below zero). Unindexed \u2014 this rule ends 2027-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { capitalGainRateBps: { value: "725", type: "int" } },
+    formula: (() => {
+      const l1 = max018(fact36("stateTaxableIncome"));
+      const l2 = max018(fact36("hiNetCapitalGainLine27a"));
+      const l10 = sub18(l1, max018(fact36("hiOutOfStateIncome")));
+      const l11 = max018(sub18(l2, max018(fact36("hiOutOfStateLtcg"))));
+      const l12 = max018(sub18(l10, l11));
+      const l16 = add14(ordinaryTax(l12), pct725(l11));
+      const l17 = max018(sub18(max018(fact36("hiTaxLine13")), l16));
+      const l18 = minE7(max018(fact36("hiOtherStateTaxEligible")), l17);
+      return minE7(l18, max018(fact36("hiAdjustedTaxLiability")));
+    })()
+  },
+  {
+    id: "us.hi.parameters",
+    version: 1,
+    jurisdiction: "us.hi",
+    title: "Hawaii 2025 Form N-11 parameters \u2014 line structure, adjustments to federal AGI, the $25 child passenger restraint credit, Schedule CR, payments and refund lines, and the enacted TY2026-2027 position (Acts 46/2024, 24/2026, 35/2026)",
+    citation: {
+      source: "2025 Form N-11 Instructions (52 pp.); printed 2025 Form N-11, Schedule X, Schedule CR, Forms N-311 and N-356; HRS \xA7\xA7 235-2.3, 235-2.4, 235-5.5, 235-7, 235-51, 235-54, 235-55 to 235-55.85; Act 46, SLH 2024; Act 123, SLH 2025; Act 24 and Act 35, SLH 2026; DOTAX Tax Announcements 2024-03, 2025-04, 2025-07, 2026-06; web-verified September 2026",
+      section: "Form N-11 lines 1-55",
+      url: FORMS2 + "n11_i.pdf",
+      excerpt: "STRUCTURE (printed 2025 Form N-11): filing status ovals 1 Single, 2 Married filing joint return, 3 Married filing separate return, 4 Head of household, 5 Qualifying surviving spouse (a federal QSS uses Schedule II and the joint standard deduction); 6a Yourself / Age 65 or over, 6b Spouse / Age 65 or over, 6c dependent children, 6d other dependents, 6e total exemptions (\u2192 us.hi.personal_exemption); 7 federal AGI; 8 'Difference in state/federal wages due to COLA, ERS, etc.' (W-2 Box 16 over Box 1); 9 'Interest on out-of-state bonds (including municipal bonds)'; 10 other Hawaii additions (Hawaii Additions Worksheet a-l: IHA distributions, tax refund adjustment, Peace Corps compensation, depreciation and gain adjustments (no bonus depreciation; \xA7 179 capped at $25,000), excluded foreign earned income, student loan interest and adoption benefit differences, 529 K-12 distributions, PTE taxable income share (Act 58, SLH 2025), foreign corporation income); 11 total additions; 12 = 7 + 11; 13 'Pensions taxed federally but not taxed by Hawaii' (\xA7 235-7(a)(2)-(3): employer-funded plans, government retirement systems including military pensions, and age-73 required distributions \u2014 employee-contributed portions are taxable, Schedule J); 14 'Social security benefits taxed on federal return' (\xA7 235-2.3(b)(3) \u2014 100%); 15 'First $8,636 of military reserve or Hawaii national guard duty pay' (\u2192 us.hi.reserve_pay_exclusion); 16 'Payments to an individual housing account' (up to $5,000, $10,000 joint, $25,000 lifetime, \xA7 235-5.5); 17 'Exceptional trees deduction' (up to $3,000 per tree, once in three years); 18 other Hawaii subtractions (Worksheet a-n: U.S. obligation interest, refund adjustment, IHA interest, Hansen's disease compensation, \xA7 280C disallowed expenses, Form 8814 child income, legal services plan benefits, student loan interest and adoption differences, qualified high technology business income, individual development accounts, moving expenses, bicycle commuting reimbursement); 19 total subtractions; 20 Hawaii AGI; 21a-21f itemized deductions and 22 total (\u2192 us.hi.itemized_deductions); 23 standard deduction (\u2192 us.hi.standard_deduction); 24 = 20 \u2212 22 or 23 ('This line MUST be filled in'); 25 exemptions; 26 taxable income ('Line 24 minus line 25 (but not less than zero)'); 27 tax \u2014 'Fill in oval if from Tax Table; Tax Rate Schedule; or Capital Gains Tax Worksheet' (\u2192 us.hi.income_tax, us.hi.capital_gains_tax) plus the Tax Computation Worksheet lines c-m (Forms N-2, N-103, N-152, N-168, N-312, N-325, N-338, N-344, N-348, N-405, N-586, N-615, N-814 \u2014 transcribed); 27a net capital gain from worksheet line 14; 28 Refundable Food/Excise Tax Credit (\u2192 us.hi.food_excise_credit) with the count of DHS-supported minor children; 29 Credit for Low-Income Household Renters (\u2192 us.hi.renters_credit); 30 Credit for Child and Dependent Care Expenses (\u2192 us.hi.child_dependent_care_credit); 31 'Credit for Child Passenger Restraint System(s)' (HRS \xA7 235-15) \u2014 '$25 for 2025 for the purchase of one or more new child passenger restraint systems which comply with federal motor vehicle safety standards. This credit is $25 per return regardless of the cost or the number of restraint systems purchased' (attach the invoice); 32 total refundable credits from Schedule CR line 11 (Part I: capital goods excise, fuel tax for commercial fishers, film production, renewable energy (refundable election), important agricultural land, research activities, renewable fuels, 8 EITC (\u2192 us.hi.eitc), claim of right, pro rata real property withholding, RIC credit); 33 = 28 + 29 + 30 + 31 + 32; 34 'Adjusted Tax Liability' = 27 \u2212 33 (may be negative); 35 total nonrefundable credits from Schedule CR line 33 (Part II: 12 income tax paid to another state or foreign country (\u2192 us.hi.other_state_credit), 13 enterprise zone, carryovers 14-24 (including 24 the 2022 EITC carryover, last usable in 2025), 25-32 low-income housing, vocational rehabilitation, school repair, nonrefundable renewable energy, healthcare preceptor, historic preservation, renewable fuels, PTE tax credit) \u2014 'If line 34 is zero or less, no tax credit may be used'; 36 Balance = 34 \u2212 35; 37 Hawaii income tax withheld (W-2, 1099-G, N-2); 38 2025 estimated tax payments (plus N-288A real property withholding); 39 2024 overpayment applied; 40 amount paid with extension (N-200V); 41 total payments; 42 overpaid = 41 \u2212 36 (if 36 is negative, its absolute value plus 41); 43a Hawaii Schools Repairs and Maintenance Fund $2 ($4 joint), 43b Hawaii Public Libraries Fund $5 ($10), 43c Domestic and Sexual Violence / Child Abuse and Neglect Funds $5 ($10); 44 total contributions; 45 = 42 \u2212 44; 46 applied to 2026 estimated tax; 47a refund = 45 \u2212 46; 48 amount you owe = 36 \u2212 41; 49 payment amount (48 plus line 50); 50 estimated tax penalty (Form N-210, 'Do not include on line 42 or 48'); 53-55 Schedule C/E/F GE license questions. ROUNDING: whole dollars ('drop amounts under 50 cents and increase amounts from 50 to 99 cents'). CONFORMITY: IRC as of December 31, 2024 for 2025 (Act 123, SLH 2025; \xA7 235-2.3); Hawaii never adopted the TCJA suspensions (personal exemptions, 2% miscellaneous deductions, \xA7 68, moving expenses, home equity interest, $750,000 mortgage limit, SALT cap), \xA7 199A, \xA7 168(k) bonus depreciation, or the \xA7 86 taxation of Social Security. RESIDENCY: Form N-11 is for full-year residents only; part-year and nonresidents file Form N-15 (not composed); no county or local income tax. DEADLINES: return due April 20, 2026 (automatic six-month extension to October 20, 2026; Tax Announcement 2026-03/04 waived penalties and interest through August 20, 2026 for Kona Low-affected filers); refundable credit claims must be filed within twelve months of year-end. TY2026 (enacted): standard deduction $8,000 / $16,000 / $12,000 / $8,000 (\xA7 235-2.4(a)(2)(F), Act 46) \u2014 version 2; the 2025 rate schedules continue (Act 24, SLH 2026's new tables \u2014 2.5% and 5% low brackets, a 13% bracket over $1,000,000 joint / $750,000 HOH / $500,000 single \u2014 'shall apply to taxable years beginning after December 31, 2026'); IRC conformity as of December 31, 2025 (Act 35, SLH 2026, HB 2329 CD1, approved May 26, 2026, \xA7\xA7 2-4 'shall apply to taxable years beginning after December 31, 2025') with \xA7 225 qualified overtime and \xA7 163(h)(4) vehicle loan interest decoupled, \xA7 68 'in the form that it existed as of December 31, 2024' at the 2009 thresholds, \xA7 174 as of December 31, 2024, \xA7 168(n) inoperative, the \xA7 67(g) and \xA7 165(h)(5) carve-outs deleted (2%-floor miscellaneous deductions and non-disaster casualty losses end) \u2014 DOTAX Announcement 2026-06 (July 31, 2026) states Hawaii 'will conform to IRC section 67(h), which disallows miscellaneous itemized deductions', to 'IRC section 165(h)(5)' (casualty losses only from 'federal or state declared disasters'), to 'IRC section 170, which reinstates the charitable deduction for individuals who do not itemize deductions and imposes a charitable deduction floor', and to 'IRC section 224, which creates a deduction of up to $25,000 for qualified tips', while 'IRC section 225 \u2026 qualified overtime compensation' and 'IRC section 163(h) \u2026 qualified passenger vehicle loan interest' are not conformed; how the 2026 Form N-11 carries the tips and non-itemizer charitable deductions is unpublished (~December 2026) \u2014 the composer stays on the 2025 form. Act 217, SLH 2026 raises the individual housing account deduction to $20,000 / $40,000 joint ($200,000 lifetime) for taxable years beginning after December 31, 2026. The $1,144 exemption, $7,000 disability exemption, food/excise, renters, child care, EITC, and other-state credit amounts are unchanged for 2026; the reserve pay exclusion re-indexes. TY2027: Act 24 rate tables and the \xA7 235-2.4(a)(2)(F) $8,000 standard deduction continue; TY2028 $9,000 / $18,000 / $13,500; TY2030 $10,000 / $20,000 / $15,000; TY2031 $12,000 / $24,000 / $18,000."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      childPassengerRestraintCredit: { value: "2500", type: "money" },
+      individualHousingAccountCap: { value: "500000", type: "money" },
+      individualHousingAccountCapJoint: { value: "1000000", type: "money" },
+      exceptionalTreePerTree: { value: "300000", type: "money" },
+      section179Cap: { value: "2500000", type: "money" },
+      schoolsFundContribution: { value: "200", type: "money" },
+      librariesFundContribution: { value: "500", type: "money" },
+      violenceFundsContribution: { value: "500", type: "money" },
+      minimumRefundOrCredit: { value: "100", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Hawaii Form N-11 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.hi.income_tax, us.hi.capital_gains_tax, us.hi.standard_deduction, us.hi.itemized_deductions, us.hi.personal_exemption, us.hi.reserve_pay_exclusion, us.hi.food_excise_credit, us.hi.renters_credit, us.hi.child_dependent_care_credit, us.hi.eitc, and us.hi.other_state_credit"
+    }
+  },
+  // ---- TY2026 versions: Act 46, SLH 2024 (§ 235-2.4(a)(2)(F)) and Act 35, SLH 2026 (conformity as of December 31, 2025) ----
+  {
+    id: "us.hi.standard_deduction",
+    version: 2,
+    jurisdiction: "us.hi",
+    title: "Hawaii standard deduction TY2026 \u2014 $8,000 single and MFS, $16,000 MFJ and QSS, $12,000 HOH (\xA7 235-2.4(a)(2)(F), Act 46, SLH 2024); dependent filers limited to the greater of $500 or earned income (Form N-11 line 23)",
+    citation: {
+      source: "HRS \xA7 235-2.4(a)(2)(F) as enacted by Act 46, SLH 2024 (HB 2404 CD1, \xA7 1; \xA7 4: 'shall apply to taxable years beginning after December 31, 2023'), re-enacted unchanged by Act 35, SLH 2026 (HB 2329 CD1, \xA7 3); DOTAX Tax Announcement 2024-03",
+      section: "\xA7 235-2.4(a)(2)(F), (a)(3)",
+      url: HRS("0002_0004"),
+      excerpt: "STATUTE (verbatim): '(F) For taxable years beginning after December 31, 2025: (i) $16,000 in the case of a joint return as provided by section 235-93 or a surviving spouse (as defined in section 2(a) of the Internal Revenue Code); (ii) $12,000 in the case of a head of household (as defined in section 2(b) of the Internal Revenue Code); (iii) $8,000 in the case of an individual who is not married and who is not a surviving spouse or head of household; or (iv) $8,000 in the case of a married individual filing a separate return; (G) For taxable years beginning after December 31, 2027: (i) $18,000 \u2026; (ii) $13,500 \u2026; (iii) $9,000 \u2026; (iv) $9,000 \u2026; (H) For taxable years beginning after December 31, 2029: (i) $20,000 \u2026; (ii) $15,000 \u2026; (iii) $10,000 \u2026; (iv) $10,000 \u2026; and (I) For taxable years beginning after December 31, 2030: (i) $24,000 \u2026; (ii) $18,000 \u2026; (iii) $12,000 \u2026; (iv) $12,000'. '(3) Section 63(c)(5) \u2026 shall be operative, except that the limitation shall be the greater of $500 or the individual's earned income'. Act 35, SLH 2026 re-enacted \xA7 235-2.4(a) with these amounts unchanged. The 2026 Form N-11 is unpublished \u2014 re-verify line 23 when it appears (~December 2026). This version ends 2028-01-01 (the (G) amounts begin TY2028)."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { single: { value: "800000", type: "money" }, joint: { value: "1600000", type: "money" }, hoh: { value: "1200000", type: "money" }, dependentMinimum: { value: "50000", type: "money" } },
+    formula: (() => {
+      const base = iff17(isJoint4, money33("1600000"), iff17(isHoh4, money33("1200000"), money33("800000")));
+      const dep = minE7(base, maxE5(money33("50000"), max018(fact36("hiEarnedIncome"))));
+      return iff17(fact36("isClaimedAsDependent"), dep, base);
+    })()
+  },
+  {
+    id: "us.hi.itemized_deductions",
+    version: 2,
+    jurisdiction: "us.hi",
+    title: "Hawaii itemized deductions TY2026 \u2014 Worksheets A-1 to A-5 as for 2025 (medical over 7.5%, gated state income or sales taxes, mortgage and investment interest, contributions, casualty losses over 10%), miscellaneous deductions not subject to the 2% floor only (Act 35, SLH 2026 dropped the \xA7 67(g) carve-out), and the \xA7 68 limitation at the 2009 thresholds",
+    citation: {
+      source: "HRS \xA7 235-2.4(b), (j), (k) as amended by Act 35, SLH 2026 (HB 2329 CD1, \xA7 3, applies to taxable years beginning after December 31, 2025)",
+      section: "\xA7 235-2.4(b), (j), (k) (2026)",
+      url: "https://www.capitol.hawaii.gov/sessions/session2026/bills/HB2329_CD1_.HTM",
+      excerpt: "ACT 35, SLH 2026 (HB 2329 CD1, \xA7 3, bracketed text repealed): '[(b) Section 67 (with respect to the 2-percent floor on miscellaneous itemized deductions) of the Internal Revenue Code shall be operative for purposes of this chapter, except that the suspension in section 67(g) shall not be operative for purposes of this chapter. (c)] (b) Section 68 (with respect to the overall limitation on itemized deductions) of the Internal Revenue Code shall be operative in the form that it existed as of December 31, 2024; provided that the thresholds shall be those that were operative for federal tax year 2009'; '(i) Section 163 \u2026 except that \u2026 (3) Section 163(h)(3)(F) (limiting mortgage interest); (4) Section 163(h)(4) (qualified passenger vehicle loan interest); and \u2026'; '(j) Section 164 \u2026 (1) Section 164(b)(6)(B) (limiting the deduction for state and local taxes) and (b)(7) (with respect to applicable limitation amount) shall not be operative \u2026; (2) The deductions under section 164(a)(3) and (b)(5) \u2026 shall be operative only for \u2026 (A) \u2026 a federal adjusted gross income of less than $100,000; (B) \u2026 head of household \u2026 less than $150,000; and (C) \u2026 joint return or as a surviving spouse \u2026 less than $200,000'; '[(3) Section 165(h)(5) (relating to the limitation on the deductibility of personal casualty losses that are not attributable to federally declared disasters) shall not be operative for purposes of this chapter;]' (repealed). DOTAX Announcement 2026-06 (verbatim): Hawaii 'will conform to IRC section 67(h), which disallows miscellaneous itemized deductions' and 'to IRC section 165(h)(5), which disallows personal casualty loss deductions, except those attributable to federal or state declared disasters'. With the \xA7 67(g) exception gone, the P.L. 119-21 disallowance ('no miscellaneous itemized deduction shall be allowed') applies to Hawaii for 2026 \u2014 hiJobAndMiscExpenses (Worksheet A-6 lines 23-29) is ignored; hiOtherMiscDeductions (deductions not subject to the floor, e.g. gambling losses) continues; casualty losses must now be from federally declared disasters (input responsibility). The 2026 worksheets are unpublished \u2014 re-verify (~December 2026)."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { medicalFloorBps: { value: "750", type: "int" }, casualtyFloorBps: { value: "1000", type: "int" }, overallLimitationThreshold: { value: "16680000", type: "money" }, overallLimitationThresholdMfs: { value: "8340000", type: "money" } },
+    formula: (() => {
+      const agi2 = fact36("hiAgi");
+      const fagi = fact36("hiFederalAgi");
+      const l21a = max018(sub18(max018(fact36("hiMedicalExpenses")), rd23(pct7(max018(agi2), "75", "1000"))));
+      const saltLimit = iff17(isJoint4, money33("20000000"), iff17(isHoh4, money33("15000000"), money33("10000000")));
+      const salt = iff17(lt17(fagi, saltLimit), max018(fact36("hiStateLocalIncomeTaxes")), money33("0"));
+      const l21b = add14(salt, max018(fact36("hiRealEstateTaxes")), max018(fact36("hiPersonalPropertyTaxes")), max018(fact36("hiOtherTaxes")));
+      const invInt = max018(fact36("hiInvestmentInterest"));
+      const l21c = add14(max018(fact36("hiHomeMortgageInterest")), invInt);
+      const l21d = max018(fact36("hiCharitableContributions"));
+      const l21e = max018(sub18(max018(fact36("hiCasualtyLosses")), rd23(pct7(max018(agi2), "10", "100"))));
+      const l30 = max018(fact36("hiOtherMiscDeductions"));
+      const total = add14(l21a, l21b, l21c, l21d, l21e, l30);
+      const protectedAmt = add14(l21a, invInt, l21e, minE7(max018(fact36("hiGamblingLossesInMisc")), l30));
+      const l5 = rd23(pct7(max018(sub18(total, protectedAmt)), "80", "100"));
+      const thr = iff17(isMfs7, money33("8340000"), money33("16680000"));
+      const l9 = rd23(pct7(max018(sub18(agi2, thr)), "3", "100"));
+      const l10 = minE7(l5, l9);
+      return iff17(and5(gt9(agi2, thr), lt17(protectedAmt, total)), max018(sub18(total, l10)), total);
+    })()
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-ri.js
+var rd24 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp11 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt18 = (l, r) => cmp11("lt", l, r);
+var le16 = (l, r) => cmp11("le", l, r);
+var gt10 = (l, r) => cmp11("gt", l, r);
+var ge8 = (l, r) => cmp11("ge", l, r);
+var iff18 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add15 = (...args) => ({ kind: "add", args });
+var sub19 = (left, right) => ({ kind: "sub", left, right });
+var max019 = (arg) => ({ kind: "max0", arg });
+var minE8 = (...args) => ({ kind: "min", args });
+var and6 = (...args) => ({ kind: "and", args });
+var or9 = (...args) => ({ kind: "or", args });
+var not6 = (arg) => ({ kind: "not", arg });
+var int12 = (value) => ({ kind: "int", value });
+var mulInt17 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits8 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus27 = (v) => cmp11("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJoint5 = or9(isStatus27("mfj"), isStatus27("qss"));
+var isMfjOnly = isStatus27("mfj");
+var isHoh5 = isStatus27("hoh");
+var times10 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var pct8 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var dollarsFromScaled11 = (n) => times10({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var worksheetRow = (x, rateBps, subtractionCents) => dollarsFromScaled11(sub19(times10(x, rateBps), times10(money33(subtractionCents), "10000")));
+var ratio42 = (num, den) => minE8({ kind: "mulDiv", a: max019(num), b: money33("10000"), c: den, round: "half-up" }, money33("10000"));
+var applyRatio2 = (base, r) => times10({ kind: "mulDiv", a: base, b: r, c: money33("1000000"), round: "half-up" }, "100");
+var worksheetTax = (x, rows) => {
+  let expr = worksheetRow(x, rows[0].rateBps, rows[0].subtractionCents);
+  for (let i = 1; i < rows.length; i++)
+    expr = iff18(gt10(x, money33(rows[i].thresholdCents)), worksheetRow(x, rows[i].rateBps, rows[i].subtractionCents), expr);
+  return expr;
+};
+var line8Tax = (x, rows) => {
+  const mid = add15(mulInt17(money33("5000"), stepUnits8(x, "5000", "floor")), money33("2500"));
+  const table2 = iff18(lt18(x, money33("5000")), money33("0"), iff18(lt18(x, money33("10000000")), worksheetTax(mid, rows), worksheetTax(x, rows)));
+  return iff18(fact36("riUseRateSchedule"), worksheetTax(x, rows), table2);
+};
+var ROWS_2025 = [
+  { thresholdCents: "0", rateBps: "375", subtractionCents: "0" },
+  { thresholdCents: "7990000", rateBps: "475", subtractionCents: "79900" },
+  // $799.00
+  { thresholdCents: "18165000", rateBps: "599", subtractionCents: "305146" }
+  // $3,051.46
+];
+var ROWS_2026 = [
+  { thresholdCents: "0", rateBps: "375", subtractionCents: "0" },
+  { thresholdCents: "8205000", rateBps: "475", subtractionCents: "82050" },
+  // $820.50
+  { thresholdCents: "18645000", rateBps: "599", subtractionCents: "313248" }
+  // $3,132.48
+];
+var phaseoutPct = (agi2, thresholdCents, stepCents) => {
+  const steps = stepUnits8(max019(sub19(agi2, money33(thresholdCents))), stepCents, "ceil");
+  return max019(sub19(money33("10000"), mulInt17(money33("2000"), steps)));
+};
+var FORMS3 = "https://tax.ri.gov/sites/g/files/xkgbur541/files/";
+var INSTR_URL = FORMS3 + "2025-12/2025%201040R%20Instructions%20122025.pdf";
+var FORM_URL = FORMS3 + "2026-01/2025_1040WE_w.pdf";
+var RIGL = (part, s) => `https://webserver.rilegislature.gov/Statutes/TITLE44/44-30/${part}/44-30-${s}.htm`;
+var riRules = [
+  {
+    id: "us.ri.income_tax",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island income tax \u2014 2025 uniform rate schedule for every filing status (3.75% to $79,900, 4.75% to $181,650, 5.99% above); the Tax Computation Worksheet (rate \xD7 taxable income less $0 / $799.00 / $3,051.46) at $100,000 or more and the Tax Table ($50-row midpoint) under $100,000 (Form RI-1040 line 8)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(A)(I) ($55,000 / $125,000 base brackets, 3.75% / 4.75% / 5.99%) indexed under \xA7 44-30-2.6(c)(3)(E); Division of Taxation ADV 2024-26 (October 31, 2024) 'Uniform tax rate schedule for Tax Year 2025'; 2025 RI-1040 Instructions p. I-13 'Rhode Island Tax Computation Worksheet'; '2025 RI Tax Tables' pp. T-1 to T-7; 'Tax Rate Schedule, Deduction and Exemption Worksheets' (2025)",
+      section: "\xA7 44-30-2.6(c)(3)(A)(I), (E); Form RI-1040 line 8",
+      url: FORMS3 + "2026-01/2025%20RI%20Tax%20Tables_Full.pdf",
+      excerpt: `STATUTE (\xA7 44-30-2.6(c)(3)(A)(I), verbatim): 'There is hereby imposed on the taxable income of married individuals filing joint returns, qualifying widow(er), every head of household, unmarried individuals, married individuals filing separate returns and bankruptcy estates, a tax determined in accordance with the following table: RI Taxable Income Over / But not over \u2014 RI Income Tax Pay + % on Excess / on the amount over: $0 - $55,000 \u2014 $0 + 3.75% \u2014 $0; 55,000 - 125,000 \u2014 2,063 + 4.75% \u2014 55,000; 125,000 - \u2014 5,388 + 5.99% \u2014 125,000.' (E): 'The dollar amount contained in subparagraphs 44-30-2.6(c)(3)(A), 44-30-2.6(c)(3)(B) and 44-30-2.6(c)(3)(C) shall be increased annually by an amount equal to: (I) Such dollar amount \u2026 adjusted for inflation using a base tax year of 2000, multiplied by; (II) The cost-of-living adjustment with a base year of 2000 \u2026 (V) If any increase determined under this section is not a multiple of fifty dollars ($50.00), such increase shall be rounded to the next lower multiple of fifty dollars ($50.00).' ADV 2024-26 (verbatim): 'Uniform tax rate schedule for Tax Year 2025 (Personal Income Tax) \u2014 Taxable income: Over $0 But not over $79,900 Pay -- + 3.75% of the amount over $0; 79,900 / 181,650 / 2,996.25 / 4.75% / 79,900; 181,650 / -- / 7,829.38 / 5.99% / 181,650.' 'The Division of Taxation has recalculated tax bracket ranges for Tax Year 2025, as required by statute. The changes were made to the Rhode Island Personal Income Tax's uniform tax rate schedule, which is used by all filers.' TAX COMPUTATION WORKSHEET (p. I-13, verbatim): 'Use for all filing status types. If Taxable Income \u2014 RI-1040, line 7 \u2026 is: Over $0 But not over $79,900 \u2014 (b) Multiplication amount 3.75% \u2014 (d) Subtraction amount $0.00; $79,900 / $181,650 \u2014 4.75% \u2014 $799.00; Over $181,650 \u2014 5.99% \u2014 $3,051.46. (c) Multiply (a) by (b). TAX: Subtract (d) from (c). Enter here and on RI-1040, line 8.' TAX TABLE (p. T-1, verbatim): 'CAUTION! The Rhode Island Tax Rate Schedule is shown so you can see the tax rate that applies to all levels of taxable income. DO NOT use to figure your Rhode Island tax. Instead, if your taxable income is less than $100,000 use the Rhode Island Tax Table located on pages T-2 through T-7. If your taxable income is larger than $100,000, use the Rhode Island Tax Computation Worksheet located on page T-1.' (p. T-2): 'Use if your Rhode Island taxable income is less than $100,000. If your taxable income is $100,000 or more, use the Tax Rate Schedules located on page T-1.' EXAMPLE (verbatim): '(1) Your taxable income from RI-1040 \u2026, line 7 is $25,300.00. (2) Find the $25,300 - 25,350 income line on this table. (3) The tax amount shown in the column "TAX" is $950.00.' Rows (verbatim): '0 50 0', '50 100 3', '100 150 5', '25,300 25,350 950', '79,900 79,950 2,997', '99,950 100,000 3,950'. CONVENTION (verified on all 2,000 $50 rows): each cell is the worksheet arithmetic (rate \xD7 the row midpoint, at-least + $25, less the subtraction amount) rounded half-up \u2014 25,325 \xD7 3.75% = 949.69 \u2192 $950; 99,975 \xD7 4.75% \u2212 799 = 3,949.81 \u2192 $3,950 \u2014 except the first row, which prints $0 (the midpoint would give $1). One column serves every filing status. ENCODING: default = the table under $100,000 (first row $0, then the midpoint arithmetic) and the worksheet at $100,000 or more; riUseRateSchedule = true applies the worksheet arithmetic at any income (differs from the table by at most $2). The worksheet subtraction amounts are exact ($799.00 = 1.00% \xD7 79,900; $3,051.46 = 799 + 1.24% \xD7 181,650), so the schedule's rounded 'Pay' anchors ($2,996.25, $7,829.38) never enter the computation. Indexed annually \u2014 this rule ends 2026-01-01 (TY2026 is version 2).`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "375", type: "int" },
+      rate2Bps: { value: "475", type: "int" },
+      rate3Bps: { value: "599", type: "int" },
+      bracket1: { value: "7990000", type: "money" },
+      bracket2: { value: "18165000", type: "money" },
+      subtraction2: { value: "79900", type: "money" },
+      subtraction3: { value: "305146", type: "money" },
+      tableTop: { value: "10000000", type: "money" }
+    },
+    formula: line8Tax(max019(fact36("stateTaxableIncome")), ROWS_2025)
+  },
+  {
+    id: "us.ri.standard_deduction",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island standard deduction 2025 \u2014 $10,900 single and MFS, $21,800 MFJ and qualifying widow(er), $16,350 HOH; reduced 20 points for each $7,250 (or fraction) of modified federal AGI over $254,250, zero past $283,250 (Form RI-1040 line 4, Standard Deduction Worksheet)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(B)(I), (III) ($7,500 / $15,000 / $7,500 / $11,250 base amounts, $175,000 threshold, $5,000 steps) indexed under (E); ADV 2024-26 (October 31, 2024); 2025 RI-1040 Instructions p. I-4 (line 4); 'Tax Rate Schedule, Deduction and Exemption Worksheets' (2025), Standard Deduction Worksheet lines 1-8; printed Form RI-1040 left margin and line 4",
+      section: "\xA7 44-30-2.6(c)(3)(B); Form RI-1040 line 4",
+      url: FORMS3 + "2026-01/2025%20Tax%20Rate%20and%20Worksheets.pdf",
+      excerpt: `STATUTE (verbatim): '(B) Deductions: (I) Rhode Island Basic Standard Deduction. Only the Rhode Island standard deduction shall be allowed in accordance with the following table: Filing status \u2014 Amount: Single $7,500; Married filing jointly or qualifying widow(er) $15,000; Married filing separately $7,500; Head of Household $11,250. (II) Nonresident alien individuals, estates and trusts are not eligible for standard deductions. (III) In the case of any taxpayer whose adjusted gross income, as modified for Rhode Island purposes pursuant to \xA7 44-30-12, for the taxable year exceeds one hundred seventy-five thousand dollars ($175,000), the standard deduction amount shall be reduced by the applicable percentage. The term "applicable percentage" means twenty (20) percentage points for each five thousand dollars ($5,000) (or fraction thereof) by which the taxpayer's adjusted gross income for the taxable year exceeds one hundred seventy-five thousand dollars ($175,000).' ADV 2024-26 (verbatim): 'Rhode Island standard deduction amounts by Tax Year \u2014 Filing status 2025: Single $10,900; Married filing jointly* $21,800; Head of household $16,350; Married filing separately $10,900. *Or qualifying widow or widower.' 'Phase-out range for standard deduction, exemption amounts by Tax Year \u2014 2025: $254,250 to $283,250. Phaseout increment (amount used in computing phaseout), which was $7,050 for 2024, will be $7,250 for 2025.' INSTRUCTIONS (p. I-4, verbatim): 'Line 4 \u2013 Deductions: Enter your Rhode Island standard deduction from the list in the next column. Rhode Island does not allow the use of federal itemized deductions. Single $10,900; Married Joint $21,800; Qualifying Widow(er) $21,800; Married Separate $10,900; Head of Household $16,350. However, if line 3 is more than $254,250 see the Exemption Worksheet on the inside of the back cover'. WORKSHEET (verbatim): '1. Enter applicable standard deduction amount from the chart below; 2. Enter your modified federal AGI from RI-1040 \u2026, page 1, line 3; 3. Is the amount on line 2 more than $254,250? Yes. Continue to line 4. No. STOP HERE! Enter the amount from line 1 on form RI-1040 \u2026, line 4; 4. Standard deduction phaseout amount $254,250; 5. Subtract line 4 from line 2. If the result is more than $29,000, STOP HERE. Your standard deduction amount is zero ($0); 6. Divide line 5 by $7,250. If the result is not a whole number, increase it to the next higher whole number (for example, increase 0.0004 to 1); 7. Enter the applicable percentage from the chart below: If the number on line 6 is 1 \u2014 0.8000; 2 \u2014 0.6000; 3 \u2014 0.4000; 4 \u2014 0.2000; 8. Deduction amount. Multiply line 1 by line 7.' No age or blindness addition and no dependent-filer limitation exist on the 2011-and-later return (the \xA7 44-30-2.6(c)(2)(C)(4)-(5) amounts belong to the pre-2011 regime). ENCODING: steps = ceil(max0(modified AGI \u2212 $254,250) \xF7 $7,250); deduction \xD7 max0(1 \u2212 0.2 \xD7 steps). TY2026 (ADV 2025-22): $11,200 / $22,400 / $16,800, $261,000 and $7,450 \u2014 version 2.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { single: { value: "1090000", type: "money" }, joint: { value: "2180000", type: "money" }, hoh: { value: "1635000", type: "money" }, mfs: { value: "1090000", type: "money" }, phaseoutThreshold: { value: "25425000", type: "money" }, phaseoutStep: { value: "725000", type: "money" }, phaseoutEnd: { value: "28325000", type: "money" } },
+    formula: (() => {
+      const base = iff18(isJoint5, money33("2180000"), iff18(isHoh5, money33("1635000"), money33("1090000")));
+      return applyRatio2(base, phaseoutPct(fact36("riModifiedAgi"), "25425000", "725000"));
+    })()
+  },
+  {
+    id: "us.ri.exemption",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island exemption 2025 \u2014 $5,100 \xD7 the RI Schedule E exemptions (yourself, spouse on a joint return, dependents), reduced 20 points for each $7,250 (or fraction) of modified federal AGI over $254,250, zero past $283,250; zero for a filer claimable by another (Form RI-1040 line 6, Exemption Worksheet)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(C)(I)-(II), (D) ($3,500 base, \xA7 151/\xA7 152 pre-TCJA exemption count, $175,000 threshold, $5,000 steps) indexed under (E); ADV 2024-26; 2025 RI-1040 Instructions pp. I-4 to I-5 (line 6), I-7 (RI Schedule E); 'Tax Rate Schedule, Deduction and Exemption Worksheets' (2025), Exemption Worksheet lines 1-8; printed Form RI-1040 line 6 and RI Schedule E lines 1a-5",
+      section: "\xA7 44-30-2.6(c)(3)(C), (D); Form RI-1040 line 6; RI Schedule E",
+      url: FORMS3 + "2026-01/2025%20Tax%20Rate%20and%20Worksheets.pdf",
+      excerpt: `STATUTE (verbatim): '(C) Exemption Amount: (I) The term "exemption amount" means three thousand five hundred dollars ($3,500) multiplied by the number of exemptions allowed for the taxable year for federal income tax purposes. For tax years beginning on or after 2018, the term "exemption amount" means the same as it does in 26 U.S.C. \xA7 151 and 26 U.S.C. \xA7 152 just prior to the enactment of the Tax Cuts and Jobs Act (Pub. L. No. 115-97) on December 22, 2017. (II) Exemption amount disallowed in case of certain dependents. In the case of an individual with respect to whom a deduction under this section is allowable to another taxpayer for the same taxable year, the exemption amount applicable to such individual for such individual's taxable year shall be zero. \u2026 (D) In the case of any taxpayer whose adjusted gross income, as modified for Rhode Island purposes pursuant to \xA7 44-30-12, for the taxable year exceeds one hundred seventy-five thousand dollars ($175,000), the exemption amount shall be reduced by the applicable percentage. The term "applicable percentage" means twenty (20) percentage points for each five thousand dollars ($5,000) (or fraction thereof) by which the taxpayer's adjusted gross income for the taxable year exceeds one hundred seventy-five thousand dollars ($175,000).' ADV 2024-26 (verbatim): 'Rhode Island personal and dependency exemption amounts by Tax Year \u2014 2025: $5,100.' FORM (line 6, verbatim): 'Enter # of exemptions from RI Sch E, line 5 in box, multiply by $5,100 and enter result on line 6. If line 3 is over $254,250, see Exemption Worksheet'. INSTRUCTIONS (verbatim): 'Exemption Amount: Multiply the number of exemptions in the box by $5,100. However, if line 3 is more than $254,250 see the Exemption Worksheet \u2026 NOTE: If someone else can claim you on their return, your exemption amount is zero.' RI SCHEDULE E (verbatim): '1a Yourself; b Spouse; 2a-2m [dependents: name, social security number, date of birth, relationship]; 3 Enter the number of boxes checked on lines 1a and 1b; 4a Enter the number of children from lines 2a through 2m who lived with you; b Enter the number of children from lines 2a through 2m who did not live with you due to divorce or separation; c Enter the number of other dependents from lines 2a through 2m not included on lines 4a or 4b; 5 Add the numbers from lines 3 through 4c. Enter here and in the box on RI-1040/NR, pg 1, line 6.' 'Line 1a - Check the "Yourself" checkbox. Line 1b - If filing a joint return, also check the "Spouse" checkbox. Lines 2a - 2m - Use pages 17 - 22 of the IRS 1040 Instructions to determine eligible dependents'. EXEMPTION WORKSHEET (verbatim): '1. Multiply $5,100 by the total number of exemptions; \u2026 4. Exemption phaseout amount $254,250; 5. \u2026 If the result is more than $29,000, STOP HERE. Your exemption amount is zero ($0); 6. Divide line 5 by $7,250 \u2026; 7. \u2026 1 \u2014 0.8000; 2 \u2014 0.6000; 3 \u2014 0.4000; 4 \u2014 0.2000; 8. Exemption amount. Multiply line 1 by line 7.' ENCODING: riExemptions is the Schedule E line 5 count (the composer counts yourself unless claimable by another, the spouse only on a joint return, and the dependents). TY2026 (ADV 2025-22): $5,250, $261,000, $7,450 \u2014 version 2.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "510000", type: "money" }, phaseoutThreshold: { value: "25425000", type: "money" }, phaseoutStep: { value: "725000", type: "money" } },
+    formula: applyRatio2(mulInt17(money33("510000"), fact36("riExemptions")), phaseoutPct(fact36("riModifiedAgi"), "25425000", "725000"))
+  },
+  {
+    id: "us.ri.social_security_modification",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island Social Security modification 2025 \u2014 the taxable Social Security in federal AGI (the share attributable to a person who has reached full retirement age, born on or before March 1, 1959) when federal AGI is under $107,000 (single, HOH, MFS) or $133,750 (MFJ, qualifying widow(er)) (RI Schedule M line 1s, Taxable Social Security Income Worksheet)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-12(c)(8) ($80,000 / $100,000 base amounts indexed with a base year of 2000, $50 / $25 rounding); ADV 2025-22 (November 3, 2025) 'Social Security modification \u2013 income limits by Tax Year'; 2025 'Modification Worksheet \u2014 Taxable Social Security Income Worksheet' (RI-1040 booklet p. 18) Steps 1-2, lines 1-13; 2025 RI-1040 Instructions p. I-9 (line 1s)",
+      section: "\xA7 44-30-12(c)(8); RI Schedule M line 1s",
+      url: FORMS3 + "2026-01/Social%20Security%20Worksheet_b.pdf",
+      excerpt: "STATUTE (verbatim): '(8) Modification for taxable Social Security income. (i) For tax years beginning on or after January 1, 2016: (A) For a person who has attained the age used for calculating full or unreduced Social Security retirement benefits who files a return as an unmarried individual, head of household, or married filing separate whose federal adjusted gross income for the taxable year is less than eighty thousand dollars ($80,000); or (B) A married individual filing jointly or individual filing qualifying widow(er) who has attained the age used for calculating full or unreduced Social Security retirement benefits whose joint federal adjusted gross income for the taxable year is less than one hundred thousand dollars ($100,000), an amount equal to the Social Security benefits includible in federal adjusted gross income. (ii) Adjustment for inflation. The dollar amount contained in subsections (c)(8)(i)(A) and (c)(8)(i)(B) of this section shall be increased annually \u2026 (v) If any increase \u2026 is not a multiple of fifty dollars ($50.00), such increase shall be rounded to the next lower multiple of fifty dollars ($50.00). In the case of a married individual filing separate return, \u2026 the next lower multiple of twenty-five dollars ($25.00)'. ADV 2025-22 (verbatim): 'Social Security modification \u2013 income limits by Tax Year \u2014 Filing status 2025: Single $107,000; Married filing jointly* $133,750; Head of household $107,000; Married filing separately $107,000. *Or qualifying widow or widower.' WORKSHEET (verbatim): 'STEP 1: Eligibility \u2014 1 Enter your date of birth; 2 Enter your spouse's date of birth, if applicable; 3 Enter your Federal AGI from RI-1040 \u2026, line 1; 4 Enter your Filing Status; 5 Were either you or your spouse born on or before 03/01/1959? If yes, check the box; 6 Filing status amount. Enter the amount from below that corresponds to your filing status on line 4: Single or head of household - $107,000; Married filing separately - $107,000; Married filing jointly or qualifying widow(er) - $133,750; 7 Is your Federal AGI on line 3 less than the filing status amount on line 6? If yes, check the box. If you answered yes to both questions 5 and 7, continue to Step 2. Otherwise, STOP, you are not eligible for this modification. STEP 2: Modification Amount \u2014 If you AND your spouse, if applicable, were born on or before 03/01/1959, enter 1.0000 on line 12 and skip lines 8 through 10. 8 Amount of social security benefits from Federal Form 1040 \u2026, line 6a; 9 Amount of line 8 attributed to the person born on or before 03/01/1959; 10 Eligible percentage of social security benefits. Divide line 9 by line 8; 11 Taxable amount of social security from Federal Form 1040 \u2026, line 6b; 12 Eligible percentage. Enter the percentage from line 10, or 1.0000, whichever applies; 13 Modification Amount. Multiply line 11 by line 12. Enter here and on Schedule M - page 1, line 1s.' 'Do not include amounts from Railroad Retirement Benefits on this worksheet.' ENCODING: riTaxpayerFullRetirementAge / riSpouseFullRetirementAge = born on or before March 1, 1959 (the Division's 2025 full-retirement-age cutoff); the joint ratio (line 10) is taken to four decimals half-up and the result rounded to whole dollars; the spouse's status matters only on a joint return. The thresholds index yearly and the 2026 figures are unpublished (~November 2026) \u2014 this rule ends 2026-01-01. TY2027: H 7127 Sub A (June 12, 2026) drops the age requirement."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { agiLimitSingleHohMfs: { value: "10700000", type: "money" }, agiLimitJoint: { value: "13375000", type: "money" }, fullRetirementAgeBornOnOrBefore: { value: "1959-03-01", type: "enum" } },
+    formula: (() => {
+      const limit = iff18(isJoint5, money33("13375000"), money33("10700000"));
+      const tpFra = fact36("riTaxpayerFullRetirementAge");
+      const spFra = and6(isMfjOnly, fact36("riSpouseFullRetirementAge"));
+      const eligible = and6(or9(tpFra, spFra), lt18(fact36("riFederalAgi"), limit));
+      const taxable3 = max019(fact36("riTaxableSocialSecurity"));
+      const total = max019(fact36("riSocialSecurityBenefits"));
+      const partial2 = iff18(gt10(total, money33("0")), applyRatio2(taxable3, ratio42(fact36("riSocialSecurityBenefitsFraPerson"), total)), money33("0"));
+      const bothOrSingle = or9(not6(isMfjOnly), and6(tpFra, fact36("riSpouseFullRetirementAge")));
+      return iff18(eligible, iff18(bothOrSingle, taxable3, partial2), money33("0"));
+    })()
+  },
+  {
+    id: "us.ri.pension_modification",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island pension and annuity modification 2025 \u2014 up to $50,000 of the federally taxable pension and annuity income (Form 1040 line 5b, not IRAs) of each person born on or before March 1, 1959, when federal AGI is under $107,000 (single, HOH, MFS) or $133,750 (MFJ, qualifying widow(er)) (RI Schedule M line 1t)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-12(c)(9)(i) as amended by P.L. 2024, ch. 117, art. 6, \xA7 21 ('up to fifty thousand dollars ($50,000)' for tax years beginning on or after January 1, 2025), (vi) (thresholds equal the (c)(8) Social Security amounts); ADV 2025-22 'Pension/401(k)/Annuity modification \u2013 income limits by Tax Year'; 2025 RI-1040 Instructions pp. I-9 to I-10 (line 1t and its table)",
+      section: "\xA7 44-30-12(c)(9); RI Schedule M line 1t",
+      url: RIGL("44-II", "12"),
+      excerpt: `STATUTE (verbatim): '(9) Modification of taxable retirement income from certain pension plans or annuities. (i) For tax years beginning on or after January 1, 2017, until the tax year beginning January 1, 2022, a modification shall be allowed for up to fifteen thousand dollars ($15,000), and for tax years beginning on or after January 1, 2023, until the tax year beginning January 1, 2024, a modification shall be allowed for up to twenty thousand dollars ($20,000), and for tax years beginning on or after January 1, 2025, a modification shall be allowed for up to fifty thousand dollars ($50,000), of taxable pension and/or annuity income that is included in federal adjusted gross income for the taxable year: (A) For a person who has attained the age used for calculating full or unreduced Social Security retirement benefits who files a return as an unmarried individual, head of household, or married filing separate whose federal adjusted gross income for such taxable year is less than the amount used for the modification contained in subsection (c)(8)(i)(A) \u2026; or (B) For a married individual filing jointly or individual filing qualifying widow(er) who has attained the age \u2026 whose joint federal adjusted gross income for such taxable year is less than the amount used for the modification contained in subsection (c)(8)(i)(B) \u2026'. ADV 2025-22 (verbatim): 'Pension/401(k)/Annuity modification \u2013 income limits by Tax Year \u2014 2025: Single $107,000; Married filing jointly* $133,750; Head of household $107,000; Married filing separately $107,000. Note: Starting with Tax Year 2025, if the taxpayer meets all requirements, he or she may reduce federal AGI, for Rhode Island tax purposes, by up to $50,000 of federally taxable pension/401(k)/403(b)/annuity income (via the Rhode Island modification).' INSTRUCTIONS (verbatim): 'Line 1t - Modification up to $50,000 for taxable retirement income from certain pension plans or annuities under R.I. Gen. Laws \xA7 44-30-12(c)(9). For those taxpayers who have reached full retirement age, if you answer YES to the following two questions, complete the table on the next page \u2026 1) Were you or your spouse (if applicable) born on or before March 1, 1959? NOTE: Only retirement income received by the taxpayer born on or before March 1, 1959 qualifies for this modification. AND 2) Is your Federal AGI less than or equal to the amount listed below for your filing status? Single $107,000; Married Joint $133,750; Qualifying Widow(er) $133,750; Married Separate $107,000; Head of Household $107,000'. TABLE (verbatim): '(a) Primary (b) Spouse \u2014 1) Date of birth; 2) For each column, if the date of birth on line 1 is on or before March 1, 1959, enter the amount from Federal Form 1040 \u2026, line 5b attributable to that person AND ONLY attributable to pensions and annuities. DO NOT include any amounts relating to IRAs included on Federal Form 1040 \u2026, line 4b; 3) For each person, enter the amount from line 2 or $50,000, whichever is less; 4) Add the amounts from lines 3a and 3b together. Enter this amount and date(s) of birth on Schedule M, line 1t.' 'Military Service Pension: \u2026 do not include any amount related to a military service pension on this line. These amounts should be reported on line 1v'. DISCREPANCY: the instructions' question 2 says 'less than or equal to' while \xA7 44-30-12(c)(9)(i) and the Social Security worksheet say 'less than' \u2014 the statute's 'less than' is encoded (a federal AGI of exactly $107,000 does not qualify). PUB 2026-01 'Rhode Island Retirement Income Tax Guide' (Publication 2026-01) repeats the looser test ('$107,000 or less') and prints the JOINT threshold as $133,500, which contradicts ADV 2025-22, the booklet table and the Social Security worksheet \u2014 all three print $133,750, and $133,750 is encoded. The same publication confirms the per-person cap in terms: 'Under the Rhode Island Pension and Annuity Income Modification, the $50,000 limit applies on an individual basis' and 'the annual $50,000 limit per individual', with 'For a married couple filing joint return, "full retirement age" requirement applies to each spouse. If only one spouse has reached full retirement age, the Rhode Island Pension and Annuity Income Modification applies only to that spouse's taxable pension and annuity income.' ENCODING: per person, min(pension for that person, $50,000) when that person has full retirement age; the spouse column only on a joint return. Thresholds index yearly \u2014 this rule ends 2026-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "5000000", type: "money" }, agiLimitSingleHohMfs: { value: "10700000", type: "money" }, agiLimitJoint: { value: "13375000", type: "money" } },
+    formula: (() => {
+      const limit = iff18(isJoint5, money33("13375000"), money33("10700000"));
+      const a = iff18(fact36("riTaxpayerFullRetirementAge"), minE8(max019(fact36("riTaxpayerPensionIncome")), money33("5000000")), money33("0"));
+      const b = iff18(and6(isMfjOnly, fact36("riSpouseFullRetirementAge")), minE8(max019(fact36("riSpousePensionIncome")), money33("5000000")), money33("0"));
+      return iff18(lt18(fact36("riFederalAgi"), limit), add15(a, b), money33("0"));
+    })()
+  },
+  {
+    id: "us.ri.child_dependent_care_credit",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island credit for child and dependent care expenses \u2014 25% of the federal credit (Schedule 3 line 2), not more than the Rhode Island income tax; nonrefundable (RI Schedule I lines 19-22, Form RI-1040 line 9a)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(F)(I)(g); 2025 RI-1040 Instructions p. I-6 (RI Schedule I lines 19-22); printed Form RI-1040 page 3, RI Schedule I",
+      section: "\xA7 44-30-2.6(c)(3)(F)(I)(g); RI Schedule I; Form RI-1040 line 9a",
+      url: FORM_URL,
+      excerpt: "STATUTE (verbatim): '(g) Child and Dependent Care: Credit shall be allowed for twenty-five percent (25%) of the federal child and dependent care credit allowable for the taxable year for federal purposes; provided, however, such credit shall not exceed the Rhode Island tax liability.' SCHEDULE I (verbatim): '19 RI income tax from page 1, line 8; 20 Credit for child and dependent care expenses from Federal Form 1040 or 1040-SR, Schedule 3, line 2; 21 Tentative allowable federal credit. Multiply line 20 by 25% (0.2500); 22 MAXIMUM CREDIT. Line 19 or 21, whichever is SMALLER. Enter here and on page 1, line 9a.' INSTRUCTIONS: 'Line 9a \u2013 Rhode Island Percentage of Allowable Federal Credit: Enter the amount of allowable federal credit from page 3, RI Schedule I, line 22.' ENCODING: min(round(25% \xD7 federal credit), line 8 tax). Unindexed \u2014 this rule ends 2027-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "25", type: "int" } },
+    formula: minE8(rd24(pct8(max019(fact36("riFederalChildCareCredit")), "1", "4")), max019(fact36("riIncomeTax")))
+  },
+  {
+    id: "us.ri.other_state_credit",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island credit for income taxes paid to another state \u2014 the smallest of the Rhode Island tax after the Schedule I credit, that tax \xD7 (income derived from the other state \xF7 modified federal AGI, four decimals, \u2264 1.0000), and the tax due and paid to the other state (RI Schedule II lines 23-29, Form RI-1040 line 9b)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-18(a)-(b); \xA7 44-30-2.6(c)(3)(F)(I)(d); 2025 RI-1040 Instructions p. I-6 (RI Schedule II lines 23-29); printed Form RI-1040 page 3, RI Schedule II; Form RI-1040MU (multiple states)",
+      section: "\xA7 44-30-18; RI Schedule II; Form RI-1040 line 9b",
+      url: RIGL("44-II", "18"),
+      excerpt: "STATUTE (verbatim): '(a) General. A resident shall be allowed a credit, against the Rhode Island personal income tax otherwise due for the taxable year, for the aggregate of net income taxes imposed on him or her for the taxable year by other states (including the District of Columbia) of the United States if the taxes are imposed irrespective of the residence or domicile of the taxpayer. (b) Limitation of credit. The credit shall not exceed the proportion of the taxpayer's Rhode Island personal income tax that the taxpayer's Rhode Island income derived from the other taxing states bears to his or her entire Rhode Island income for the same taxable year.' SCHEDULE II (verbatim): '23 RI income tax from RI-1040, page 1, line 8 less allowable federal credit from RI-1040, page 3, line 22; 24 Income derived from other state. If more than one state, see instructions; 25 Modified federal AGI from page 1, line 3; 26 Divide line 24 by line 25 [_ . _ _ _ _]; 27 Tentative credit. Multiply line 23 by line 26; 28 Tax due and paid to other state (see specific instructions). Insert abbreviation for state paid; 29 MAXIMUM TAX CREDIT. Line 23, 27 or 28, whichever is the SMALLEST. Enter here and on pg 1, line 9b.' INSTRUCTIONS (verbatim): 'Line 26 \u2013 Divide line 24 by line 25. If greater than 1.0000, enter 1.0000.' 'Out-of-state gross income is determined in the same manner as that which would be used for Federal purposes and generally includes the net amounts of income that appear on the face of the other state's return'. 'If you owe no tax to the other state(s) and are to be refunded all the taxes withheld or paid to the other state(s), enter $0.00 on line 28.' 'NOTE: You must attach a signed copy of each state return for which you are claiming credit.' Multiple states: one Form RI-1040MU part per state, the line 29 income total and the line 30 credit total flow to Schedule II lines 24 and 28 with 'MU'. ENCODING: ratio to four decimals half-up capped at 1.0000; line 27 rounded to whole dollars; $0 when modified federal AGI is not positive. Unindexed \u2014 this rule ends 2027-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { ratioDecimals: { value: "4", type: "int" } },
+    formula: (() => {
+      const l23 = max019(fact36("riIncomeTaxAfterFederalCredit"));
+      const l25 = fact36("riModifiedAgi");
+      const l27 = applyRatio2(l23, ratio42(fact36("riOtherStateIncome"), l25));
+      return iff18(gt10(l25, money33("0")), minE8(l23, l27, max019(fact36("riOtherStateTaxPaid"))), money33("0"));
+    })()
+  },
+  {
+    id: "us.ri.eitc",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island earned income credit \u2014 16% of the federal earned income credit; fully refundable (RI Schedule EIC lines 39-41, Form RI-1040 line 14d)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(2)(N)(1)-(2) (16% for tax years beginning on or after January 1, 2024; the excess over the tax is 100% refundable from 2015); 2025 RI-1040 Instructions p. I-7 (RI Schedule EIC lines 39-41); printed Form RI-1040 page 3, RI Schedule EIC",
+      section: "\xA7 44-30-2.6(c)(2)(N); RI Schedule EIC; Form RI-1040 line 14d",
+      url: RIGL("44-I", "2.6"),
+      excerpt: "STATUTE (verbatim): 'For tax years beginning on or after January 1, 2024, a taxpayer entitled to a federal earned-income credit shall be allowed a Rhode Island earned-income credit equal to sixteen percent (16%) of the federal earned-income credit. Such credit shall not exceed the amount of the Rhode Island income tax. (2) Refundable portion. In the event the Rhode Island earned-income credit allowed under paragraph (N)(1) of this section exceeds the amount of Rhode Island income tax, a refundable earned-income credit shall be allowed as follows. \u2026 (ii) For tax years beginning on or after January 1, 2015, for purposes of paragraph (2) refundable earned-income credit means one hundred percent (100%) of the amount by which the Rhode Island earned-income credit exceeds the Rhode Island income tax.' SCHEDULE EIC (verbatim): '39 Federal earned income credit from Federal Form 1040 or 1040-SR, line 27a; 40 Rhode Island percentage 16%; 41 RI EARNED INCOME CREDIT. Multiply line 39 by line 40. Enter here and on RI-1040, page 2, line 14d.' Form RI-1040 line 14d sits among 'PAYMENTS AND PROPERTY TAX RELIEF CREDIT' ('d RI earned income credit from page 3, RI Schedule EIC, line 41'), so the whole credit is refundable through line 14g. ENCODING: round(16% \xD7 federal EIC). The FY2027 budget did not change the rate \u2014 this rule ends 2027-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "16", type: "int" } },
+    formula: rd24(pct8(max019(fact36("riFederalEic")), "16", "100"))
+  },
+  {
+    id: "us.ri.property_tax_relief_credit",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island property tax relief credit 2025 (Form RI-1040H) \u2014 for a claimant 65 or older or disabled with household income of $40,730 or less: property taxes (or 20% of rent) over 3% to 6% of household income by income band and household size, up to $700; refundable; not for a dependent of another (Form RI-1040 line 14c)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7\xA7 44-33-3(1)-(3), (6)-(7), 44-33-9 (income ranges and the $600 maximum indexed by CPI-U from 2023, rounded up to $5), 44-33-16; ADV 2025-22 'Property tax relief credit \u2013 income ranges by tax year' and 'maximum credit amount' (2025: $700); 2025 Form RI-1040H Parts 1-5 and the Computation Table; 2025 RI-1040 Instructions p. I-5 (line 14c)",
+      section: "\xA7\xA7 44-33-3, 44-33-9; Form RI-1040H lines 1-13; Form RI-1040 line 14c",
+      url: FORMS3 + "2026-01/2025%201040H_w.pdf",
+      excerpt: `STATUTE (\xA7 44-33-9, verbatim): '(1) For any taxable year, a claimant is entitled to a credit against his or her tax liability equal to the amount by which the property taxes accrued or rent constituting property taxes accrued upon the claimant's homestead for the taxable year exceeds a certain percentage of the claimant's total household income for that taxable year, which percentage is based upon income level and household size. The credit shall be computed in accordance with the following table: Income Range \u2014 1 Person \u2014 2 or More Persons: less than $6000 3% 3%; $6001-9000 4% 4%; $9001-12000 5% 5%; $12001-15000 6% 5%; $15001-35000 6% 6%. (2) \u2026 For tax years beginning on or after January 1, 2022, the maximum credit shall be six hundred dollars ($600). For tax years beginning on or after January 1, 2023, the income range provided pursuant to subsection (1) of this section and the maximum credit granted pursuant to subsection (2) of this section shall be adjusted by the percentage increase in the Consumer Price Index for all Urban Consumers (CPI-U) \u2026 Said adjustment shall be compounded annually and shall be rounded up to the nearest five dollar ($5.00) increment.' \xA7 44-33-3: '(1) "Claimant" means a homeowner or renter, sixty-five (65) years of age or older, and/or disabled, who has filed a claim under this chapter and was domiciled in this state for the entire calendar year \u2026 Claimant shall not mean or include any person claimed as a dependent by any taxpayer under the Internal Revenue Code'; '(2) "Disabled" means those persons who are receiving a social security disability benefit.'; '(3) \u2026 Twenty percent (20%) of the annual gross rental plus the space rental fees paid during the year are the annual "property taxes accrued."'; '(7) "Income" means the sum of federal adjusted gross income \u2026 and all non-taxable income'. ADV 2025-22 (verbatim): 'Property tax relief credit \u2013 income ranges by tax year \u2014 2025 Household income / Percentage of income allowable as credit (1 person / 2 or more): Less than $6,991 3% 3%; $6,991 - $10,480 4% 4%; $10,481 - $13,970 5% 5%; $13,971 - $17,460 6% 5%; $17,461 - $40,730 6% 6%.' 'Property tax relief credit \u2013 maximum credit amount by tax year \u2014 2025: $700.' FORM RI-1040H (verbatim): 'PART 1 ELIGIBILITY \u2026 A Were you domiciled in Rhode Island for all of 2025?; B In 2025 did you live in a household or rent a dwelling that was subject to property tax?; C Are you current for property taxes or rent due on the homestead for 2025 and all prior years?; D Were you or your spouse 65 years of age or older and/or disabled as of December 31, 2025?; E Was your 2025 total household income from page 2, line 32 $40,730 or less?' 'PART 3 HOMEOWNERS: 2 Enter the amount of property taxes you paid or will pay for 2025; 3 Using your household income from line 1b enter percentage from the computation table located on pg 3; 4 Multiply amount on line 1b by percentage on line 3; 5 Tentative credit. Subtract line 4 from line 2. If line 4 is greater than line 2, enter zero; 6 PROPERTY TAX RELIEF. Line 5 or $700.00, whichever is LESS.' 'PART 4 RENTERS: 7 Enter the amount of rent you paid in 2025; 8 Multiply the amount on line 7 by twenty (20) percent (0.2000); 9 Using your household income from line 1b enter percentage from the computation table \u2026; 10 Multiply amount on line 1b by percentage on line 9; 11 Tentative credit. Subtract line 10 from line 8. If line 10 is greater than line 8, enter zero; 12 PROPERTY TAX RELIEF. Line 11 or $700.00, whichever is LESS. 13 PROPERTY TAX RELIEF. Line 6 or line 12, whichever applies. Enter here and on Form RI-1040, line 14c.' 'RENTED LAND: If you live on land that is rented and your home or trailer is subject to property tax. Multiply the amount of rent you paid in 2025 by 20% and add the amount to the property tax paid. Then enter the total on RI-1040H, line 2.' 'The maximum amount of credit allowable under Chapter 44-33, Property Tax Relief Act, for calendar year 2025 is $700.00.' ENCODING: base = property tax paid + 20% of rent (covers homeowners, renters, and rented land); income \xD7 percentage rounded to whole dollars; credit = min(max0(base \u2212 income \xD7 pct), $700); $0 unless riAge65OrDisabled, household income \u2264 $40,730, and not claimable by another; riHouseholdMembers \u2265 2 selects the '2 or more' column. Indexed \u2014 this rule ends 2026-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      maximumCredit: { value: "70000", type: "money" },
+      incomeLimit: { value: "4073000", type: "money" },
+      band1Top: { value: "699100", type: "money" },
+      band2Top: { value: "1048000", type: "money" },
+      band3Top: { value: "1397000", type: "money" },
+      band4Top: { value: "1746000", type: "money" },
+      rentPct: { value: "20", type: "int" }
+    },
+    formula: (() => {
+      const income = max019(fact36("riHouseholdIncome"));
+      const two = ge8(fact36("riHouseholdMembers"), int12("2"));
+      const pctPoints = iff18(lt18(income, money33("699100")), money33("3"), iff18(le16(income, money33("1048000")), money33("4"), iff18(le16(income, money33("1397000")), money33("5"), iff18(le16(income, money33("1746000")), iff18(two, money33("5"), money33("6")), money33("6")))));
+      const floor = rd24({ kind: "mulDiv", a: income, b: pctPoints, c: money33("100"), round: "half-up" });
+      const base = add15(max019(fact36("riPropertyTaxPaid")), rd24(pct8(max019(fact36("riRentPaid")), "20", "100")));
+      const credit = minE8(max019(sub19(base, floor)), money33("70000"));
+      const ok2 = and6(fact36("riAge65OrDisabled"), le16(income, money33("4073000")), not6(fact36("isClaimedAsDependent")));
+      return iff18(ok2, credit, money33("0"));
+    })()
+  },
+  {
+    id: "us.ri.use_tax",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island individual use tax \u2014 7% of untaxed purchases less sales tax paid to other states, or the safe-harbor lookup table on federal AGI ($5 under $8,350 \u2026 $60 under $100,300, then 0.08% of federal AGI) plus 7% on each single purchase of $1,000 or more (RI Schedule U, Form RI-1040 line 12a)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-100; 2025 RI Schedule U lines 1-8 and the Use Tax Table; 2025 RI-1040 Instructions p. I-11 (RI Schedule U)",
+      section: "\xA7 44-30-100; RI Schedule U; Form RI-1040 line 12a",
+      url: FORMS3 + "2026-01/2025%20RI%20Schedule%20U_w.pdf",
+      excerpt: `INSTRUCTIONS (verbatim): 'Pursuant to R.I. Gen. Laws \xA7 44-30-100, when reporting the amount of use tax obligation on the Rhode Island personal income return, the taxpayer shall list either the actual amount (from books, records, and other sources), or an amount using a lookup table established by the tax administrator. \u2026 To determine the amount of use tax from the lookup table, the taxpayer shall multiply 0.0008 by the amount of the taxpayer's federal AGI as listed on the Rhode Island personal income tax return before modifications, adjustments, or other changes. If a taxpayer uses the lookup table, the taxpayer shall list on the return not only the result from the lookup table, but also the actual amount of each single purchase whose purchase price equals or exceeds one thousand dollars ($1,000). \u2026 the use of the lookup table as described in this section is, for the taxpayer, a "safe harbor" alternative'. SCHEDULE U (verbatim): 'Option #1 - Actual Use Tax Due: 1 Enter the total price of purchases subject to the use tax; 2 Use tax due. Multiply line 1 by 7% (0.07); 3 Enter the amount of sales taxes paid in other states for the purchases on line 1; 4 Net use tax due. Subtract line 3 from line 2. Enter here and on RI-1040, pg 1, line 12a. Option #2 - Rhode Island Use Tax Lookup Table: 5 Enter your 2025 Federal AGI from Form RI-1040 \u2026, line 1; 6 Use tax due. Multiply line 5 by 0.0008 or enter the amount from the Rhode Island Use Tax Lookup Table below; 7 \u2026 list the actual amount of each single purchase greater than or equal to $1,000.00 [Product Cost, Tax Due (Cost x 7%), Sales Tax Paid, Sales Tax Due]; 7e Net use tax due on purchases equal to or greater than $1,000; 8 Use tax due. Add lines 6 and 7e.' USE TAX TABLE (verbatim, 'Federal AGI \u2026 At least / Less than / Use Tax Amount'): '$0 8,350 $5; 8,350 16,700 10; 16,700 25,050 15; 25,050 33,400 20; 33,400 41,750 25; 41,750 50,150 30; 50,150 58,500 35; 58,500 66,850 40; 66,850 75,200 45; 75,200 83,550 50; 83,550 91,950 55; 91,950 100,300 60. If your Federal AGI is $100,300 or greater, multiply Form RI-1040/NR, line 1 by 0.08% (0.0008)'. 'In Rhode Island the sales and use tax rate is 7%.' 'Clothing and footwear costing $250 or less are not taxable.' ENCODING: riUseTaxLookupTable = true applies the printed table (or 0.08% at $100,300 and over) plus riLargePurchasesNetUseTax (the line 7e net); otherwise round(7% \xD7 riUseTaxPurchases) \u2212 riSalesTaxPaidOtherStates, not below zero. The table bands are the Division's 2025 figures \u2014 this rule ends 2026-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { rateBps: { value: "700", type: "int" }, lookupBps: { value: "8", type: "int" }, lookupTop: { value: "10030000", type: "money" }, largePurchaseThreshold: { value: "100000", type: "money" } },
+    formula: (() => {
+      const agi2 = max019(fact36("riFederalAgi"));
+      const bands2 = [["835000", "500"], ["1670000", "1000"], ["2505000", "1500"], ["3340000", "2000"], ["4175000", "2500"], ["5015000", "3000"], ["5850000", "3500"], ["6685000", "4000"], ["7520000", "4500"], ["8355000", "5000"], ["9195000", "5500"], ["10030000", "6000"]];
+      let table2 = dollarsFromScaled11(times10(agi2, "8"));
+      for (let i = bands2.length - 1; i >= 0; i--)
+        table2 = iff18(lt18(agi2, money33(bands2[i][0])), money33(bands2[i][1]), table2);
+      const lookup = add15(table2, max019(fact36("riLargePurchasesNetUseTax")));
+      const actual = max019(sub19(rd24(pct8(max019(fact36("riUseTaxPurchases")), "7", "100")), max019(fact36("riSalesTaxPaidOtherStates"))));
+      return iff18(fact36("riUseTaxLookupTable"), lookup, actual);
+    })()
+  },
+  {
+    id: "us.ri.parameters",
+    version: 1,
+    jurisdiction: "us.ri",
+    title: "Rhode Island 2025 Form RI-1040 parameters \u2014 line structure, RI Schedule M modifications, the closed credit list, payments, and the enacted TY2026-2027 position (ADV 2025-22; FY2027 budget H 7127 Sub A)",
+    citation: {
+      source: "2025 RI-1040 Resident Instructions (Rev. 11/2025); printed 2025 Form RI-1040 with RI Schedules I, II, EIC, W, E; RI Schedules M, CR, U, HR1; Form RI-1040H; R.I. Gen. Laws \xA7\xA7 44-30-2.6, 44-30-12, 44-30-18, 44-30-100, 44-33-1 et seq.; Division of Taxation ADV 2024-26, ADV 2025-22, 'Summary of Legislative Changes' (July 22, 2026); web-verified September 2026",
+      section: "Form RI-1040 lines 1-18",
+      url: INSTR_URL,
+      excerpt: "STRUCTURE (printed 2025 Form RI-1040): filing status Single / Married filing jointly / Married filing separately / Head of household / Qualifying widow(er) ('Taxpayers using the filing status of Qualifying Surviving Spouse on their Federal return should use the filing status of Qualifying Widow(er) on their Rhode Island return'); 1 'Federal AGI from Federal Form 1040 or 1040-SR, line 11a'; 2 'Net modifications to Federal AGI from RI Sch M, line 3'; 3 'Modified Federal AGI. Combine lines 1 and 2'; 4 standard deduction (\u2192 us.ri.standard_deduction); 5 = 3 \u2212 4, not below zero; 6 exemptions \xD7 $5,100 (\u2192 us.ri.exemption); 7 'RI TAXABLE INCOME. Subtract line 6 from line 5. If zero or less, enter 0'; 8 'RI income tax from Rhode Island Tax Table or Tax Computation Worksheet' (\u2192 us.ri.income_tax); 9a Schedule I credit (\u2192 us.ri.child_dependent_care_credit); 9b Schedule II other-state credit (\u2192 us.ri.other_state_credit); 9c 'Other Rhode Island Credits from RI Schedule CR, line 9' (RI-0715 historic homeowner carryforwards, RI-2276 scholarship organizations, RI-286B historic structures, RI-5442 low income housing, RI-6754 qualified jobs, RI-7253 Rebuild RI, RI-8201 motion picture and musical/theatrical, RI-9283 Wavemaker \u2014 certificate credits); 9d total credits; 10a 'Rhode Island income tax after credits. Subtract line 9d from line 8 (not less than zero)'; 10b 'Recapture of Prior Year Other Rhode Island Credits from RI Schedule CR, line 12'; 11 'RI checkoff contributions from page 3, RI Checkoff Schedule, line 38' (lines 30-37: Drug program account, Olympic contribution ($1 / $2 joint), RI Organ Transplant Fund, RI Council on the Arts, RI Nongame Wildlife Fund, Childhood Disease Victim's Fund, RI Military Family Relief Fund, Behavioral health education fund \u2014 'These checkoff contributions will increase your tax due or reduce your refund'); 12a use/sales tax (\u2192 us.ri.use_tax); 12b 'Individual Mandate Penalty' (Form IND-HEALTH / Shared Responsibility Worksheet line 15 \u2014 transcribed); 13a 'TOTAL RI TAX AND CHECKOFF CONTRIBUTIONS. Add lines 10a, 10b, 11, 12a and 12b'; 13b = 13a; 14a 'RI 2025 income tax withheld from RI Schedule W, line 16' (W-2 box 17, 1099s, RI K-1 PTE/PTW amounts); 14b '2025 estimated tax payments and amount applied from 2024 return'; 14c 'Property tax relief credit from RI-1040H, line 13' (\u2192 us.ri.property_tax_relief_credit); 14d 'RI earned income credit from page 3, RI Schedule EIC, line 41' (\u2192 us.ri.eitc); 14e 'RI Residential Lead Paint Credit from RI-6238, line 7' (transcribed); 14f 'Other payments' (Form RI-4868 extension payment); 14g total payments and credits; 14h 'Previously issued overpayments (if filing an amended return)'; 14i net payments; 15a 'AMOUNT DUE. If line 13b is LARGER than line 14i, subtract line 14i from line 13b'; 15b underestimating interest (Form RI-2210 / RI-2210A) 'added to line 15a or subtracted from line 16'; 15c total amount due ('An amount due of less than five dollars ($5) need not be paid'); 16 'AMOUNT OVERPAID. If line 14i is LARGER than line 13b, subtract line 13b from line 14i'; 17 refund ('Refunds of less than $5.00 will not be paid unless specifically requested'); 18 overpayment applied to 2026. RI SCHEDULE M (decreasing, lines 1a-1x): U.S. obligation interest less related investment interest (\xA7 44-30-12(c)(1)), fiduciary adjustment, R&D facilities, Railroad Retirement benefits, venture capital, Family Education Accounts, 529 contributions 'Not to exceed $500 ($1,000 if joint return)' (\xA7 44-30-12(c)(4)), artists in economic development zones, bonus depreciation and \xA7 179 recovery (\xA7\xA7 44-61-1, 44-61-1.1), Jobs Growth Act compensation, qualifying options / securities, employer tax incentives, exempt tax credit income, nonresident military pay, Scituate MSA, dependent/domestic partner insurance benefits, organ donation up to $10,000, 1s Social Security (\u2192 us.ri.social_security_modification), 1t pensions and annuities up to $50,000 (\u2192 us.ri.pension_modification), 1u cash-basis PTE refund, 1v military service pensions in full (\xA7 44-30-12(c)(11)), 1w cannabis \xA7 280E expenses, 1x \xA7 174A amortization; (increasing, 2a-2l): out-of-state state and municipal bond interest (\xA7 44-30-12(b)(1)-(2)), fiduciary adjustment, Family Education Account recapture, bonus depreciation (\xA7 44-61-1: 'any bonus depreciation taken for federal purposes must be added back'), 529 recapture, tax credit income recapture, Scituate MSA recapture, 2h pass-through entity tax elected to be paid (\xA7 44-11-2.3), 2i unemployment compensation not in federal AGI, 2j PPP loan forgiveness over $250,000, 2k 'Add back of Federal P.L. 119-21, H.R.1 Provisions from 2025 RI Schedule HR1 - Individual, line 1f' (\xA7 44-30-12(b)(9): \xA7\xA7 163(j), 174A, 179(b), 181 \u2014 the 2025 Instructions: 'Section 179 depreciation will remain limited to $25,000 for Rhode Island income tax purposes'). CREDITS: \xA7 44-30-2.6(c)(3)(F)(I) \u2014 'the only credits allowed against a tax imposed under this chapter shall be as follows: (a) Rhode Island earned-income credit \u2026; (b) Property Tax Relief Credit \u2026; (c) Lead Paint Credit \u2026; (d) Credit for income taxes of other states \u2026; (e) Historic Structures Tax Credit \u2026; (f) Motion Picture Productions Tax Credit \u2026; (g) Child and Dependent Care: \u2026 twenty-five percent (25%) \u2026; (h) \u2026 Scholarship Organizations \u2026; (i) Credit for tax withheld \u2026; (j) Stay Invested in RI Wavemaker Fellowship \u2026; (k) Rebuild Rhode Island \u2026; (l) Rhode Island Qualified Jobs Incentive Program \u2026; (m) Historic homeownership assistance act \u2026 carryforward'. ROUNDING: whole dollars (the printed return has no cents boxes); a $5 de minimis on amounts due and refunds. SCOPE: full-year residents; part-year and nonresidents file RI-1040NR (Schedules II/III \u2014 not composed); no county or municipal income tax. DEADLINES: April 15, 2026 (automatic six-month extension for filing, not payment); Form RI-1040H and RI-6238 must be filed by April 15, 2026 regardless. TY2026 (ADV 2025-22, November 3, 2025): brackets $82,050 / $186,450 ('Uniform tax rate schedule for Tax Year 2026: 0 - 82,050 3.75%; 82,050 - 186,450 3,076.88 + 4.75%; 186,450 - 8,035.88 + 5.99%'), standard deduction $11,200 / $22,400 / $16,800 / $11,200, exemption $5,250, phase-out $261,000 to $290,800 in $7,450 steps \u2014 versions 2; the Social Security / pension thresholds and the RI-1040H amounts for 2026 publish ~November 2026. TY2027 (H 7127 Sub A, approved June 12, 2026, Division summary July 22, 2026): a High-Income Surtax of 1% on personal income over $1,000,000 (indexed; 2% for 2028, 3% for 2029 and after) 'applies to all personal income tax filers'; a refundable $330 Child Tax Credit per child 18 or under, phased out 20 points per $2,875 over $88,500 ($3,590 over $110,640 joint); the Social Security modification's age test is eliminated ('while keeping the income threshold'); the H.R. 1 decoupling becomes permanent (\xA7 174A from 2026; \xA7\xA7 163(j) and 1202 from 2027). TY2025 was untouched by the 2026 session."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      tuitionSavingsCap: { value: "50000", type: "money" },
+      tuitionSavingsCapJoint: { value: "100000", type: "money" },
+      organDonationCap: { value: "1000000", type: "money" },
+      section179Cap: { value: "2500000", type: "money" },
+      deMinimisDueOrRefund: { value: "500", type: "money" },
+      olympicCheckoff: { value: "100", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Rhode Island Form RI-1040 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.ri.income_tax, us.ri.standard_deduction, us.ri.exemption, us.ri.social_security_modification, us.ri.pension_modification, us.ri.child_dependent_care_credit, us.ri.other_state_credit, us.ri.eitc, us.ri.property_tax_relief_credit, and us.ri.use_tax"
+    }
+  },
+  // ---- TY2026 versions: ADV 2025-22 (November 3, 2025) and the 2026 Form RI-1040ES ----
+  {
+    id: "us.ri.income_tax",
+    version: 2,
+    jurisdiction: "us.ri",
+    title: "Rhode Island income tax TY2026 \u2014 uniform rate schedule 3.75% to $82,050, 4.75% to $186,450, 5.99% above (worksheet subtraction amounts $820.50 / $3,132.48) (Form RI-1040 line 8)",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(A)(I) indexed under (E); Division of Taxation ADV 2025-22 (November 3, 2025) 'Uniform tax rate schedule for Tax Year 2026'; 2026 Form RI-1040ES '2026 Tax Rate Schedule - FOR ALL FILING STATUS TYPES'",
+      section: "\xA7 44-30-2.6(c)(3)(A)(I), (E)",
+      url: FORMS3 + "2025-11/ADV_2025_22_Inflation_Adjustments.pdf",
+      excerpt: "ADV 2025-22 (verbatim): 'Uniform tax rate schedule for Tax Year 2026 (Personal Income Tax) \u2014 Taxable income: Over $0 But not over $82,050 Pay -- + 3.75% of the amount over $0; 82,050 / 186,450 / 3,076.88 / 4.75% / 82,050; 186,450 / / 8,035.88 / 5.99% / 186,450.' 2026 FORM RI-1040ES (verbatim): '2026 Tax Rate Schedule - FOR ALL FILING STATUS TYPES: $0 - $82,050 \u2014 3.75% \u2014 $0; 82,050 - 186,450 \u2014 3,076.88 + 4.75% \u2014 82,050; 186,450 - .......... \u2014 8,035.88 + 5.99% \u2014 186,450'. ENCODING: the schedule evaluated EXACTLY at the taxable income, in the Tax Computation Worksheet's form (rate x taxable income minus a subtraction constant), one half-up rounding to whole dollars. The printed 'Pay' anchors $3,076.88 and $8,035.88 are display roundings of 3,076.875 (= 82,050 x 3.75%) and 8,035.875 (= 3,076.875 + 104,400 x 4.75%); applying the ROUNDED anchor plus the rate on the excess carries a +$0.005 bias into every income above $82,050 and overstates the tax by $1 at 1,589 of the 400,001 whole-dollar incomes to $400,000 (first at $82,421: exact 3,094.4975 -> $3,094, rounded-anchor method 3,094.5025 -> $3,095). The Division's filed-return method is the worksheet, whose constants are exact by construction \u2014 TY2025 proves it: the printed worksheet constants $799.00 and $3,051.46 are exact while that year's schedule anchor $7,829.38 is rounded from 7,829.375, and the 2025 worksheet governs the filed return. The 2026 constants are therefore 82,050 x (4.75% - 3.75%) = $820.50 and 820.50 + 186,450 x (5.99% - 4.75%) = $3,132.48 \u2014 arithmetic on published thresholds and rates, not an invented figure. Neither the 2026 Tax Table nor the 2026 Tax Computation Worksheet is published yet (both ~December 2026): this rule does not reproduce a $50-row table, so expect at most half a row of divergence from the eventual printed table below $100,000, and re-verify the worksheet constants when it publishes."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { bracket1: { value: "8205000", type: "money" }, bracket2: { value: "18645000", type: "money" }, subtraction2: { value: "82050", type: "money" }, subtraction3: { value: "313248", type: "money" }, publishedAnchor2: { value: "307688", type: "money" }, publishedAnchor3: { value: "803588", type: "money" } },
+    formula: worksheetTax(max019(fact36("stateTaxableIncome")), ROWS_2026)
+  },
+  {
+    id: "us.ri.standard_deduction",
+    version: 2,
+    jurisdiction: "us.ri",
+    title: "Rhode Island standard deduction TY2026 \u2014 $11,200 single and MFS, $22,400 MFJ and qualifying widow(er), $16,800 HOH; phased out over $261,000 in $7,450 steps, zero past $290,800",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(B) indexed under (E); ADV 2025-22 (November 3, 2025); 2026 Form RI-1040ES Deduction Worksheet lines 15-22",
+      section: "\xA7 44-30-2.6(c)(3)(B)",
+      url: FORMS3 + "2025-11/ADV_2025_22_Inflation_Adjustments.pdf",
+      excerpt: "ADV 2025-22 (verbatim): 'Rhode Island standard deduction amounts by Tax Year \u2014 2026: Single $11,200; Married filing jointly* $22,400; Head of household $16,800; Married filing separately $11,200.' 'Phase-out range for standard deduction, exemption amounts by Tax Year \u2014 2026: $261,000 to $290,800. Phaseout increment (amount used in computing phaseout), which was $7,250 for 2025, will be $7,450 for 2026.' 2026 FORM RI-1040ES DEDUCTION WORKSHEET (verbatim): '16. Is the amount on line 1 more than $261,000? \u2026 18. Deduction Phaseout Amount $261,000; 19. Subtract line 18 from line 17. If the result is more than $29,800, STOP HERE. Your standard deduction amount is zero ($0); 20. Divide line 19 by $7,450. If the result is not a whole number, increase it to the next higher whole number; 21. \u2026 1 \u2014 0.8000; 2 \u2014 0.6000; 3 \u2014 0.4000; 4 \u2014 0.2000; 22. Deduction amount - Multiply line 15 by line 21.'"
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { single: { value: "1120000", type: "money" }, joint: { value: "2240000", type: "money" }, hoh: { value: "1680000", type: "money" }, phaseoutThreshold: { value: "26100000", type: "money" }, phaseoutStep: { value: "745000", type: "money" } },
+    formula: (() => {
+      const base = iff18(isJoint5, money33("2240000"), iff18(isHoh5, money33("1680000"), money33("1120000")));
+      return applyRatio2(base, phaseoutPct(fact36("riModifiedAgi"), "26100000", "745000"));
+    })()
+  },
+  {
+    id: "us.ri.exemption",
+    version: 2,
+    jurisdiction: "us.ri",
+    title: "Rhode Island exemption TY2026 \u2014 $5,250 per exemption, phased out over $261,000 in $7,450 steps, zero past $290,800",
+    citation: {
+      source: "R.I. Gen. Laws \xA7 44-30-2.6(c)(3)(C), (D) indexed under (E); ADV 2025-22 (November 3, 2025); 2026 Form RI-1040ES Exemption Worksheet lines 23-30",
+      section: "\xA7 44-30-2.6(c)(3)(C), (D)",
+      url: FORMS3 + "2025-11/ADV_2025_22_Inflation_Adjustments.pdf",
+      excerpt: "ADV 2025-22 (verbatim): 'Rhode Island personal and dependency exemption amounts by Tax Year \u2014 2026: $5,250.' 2026 FORM RI-1040ES EXEMPTION WORKSHEET (verbatim): '23. Multiply $5,250 by the total number of exemptions; 24. Is the amount on line 1 more than $261,000? \u2026 26. Exemption Phaseout Amount $261,000; 27. Subtract line 26 from line 25. If the result is more than $29,800, STOP HERE. Your exemption amount is zero ($0); 28. Divide line 27 by $7,450 \u2026; 29. \u2026 1 \u2014 0.8000; 2 \u2014 0.6000; 3 \u2014 0.4000; 4 \u2014 0.2000; 30. Exemption amount - Multiply line 23 by line 29.'"
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "525000", type: "money" }, phaseoutThreshold: { value: "26100000", type: "money" }, phaseoutStep: { value: "745000", type: "money" } },
+    formula: applyRatio2(mulInt17(money33("525000"), fact36("riExemptions")), phaseoutPct(fact36("riModifiedAgi"), "26100000", "745000"))
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-mt.js
+var rd25 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp12 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt19 = (l, r) => cmp12("lt", l, r);
+var le17 = (l, r) => cmp12("le", l, r);
+var gt11 = (l, r) => cmp12("gt", l, r);
+var iff19 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add16 = (...args) => ({ kind: "add", args });
+var sub20 = (left, right) => ({ kind: "sub", left, right });
+var max020 = (arg) => ({ kind: "max0", arg });
+var minE9 = (...args) => ({ kind: "min", args });
+var and7 = (...args) => ({ kind: "and", args });
+var isStatus28 = (v) => cmp12("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJoint6 = { kind: "or", args: [isStatus28("mfj"), isStatus28("qss")] };
+var isMfjOnly2 = isStatus28("mfj");
+var isHoh6 = isStatus28("hoh");
+var times11 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var pct9 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var dollarsFromScaled12 = (n) => times11({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var byStatus = (joint, hoh, single) => iff19(isJoint6, money33(joint), iff19(isHoh6, money33(hoh), money33(single)));
+var ordinaryTax2 = (ordinary2, b) => {
+  const threshold2 = byStatus(b.joint, b.hoh, b.single);
+  const lower = dollarsFromScaled12(times11(ordinary2, b.rate1Bps));
+  const upper = b.lessSingle !== void 0 ? dollarsFromScaled12(sub20(times11(ordinary2, b.rate2Bps), times11(byStatus(b.lessJoint, b.lessHoh, b.lessSingle), "10000"))) : dollarsFromScaled12(add16(times11(threshold2, b.rate1Bps), times11(sub20(ordinary2, threshold2), b.rate2Bps)));
+  return iff19(cmp12("ge", ordinary2, threshold2), upper, lower);
+};
+var capitalGainsTax = (taxable3, gains, b) => {
+  const l1 = max020(taxable3);
+  const l2 = max020(gains);
+  const l3 = minE9(l1, l2);
+  const l4 = max020(sub20(l1, l3));
+  const l5 = byStatus(b.joint, b.hoh, b.single);
+  const l6 = max020(sub20(l5, l4));
+  const l7 = minE9(l3, l6);
+  const l8 = dollarsFromScaled12(times11(l7, "300"));
+  const l9 = max020(sub20(l3, l6));
+  const l10 = dollarsFromScaled12(times11(l9, "410"));
+  return add16(l8, l10);
+};
+var BR_2025 = { joint: "4220000", hoh: "3170000", single: "2110000", rate1Bps: "470", rate2Bps: "590", lessJoint: "50600", lessHoh: "38000", lessSingle: "25300" };
+var BR_2026 = { joint: "9500000", hoh: "7125000", single: "4750000", rate1Bps: "470", rate2Bps: "565" };
+var BR_2027 = { joint: "13000000", hoh: "9750000", single: "6500000", rate1Bps: "470", rate2Bps: "540" };
+var BOOK = "https://revenuefiles.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2-Instructions/2025_Montana_Individual_Income_Tax_Return_Form_2_Instructions.pdf";
+var FORM = "https://revenuefiles.mt.gov/files/Forms/Montana-Individual-Income-Tax-Return-Form-2/2025_Montana_Individual_Income_Tax_Return_Form_2.pdf";
+var MCA = (part, section) => `https://archive.legmt.gov/bills/mca/title_0150/chapter_0300/part_0${part}/section_0${section}/0150-0300-0${part}-0${section}.html`;
+var RATE_EXCERPT_2025 = "BOOKLET p. 12 '2025 Montana Income Tax Rates' (verbatim). Single and Married Filing Separately \u2014 Ordinary Income Tax Rates: 'If your taxable income without net long-term capital gains is $0 / But less than $21,100 / Then your tax rate is 4.7% / Less $0; $21,100 or greater / 5.9% / Less $253.' Net Long-Term Capital Gains Rate: 'For net long-term capital gains above $0 / But less than $21,100 minus ordinary income / 3%; $21,100 minus ordinary income / 4.1%; If ordinary income exceeds $21,100 / 4.1%.' Married Filing Jointly and Qualifying Surviving Spouse: $42,200 / 4.7% / Less $0; '$42,200 or greater / 5.9% / Less $506'. Head of Household: $31,700 / 4.7% / Less $0; '$31,700 or greater / 5.9% / Less $380'. The 'Less' constants are the exact 1.2-percentage-point figures TRUNCATED to whole dollars (21,100 x 1.2% = 253.20 -> $253; 42,200 x 1.2% = 506.40 -> $506; 31,700 x 1.2% = 380.40 -> $380), so the printed schedule sits up to $0.40 above pure cumulative bracketing \u2014 encoded as printed.";
+var mtRules = [
+  {
+    id: "us.mt.ordinary_income_tax",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana ordinary income tax 2025 \u2014 4.7% to $21,100 single and MFS, $42,200 MFJ and qualifying surviving spouse, $31,700 head of household, then 5.9% less the printed $253 / $506 / $380 constant, on taxable income excluding net long-term capital gains (Form 2 page 2, line 12)",
+    citation: {
+      source: "2025 Montana Form 2 Instructions (V2 9/16/2025) p. 12 '2025 Montana Income Tax Rates'; printed 2025 Form 2 (2025v3 12/2025) page 2 line 12; Montana Department of Revenue '2025 Montana Tax Tables and Deductions'; MCA \xA7 15-30-2103 (the TY2026 'Temporary' text, for structure only \u2014 see the module note on the currency trap)",
+      section: "MCA \xA7 15-30-2103(1); Form 2 page 2 line 12",
+      url: BOOK,
+      excerpt: RATE_EXCERPT_2025 + " FORM (page 2, verbatim): '12 If you do not have a net long-term capital gain, figure your tax on the amount on line 1 using the Montana Ordinary Income Tax Table. If you have a net long-term capital gain, figure your tax on the amount on line 4 using the Montana Ordinary Income Tax Table. This is your Montana ordinary income tax.' DEFINITION (booklet p. 11, verbatim): 'Montana Ordinary Income is defined as all taxable income that is not considered a net long-term capital gain and includes qualified dividends.' \u2014 qualified dividends are ORDINARY income in Montana, unlike the federal treatment. Despite the words 'Tax Table', NO income-bracket lookup table exists anywhere in the 48-page booklet; the rate schedule is the only method at every income level, and Montana has no standard deduction (\xA7 15-30-2132 repealed) and no personal exemption (\xA7 15-30-2114 repealed), both by SB 399 (Ch. 503, L. 2021). The Department's tax-tables page adds: 'Estates, Trusts, and Pass-Through Composite Tax Filers have the same rates below' (the single/MFS column). TY2026 and TY2027 are versions 2 and 3 (HB 337, Ch. 227, L. 2025)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "470", type: "int" },
+      rate2Bps: { value: "590", type: "int" },
+      thresholdSingle: { value: "2110000", type: "money" },
+      thresholdJoint: { value: "4220000", type: "money" },
+      thresholdHoh: { value: "3170000", type: "money" },
+      lessSingle: { value: "25300", type: "money" },
+      lessJoint: { value: "50600", type: "money" },
+      lessHoh: { value: "38000", type: "money" }
+    },
+    formula: ordinaryTax2(max020(sub20(max020(fact36("stateTaxableIncome")), minE9(max020(fact36("stateTaxableIncome")), max020(fact36("mtNetLongTermCapitalGains"))))), BR_2025)
+  },
+  {
+    id: "us.mt.capital_gains_tax",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana net long-term capital gains tax 2025 \u2014 3% on the gains that fit below the filing-status threshold after ordinary income, 4.1% above, and 4.1% on all of them once ordinary income reaches the threshold (Form 2 page 2, lines 1-11)",
+    citation: {
+      source: "MCA \xA7 15-30-2103(2)-(3); printed 2025 Form 2 (2025v3 12/2025) page 2 lines 1-11; 2025 Montana Form 2 Instructions p. 11 and the rate page p. 12; MCA \xA7 15-30-2301 (the former capital gains credit) Repealed, Secs. 65, 70(1), Ch. 503, L. 2021",
+      section: "MCA \xA7 15-30-2103(2); Form 2 page 2 lines 1-11",
+      url: FORM,
+      excerpt: `STATUTE (\xA7 15-30-2103(2), verbatim, joint column): 'that portion of a taxpayer's Montana taxable income that consists of net long-term capital gains after accounting for amounts included in taxable income that is not net long-term capital gains is subject to a tax on the brackets of net long-term capital gains as follows: (a) for every married individual who files a joint return and for every surviving spouse: (i) on the first $95,000 less nonqualified taxable income of net long-term capital gains, 3.0%; (ii) on net long-term capital gains that exceed $95,000 less nonqualified taxable income or any part of that income, 4.1%, except that if the total nonqualified taxable income is $95,000 or greater, all of the net long-term capital gains are taxed at 4.1%'. (3): "'Net long-term capital gains' means net long-term capital gains as that term is defined in section 1222 of the Internal Revenue Code, 26 U.S.C. 1222. 'Nonqualified taxable income' means Montana taxable income that is not considered net long-term capital gains." (The $95,000 is the TY2026 figure; TY2025 is $42,200 joint \u2014 see the module currency note.) FORM (page 2, verbatim): '1 Enter your total Montana taxable income from page 1, line 7. If you do not have a net long-term capital gains, skip lines 2 through 10 and enter 0 (zero) on line 11. 2 Enter your net long-term capital gains. 3 Enter the lesser of line 1 or line 2. 4 Subtract line 3 from line 1. 5 Enter the amount for your federal filing status: $21,100 if single or married filing separately; $42,200 if married filing jointly or qualifying surviving spouse; $31,700 if head of household. 6 Subtract line 4 from line 5. If zero or less, enter 0 (zero). 7 Enter the lesser of line 3 or line 6. 8 Multiply line 7 by 3% (0.03). 9 Subtract line 6 from line 3. If zero or less, enter 0 (zero). 10 Multiply line 9 by 4.1% (0.041). 11 Add lines 8 and 10. This is your Montana net long-term capital gains tax.' INSTRUCTIONS (p. 11, verbatim): 'Generally, this amount is the lesser of federal Schedule D, line 15 or Schedule D, line 16.' ENCODING: lines 8 and 10 are separate whole-dollar boxes on the printed form, so EACH rounds half-up before they are added \u2014 not one rounding of the sum. The old capital gains CREDIT no longer exists: \xA7 15-30-2301 is repealed and Schedule III lists no such credit.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { lowRateBps: { value: "300", type: "int" }, highRateBps: { value: "410", type: "int" }, thresholdSingle: { value: "2110000", type: "money" }, thresholdJoint: { value: "4220000", type: "money" }, thresholdHoh: { value: "3170000", type: "money" } },
+    formula: capitalGainsTax(fact36("stateTaxableIncome"), fact36("mtNetLongTermCapitalGains"), BR_2025)
+  },
+  {
+    id: "us.mt.income_tax",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana resident tax 2025 \u2014 the ordinary income tax plus the net long-term capital gains tax (Form 2 page 2, line 13, carried to page 1 line 8)",
+    citation: {
+      source: "Printed 2025 Form 2 (2025v3 12/2025) page 2 line 13; 2025 Montana Form 2 Instructions p. 10 'Montana Individual Income Tax Calculation'; MCA \xA7 15-30-2103",
+      section: "Form 2 page 2 line 13; page 1 line 8",
+      url: FORM,
+      excerpt: "FORM (page 2, verbatim): '13 Residents add lines 11 and 12, and enter this amount on page 1, line 8. This is your Montana resident tax.' INSTRUCTIONS (p. 10, verbatim): 'Complete lines 1 through 12 to calculate your Montana tax liability, which consists of the Montana Ordinary Income Tax and the Montana Net Long-Term Capital Gains Tax. If you are a resident, the amount on line 13 is your tax liability. Nonresidents, part-year residents, and Montana residents filing jointly with a nonresident or part-year resident spouse (mixed residency filers) complete lines 1 through 12, then use the Net Long-Term Capital Gains Tax on line 11 and the Montana Ordinary Income Tax on line 12 to figure the total Montana tax liability on Schedule II, Tax on Montana Source Income.' SCOPE: this rule is the FULL-YEAR RESIDENT total. Nonresident, part-year and mixed-residency returns apportion on Schedule II and are out of scope. " + RATE_EXCERPT_2025
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: add16(capitalGainsTax(fact36("stateTaxableIncome"), fact36("mtNetLongTermCapitalGains"), BR_2025), ordinaryTax2(max020(sub20(max020(fact36("stateTaxableIncome")), minE9(max020(fact36("stateTaxableIncome")), max020(fact36("mtNetLongTermCapitalGains"))))), BR_2025))
+  },
+  {
+    id: "us.mt.age65_subtraction",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana age-65 subtraction 2025 \u2014 $5,660 for each taxpayer who has attained age 65, $11,320 on a joint return where both have (Form 2 line 6)",
+    citation: {
+      source: "MCA \xA7 15-30-2120(3)(g) ($5,500 base) and (7) (annual inflation adjustment, rounded to the nearest $10); 2025 Montana Form 2 Instructions p. 7 line 6; printed 2025 Form 2 line 6; Montana Department of Revenue '2025 Montana Tax Tables and Deductions'",
+      section: "MCA \xA7 15-30-2120(3)(g), (7); Form 2 line 6",
+      url: MCA("210", "200"),
+      excerpt: `STATUTE (\xA7 15-30-2120(3)(g), verbatim): 'for each taxpayer that has attained the age of 65, an additional subtraction of $5,500'. (7)(a)-(b), verbatim: 'By November 1 of each year, the department shall multiply the subtractions from federal taxable income in subsections (3)(g) and (3)(o) by the inflation factor for that tax year for a taxpayer that either: (i) has attained the age of 65; or (ii) is a qualified volunteer firefighter or volunteer emergency care provider. (b) The department shall round the results in subsection (7)(a) to the nearest $10.' \xA7 15-30-2101(12): "'Inflation factor' means a number determined for each tax year by dividing the consumer price index for June of the previous tax year by the consumer price index for June 2023." FORM (line 6, verbatim): '$5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older)'. INSTRUCTIONS (p. 7, verbatim): 'Taxpayers 65 and older receive a $5,660 subtraction from federal taxable income. If married filing jointly, and both are 65 and older, the subtraction is equal to $11,320. This amount is adjusted annually for inflation.' NAMING TRAP: the Department's web page labels this the '65 and over exemption', but it is a SUBTRACTION from federal taxable income taken on Form 2 line 6 \u2014 Montana's personal exemption (\xA7 15-30-2114) is repealed. The doubled amount needs a JOINT return: a qualifying surviving spouse has no spouse to count. Indexed annually and the TY2026 figure is unpublished (the department sets it by November 1) \u2014 this rule ends 2026-01-01.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { perTaxpayer: { value: "566000", type: "money" }, bothSpouses: { value: "1132000", type: "money" } },
+    formula: add16(iff19(fact36("mtTaxpayerAge65"), money33("566000"), money33("0")), iff19(and7(isMfjOnly2, fact36("mtSpouseAge65")), money33("566000"), money33("0")))
+  },
+  {
+    id: "us.mt.eitc",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana earned income tax credit 2025 \u2014 10% of the federal earned income credit, refundable (Form 2 line 15)",
+    citation: {
+      source: "MCA \xA7 15-30-2318; 2025 Montana Form 2 Instructions p. 9 line 15; printed 2025 Form 2 line 15; Montana Department of Revenue 'Montana Earned Income Tax Credit'; enrolled House Bill 337 (Ch. 227, L. 2025) \xA7 3 and \xA7 6",
+      section: "MCA \xA7 15-30-2318; Form 2 line 15",
+      url: MCA("230", "180"),
+      excerpt: "FORM (line 15, verbatim): 'Earned Income Credit. Federal EIC ____ Multiply Federal EIC by 10% (0.10)'. INSTRUCTIONS (p. 9, verbatim): 'You are allowed a Montana earned income tax credit (EITC) of 10 percent of the federal EITC claimed on your federal return. Your Montana EITC is refundable. This means that if the credit is more than your Montana tax liability after applying withholding taxes and credits, the difference will be refunded to you. Nonresidents do not qualify for the Montana EITC.' STATUTE (\xA7 15-30-2318(4), verbatim): 'The taxpayer is entitled to a refund equal to the amount by which the credit exceeds the taxpayer's tax liability or, if the taxpayer has no tax liability under this chapter, a refund equal to the amount of the credit.' CURRENCY TRAP: \xA7 15-30-2318(2) as published in MCA 2025 already reads '20%' \u2014 that is the TY2026 text. Enrolled HB 337 \xA7 3 shows the amendment as '10% 20%' and \xA7 6(1) provides: '[Sections 1 and 3] apply to the income tax year beginning January 1, 2026.' TY2025 is 10%; TY2026 is version 2. REDUCTION: Worksheet A prorates the credit by Montana earned income / federal earned income for part-year and mixed-residency filers, enrolled tribal members living on their own reservation, IRC \xA7 501(d) agricultural-organization members, and resident active-duty servicemembers \u2014 those are out of scope for this full-year-resident rule and the composer names them."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "10", type: "int" } },
+    formula: rd25(pct9(max020(fact36("mtFederalEic")), "10", "100"))
+  },
+  {
+    id: "us.mt.elderly_homeowner_renter_credit",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana elderly homeowner/renter credit 2025 (Schedule 2EC) \u2014 for a claimant 62 or older with gross household income under $45,000: property tax billed plus 15% of rent, less the household income reduction, capped at $1,150 and multiplied by the credit multiplier; refundable and claimable with no tax liability",
+    citation: {
+      source: "MCA \xA7\xA7 15-30-2337 (definitions), 15-30-2338 (eligibility), 15-30-2340 (computation, tables, $1,150 cap, refundability); printed 2025 Form 2 Schedule 2EC (2025v3 12/2025) lines 1-30; 2025 Montana Form 2 Instructions pp. 38-42",
+      section: "MCA \xA7\xA7 15-30-2337 to 15-30-2341; Schedule 2EC",
+      url: MCA("230", "400"),
+      excerpt: `ELIGIBILITY (Schedule 2EC attestation block, verbatim): 'I reached age 62 by December 31, 2025 / I resided in Montana for a minimum of nine months during 2025 / I occupied a Montana residence as a renter, owner, or lessee for at least six months during 2025 / The combined gross household income was less than $45,000 for 2025 / I am the only member of my household claiming this credit.' All FIVE attestations gate the credit (mtAge62, mtResided9Months, mtOccupied6Months, mtSoleHouseholdClaimant), each defaulting to not-attested so an unattested claim pays $0. STATUTE (\xA7 15-30-2338(1), verbatim): 'must have reached age 62 or older during the claim period\u2026; must have resided in Montana for at least 9 months of that period; must have occupied one or more dwellings in Montana as an owner, renter, or lessee for at least 6 months of the claim period; and must have less than $45,000 of gross household income.' DEFINITIONS: \xA7 15-30-2337(4) "'Gross household income' means all income received by all individuals of a household while they are members of the household"; (9)(a) income is federal AGI without regard to loss 'plus all nontaxable income, including but not limited to: (i) the amount of any pension or annuity, including Railroad Retirement Act benefits and veterans' disability benefits; (ii) the amount of capital gains excluded from adjusted gross income; (iii) alimony; (iv) support money; (v) nontaxable strike benefits; (vi) cash public assistance and relief; (vii) interest on federal, state, county, and municipal bonds; and (viii) all payments received under federal social security except social security income paid directly to a nursing home'; (8) "'Household income' means the amount obtained by subtracting $12,600 from gross household income"; (11) "'Rent-equivalent tax paid' means 15% of the gross rent." The booklet (p. 40, line 8) also requires including refundable credits received in cash, expressly 'the 2024 Montana property tax rebate'. WORKSHEET (Schedule 2EC, verbatim): '19 Your standard exclusion is entered here for you 12,600. 20 Subtract line 19 from line 18 and enter the result here, but not less than zero. 21 Enter your multiplier rate from the Household Income Reduction Table. 22 Multiply line 20 by line 21. This is your net household income. 23 Enter the property tax you were billed for your Montana residence and up to one acre in 2025. 24 Enter the rent that you paid in 2025 for your Montana residence. 25 Multiply line 24 by 15% (0.15). 26 Add lines 23 and 25. 27 Subtract line 22 from line 26 and enter the result here, but not less than zero. 28 Enter the lesser of line 27 or $1,150. 29 Enter the percentage from the Credit Multiplier Table that corresponds to your gross household income on line 18. 30 Multiply line 28 by the percentage on line 29.' HOUSEHOLD INCOME REDUCTION TABLE (line 20, verbatim): $0-$1,999 -> 0; $2,000-$2,999 -> 0.006; $3,000-$3,999 -> 0.016; $4,000-$4,999 -> 0.024; $5,000-$5,999 -> 0.028; $6,000-$6,999 -> 0.032; $7,000-$7,999 -> 0.035; $8,000-$8,999 -> 0.039; $9,000-$9,999 -> 0.042; $10,000-$10,999 -> 0.045; $11,000-$11,999 -> 0.048; $12,000 and greater -> 0.05. CREDIT MULTIPLIER TABLE (line 18, verbatim): 'Less than $35,000 -> 1.00 (100%); $35,000 to $37,500 -> 0.40 (40%); $37,501 to $40,000 -> 0.30 (30%); $40,001 to $42,500 -> 0.20 (20%); $42,501 to $44,999 -> 0.10 (10%); $45,000 and greater -> 0.00 (0%).' DRAFTING DISCREPANCY: \xA7 15-30-2340(5) opens 'For a claimant whose household income is $35,000 or more but less than $45,000' while its own table column is headed 'Gross household income' and Schedule 2EC line 29 keys off line 18 (GROSS) \u2014 the form and the table header govern, and gross household income is encoded. REFUNDABLE: \xA7 15-30-2340(7), verbatim: 'If the amount of the credit exceeds the claimant's liability under this chapter, the amount of the excess must be refunded to the claimant. The credit may be claimed even though the claimant has no income taxable under this chapter.' The $45,000 / $12,600 / $1,150 figures and both tables are hard-coded in statute with NO inflation indexing and were untouched by the 2025 session, so this rule carries through TY2027 alongside the House Bill 337 rate versions (only \xA7 15-30-2339, the filing-date section, was amended, by Senate Bill 53).`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { maximumCredit: { value: "115000", type: "money" }, incomeLimit: { value: "4500000", type: "money" }, standardExclusion: { value: "1260000", type: "money" }, rentEquivalentPct: { value: "15", type: "int" } },
+    formula: (() => {
+      const l18 = max020(fact36("mtGrossHouseholdIncome"));
+      const l20 = max020(sub20(l18, money33("1260000")));
+      const mult = iff19(lt19(l20, money33("200000")), money33("0"), iff19(lt19(l20, money33("300000")), money33("60"), iff19(lt19(l20, money33("400000")), money33("160"), iff19(lt19(l20, money33("500000")), money33("240"), iff19(lt19(l20, money33("600000")), money33("280"), iff19(lt19(l20, money33("700000")), money33("320"), iff19(lt19(l20, money33("800000")), money33("350"), iff19(lt19(l20, money33("900000")), money33("390"), iff19(lt19(l20, money33("1000000")), money33("420"), iff19(lt19(l20, money33("1100000")), money33("450"), iff19(lt19(l20, money33("1200000")), money33("480"), money33("500"))))))))))));
+      const l22 = dollarsFromScaled12({ kind: "mulDiv", a: l20, b: mult, c: money33("1"), round: "half-up" });
+      const l23 = max020(fact36("mtPropertyTaxBilled"));
+      const l25 = rd25(pct9(max020(fact36("mtRentPaid")), "15", "100"));
+      const l26 = add16(l23, l25);
+      const l27 = max020(sub20(l26, l22));
+      const l28 = minE9(l27, money33("115000"));
+      const cm = iff19(lt19(l18, money33("3500000")), money33("10000"), iff19(le17(l18, money33("3750000")), money33("4000"), iff19(le17(l18, money33("4000000")), money33("3000"), iff19(le17(l18, money33("4250000")), money33("2000"), iff19(lt19(l18, money33("4500000")), money33("1000"), money33("0"))))));
+      const l30 = rd25({ kind: "mulDiv", a: l28, b: cm, c: money33("10000"), round: "half-up" });
+      const eligible = and7(fact36("mtAge62"), fact36("mtResided9Months"), fact36("mtOccupied6Months"), fact36("mtSoleHouseholdClaimant"), lt19(l18, money33("4500000")));
+      return iff19(eligible, l30, money33("0"));
+    })()
+  },
+  {
+    id: "us.mt.other_state_credit",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana credit for income taxes paid to another state or country 2025 \u2014 computed SEPARATELY for ordinary income and for net long-term capital gains and summed; each is the least of the tax paid, that tax times the sourced-income ratio, and the Montana tax times the sourced-income ratio (Schedule III Part II, six decimals)",
+    citation: {
+      source: "MCA \xA7 15-30-2302; printed 2025 Form 2 Schedule III Part II (2025v3 12/2025) lines 1-21; 2025 Montana Form 2 Instructions pp. 33-35",
+      section: "MCA \xA7 15-30-2302; Schedule III Part II",
+      url: MCA("230", "020"),
+      excerpt: "STATUTE (\xA7 15-30-2302(5), verbatim): 'The allowable credit must be computed by a formula prescribed by the department.' \u2014 so the printed worksheet IS the operative arithmetic. FORM (Schedule III Part II, verbatim): 'Montana Ordinary Income Tax \u2014 1 Enter your income sourced and taxable to another state or country that is included in your Montana taxable income \u2026, excluding any net long-term capital gains. 2 Enter all income sourced and taxable to the other state or country. 3 Income sourced and taxable to Montana excluding your net long-term capital gains. 4 Enter your total tax liability paid to the other state or country. 5 Enter your Montana ordinary income tax. 6 Divide line 1 by line 2. Round to 6 decimal places and do not enter more than 1.000000. 7 Multiply line 4 by line 6. 8 Divide line 1 by line 3. Round to 6 decimal places and do not enter more than 1.000000. 9 Multiply line 5 by line 8. 10 Enter the lesser of the amounts on lines 4, 7, or 9. This is your credit for income tax paid to another state or country for Montana ordinary income tax. Montana Net Long-Term Capital Gains Tax \u2014 11 Enter your net long-term capital gain sourced and taxable to another state or country that is included in your Montana taxable income. 12 Enter all income sourced and taxable to the other state or country. 13 Enter federal net long-term capital gains. 14 Enter your income tax liability paid to the other state or country. 15 Full-year residents enter page 2, line 11. 16 Divide line 11 by line 12. Round to 6 decimal places and do not enter more than 1.000000. 17 Multiply line 14 by line 16. 18 Divide line 11 by line 13. Round to 6 decimal places and do not enter more than 1.000000. 19 Multiply line 15 by line 18. 20 Enter the lesser of the amounts on lines 14, 17, or 19. Total Credit for Income Taxes Paid to Another State or Country \u2014 21 Add lines 10 and 20.' BOOKLET (page 35, verbatim): 'Line 4. Enter the actual tax liability paid by you or on your behalf to the other state or country.' 'Line 14. Enter the actual tax liability paid by you or on your behalf to the other state or country. This amount comes from either an individual income tax return you filed, or a pass-through entity return filed on your behalf by a partnership or S corporation. Do not include any penalties and interest paid to the other state or country.' 'Line 16. This amount represents the proportion of tax paid to the other state or country on only your net long-term capital gains.' ENCODING: lines 4 and 14 are the SAME figure \u2014 the total tax paid to the other state (mtOtherStateTaxPaid) \u2014 and the line 16 ratio (gains sourced / all income sourced) attributes the gains share; the rule does not take a pre-attributed gains tax. Both ratios are six decimal places, half-up, capped at 1.000000, and each block takes the least of three amounts before the two are summed. NONREFUNDABLE, carried to Schedule III Part I line 1 and Form 2 line 9. NORTH DAKOTA RECIPROCITY (instructions): wages earned in North Dakota by a Montana resident are NOT eligible \u2014 file a North Dakota return for a refund; non-wage North Dakota income can qualify. FOREIGN TAX: not allowed if a federal Form 1116 credit was claimed for the same year."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { ratioDecimals: { value: "6", type: "int" } },
+    formula: (() => {
+      const ratio6 = (num, den) => minE9({ kind: "mulDiv", a: max020(num), b: money33("1000000"), c: den, round: "half-up" }, money33("1000000"));
+      const applyRatio6 = (base, r) => dollarsFromScaled12({ kind: "mulDiv", a: base, b: r, c: money33("100"), round: "half-up" });
+      const oSourced = max020(fact36("mtOtherStateOrdinaryIncome"));
+      const oAll = fact36("mtOtherStateTotalIncome");
+      const oMt = fact36("mtOrdinaryIncomeSourcedToMontana");
+      const oPaid = max020(fact36("mtOtherStateTaxPaid"));
+      const oTax = max020(fact36("mtOrdinaryIncomeTax"));
+      const l7 = iff19(gt11(oAll, money33("0")), applyRatio6(oPaid, ratio6(oSourced, oAll)), money33("0"));
+      const l9 = iff19(gt11(oMt, money33("0")), applyRatio6(oTax, ratio6(oSourced, oMt)), money33("0"));
+      const l10 = iff19(gt11(oSourced, money33("0")), minE9(oPaid, l7, l9), money33("0"));
+      const gSourced = max020(fact36("mtOtherStateCapitalGains"));
+      const gAll = fact36("mtOtherStateTotalIncome");
+      const gFed = fact36("mtFederalNetLongTermCapitalGains");
+      const gPaid = max020(fact36("mtOtherStateTaxPaid"));
+      const gTax = max020(fact36("mtCapitalGainsTax"));
+      const l17 = iff19(gt11(gAll, money33("0")), applyRatio6(gPaid, ratio6(gSourced, gAll)), money33("0"));
+      const l19 = iff19(gt11(gFed, money33("0")), applyRatio6(gTax, ratio6(gSourced, gFed)), money33("0"));
+      const l20 = iff19(gt11(gSourced, money33("0")), minE9(gPaid, l17, l19), money33("0"));
+      return add16(l10, l20);
+    })()
+  },
+  {
+    id: "us.mt.tuition_savings_subtraction",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana family education savings (529) subtraction 2025 \u2014 up to $4,500 per taxpayer, $9,000 on a joint return (Schedule I line 16)",
+    citation: {
+      source: "MCA \xA7 15-30-2120(5), (11); 2025 Montana Form 2 Schedule I line 16; 2025 Montana Form 2 Instructions 'What's New' (House Bill 845, Ch. 734, L. 2025) and p. 20; Senate Bill 53 (Ch. 545, L. 2025)",
+      section: "MCA \xA7 15-30-2120(5); Schedule I line 16",
+      url: MCA("210", "200"),
+      excerpt: "BOOKLET What's New (verbatim): 'House Bill 845 increased the maximum subtraction a taxpayer may take for contributions to a 529 plan. The bill also provides for annual inflationary adjustments to the amount of the subtraction. For tax year 2025, the maximum contribution amount has increased from $3,000 to $4,500 (up to $9,000 if filing jointly).' And: 'Senate Bill 53 \u2026 clarified that taxpayers filing jointly can take a subtraction for a joint contribution to a 529 or 529A plan. Previously, the subtraction was equal to the contribution per individual taxpayer. The bill updated the definition of a qualified withdrawal of a 529 plan to include the rollover of a 529 plan to a Roth IRA under IRC 529.' STATUTE (\xA7 15-30-2120(5)(a)): the subtraction is 'the lesser of $4,500 or the amount of the contribution', and for a joint return 'not in excess of $9,000'. INDEXING (\xA7 15-30-2120(11), verbatim): 'the total amount of the contributions for each tax year after 2025 is determined by multiplying the amount in subsection (5)(a) by an inflation factor determined by dividing the consumer price index fund for June of the previous tax year by the consumer price index for June 2024 and rounding the resulting figure to the nearest $100 increment.' (the printed code's 'consumer price index fund' is a drafting error). First indexed for TY2026, unpublished \u2014 this rule ends 2026-01-01. The doubled cap needs a JOINT return."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "450000", type: "money" }, capJoint: { value: "900000", type: "money" } },
+    formula: minE9(max020(fact36("mtTuitionSavingsContributions")), iff19(isMfjOnly2, money33("900000"), money33("450000")))
+  },
+  {
+    id: "us.mt.able_subtraction",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana ABLE account subtraction 2025 \u2014 up to $3,000 per taxpayer, $6,000 on a joint return (Schedule I line 17)",
+    citation: {
+      source: "MCA \xA7 15-30-2120(6); 2025 Montana Form 2 Schedule I line 17; 2025 Montana Form 2 Instructions p. 20; House Bill 671 (Ch. 339, L. 2025)",
+      section: "MCA \xA7 15-30-2120(6); Schedule I line 17",
+      url: MCA("210", "200"),
+      excerpt: "FORM (Schedule I line 17, verbatim): 'Achieving a Better Life Experience Act (ABLE) account deposits'. STATUTE \xA7 15-30-2120(6)(a) caps the subtraction at $3,000, and at $6,000 for a joint return. Unlike the \xA7 529 subtraction, the ABLE cap is NOT inflation-indexed \u2014 \xA7 15-30-2120(11) indexes only the subsection (5) amount \u2014 so this rule carries through TY2027 while the 529 rule ends at 2026-01-01 and refuses until the indexed cap publishes. The doubled cap needs a JOINT return."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "300000", type: "money" }, capJoint: { value: "600000", type: "money" } },
+    formula: minE9(max020(fact36("mtAbleContributions")), iff19(isMfjOnly2, money33("600000"), money33("300000")))
+  },
+  {
+    id: "us.mt.military_retirement_subtraction",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana military retirement and survivor benefit subtraction 2025 \u2014 the lesser of Montana source wage income or 50% of the military pension, for a qualifying recent resident, for five consecutive years only (Schedule I line 13)",
+    citation: {
+      source: "MCA \xA7 15-30-2120(3)(n), (8), (9); 2025 Montana Form 2 Schedule I line 13 and Form WMRE; 2025 Montana Form 2 Instructions p. 19; Senate Bill 93 (Ch. 586, L. 2025)",
+      section: "MCA \xA7 15-30-2120(8), (9); Schedule I line 13",
+      url: MCA("210", "200"),
+      excerpt: "STATUTE (\xA7 15-30-2120(8), verbatim): 'Subject to subsection (9), the subtraction in subsection (3)(n)(i) is equal to the lesser of: (i) the amount of Montana source wage income on the return; or (ii) 50% of the taxpayer's military pension or military retirement income.' (9), verbatim: 'The subtractions in subsection (3)(n): (a) may only be claimed by a person who: (i) became a resident of the state on or after June 30, 2023; or (ii) was a resident of the state before receiving military pension or military retirement income and remained a resident after receiving military pension or military retirement income; (b) may only be claimed for 5 consecutive years after satisfying the provisions of subsection (9)(a); and (c) are not available if a taxpayer claimed the exemption before becoming a nonresident.' Survivor benefits, \xA7 15-30-2120(3)(n)(ii): 'up to 50% of all income received as survivor benefits for military service.' FORM (Schedule I line 13, verbatim): 'Subtraction of military retirement income for working military retirees and military survivor benefits. Include Form WMRE'. BOOKLET What's New: 'Senate Bill 93 removes the expiration date for the military retirement income and survivor's benefits subtraction. Previously, it was set to expire December 31, 2033.' With the sunset removed and no indexed amount involved, this rule carries through TY2027. NOTE the working-retiree design: the subtraction is capped by MONTANA SOURCE WAGE INCOME, which \xA7 15-30-2120(8)(b) (verbatim) defines as '(i) wages, salary, tips, and other compensation for services performed in the state; (ii) net income from a trade, business, profession, or occupation carried on in the state; and (iii) net income from farming activities carried on in the state' \u2014 so a retiree with Montana Schedule C or F net income qualifies without a W-2, and a fully retired veteran with none of the three gets nothing. Active-duty pay is a different, uncapped subtraction on Schedule I line 12 (\xA7 15-30-2120(3)(c)). Both eligibility conditions are attestations with conservative defaults."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "50", type: "int" } },
+    formula: iff19(and7(fact36("mtMilitaryRetireeEligible"), fact36("mtMilitaryRetireeWithinFiveYears")), minE9(max020(fact36("mtMontanaSourceWageIncome")), rd25(pct9(max020(fact36("mtMilitaryRetirementIncome")), "50", "100"))), money33("0"))
+  },
+  {
+    id: "us.mt.parameters",
+    version: 1,
+    jurisdiction: "us.mt",
+    title: "Montana 2025 Form 2 parameters \u2014 line structure, Schedule I adjustments, the credit lists, and the enacted TY2026-TY2027 position (House Bill 337, Ch. 227, L. 2025)",
+    citation: {
+      source: "2025 Montana Form 2 Instructions (V2 9/16/2025); printed 2025 Form 2 and Schedules I, II, III, IV, V, 2EC (2025v3 12/2025); 2026 Publication 1 (V1 September 2025); MCA Title 15 chapter 30 parts 21 and 23; enrolled House Bill 337 (Ch. 227, L. 2025), House Bill 129 (Ch. 638), House Bill 845 (Ch. 734), Senate Bill 53 (Ch. 545), Senate Bill 93 (Ch. 586), Senate Bill 544 (Ch. 582), House Bill 231 (Ch. 674); web-verified September 2026",
+      section: "Form 2 lines 1-26",
+      url: BOOK,
+      excerpt: "STRUCTURE (printed 2025 Form 2 page 1, verbatim): '1 Federal adjusted gross income from Form 1040, line 11b; 2 Add Form 1040, lines 12e and 13b; 3 Subtract line 2 from line 1. If zero or less, enter 0 (zero); 4 Montana additions to federal taxable income from Schedule I, Part I, line 7; 5 Montana subtractions from federal taxable income from Schedule I, Part I, line 24; 6 $5,660 subtraction for taxpayers 65 and older ($11,320 if married filing jointly and both are 65 and older); 7 Add lines 3 and 4. Then subtract lines 5 and 6. If zero or less, enter 0 (zero). This is your Montana taxable income.' Then line 8 the tax (page 2 worksheet), 9 nonrefundable credits (Schedule III Part I line 14), 11 Montana income tax withheld (11a W-2s, 11b 1099s, 11c pass-through entity tax credit, 11d Schedule K-1 withholding, 11e Form LOWCERT loan-out withholding), 15 the earned income credit, 16 the elderly homeowner/renter credit (Schedule 2EC line 30), 17 refundable credits (Schedule III Part I line 17), 21 total payments, 22 tax due, 26 refund. DEDUCTIONS (instructions p. 7, verbatim): 'Federal standard deduction or federal itemized deductions. You must use the same type of deduction taken on your federal return to determine Montana taxable income. This amount is reported on Form 1040, line 12e.' 'The additional deductions found on Form 1040, Schedule 1-A for qualified tips, qualified overtime compensation, qualified passenger vehicle loan interest, and the enhanced deduction for seniors, are included in the calculation of Montana taxable income.' 'Important: Do not include the federal qualified business income deduction to determine your federal taxable income for Montana purposes.' (\xA7 15-30-2120(2)(i) adds back 'an amount equal to the qualified business income deduction claimed'.) SALT ADD-BACK (\xA7 15-30-2120(2)(j), verbatim): 'for an individual taxpayer that deducts state income taxes pursuant to section 164(a)(3) of the Internal Revenue Code \u2026, an additional amount equal to the state income tax deduction claimed, not to exceed the amount required to reduce the federal itemized amount computed under section 161 of the Internal Revenue Code \u2026 to the amount of the federal standard deduction allowable under section 63(c)' \u2014 computed on Worksheet B and reported on Schedule I Part I line 4; new placement for TY2025. SCHEDULE I additions lines 1-7 (out-of-state municipal bond interest, recoveries, taxable MSA and first-time homebuyer distributions, the state income tax add-back, expenses used to claim a Montana credit, coded other additions AC/AF/AG/AN/AZ) and subtractions lines 8-24 (state tax refunds, federal bond interest, recoveries, exempt tribal income on Form ETM, active-duty military salary, the working-military-retiree subtraction on Form WMRE, medical savings account deposits up to $4,600, first-time homebuyer accounts, 529 up to $4,500/$9,000, ABLE up to $3,000/$6,000, recycled-material expenses on Form RCYL, expenses offset by a federal credit, cannabis \xA7 280E expenses, coded business subtractions SE/SJ/SO/SG/SL/SN/SP/SQ/SR, and Tier I and Tier II Railroad Retirement). NO SOCIAL SECURITY SUBTRACTION EXISTS \u2014 Montana taxes the federally taxable portion with no state modification; the pre-2024 Social Security worksheet was repealed with SB 399. NONREFUNDABLE CREDITS (Schedule III Part I lines 1-14): other state or country tax, qualified endowment (Form QEC), recycle (RCYL), apprenticeship, trades education and training (TETC), innovative educational program, student scholarship organization, contractor's gross receipts, historic property preservation, infrastructure users fee (IUFC), MEDIA, jobs growth incentive (JGI), and carryforwards from expired credits (codes BBSC, IRAC, GEOT, AESC, AEPC, DCAC, EMPZ, ADPT, MINE). REFUNDABLE (Schedule III Part I lines 15-17): the adoption credit ($7,500 for a foster-care child, $5,000 otherwise, \xA7 15-30-2321, terminates December 31, 2031) and the unlocking public lands credit ($750 per agreement, maximum $3,000 per year, \xA7 15-30-2380). Montana has NO child tax credit and NO child care credit \u2014 the dependent care assistance credit was repealed effective TY2022 and survives only as a five-year carryforward under code DCAC. TY2026 (HB 337 \xA7\xA7 1, 3, applicability 'the income tax year beginning January 1, 2026'; booklet p. 42 '2026 Tax Tables'; 2026 Publication 1): ordinary rates 4.7% then 5.65% over $47,500 single and MFS, $95,000 MFJ and qualifying surviving spouse, $71,250 head of household; capital gains 3% then 4.1% on the same structure; the earned income credit doubles to 20% of the federal credit; HB 129 adds a $3,000 inflation-adjusted subtraction for qualified volunteer firefighters and volunteer emergency care providers. HB 337 \xA7 4 (Transition): 'The modified inflation factor provided for in 15-30-2103(3) does not apply until tax year 2028' \u2014 the TY2026 and TY2027 brackets are STATUTORY and NOT indexed. TY2027 (HB 337 \xA7 2, effective January 1, 2027): 4.7% then 5.4% over $65,000 / $130,000 / $97,500. UNPUBLISHED as of September 2026 and therefore not encoded for TY2026: the indexed age-65 subtraction, the indexed 529 cap, the volunteer firefighter subtraction amount, and the TY2026 Form 2 line numbering (no 2026 form exists). The elderly credit's $45,000 / $12,600 / $1,150 figures and both of its tables are statutory, unindexed and untouched by the 2025 session, so that rule carries through TY2026. OUT OF SCOPE: nonresident, part-year and mixed-residency returns (Schedule II apportionment), the Montana medical savings account Part II adjustment, Schedule IV penalties and interest, the pass-through entity tax credit, and the property tax rebate (House Bill 231 rebated TAX YEAR 2024 property taxes on a separate application at getmyrebate.mt.gov and never touches Form 2 \u2014 but the booklet requires counting it in gross household income on Schedule 2EC line 8)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      msaCap: { value: "460000", type: "money" },
+      adoptionCreditFosterChild: { value: "750000", type: "money" },
+      adoptionCreditOtherChild: { value: "500000", type: "money" },
+      unlockingPublicLandsPerAgreement: { value: "75000", type: "money" },
+      unlockingPublicLandsMaximum: { value: "300000", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Montana Form 2 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.mt.income_tax, us.mt.ordinary_income_tax, us.mt.capital_gains_tax, us.mt.age65_subtraction, us.mt.eitc, us.mt.elderly_homeowner_renter_credit, us.mt.other_state_credit, us.mt.tuition_savings_subtraction, us.mt.able_subtraction, and us.mt.military_retirement_subtraction"
+    }
+  },
+  // ---- TY2026 and TY2027: House Bill 337 (Ch. 227, L. 2025), statutory and NOT inflation-indexed ----
+  {
+    id: "us.mt.ordinary_income_tax",
+    version: 2,
+    jurisdiction: "us.mt",
+    title: "Montana ordinary income tax TY2026 \u2014 4.7% to $47,500 single and MFS, $95,000 MFJ and qualifying surviving spouse, $71,250 head of household, then 5.65% (House Bill 337)",
+    citation: {
+      source: "Enrolled House Bill 337 (Ch. 227, L. 2025) \xA7\xA7 1, 5, 6; MCA \xA7 15-30-2103 (Temporary); 2025 Montana Form 2 Instructions p. 42 '2026 Tax Tables'; 2026 Publication 1",
+      section: "MCA \xA7 15-30-2103(1) (Temporary); HB 337 \xA7 1",
+      url: MCA("210", "030"),
+      excerpt: "STATUTE (\xA7 15-30-2103(1) (Temporary), verbatim): '(a) for every married individual who files a joint return and for every surviving spouse: (i) on the first $95,000 of Montana taxable income or any part of that income, 4.7%; (ii) on any Montana taxable income in excess of $95,000 or any part of that income, 5.65%; (b) for every head of household: (i) on the first $71,250 \u2026 4.7%; (ii) \u2026 in excess of $71,250 \u2026 5.65%; (c) for every individual other than a surviving spouse or head of household who is not a married individual: (i) on the first $47,500 \u2026 4.7%; (ii) \u2026 in excess of $47,500 \u2026 5.65%; (d) for every married individual who does not make a joint return and for every estate or trust \u2026: (i) on the first $47,500 \u2026 4.7%; (ii) \u2026 in excess of $47,500 \u2026 5.65%.' Terminator: '(Terminates December 31, 2026--sec. 7, Ch. 227, L. 2025.)' HB 337 \xA7 6(1): '[Sections 1 and 3] apply to the income tax year beginning January 1, 2026.' HB 337 \xA7 4 (Transition): 'The modified inflation factor provided for in 15-30-2103(3) does not apply until tax year 2028.' \u2014 these brackets are statutory and NOT indexed. BOOKLET p. 42 ('2026 Tax Tables', verbatim, single and MFS): '$0 | $47,500 | 4.7% ; $47,500 or greater | 5.65%'. ENCODING: the 2026 schedule prints no 'Less' constant (the TY2026 Form 2 does not exist yet \u2014 it publishes ~September 2026), so this rule accumulates the two brackets EXACTLY (4.7% of the threshold plus 5.65% of the excess, one half-up rounding) rather than inventing a subtraction amount. The exact continuity figure for head of household is $676.875, which is not a whole cent, so no honest constant exists to encode. If the Department truncates its 2026 constants the way it truncated the 2025 ones ($253.20 -> $253), the printed schedule will sit up to $1 above this rule \u2014 re-verify when the 2026 booklet publishes."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { rate1Bps: { value: "470", type: "int" }, rate2Bps: { value: "565", type: "int" }, thresholdSingle: { value: "4750000", type: "money" }, thresholdJoint: { value: "9500000", type: "money" }, thresholdHoh: { value: "7125000", type: "money" } },
+    formula: ordinaryTax2(max020(sub20(max020(fact36("stateTaxableIncome")), minE9(max020(fact36("stateTaxableIncome")), max020(fact36("mtNetLongTermCapitalGains"))))), BR_2026)
+  },
+  {
+    id: "us.mt.capital_gains_tax",
+    version: 2,
+    jurisdiction: "us.mt",
+    title: "Montana net long-term capital gains tax TY2026 \u2014 3% below the $47,500 / $95,000 / $71,250 threshold after ordinary income, 4.1% above (House Bill 337)",
+    citation: {
+      source: "MCA \xA7 15-30-2103(2) (Temporary); enrolled House Bill 337 (Ch. 227, L. 2025) \xA7 1; 2025 Montana Form 2 Instructions p. 42 '2026 Tax Tables'",
+      section: "MCA \xA7 15-30-2103(2) (Temporary)",
+      url: MCA("210", "030"),
+      excerpt: "BOOKLET p. 42 ('2026 Tax Tables', Net Long-Term Capital Gains Rate, single and MFS, verbatim): 'For net long-term capital gains above $0 | But less than $47,500 minus ordinary income | 3% ; $47,500 minus ordinary income | 4.1% ; If ordinary income exceeds $47,500 | 4.1%.' The joint column uses $95,000 and head of household $71,250. The 3% and 4.1% RATES are unchanged from 2025 \u2014 only the thresholds move. The page 2 worksheet arithmetic is unchanged, and lines 8 and 10 still round separately."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { lowRateBps: { value: "300", type: "int" }, highRateBps: { value: "410", type: "int" }, thresholdSingle: { value: "4750000", type: "money" }, thresholdJoint: { value: "9500000", type: "money" }, thresholdHoh: { value: "7125000", type: "money" } },
+    formula: capitalGainsTax(fact36("stateTaxableIncome"), fact36("mtNetLongTermCapitalGains"), BR_2026)
+  },
+  {
+    id: "us.mt.income_tax",
+    version: 2,
+    jurisdiction: "us.mt",
+    title: "Montana resident tax TY2026 \u2014 the ordinary income tax plus the net long-term capital gains tax under the House Bill 337 brackets",
+    citation: {
+      source: "Enrolled House Bill 337 (Ch. 227, L. 2025) \xA7\xA7 1, 4, 5, 6; MCA \xA7 15-30-2103 (Temporary); 2025 Montana Form 2 Instructions p. 42; 2026 Publication 1",
+      section: "MCA \xA7 15-30-2103 (Temporary); Form 2 page 2 line 13",
+      url: MCA("210", "030"),
+      excerpt: "TY2026 brackets, published a full year ahead in the 2025 booklet (p. 42) and in 2026 Publication 1, and matching MCA \xA7 15-30-2103 (Temporary) digit for digit: 4.7% to $47,500 single and married filing separately, $95,000 married filing jointly and qualifying surviving spouse, $71,250 head of household, then 5.65%; net long-term capital gains 3% then 4.1% on the same thresholds. Statutory and NOT inflation-indexed (HB 337 \xA7 4). The TY2026 Form 2 and its schedules do not exist yet, so the Form 2 line numbering, the indexed age-65 subtraction, the indexed 529 cap and the new House Bill 129 volunteer firefighter subtraction are all unpublished and deliberately not encoded for TY2026 \u2014 the age-65 and 529 rules end 2026-01-01 and refuse rather than guess."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: add16(capitalGainsTax(fact36("stateTaxableIncome"), fact36("mtNetLongTermCapitalGains"), BR_2026), ordinaryTax2(max020(sub20(max020(fact36("stateTaxableIncome")), minE9(max020(fact36("stateTaxableIncome")), max020(fact36("mtNetLongTermCapitalGains"))))), BR_2026))
+  },
+  {
+    id: "us.mt.eitc",
+    version: 2,
+    jurisdiction: "us.mt",
+    title: "Montana earned income tax credit TY2026 \u2014 20% of the federal earned income credit, refundable (House Bill 337)",
+    citation: {
+      source: "MCA \xA7 15-30-2318(2); enrolled House Bill 337 (Ch. 227, L. 2025) \xA7\xA7 3, 6(1); 2025 Montana Form 2 Instructions 'What's New'; 2026 Publication 1; Montana Employer and Information Agent Guide",
+      section: "MCA \xA7 15-30-2318(2)",
+      url: MCA("230", "180"),
+      excerpt: "STATUTE (\xA7 15-30-2318(2), verbatim): 'The amount of the credit allowed under subsection (1) is 20% of the amount of the credit determined for the tax year under section 32 of the Internal Revenue Code, 26 U.S.C. 32.' Enrolled HB 337 \xA7 3 shows the amendment as '10% 20%', and \xA7 6(1): '[Sections 1 and 3] apply to the income tax year beginning January 1, 2026.' BOOKLET What's New (verbatim): 'The bill also increases the Montana earned income tax credit to 20% of the federal earned income tax credit beginning in tax year 2026.' Still refundable under \xA7 15-30-2318(4). The 20% is PERMANENT: Ch. 227 \xA7 7's termination clause applies to '[Section 1]' \u2014 the \xA7 15-30-2103 (Temporary) RATE section \u2014 not to \xA7 3, which amends the earned income credit. So this version carries through TY2027 rather than expiring with the 2026 rate table."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "20", type: "int" } },
+    formula: rd25(pct9(max020(fact36("mtFederalEic")), "20", "100"))
+  },
+  {
+    id: "us.mt.ordinary_income_tax",
+    version: 3,
+    jurisdiction: "us.mt",
+    title: "Montana ordinary income tax TY2027 \u2014 4.7% to $65,000 single and MFS, $130,000 MFJ and qualifying surviving spouse, $97,500 head of household, then 5.4% (House Bill 337 \xA7 2)",
+    citation: {
+      source: "Enrolled House Bill 337 (Ch. 227, L. 2025) \xA7\xA7 2, 4, 5(3), 6(2); MCA \xA7 15-30-2103 (Effective January 1, 2027); 2025 Montana Form 2 Instructions p. 42 '2027 Tax Tables'",
+      section: "MCA \xA7 15-30-2103(1) (Effective January 1, 2027); HB 337 \xA7 2",
+      url: MCA("210", "030"),
+      excerpt: "BOOKLET p. 42 ('2027 Tax Tables', verbatim, single and MFS): '$0 | $65,000 | 4.7% ; $65,000 or greater | 5.4%'; joint $130,000 and head of household $97,500. HB 337 \xA7 5(3): '[Section 2] is effective January 1, 2027.' \xA7 6(2): '[Section 2] applies to income tax years beginning after December 31, 2026.' INDEXING RESUMES AFTER THIS YEAR: \xA7 15-30-2103(3) (2027 version, verbatim): 'By November 1 of each year, the department shall multiply the bracket amounts contained in subsections (1) and (2) by the modified inflation factor for the following tax year and round the cumulative brackets to the nearest $100.' with (4)(a) substituting the June 2026 consumer price index as the base \u2014 but HB 337 \xA7 4 defers it: 'The modified inflation factor provided for in 15-30-2103(3) does not apply until tax year 2028.' So TY2027 uses these statutory figures unindexed, and TY2028 onward must be re-verified against the Department's November determination. No 'Less' constant is printed for 2027 either, so this rule accumulates the brackets exactly (4.7% of the threshold plus 5.4% of the excess, one half-up rounding); the TY2027 form is years from publication."
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { rate1Bps: { value: "470", type: "int" }, rate2Bps: { value: "540", type: "int" }, thresholdSingle: { value: "6500000", type: "money" }, thresholdJoint: { value: "13000000", type: "money" }, thresholdHoh: { value: "9750000", type: "money" } },
+    formula: ordinaryTax2(max020(sub20(max020(fact36("stateTaxableIncome")), minE9(max020(fact36("stateTaxableIncome")), max020(fact36("mtNetLongTermCapitalGains"))))), BR_2027)
+  },
+  {
+    id: "us.mt.capital_gains_tax",
+    version: 3,
+    jurisdiction: "us.mt",
+    title: "Montana net long-term capital gains tax TY2027 \u2014 3% below the $65,000 / $130,000 / $97,500 threshold after ordinary income, 4.1% above (House Bill 337 \xA7 2)",
+    citation: {
+      source: "MCA \xA7 15-30-2103(2) (Effective January 1, 2027); enrolled House Bill 337 (Ch. 227, L. 2025) \xA7 2; 2025 Montana Form 2 Instructions p. 42 '2027 Tax Tables'",
+      section: "MCA \xA7 15-30-2103(2) (Effective January 1, 2027)",
+      url: MCA("210", "030"),
+      excerpt: "BOOKLET p. 42 ('2027 Tax Tables', Net Long-Term Capital Gains Rate, verbatim, single and MFS): 'For net long-term capital gains above $0 | But less than $65,000 minus ordinary income | 3% ; $65,000 minus ordinary income | 4.1% ; If ordinary income exceeds $65,000 | 4.1%.' Joint $130,000, head of household $97,500. The 3% and 4.1% rates are unchanged across all three years; only the thresholds move."
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: { lowRateBps: { value: "300", type: "int" }, highRateBps: { value: "410", type: "int" }, thresholdSingle: { value: "6500000", type: "money" }, thresholdJoint: { value: "13000000", type: "money" }, thresholdHoh: { value: "9750000", type: "money" } },
+    formula: capitalGainsTax(fact36("stateTaxableIncome"), fact36("mtNetLongTermCapitalGains"), BR_2027)
+  },
+  {
+    id: "us.mt.income_tax",
+    version: 3,
+    jurisdiction: "us.mt",
+    title: "Montana resident tax TY2027 \u2014 the ordinary income tax plus the net long-term capital gains tax under the House Bill 337 \xA7 2 brackets",
+    citation: {
+      source: "Enrolled House Bill 337 (Ch. 227, L. 2025) \xA7\xA7 2, 4, 5(3), 6(2); MCA \xA7 15-30-2103 (Effective January 1, 2027); 2025 Montana Form 2 Instructions p. 42",
+      section: "MCA \xA7 15-30-2103 (Effective January 1, 2027)",
+      url: MCA("210", "030"),
+      excerpt: "TY2027: 4.7% to $65,000 single and married filing separately, $130,000 married filing jointly and qualifying surviving spouse, $97,500 head of household, then 5.4%; net long-term capital gains 3% then 4.1% on the same thresholds. Published in the 2025 booklet (p. 42) and codified as the '(Effective January 1, 2027)' version of \xA7 15-30-2103. Bracket indexing is deferred to TY2028 by HB 337 \xA7 4, so TY2028 onward must be re-verified against the Department's November determination \u2014 this version ends 2028-01-01. Everything downstream of the rate (the age-65 subtraction, the 529 cap, the earned income credit percentage, the elderly credit) must be re-checked against the TY2027 booklet when it publishes."
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: add16(capitalGainsTax(fact36("stateTaxableIncome"), fact36("mtNetLongTermCapitalGains"), BR_2027), ordinaryTax2(max020(sub20(max020(fact36("stateTaxableIncome")), minE9(max020(fact36("stateTaxableIncome")), max020(fact36("mtNetLongTermCapitalGains"))))), BR_2027))
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-de.js
+var cmp13 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt20 = (l, r) => cmp13("lt", l, r);
+var le18 = (l, r) => cmp13("le", l, r);
+var gt12 = (l, r) => cmp13("gt", l, r);
+var ge9 = (l, r) => cmp13("ge", l, r);
+var iff20 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add17 = (...args) => ({ kind: "add", args });
+var sub21 = (left, right) => ({ kind: "sub", left, right });
+var max021 = (arg) => ({ kind: "max0", arg });
+var minE10 = (...args) => ({ kind: "min", args });
+var and8 = (...args) => ({ kind: "and", args });
+var not7 = (arg) => ({ kind: "not", arg });
+var int13 = (value) => ({ kind: "int", value });
+var mulInt18 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits9 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus29 = (v) => cmp13("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJointReturn = isStatus29("mfj");
+var times12 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled13 = (n) => times12({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var BANDS_2025 = [
+  { floorCents: "200000", anchorCents: "0", rateBps: "220" },
+  // 2.2% over $2,000
+  { floorCents: "500000", anchorCents: "6600", rateBps: "390" },
+  // $66.00 + 3.9% over $5,000
+  { floorCents: "1000000", anchorCents: "26100", rateBps: "480" },
+  // $261.00 + 4.8% over $10,000
+  { floorCents: "2000000", anchorCents: "74100", rateBps: "520" },
+  // $741.00 + 5.2% over $20,000
+  { floorCents: "2500000", anchorCents: "100100", rateBps: "555" },
+  // $1,001.00 + 5.55% over $25,000
+  { floorCents: "6000000", anchorCents: "294350", rateBps: "660" }
+  // $2,943.50 + 6.6% over $60,000
+];
+var scheduleTax4 = (x, bands2) => {
+  let expr = money33("0");
+  for (const b of bands2) {
+    const row2 = dollarsFromScaled13(add17(times12(money33(b.anchorCents), "10000"), times12(sub21(x, money33(b.floorCents)), b.rateBps)));
+    expr = iff20(gt12(x, money33(b.floorCents)), row2, expr);
+  }
+  return expr;
+};
+var line24Tax = (x, bands2) => {
+  const mid = add17(mulInt18(money33("5000"), stepUnits9(x, "5000", "floor")), money33("2500"));
+  const table2 = iff20(lt20(x, money33("200000")), money33("0"), scheduleTax4(mid, bands2));
+  return iff20(fact36("deUseRateSchedule"), scheduleTax4(x, bands2), iff20(lt20(x, money33("6000000")), table2, scheduleTax4(x, bands2)));
+};
+var FORMS4 = "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/";
+var INSTR_URL2 = FORMS4 + "Instructions/PIT-RES_Instructions_2025-01.pdf";
+var FORM_URL2 = FORMS4 + "PIT-RES_2025-01_PaperInteractiveIPM.pdf";
+var TABLE_URL = "https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf";
+var DELC = (sub24) => `https://delcode.delaware.gov/title30/c011/${sub24}/index.html`;
+var deRules = [
+  {
+    id: "us.de.income_tax",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware income tax 2025 \u2014 one schedule for every filing status: no tax on the first $2,000, then 2.2% / 3.9% / 4.8% / 5.2% / 5.55% at $5,000 / $10,000 / $20,000 / $25,000 / $60,000, and $2,943.50 plus 6.6% above $60,000; the printed Tax Table (row midpoint) below $60,000 (Form PIT-RES line 24)",
+    citation: {
+      source: "30 Del. C. \xA7 1102(a)(14) (rates, as enacted by 79 Del. Laws c. 10 (2013) and unamended since) and \xA7 1102(d)(1) (the Director's tax table); 2025 Delaware State Income Tax Table (TY25_taxtable.pdf) pages 1-3 and its '2025 STATE INCOME TAX SCHEDULE'; 2025 PIT-RES Instructions (Revised 03/26/26) p. 7 line 24; printed 2025 Form PIT-RES (Revision 20260407) line 24",
+      section: "30 Del. C. \xA7 1102(a)(14), (d)(1); Form PIT-RES line 24",
+      url: TABLE_URL,
+      excerpt: "STATUTE (\xA7 1102(a)(14), verbatim): 'For taxable years beginning after December 31, 2013, the amount of tax shall be determined as follows: 2.2% of taxable income in excess of $2,000 but not in excess of $5,000; 3.9% of taxable income in excess of $5,000 but not in excess of $10,000; 4.8% of taxable income in excess of $10,000 but not in excess of $20,000; 5.2% of taxable income in excess of $20,000 but not in excess of $25,000; 5.55% of taxable income in excess of $25,000 but not in excess of $60,000; and 6.6% of taxable income in excess of $60,000.' TABLE AUTHORITY (\xA7 1102(d)(1), verbatim): 'In lieu of the tax imposed by subsection (a) of this section there is imposed for each taxable year on the tax table income of every individual whose tax table income for the taxable year does not exceed $60,000 \u2026 a tax determined under tables \u2026 which shall be prescribed by the Director of Revenue. The amounts of tax prescribed in such tables shall be computed on the basis of the rates prescribed by subsection (a) of this section.' (3): 'This subsection shall not apply to an estate or trust.' TABLE (header, verbatim): '2025 STATE INCOME TAX TABLE \u2014 BASED ON TABLE INCOME FOR PERSONS WITH TAXABLE INCOMES OF LESS THAN $60,000', columns 'At least / But less than / Tax due'. SCHEDULE (table p. 3, verbatim): 'If taxable income on Line 23 of DE PIT-RES or Line 42 of DE PIT-NON is $60,000 or [more,] your tax is: $2,943.50 plus 6.60% (.066) over, for the portion over $60,000.' with the worked EXAMPLE: 'Taxable income of $67,751: Tax on $60,000 . . . $2,943.50; Income over $60,000 . . . $7,751; Tax Rate over $60,000 . . . x .066; Tax on $7,751 . . . + $511.56; Total Tax . . . $3,455.06 (Round to $3,455.)' \u2014 the Division truncates 511.566 to $511.56 on its own worked line, so its printed total reads $3,455.06 where a single rounding of 3,455.066 gives the same $3,455 INSTRUCTIONS (p. 7 line 24, verbatim): 'If Line 23 is less than $60,000, use the tax table to compute your tax liability. If line 23 is $60,000 or greater, use the tax schedule at the end of the tax table to compute your tax liability.' STRUCTURE (verified on the printed table): 1,162 rows \u2014 '0 | 1,000 | 0' and '1,000 | 2,000 | 0' at the bottom, then $50 rows from '2,000 | 2,050 | 1' to '59,950 | 60,000 | 2,942'. CONVENTION (verified on ALL 1,162 rows, zero exceptions): each cell is the statutory schedule at the row midpoint, rounded half-up \u2014 5,875 gives 66 + 3.9% x 875 = 100.13 -> $100; 59,975 gives 2,943.50 - 5.55% x 25 = 2,942.11 -> $2,942. ONE table serves EVERY filing status: there is a single 'Tax due' column and \xA7 1102(a) draws no distinction by status \u2014 filing status moves only the standard deduction (line 20), the additional standard deduction (line 21) and the personal credits (lines 27a-27b). ANCHORS: the cumulative amounts are EXACT, not rounded ($66, $261, $741, $1,001, $2,943.50 all fall out of the statute); the 2026 PIT-EST estimated-tax worksheet prints the last one as '$2,943.00', but the filing-season table's exact $2,943.50 is encoded. deUseRateSchedule applies the schedule below $60,000 as well (it differs from the table by at most the value of half a row). The rates and brackets are NOT indexed and have been unchanged since 79 Del. Laws c. 10 (2013)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      zeroBracketTop: { value: "200000", type: "money" },
+      bracket2: { value: "500000", type: "money" },
+      bracket3: { value: "1000000", type: "money" },
+      bracket4: { value: "2000000", type: "money" },
+      bracket5: { value: "2500000", type: "money" },
+      bracket6: { value: "6000000", type: "money" },
+      topAnchor: { value: "294350", type: "money" },
+      topRateBps: { value: "660", type: "int" },
+      tableTop: { value: "6000000", type: "money" }
+    },
+    formula: line24Tax(max021(fact36("stateTaxableIncome")), BANDS_2025)
+  },
+  {
+    id: "us.de.standard_deduction",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware standard deduction 2025 \u2014 $3,250, or $6,500 on a joint return, plus $2,500 for each checked box for age 65 or over and blindness (maximum $5,000 per person); not available to itemizers (Form PIT-RES lines 20a and 21)",
+    citation: {
+      source: "30 Del. C. \xA7 1108(a)(3) (the $3,250 / $6,500 amounts, unamended since 72 Del. Laws 1st Sp. Sess. c. 241 (1999)) and \xA7 1108(b)-(c) (the $2,500 additions and the blindness definition); 2025 PIT-RES Instructions p. 7 lines 20a and 21; printed 2025 Form PIT-RES lines 20a and 21",
+      section: "30 Del. C. \xA7 1108; Form PIT-RES lines 20a, 21",
+      url: DELC("sc02"),
+      excerpt: `STATUTE (\xA7 1108(a)(3), verbatim): 'For taxable periods beginning after December 31, 1999, the standard deduction of a resident individual shall be $3,250, and the standard deduction of resident spouses shall be $6,500 if they file a joint return and $3,250 each if they file separate returns.' (b), verbatim: 'The sum of $2,500 shall be added to the standard deduction determined under subsection (a) of this section in each of the following circumstances: (1) For the taxpayer who has attained the age of 65 before the close of the taxable year; \u2026 (3) For the taxpayer who is blind at the close of the taxable year'. FORM (line 20a, verbatim): 'Filing Statuses 1, 3, & 5 enter $3250 in Column B; Filing Status 2 enter $6500 in Column B; Filing Status 4 enter $3250 in Column A and in Column B'. FORM (line 21, verbatim): 'ADDITIONAL STANDARD DEDUCTIONS (Not Allowed with Itemized Deductions) \u2026 Multiply the number of boxes checked below by $2500. \u2026 Column A - if Spouse was: 65 or over / blind   Column B - if You were: 65 or over / blind'. INSTRUCTIONS (p. 7, verbatim): 'Multiply the number of boxes checked on Line 21 by $2,500 and determine the total (a maximum of $5,000 per individual).' and '($5,000 per spouse age 65 or over and blind; $2,500 per spouse age 65 and over or blind)'. And: 'NOTE: If you elect to itemize your deductions, you do not qualify for the additional standard deduction even though you may be 65 years of age or older and/or blind. If you itemize deductions, do not check the "65 or over" box.' NOTE THE AGE SPLIT: the additional standard deduction uses 65, while the personal credit (\xA7 1110(b)(2)) and the pension exclusion (\xA7 1106(b)(3)b.) both use 60. The base amounts are NOT indexed and have stood at $3,250 / $6,500 since TY2000. ENCODING: the $6,500 belongs to filing status 2 (joint) ALONE \u2014 statuses 1, 3, 4 and 5 each take $3,250, and on a combined separate return (status 4) each COLUMN takes its own $3,250. The composer runs status 4 as two returns.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { base: { value: "325000", type: "money" }, joint: { value: "650000", type: "money" }, perBox: { value: "250000", type: "money" }, maxBoxesPerPerson: { value: "2", type: "int" } },
+    formula: (() => {
+      const base = iff20(isJointReturn, money33("650000"), money33("325000"));
+      const hasSpouseColumn = { kind: "or", args: [isJointReturn, { kind: "cmp", op: "eq", left: fact36("filingStatus"), right: { kind: "enum", value: "mfs" } }] };
+      const boxes = iff20(hasSpouseColumn, minE10(fact36("deAdditionalDeductionBoxes"), int13("4")), minE10(fact36("deAdditionalDeductionBoxes"), int13("2")));
+      return iff20(fact36("deItemizes"), money33("0"), add17(base, mulInt18(money33("250000"), boxes)));
+    })()
+  },
+  {
+    id: "us.de.personal_credits",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware personal credits 2025 \u2014 $110 for each federal exemption plus $110 for each person 60 or over; nonrefundable and capped at the tax otherwise due; zero for a filer claimed as a dependent on another return (Form PIT-RES lines 27a and 27b)",
+    citation: {
+      source: "30 Del. C. \xA7 1110(b)-(c); 2025 PIT-RES Instructions p. 9 lines 27a and 27b; printed 2025 Form PIT-RES lines 27a, 27b and 33",
+      section: "30 Del. C. \xA7 1110(b), (c); Form PIT-RES lines 27a-27b",
+      url: DELC("sc02"),
+      excerpt: `STATUTE (\xA7 1110(b), verbatim): 'For tax years beginning after December 31, 1995, resident individuals shall be allowed a personal credit against the individual's tax otherwise due under this chapter in the amount of: (1) $110 for each personal exemption to which such individual is entitled for the taxable year for federal income tax purposes; plus (2) An additional $110 in the case of each resident person age 60 or over.' (c), verbatim: 'In no event shall the credit allowed under subsection (b) of this section exceed the tax otherwise due under this chapter.' FORM (line 27a, verbatim): 'PERSONAL CREDITS / Enter number of exemptions ___ x $110 / If you are Filing Status 3, see instructions. If you use Filing Status 4, enter the total for each appropriate column. All others enter total in Column B.' FORM (line 27b, verbatim): 'CHECK BOXES \u2014 Spouse 60 or over (Column A) / Self 60 or over (Column B) / Enter number of boxes checked on Line 27b ___ x $110'. INSTRUCTIONS (p. 9, verbatim): 'Enter the total number of dependents listed on your federal return, multiply by $110 and enter the total on Line 27a. If you are married and filing a combined separate return (Filing Status 4), split the total between Columns A and B in increments of $110. You are still eligible for this credit even though you do not recognize personal exemptions on your federal return.' 'NOTE: You are not entitled to a Delaware Personal Credit if you are listed as a dependent on another individual's Federal return. Enter "0" in the space provided on Line 27a.' 'Example: If you filed your federal return as married filing jointly and have no dependents, enter $220.' 'If you and/or your spouse were 60 years of age or over on December 31, 2025, check the appropriate box(es), multiply the number of boxes checked by $110, and enter the total on Line 27b.' ENCODING: Delaware grants a CREDIT, not an exemption deduction \u2014 \xA7 1110(a)'s $1,250 exemption applies only to 'tax years ending before January 1, 1996'. The count on line 27a is the federal exemption count (the taxpayer, the spouse on a joint return, and dependents), which is why a childless joint return enters $220. The age-60 credit is one per qualifying person. The cap is applied by the composer at line 33 ('If Line 32 is greater than Line 26, enter 0'), not here, so this rule reports the credit earned. The $110 amounts are NOT indexed and have stood since 72 Del. Laws 1st Sp. Sess. c. 247 (1999).`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "11000", type: "money" }, perAge60: { value: "11000", type: "money" } },
+    formula: iff20(fact36("isClaimedAsDependent"), money33("0"), add17(mulInt18(money33("11000"), fact36("deExemptions")), mulInt18(money33("11000"), minE10(fact36("deAge60Persons"), int13("2")))))
+  },
+  {
+    id: "us.de.pension_exclusion",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware pension exclusion 2025 \u2014 $12,500 of pension and eligible retirement income at age 60 or over; under 60, $12,500 of a United States military pension or $2,000 of any other pension; one exclusion per taxpayer (Form PIT-RES line 6)",
+    citation: {
+      source: "30 Del. C. \xA7 1106(b)(3)b. and f.; 2025 PIT-RES Instructions p. 6 line 6 and the 60-or-over worksheet; printed 2025 Form PIT-RES line 6",
+      section: "30 Del. C. \xA7 1106(b)(3); Form PIT-RES line 6",
+      url: DELC("sc02"),
+      excerpt: "STATUTE (\xA7 1106(b)(3)b., verbatim): 'For taxable years beginning on January 1, 2022, and ending before January 1, 2027: 1. For persons under age 60, the greater of: A. Amounts received, not to exceed $2,000, as pensions from employers, the United States, this State, or any subdivision of this State; or B. Amounts received, not to exceed $12,500, as a United States military pension. 2. For persons age 60 or older, amounts received, not to exceed $12,500, as pensions from employers, the United States, this State, or any subdivision of this State, or as eligible retirement income.' INSTRUCTIONS (p. 6, verbatim): 'IF YOU WERE UNDER 60 on December 31, 2025 and retired from the United States military and received pension income during the year, your exclusion equals $12,500 or the amount of your pension, whichever is less.' 'IF YOU WERE UNDER 60 on December 31, 2025, and you receive a non-military pension, your exclusion equals $2,000 or the amount of your pension, whichever is less.' 'IF YOU WERE 60 OR OVER on December 31, 2025, your exclusion is determined as follows: 1. Amount of pension \u2026 2. Amount of eligible retirement income \u2026 3. Total (add lines 1 and 2) \u2026 4. Enter Line 3 or $12,500, whichever is less here and on Line 6.' 'Eligible retirement income includes dividends, capital gains net of capital losses, interest, net rental income from real property and qualified retirement plans (IRC Sec. 4974), such as IRA, 401(k), Keogh plans, and government deferred compensation plans (IRC Sec. 457).' 'NOTE: Each taxpayer may receive ONLY ONE pension exclusion, even if he or she is receiving more than one pension or other retirement distribution. Spouses who each receive pensions are entitled to one exclusion each.' DISQUALIFIERS (verbatim): 'An early distribution from an IRA or pension fund for emergency reasons or following a separation from employment does not qualify for the pension exclusion. If the distribution code listed in Box 7 of your 1099 R is a 1 (one), or if you were assessed an early withdrawal penalty on federal 1040, Schedule 2, Line 8 for the distribution, then that distribution DOES NOT qualify.' Employer-paid disability pension income before minimum retirement age also fails. AGE TEST: 60 or over ON DECEMBER 31 of the tax year \u2014 the 'eligible retirement income' broadening belongs ONLY to the 60-or-over tier; an under-60 filer gets $2,000 of pension (or $12,500 of a military pension) and nothing for interest, dividends or capital gains. NOT ENCODED, and named here because the form does not surface it: \xA7 1106(b)(3)f.4. conditions the 60-or-over exclusion on 3 years of Delaware legal domicile for a person domiciled here before January 1, 2027 (5 years for one domiciled here on or after that date) \u2014 an eligibility gate that appears nowhere on Form PIT-RES. This rule computes the amount and the composer discloses the domicile test. \xA7 1106(b)(3)b. by its terms ends before January 1, 2027; 85 Del. Laws c. 426 (Senate Bill 219 with Senate Amendment 1, approved August 17, 2026) replaces it with a military-pension phase-in of $15,000 for TY2027, $20,000 for TY2028 and $25,000 for TY2029 and after, applying at ANY age, while the non-military 60-or-over exclusion stays at $12,500 and the general under-60 amount stays at $2,000 \u2014 none of those caps reaches TY2025 or TY2026, so this rule ends 2027-01-01. OPEN QUESTION, deliberately not resolved here: Senate Amendment 1 added \xA7 1106(b)(3)f.3.-f.4., which apply 'for the purposes of this paragraph (b)(3)' \u2014 wording that reaches subparagraph b., the TY2022-2026 window \u2014 and impose a per-spouse cap ('The total subtraction modification may not exceed twice the relevant limit') and a DOMICILE test: 3 years of Delaware legal domicile for a person 60 or older domiciled here before January 1, 2027, and 5 years for one domiciled here on or after that date. The Act carries no effective-date section and was approved August 17, 2026, so whether the domicile test reaches a TY2026 return is genuinely unsettled on the face of the statute. This rule does NOT apply it to TY2025 or TY2026 \u2014 no TY2025 or TY2026 form asks the question \u2014 and the composer discloses it. The \xA7 1106(b)(3)c. definition of a United States military pension was expanded by 84 Del. Laws c. 437 (Senate Bill 329, approved September 26, 2024) to cover the Army, Navy, Air Force, Marine Corps, Space Force, Coast Guard, the commissioned corps of the National Oceanic and Atmospheric Administration, the commissioned corps of the Public Health Service, and the National Guard."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { cap60: { value: "1250000", type: "money" }, capMilitaryUnder60: { value: "1250000", type: "money" }, capUnder60: { value: "200000", type: "money" } },
+    formula: (() => {
+      const pension = max021(fact36("dePensionIncome"));
+      const eligible = max021(fact36("deEligibleRetirementIncome"));
+      const over60 = minE10(add17(pension, eligible), money33("1250000"));
+      const under60 = iff20(fact36("deMilitaryPension"), minE10(pension, money33("1250000")), minE10(pension, money33("200000")));
+      return iff20(fact36("deAge60OrOver"), over60, under60);
+    })()
+  },
+  {
+    id: "us.de.pension_exclusion",
+    version: 2,
+    jurisdiction: "us.de",
+    title: "Delaware pension exclusion TY2026 \u2014 the same $12,500 / $12,500 military / $2,000 tiers, but a person 60 or over qualifies ONLY if legally domiciled in Delaware for at least three years (85 Del. Laws c. 426, \xA7 1106(b)(3)f.4, effective August 17, 2026) (Form PIT-RES line 6)",
+    citation: {
+      source: "30 Del. C. \xA7 1106(b)(3)b. and f.4 as amended by 85 Del. Laws c. 426 (Senate Bill 219 with Senate Amendment 1, signed and effective August 17, 2026)",
+      section: "30 Del. C. \xA7 1106(b)(3)f.4; Form PIT-RES line 6",
+      url: DELC("sc02"),
+      excerpt: `STATUTE (\xA7 1106(b)(3)f.4, verbatim, as it now reads on delcode.delaware.gov): '4. A. A person who is age 60 or older is eligible for the subtraction under this paragraph (b)(3) only if 1 of the following applies: I. For a person who is age 60 or older and legally domiciled in this State before January 1, 2027, the person is legally domiciled in this State for at least 3 years. II. For a person who is age 60 or older and legally domiciled in this State on or after January 1, 2027, the person is legally domiciled in this State for at least 5 years. B. For purposes of this paragraph (b)(3)f.4. of this section, a person is legally domiciled in this State if the person is a "resident individual" under \xA7 1103 of this title.' ENACTMENT: 85 Del. Laws c. 426 = Senate Bill 219 with Senate Amendment 1, signed August 17, 2026, effective on signature; the Act carries NO tax-year applicability section, and the codified text is in force for returns filed after that date. TY2025 returns were due April 30, 2026 and are untouched (version 1). For TY2026 the gate is ENCODED: the 60-or-over tier pays only when deDomiciledForPensionExclusion is attested (the person has been a Delaware resident individual for at least three years \u2014 the five-year test applies only to someone who first became domiciled on or after January 1, 2027, i.e. never to a 2026 return). The gate covers the whole of paragraph (b)(3), so a 60-or-over person who fails it gets NO exclusion \u2014 not the under-60 tier. The under-60 tiers (including the $12,500 military tier) are unchanged. The same Act raises the MILITARY pension exclusion to $15,000 for 2027, $20,000 for 2028 and $25,000 for 2029 and after \u2014 outside this rule's window. RE-VERIFY against the 2026 PIT-RES instructions when they publish (~January 2027): if the Division applies f.4 only from TY2027, drop the gate.`
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap60: { value: "1250000", type: "money" }, capMilitaryUnder60: { value: "1250000", type: "money" }, capUnder60: { value: "200000", type: "money" }, domicileYears: { value: "3", type: "int" } },
+    formula: (() => {
+      const pension = max021(fact36("dePensionIncome"));
+      const eligible = max021(fact36("deEligibleRetirementIncome"));
+      const over60 = minE10(add17(pension, eligible), money33("1250000"));
+      const under60 = iff20(fact36("deMilitaryPension"), minE10(pension, money33("1250000")), minE10(pension, money33("200000")));
+      return iff20(fact36("deAge60OrOver"), iff20(fact36("deDomiciledForPensionExclusion"), over60, money33("0")), under60);
+    })()
+  },
+  {
+    id: "us.de.elderly_disabled_exclusion",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware exclusion for certain persons 60 or over or disabled 2025 \u2014 $2,000 ($4,000 on a joint return where both qualify) when earned income is under $2,500 ($5,000) and adjusted gross income before this exclusion is $10,000 or less ($20,000) (Form PIT-RES line 11)",
+    citation: {
+      source: "30 Del. C. \xA7 1106(b)(2); 2025 PIT-RES Instructions p. 7 'LINE 11 WORKSHEET, PERSONS 60 OR OVER OR DISABLED'; printed 2025 Form PIT-RES line 11",
+      section: "30 Del. C. \xA7 1106(b)(2); Form PIT-RES line 11",
+      url: DELC("sc02"),
+      excerpt: "STATUTE (\xA7 1106(b)(2), verbatim): 'The amount of $2,000 by any person who has a total and permanent disability or by a person who is over 60 years of age, and (i) whose earned income in the taxable year is less than $2,500 and (ii) whose adjusted gross income (without reduction by this exclusion) does not exceed $10,000. For purposes of this paragraph (2), in the case of spouses filing a joint return, the amount of the exclusion shall be $4,000 if (i) both are either over 60 years of age or have total and permanent disabilities or 1 is over 60 years of age and the other has a total and permanent disability and (ii) their total earned income in the taxable year is less than $5,000 and their adjusted gross income does not exceed $20,000.' WORKSHEET (Instructions p. 7, verbatim, single/married filing separate column): 'Were you at least 60 years old or totally and permanently disabled on 12/31/2025?' / 'Did your earned income (i.e., wages, tips, farm, or business income) total less than $2,500?' / 'Is Line 10 $10,000 or less?' / 'If you answered YES to all, enter $2,000 on Line 11.' (joint column): 'Were both spouses at least 60 years old or totally and permanently disabled on 12/31/2025?' / 'Is combined earned income \u2026 less than $5,000?' / 'Is Line 10 $20,000 or less?' / 'If you answered YES to all, enter $4,000 on Line 11.' And: 'NOTE: If you are filing a joint return and only one spouse qualifies for this exclusion, you should consider filing separate returns (Filing Status 3 or 4).' STATUTE-FORM DIVERGENCE: \xA7 1106(b)(2) says 'over 60 years of age' while the printed worksheet asks 'at least 60 years old' \u2014 the FORM's test is encoded, matching the age-60 test the personal credit and the pension exclusion both use. ENCODING: three all-or-nothing CLIFFS, not phase-outs. The income test runs against Form PIT-RES LINE 10 \u2014 after the Section B subtractions but before this exclusion \u2014 which is exactly the statute's 'without reduction by this exclusion'. Earned income is strictly LESS THAN the limit; the AGI test is 'or less'. The $4,000 tier needs a JOINT return with BOTH spouses qualifying. A JOINT return on which only ONE spouse qualifies gets NOTHING, not $2,000: the printed worksheet offers exactly two columns ('Single, married filing separate returns' and 'Married filing joint returns'), the joint column's first question is 'Were BOTH spouses at least 60 years old or totally and permanently disabled', and the booklet's own note settles it \u2014 'If you are filing a joint return and only one spouse qualifies for this exclusion, you should consider filing separate returns (Filing Status 3 or 4)', advice that would be pointless if the joint return already produced $2,000. A reader of \xA7 1106(b)(2) alone might grant the single $2,000 to the qualifying spouse on a joint return; the form does not, and the form is what is filed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { single: { value: "200000", type: "money" }, joint: { value: "400000", type: "money" }, earnedIncomeLimit: { value: "250000", type: "money" }, earnedIncomeLimitJoint: { value: "500000", type: "money" }, agiLimit: { value: "1000000", type: "money" }, agiLimitJoint: { value: "2000000", type: "money" } },
+    formula: (() => {
+      const agi2 = fact36("deAgiBeforeExclusion");
+      const earned2 = max021(fact36("deEarnedIncome"));
+      const bothQualify = and8(isJointReturn, fact36("deQualifiesElderlyDisabled"), fact36("deSpouseQualifiesElderlyDisabled"));
+      const jointOk = and8(bothQualify, lt20(earned2, money33("500000")), le18(agi2, money33("2000000")));
+      const singleOk = and8(not7(isJointReturn), fact36("deQualifiesElderlyDisabled"), lt20(earned2, money33("250000")), le18(agi2, money33("1000000")));
+      return iff20(jointOk, money33("400000"), iff20(singleOk, money33("200000"), money33("0")));
+    })()
+  },
+  {
+    id: "us.de.eitc",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware earned income tax credit 2025 \u2014 the taxpayer may claim either 20% of the federal credit limited to the tax, or 4.5% of it fully refundable; the Division's worksheet picks whichever is larger (Form PIT-RES line 34, DE Schedule II)",
+    citation: {
+      source: "30 Del. C. \xA7 1117(a)(2) (enacted by 83 Del. Laws c. 118, effective for tax years beginning on or after January 1, 2022, unamended since); 2025 Form PIT-RSS 'DE SCHEDULE II - EARNED INCOME TAX CREDIT' lines 12-17; printed 2025 Form PIT-RES line 34",
+      section: "30 Del. C. \xA7 1117(a)(2); Form PIT-RES line 34",
+      url: DELC("sc02"),
+      excerpt: "STATUTE (\xA7 1117(a)(2), verbatim): 'The individual may claim either of the following amounts: a. 20% of the corresponding federal earned income tax credit, not to exceed the tax otherwise due under this chapter. b. 4.5% of the corresponding federal earned income tax credit, of which the amount that exceeds the tax otherwise due under this chapter is refundable.' SCHEDULE II (Form PIT-RSS, verbatim): line 12 is the Form PIT-RES line 33 tax less non-refundable credits; line 13 the federal earned income credit; line 14 that credit x .045; line 15 that credit x .20; 'If Line 14 is greater than or equal to Line 12' the refundable branch applies; 'If Line 14 is less than Line 12, compare Line 12 to Line 15, enter the smaller amount' as the non-refundable branch. Form PIT-RES line 34 carries REFUNDABLE and NON-REFUNDABLE checkboxes. ENCODING: the statute grants an ELECTION, but the Division's prescribed comparison is provably the taxpayer-optimal branch in every case, so it is encoded deterministically rather than as a user choice. When 4.5% of the federal credit is at least the remaining tax, the refundable 4.5% is taken in full (it exceeds the non-refundable branch, which cannot pay more than that tax); otherwise the smaller of the remaining tax and 20% of the federal credit is taken, which always beats 4.5%. The election is annual and binds nothing across years. NOTE: Schedule II line 13 cites federal 'Form 1040 or 1040-SR, Line 27' while the instructions say line 28 \u2014 line 27 is the federal earned income credit and is the correct reference. deEitcTaxAfterCredits is the Form PIT-RES line 33 amount (the tax after ALL other non-refundable credits), not the line 24 tax."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { nonrefundablePct: { value: "20", type: "int" }, refundablePctBps: { value: "450", type: "int" } },
+    formula: (() => {
+      const fed = max021(fact36("deFederalEic"));
+      const remaining = max021(fact36("deEitcTaxAfterCredits"));
+      const refundable = dollarsFromScaled13(times12(fed, "450"));
+      const nonrefundable = minE10(remaining, dollarsFromScaled13(times12(fed, "2000")));
+      return iff20(ge9(refundable, remaining), refundable, nonrefundable);
+    })()
+  },
+  {
+    id: "us.de.child_care_credit",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware child and dependent care credit 2025 \u2014 50% of the federal credit, not more than $3,000 and not more than the tax otherwise due; nonrefundable (Form PIT-RES line 31)",
+    citation: {
+      source: "30 Del. C. \xA7 1114(a); 2025 PIT-RES Instructions p. 10 line 31 and its worksheet; printed 2025 Form PIT-RES line 31",
+      section: "30 Del. C. \xA7 1114(a); Form PIT-RES line 31",
+      url: DELC("sc02"),
+      excerpt: "STATUTE (\xA7 1114(a), verbatim): '50 percent of the child and dependent care expense credit allowable for federal income tax purposes \u2026 In no event shall the allowable credit under this subsection exceed the tax otherwise due'. FORM (line 31, verbatim): 'CHILD CARE CREDIT (Enter 50% of Federal credit)'. WORKSHEET: federal Form 2441 line 11 x .50, and 'Do not enter an amount in excess of $3,000.' ENCODING: NONREFUNDABLE and capped at the tax; the composer applies the tax cap across the whole line 27a-31 block as the instructions require ('The total of all non-refundable credits (Lines 27a through 31) is limited to the amount of your Delaware tax liability on Line 26'), so this rule reports the credit earned before that block cap. On a combined separate return the credit is applied against the spouse with the LOWER taxable income \u2014 the opposite of the earned income credit, which uses the higher."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "50", type: "int" }, cap: { value: "300000", type: "money" } },
+    formula: minE10(dollarsFromScaled13(times12(max021(fact36("deFederalChildCareCredit")), "5000")), money33("300000"))
+  },
+  {
+    id: "us.de.other_state_credit",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware credit for tax imposed by another state 2025 \u2014 the tax times the ratio of income from the other state to Delaware adjusted gross income (capped at 100%), limited to the tax actually paid to that state; computed per state (Form PIT-RES line 28, DE Schedule I)",
+    citation: {
+      source: "30 Del. C. \xA7 1111; 2025 PIT-RES Instructions p. 9 line 28 and its worksheet; 2025 Form PIT-RSS 'DE SCHEDULE I - CREDIT FOR INCOME TAXES PAID TO ANOTHER STATE'",
+      section: "30 Del. C. \xA7 1111; Form PIT-RES line 28",
+      url: DELC("sc02"),
+      excerpt: "STATUTE (\xA7 1111(b)): the credit is limited 'with respect to the income tax imposed upon the taxpayer for the taxable year by each other taxing jurisdiction' \u2014 PER STATE \u2014 by a fraction of TAXABLE income. WORKSHEET (Instructions p. 9, verbatim): line 1 'adjusted gross income from the other state return'; line 2 'Delaware adjusted gross income (Line 12 of return)'; line 3 'divide Line 1 by Line 2 \u2026 If Line 1 is greater than Line 2: enter 100%'; line 5 = line 3 x the line 24 tax; line 6 the taxes paid net of credits, excluding city and county taxes; line 7 'the lesser of 5 or 6'. STATUTE-FORM DIVERGENCE: \xA7 1111(b) frames the limiting fraction in terms of TAXABLE income, while the printed worksheet uses ADJUSTED GROSS income (its line 2 is Form PIT-RES line 12, Delaware AGI). The printed worksheet is encoded \u2014 it is what filers compute and what the Division processes. NO ROUNDING CONVENTION IS PRINTED anywhere on the worksheet or the schedule, so this rule carries the ratio at full precision and rounds ONCE to whole dollars at the product; that is the most conservative reading and it is disclosed here rather than inferred. PER STATE: DE Schedule I provides five state lines, 'Enter the credit in the highest to lowest amount order', summed on line 6 \u2014 this rule computes ONE state and the composer sums. The District of Columbia counts as a state; political subdivisions (city and county taxes) do not qualify."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { ratioCap: { value: "1", type: "int" } },
+    formula: (() => {
+      const deAgi = fact36("deAdjustedGrossIncome");
+      const otherAgi = max021(fact36("deOtherStateIncome"));
+      const capped = minE10(otherAgi, deAgi);
+      const share2 = dollarsFromScaled13({ kind: "mulDiv", a: times12(max021(fact36("deIncomeTax")), "10000"), b: capped, c: deAgi, round: "half-up" });
+      return iff20(gt12(deAgi, money33("0")), minE10(share2, max021(fact36("deOtherStateTaxPaid"))), money33("0"));
+    })()
+  },
+  {
+    id: "us.de.volunteer_firefighter_credit",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware volunteer firefighter credit 2025 \u2014 $1,000 for each qualifying volunteer firefighter, ambulance or rescue squad member; nonrefundable (Form PIT-RES line 29)",
+    citation: {
+      source: "30 Del. C. \xA7 1113; 2025 PIT-RES Instructions p. 10 line 29; printed 2025 Form PIT-RES line 29",
+      section: "30 Del. C. \xA7 1113; Form PIT-RES line 29",
+      url: DELC("sc02"),
+      excerpt: "FORM (line 29, verbatim): 'VOLUNTEER FIREFIGHTER CREDIT'. \xA7 1113 allows $1,000 against the tax for an active volunteer firefighter or member of a volunteer fire company auxiliary, ambulance or rescue squad. ONE credit per qualifying person, so a joint return on which both spouses qualify claims $2,000; on a combined separate return each column claims its own. Nonrefundable and swept into the line 27a-31 block that the instructions limit to the line 26 tax. The Division verifies this credit before processing \u2014 the booklet warns 'Credits such as firefighter and business credits are verified before return is processed' \u2014 so it is gated on an explicit attestation and defaults to not claimed."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perPerson: { value: "100000", type: "money" } },
+    formula: mulInt18(money33("100000"), minE10(fact36("deVolunteerFirefighters"), int13("2")))
+  },
+  {
+    id: "us.de.parameters",
+    version: 1,
+    jurisdiction: "us.de",
+    title: "Delaware 2025 Form PIT-RES parameters \u2014 line structure, the five filing statuses and the combined separate two-column return, modifications, credits, and the enacted TY2026-TY2027 position",
+    citation: {
+      source: "2025 PIT-RES Instructions (Revised 03/26/26); printed 2025 Form PIT-RES (Revision 20260407) and Form PIT-RSA; 2025 State Income Tax Table; 2026 Form PIT-EST Instructions (Revised 11/10/25); 30 Del. C. \xA7\xA7 1102, 1105-1111; 85 Del. Laws c. 231 (House Bill 255, approved November 19, 2025) and c. 426 (Senate Bill 219, approved August 17, 2026); web-verified September 2026",
+      section: "Form PIT-RES lines 1-40",
+      url: INSTR_URL2,
+      excerpt: "FILING STATUS (printed on Form PIT-RES p. 1, verbatim): '1. Single, Divorced, Widow(er)  2. Joint  3. Married & Filing Separate Forms  4. Married & Filing Combined Separate on this form  5. Head of Household'. COLUMN RULE (banner above Section A on pages 1 and 2, verbatim): 'Column A is for Spouse information, Filing status 4 only. All other filing status use Column B.' INSTRUCTIONS (p. 5, verbatim): 'FILING STATUS 2, 3, AND 4 - MARRIED TAXPAYERS. You may file Joint, Separate, or Combined Separate Delaware returns. If you use Filing Status 4, you are in fact filing two separate returns which have been combined on the same form for convenience.' 'NOTE: Generally, separate returns (filing status 3 or 4) will be advantageous if both spouses have Delaware adjusted gross income in excess of $9,400.' 'If you elect to use Filing Status 3 or 4, both you and your spouse must compute your taxable income the same way. This means if one itemizes deductions, the other must itemize. If one takes the standard deduction, the other must take the standard deduction in computing taxable income.' 'For Filing Status 3 or 4, you must each report your own income, personal credits, deductions, and one-half of the income derived from securities, bank accounts, real estate, etc., which are titled or registered in joint names.' (\xA7 1109(b): 'Spouses, both of whom are required to file returns under this chapter, shall be allowed to itemize their deductions only if both elect to do so.') STRUCTURE (printed Form PIT-RES, verbatim): 'SECTION A - ADDITIONS: 1. FEDERAL AGI AMOUNT FROM FEDERAL FORM 1040; 2. INTEREST ON STATE & LOCAL OBLIGATIONS OTHER THAN DELAWARE; 3. FIDUCIARY ADJUSTMENT, OIL DEPLETION; 4. TOTAL - Add Lines 1 through 3. SECTION B - SUBTRACTIONS: 5. INTEREST RECEIVED ON U.S. OBLIGATIONS; 6. PENSION/RETIREMENT EXCLUSIONS; 7. DELAWARE STATE TAX REFUND, FIDUCIARY ADJUSTMENT, WORK OPPORTUNITY TAX CREDIT, DELAWARE NOL CARRYFORWARD, ETC.; 8a. TAXABLE SOCIAL SECURITY/RR RETIREMENT BENEFITS/HIGHER EDUCATION EXCLUSION/CERTAIN LUMP SUM DISTRIBUTIONS; 8b. 529 CONTRIBUTION TO DELAWARE-SPONSORED TUITION PROGRAM OR ABLE PROGRAM; 9. Add Lines 5 through 8b; 10. Subtract Line 9 from Line 4; 11. EXCLUSION FOR CERTAIN PERSONS 60 AND OVER OR DISABLED; 12. DELAWARE ADJUSTED GROSS INCOME. Subtract Line 11 from Line 10.' Then lines 13-19 the itemized detail, 20a the standard deduction, 20b itemized, 21 the additional standard deduction, 22 total deductions, 23 taxable income, 24 the tax, 27a-27b the personal credits, 33 the credit cap, and the payments and refund block through line 40. SOCIAL SECURITY (\xA7 1106(b)(4), verbatim): 'Social Security benefits paid by the United States and all payments received under the Railroad Retirement Act of 1974 \u2026 to the extent included in federal adjusted gross income' \u2014 fully excluded on line 8a, no cap, no age test, no phase-out, and INDEPENDENT of the line 6 pension exclusion. Instructions p. 7: 'Social Security and Railroad Retirement benefits are not taxable in Delaware and, therefore, should not be included in taxable income.' OTHER SUBTRACTIONS: interest on U.S. obligations (\xA7 1106(b)(1)); the higher-education exclusion for plan distributions applied to books, tuition or fees (\xA7 1106(b)(8)); DE529 contributions up to $1,000 ($2,000 joint), phased out entirely above $100,000 of federal AGI ($200,000 joint) and not available for K-12 tuition (\xA7 1106(b)(11)); Delaware ABLE contributions up to $5,000 ($10,000 joint) (\xA7 1106(b)(12)); Travelink benefits (\xA7 1106(b)(6)); the Work Opportunity Tax Credit wage disallowance (\xA7 1106(b)(5)); and the Delaware net operating loss carryforward of losses blocked by the $30,000 carryback cap (\xA7 1106(a)(3), (b)(7)). ADDITIONS: non-Delaware state and municipal bond interest (\xA7 1106(a)(1)), percentage depletion above cost depletion (\xA7 1106(a)(2)), and the fiduciary adjustment (\xA7 1106(c)). ITEMIZED DEDUCTIONS are allowed and are DECOUPLED from the federal election \u2014 Instructions p. 7: 'If you claimed a standard deduction on your federal return, you may still elect to itemize your deductions on the Delaware return. In this case, complete and attach Form PIT-RSA.' They are reduced by Delaware income tax and by other-state tax taken as a \xA7 1111 credit, and increased by foreign taxes paid, the charitable mileage differential (Instructions p. 7: 'Miles driven 1/1/2025-12/31/2025 ____ x .26'), and up to $500 of active labor organization dues (\xA7 1109(a)(2)d., new for TY2024). PIT-RSA carries the federal SALT structure: 'Enter the smaller of line 5e \u2026 or $40,000 ($20,000 if married filing separately)'. TY2026: the rates, brackets, standard deduction, additional standard deduction, personal credits and pension exclusion are ALL UNCHANGED \u2014 the 2026 PIT-EST Instructions (Revised 11/10/25) print the identical schedule, '$3,250 single, divorced or widow(er), head of household \u2026 $6,500 if married filing jointly', '$2,500 for taxpayer &/or spouse. If 65 years old or over or blind', 'Pension Exclusions - per person ($2,000 under 60 years of age/$12,500 if 60 or over /$12,500 if from qualified military pension)' and 'Personal Credits ($110.00 X total number of Federal Exemptions and exemptions for being 60 or older)', and \xA7\xA7 1102, 1108 and 1110 were not amended. The 2026 tax table and the TY2026 PIT-RES form are NOT yet published. The bracket-restructuring bills of the 153rd General Assembly (House Bill 13 and both substitutes, which would have added 6. TWO 153rd General Assembly enactments DO touch \xA7 1106 and are not modeled as rules: 85 Del. Laws c. 231 (House Bill 255 with House Amendments 2 and 3, approved November 19, 2025) adds \xA7 1106(d), decoupling from the P.L. 119-21 (OBBBA) \xA7 70301 expensing and \xA7 70307 qualified production property depreciation for property placed in service after December 31, 2025 and before January 1, 2031 \u2014 a TY2026 addition or subtraction that belongs in the generic additions/subtractions inputs; and 85 Del. Laws c. 426 (Senate Bill 219 with Senate Amendment 1, August 17, 2026), which adds the \xA7 1106(b)(3)f.4 domicile gate on the 60-or-over pension exclusion (encoded as us.de.pension_exclusion version 2) and raises the military pension exclusion for 2027 and after.75% and 6.95% tiers) DIED in House Revenue & Finance; House Bill 108 (pension exclusion to $25,000) likewise. What WAS enacted across the 152nd and 153rd General Assemblies, exhaustively \u2014 the complete set of 84 and 85 Del. Laws citations in the credit lines of Chapter 11 subchapters I and II: 84 Del. Laws c. 192 (Senate Substitute 2 for Senate Bill 72, approved August 31, 2023) added the \xA7 1109(a)(2)d. labor-organization dues deduction 'For tax years beginning on or after January 1, 2024'; c. 233 (Senate Bill 125, approved September 21, 2023) repealed \xA7 1116, the Delaware investment credit; c. 366 (House Bill 324, approved August 15, 2024) RELOCATED the organ and bone marrow donation credit from \xA7 20E-103 to \xA7 1118 (83 Del. Laws c. 440 created it) and added \xA7 1109(a)(1)c.; c. 437 (Senate Bill 329, approved September 26, 2024) expanded the military pension definition; and 85 Del. Laws c. 231 (House Bill 255, approved November 19, 2025) adds \xA7 1106(d) decoupling Delaware from the P.L. 119-21 bonus depreciation and qualified production property provisions, whose section 3 reads 'Section 1 of this Act is effective upon enactment and applies to tax years beginning on or after January 1, 2022. Section 2 of this Act is effective January 1, 2026', so the personal side first applies TY2026 \u2014 a Schedule-level modification, not a rate or credit change; and 85 Del. Laws c. 426 (Senate Bill 219, approved August 17, 2026) raises the MILITARY pension exclusion to $15,000 for TY2027, $20,000 for TY2028 and $25,000 for TY2029 and after, and adds the 3-year / 5-year Delaware domicile requirement \u2014 first applying to TY2027. OUT OF SCOPE: nonresident and part-year returns (Form PIT-NON), the separate tax on lump-sum distributions (Form PIT-STC, \xA7 1102(b)), the itemized-deduction detail on Form PIT-RSA, Delaware S corporation payments (Schedule V), and county or school district levies (Delaware has no local income tax)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      de529Cap: { value: "100000", type: "money" },
+      de529CapJoint: { value: "200000", type: "money" },
+      de529AgiPhaseout: { value: "10000000", type: "money" },
+      de529AgiPhaseoutJoint: { value: "20000000", type: "money" },
+      deAbleCap: { value: "500000", type: "money" },
+      deAbleCapJoint: { value: "1000000", type: "money" },
+      nolCarrybackCap: { value: "3000000", type: "money" },
+      laborDuesCap: { value: "50000", type: "money" },
+      charitableMileageRateCents: { value: "26", type: "int" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Delaware Form PIT-RES composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.de.income_tax, us.de.standard_deduction, us.de.personal_credits, us.de.pension_exclusion, and us.de.elderly_disabled_exclusion"
+    }
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-nd.js
+var cmp14 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt21 = (l, r) => cmp14("lt", l, r);
+var gt13 = (l, r) => cmp14("gt", l, r);
+var iff21 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add18 = (...args) => ({ kind: "add", args });
+var sub22 = (left, right) => ({ kind: "sub", left, right });
+var max022 = (arg) => ({ kind: "max0", arg });
+var minE11 = (...args) => ({ kind: "min", args });
+var and9 = (...args) => ({ kind: "and", args });
+var mulInt19 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits10 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus30 = (v) => cmp14("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJointCol = { kind: "or", args: [isStatus30("mfj"), isStatus30("qss")] };
+var isMfs8 = isStatus30("mfs");
+var isHoh7 = isStatus30("hoh");
+var times13 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled14 = (n) => times13({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var scheduleTax5 = (x, s) => {
+  const mid = dollarsFromScaled14(times13(sub22(x, money33(s.zeroTop)), "195"));
+  const top = dollarsFromScaled14(add18(times13(money33(s.anchorCents), "10000"), times13(sub22(x, money33(s.midTop)), "250")));
+  return iff21(gt13(x, money33(s.midTop)), top, iff21(gt13(x, money33(s.zeroTop)), mid, money33("0")));
+};
+var byStatus2 = (x, y) => iff21(isJointCol, scheduleTax5(x, y.joint), iff21(isMfs8, scheduleTax5(x, y.mfs), iff21(isHoh7, scheduleTax5(x, y.hoh), scheduleTax5(x, y.single))));
+var Y2025 = {
+  single: { zeroTop: "4847500", midTop: "24482500", anchorCents: "382883" },
+  // $48,475 / $244,825 / $3,828.83
+  joint: { zeroTop: "8097500", midTop: "29807500", anchorCents: "423345" },
+  // $80,975 / $298,075 / $4,233.45
+  mfs: { zeroTop: "4047500", midTop: "14902500", anchorCents: "211673" },
+  // $40,475 / $149,025 / $2,116.73
+  hoh: { zeroTop: "6495000", midTop: "27145000", anchorCents: "402675" }
+  // $64,950 / $271,450 / $4,026.75
+};
+var Y2026 = {
+  single: { zeroTop: "4957500", midTop: "25040000", anchorCents: "391609" },
+  // $49,575 / $250,400 / $3,916.09
+  joint: { zeroTop: "8280000", midTop: "30485000", anchorCents: "432998" },
+  // $82,800 / $304,850 / $4,329.98
+  mfs: { zeroTop: "4140000", midTop: "15242500", anchorCents: "216499" },
+  // $41,400 / $152,425 / $2,164.99
+  hoh: { zeroTop: "6640000", midTop: "27760000", anchorCents: "411840" }
+  // $66,400 / $277,600 / $4,118.40
+};
+var line20Tax = (x, y) => {
+  const mid = add18(mulInt19(money33("5000"), stepUnits10(x, "5000", "floor")), money33("2500"));
+  const table2 = byStatus2(mid, y);
+  return iff21(fact36("ndUseRateSchedule"), byStatus2(x, y), iff21(lt21(x, money33("10000000")), table2, byStatus2(x, y)));
+};
+var FORMS5 = "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/";
+var BOOKLET = FORMS5 + "2025-individual-income-tax-booklet.pdf";
+var TABLE_URL2 = FORMS5 + "tax-tables-2025.pdf";
+var SCHEDULE_EXCERPT = "2025 TAX RATE SCHEDULES (standalone tax-tables-2025.pdf, verbatim): 'If your North Dakota taxable income is $100,000 or more, use the tax rate schedule below for your filing status to calculate your tax.' SINGLE: '$0 to $48,475 \u2014 0.00% of North Dakota taxable income; 48,475 to 244,825 \u2014 $0.00 + 1.95% of amount over $48,475; 244,825 \u2014 3,828.83 + 2.50% of amount over 244,825.' MARRIED FILING JOINTLY AND QUALIFYING SURVIVING SPOUSE: '$0 to $80,975 \u2014 0.00%; 80,975 to 298,075 \u2014 $0.00 + 1.95% of amount over $80,975; 298,075 \u2014 4,233.45 + 2.50% of amount over 298,075.' MARRIED FILING SEPARATELY: '$0 to $40,475 \u2014 0.00%; 40,475 to 149,025 \u2014 $0.00 + 1.95% of amount over $40,475; 149,025 \u2014 2,116.73 + 2.50% of amount over 149,025.' HEAD OF HOUSEHOLD: '$0 to $64,950 \u2014 0.00%; 64,950 to 271,450 \u2014 $0.00 + 1.95% of amount over $64,950; 271,450 \u2014 4,026.75 + 2.50% of amount over 271,450.' The printed anchors are the exact 1.95% products where those are whole cents and the rounded product otherwise: (244,825 \u2212 48,475) x 1.95% = 3,828.825 -> $3,828.83; (298,075 \u2212 80,975) x 1.95% = $4,233.45 exactly; (149,025 \u2212 40,475) x 1.95% = 2,116.725 -> $2,116.73; (271,450 \u2212 64,950) x 1.95% = $4,026.75 exactly. BOOKLET DEFECT: the booklet's joint schedule prints 'of amount over $ 80.975' with a PERIOD; the standalone table and the Department's web page print $80,975 and the anchor arithmetic confirms it.";
+var ndRules = [
+  {
+    id: "us.nd.income_tax",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota income tax 2025 \u2014 three brackets whose first is 0.00%, then 1.95% and 2.50%, at $48,475 / $244,825 single, $80,975 / $298,075 joint and qualifying surviving spouse, $40,475 / $149,025 married filing separately, $64,950 / $271,450 head of household; the printed Tax Table (row midpoint) below $100,000 (Form ND-1 line 20)",
+    citation: {
+      source: "N.D.C.C. \xA7 57-38-30.3(1) (the three-bracket structure, as enacted by House Bill 1158, S.L. 2023 ch. 527, effective for taxable years beginning after December 31, 2022), (1)(g) (annual re-prescription by the Tax Commissioner under IRC \xA7 1(f)) and (10) (the tax tables must be followed); 2025 Tax Rate Schedules and 2025 Tax Table (tax-tables-2025.pdf); 2025 Individual Income Tax Return and Booklet; printed 2025 Form ND-1 (SFN 28702 (12-2025)) line 20",
+      section: "N.D.C.C. \xA7 57-38-30.3(1), (10); Form ND-1 line 20",
+      url: TABLE_URL2,
+      excerpt: "STATUTE (\xA7 57-38-30.3(1), verbatim): 'A tax is hereby imposed for each taxable year upon income earned or received in that taxable year by every resident and nonresident individual, estate, and trust. A taxpayer computing the tax under this section is only eligible for those adjustments or credits that are specifically provided for in this section. \u2026 The tax for individuals is equal to North Dakota taxable income multiplied by the rates in the applicable rate schedule in subdivisions a through d corresponding to an individual's filing status used for federal income tax purposes.' INDEXING (\xA7 57-38-30.3(1)(g), verbatim): 'The tax commissioner shall prescribe new rate schedules that apply in lieu of the schedules set forth in subdivisions a through e. The new schedules must be determined by increasing the minimum and maximum dollar amounts for each income bracket for which a tax is imposed by the cost-of-living adjustment for the taxable year as determined by the secretary of the United States treasury for purposes of section 1(f) of the United States Internal Revenue Code of 1954, as amended. For this purpose, the rate applicable to each income bracket may not be changed'. So the RATES are frozen and only the thresholds move \u2014 and the Century Code keeps printing the 2023 base amounts ($44,725 / $225,975 single, $74,750 / $275,100 joint, $37,375 / $137,550 separate, $59,950 / $250,550 head of household) indefinitely. NEVER take the thresholds from the code; take them from the Commissioner's published schedules. TABLE AUTHORITY (\xA7 57-38-30.3(10), verbatim): 'The tax commissioner may prescribe tax tables, to be used in computing the tax according to subsection 1, if the amounts of the tax tables are based on the tax rates set forth in subsection 1. If prescribed by the tax commissioner, the tables must be followed by every individual, estate, or trust determining a tax under this section.' \u2014 mandatory, not optional. " + SCHEDULE_EXCERPT + " TABLE STRUCTURE (verified on the printed table): 1,195 rows of $50 from '40,250 | 40,300 | 0 | 0 | 0 | 0' to '99,950 | 100,000 | 1,004 | 371 | 1,160 | 683', four columns headed 'Single / Married filing jointly * / Married filing separately / Head of household' under the banner 'Your tax is\u2014', with the footnote '*If a Qualifying surviving spouse, use the Married filing jointly column.' Below $40,250 every column is $0. Marginal note: 'If $100,000 or over \u2014 use the Tax Rate Schedules on next page.' CONVENTION (verified on ALL 1,195 rows in ALL FOUR columns \u2014 4,780 cells, zero exceptions): each cell is the schedule at the row midpoint (at least + $25), rounded half-up. The booklet's own worked example lands on it: 'a married couple filing jointly with $91,900 of ND taxable income falls in the $91,900 \u2013 $91,950 row and owes $214' \u2014 midpoint 91,925 gives 1.95% x $10,950 = 213.525 -> $214. The table never reaches the 2.50% bracket, since every 1.95% bracket top exceeds $100,000. ndUseRateSchedule applies the schedule at the exact income instead."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate2Bps: { value: "195", type: "int" },
+      rate3Bps: { value: "250", type: "int" },
+      zeroTopSingle: { value: "4847500", type: "money" },
+      zeroTopJoint: { value: "8097500", type: "money" },
+      zeroTopMfs: { value: "4047500", type: "money" },
+      zeroTopHoh: { value: "6495000", type: "money" },
+      tableTop: { value: "10000000", type: "money" }
+    },
+    formula: line20Tax(max022(fact36("stateTaxableIncome")), Y2025)
+  },
+  {
+    id: "us.nd.income_tax",
+    version: 2,
+    jurisdiction: "us.nd",
+    title: "North Dakota income tax TY2026 \u2014 the same 0.00% / 1.95% / 2.50% rates on the Commissioner's indexed thresholds: $49,575 / $250,400 single, $82,800 / $304,850 joint and qualifying surviving spouse, $41,400 / $152,425 married filing separately, $66,400 / $277,600 head of household",
+    citation: {
+      source: "2026 Form ND-1ES (SFN 28709 (12-2025)) page 2, '2026 Forms ND-1 and ND-EZ Tax Rate Schedules'; 2026 Income Tax Withholding Rates and Instructions booklet (published December 2025); N.D.C.C. \xA7 57-38-30.3(1)(g)",
+      section: "N.D.C.C. \xA7 57-38-30.3(1), (1)(g); 2026 Form ND-1ES page 2",
+      url: FORMS5 + "28709-form-nd-1es-2026.pdf",
+      excerpt: "2026 FORM ND-1ES (verbatim, '2026 Forms ND-1 and ND-EZ Tax Rate Schedules'): SINGLE '$0 to $49,575 \u2014 0.00% of North Dakota taxable income; 49,575 to 250,400 \u2014 0.00 + 1.95% of amount over $49,575; 250,400 \u2014 3,916.09 + 2.50% of amount over 250,400.' MARRIED FILING JOINTLY AND QUALIFYING SURVIVING SPOUSE '$0 to $82,800 \u2014 0.00%; 82,800 to 304,850 \u2014 0.00 + 1.95% of amount over $82,800; 304,850 \u2014 4,329.98 + 2.50% of amount over 304,850.' MARRIED FILING SEPARATELY '$0 to $41,400 \u2014 0.00%; 41,400 to 152,425 \u2014 0.00 + 1.95% of amount over $41,400; 152,425 \u2014 2,164.99 + 2.50% of amount over 152,425.' HEAD OF HOUSEHOLD '$0 to $66,400 \u2014 0.00%; 66,400 to 277,600 \u2014 0.00 + 1.95% of amount over $66,400; 277,600 \u2014 4,118.40 + 2.50% of amount over 277,600.' Anchor arithmetic: (250,400 \u2212 49,575) x 1.95% = 3,916.0875 -> $3,916.09; (304,850 \u2212 82,800) x 1.95% = 4,329.975 -> $4,329.98; (152,425 \u2212 41,400) x 1.95% = 2,164.9875 -> $2,164.99; (277,600 \u2212 66,400) x 1.95% = $4,118.40 exactly. PARTIAL CORROBORATION: the 2026 Income Tax Withholding Rates booklet's annual payroll tables carry the same rates and two of the bracket WIDTHS \u2014 its 'Single person' table runs $57,625 to $258,450 (a width of $200,825, exactly 250,400 \u2212 49,575) with the identical base tax $3,916.09, and its table headed 'Married person' runs $57,500 to $168,525 (width $111,025 = 152,425 \u2212 41,400) with base tax $2,164.99, i.e. the MARRIED FILING SEPARATELY schedule, not the joint one. The withholding booklet therefore corroborates the single and separate schedules only; it nowhere prints $82,800, $304,850, $4,329.98, $66,400, $277,600 or $4,118.40, so the joint and head-of-household TY2026 schedules rest on Form ND-1ES alone (their anchors reproduce arithmetically from the printed thresholds). The withholding thresholds themselves are shifted because they are applied to wages net of allowances. NO RATE CHANGE for 2026 \u2014 only the thresholds moved (the zero-bracket top rises $1,100 single, $1,825 joint, $925 separate, $1,450 head of household). The 2026 Form ND-1, its booklet and its Tax Table are NOT yet published, so this rule applies the SCHEDULE at the exact income for every taxable income and does not reproduce an unpublished $50-row table; expect at most the value of half a row of divergence from the eventual printed table, and re-verify when it publishes."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate2Bps: { value: "195", type: "int" },
+      rate3Bps: { value: "250", type: "int" },
+      zeroTopSingle: { value: "4957500", type: "money" },
+      zeroTopJoint: { value: "8280000", type: "money" },
+      zeroTopMfs: { value: "4140000", type: "money" },
+      zeroTopHoh: { value: "6640000", type: "money" }
+    },
+    formula: byStatus2(max022(fact36("stateTaxableIncome")), Y2026)
+  },
+  {
+    id: "us.nd.capital_gain_exclusion",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota net long-term capital gain exclusion 2025 \u2014 40% of the lesser of federal Schedule D lines 15 and 16, net of any gain already excluded elsewhere (Form ND-1 line 6)",
+    citation: {
+      source: "N.D.C.C. \xA7 57-38-30.3(2)(d)(1); 2025 Individual Income Tax Booklet page 12 (line 6) and its worksheet on page 13; printed 2025 Form ND-1 line 6",
+      section: "N.D.C.C. \xA7 57-38-30.3(2)(d)(1); Form ND-1 line 6",
+      url: BOOKLET,
+      excerpt: "STATUTE (\xA7 57-38-30.3(2)(d)(1), verbatim): North Dakota taxable income is 'Reduced by forty percent of: (1) The excess of the taxpayer's net long-term capital gain for the taxable year over the net short-term capital loss for that year, as computed for purposes of the Internal Revenue Code of 1986, as amended. The adjustment provided by this subdivision is allowed only to the extent the net long-term capital gain is allocated to this state.' BOOKLET (page 12, verbatim): 'If your federal taxable income includes a net long-term capital gain (including a capital gain distribution from a mutual fund), you may be able to exclude 40 percent of the gain from your North Dakota taxable income. If you were a full-year nonresident or a part-year resident of North Dakota for the year, only a net long-term capital gain reportable to North Dakota is eligible for the exclusion. A net long-term capital gain included in an amount entered on line 7, or 16 of Form ND-1 is not eligible for the exclusion.' WORKSHEET (page 13): line 1 is 2025 Schedule D (Form 1040) line 15 and line 2 is Schedule D line 16, each with 'If zero or less, stop here; no exclusion is allowed'; line 3 is the smaller of the two; a full-year resident carries line 3 to line 5; line 6 removes the portion already included in ND-1 line 7 or 16; line 7 subtracts; line 8 multiplies by 40%. 'Capital gain distribution \u2014 If you reported capital gain distributions on Form 1040 or 1040-SR, line 7 (and you did not have to complete Schedule D), skip lines 1 and 2 and enter the distributions on line 3 of this worksheet.' ENCODING: ndNetLongTermCapitalGain is worksheet line 3 (the smaller of Schedule D lines 15 and 16, or the capital gain distributions when no Schedule D was required); ndCapitalGainAlreadyExcluded is worksheet line 6. Both are zero or positive \u2014 the worksheet stops outright if either Schedule D figure is zero or less, so a net loss produces no exclusion rather than a negative one."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "40", type: "int" } },
+    formula: dollarsFromScaled14(times13(max022(sub22(max022(fact36("ndNetLongTermCapitalGain")), max022(fact36("ndCapitalGainAlreadyExcluded")))), "4000"))
+  },
+  {
+    id: "us.nd.qualified_dividend_exclusion",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota qualified dividend exclusion 2025 \u2014 40% of the qualified dividends on federal Form 1040 line 3a (Form ND-1 line 13)",
+    citation: {
+      source: "N.D.C.C. \xA7 57-38-30.3(2)(d)(2); 2025 Individual Income Tax Booklet (line 13); printed 2025 Form ND-1 line 13",
+      section: "N.D.C.C. \xA7 57-38-30.3(2)(d)(2); Form ND-1 line 13",
+      url: BOOKLET,
+      excerpt: "STATUTE (\xA7 57-38-30.3(2)(d)(2), verbatim): North Dakota taxable income is reduced by forty percent of 'Qualified dividends as defined under Internal Revenue Code section 1(h)(11) \u2026 but only if taxed at a federal income tax rate that is lower than the regular federal income tax rates applicable to ordinary income. If, for any taxable year, qualified dividends are taxed at the regular federal income tax rates applicable to ordinary income, the reduction allowed under this subdivision is equal to thirty percent of all dividends included in federal taxable income. The adjustment provided by this subdivision is allowed only to the extent the qualified dividend income is allocated to this state.' BOOKLET (line 13): the exclusion is 40% of Form 1040 or 1040-SR LINE 3A; a part-year resident or nonresident takes 40% of the portion reported to North Dakota (Schedule ND-1NR line 2, column B). ENCODING: the 40% branch is applied, which is the operative one for 2025 \u2014 qualified dividends were taxed at preferential federal rates. The statute's fallback (30% of ALL dividends, not merely qualified ones, if qualified dividends are ever taxed at ordinary rates) is NOT modelled and would need a new rule version if federal law changed; it is named here so the omission is visible."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "40", type: "int" }, ordinaryRateFallbackPct: { value: "30", type: "int" } },
+    formula: dollarsFromScaled14(times13(max022(fact36("ndQualifiedDividends")), "4000"))
+  },
+  {
+    id: "us.nd.college_save_deduction",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota College SAVE contribution deduction 2025 \u2014 up to $5,000, or $10,000 on a joint return (Form ND-1 line 12)",
+    citation: {
+      source: "2025 Individual Income Tax Booklet (line 12); printed 2025 Form ND-1 line 12; N.D.C.C. \xA7 57-38-30.3(2)(m)",
+      section: "Form ND-1 line 12",
+      url: BOOKLET,
+      excerpt: "BOOKLET (line 12): the deduction is for contributions to a North Dakota College SAVE account administered by the Bank of North Dakota, capped at $5,000, or $10,000 if married filing jointly. ROLLOVERS FROM ANOTHER SECTION 529 PLAN DO NOT QUALIFY. ENCODING: the doubled cap requires a JOINT return \u2014 a qualifying surviving spouse shares the joint RATE column under the table's footnote but is not a joint return for this cap."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { cap: { value: "500000", type: "money" }, capJoint: { value: "1000000", type: "money" } },
+    formula: minE11(max022(fact36("ndCollegeSaveContributions")), iff21(isStatus30("mfj"), money33("1000000"), money33("500000")))
+  },
+  {
+    id: "us.nd.marriage_penalty_credit",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota marriage penalty credit 2025 \u2014 for a joint return with North Dakota taxable income over $81,036 where the lower-earning spouse's qualified income exceeds $47,550: the joint tax less the sum of two single-schedule computations, capped at $312 (Form ND-1 line 22)",
+    citation: {
+      source: "N.D.C.C. \xA7 57-38-30.3(7); 2025 Individual Income Tax Booklet page 14, Marriage Penalty Credit Worksheet; printed 2025 Form ND-1 line 22",
+      section: "N.D.C.C. \xA7 57-38-30.3(7); Form ND-1 line 22",
+      url: BOOKLET,
+      excerpt: "WORKSHEET (2025 booklet, Marriage Penalty Credit Worksheet, verbatim): '1. Is your filing status Married filing jointly? No. Stop; you do not qualify for the credit. Yes. Enter your taxable income from Form ND-1, line 18. 2. Is the amount on line 1 more than $81,036? No. Stop; you do not qualify for the credit. Yes. Go to line 3. 3. a. Enter your qualified income; b. Enter your spouse's qualified income. 4. Enter the smaller of line 3a or line 3b. 5. Is the amount on line 4 more than $47,550? No. Stop; you do not qualify for the credit. Yes. Go to line 6 ... 15,750.00. 6. Subtract line 5 from line 4. 7. Calculate the tax on the amount on line 6 using the Single tax rate schedule. 8. Subtract line 6 from line 1. 9. Calculate the tax on the amount on line 8 using the Single tax rate schedule. 10. Calculate the tax on the amount on line 1 using the Married filing jointly tax rate schedule. 11. Add lines 7 and 9. 12. Subtract line 11 from line 10. If result is zero or less, stop; you do not qualify for the credit. 13. Maximum credit ... 312.00. 14. Enter smaller of line 12 or line 13.' QUALIFIED INCOME (booklet): wages, salaries and tips from Form 1040 line 1z; net self-employment income from Schedule SE line 3 reduced by the Schedule 1 line 15 self-employment tax deduction; and the taxable IRA, pension, annuity and Social Security amounts from lines 4b, 5b and 6b \u2014 then 'Reduce this total by amounts entered on Form ND-1, lines 8 and 15' (the Railroad Retirement and Social Security exclusions). Eligibility prose adds the honest warning: 'Although you meet all of the above conditions, your fact situation may not produce a credit under the calculation formula prescribed by law.' THE $15,750 ON LINE 5 IS PREPRINTED and is HALF the federal married-filing-jointly basic standard deduction ($31,500 / 2), per N.D.C.C. \xA7 57-38-01.28(4)(b), which defines the lesser-earning spouse's qualifying income as that income 'minus the sum of: (1) The amount for one exemption under section 151(d) \u2026; and (2) One-half of the amount of the standard deduction under section 63(c)(2)(A)'. The series bears this out: the 2024 worksheet printed 14,600.00 ($29,200 / 2) with a $303 maximum and the 2023 worksheet 13,850.00 ($27,700 / 2). MAXIMUM: \xA7 57-38-01.28(1) sets 'a credit of not to exceed three hundred dollars per couple' and directs the commissioner to adjust it 'each taxable year at the time and rate adjustments are made to rate schedules' \u2014 $300 base, $303 for 2024, $312 for 2025. PRINTED INCONSISTENCY, disclosed rather than silently resolved: the worksheet's screening gates do NOT line up with the 2025 bracket boundaries \u2014 line 2 gates at $81,036 while the joint zero-bracket top is $80,975, and line 5 gates at $47,550 while the single zero-bracket top is $48,475. A joint filer at, say, $81,000 of taxable income is screened out at line 2 even though the line 12 arithmetic would produce a positive credit. The same mismatch appears in the 2024 and 2023 worksheets, so it is the Commissioner's deliberate screening figure rather than a typo. THE GATES ARE ENCODED AS PRINTED, because they are what the filed worksheet does. ENCODING: this rule takes the three schedule evaluations as computed amounts \u2014 ndSingleScheduleTaxA is worksheet line 7 (the tax on the lower qualified income less $15,750) and ndSingleScheduleTaxB is line 9 (the tax on taxable income less that same line 6 amount), both on the SINGLE schedule, and ndJointScheduleTax is line 10 (taxable income on the JOINT schedule) \u2014 and applies the two gates, the line 12 subtraction and the $312 cap. The composer runs the three evaluations. Every figure here is a 2025 printed amount that moves with the indexed schedules, so this rule ends 2026-01-01; the 2026 worksheet publishes with the 2026 booklet around December 2026. NOT AT RISK: House Bill 1388 of the 2025 session would have changed the rates and REPEALED \xA7 57-38-01.28 outright, but it failed in the Senate \u2014 the credit survives intact."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { maximumCredit: { value: "31200", type: "money" }, taxableIncomeFloor: { value: "8103600", type: "money" }, lowerIncomeFloor: { value: "4755000", type: "money" }, halfJointStandardDeduction: { value: "1575000", type: "money" } },
+    formula: (() => {
+      const eligible = and9(isStatus30("mfj"), gt13(fact36("ndTaxableIncome"), money33("8103600")), gt13(fact36("ndLowerQualifiedIncome"), money33("4755000")));
+      const excess = max022(sub22(max022(fact36("ndJointScheduleTax")), add18(max022(fact36("ndSingleScheduleTaxA")), max022(fact36("ndSingleScheduleTaxB")))));
+      return iff21(eligible, minE11(excess, money33("31200")), money33("0"));
+    })()
+  },
+  {
+    id: "us.nd.other_state_credit",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota credit for income tax paid to another state or its local jurisdictions 2025 \u2014 the North Dakota tax times the ratio of doubly taxed income to the income base (four decimals, capped at 1), limited to the net income tax actually paid; computed per state (Form ND-1 line 21, Schedule ND-1CR)",
+    citation: {
+      source: "Schedule ND-1CR (2025), SFN 28721 (12-2025), 'CREDIT FOR INCOME TAX PAID TO ANOTHER STATE OR LOCAL JURISDICTION'; N.D.C.C. \xA7 57-38-30.3; printed 2025 Form ND-1 line 21",
+      section: "Schedule ND-1CR; Form ND-1 line 21",
+      url: FORMS5 + "28721-schedule-nd-cr-2025.pdf",
+      excerpt: "SCHEDULE ND-1CR (verbatim): '1a. Federal adjusted gross income from Form ND-1, line 1a. 1b. How much of the amount on line 1a has its source in the other state? If none, stop here; you are not eligible for this credit. 1c. How much of the amount on line 1b did you (and your spouse, if filing jointly) receive or earn while a resident of North Dakota? If none, stop here. 2. Enter the applicable amount for your residency status \u2014 Full-year resident: Enter the amount from Form ND-1, line 1a, less the amount from Form ND-1, line 5. Part-year resident: Enter the amount from Schedule ND-1NR, line 18. 3. Divide line 1c by line 2. Round to nearest four decimal places. If line 1c is equal to or more than line 2, enter 1. 4. North Dakota tax from Form ND-1, line 20. 5. Multiply line 4 by line 3. 6. Enter the amount of income tax paid to the other state and its local jurisdictions. 7. Credit - Enter the smaller of line 5 or line 6. Enter this amount on Form ND-1, line 21.' NET INCOME TAX (instructions): 'Enter on line 6 the amount of net income tax shown on the other state's income tax return \u2026 'Net income tax' means the amount after income tax credits but before withholding and estimated taxes.' PER STATE (verbatim): 'If you paid income tax to more than one other state for the tax year, complete a separate Schedule ND-1CR for each state. If you also paid income tax to a local jurisdiction in another state, include the income tax paid to the local jurisdiction on the Schedule ND-1CR completed for the state in which the local jurisdiction is located. Add the separate credit amounts from all of the Schedule ND-1CR forms and enter the total on Form ND-1, line 21.' \u2014 this rule computes ONE state and the composer sums. SCOPE: 'state' means any of the other 49 states, the District of Columbia and a United States territory; FOREIGN COUNTRIES DO NOT QUALIFY; the credit is not allowed on the strength of withholding or estimated payments alone, since a return must actually be filed in the other state. MONTANA AND MINNESOTA WAGE RECIPROCITY: wages earned there are NOT eligible \u2014 the filer takes a refund on that state's own return \u2014 while non-wage Montana and Minnesota income does use Schedule ND-1CR. ENCODING: the ratio is rounded to FOUR decimal places and capped at 1 exactly as printed, then applied to the line 20 tax with one rounding to whole dollars; the full-year resident base (line 2) is federal AGI less the ND-1 line 5 United States obligation interest. Part-year and nonresident filers use the Schedule ND-1NR line 18 base and the lines 8-11 branch, which is out of scope for this full-year-resident rule."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { ratioDecimals: { value: "4", type: "int" } },
+    formula: (() => {
+      const base = fact36("ndOtherStateIncomeBase");
+      const doubled = max022(fact36("ndDoublyTaxedIncome"));
+      const ratio = minE11({ kind: "mulDiv", a: doubled, b: money33("10000"), c: base, round: "half-up" }, money33("10000"));
+      const share2 = dollarsFromScaled14({ kind: "mulDiv", a: times13(max022(fact36("ndIncomeTaxBeforeCredits")), "10000"), b: ratio, c: money33("10000"), round: "half-up" });
+      return iff21(gt13(base, money33("0")), minE11(share2, max022(fact36("ndOtherStateTaxPaid"))), money33("0"));
+    })()
+  },
+  {
+    id: "us.nd.parameters",
+    version: 1,
+    jurisdiction: "us.nd",
+    title: "North Dakota 2025 Form ND-1 parameters \u2014 line structure, additions and subtractions, credits, and the TY2026 position",
+    citation: {
+      source: "2025 Individual Income Tax Return and Booklet; printed 2025 Form ND-1 (SFN 28702 (12-2025)), Form ND-EZ (SFN 28745 (12-2025)) and Schedule ND-1SA (SFN 28710 (12-2025)); 2025 Tax Tables; 2026 Form ND-1ES; N.D.C.C. ch. 57-38; S.L. 2023 ch. 527 (House Bill 1158); web-verified September 2026",
+      section: "Form ND-1 lines 1-37",
+      url: BOOKLET,
+      excerpt: "STRUCTURE (printed 2025 Form ND-1, verbatim): '1. a. Federal adjusted gross income from Form 1040 or 1040-SR, line 11. If zero, enter 0; b. Federal taxable income from Form 1040 or 1040-SR, line 15. If zero, see instructions. Additions: 2. Planned gift or endowment tax credit adjustment to income; 3. Total other additions (Attach Schedule ND-1SA); 4. a. Total additions. Add lines 2 and 3; b. Add lines 1b and 4a. Subtractions: 5. Interest from U.S. obligations; \u2026 17. Total subtractions. Add lines 5 through 16; 18. North Dakota taxable income. Subtract line 17 from line 4b. If less than zero, enter 0.' Then line 19 carries line 18 to page 2, line 20 is the tax, line 21 the credit for tax paid to another state (Schedule ND-1CR), line 22 the marriage penalty credit, line 23 other credits (Schedule ND-1TC), and the payments block runs to line 28; page 2 then prints 29 Overpayment, 30 amount applied to 2026 estimated tax, 31 voluntary contributions, 32 Refund, 33 Tax due, 34 Penalty and Interest, 35 voluntary contributions, 36 Balance due ('Add lines 33, 34, 35, and, if applicable, line 37') and 37 interest on underpaid estimated tax (Schedule ND-1UT) \u2014 lines 29, 32 and 33 each carry 'If less than $5.00, enter 0'. LINE 1A IS INFORMATIONAL \u2014 federal AGI feeds nothing; the computation chain is 1b -> 4b -> 18 -> 19 -> 20. NEGATIVE FEDERAL TAXABLE INCOME (booklet page 12, verbatim): 'On Form 1040 or 1040-SR, line 15, you are instructed to enter \\'0\\' for your federal taxable income if it calculates out to be less than zero. However, for purposes of completing Form ND-1, enter the negative number on line 1b. Enter a minus sign (-) to the left of the number.' The printed ND-EZ (SFN 28745) line 1b likewise says 'If zero, enter 0', and the booklet's ND-EZ instructions repeat the same direction verbatim \u2014 'for purposes of completing Form ND-EZ, enter the negative number on line 1b' \u2014 so a negative federal taxable income is entered on EITHER form and does not by itself require Form ND-1. NO NORTH DAKOTA STANDARD DEDUCTION AND NO PERSONAL EXEMPTION EXIST \u2014 the booklet states the starting point 'perpetually conforms to the computation of federal taxable income', so the federal standard deduction, the increased state and local tax deduction and the tips and overtime exclusions all flow through by default. \xA7 57-38-30.3(2)(o) allows a joint filer a reduction for a 'recomputed' standard deduction that doubles the single amount, but post-2017 the federal joint basic standard deduction ALREADY equals twice the single amount, so it computes to zero and no line exists for it on Form ND-1 \u2014 a statutory dead letter, not an omission. SUBTRACTIONS (Form ND-1 lines 5-16): interest from U.S. obligations (line 5, an enumerated list that expressly EXCLUDES Freddie Mac, Fannie Mae, Ginnie Mae, federal tax refunds and repurchase agreements); the 40% net long-term capital gain exclusion (6); exempt income of an eligible Native American enrolled member living on a North Dakota reservation all year (7); Railroad Retirement Board benefits (8); the licensed peace officer retirement benefit exclusion for 20 years of service or medical retirement (9); the nonresident Servicemembers Civil Relief Act adjustment (10); the military pay exclusion, uncapped, covering federal pay for training, education, mobilization and bonuses and state pay on state active duty (11); the College SAVE deduction (12); the 40% qualified dividend exclusion (13); the military retirement benefit exclusion, uncapped, covering the retiree or surviving spouse and a dual-status military technician's federal civil-service retirement (14); the SOCIAL SECURITY BENEFIT EXCLUSION (15) \u2014 'Enter on this line the taxable portion of your Social Security benefits reported on Form 1040 or 1040-SR, line 6b', with NO cap, NO age test and NO phase-out, and with Tier 1 Railroad Retirement going to line 8 instead (a filer with both an SSA-1099 and an RRB-1099 splits line 6b between lines 8 and 15 in the ratio of gross benefits of each type to combined gross benefits); and Schedule ND-1SA other subtractions (16). SCHEDULE ND-1SA carries the renaissance zone and new-or-expanding-business exemptions (both requiring a property tax clearance record under \xA7 57-01-15.1), the human organ donor expense deduction of up to $10,000, the employee workforce recruitment exclusion, the STILLBORN CHILD DEDUCTION of $5,241 for 2025 (indexed by the Midwest CPI-U under \xA7 57-38-30.3(2)(p), and requiring the 11-digit fetal death certificate number), the college expense reimbursement deduction, and income from an S corporation taxed as a C corporation. ADDITIONS are only the planned gift or endowment credit adjustment (line 2) and Schedule ND-1SA's lump sum distribution from federal Form 4972 and loss from an S corporation taxed as a C corporation (line 3). SPECIAL COMPUTATIONS out of scope here: Schedule ND-1FA farm income averaging, Schedule ND-1CS sale of a research credit, Schedule ND-1NR for part-year and nonresident filers (\xA7 57-38-30.3(1)(f) prorates by the ratio of federal AGI allocable to North Dakota over federal AGI from all sources reduced by the (2)(a) and (2)(b) amounts, and a joint return with one full-year resident and one nonresident spouse MUST be computed that way), and the estate and trust schedule in \xA7 57-38-30.3(1)(e) ($3,000 / $10,750 base, $151.13 anchor). TY2026: the rates are unchanged at 0.00% / 1.95% / 2.50% and only the indexed thresholds move \u2014 see us.nd.income_tax version 2. \xA7 57-38-30.3(1) was NOT amended in the 2025 regular session or in EITHER 2026 special session. The January 2026 special session (convened January 21, adjourned January 23, called for the Rural Health Transformation Program) produced one taxation chapter, ch. 658 (House Bill 1626), which touches the property tax primary residence credit and the early payment discount and never reaches chapter 57-38. The September 2026 special session (convened September 2 by executive order) was called to regulate kratom; the six measures Legislative Management advanced for it are the kratom bills, a Military Gallery line of credit, a temporary nondisclosure-agreement restriction for data centers and other industrial developments, and a technical correction to a PROPERTY tax credit statement \u2014 no individual income tax measure was on its agenda, and chapter 57-38 is untouched. Subsection (2) was last touched by S.L. 2025 ch. 64 (House Bill 1031, Legislative Council technical corrections) and \xA7 57-38-30.3(7)(u) gained an employer child care contribution credit from S.L. 2025 ch. 558 (Senate Bill 2282). The 2026 Form ND-1, its booklet and its Tax Table are not yet published."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      collegeSaveCap: { value: "500000", type: "money" },
+      collegeSaveCapJoint: { value: "1000000", type: "money" },
+      organDonorCap: { value: "1000000", type: "money" },
+      stillbornChildDeduction: { value: "524100", type: "money" },
+      marriagePenaltyMaximum: { value: "31200", type: "money" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: North Dakota Form ND-1 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.nd.income_tax, us.nd.capital_gain_exclusion, us.nd.qualified_dividend_exclusion, us.nd.college_save_deduction, and us.nd.marriage_penalty_credit"
+    }
+  }
+];
+
+// ../corpus-us-federal/dist/rules/state-vt.js
+var cmp15 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt22 = (l, r) => cmp15("lt", l, r);
+var le19 = (l, r) => cmp15("le", l, r);
+var gt14 = (l, r) => cmp15("gt", l, r);
+var iff22 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add19 = (...args) => ({ kind: "add", args });
+var sub23 = (left, right) => ({ kind: "sub", left, right });
+var max023 = (arg) => ({ kind: "max0", arg });
+var minE12 = (...args) => ({ kind: "min", args });
+var maxE6 = (a, b) => iff22(gt14(a, b), a, b);
+var and10 = (...args) => ({ kind: "and", args });
+var or10 = (...args) => ({ kind: "or", args });
+var int14 = (value) => ({ kind: "int", value });
+var mulInt20 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits11 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus31 = (v) => cmp15("eq", fact36("filingStatus"), { kind: "enum", value: v });
+var isJointCol2 = or10(isStatus31("mfj"), isStatus31("qss"));
+var isMfj5 = isStatus31("mfj");
+var isMfs9 = isStatus31("mfs");
+var isHoh8 = isStatus31("hoh");
+var times14 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+var dollarsFromScaled15 = (n) => times14({ kind: "mulDiv", a: n, b: money33("1"), c: money33("1000000"), round: "half-up" }, "100");
+var applyRatio22 = (base, r) => times14({ kind: "mulDiv", a: base, b: r, c: money33("10000"), round: "half-up" }, "100");
+var rowTax = (x, r) => dollarsFromScaled15(add19(times14(money33(r.baseCents), "10000"), times14(sub23(x, money33(r.overCents)), r.rateBps)));
+var scheduleTax6 = (x, rows) => {
+  let expr = rowTax(x, rows[0]);
+  for (let i = 1; i < rows.length; i++)
+    expr = iff22(gt14(x, money33(rows[i].overCents)), rowTax(x, rows[i]), expr);
+  return expr;
+};
+var SCHED_20252 = {
+  // Schedule X — Single
+  single: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "4940000", baseCents: "165500", rateBps: "660" },
+    // 49,400 / 1,655.00
+    { overCents: "7500000", baseCents: "334500", rateBps: "660" },
+    // 75,000 / 3,345.00 (the printed split row)
+    { overCents: "11970000", baseCents: "629500", rateBps: "760" },
+    // 119,700 / 6,295.00
+    { overCents: "24970000", baseCents: "1617500", rateBps: "875" }
+    // 249,700 / 16,175.00
+  ],
+  // Schedule Y-1 — Married Filing Jointly; Qualifying Widow(er); Civil Union Filing Jointly
+  joint: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "7500000", baseCents: "251300", rateBps: "335" },
+    // 75,000 / 2,513.00 (split row, still 3.35%)
+    { overCents: "8250000", baseCents: "276400", rateBps: "660" },
+    // 82,500 / 2,764.00
+    { overCents: "19945000", baseCents: "1048200", rateBps: "760" },
+    // 199,450 / 10,482.00
+    { overCents: "30400000", baseCents: "1842800", rateBps: "875" }
+    // 304,000 / 18,428.00
+  ],
+  // Schedule Y-2 — Married Filing Separately; Civil Union Filing Separately
+  mfs: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "4125000", baseCents: "138200", rateBps: "660" },
+    // 41,250 / 1,382.00
+    { overCents: "7500000", baseCents: "360900", rateBps: "660" },
+    // 75,000 / 3,609.00 (split row)
+    { overCents: "9972500", baseCents: "524100", rateBps: "760" },
+    // 99,725 / 5,241.00
+    { overCents: "15200000", baseCents: "921400", rateBps: "875" }
+    // 152,000 / 9,214.00
+  ],
+  // Schedule Z — Heads of Household
+  hoh: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "6620000", baseCents: "221800", rateBps: "660" },
+    // 66,200 / 2,218.00
+    { overCents: "7500000", baseCents: "279900", rateBps: "660" },
+    // 75,000 / 2,799.00 (split row)
+    { overCents: "17100000", baseCents: "913500", rateBps: "760" },
+    // 171,000 / 9,135.00
+    { overCents: "27685000", baseCents: "1717900", rateBps: "875" }
+    // 276,850 / 17,179.00
+  ]
+};
+var byStatus3 = (x, y = SCHED_20252) => iff22(isJointCol2, scheduleTax6(x, y.joint), iff22(isMfs9, scheduleTax6(x, y.mfs), iff22(isHoh8, scheduleTax6(x, y.hoh), scheduleTax6(x, y.single))));
+var SCHED_2026 = {
+  single: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "5075000", baseCents: "170000", rateBps: "660" },
+    // 50,750 / 1,700.00
+    { overCents: "12285000", baseCents: "645900", rateBps: "760" },
+    // 122,850 / 6,459.00
+    { overCents: "25630000", baseCents: "1660100", rateBps: "875" }
+    // 256,300 / 16,601.00
+  ],
+  joint: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "8470000", baseCents: "283700", rateBps: "660" },
+    // 84,700 / 2,837.00
+    { overCents: "20475000", baseCents: "1076100", rateBps: "760" },
+    // 204,750 / 10,761.00
+    { overCents: "31205000", baseCents: "1891600", rateBps: "875" }
+    // 312,050 / 18,916.00
+  ],
+  mfs: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "4235000", baseCents: "141900", rateBps: "660" },
+    // 42,350 / 1,419.00
+    { overCents: "10237500", baseCents: "538000", rateBps: "760" },
+    // 102,375 / 5,380.00
+    { overCents: "15602500", baseCents: "945800", rateBps: "875" }
+    // 156,025 / 9,458.00
+  ],
+  hoh: [
+    { overCents: "0", baseCents: "0", rateBps: "335" },
+    { overCents: "6800000", baseCents: "227800", rateBps: "660" },
+    // 68,000 / 2,278.00
+    { overCents: "17550000", baseCents: "937300", rateBps: "760" },
+    // 175,500 / 9,373.00
+    { overCents: "28415000", baseCents: "1763000", rateBps: "875" }
+    // 284,150 / 17,630.00
+  ]
+};
+var line8Tax2 = (x) => {
+  const mid = add19(mulInt20(money33("10000"), stepUnits11(x, "10000", "floor")), money33("5000"));
+  const table2 = iff22(lt22(x, money33("10000")), money33("0"), byStatus3(mid));
+  return iff22(fact36("vtUseRateSchedule"), byStatus3(x), iff22(lt22(x, money33("7500000")), table2, byStatus3(x)));
+};
+var FORMS6 = "https://tax.vermont.gov/sites/tax/files/documents/";
+var BOOKLET2 = FORMS6 + "IN-111-Instr-2025.pdf";
+var VSA = (s) => `https://legislature.vermont.gov/statutes/section/32/151/${s}`;
+var retireFull = iff22(isMfj5, money33("7000000"), money33("5500000"));
+var retireNone = iff22(isMfj5, money33("8000000"), money33("6500000"));
+var vtRules = [
+  {
+    id: "us.vt.income_tax",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont income tax 2025 \u2014 Form IN-111 line 8: the Tax Table below $75,000 ($100-row midpoint through the printed rate schedule), the rate schedule with its printed VT Base Tax anchors at $75,000 or more (3.35% / 6.60% / 7.60% / 8.75%), and the 3%-of-federal-AGI minimum when federal AGI exceeds $150,000",
+    citation: {
+      source: "32 V.S.A. \xA7 5822(a) (rates and the (a)(6) minimum), \xA7 5822(b)(2) (annual inflation adjustment by the Commissioner); 2025 Vermont Tax Rate Schedules (TaxRateSched-2025.pdf); 2025 Vermont Tax Tables (VermontTaxTables-2025.pdf, 5 pages, 750 rows); 2025 Form IN-111 Instructions p. 6, line 8",
+      section: "32 V.S.A. \xA7 5822(a); Form IN-111 line 8",
+      url: FORMS6 + "TaxRateSched-2025.pdf",
+      excerpt: "2025 VERMONT TAX RATE SCHEDULES (verbatim): 'Single Individuals, Schedule X \u2014 If VT Taxable Income is Over / But Not Over / VT Base Tax is / Plus / of the amount over: 0 / 49,400 / 0.00 / 3.35% / 0; 49,400 / 75,000 / 1,655.00 / 6.60% / 49,400; TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES; 75,000 / 119,700 / 3,345.00 / 6.60% / 75,000; 119,700 / 249,700 / 6,295.00 / 7.60% / 119,700; 249,700 / - / 16,175.00 / 8.75% / 249,700.' 'Married Filing Jointly, Schedule Y-1 \u2014 Use if your filing status is: Married Filing Jointly; Qualifying Widow(er); or Civil Union Filing Jointly: 0 / 75,000 / 0.00 / 3.35% / 0; 75,000 / 82,500 / 2,513.00 / 3.35% / 75,000; 82,500 / 199,450 / 2,764.00 / 6.60% / 82,500; 199,450 / 304,000 / 10,482.00 / 7.60% / 199,450; 304,000 / - / 18,428.00 / 8.75% / 304,000.' 'Married Filing Separately, Schedule Y-2: 0 / 41,250 / 0.00 / 3.35%; 41,250 / 75,000 / 1,382.00 / 6.60% / 41,250; 75,000 / 99,725 / 3,609.00 / 6.60% / 75,000; 99,725 / 152,000 / 5,241.00 / 7.60% / 99,725; 152,000 / - / 9,214.00 / 8.75% / 152,000.' 'Heads of Household, Schedule Z: 0 / 66,200 / 0.00 / 3.35%; 66,200 / 75,000 / 2,218.00 / 6.60% / 66,200; 75,000 / 171,000 / 2,799.00 / 6.60% / 75,000; 171,000 / 276,850 / 9,135.00 / 7.60% / 171,000; 276,850 / - / 17,179.00 / 8.75% / 276,850.' WORKED EXAMPLE (verbatim): 'Vermont Taxable Income is $85,000 (Form IN-111, Line 7). Filing Status is Married Filing Jointly. Use Schedule Y-1. Base Tax is $2,764. Subtract $82,500 from $85,000. Multiply the result ($2,500) by 6.6%. Add this amount ($165) to Base Tax ($2,764) for Vermont Tax of $2,929.' FOOTNOTE (verbatim): 'For Adjusted Gross Incomes (IN-111, Line 1) exceeding $150,000, Line 8 is the greater of 1) 3% of Adjusted Gross Income less interest from U.S. obligations, or 2) Tax Rate Schedule calculation.' BOOKLET LINE 8 (p. 6, verbatim): 'Taxpayers who have a federal Adjusted Gross Income (AGI) greater than $150,000 must pay a minimum Vermont tax of 3% of federal AGI. If your federal AGI, Line 1, is greater than $150,000, enter the amount that is higher: 1) 3% of your federal AGI less interest from U.S. obligations, or 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule. If your federal AGI, Line 1, is less than or equal to $150,000, calculate your Vermont tax on Vermont Taxable Income, Line 7, using the applicable tax table or rate schedule.' READ LITERALLY: the over-$150,000 branch names only the RATE SCHEDULE, and the schedule page's footnote likewise says 'Tax Rate Schedule calculation', so for a filer with federal AGI over $150,000 the tax is the greater of the 3% floor and the schedule at the exact taxable income even below $75,000 \u2014 the Tax Table (which differs from the schedule by up to $4 in that range) is used only at or below $150,000 of AGI. STATUTE (\xA7 5822(a)(6), verbatim): 'If the federal adjusted gross income of the taxpayer exceeds $150,000.00, then the tax calculated under this subsection shall be the greater of the tax calculated under subdivisions (1)-(5) of this subsection or three percent of the taxpayer's federal adjusted gross income.' \u2014 the statute says 3% of federal AGI; the booklet and schedule footnote subtract U.S. obligation interest first. The booklet governs the filed return and is encoded (vtUsObligationInterest). TAX TABLE: 750 rows of $100 from $0 to $75,000 in four columns (Single; Married filing jointly*; Married filing separately**; Head of household), footnoted '* This column also applies to qualifying widow(er) and civil union filing jointly status' and '** This column also applies to civil union filing separately status'. CONVENTION, proved on all 3,000 cells: the schedule with its PRINTED whole-dollar anchors evaluated at the row midpoint, rounded half-up (2,996 cells); the first row 0-100 prints 0 in every column where the arithmetic gives 2 (4 cells). At the 154 cells where the printed anchor and the exact cumulative schedule give different dollars, the table follows the printed anchor at all 154. ANCHORS: every printed 'VT Base Tax' is the half-up rounding of the exact cumulative tax at the threshold \u2014 GB-1210-2025's annual withholding table prints the unrounded values 1,654.90 / 6,294.70 / 16,174.70 (single) and 2,763.75 / 10,482.45 / 18,428.25 (married), and 41,250 x 3.35% = 1,381.875 -> 1,382, 66,200 x 3.35% = 2,217.70 -> 2,218. SPLIT-ROW ARTIFACT, encoded as printed: at exactly $75,000 a married-filing-separately filer is in the row 'over 41,250 but not over 75,000' (1,382 + 6.6% x 33,750 = 3,609.50 -> $3,610) while one dollar more is in the row 'over 75,000' whose printed base is $3,609 (exact 3,609.375 rounded), so the literal schedule steps down $1 between $75,000.00 and $75,000.01; the single, joint and head-of-household split rows are continuous (3,344.60 -> 3,345; 2,512.50 -> 2,513; 2,798.80 -> 2,799). ROUNDING: whole dollars, one half-up rounding per printed box. INDEXATION: \xA7 5822(b)(2) directs the Commissioner to adjust the bracket amounts annually by the CPI-U; the codified \xA7 5822(a) still prints the base amounts ($38,700 / $93,700 / $195,450 single) and always will, so the operative thresholds exist only in the Department's published schedules. TY2026: the Department has not published the 2026 IN-111 rate schedule or table (both ~December 2026); GB-1210-2026's annual withholding tables imply single brackets of $50,750 / $122,850 / $256,300 and joint $84,700 / $204,750 / $312,050 (the printed thresholds less the printed offsets of half and three-quarters of the standard deduction, a construction that reproduces every 2025 threshold exactly), and the 2026 Form IN-114 Instructions print '2026 Preliminary Vermont Tax Rates' for all four statuses, encoded as version 2 of this rule; this version ends 2026-01-01 because the Tax Table it applies is the 2025 table."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "335", type: "int" },
+      rate2Bps: { value: "660", type: "int" },
+      rate3Bps: { value: "760", type: "int" },
+      rate4Bps: { value: "875", type: "int" },
+      tableTop: { value: "7500000", type: "money" },
+      singleBracket1: { value: "4940000", type: "money" },
+      singleBracket2: { value: "11970000", type: "money" },
+      singleBracket3: { value: "24970000", type: "money" },
+      jointBracket1: { value: "8250000", type: "money" },
+      jointBracket2: { value: "19945000", type: "money" },
+      jointBracket3: { value: "30400000", type: "money" },
+      mfsBracket1: { value: "4125000", type: "money" },
+      mfsBracket2: { value: "9972500", type: "money" },
+      mfsBracket3: { value: "15200000", type: "money" },
+      hohBracket1: { value: "6620000", type: "money" },
+      hohBracket2: { value: "17100000", type: "money" },
+      hohBracket3: { value: "27685000", type: "money" },
+      minimumTaxAgiThreshold: { value: "15000000", type: "money" },
+      minimumTaxRateBps: { value: "300", type: "int" }
+    },
+    formula: (() => {
+      const x = max023(fact36("stateTaxableIncome"));
+      const agi2 = fact36("vtFederalAgi");
+      const floor3 = dollarsFromScaled15(times14(max023(sub23(agi2, max023(fact36("vtUsObligationInterest")))), "300"));
+      return iff22(gt14(agi2, money33("15000000")), maxE6(byStatus3(x), floor3), line8Tax2(x));
+    })()
+  },
+  {
+    id: "us.vt.income_tax",
+    version: 2,
+    jurisdiction: "us.vt",
+    title: "Vermont income tax TY2026 (preliminary) \u2014 the same 3.35% / 6.60% / 7.60% / 8.75% rates on the Commissioner's indexed brackets: $50,750 / $122,850 / $256,300 single, $84,700 / $204,750 / $312,050 joint and qualifying widow(er), $42,350 / $102,375 / $156,025 married filing separately, $68,000 / $175,500 / $284,150 head of household; schedule only, and the 3%-of-AGI minimum above $150,000",
+    citation: {
+      source: "2026 Form IN-114 Instructions (IN-114-Instr-2026.pdf, Rev. 10/25) p. 2, '2026 Preliminary Vermont Tax Rates'; corroborated by the 2026 Income Tax Withholding Instructions (GB-1210-2026) annual payroll tables; 32 V.S.A. \xA7 5822(a), (b)(2)",
+      section: "32 V.S.A. \xA7 5822(a); 2026 Form IN-114 Instructions p. 2",
+      url: FORMS6 + "IN-114-Instr-2026.pdf",
+      excerpt: "2026 PRELIMINARY VERMONT TAX RATES (verbatim): 'Single Individuals, Schedule X \u2014 0 / 50,750 / 0.00 / 3.35% / 0; 50,750 / 122,850 / 1,700.00 / 6.60% / 50,750; 122,850 / 256,300 / 6,459.00 / 7.60% / 122,850; 256,300 / - / 16,601.00 / 8.75% / 256,300.' 'Married Filing Jointly, Schedule Y-1 \u2014 Use if your filing status is: Married Filing Jointly; Qualifying Widow(er) or Civil Union Filing Jointly \u2014 0 / 84,700 / 0.00 / 3.35% / 0; 84,700 / 204,750 / 2,837.00 / 6.60% / 84,700; 204,750 / 312,050 / 10,761.00 / 7.60% / 204,750; 312,050 / - / 18,916.00 / 8.75% / 312,050.' 'Married Filing Separately, Schedule Y-2 \u2014 0 / 42,350 / 0.00 / 3.35%; 42,350 / 102,375 / 1,419.00 / 6.60% / 42,350; 102,375 / 156,025 / 5,380.00 / 7.60% / 102,375; 156,025 / - / 9,458.00 / 8.75% / 156,025.' 'Heads of Household, Schedule Z \u2014 0 / 68,000 / 0.00 / 3.35%; 68,000 / 175,500 / 2,278.00 / 6.60% / 68,000; 175,500 / 284,150 / 9,373.00 / 7.60% / 175,500; 284,150 / - / 17,630.00 / 8.75% / 284,150.' CORROBORATION: GB-1210-2026's annual withholding tables run single $3,925 to $54,675 at 3.35% then $1,700.13 + 6.60% to $126,775, $6,458.73 + 7.60% to $260,225, $16,600.93 + 8.75% \u2014 each threshold is the schedule bracket plus a $3,925 offset (half the standard deduction, exactly as the 2025 table's $3,825 offset is half of $7,650), and married $11,775 to $96,475, $2,837.45 + 6.60% to $216,525, $10,760.75 + 7.60% to $323,825, $18,915.55 + 8.75% (offset $11,775, three-quarters of the standard deduction, as 2025's $11,475 is three-quarters of $15,300). Every preliminary base is the half-up rounding of those exact figures (1,700.125 -> 1,700; 2,837.45 -> 2,837). ENCODING: the schedule with its printed whole-dollar bases applied at the exact income \u2014 the 2025 filed-return convention \u2014 for every status; no 2026 Tax Table exists, so nothing below $75,000 is a table lookup, and there is no $75,000 split row. The $150,000 minimum-tax threshold in \xA7 5822(a)(6) is a fixed statutory amount outside the \xA7 5822(b)(2) indexation and carries over unchanged. LABELLED PRELIMINARY by the Department: re-verify against the 2026 Form IN-111 rate schedule and Tax Table when they publish (~December 2026), and expect at most half a row of divergence from the eventual table below $75,000."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      rate1Bps: { value: "335", type: "int" },
+      rate2Bps: { value: "660", type: "int" },
+      rate3Bps: { value: "760", type: "int" },
+      rate4Bps: { value: "875", type: "int" },
+      singleBracket1: { value: "5075000", type: "money" },
+      singleBracket2: { value: "12285000", type: "money" },
+      singleBracket3: { value: "25630000", type: "money" },
+      jointBracket1: { value: "8470000", type: "money" },
+      jointBracket2: { value: "20475000", type: "money" },
+      jointBracket3: { value: "31205000", type: "money" },
+      mfsBracket1: { value: "4235000", type: "money" },
+      mfsBracket2: { value: "10237500", type: "money" },
+      mfsBracket3: { value: "15602500", type: "money" },
+      hohBracket1: { value: "6800000", type: "money" },
+      hohBracket2: { value: "17550000", type: "money" },
+      hohBracket3: { value: "28415000", type: "money" },
+      minimumTaxAgiThreshold: { value: "15000000", type: "money" },
+      minimumTaxRateBps: { value: "300", type: "int" }
+    },
+    formula: (() => {
+      const x = max023(fact36("stateTaxableIncome"));
+      const agi2 = fact36("vtFederalAgi");
+      const floor3 = dollarsFromScaled15(times14(max023(sub23(agi2, max023(fact36("vtUsObligationInterest")))), "300"));
+      return iff22(gt14(agi2, money33("15000000")), maxE6(byStatus3(x, SCHED_2026), floor3), byStatus3(x, SCHED_2026));
+    })()
+  },
+  {
+    id: "us.vt.standard_deduction",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont standard deduction 2025 \u2014 $7,650 single and married filing separately, $15,300 married filing jointly and qualifying widow(er), $11,450 head of household, plus $1,250 for each federal age-65/blind box (Form IN-111 line 4)",
+    citation: {
+      source: "32 V.S.A. \xA7 5811(21)(C)(ii)-(iii) and (D); 2025 Form IN-111 filing status box and line 4 chart; 2025 Form IN-111 Instructions p. 6, line 4",
+      section: "32 V.S.A. \xA7 5811(21)(C)(ii), (iii); Form IN-111 line 4",
+      url: BOOKLET2,
+      excerpt: "STATUTE (\xA7 5811(21)(C), verbatim): taxable income is decreased by '(ii) a standard deduction determined as follows: (I) for taxpayers whose filing status under section 5822 of this chapter is unmarried (other than surviving spouses or heads of households) or married filing separate returns, $6,000.00; (II) for taxpayers whose filing status under section 5822 of this chapter is head of household, $9,000.00; and (III) for taxpayers whose filing status under section 5822 of this chapter is married filing joint return or surviving spouse, $12,000.00; (iii) an additional deduction of $1,000.00 for each federal deduction under 26 U.S.C. \xA7 63(f) that the taxpayer qualified for and received' \u2014 '(D) The dollar amounts ... shall be adjusted annually for inflation by the Commissioner of Taxes beginning with taxable year 2018'. PRINTED FORM (filing status box, verbatim): 'Single ($7,650) / Married/CU Filing Jointly ($15,300) / Married/CU Filing Separately ($7,650) / Head of Household ($11,450) / Qualifying Widow(er) ($15,300)'. BOOKLET LINE 4 (verbatim): 'Enter the amount of standard deduction from the chart below. You also receive an additional deduction of $1,250 for each standard deduction box checked on the federal Form 1040. If you or your spouse was born before Jan. 2, 1961, or you were blind, use the number of standard deduction boxes checked on your federal Form 1040, select the corresponding number to the filing status and enter on Line 4.' CHART (verbatim, 'Standard / For those born before Jan. 2, 1961 or blind: 1 / 2 / 3 / 4'): 'Single 7,650 / 8,900 / 10,150 / n/a / n/a; Married Filing Jointly or Qualifying Widow(er) 15,300 / 16,550 / 17,800 / 19,050 / 20,300; Married Filing Separately 7,650 / 8,900 / 10,150 / 11,400 / 12,650; Head of Household 11,450 / 12,700 / 13,950 / n/a / n/a'. ENCODING: base by status plus $1,250 per box, boxes capped at the chart's columns as printed \u2014 two for single and head of household, four for the 'Married Filing Jointly or Qualifying Widow(er)' row and for married filing separately (a qualifying widow(er)'s federal Form 1040 can carry at most two boxes, so the third and fourth columns are reachable only on a joint return). Vermont has NO itemized deduction: the only itemized-type item is the medical-expense excess on Schedule IN-112 line 11. TY2026: \xA7 5811(21)(D) indexes these amounts; GB-1210-2026's annual withholding offsets ($3,925 single, $11,775 married \u2014 half and three-quarters of the standard deduction, a construction that reproduces the 2025 offsets $3,825 and $11,475 exactly) imply $7,850 and $15,700, but the 2026 head-of-household amount and the 2026 per-box amount are unpublished, so this rule ends 2026-01-01."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { single: { value: "765000", type: "money" }, joint: { value: "1530000", type: "money" }, hoh: { value: "1145000", type: "money" }, perBox: { value: "125000", type: "money" } },
+    formula: (() => {
+      const base = iff22(isJointCol2, money33("1530000"), iff22(isHoh8, money33("1145000"), money33("765000")));
+      const cap = iff22(or10(isJointCol2, isMfs9), int14("4"), int14("2"));
+      const boxes = minE12(fact36("vtAdditionalDeductionBoxes"), cap);
+      return add19(base, mulInt20(money33("125000"), boxes));
+    })()
+  },
+  {
+    id: "us.vt.personal_exemption",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont personal exemption 2025 \u2014 $5,300 per exemption: yourself unless claimable as a dependent, a spouse on a joint return only, and each other dependent (Form IN-111 line 5e)",
+    citation: {
+      source: "32 V.S.A. \xA7 5811(21)(C)(i) and (D); 2025 Form IN-111 lines 5a-5e; 2025 Form IN-111 Instructions p. 6, lines 5a-5e",
+      section: "32 V.S.A. \xA7 5811(21)(C)(i); Form IN-111 line 5",
+      url: BOOKLET2,
+      excerpt: `STATUTE (\xA7 5811(21)(C)(i), verbatim): 'a personal exemption of $4,150.00 per person for the taxpayer, for the spouse or the deceased spouse of the taxpayer whose filing status under section 5822 of this chapter is married filing a joint return or surviving spouse, and for each individual qualifying as a dependent of the taxpayer under 26 U.S.C. \xA7 152, provided that no exemption may be claimed for an individual who is a dependent of another taxpayer' (indexed under (D)). PRINTED FORM (verbatim): '5a. Enter "1" for yourself if no one can claim you as a dependent; 5b. Enter "1" for your jointly filed spouse; 5c. Enter number of OTHER dependents; 5d. Total Exemptions (ADD Lines 5a through 5c); 5e. MULTIPLY Line 5d by $5,300 (2025 Personal Exemption)'. BOOKLET (verbatim): 'Line 5a Yourself. Enter "1" on this line if no one can claim you as a dependent on a 2025 personal income tax return. Line 5b Spouse or Civil Union Partner. Enter "1" on this line as long as no other person can claim your spouse or civil union partner as a dependent on a 2025 personal income tax return. Do not enter "1" if your filing status is Qualifying Widow(er) or Married Filing Separately. Line 5c Other Dependents. Enter the number of dependents other than yourself or spouse that you are claiming on your 2025 federal Form 1040.' SOURCE CONFLICT, disclosed: the statute's 'deceased spouse ... surviving spouse' language would give a qualifying widow(er) a second exemption; the form instruction forbids it. The FORM governs the filed return and is encoded \u2014 the composer counts a spouse only on a joint return. This rule takes the count (vtExemptions) and multiplies. TY2026: GB-1210-2026 prints 'one withholding allowance equals $5400.00' where GB-1210-2025 printed $5,300.00 (the 2025 exemption), so the 2026 exemption is $5,400; it is not encoded as a version because the companion 2026 deduction and rate figures are unpublished and a return cannot be composed without them.`
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "530000", type: "money" } },
+    formula: mulInt20(money33("530000"), fact36("vtExemptions"))
+  },
+  {
+    id: "us.vt.personal_exemption",
+    version: 2,
+    jurisdiction: "us.vt",
+    title: "Vermont personal exemption TY2026 \u2014 $5,400 per exemption, the 2026 withholding allowance printed in GB-1210-2026 (Form IN-111 line 5e)",
+    citation: {
+      source: "2026 Vermont Income Tax Withholding Instructions, Tables and Charts (GB-1210-2026, published December 2025), annual payroll table footnote; 32 V.S.A. \xA7 5811(21)(C)(i) and (D)",
+      section: "32 V.S.A. \xA7 5811(21)(C)(i); GB-1210-2026",
+      url: FORMS6 + "GB-1210-2026.pdf",
+      excerpt: "GB-1210-2026 (verbatim, annual payroll table footnote): '*use wages after subtracting withholding allowances (one withholding allowance equals $5400.00)'. GB-1210-2025 printed '$5300.00' \u2014 the 2025 personal exemption printed on Form IN-111 line 5e \u2014 and GB-1210-2024 printed $5,100, the 2024 exemption, so the withholding allowance IS the indexed \xA7 5811(21)(C)(i) exemption each year. ENCODING: $5,400 per exemption, counted as on the 2025 form (yourself unless claimable, a spouse on a joint return only, other dependents). The 2026 Form IN-111 is unpublished; re-verify when it publishes (~December 2026). The companion 2026 standard deduction is NOT encoded \u2014 the withholding offsets imply $7,850 single and $15,700 joint but no document prints them and no head-of-household figure exists \u2014 so a TY2026 return still refuses at line 4."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perExemption: { value: "540000", type: "money" } },
+    formula: mulInt20(money33("540000"), fact36("vtExemptions"))
+  },
+  {
+    id: "us.vt.retirement_income_exclusion",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont retirement income exclusion 2025 \u2014 Schedule IN-112 line 12: EITHER all federally taxable Social Security OR up to $10,000 of Civil Service Retirement System / other non-Social-Security contributory system income, in full at federal AGI up to $55,000 ($70,000 joint), phased out to $65,000 ($80,000 joint)",
+    citation: {
+      source: "32 V.S.A. \xA7 5830e(a), (b), (c), (e) as amended by 2025 Act 71 \xA7 3; 2025 Schedule IN-112 Instructions pp. 1-2, 'Retirement Income Exemption Worksheet'; 2025 Schedule IN-112 Part I line 12",
+      section: "32 V.S.A. \xA7 5830e(a)-(c), (e); Schedule IN-112 line 12",
+      url: VSA("05830e"),
+      excerpt: "STATUTE (\xA7 5830e(a)(1), verbatim): 'For taxpayers whose filing status is single, married filing separately, head of household, or surviving spouse: (A) If the federal adjusted gross income of the taxpayer is less than or equal to $55,000.00, all federally taxable benefits received under the federal Social Security Act shall be excluded. (B) If the federal adjusted gross income of the taxpayer is greater than $55,000.00 but less than $65,000.00, the percentage of federally taxable benefits ... to be excluded shall be proportional to the amount of the taxpayer's federal adjusted gross income over $55,000.00, determined by: (i) subtracting the federal adjusted gross income of the taxpayer from $65,000.00; (ii) dividing the value under subdivision (i) ... by $10,000.00; and (iii) multiplying the value under subdivision (ii) ... by the federally taxable benefits received under the Social Security Act. (C) If the federal adjusted gross income of the taxpayer is equal to or greater than $65,000.00, no amount ... shall be excluded.' (a)(2): married filing jointly, the same at $70,000.00 / $80,000.00. (b): 'the first $10,000.00 of income received from the Civil Service Retirement System' on the same thresholds; (c): other contributory systems of the U.S., this State or another state 'based on earnings that were not covered by the Social Security Act' are excluded 'as though the income were received from the Civil Service Retirement System'; (e)(1): 'A taxpayer of this State who is eligible during the taxable year for more than one of the exclusions under subsections (a), (b), and (c) of this section shall elect only one of the exclusions'. WORKSHEET (Schedule IN-112 Instructions, verbatim): '2. If you are: Married filing jointly, is your Adjusted Gross Income (AGI) on Form IN-111, Line 1, less than $80,000? Single, head of household, surviving spouse, or married filing separately, is your AGI on Form IN-111, Line 1, less than $65,000? No, STOP. ... 3. If you are: Married filing jointly, is your AGI less than $70,000? Single, head of household, surviving spouse, or married filing separately, is your AGI less than $55,000? ... Yes. You qualify for a full exemption. If you elected the exemption for social security, please enter the full amount from federal Form 1040, Line 6b ... If you elected one of the other retirement exemptions, enter your eligible retirement system income or $10,000, whichever is less. SECTION II ... 4. Married filing jointly, enter $80,000. All other filing statuses, enter $65,000. 5. Enter your AGI from Form IN-111, Line 1. 6. Subtract Line 5 from Line 4. If Line 5 is greater than Line 4, enter -0-. 7. Divide Line 6 by $10,000. This value will be a decimal. Please round to the second decimal place (Example: .481 would round to .48). 8. Enter the lesser of Line 7 or the value 1 ... 10. Amount of partial exemption. Multiply Line 9 by Line 8 ... 12. Amount of partial exemption. Multiply Line 11 by Line 8.' ROUNDING: the worksheet's 'round to the second decimal place (.481 -> .48)' does not settle a .485 tie; this rule rounds half-up, the conventional reading \u2014 a half-even tie rule would change the dollar result only at AGIs ending in 50 with an odd hundreds digit ($55,150, $55,350, \u2026). ENCODING: vtRetirementElection picks the branch ('social_security' or 'contributory_system'; the default 'none' claims nothing); the ratio is rounded half-up to two decimals and capped at 1.00 exactly as the worksheet says, then multiplied with one whole-dollar rounding. The worksheet's question 3 says 'less than $55,000' where the statute says 'less than or equal to' \u2014 at exactly $55,000 the statute's full exclusion is applied (the ratio would be 1.00 either way, so the two readings agree in dollars). A qualifying surviving spouse uses the non-joint thresholds (statute and worksheet both list 'surviving spouse' with single). 2025 Act 71 \xA7 3 raised every threshold by $5,000 for tax years from January 1, 2025. Military retirement is a SEPARATE exclusion (us.vt.military_retirement_exclusion) that may be taken in addition to this one (\xA7 5830e(e)(2))."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { fullSingle: { value: "5500000", type: "money" }, noneSingle: { value: "6500000", type: "money" }, fullJoint: { value: "7000000", type: "money" }, noneJoint: { value: "8000000", type: "money" }, contributoryCap: { value: "1000000", type: "money" }, ratioDecimals: { value: "2", type: "int" } },
+    formula: (() => {
+      const agi2 = fact36("vtFederalAgi");
+      const isSs = cmp15("eq", fact36("vtRetirementElection"), { kind: "enum", value: "social_security" });
+      const isCs = cmp15("eq", fact36("vtRetirementElection"), { kind: "enum", value: "contributory_system" });
+      const base = iff22(isSs, max023(fact36("vtTaxableSocialSecurity")), iff22(isCs, minE12(max023(fact36("vtContributorySystemIncome")), money33("1000000")), money33("0")));
+      const ratio = minE12({ kind: "mulDiv", a: max023(sub23(retireNone, agi2)), b: money33("100"), c: money33("1000000"), round: "half-up" }, money33("100"));
+      return iff22(le19(agi2, retireFull), base, iff22(lt22(agi2, retireNone), applyRatio22(base, ratio), money33("0")));
+    })()
+  },
+  {
+    id: "us.vt.military_retirement_exclusion",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont military retirement and survivor benefit exclusion 2025 \u2014 Schedule IN-112 line 13: all federally taxable U.S. military retirement and survivor benefit income at federal AGI up to $125,000, phased out to $175,000, for every filing status",
+    citation: {
+      source: "32 V.S.A. \xA7 5830e(d) and (e)(2), added by 2025 Act 71 \xA7 3; 2025 Schedule IN-112 Instructions p. 3, 'Military Retirement Income Exemption Worksheet' and line 13",
+      section: "32 V.S.A. \xA7 5830e(d); Schedule IN-112 line 13",
+      url: VSA("05830e"),
+      excerpt: "STATUTE (\xA7 5830e(d), verbatim): 'For taxpayers of any filing status, U.S. military retirement income, and U.S. military survivor benefit income received by an eligible beneficiary, received by a taxpayer of this State shall be excluded from taxable income ... as follows: (1) If the federal adjusted gross income of the taxpayer is less than or equal to $125,000.00, all federally taxable U.S. military retirement income and survivor benefit income shall be excluded. (2) If the federal adjusted gross income of the taxpayer is greater than $125,000.00 but less than $175,000.00, the percentage ... to be excluded shall be proportional to the amount of the taxpayer's federal adjusted gross income over $125,000.00, determined by: (A) subtracting the federal adjusted gross income of the taxpayer from $175,000.00; (B) dividing the value under subdivision (A) ... by $50,000.00; and (C) multiplying the value under subdivision (B) ... by the federally taxable U.S. military retirement income and survivor benefit income received. (3) If the federal adjusted gross income of the taxpayer is equal to or greater than $175,000.00, no amount ... shall be excluded.' (e)(2): 'A taxpayer ... who is eligible ... for the military retirement and survivor benefit exclusion under subsection (d) of this section may elect that exclusion regardless of whether the taxpayer also elects an exclusion under subsections (a)-(c)'. WORKSHEET (Schedule IN-112 Instructions, verbatim): '2. Is your Adjusted Gross Income (AGI) on Form IN-111 ... Line 1, less than $175,000? ... 3. Is your AGI on Form IN-111, Line 1, less than or equal to $125,000? ... Yes. You qualify for a full exemption. ... SECTION II ... 5. Phaseout Threshold 175,000; 6. Subtract Line 4 from Line 5; 7. Divide Line 6 by $50,000. This value will be a decimal. Please round to the second decimal place (Example: .481 would round to .48). 8. Enter the lesser of Line 7 or the value 1 ... 10. Amount of partial exemption. Multiply Line 8 by Line 9.' BOOKLET LINE 13 (verbatim): 'Act 71 was signed into law on June 25, 2025. This new exemption under Act 71 takes effect beginning with the 2025 tax year.' ENCODING: two-decimal half-up ratio capped at 1.00, one whole-dollar rounding of the product; the thresholds do not depend on filing status."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { fullAgi: { value: "12500000", type: "money" }, noneAgi: { value: "17500000", type: "money" }, phaseRange: { value: "5000000", type: "money" }, ratioDecimals: { value: "2", type: "int" } },
+    formula: (() => {
+      const agi2 = fact36("vtFederalAgi");
+      const base = max023(fact36("vtMilitaryRetirementIncome"));
+      const ratio = minE12({ kind: "mulDiv", a: max023(sub23(money33("17500000"), agi2)), b: money33("100"), c: money33("5000000"), round: "half-up" }, money33("100"));
+      return iff22(le19(agi2, money33("12500000")), base, iff22(lt22(agi2, money33("17500000")), applyRatio22(base, ratio), money33("0")));
+    })()
+  },
+  {
+    id: "us.vt.capital_gains_exclusion",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont capital gains exclusion 2025 \u2014 Schedule IN-153: the greater of the $5,000 flat exclusion and 40% of eligible net adjusted capital gain on assets held over three years (up to $350,000), limited to 40% of federal taxable income (Schedule IN-112 line 8)",
+    citation: {
+      source: "32 V.S.A. \xA7 5811(21)(B)(ii); 2025 Schedule IN-153 Parts I-III (lines 1-21) and its instructions; Schedule IN-112 Part I line 8",
+      section: "32 V.S.A. \xA7 5811(21)(B)(ii); Schedule IN-153 line 21",
+      url: FORMS6 + "IN-153-2025.pdf",
+      excerpt: "STATUTE (\xA7 5811(21)(B)(ii), verbatim): decreased by 'with respect to adjusted net capital gain income as defined in 26 U.S.C. \xA7 1(h) reduced by the total amount of any qualified dividend income: either the first $5,000.00 of such adjusted net capital gain income or 40 percent of adjusted net capital gain income from the sale of assets held by the taxpayer for more than three years, except not adjusted net capital gain income from: (I) the sale of any real estate or portion of real estate used by the taxpayer as a primary or nonprimary residence; or (II) the sale of depreciable personal property other than farm property and standing timber; or stocks or bonds publicly traded or traded on an exchange, or any other financial instruments; regardless of whether sold by an individual or business; and provided that the total amount of decrease under this subdivision (21)(B)(ii) shall not exceed 40 percent of federal taxable income or $350,000.00, whichever is less'. SCHEDULE IN-153 (verbatim): Part I '1. Enter smaller of Line 15 or 16 from federal Form 1040, Schedule D ... 4. Subtract Line 3 from Line 1 [qualified dividends and other ineligible items] ... 7. Divide Line 5c by Line 6 [investment interest expense allocation] ... 8. Subtract Line 7 from Line 4. Entry cannot be less than zero. 9. Enter the smaller of Line 8 or $5,000.' Part II '10. Enter the amount from Part I, Line 4. 11. Enter amount of adjusted net capital gain from the sale of assets held for three years or less. 12. Assets held for more than three years. Subtract Line 11 from Line 10. Entry cannot be less than zero. 13a. Real estate or portion of real estate used as a primary or nonprimary home. 13b. Depreciable personal property (except for farm property or standing timber). 13c. Stocks or bonds publicly traded or traded on an exchange or any other financial instruments. 14. Add Lines 13a through 13c. 15. Subtract Line 14 from Line 12 ... This is the amount of net adjusted capital gain eligible for exclusion. 16. Enter amount from Part I, Line 7 or recomputed federal Form 4952. 17. Subtract Line 16 from Line 15. 18. Multiply Line 17 by 40%; enter result or $350,000, whichever is less.' Part III '19. Enter the greater of Line 9 or Line 18. 20. Multiply [Federal Taxable Income] x 40% and enter result here. 21. Enter the smaller of Line 19 or Line 20. This is your capital gains exclusion.' INSTRUCTIONS (verbatim): 'Qualified dividends are not eligible for capital gains treatment for Vermont tax purposes. Taxpayers may elect either the Flat Exclusion or the Percentage Exclusion. The amount excluded under either method cannot exceed 40% of federal taxable income or $350,000, whichever is less. If your 2025 federal Form 1040 ... shows a capital loss, you are not eligible to complete this form.' ENCODING: vtNetAdjustedCapitalGain is Part I line 8 (net adjusted capital gain after qualified dividends and allocated investment interest), vtEligibleLongTermGain is Part II line 17 (the over-three-year gain net of the three ineligible categories and interest), vtFederalTaxableIncome is the line 20 base; the rule takes the greater of the two methods and applies the 40%-of-federal-taxable-income cap. A net capital loss gives $0."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { flat: { value: "500000", type: "money" }, pct: { value: "40", type: "int" }, cap: { value: "35000000", type: "money" }, ftiPct: { value: "40", type: "int" } },
+    formula: (() => {
+      const l9 = minE12(max023(fact36("vtNetAdjustedCapitalGain")), money33("500000"));
+      const l18 = minE12(dollarsFromScaled15(times14(max023(fact36("vtEligibleLongTermGain")), "4000")), money33("35000000"));
+      const l19 = maxE6(l9, l18);
+      const l20 = dollarsFromScaled15(times14(max023(fact36("vtFederalTaxableIncome")), "4000"));
+      return minE12(l19, l20);
+    })()
+  },
+  {
+    id: "us.vt.student_loan_interest_subtraction",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont student loan interest subtraction 2025 \u2014 Schedule IN-112 line 16c: interest paid on qualified student loans not already deducted federally, denied above $200,000 of federal AGI on a joint return and $120,000 for every other status",
+    citation: {
+      source: "32 V.S.A. \xA7 5811(21)(B)(vi); 2025 Schedule IN-112 Part I lines 16a-16c and its instructions p. 3",
+      section: "32 V.S.A. \xA7 5811(21)(B)(vi); Schedule IN-112 line 16c",
+      url: FORMS6 + "IN-112-Instr-2025.pdf",
+      excerpt: "STATUTE (\xA7 5811(21)(B)(vi), verbatim): decreased by 'the amount of interest paid by a qualified resident taxpayer during the taxable year on a qualified education loan for the costs of attendance at an eligible educational institution'. INSTRUCTIONS (verbatim): 'Line 16a Student Loan Interest. Total student loan interest you paid in 2025 on qualified student loans. Line 16b Student loan interest already deducted on federal Form 1040, Schedule 1, Line 21. Line 16c Subtract Line 16b from Line 16a. If filing jointly and AGI is greater than $200,000, enter -0-. All other filers, if AGI is greater than $120,000, enter -0-.' STATUTE (\xA7 5811(29)(B), the 'qualified resident taxpayer' definition): federal AGI 'equal to or less than: (i) $120,000.00 if the taxpayer's filing status is single, head of household, or married filing separately; or (ii) $200,000.00 if the taxpayer's filing status is married filing jointly'. ENCODING: the income limits are cliffs, applied as printed \u2014 'filing jointly' is the married-filing-jointly status; a qualifying surviving spouse is named in neither list and takes the $120,000 limit as the instructions' 'All other filers'."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { agiLimitJoint: { value: "20000000", type: "money" }, agiLimitOther: { value: "12000000", type: "money" } },
+    formula: (() => {
+      const limit = iff22(isMfj5, money33("20000000"), money33("12000000"));
+      return iff22(gt14(fact36("vtFederalAgi"), limit), money33("0"), max023(sub23(max023(fact36("vtStudentLoanInterestPaid")), max023(fact36("vtStudentLoanInterestDeductedFederally")))));
+    })()
+  },
+  {
+    id: "us.vt.charitable_credit",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont charitable contribution credit 2025 \u2014 5% of the first $20,000 of contributions allowable under IRC \xA7 170, nonrefundable, maximum $1,000, available whether or not the filer itemizes federally (Form IN-111 lines 11-13)",
+    citation: {
+      source: "32 V.S.A. \xA7 5822(d)(3); 2025 Form IN-111 lines 11-13; 2025 Form IN-111 Instructions p. 7, lines 11-13",
+      section: "32 V.S.A. \xA7 5822(d)(3); Form IN-111 line 13",
+      url: BOOKLET2,
+      excerpt: "STATUTE (\xA7 5822(d)(3), verbatim): 'Individuals shall receive a nonrefundable charitable contribution credit against the tax imposed under this section for the taxable year. The credit shall be five percent of the first $20,000.00 in charitable contributions made during the taxable year that are allowable under 26 U.S.C. \xA7 170. This credit shall be available irrespective of a taxpayer's election not to itemize at the federal level.' PRINTED FORM (verbatim): '11. Tax-Deductible Charitable Contribution (See instructions); 12. Multiply Line 11 by 5% (0.05); 13. Charitable Contribution Deduction (Enter the lesser of Line 12 or $1,000)'. BOOKLET (verbatim): 'Line 11 Tax Deductible Charitable Contribution. Enter the amount contributed to qualified charities in the taxable year. Line 12 Multiply Line 11 by 5% (0.05). Line 13 Enter the amount on Line 12 or $1,000 ($20,000 times 5%), whichever is less. Line 14 Vermont Income Tax. Line 10 minus Line 13.' ENCODING: 5% of the contributions with one whole-dollar rounding, capped at $1,000; the form labels line 13 a 'Deduction' but it is subtracted from the TAX on line 14."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "5", type: "int" }, maxContributions: { value: "2000000", type: "money" }, maxCredit: { value: "100000", type: "money" } },
+    formula: minE12(dollarsFromScaled15(times14(max023(fact36("vtCharitableContributions")), "500")), money33("100000"))
+  },
+  {
+    id: "us.vt.federal_tax_adjustment",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont 24% federal-tax adjustment 2025 \u2014 Schedule IN-119: 24% of the federal additional taxes on qualified plans, investment credit recapture and Form 4972 lump-sum tax (Part I line 5, an addition), and 24% of the federal elderly/disabled credit, Vermont-based investment credit and farm income averaging (Part II line 12, a nonrefundable credit)",
+    citation: {
+      source: "32 V.S.A. \xA7 5822(c) and (d)(1)-(2); 2025 Schedule IN-119 Part I lines 1-7 and Part II lines 8-14; 2025 Schedule IN-119 Instructions",
+      section: "32 V.S.A. \xA7 5822(c), (d); Schedule IN-119 lines 5 and 12",
+      url: VSA("05822"),
+      excerpt: "STATUTE (\xA7 5822(c), verbatim): 'The amount of tax determined under subsection (a) of this section shall be: (1) increased by 24 percent of the taxpayer's federal tax liability for the taxable year for the following: (A) additional taxes on qualified retirement plans, including individual retirement accounts and medical savings accounts and other tax-favored accounts; (B) recapture of the federal investment tax credit attributable to the Vermont portion of the investment; and (C) tax on qualified lump-sum distributions of pension income not included in federal taxable income; and (2) decreased by 24 percent of the reduction in the taxpayer's federal tax liability due to farm income averaging.' (d)(1): 'A taxpayer shall be entitled to a credit against the tax imposed under this section of 24 percent of each of the credits allowed against the taxpayer's federal income tax for the taxable year as follows: the credit for people who are elderly or permanently totally disabled and the investment tax credit attributable to the Vermont-property portion of the investment.' SCHEDULE IN-119 (verbatim): Part I '1. Tax on Qualified Plans including IRA, HSA, and MSA distributions; 2. Recapture of Federal Investment Tax Credit; 3. Tax from federal Form 4972 ...; 4. ADD Lines 1 through 3; 5. MULTIPLY Line 4 by 24% (0.24); 6. Recapture of Vermont Credits; 7. ADD Lines 5 and 6.' Part II '8. Credit for the Elderly or the Disabled; 9. Investment Tax Credit - Vermont-based only; 10. Vermont Farm Income Averaging Credit; 11. ADD Lines 8 through 10; 12. MULTIPLY Line 11 by 24% (0.24); 13. Vermont-based Solar Energy Credit carryforward; 14. ADD Lines 12 and 13; 15. SUBTRACT Line 14 from Line 7. Enter on Form IN-111, Line 9.' ENCODING: one rule applied to whichever base (vtFederalTaxAdjustmentBase) \u2014 24% with one whole-dollar rounding; the composer runs it once for line 5 and once for line 12 and nets them on line 15 with the recapture and solar carryforward inputs."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "24", type: "int" } },
+    formula: dollarsFromScaled15(times14(max023(fact36("vtFederalTaxAdjustmentBase")), "2400"))
+  },
+  {
+    id: "us.vt.other_state_credit",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont credit for income tax paid to another state or Canadian province 2025 \u2014 Schedule IN-117: the Vermont tax times the ratio of the doubly-taxed modified AGI to total modified AGI, capped at 100%, limited to the tax paid (Form IN-111 line 17)",
+    citation: {
+      source: "32 V.S.A. \xA7 5825(a); 2025 Schedule IN-117 lines 1-21 and its instructions; 2025 Form IN-111 line 17",
+      section: "32 V.S.A. \xA7 5825(a); Schedule IN-117 line 21",
+      url: FORMS6 + "IN-117-2025.pdf",
+      excerpt: "STATUTE (\xA7 5825(a), verbatim): 'A taxpayer of this State who was a resident individual, estate, or trust during any portion of a taxable year shall receive credit against the tax imposed, for that taxable year, by section 5822 of this title for income taxes imposed by, and paid to, another state or territory of the United States, the District of Columbia, or a province of Canada, upon the taxpayer's income earned or received from sources within that state, territory, district, or province during that portion of that taxable year. In no case shall the credit allowed by this section exceed the portion of Vermont income tax, otherwise imposed by this chapter, attributable to the adjusted gross income earned or received from sources within such other state, territory, district, or province.' SCHEDULE IN-117 (verbatim): '9. Modified Adjusted Gross Income for income taxed in another state or Canadian province AND taxed in Vermont (SUBTRACT Line 8 from Line 5) ... 17. SUBTRACT Line 16 from Line 13 [modified Vermont AGI: federal AGI plus non-Vermont obligations and bonus depreciation, less U.S. government interest and the prior-year depreciation adjustment] ... 18. Vermont income tax from Form IN-111, Line 14. 19. Computed tax credit (DIVIDE Line 9 by Line 17. MULTIPLY the result by Line 18.) Result cannot be more than 100% of Vermont tax. 20. Income tax paid to another state or Canadian province ... 21. Enter the lesser of Line 19 or 20.' INSTRUCTIONS (verbatim): 'Line 19 Divide Line 9 ... by Line 17 ... and multiply that result by Line 18. Line 20 Enter the amount of income tax paid to the other state or Canadian province. This amount is income tax paid to the state or Canadian province \u2013 not the amount of withholding. City and county tax paid to the other state is not allowed. Credit for the Canadian provincial income tax does not include the portion used as a foreign credit on federal Form 1040. Line 21 Enter the lesser of Line 19 or 20 ... If there is more than one state or province, add Line 21 from all Schedules IN-117.' ENCODING: line 19 = line 18 x line 9 / line 17 with ONE whole-dollar rounding of the exact quotient (the schedule prints no intermediate ratio and no decimal count), capped at line 18; a separate schedule per state is summed by the caller."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {},
+    formula: (() => {
+      const l9 = max023(fact36("vtOtherStateIncome"));
+      const l17 = fact36("vtModifiedAgi");
+      const l18 = max023(fact36("vtIncomeTax"));
+      const l19 = minE12(times14({ kind: "mulDiv", a: l18, b: l9, c: times14(l17, "100"), round: "half-up" }, "100"), l18);
+      return iff22(gt14(l17, money33("0")), minE12(l19, max023(fact36("vtOtherStateTaxPaid"))), money33("0"));
+    })()
+  },
+  {
+    id: "us.vt.eitc",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont earned income tax credit 2025 \u2014 38% of the federal credit with one or more qualifying children, 100% of it with none (2025 Act 71 \xA7 2); refundable (Schedule IN-112 Part II line 7)",
+    citation: {
+      source: "32 V.S.A. \xA7 5828b(a)-(b) as amended by 2025 Act 71 \xA7 2 (eff. January 1, 2025); 2025 Schedule IN-112 Part II lines 5-7; Department of Taxes 2025 Legislative Highlights",
+      section: "32 V.S.A. \xA7 5828b; Schedule IN-112 line 7",
+      url: VSA("05828b"),
+      excerpt: "STATUTE (\xA7 5828b(a), verbatim): 'A resident individual or part-year resident individual who is entitled to an earned income tax credit granted under the laws of the United States shall be entitled to a credit against the tax imposed for each year by section 5822 of this title. The credit shall be for an individual who claims one or more qualifying children 38 percent or for an individual who does not claim one or more qualifying children 100 percent of the earned income tax credit granted to the individual under the laws of the United States, multiplied by the percentage that the individual's income that is earned or received during the period of the individual's residency in this State bears to the individual's total income.' (b): 'In the event the credit exceeds the amount of the income tax payments due from the taxpayer, the excess of credits over payments due shall be paid to the taxpayer.' SCHEDULE IN-112 (verbatim): '5. Number of qualifying children from federal Schedule EIC. 6. Federal Earned Income Tax Credit. Enter amount from federal Form 1040. 7. Vermont Earned Income Tax Credit. If Line 5 is GREATER than zero, MULTIPLY Line 6 by 38% (0.38). If Line 5 is zero, enter the amount from Line 6.' LEGISLATIVE HIGHLIGHTS (verbatim): 'Sec. 2, Earned Income Tax Credit \u2014 Changes the percentage of the federal Earned Income Tax Credit that may be taken in Vermont by claimants without qualifying children, from 38 percent to 100 percent' \u2014 'effective retroactively to tax years opening on and after January 1, 2025'. ENCODING: full-year residents only (the residency proration is Schedule IN-113, out of scope); refundable through Form IN-111 line 26c."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pctWithChildren: { value: "38", type: "int" }, pctNoChildren: { value: "100", type: "int" } },
+    formula: iff22(gt14(fact36("vtEitcQualifyingChildren"), int14("0")), dollarsFromScaled15(times14(max023(fact36("vtFederalEic")), "3800")), max023(fact36("vtFederalEic")))
+  },
+  {
+    id: "us.vt.child_tax_credit",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont child tax credit 2025 \u2014 $1,000 per qualifying child six or younger at year end, reduced $20 per $1,000 or fraction of federal AGI over $125,000 regardless of filing status; refundable (Schedule IN-112 Part II line 4)",
+    citation: {
+      source: "32 V.S.A. \xA7 5830f(a)-(b) as amended by 2025 Act 71 \xA7 1 (age five to six, eff. January 1, 2025); 2025 Schedule IN-112 Part II lines 3-4 and its instructions p. 4 'CHILD TAX CREDIT TABLE'",
+      section: "32 V.S.A. \xA7 5830f; Schedule IN-112 line 4",
+      url: VSA("05830f"),
+      excerpt: "STATUTE (\xA7 5830f(a), verbatim): 'The total credit per taxable year shall be in the amount of $1,000.00 per qualifying child, as defined under 26 U.S.C. \xA7 152(c) but notwithstanding the taxpayer identification number requirements under 26 U.S.C. \xA7 24(e) and (h)(7), who is six years of age or younger as of the close of the calendar year in which the taxable year of the taxpayer begins.' (b): 'the amount of the credit per child under this section shall be reduced, but not below zero, by $20.00 for each $1,000.00, or fraction thereof, by which the individual's adjusted gross income exceeds $125,000.00, irrespective of the individual's filing status. For purposes of this subsection, spouses filing jointly shall be considered an individual.' INSTRUCTIONS (verbatim): 'Line 3 Enter the number of qualifying children ... Qualifying children are those born between 2019 and 2025. Line 4 Child Tax Credit. Multiply Line 3 by $1,000 or if your AGI is greater than $125,000, use the table to find the credit amount per qualifying child to use on Line 4.' TABLE (verbatim, 'At Least / But Not More Than / Child Tax Credit Is'): '0 / 125,000 / 1,000; 125,001 / 126,000 / 980; 126,001 / 127,000 / 960; ... 137,001 / 138,000 / 740; ... 150,001 / 151,000 / 480; ... 173,001 / 174,000 / 20; 174,001 / - / 0'. ENCODING: per child = $1,000 less $20 x the number of $1,000 units OR FRACTION by which AGI exceeds $125,000 (ceil), floored at zero \u2014 this reproduces every printed row (AGI 125,001 -> 1 unit -> $980; 174,001 -> 50 units -> $0) \u2014 times the count of qualifying children six or younger. Refundable through Form IN-111 line 26c; the statute's $20 step and the printed table are whole dollars, so no rounding arises."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { perChild: { value: "100000", type: "money" }, phaseoutStart: { value: "12500000", type: "money" }, reductionPerStep: { value: "2000", type: "money" }, stepCents: { value: "100000", type: "money" }, maxAge: { value: "6", type: "int" } },
+    formula: (() => {
+      const steps = stepUnits11(max023(sub23(fact36("vtFederalAgi"), money33("12500000"))), "100000", "ceil");
+      const perChild = max023(sub23(money33("100000"), mulInt20(money33("2000"), steps)));
+      return mulInt20(perChild, fact36("vtChildrenSixOrUnder"));
+    })()
+  },
+  {
+    id: "us.vt.child_dependent_care_credit",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont child and dependent care credit 2025 \u2014 72% of the federal credit, refundable (Schedule IN-112 Part II line 2)",
+    citation: {
+      source: "32 V.S.A. \xA7 5828c; 2025 Schedule IN-112 Part II lines 1-2",
+      section: "32 V.S.A. \xA7 5828c; Schedule IN-112 line 2",
+      url: VSA("05828c"),
+      excerpt: "STATUTE (\xA7 5828c, verbatim): 'A resident or part-year resident of this State shall be eligible for a refundable credit against the tax imposed under section 5822 of this title. The credit shall be equal to 72 percent of the federal child and dependent care credit allowed to the taxpayer for the taxable year for child or dependent care services.' SCHEDULE IN-112 (verbatim): '1. Child and Dependent Care Credit (federal Form 2441, Line 11). 2. Vermont Child and Dependent Care Credit (MULTIPLY Line 1 by 72% (0.72)).' ENCODING: 72% with one whole-dollar rounding; refundable through Form IN-111 line 26c."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "72", type: "int" } },
+    formula: dollarsFromScaled15(times14(max023(fact36("vtFederalChildCareCredit")), "7200"))
+  },
+  {
+    id: "us.vt.veteran_credit",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont veteran tax credit 2025 \u2014 $250 refundable for a filer with a discharge or separation record verifying service in the uniformed services, reduced $5 per full $100 of federal AGI over $25,000 and gone at $30,000 (Schedule IN-112 Part II lines 8-12)",
+    citation: {
+      source: "32 V.S.A. \xA7 5830g, added by 2025 Act 71 \xA7 5 (eff. January 1, 2025); 2025 Schedule IN-112 Part II lines 8-12 and its instructions p. 4",
+      section: "32 V.S.A. \xA7 5830g; Schedule IN-112 line 12",
+      url: VSA("05830g"),
+      excerpt: "STATUTE (\xA7 5830g, verbatim): '(a) A resident individual or part-year resident individual who served in the uniformed services shall be entitled to a refundable credit against the tax imposed by section 5822 of this title for the taxable year. (b) A taxpayer shall be eligible for the credit under this section provided the taxpayer has a discharge record, or other record of separation from active duty, verifying service in the uniformed services. (c)(1) If the federal adjusted gross income of the taxpayer is less than or equal to $25,000.00, the amount of tax credit provided under this section shall be $250.00. (2) If the federal adjusted gross income of the taxpayer is greater than $25,000.00 but less than $30,000.00, the amount of credit shall be $250.00 less $5.00 per $100.00 of federal adjusted gross income exceeding $25,000.00 of federal adjusted gross income. (3) If the federal adjusted gross income of the taxpayer is $30,000.00 or greater, no amount of credit shall be provided under this section.' SCHEDULE IN-112 (verbatim): '8. Enter your AGI from Form IN-111, Line 1. 9. If Line 8 is $25,000 or less, enter -0- and skip to Line 12. Otherwise, SUBTRACT $25,000 from Line 8. 10. DIVIDE Line 9 by 100, rounding down to the nearest whole number. 11. MULTIPLY Line 10 by $5. 12. If Line 9 is zero, enter $250. Otherwise, enter $250 MINUS Line 11.' ENCODING: the discharge record is an attestation (vtVeteranDischargeRecord) with a $0 default; the $5 steps use the FLOOR of the excess in hundreds, exactly as line 10 prints; the result is a whole number of dollars by construction. One credit per return as the schedule prints it."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { credit: { value: "25000", type: "money" }, phaseoutStart: { value: "2500000", type: "money" }, phaseoutEnd: { value: "3000000", type: "money" }, reductionPerHundred: { value: "500", type: "money" } },
+    formula: (() => {
+      const steps = stepUnits11(max023(sub23(fact36("vtFederalAgi"), money33("2500000"))), "10000", "floor");
+      const amount = max023(sub23(money33("25000"), mulInt20(money33("500"), steps)));
+      return iff22(and10(fact36("vtVeteranDischargeRecord"), lt22(fact36("vtFederalAgi"), money33("3000000"))), amount, money33("0"));
+    })()
+  },
+  {
+    id: "us.vt.use_tax",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont use tax 2025 \u2014 Form IN-111 line 22: the Estimated Use Tax Table by federal AGI ($0 to $45 in $10,000 bands; 0.05% of AGI, at most $150, above $100,000) for unrecorded purchases, plus 6% of recorded purchases, less sales tax paid to another state",
+    citation: {
+      source: "2025 Form IN-111 Instructions pp. 8-9, 'USE TAX WORKSHEET' Parts 1-4 and the 'Estimated Use Tax Table'; 32 V.S.A. \xA7 9773",
+      section: "Form IN-111 line 22; Use Tax Worksheet",
+      url: BOOKLET2,
+      excerpt: "BOOKLET (verbatim): 'The use tax rate is the same as the sales tax rate: 6%. If you didn't keep records of qualifying purchases, Vermont offers an option for estimating them in Part 1. If you did keep records, you should use Part 2. The total for any purchases that cost over $1,000 each needs to be reported on Line 3a.' WORKSHEET (verbatim): 'Part 1 If you did not keep accurate records \u2014 1a. Enter the amount of use tax from the Estimated Use Tax Table below that corresponds to your Adjusted Gross Income from Form IN-111, Line 1. 1b. Did you make purchase(s) of $1,000 or more per item? Yes. Go to Part 3. No. Enter Line 1a amount onto Form IN-111, Line 22.' ESTIMATED USE TAX TABLE (verbatim): 'Up to $20,000 \u2014 $0; $20,001 - $30,000 \u2014 $10; $30,001 - $40,000 \u2014 $15; $40,001 - $50,000 \u2014 $20; $50,001 - $60,000 \u2014 $25; $60,001 - $70,000 \u2014 $30; $70,001 - $80,000 \u2014 $35; $80,001 - $90,000 \u2014 $40; $90,001 - $100,000 \u2014 $45; $100,001 and over \u2014 0.05% (0.0005) of AGI or $150, whichever is less.' 'Part 2 If you did keep accurate records \u2014 2a. Enter the total amount of all purchases of items under $1,000 each. 2b. Multiply Line 2a by 6% (0.06). Part 3 Total Use Tax due \u2014 3a. Enter the total amount of all purchases of items $1,000 or more per item. 3b. Multiply Line 3a by 6% (0.06). 3c. Add Line 3b to either Line 1a or Line 2b (the line with a value entered). 3d. Enter the amount of sales tax paid to another state for the purchases on Lines 2a and 3a, if any. 3e. Line 3c minus Line 3d. Enter here and on Form IN-111, Line 22.' WINDOW: the Estimated Use Tax Table is a booklet-year figure \u2014 this rule ends 2026-01-01 and re-verifies against the 2026 Form IN-111 instructions (the 6% rate is statutory, 32 V.S.A. \xA7 9773). ENCODING: vtUseTaxEstimateFromTable selects Part 1 (the table on vtFederalAgi, with the 0.05% tier rounded once to whole dollars) instead of Part 2 (6% of vtUseTaxSmallPurchases); 6% of vtUseTaxLargePurchases is always added; vtUseTaxPaidOtherState is subtracted; floored at zero."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    parameters: { rateBps: { value: "600", type: "int" }, estimateRateBps: { value: "5", type: "int" }, estimateCap: { value: "15000", type: "money" }, largeItemThreshold: { value: "100000", type: "money" } },
+    formula: (() => {
+      const agi2 = fact36("vtFederalAgi");
+      const band = (hiCents, amt, els) => iff22(le19(agi2, money33(hiCents)), money33(amt), els);
+      const over100k = minE12(dollarsFromScaled15(times14(max023(agi2), "5")), money33("15000"));
+      const table2 = band("2000000", "0", band("3000000", "1000", band("4000000", "1500", band("5000000", "2000", band("6000000", "2500", band("7000000", "3000", band("8000000", "3500", band("9000000", "4000", band("10000000", "4500", over100k)))))))));
+      const small = dollarsFromScaled15(times14(max023(fact36("vtUseTaxSmallPurchases")), "600"));
+      const large = dollarsFromScaled15(times14(max023(fact36("vtUseTaxLargePurchases")), "600"));
+      const base = iff22(fact36("vtUseTaxEstimateFromTable"), table2, small);
+      return max023(sub23(add19(base, large), max023(fact36("vtUseTaxPaidOtherState"))));
+    })()
+  },
+  {
+    id: "us.vt.child_care_contribution",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont child care contribution 2025 \u2014 Form IN-111 line 21: 0.11% of Vermont-source self-employment income (federal Schedule SE line 6 less work performed outside Vermont)",
+    citation: {
+      source: "2023 Act 76; 2025 Form IN-111 line 21 and Instructions p. 7, 'CHILD CARE CONTRIBUTION WORKSHEET'; Department guide GB-1326",
+      section: "Form IN-111 line 21",
+      url: BOOKLET2,
+      excerpt: "BOOKLET (verbatim): 'Line 21 Child Care Contributions. Act 76 of 2023, an act relating to child care, early education, workers' compensation, and unemployment insurance, created a child care contribution (CCC) in Vermont. Per the statutory directive, collection of the CCC commenced on July 1, 2024. Individuals with self-employment income from Vermont sources earned on July 1, 2024, or after must include their CCC on Form IN-111.' WORKSHEET (verbatim): '1. Enter the amount from federal Form 1040, Schedule SE, Line 6. 2. Enter the amount of income reported on Line 1 that was earned for work performed outside of Vermont. 3. Subtract Line 2 from Line 1. 4. Multiply Line 3 by 0.11% (0.0011). Enter this amount on Form IN-111, Line 21.' WINDOW: the 0.11% rate is statutory (2023 Act 76) and the worksheet is the 2025 booklet's; carried to 2027-01-01 and to be re-verified against the 2026 booklet. ENCODING: 0.11% of the Vermont-source net self-employment income with ONE whole-dollar rounding (11 basis points is not an integer-cent rate, so rounding to cents first would misstate some inputs by $1)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { rateBps: { value: "11", type: "int" } },
+    formula: dollarsFromScaled15(times14(max023(sub23(max023(fact36("vtSelfEmploymentIncome")), max023(fact36("vtSelfEmploymentIncomeOutsideVermont")))), "11"))
+  },
+  {
+    id: "us.vt.vheip_credit",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont Higher Education Investment Plan credit 2025 \u2014 10% of the first $2,500 contributed per beneficiary ($5,000 per beneficiary on a joint return), nonrefundable (Schedule IN-119 Part II line 1)",
+    citation: {
+      source: "32 V.S.A. \xA7 5825a(a); 2025 Schedule IN-119 Part II line 1 and its instructions p. 2",
+      section: "32 V.S.A. \xA7 5825a(a); Schedule IN-119 Part II line 1",
+      url: VSA("05825a"),
+      excerpt: "STATUTE (\xA7 5825a(a), verbatim): 'A taxpayer of this State, including each spouse filing a joint return, who makes a contribution to a Vermont Higher Education Investment Plan account ... shall be eligible for a nonrefundable credit against the tax imposed under section 5822 of this title of 10 percent of the first $2,500.00 per beneficiary, contributed by the taxpayer during the taxable year to a Vermont Higher Education Investment Plan account'. INSTRUCTIONS (Schedule IN-119, verbatim): 'For jointly filed returns, the tax credit equals 10% of the first $5,000 of contributions per beneficiary.' FORM (verbatim): '1. Vermont Higher Education Investment Plan (VHEIP) ... 2025 Contribution eligible for credit ... TIMES (X) .10'. ENCODING: contributions capped at $2,500 ($5,000 joint) times the number of beneficiaries, then 10% \u2014 the per-beneficiary cap is applied in aggregate because the form takes one contribution total; a caller with unequal contributions across beneficiaries must pass the already-capped eligible total. Nonrefundable, into Form IN-111 line 18 through Schedule IN-119 Part II line 9. Rollovers and the 10% recapture of non-qualified distributions (\xA7 5825a(b)) are out of scope."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: { pct: { value: "10", type: "int" }, perBeneficiary: { value: "250000", type: "money" }, perBeneficiaryJoint: { value: "500000", type: "money" } },
+    formula: (() => {
+      const cap = mulInt20(iff22(isMfj5, money33("500000"), money33("250000")), fact36("vtVheipBeneficiaries"));
+      return dollarsFromScaled15(times14(minE12(max023(fact36("vtVheipContributions")), cap), "1000"));
+    })()
+  },
+  {
+    id: "us.vt.parameters",
+    version: 1,
+    jurisdiction: "us.vt",
+    title: "Vermont Form IN-111 2025 \u2014 composition conventions, printed line structure, filing-status routing, out-of-scope schedules, and legislative currency",
+    citation: {
+      source: "2025 Form IN-111 (Rev. 10/25); 2025 Form IN-111 Instructions; Schedules IN-112, IN-113, IN-117, IN-119, IN-153, RCC-146, HS-122; 32 V.S.A. chapter 151; 2025 Act 71 (S.51); 2026 Act 164 (H.933); Department of Taxes 2025 and 2026 Legislative Highlights",
+      section: "Form IN-111 lines 1-32",
+      url: FORMS6 + "IN-111-2025.pdf",
+      excerpt: "STRUCTURE (printed 2025 Form IN-111, verbatim captions): '1. Federal Adjusted Gross Income (federal Form 1040, Line 11a); 2. Net Modifications to Federal AGI (Schedule IN-112, Part I, Line 19); 3. Federal AGI with Modifications (ADD Lines 1 and 2); 4. 2025 Vermont Standard Deduction from filing status section above; 5a-5e Personal Exemptions ... 5e. MULTIPLY Line 5d by $5,300; 6. ADD Lines 4 and 5e; 7. Vermont Taxable Income (SUBTRACT Line 6 from Line 3. If less than zero, enter -0-); 8. Vermont Income Tax from tax table or tax rate schedule (If Line 1 is greater than $150,000, see instructions); 9. Net Adjustment to Vermont Tax (Schedule IN-119, Part I, Line 15); 10. Vermont Income Tax with Adjustment (ADD Lines 8 and 9. If less than zero, enter -0-); 11. Tax-Deductible Charitable Contribution; 12. Multiply Line 11 by 5% (0.05); 13. Charitable Contribution Deduction (Enter the lesser of Line 12 or $1,000); 14. Vermont Income Tax (Line 10 MINUS Line 13. If less than zero, enter -0-); 15. Income Adjustment (Schedule IN-113, Line 35, or 100.0000%); 16. Adjusted Vermont Income Tax (MULTIPLY Line 14 by Line 15); 17. Other State Credit (Schedule IN-117, Line 21); 18. Vermont Tax Credits (Schedule IN-119, Part II); 19. Total Vermont Credits (Add Lines 17 and 18); 20. Vermont Income Tax after credits (SUBTRACT Line 19 from Line 16. If Line 19 is greater than Line 16, enter -0-); 21. Child Care Contributions for Self-Employed individuals; 22. Use Tax; 23. Total Vermont Taxes (ADD Lines 20 through 22); 24a-24e Voluntary Contributions; 25. Total of Vermont Taxes and Voluntary Contributions (ADD Lines 23 and 24e); 26a. 2025 Vermont Tax Withheld from W-2, 1099; 26b. 2025 Estimated Tax payments, amount carried forward; 26c. Refundable Credits (Schedule IN-112, Part II: Full-Year Residents-Line 13); 26d. 2025 Vermont Real Estate Withholding; 26e. 2025 Nonresident Estimated Tax payments; 26f. Total Payments and Credits (ADD Lines 26a through 26e); 27. Overpayment. If Line 25 is less than Line 26f, SUBTRACT Line 25 from Line 26f; 28a. Refund to be credited to 2026 Estimated Tax Payment; 28b. Refund to be credited to 2026 Property Tax Bill; 29. REFUND AMOUNT (SUBTRACT Lines 28a and 28b from Line 27); 30. If Line 25 is more than Line 26f, subtract Line 26f from Line 25; 31. Interest and Penalty on Underpayment of Estimated Tax (Worksheet IN-152 or IN-152A); 32. AMOUNT DUE (ADD Lines 30 & 31).' SCHEDULE IN-112 PART I (verbatim): additions '3. Income from Non-Vermont State and Local Obligations; 4. Bonus Depreciation Allowed under federal law; 6. Total Additions (ADD Line 3 and Line 4)'; subtractions '7. Interest Income from U.S. Obligations; 8. Capital Gains Exclusion (Schedule IN-153, Line 21); 9. Adjustment for Prior Years' Bonus Depreciation; 10. Taxable Refunds of State and Local Income Taxes; 11. Medical Expense Deduction; 12. Retirement Benefits Exempt from Taxation; 13. Military retirement and Survivor Benefit exempt from Taxation; 14. Railroad Retirement income; 15. Bond/note interest income from [Vermont Student Assistance Corporation, Build America, Vermont Telecommunications Authority, Vermont Public Power Supply Authority]; 16c. [student loan interest]; 18. Total Subtractions (ADD Lines 7 through 15 and Line 16c); 19. SUBTRACT Line 18 from Line 6. Enter on Form IN-111, Line 2.' PART II refundable credits: '2. Vermont Child and Dependent Care Credit; 4. Child Tax Credit; 7. Vermont Earned Income Tax Credit; 12. [Veteran Tax Credit]; 13. Total Vermont Refundable Tax Credits (ADD Lines 2, 4, 7, and 12). Full-Year Residents: Enter this amount on Form IN-111, Line 26c.' MEDICAL DEDUCTION WORKSHEET (IN-112 Instructions, verbatim): '1a. Medical and Dental Expense from federal Form 1040, Schedule A, Line 4. 1b. Non-allowable expenses included in Line 1a [recurring monthly payments or entrance fees to a retirement community]. 1c. Total. Line 1a minus Line 1b. 2. Amount from Vermont Form IN-111, Line 6. 3. Subtract Line 2 from Line 1c. Enter here and on Schedule IN-112, Part I, Line 11. If amount on Line 3 is negative, STOP.' \u2014 \xA7 5811(21)(C)(iv). FILING STATUS: the printed statuses are Single; Married/CU Filing Jointly; Married/CU Filing Separately; Head of Household; Qualifying Widow(er). A qualifying widow(er) takes the joint standard deduction ($15,300), the joint rate column (Schedule Y-1 and the table footnote), the non-joint retirement thresholds (\xA7 5830e lists 'surviving spouse' with single), the non-joint student loan limit ('filing jointly' means the joint status), NO spouse exemption (line 5b), and is one person for the additional deduction boxes. Civil union partners file as married (\xA7 5812). 2025 Act 27 \xA7 E.111.2 amended \xA7 5861(c) so that spouses 'shall file a joint Vermont personal income tax return for any taxable year for which the spouses file ... a joint federal income tax return', so the Vermont status mirrors the federal one (the booklet allows a recomputed separate return only for civil unions and for a couple where only one spouse has Vermont nexus). OUT OF SCOPE, named: Schedule IN-113 (part-year and nonresident income adjustment \u2014 line 15 is 100% for a full-year resident); the Renter Credit (Form RCC-146, a separate claim computed from household income, family size and county fair market rent, paid outside Form IN-111); the Property Tax Credit (Form HS-122 / HI-144, chapter 154); Schedule IN-119 Part II business credits other than the 24% items (charitable housing, mobile home, research and development, affordable housing, historic rehabilitation, facade, code improvements \u2014 transcribed as an input; the VHEIP credit on line 1 is us.vt.vheip_credit); nonresident real estate withholding and Schedule K-1VT payments (inputs); IN-152 underpayment interest (input); bonus depreciation and QSBS modifications (inputs on the generic additions and subtractions). LEGISLATIVE CURRENCY: 2025 Act 71 (S.51, signed June 25, 2025), retroactive to tax years from January 1, 2025 \u2014 \xA7 1 child tax credit age five to six; \xA7 2 childless EITC 38% to 100%; \xA7 3 every retirement-exclusion AGI threshold up $5,000 and the military retirement/survivor exclusion at $125,000-$175,000 for every status, electable alongside one other; \xA7\xA7 4-5 the $250 veteran credit. 2026 Act 164 (H.933, June 18, 2026): \xA7 55 amends \xA7 5811(21)(B) to add subtractions for R&E amortization and decouples from IRC \xA7 168(n) (bonus depreciation on qualified production property) \u2014 effective retroactively January 1, 2026 and applying to taxable years from January 1, 2025 under the act's \xA7 (8); \xA7 55a requires an addback of the federal qualified small business stock exclusion for taxable years beginning on and after January 1, 2026; \xA7\xA7 56-57 recast the \xA7 5822(e) apportionment for part-year and nonresident filers; \xA7\xA7 60-61 link Vermont income tax to federal law as of December 31, 2025, applying to taxable years from January 1, 2025. NONE of these touches the 2025 rates, brackets, deduction, exemption, or credit amounts. For the retroactive TY2025 items the Department issued the 2025 Vermont Income Tax Form Instructions Federal Conformity Supplement (Rev. 6/26), which routes the IRC \xA7 168(n) and large-business \xA7 174A addbacks and subtractions through Schedule IN-112 lines 4 and 9 \u2014 the generic additions and subtractions inputs here. The 2026 Highlights also record 2026 Act 169 (H.949) \xA7\xA7 8-9, which raise the RENTER credit to 12.5% of fair market rent and $3,250 for claim year 2027 only (outside Form IN-111), and \xA7 10, which raises the property tax credit's $47,000 tiers to $50,000 from claim year 2028. Every dollar amount in \xA7\xA7 5811(21)(C) and 5822(a) is indexed annually by the Commissioner; the 2026 Form IN-111, rate schedule and table publish ~December 2026, so the 2025 rate and deduction rules end 2026-01-01. TY2026 is partly published: the 2026 Form IN-114 Instructions print '2026 Preliminary Vermont Tax Rates' for all four statuses (us.vt.income_tax version 2) and GB-1210-2026 prints the $5,400 withholding allowance that is the personal exemption (us.vt.personal_exemption version 2); the 2026 standard deduction is not printed anywhere (the withholding offsets imply $7,850 single and $15,700 joint, with no head-of-household figure), so us.vt.standard_deduction ends 2026-01-01 and a TY2026 return refuses at line 4 until the 2026 Form IN-111 publishes (~December 2026)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    parameters: {
+      standardDeductionSingle: { value: "765000", type: "money" },
+      standardDeductionJoint: { value: "1530000", type: "money" },
+      standardDeductionHoh: { value: "1145000", type: "money" },
+      additionalDeductionPerBox: { value: "125000", type: "money" },
+      personalExemption: { value: "530000", type: "money" },
+      minimumTaxAgiThreshold: { value: "15000000", type: "money" },
+      tableTop: { value: "7500000", type: "money" },
+      charitableCreditMax: { value: "100000", type: "money" },
+      eitcPctWithChildren: { value: "38", type: "int" },
+      eitcPctNoChildren: { value: "100", type: "int" },
+      childTaxCreditPerChild: { value: "100000", type: "money" },
+      childCareCreditPct: { value: "72", type: "int" },
+      veteranCredit: { value: "25000", type: "money" },
+      capitalGainsFlat: { value: "500000", type: "money" },
+      capitalGainsCap: { value: "35000000", type: "money" },
+      useTaxRateBps: { value: "600", type: "int" },
+      childCareContributionBps: { value: "11", type: "int" }
+    },
+    formula: {
+      kind: "unsupported",
+      reason: "parameters-only rule: Vermont Form IN-111 composition conventions and transcription parameters \u2014 use lookup_tax_parameter / read the citation; the computable pieces are us.vt.income_tax, us.vt.standard_deduction, us.vt.personal_exemption, us.vt.retirement_income_exclusion, us.vt.military_retirement_exclusion, us.vt.capital_gains_exclusion, us.vt.student_loan_interest_subtraction, us.vt.charitable_credit, us.vt.federal_tax_adjustment, us.vt.other_state_credit, us.vt.eitc, us.vt.child_tax_credit, us.vt.child_dependent_care_credit, us.vt.veteran_credit, us.vt.vheip_credit, us.vt.use_tax, and us.vt.child_care_contribution"
+    }
   }
 ];
 
@@ -52120,6 +57274,12 @@ var stateParameterRules = [
   ...idRules,
   ...wvRules,
   ...meRules,
+  ...hiRules,
+  ...riRules,
+  ...mtRules,
+  ...deRules,
+  ...ndRules,
+  ...vtRules,
   ...otherStateRules
 ];
 
@@ -52129,7 +57289,7 @@ var money34 = (cents) => ({ kind: "money", cents });
 var ruleRef31 = (ruleId) => ({ kind: "rule", ruleId });
 var param21 = (name) => ({ kind: "param", name });
 var zero24 = money34("0");
-var isStatus26 = (status) => ({
+var isStatus32 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact37("filingStatus"),
@@ -52201,7 +57361,7 @@ function phasedReduction(tentative, wageLimit, excess, band) {
 function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
   const band = {
     kind: "if",
-    cond: isStatus26("mfj"),
+    cond: isStatus32("mfj"),
     then: param21("bandJoint"),
     else: param21("band")
   };
@@ -52300,7 +57460,7 @@ var qbiRules = [
     "2025",
     {
       kind: "if",
-      cond: isStatus26("mfj"),
+      cond: isStatus32("mfj"),
       then: money34("39460000"),
       // $394,600
       else: money34("19730000")
@@ -52389,7 +57549,10 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
 }
 var wagesForBase = {
   kind: "if",
-  cond: { kind: "cmp", op: "gt", left: fact38("socialSecurityWages"), right: zero25 },
+  cond: {
+    kind: "or",
+    args: [fact38("socialSecurityWagesProvided"), { kind: "cmp", op: "gt", left: fact38("socialSecurityWages"), right: zero25 }]
+  },
   then: fact38("socialSecurityWages"),
   else: fact38("wages")
 };
@@ -52488,7 +57651,7 @@ var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
-var isStatus27 = (status) => ({
+var isStatus33 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact39("filingStatus"),
@@ -52544,7 +57707,7 @@ var seniorDeductionRules = [
     formula: {
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
-      cond: isStatus27("mfs"),
+      cond: isStatus33("mfs"),
       then: zero26,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
@@ -52555,7 +57718,7 @@ var seniorDeductionRules = [
             fact39("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus27("mfj"), fact39("spouseIsAge65OrOlder")]
+              args: [isStatus33("mfj"), fact39("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -52575,7 +57738,7 @@ var seniorDeductionRules = [
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus27("mfj"), fact39("spouseIsAge65OrOlder")]
+                args: [isStatus33("mfj"), fact39("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
               else: zero26
@@ -52624,7 +57787,7 @@ var fact40 = (factId) => ({ kind: "fact", factId });
 var money37 = (cents) => ({ kind: "money", cents });
 var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
 var param24 = (name) => ({ kind: "param", name });
-var pct7 = (num, base) => ({
+var pct10 = (num, base) => ({
   kind: "mulRate",
   base,
   rate: { num, den: "100" },
@@ -52673,14 +57836,14 @@ var magiBase = {
   }
 };
 var ss = fact40("socialSecurityBenefits");
-var provisional = { kind: "add", args: [magiBase, pct7("50", ss)] };
-var isMfs7 = {
+var provisional = { kind: "add", args: [magiBase, pct10("50", ss)] };
+var isMfs10 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
   right: { kind: "enum", value: "mfs" }
 };
-var isMfj5 = {
+var isMfj6 = {
   kind: "cmp",
   op: "eq",
   left: fact40("filingStatus"),
@@ -52688,15 +57851,15 @@ var isMfj5 = {
 };
 var byJoint = (joint, other) => ({
   kind: "if",
-  cond: isMfj5,
+  cond: isMfj6,
   then: param24(joint),
   else: param24(other)
 });
 var socialSecurityRules = [
   {
     id: "us.federal.taxable_social_security",
-    version: 8,
-    // v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
+    version: 9,
+    // v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
     jurisdiction: "us.federal",
     title: "Taxable Social Security benefits (\xA7 86: the 0/50/85% worksheet)",
     citation: {
@@ -52728,19 +57891,21 @@ var socialSecurityRules = [
       then: money37("0"),
       else: {
         kind: "if",
-        cond: isMfs7,
+        // § 86(c)(1)(C)(ii): the $0 base applies to an MFS filer who did NOT live apart from the
+        // spouse at all times during the year; one who did is treated as unmarried ($25,000/$34,000)
+        cond: { kind: "and", args: [isMfs10, { kind: "not", arg: fact40("mfsLivedApartAllYear") }] },
         then: {
           kind: "min",
-          args: [pct7("85", ss), pct7("85", { kind: "max0", arg: provisional })]
+          args: [pct10("85", ss), pct10("85", { kind: "max0", arg: provisional })]
         },
         else: {
           kind: "min",
           args: [
-            pct7("85", ss),
+            pct10("85", ss),
             {
               kind: "add",
               args: [
-                pct7("85", {
+                pct10("85", {
                   kind: "max0",
                   arg: {
                     kind: "sub",
@@ -52754,8 +57919,8 @@ var socialSecurityRules = [
                     {
                       kind: "min",
                       args: [
-                        pct7("50", ss),
-                        pct7("50", {
+                        pct10("50", ss),
+                        pct10("50", {
                           kind: "max0",
                           arg: {
                             kind: "sub",
@@ -52782,7 +57947,7 @@ var J27 = "us.federal";
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money38 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var isStatus28 = (status) => ({
+var isStatus34 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact41("filingStatus"),
@@ -52921,7 +58086,7 @@ var standardDeductionRules = [
     // asked once the filing status is actually known to be MFS
     applicability: {
       kind: "if",
-      cond: isStatus28("mfs"),
+      cond: isStatus34("mfs"),
       then: fact41("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
@@ -53010,11 +58175,11 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
         addIf(fact41("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus28("mfj"), fact41("spouseIsAge65OrOlder")]
+          args: [isStatus34("mfj"), fact41("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus28("mfj"), fact41("spouseIsBlind")]
+          args: [isStatus34("mfj"), fact41("spouseIsBlind")]
         })
       ]
     }
@@ -53024,7 +58189,7 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
 var fact42 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
-var isStatus29 = (status) => ({
+var isStatus35 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact42("filingStatus"),
@@ -53072,7 +58237,7 @@ var tipsEligibilityRules = [
       // an MFS filer gets a definitive "false" without being asked their job.
       kind: "and",
       args: [
-        { kind: "not", arg: isStatus29("mfs") },
+        { kind: "not", arg: isStatus35("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
         fact42("tipsWereVoluntary"),
         { kind: "not", arg: fact42("employerIsSSTB") }
@@ -53087,13 +58252,13 @@ var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var zero27 = money39("0");
-var isStatus30 = (status) => ({
+var isStatus36 = (status) => ({
   kind: "cmp",
   op: "eq",
   left: fact43("filingStatus"),
   right: { kind: "enum", value: status }
 });
-function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus30("mfs")) {
+function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus36("mfs")) {
   return {
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
@@ -53124,7 +58289,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus30("mf
                   left: ruleRef36("us.federal.agi"),
                   right: {
                     kind: "if",
-                    cond: isStatus30("mfj"),
+                    cond: isStatus36("mfj"),
                     then: param25("magiThresholdJoint"),
                     else: param25("magiThreshold")
                   }
@@ -53196,7 +58361,7 @@ var tipsOvertimeRules = [
     },
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
-      cond: isStatus30("mfj"),
+      cond: isStatus36("mfj"),
       then: param25("capJoint"),
       else: param25("cap")
     })
@@ -53276,8 +58441,10 @@ var documentsShape = external_exports.object({
     box3: usd2.optional().describe("social security wages"),
     box5: usd2.optional().describe("Medicare wages and tips"),
     box6: usd2.optional().describe("Medicare tax withheld \u2014 Part IV excess over 1.45% of box 5 is added to withholding automatically"),
-    box17: usd2.optional().describe("state income tax withheld \u2014 surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing")
+    box17: usd2.optional().describe("state income tax withheld \u2014 surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing"),
+    recipient: external_exports.enum(["taxpayer", "spouse"]).optional().describe("whose W-2 this is (box e) \u2014 REQUIRED on a joint return with self-employment income, because Schedule SE line 8a coordinates the wage base with the SE earner's OWN box 3 only")
   }).strict()).optional().describe("one entry per W-2, boxes transcribed verbatim"),
+  selfEmploymentEarner: external_exports.enum(["taxpayer", "spouse"]).optional().describe("who earned the self-employment income (Schedule C / 1099-NEC / 1099-K) \u2014 defaults to the taxpayer; on a joint return this selects whose W-2 box 3 feeds Schedule SE line 8a"),
   f1099rs: external_exports.array(external_exports.object({
     box1: usd2.describe("gross distribution"),
     box2a: usd2.describe("taxable amount (0 if fully rolled over / converted basis applied via ira8606)"),
@@ -53285,7 +58452,7 @@ var documentsShape = external_exports.object({
     box7: external_exports.string().describe('distribution code(s), e.g. "1", "7", "4", "G", "3", "C"'),
     iraSepSimple: external_exports.boolean().optional().describe("the IRA/SEP/SIMPLE checkbox"),
     recipient: external_exports.enum(["taxpayer", "spouse"]).optional().describe("whose distribution (for the age-based penalty test); default taxpayer"),
-    rolledOver: external_exports.boolean().optional().describe("interview-confirmed full rollover (e.g. 'distributions less rollovers = 0') \u2014 excluded from taxable income regardless of box 2a"),
+    rolledOver: external_exports.boolean().optional().describe("interview-confirmed full rollover (e.g. 'distributions less rollovers = 0') \u2014 excluded from taxable income regardless of box 2a. NOT for a code-G direct rollover to a ROTH: the payer reports the converted amount in box 2a and it IS taxable"),
     disabilityBeforeRetirementAge: external_exports.boolean().optional().describe("code-3 disability received before minimum retirement age \u2014 reported as WAGES (Pub. 525) and counted as \xA7 22 disability income")
   }).strict()).optional().describe("one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"),
   ssa1099s: external_exports.array(external_exports.object({
@@ -53356,13 +58523,13 @@ function ageYearsExact(dobStr, taxYear) {
   const birth = Date.UTC(y, m - 1, d3);
   return (end - birth) / (365.25 * 24 * 3600 * 1e3);
 }
-function compileDocuments(docs, asOf) {
+function compileDocuments(docs, asOf, ctx = {}) {
   const taxYear = Number(asOf.slice(0, 4));
   const sums = {};
   const ints = {};
   const bools = {};
   const notes = [];
-  const add14 = (id, c2) => {
+  const add20 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -53378,26 +58545,47 @@ function compileDocuments(docs, asOf) {
     bools.spouseIsAge65OrOlder = born65Cutoff(docs.spouseDateOfBirth);
     notes.push(`spouse age at year end: ${ageAtYearEnd(docs.spouseDateOfBirth, taxYear)} (from ${docs.spouseDateOfBirth})`);
   }
-  const multiW2 = (docs.w2s ?? []).length > 1;
-  if (multiW2 && (docs.w2s ?? []).some((w) => w.box3 !== void 0)) {
-    notes.push("MULTIPLE W-2s: box-3 sums are NOT set as socialSecurityWages (Schedule SE coordination is PER PERSON \u2014 if there is self-employment income, set income.socialSecurityWages to the SE-earner's OWN box 3 yourself)");
+  const w2s = docs.w2s ?? [];
+  const multiW2 = w2s.length > 1;
+  const joint = ctx.filingStatus === "mfj";
+  const docsHaveSE = (docs.f1099necs ?? []).length > 0 || (docs.f1099ks ?? []).length > 0 || docs.scheduleCExpensesTotal !== void 0;
+  const hasSE = ctx.hasSelfEmployment === true || docsHaveSE;
+  const earner = docs.selfEmploymentEarner ?? "taxpayer";
+  const allTagged = w2s.length > 0 && w2s.every((w) => w.recipient !== void 0);
+  if (hasSE && w2s.length > 0 && ctx.socialSecurityWagesSupplied) {
+    notes.push("Schedule SE line 8a: income.socialSecurityWages was passed directly (the SE earner's own box 3) \u2014 the W-2 box-3 amounts in the documents block are not used for the wage base");
+  } else if (hasSE && w2s.length > 0) {
+    if (allTagged) {
+      const own = w2s.filter((w) => w.recipient === earner);
+      const ssw = own.reduce((t, w) => t + toCents(w.box3 ?? w.box1), 0n);
+      add20("socialSecurityWages", ssw);
+      bools.socialSecurityWagesProvided = true;
+      notes.push(`Schedule SE line 8a: ${own.length} W-2(s) belong to the ${earner} (the SE earner) \u2014 social security wages $${dollars4(ssw)} coordinate the OASDI wage base${own.some((w) => w.box3 === void 0) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`);
+    } else if (joint || multiW2) {
+      throw new Error("Schedule SE coordination is PER PERSON: this return has self-employment income and " + (joint ? "is a joint return" : "more than one W-2") + ", so tag every documents.w2s entry with recipient ('taxpayer' or 'spouse') and, if the spouse is the self-employed one, set documents.selfEmploymentEarner \u2014 or drop the W-2 documents and pass income.socialSecurityWages (the SE earner's OWN box 3, even 0) with income.socialSecurityWagesProvided true");
+    }
+  } else if (multiW2 && w2s.some((w) => w.box3 !== void 0)) {
+    notes.push("MULTIPLE W-2s: box-3 sums are not set as socialSecurityWages (no self-employment income, so Schedule SE line 8a is not needed)");
   }
-  let w2Box1Cents = 0n;
+  let w2Box1Cents = (docs.w2s ?? []).length ? 0n : void 0;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add14("wages", toCents(w.box1));
-    w2Box1Cents += toCents(w.box1);
+    add20("wages", toCents(w.box1));
+    w2Box1Cents = (w2Box1Cents ?? 0n) + toCents(w.box1);
     if (w.box2 !== void 0)
-      add14("federalTaxWithheld", toCents(w.box2));
-    if (w.box3 !== void 0 && !multiW2)
-      add14("socialSecurityWages", toCents(w.box3));
+      add20("federalTaxWithheld", toCents(w.box2));
+    if (w.box3 !== void 0 && !multiW2 && !allTagged && !joint && !ctx.socialSecurityWagesSupplied) {
+      add20("socialSecurityWages", toCents(w.box3));
+      if (hasSE)
+        bools.socialSecurityWagesProvided = true;
+    }
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add14("medicareWages", b5);
+      add20("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess = toCents(w.box6) - regular;
         if (excess > 0n) {
-          add14("federalTaxWithheld", excess);
+          add20("federalTaxWithheld", excess);
           notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars4(excess)}; added to withholding`);
         }
       }
@@ -53409,72 +58597,75 @@ function compileDocuments(docs, asOf) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(r.box4));
+      add20("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
-    if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
+    if (r.rolledOver || r.box7.toUpperCase().includes("G") && taxable3 === 0n) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
+    if (r.box7.toUpperCase().includes("G")) {
+      notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars4(taxable3)} \u2014 a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
+    }
     if (r.disabilityBeforeRetirementAge) {
-      add14("wages", taxable3);
-      add14("scheduleRDisabilityIncome", taxable3);
+      add20("wages", taxable3);
+      add20("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars4(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add14("taxableIraDistributions", taxable3);
+      add20("taxableIraDistributions", taxable3);
     else
-      add14("taxablePensionsAndAnnuities", taxable3);
+      add20("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add14("earlyDistributionSubjectToPenalty", taxable3);
+        add20("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars4(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add14("socialSecurityBenefits", toCents(s.box5));
+    add20("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add14("federalTaxWithheld", toCents(s.box6));
+      add20("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(n.box4));
+      add20("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(k.box4));
+      add20("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add14("selfEmploymentNetProfit", net);
+        add20("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars4(seGross)} gross (1099-NEC/K) \u2212 $${dollars4(expenses)} expenses = $${dollars4(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add14("scheduleCNetLoss", -net);
+      add20("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars4(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add14("taxableInterest", toCents(t.box1));
+      add20("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add14("taxableInterest", toCents(t.box3));
+      add20("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars4(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add14("taxExemptInterest", toCents(t.box8));
+      add20("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(t.box4));
+      add20("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -53483,15 +58674,15 @@ function compileDocuments(docs, asOf) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars4(qualified2)}) exceeds box 1a (total, $${dollars4(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add14("qualifiedDividends", qualified2);
+      add20("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add14("ordinaryDividends", total - qualified2);
+      add20("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add14("__ltProceeds", toCents(d3.box2a));
+      add20("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars4(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(d3.box4));
+      add20("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -53506,24 +58697,24 @@ function compileDocuments(docs, asOf) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(b.box4));
+      add20("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add14("shortTermCapitalGains", stNet);
+      add20("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add14("shortTermCapitalLoss", -stNet);
+      add20("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add14("longTermCapitalGains", ltNet);
+      add20("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add14("longTermCapitalLoss", -ltNet);
+      add20("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars4(stNet)}, long-term net $${dollars4(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add14("unemploymentCompensation", toCents(g.box1));
+      add20("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add14("federalTaxWithheld", toCents(g.box4));
+      add20("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars4(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -53650,6 +58841,7 @@ var INDIVIDUAL_GROUPS = {
     "unemploymentCompensation",
     "otherOrdinaryIncome",
     "socialSecurityWages",
+    "socialSecurityWagesProvided",
     "medicareWages",
     "foreignEarnedIncome"
   ],
@@ -54148,7 +59340,169 @@ var INDIVIDUAL_GROUPS = {
     "meDisabledVeteran",
     "meDependents13a",
     "meUseTaxPurchases",
-    "meUseTaxEstimate"
+    "meUseTaxEstimate",
+    "hiUseRateSchedule",
+    "hiNetLongTermCapitalGain",
+    "hiNetCapitalGain",
+    "hiInvestmentInterestN158",
+    "hiCapitalGainsStatutoryThreshold",
+    "hiEarnedIncome",
+    "hiAgi",
+    "hiFederalAgi",
+    "hiMedicalExpenses",
+    "hiStateLocalIncomeTaxes",
+    "hiRealEstateTaxes",
+    "hiPersonalPropertyTaxes",
+    "hiOtherTaxes",
+    "hiHomeMortgageInterest",
+    "hiInvestmentInterest",
+    "hiCharitableContributions",
+    "hiCasualtyLosses",
+    "hiJobAndMiscExpenses",
+    "hiOtherMiscDeductions",
+    "hiGamblingLossesInMisc",
+    "hiExemptions",
+    "hiDisabledPersons",
+    "hiNonDisabledSpouseAge65",
+    "hiReservePay",
+    "hiSpouseReservePay",
+    "hiSpouseFederalAgi",
+    "hiFoodExciseQualifiedExemptions",
+    "hiSpouseAgi",
+    "hiRentPaid",
+    "hiRentersExemptions",
+    "hiChildCareExpenses",
+    "hiChildCareQualifyingPersons",
+    "hiDependentCareBenefits",
+    "hiSpouseEarnedIncome",
+    "hiMfsConsideredUnmarried",
+    "hiFederalEic",
+    "hiNetCapitalGainLine27a",
+    "hiOutOfStateIncome",
+    "hiOutOfStateLtcg",
+    "hiOtherStateTaxEligible",
+    "hiTaxLine13",
+    "hiAdjustedTaxLiability",
+    "riUseRateSchedule",
+    "riModifiedAgi",
+    "riExemptions",
+    "riFederalAgi",
+    "riTaxpayerFullRetirementAge",
+    "riSpouseFullRetirementAge",
+    "riSocialSecurityBenefits",
+    "riSocialSecurityBenefitsFraPerson",
+    "riTaxableSocialSecurity",
+    "riTaxpayerPensionIncome",
+    "riSpousePensionIncome",
+    "riFederalChildCareCredit",
+    "riIncomeTax",
+    "riIncomeTaxAfterFederalCredit",
+    "riOtherStateIncome",
+    "riOtherStateTaxPaid",
+    "riFederalEic",
+    "riHouseholdIncome",
+    "riHouseholdMembers",
+    "riAge65OrDisabled",
+    "riPropertyTaxPaid",
+    "riRentPaid",
+    "riUseTaxLookupTable",
+    "riUseTaxPurchases",
+    "riSalesTaxPaidOtherStates",
+    "riLargePurchasesNetUseTax",
+    "mtNetLongTermCapitalGains",
+    "mtTaxpayerAge65",
+    "mtSpouseAge65",
+    "mtFederalEic",
+    "mtAge62",
+    "mtResided9Months",
+    "mtOccupied6Months",
+    "mtSoleHouseholdClaimant",
+    "mtGrossHouseholdIncome",
+    "mtPropertyTaxBilled",
+    "mtRentPaid",
+    "mtOrdinaryIncomeTax",
+    "mtCapitalGainsTax",
+    "mtOtherStateOrdinaryIncome",
+    "mtOtherStateCapitalGains",
+    "mtOtherStateTotalIncome",
+    "mtOrdinaryIncomeSourcedToMontana",
+    "mtFederalNetLongTermCapitalGains",
+    "mtOtherStateTaxPaid",
+    "mtTuitionSavingsContributions",
+    "mtAbleContributions",
+    "mtMilitaryRetirementIncome",
+    "mtMontanaSourceWageIncome",
+    "mtMilitaryRetireeEligible",
+    "mtMilitaryRetireeWithinFiveYears",
+    "deUseRateSchedule",
+    "deItemizes",
+    "deAdditionalDeductionBoxes",
+    "deExemptions",
+    "deAge60Persons",
+    "deAge60OrOver",
+    "deDomiciledForPensionExclusion",
+    "deMilitaryPension",
+    "dePensionIncome",
+    "deEligibleRetirementIncome",
+    "deAgiBeforeExclusion",
+    "deEarnedIncome",
+    "deQualifiesElderlyDisabled",
+    "deSpouseQualifiesElderlyDisabled",
+    "deFederalEic",
+    "deEitcTaxAfterCredits",
+    "deFederalChildCareCredit",
+    "deAdjustedGrossIncome",
+    "deIncomeTax",
+    "deOtherStateIncome",
+    "deOtherStateTaxPaid",
+    "deVolunteerFirefighters",
+    "ndUseRateSchedule",
+    "ndNetLongTermCapitalGain",
+    "ndCapitalGainAlreadyExcluded",
+    "ndQualifiedDividends",
+    "ndCollegeSaveContributions",
+    "ndTaxableIncome",
+    "ndLowerQualifiedIncome",
+    "ndSingleScheduleTaxA",
+    "ndSingleScheduleTaxB",
+    "ndJointScheduleTax",
+    "ndDoublyTaxedIncome",
+    "ndOtherStateIncomeBase",
+    "ndIncomeTaxBeforeCredits",
+    "ndOtherStateTaxPaid",
+    "vtUseRateSchedule",
+    "vtFederalAgi",
+    "vtUsObligationInterest",
+    "vtAdditionalDeductionBoxes",
+    "vtExemptions",
+    "vtRetirementElection",
+    "vtTaxableSocialSecurity",
+    "vtContributorySystemIncome",
+    "vtMilitaryRetirementIncome",
+    "vtNetAdjustedCapitalGain",
+    "vtEligibleLongTermGain",
+    "vtFederalTaxableIncome",
+    "vtStudentLoanInterestPaid",
+    "vtStudentLoanInterestDeductedFederally",
+    "vtCharitableContributions",
+    "vtFederalTaxAdjustmentBase",
+    "vtOtherStateIncome",
+    "vtModifiedAgi",
+    "vtIncomeTax",
+    "vtOtherStateTaxPaid",
+    "vtFederalEic",
+    "vtEitcQualifyingChildren",
+    "vtChildrenSixOrUnder",
+    "vtFederalChildCareCredit",
+    "vtVeteranDischargeRecord",
+    "vtUseTaxEstimateFromTable",
+    "vtUseTaxSmallPurchases",
+    "vtUseTaxLargePurchases",
+    "vtUseTaxPaidOtherState",
+    "vtSelfEmploymentIncome",
+    "vtSelfEmploymentIncomeOutsideVermont",
+    "vtVheipContributions",
+    "vtVheipBeneficiaries"
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -54198,10 +59552,11 @@ var GROUP_DESCRIPTIONS = {
   household_employer: "Schedule H nanny/household-employee taxes",
   payments_estimates: "withholding, prior-year safe harbor, annualized installments"
 };
+var OTHER_EARNED_INCOME = external_exports.union([external_exports.number(), external_exports.string()]).optional().describe("Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 \u2014 taxable dependent care benefits (Form 2441 Part III, line 26 \u2192 line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.");
 var individualNestedShape = (() => {
   const shape = {};
   for (const [group, ids] of Object.entries(INDIVIDUAL_GROUPS)) {
-    shape[group] = external_exports.object(shapeFor(ids)).strict().optional().describe(GROUP_DESCRIPTIONS[group] ?? group);
+    shape[group] = external_exports.object(group === "income" ? { ...shapeFor(ids), otherEarnedIncome: OTHER_EARNED_INCOME } : shapeFor(ids)).strict().optional().describe(GROUP_DESCRIPTIONS[group] ?? group);
   }
   shape.documents = documentsShape.optional();
   shape.target = targetParam("net tax; balance due when payments_estimates.federalTaxWithheld is given", "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met");
@@ -54304,15 +59659,35 @@ function buildFactsValidated(factsArg, defaultTarget) {
     if (typeof flat.asOf !== "string") {
       throw new Error('asOf is required \u2014 pass the year-end date of the intended tax year (e.g. "2025-12-31" for TY2025). This tool refuses to default to today: a 2025 return computed under 2026 parameters is a silent wrong answer.');
     }
-    const compiled = compileDocuments(parsedDocs.data, flat.asOf);
+    const seProfit = flat.selfEmploymentNetProfit;
+    const compiled = compileDocuments(parsedDocs.data, flat.asOf, {
+      filingStatus: typeof flat.filingStatus === "string" ? flat.filingStatus : void 0,
+      hasSelfEmployment: seProfit !== void 0 && Number(String(seProfit).replace(/[$,]/g, "")) > 0,
+      socialSecurityWagesSupplied: "socialSecurityWages" in flat
+    });
     documentNotes = compiled.notes;
     w2Box1Cents = compiled.w2Box1Cents;
+    if (!(parsedDocs.data.w2s ?? []).length && !("wages" in flat) && !("wages" in compiled.facts)) {
+      compiled.facts.wages = 0;
+      documentNotes.push("no W-2 in the documents block: wages $0 (Form 1040 line 1a)");
+    }
     for (const [id, v] of Object.entries(compiled.facts)) {
       if (id in flat) {
         throw new Error(`fact "${id}" was derived from the documents block AND passed directly \u2014 remove the direct value (the compiled document value is authoritative; to override, drop the document entry and disclose)`);
       }
       flat[id] = v;
     }
+  }
+  if ("otherEarnedIncome" in flat) {
+    const num = (v) => Number(String(v ?? 0).replace(/[$,]/g, ""));
+    const other = num(flat.otherEarnedIncome);
+    if (!Number.isFinite(other) || other < 0)
+      throw new Error("income.otherEarnedIncome must be a non-negative dollar amount");
+    if (w2Box1Cents === void 0)
+      w2Box1Cents = BigInt(Math.round(num(flat.wages) * 100));
+    flat.wages = num(flat.wages) + other;
+    delete flat.otherEarnedIncome;
+    documentNotes.push(`line 1h: $${other.toLocaleString("en-US")} of non-W-2 earned income (income.otherEarnedIncome) added to wages`);
   }
   const parsed = STRICT_FLAT.safeParse(flat);
   if (!parsed.success) {
@@ -54438,7 +59813,7 @@ function createServer() {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME / HI N-11, RI-1040, MT Form 2, DE PIT-RES, ND-1, VT IN-111) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. DE filing status 4 (married filing combined separate) is TWO returns on one form: pass filingStatus 'mfs' with deCombinedSeparate plus the deSpouse* column-A inputs, and each column gets its own $3,250 deduction and its own bracket climb. MT starts from FEDERAL TAXABLE INCOME and has no standard deduction, personal exemption or Social Security subtraction of its own, so mtFederalDeductions (federal Form 1040 lines 12e and 13b) is REQUIRED and the composer refuses without it; long-term capital gains are taxed separately at 3%/4.1% on the page 2 worksheet. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold. For HI, pass federalAGI (line 7) plus hiPensionExclusion (employer-funded pensions are exempt), taxableSocialSecurity (100% subtracted), hiReservePay, dependents and hiTaxpayerAge65/hiSpouseAge65 (each 65+ oval is one more $1,144 exemption; hiDisabledPersons for the $7,000 in-lieu exemption), the Worksheets A-1 to A-6 amounts for an itemizer (no SALT cap, but hiStateLocalIncomeTaxes needs federal AGI under $100,000 / $150,000 / $200,000; the \xA7 68 limitation applies over $166,800), hiNetCapitalGain + hiNetLongTermCapitalGain for the 7.25% alternative tax, hiPresentOverNineMonths (REQUIRED attestation for the food/excise and renters credits) with hiRentPaid, hiChildCareExpenses + hiEarnedIncome (+ hiSpouseEarnedIncome) for the Schedule X credit, federalEITC (40%, refundable), hiOtherStateTaxEligible + hiOutOfStateIncome for the other-state credit, and stateWithholding; the standard deduction is $4,400 / $8,800 / $6,424 for 2025 (dependent filers: greater of $500 or hiEarnedIncome); a federal QSS uses Schedule II. For ND, the base is FEDERAL TAXABLE INCOME (Form 1040 line 15) \u2014 pass ndFederalTaxableIncome, which is REQUIRED and which the composer refuses without; it may be NEGATIVE (the booklet directs the filer to enter the negative number on line 1b even though Form 1040 line 15 shows 0), and federalAGI is line 1a only, feeding NOTHING. There is no North Dakota standard deduction and no personal exemption. The first bracket is ZERO PERCENT (0.00% / 1.95% / 2.50%), so a great many returns owe nothing at all; below $100,000 the $50 Tax Table is MANDATORY under section 57-38-30.3(10) and prices the row MIDPOINT, which the composer applies for TY2025 (set ndUseRateSchedule only to see the schedule's figure). Pass taxableSocialSecurity (excluded IN FULL, no cap or age test), ndMilitaryPay and ndMilitaryRetirement (both excluded in full), ndRailroadRetirementBenefits (line 8 \u2014 a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 by gross benefits), ndNetLongTermCapitalGain with ndCapitalGainAlreadyExcluded for the 40% exclusion and ndQualifiedDividends for the parallel 40%, ndCollegeSaveContributions ($5,000, doubled ONLY on a joint return), and ndLowerQualifiedIncome for the marriage penalty credit (joint returns only; the composer runs the whole worksheet, including the preprinted $15,750). QSS uses the joint COLUMN of the table and the joint rate schedule but is NOT a joint return \u2014 its College SAVE cap stays $5,000 and it gets no marriage penalty credit. Every North Dakota credit is NONREFUNDABLE. Schedule ND-1NR (part-year and nonresident) and Schedule ND-1FA farm income averaging are not composed. For VT, pass federalAGI (line 1) and the Schedule IN-112 pieces: taxableSocialSecurity with vtRetirementElection ('social_security' OR 'contributory_system' with vtContributorySystemIncome \u2014 the filer may elect only ONE, excluded in full at federal AGI up to $55,000 / $70,000 joint and phased out to $65,000 / $80,000), vtMilitaryRetirementIncome (a SEPARATE exclusion, full to $125,000 and phased out to $175,000, claimable in addition), vtNetAdjustedCapitalGain + vtEligibleLongTermGain + vtFederalTaxableIncome for the Schedule IN-153 exclusion (the greater of $5,000 and 40% of over-three-year gain, capped at 40% of federal taxable income), vtUsObligationInterest, vtFederalMedicalExpenses (only the excess over the Vermont deduction plus exemptions is subtracted), ageOrBlindBoxes ($1,250 each on line 4), dependents (line 5c), vtCharitableContributions (5%, max $1,000, itemizing not required), vtOtherStateIncome + vtOtherStateTaxPaid (Schedule IN-117), and the refundable Schedule IN-112 Part II inputs \u2014 federalEITC with vtEitcQualifyingChildren (38% with children, 100% WITHOUT), vtChildrenSixOrUnder ($1,000 each, phased out $20 per $1,000 of AGI over $125,000), vtFederalChildCareCredit (72%), vtVeteranDischargeRecord ($250 to $30,000 of AGI). Vermont has NO itemized deduction; below $75,000 the Tax Table is mandatory and the composer applies it; above $150,000 of federal AGI the tax is at least 3% of AGI less U.S. obligation interest. A federal QSS takes the joint deduction and column but no spouse exemption. The Renter Credit (RCC-146) and Property Tax Credit (HS-122) are separate claims, not composed; TY2026 refuses at line 4 until the 2026 standard deduction publishes.",
     inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
   }, async (args) => {
     try {
@@ -54465,7 +59840,7 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       };
-      const rd23 = (c2) => {
+      const rd26 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -54492,11 +59867,11 @@ function createServer() {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd23(after) + rd23(other);
-      const payments = rd23(withheld) + rd23(refundable) + rd23(extension) + rd23(estimated);
+      const total24 = rd26(after) + rd26(other);
+      const payments = rd26(withheld) + rd26(refundable) + rd26(extension) + rd26(estimated);
       const balance = payments - total24;
       const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
-      const d3 = (c2) => fmt2(rd23(c2));
+      const d3 = (c2) => fmt2(rd26(c2));
       return ok({
         ok: true,
         asOf,
@@ -54506,6 +59881,7 @@ function createServer() {
           // wages fact (e.g. pre-retirement disability per Pub. 525) is line 1h.
           "1a_wages": d3(w2Box1Cents ?? wages),
           ...w2Box1Cents !== void 0 && wages > w2Box1Cents ? { "1h_other_earned_income": d3(wages - w2Box1Cents) } : {},
+          "6b_taxable_social_security": d3(get("us.federal.taxable_social_security")),
           "9_total_income": d3(gross),
           "10_adjustments": d3(gross - agi2),
           "11_agi": d3(agi2),
@@ -54523,7 +59899,7 @@ function createServer() {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd23(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt2(rd26(extension)) } : {},
           "33_total_payments": fmt2(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt2(balance)}` : `owed ${fmt2(-balance)}`
         },

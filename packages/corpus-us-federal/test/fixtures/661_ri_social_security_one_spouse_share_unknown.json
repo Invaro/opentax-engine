@@ -1,0 +1,16 @@
+{
+  "description": "REGRESSION: on a joint return where only one spouse reached full retirement age, the eligible percentage is worksheet line 9 / line 8. With line 9 unsupplied the fact defaults to $0, so the modification is $0 rather than the whole taxable benefit \u2014 the conservative default.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalAgi": 120000,
+    "riTaxpayerFullRetirementAge": true,
+    "riSpouseFullRetirementAge": false,
+    "riSocialSecurityBenefits": 40000,
+    "riTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.social_security_modification",
+  "expect": {
+    "valueCents": "0"
+  }
+}

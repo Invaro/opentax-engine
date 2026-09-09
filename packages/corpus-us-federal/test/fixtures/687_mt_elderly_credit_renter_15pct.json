@@ -1,0 +1,18 @@
+{
+  "description": "MT Schedule 2EC renter: line 25 = 15% of $4,000 rent = $600 rent-equivalent tax; gross income 13,000 puts line 20 at 400, whose multiplier is 0, so line 22 = $0 and the credit is $600.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 13000,
+    "mtRentPaid": 4000,
+    "mtSoleHouseholdClaimant": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "60000"
+  }
+}

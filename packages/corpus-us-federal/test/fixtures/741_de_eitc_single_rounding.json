@@ -1,0 +1,13 @@
+{
+  "description": "REGRESSION (double rounding): DE Schedule II line 14 is a whole-dollar box, so 4.5% of a $4,011 federal credit is 180.495 -> $180. Rounding to cents first (180.50) and then to dollars gives $181 \u2014 wrong for every federal credit congruent to 11 modulo 200.",
+  "facts": {
+    "filingStatus": "single",
+    "deFederalEic": 4011,
+    "deEitcTaxAfterCredits": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.eitc",
+  "expect": {
+    "valueCents": "18000"
+  }
+}

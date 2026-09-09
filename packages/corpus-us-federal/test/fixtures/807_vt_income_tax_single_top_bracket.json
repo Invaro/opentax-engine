@@ -1,0 +1,12 @@
+{
+  "description": "VT single $300,000: 16,175 + 8.75% x (300,000 - 249,700) = 16,175 + 4,401.25 = 20,576.25 -> $20,576.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "2057600"
+  }
+}

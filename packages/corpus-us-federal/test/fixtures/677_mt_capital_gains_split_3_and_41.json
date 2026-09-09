@@ -1,0 +1,13 @@
+{
+  "description": "MT Form 2 page 2 with the gain straddling the bracket: taxable income $30,000, gains $20,000. Ordinary income 10,000; line 6 = 21,100 - 10,000 = 11,100; line 8 = 3% x 11,100 = $333; line 9 = 8,900; line 10 = 4.1% x 8,900 = 364.90 -> $365 (lines 8 and 10 are separate whole-dollar boxes, so each rounds); line 11 = $698; line 12 = 4.7% x 10,000 = $470; line 13 = $1,168.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 30000,
+    "mtNetLongTermCapitalGains": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "116800"
+  }
+}

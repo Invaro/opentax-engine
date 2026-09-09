@@ -1,0 +1,12 @@
+{
+  "description": "HI TY2026 reserve pay exclusion re-indexes (E-5 pay) -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "hiReservePay": 9000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.hi.reserve_pay_exclusion",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

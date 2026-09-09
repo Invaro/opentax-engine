@@ -1,0 +1,12 @@
+{
+  "description": "Standard Deduction Worksheet, HOH: modified AGI 261,500 - 254,250 = 7,250; 7,250 / 7,250 = 1 -> 0.8000; 16,350 x 0.8 = $13,080.",
+  "facts": {
+    "filingStatus": "hoh",
+    "riModifiedAgi": 261500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.standard_deduction",
+  "expect": {
+    "valueCents": "1308000"
+  }
+}

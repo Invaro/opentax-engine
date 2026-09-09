@@ -101,7 +101,7 @@ const byJoint = (joint: string, other: string): Expr => ({
 export const socialSecurityRules: Rule[] = [
   {
     id: "us.federal.taxable_social_security",
-    version: 8, // v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
+    version: 9, // v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
     jurisdiction: "us.federal",
     title: "Taxable Social Security benefits (§ 86: the 0/50/85% worksheet)",
     citation: {
@@ -127,7 +127,9 @@ export const socialSecurityRules: Rule[] = [
       then: money("0"),
       else: {
         kind: "if",
-        cond: isMfs,
+        // § 86(c)(1)(C)(ii): the $0 base applies to an MFS filer who did NOT live apart from the
+        // spouse at all times during the year; one who did is treated as unmarried ($25,000/$34,000)
+        cond: { kind: "and", args: [isMfs, { kind: "not", arg: fact("mfsLivedApartAllYear") }] },
         then: {
           kind: "min",
           args: [pct("85", ss), pct("85", { kind: "max0", arg: provisional })],

@@ -1,0 +1,12 @@
+{
+  "description": "ND TY2026 head of household off the indexed anchor: $300,000 pays 4,118.40 + 2.5% x (300,000 - 277,600) = 4,678.40 -> $4,678. The 2026 thresholds moved; the rates did not.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "467800"
+  }
+}

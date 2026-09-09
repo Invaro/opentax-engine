@@ -1,0 +1,12 @@
+{
+  "description": "RI Tax Computation Worksheet takes over at $100,000 ('If your taxable income is $100,000 or more, use the Tax Rate Schedules'): 100,000 x 4.75% - 799.00 = $3,951.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "395100"
+  }
+}

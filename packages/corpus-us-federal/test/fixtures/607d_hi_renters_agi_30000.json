@@ -1,0 +1,14 @@
+{
+  "description": "HI AGI $30,000 -> not 'less than $30,000' -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 30000,
+    "hiRentPaid": 9000,
+    "hiRentersExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

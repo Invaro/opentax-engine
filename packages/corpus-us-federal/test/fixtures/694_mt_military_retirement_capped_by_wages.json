@@ -1,0 +1,15 @@
+{
+  "description": "MT Schedule I line 13: the working-military-retiree subtraction is the LESSER of Montana source wage income or 50% of the pension. With $30,000 of pension and $10,000 of Montana wages, the subtraction is $10,000, not $15,000.",
+  "facts": {
+    "filingStatus": "single",
+    "mtMilitaryRetireeEligible": true,
+    "mtMilitaryRetireeWithinFiveYears": true,
+    "mtMilitaryRetirementIncome": 30000,
+    "mtMontanaSourceWageIncome": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.military_retirement_subtraction",
+  "expect": {
+    "valueCents": "1000000"
+  }
+}

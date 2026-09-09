@@ -1,0 +1,19 @@
+{
+  "description": "HI itemized, single Hawaii AGI = federal AGI $60,000: medical 10,000 - 7.5% x 60,000 = 5,500; taxes 3,000 (allowed, FAGI < 100,000) + 2,000; interest 8,000; contributions 1,500; misc 2,000 - 2% x 60,000 = 800 -> $20,800 (no limitation).",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 60000,
+    "hiFederalAgi": 60000,
+    "hiMedicalExpenses": 10000,
+    "hiStateLocalIncomeTaxes": 3000,
+    "hiRealEstateTaxes": 2000,
+    "hiHomeMortgageInterest": 8000,
+    "hiCharitableContributions": 1500,
+    "hiJobAndMiscExpenses": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.itemized_deductions",
+  "expect": {
+    "valueCents": "2080000"
+  }
+}

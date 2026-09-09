@@ -1,0 +1,14 @@
+{
+  "description": "HI AGI $25,001 -> 24%: 4,000 x 24% = $960.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 25001,
+    "hiChildCareExpenses": 4000,
+    "hiEarnedIncome": 25001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "96000"
+  }
+}

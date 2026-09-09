@@ -1,0 +1,14 @@
+{
+  "description": "HI AGI $33,000 -> 23%: 3,333 x .23 = 766.59 -> $767.",
+  "facts": {
+    "filingStatus": "hoh",
+    "hiAgi": 33000,
+    "hiChildCareExpenses": 3333,
+    "hiEarnedIncome": 33000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "76700"
+  }
+}

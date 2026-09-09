@@ -1,0 +1,18 @@
+{
+  "description": "REGRESSION: Schedule 2EC has FIVE attestations. Without 'I am the only member of my household claiming this credit' the credit is $0 \u2014 otherwise two members of one household could each be paid it.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "mtSoleHouseholdClaimant": false,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 20000,
+    "mtRentPaid": 6000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

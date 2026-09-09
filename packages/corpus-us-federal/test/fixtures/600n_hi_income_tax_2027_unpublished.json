@@ -1,0 +1,12 @@
+{
+  "description": "HI TY2027: Act 24, SLH 2026's new tables (2.5% / 5% / 13%) are not yet encoded -> no applicable rule.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2027-06-30",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

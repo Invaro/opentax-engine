@@ -1,0 +1,12 @@
+{
+  "description": "REGRESSION: a qualifying surviving spouse shares the joint RATE column under the Tax Table's footnote but is NOT a joint return \u2014 the College SAVE cap stays at $5,000.",
+  "facts": {
+    "filingStatus": "qss",
+    "ndCollegeSaveContributions": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.college_save_deduction",
+  "expect": {
+    "valueCents": "500000"
+  }
+}

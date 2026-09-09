@@ -1,0 +1,12 @@
+{
+  "description": "VT standard deduction, single with both federal age/blind boxes: 7,650 + 2 x 1,250 = $10,150 (chart column 2; columns 3 and 4 print n/a for single).",
+  "facts": {
+    "filingStatus": "single",
+    "vtAdditionalDeductionBoxes": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.standard_deduction",
+  "expect": {
+    "valueCents": "1015000"
+  }
+}

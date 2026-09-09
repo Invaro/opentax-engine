@@ -1,0 +1,14 @@
+{
+  "description": "VT capital gains exclusion capped at 40% of federal taxable income (IN-153 line 20): 40% x $15,000 = $6,000 beats neither $8,000 nor the greater-of, so $6,000.",
+  "facts": {
+    "filingStatus": "single",
+    "vtNetAdjustedCapitalGain": 20000,
+    "vtEligibleLongTermGain": 20000,
+    "vtFederalTaxableIncome": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.capital_gains_exclusion",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

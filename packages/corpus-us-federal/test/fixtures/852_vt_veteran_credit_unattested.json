@@ -1,0 +1,12 @@
+{
+  "description": "VT veteran tax credit is $0 without the discharge or separation record attestation.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.veteran_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

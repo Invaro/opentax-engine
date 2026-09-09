@@ -1,0 +1,16 @@
+{
+  "description": "HI credit limited to the line 34 adjusted tax liability 1,500 -> $1,500.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 80000,
+    "hiOutOfStateIncome": 30000,
+    "hiOtherStateTaxEligible": 2000,
+    "hiTaxLine13": 4973,
+    "hiAdjustedTaxLiability": 1500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.other_state_credit",
+  "expect": {
+    "valueCents": "150000"
+  }
+}

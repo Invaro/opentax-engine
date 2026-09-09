@@ -1,0 +1,17 @@
+{
+  "description": "Form RI-1040H Part 3: household income 20,000 sits in the 17,461-40,730 band (6%); line 4 = 1,200; line 5 = 2,000 - 1,200 = 800; line 6 = 'Line 5 or $700.00, whichever is LESS' -> $700.",
+  "facts": {
+    "filingStatus": "single",
+    "riHouseholdIncome": 20000,
+    "riHouseholdMembers": 1,
+    "riAge65OrDisabled": true,
+    "riPropertyTaxPaid": 2000,
+    "riRentPaid": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.property_tax_relief_credit",
+  "expect": {
+    "valueCents": "70000"
+  }
+}

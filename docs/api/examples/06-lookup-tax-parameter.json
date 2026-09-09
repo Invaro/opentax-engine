@@ -1,0 +1,124 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 6,
+    "method": "tools/call",
+    "params": {
+      "name": "lookup_tax_parameter",
+      "arguments": {
+        "query": "child tax credit per child 2025"
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 6,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "query": "child tax credit per child 2025",
+    "asOf": "2026-09-09",
+    "hits": [
+      {
+        "ruleId": "us.de.child_care_credit",
+        "title": "Delaware child and dependent care credit 2025 — 50% of the federal credit, not more than $3,000 and not more than the tax otherwise due; nonrefundable (Form PIT-RES line 31)",
+        "citation": {
+          "source": "30 Del. C. § 1114(a); 2025 PIT-RES Instructions p. 10 line 31 and its worksheet; printed 2025 Form PIT-RES line 31",
+          "section": "30 Del. C. § 1114(a); Form PIT-RES line 31",
+          "url": "https://delcode.delaware.gov/title30/c011/sc02/index.html",
+          "excerpt": "STATUTE (§ 1114(a), verbatim): '50 percent of the child and dependent care expense credit allowable for federal income tax purposes … In no event shall the allowable credit under this subsection exceed the tax otherwise due'. FORM (line 31, verbatim): 'CHILD CARE CREDIT (Enter 50% of Federal credit)'. WORKSHEET: federal Form 2441 line 11 x .50, and 'Do not enter an amount in excess of $3,000.' ENCODING: NONREFUNDABLE and capped at the tax; the composer applies the tax cap across the whole line 27a-31 block as the instructions require ('The total of all non-refundable credits (Lines 27a through 31) is limited to the amount of your Delaware tax liability on Line 26'), so this rule reports the credit earned before that block cap. On a combined separate return the credit is applied against the spouse with the LOWER taxable income — the opposite of the earned income credit, which uses the higher."
+        },
+        "effective": "[2025-01-01, 2027-01-01)",
+        "byFilingStatus": {},
+        "parameters": {
+          "cap": "$3,000.00"
+        }
+      },
+      {
+        "ruleId": "us.vt.child_tax_credit",
+        "title": "Vermont child tax credit 2025 — $1,000 per qualifying child six or younger at year end, reduced $20 per $1,000 or fraction of federal AGI over $125,000 regardless of filing status; refundable (Schedule IN-112 Part II line 4)",
+        "citation": {
+          "source": "32 V.S.A. § 5830f(a)-(b) as amended by 2025 Act 71 § 1 (age five to six, eff. January 1, 2025); 2025 Schedule IN-112 Part II lines 3-4 and its instructions p. 4 'CHILD TAX CREDIT TABLE'",
+          "section": "32 V.S.A. § 5830f; Schedule IN-112 line 4",
+          "url": "https://legislature.vermont.gov/statutes/section/32/151/05830f",
+          "excerpt": "STATUTE (§ 5830f(a), verbatim): 'The total credit per taxable year shall be in the amount of $1,000.00 per qualifying child, as defined under 26 U.S.C. § 152(c) but notwithstanding the taxpayer identification number requirements under 26 U.S.C. § 24(e) and (h)(7), who is six years of age or younger as of the close of the calendar year in which the taxable year of the taxpayer begins.' (b): 'the amount of the credit per child under this section shall be reduced, but not below zero, by $20.00 for each $1,000.00, or fraction thereof, by which the individual's adjusted gross income exceeds $125,000.00, irrespective of the individual's filing status. For purposes of this subsection, spouses filing jointly shall be considered an individual.' INSTRUCTIONS (verbatim): 'Line 3 Enter the number of qualifying children ... Qualifying children are those born between 2019 and 2025. Line 4 Child Tax Credit. Multiply Line 3 by $1,000 or if your AGI is greater than $125,000, use the table to find the credit amount per qualifying child to use on Line 4.' TABLE (verbatim, 'At Least / But Not More Than / Child Tax Credit Is'): '0 / 125,000 / 1,000; 125,001 / 126,000 / 980; 126,001 / 127,000 / 960; ... 137,001 / 138,000 / 740; ... 150,001 / 151,000 / 480; ... 173,001 / 174,000 / 20; 174,001 / - / 0'. ENCODING: per child = $1,000 less $20 x the number of $1,000 units OR FRACTION by which AGI exceeds $125,000 (ceil), floored at zero — this reproduces every printed row (AGI 125,001 -> 1 unit -> $980; 174,001 -> 50 units -> $0) — times the count of qualifying children six or younger. Refundable through Form IN-111 line 26c; the statute's $20 step and the printed table are whole dollars, so no rounding arises."
+        },
+        "effective": "[2025-01-01, 2027-01-01)",
+        "byFilingStatus": {},
+        "parameters": {
+          "perChild": "$1,000.00",
+          "phaseoutStart": "$125,000.00",
+          "reductionPerStep": "$20.00",
+          "stepCents": "$1,000.00"
+        }
+      },
+      {
+        "ruleId": "us.vt.parameters",
+        "title": "Vermont Form IN-111 2025 — composition conventions, printed line structure, filing-status routing, out-of-scope schedules, and legislative currency",
+        "citation": {
+          "source": "2025 Form IN-111 (Rev. 10/25); 2025 Form IN-111 Instructions; Schedules IN-112, IN-113, IN-117, IN-119, IN-153, RCC-146, HS-122; 32 V.S.A. chapter 151; 2025 Act 71 (S.51); 2026 Act 164 (H.933); Department of Taxes 2025 and 2026 Legislative Highlights",
+          "section": "Form IN-111 lines 1-32",
+          "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-111-2025.pdf",
+          "excerpt": "STRUCTURE (printed 2025 Form IN-111, verbatim captions): '1. Federal Adjusted Gross Income (federal Form 1040, Line 11a); 2. Net Modifications to Federal AGI (Schedule IN-112, Part I, Line 19); 3. Federal AGI with Modifications (ADD Lines 1 and 2); 4. 2025 Vermont Standard Deduction from filing status section above; 5a-5e Personal Exemptions ... 5e. MULTIPLY Line 5d by $5,300; 6. ADD Lines 4 and 5e; 7. Vermont Taxable Income (SUBTRACT Line 6 from Line 3. If less than zero, enter -0-); 8. Vermont Income Tax from tax table or tax rate schedule (If Line 1 is greater than $150,000, see instructions); 9. Net Adjustment to Vermont Tax (Schedule IN-119, Part I, Line 15); 10. Vermont Income Tax with Adjustment (ADD Lines 8 and 9. If less than zero, enter -0-); 11. Tax-Deductible Charitable Contribution; 12. Multiply Line 11 by 5% (0.05); 13. Charitable Contribution Deduction (Enter the lesser of Line 12 or $1,000); 14. Vermont Income Tax (Line 10 MINUS Line 13. If less than zero, enter -0-); 15. Income Adjustment (Schedule IN-113, Line 35, or 100.0000%); 16. Adjusted Vermont Income Tax (MULTIPLY Line 14 by Line 15); 17. Other State Credit (Schedule IN-117, Line 21); 18. Vermont Tax Credits (Schedule IN-119, Part II); 19. Total Vermont Credits (Add Lines 17 and 18); 20. Vermont Income Tax after credits (SUBTRACT Line 19 from Line 16. If Line 19 is greater than Line 16, enter -0-); 21. Child Care Contributions for Self-Employed individuals; 22. Use Tax; 23. Total Vermont Taxes (ADD Lines 20 through 22); 24a-24e Voluntary Contributions; 25. Total of Vermont Taxes and Voluntary Contributions (ADD Lines 23 and 24e); 26a. 2025 Vermont Tax Withheld from W-2, 1099; 26b. 2025 Estimated Tax payments, amount carried forward; 26c. Refundable Credits (Schedule IN-112, Part II: Full-Year Residents-Line 13); 26d. 2025 Vermont Real Estate Withholding; 26e. 2025 Nonresident Estimated Tax payments; 26f. Total Payments and Credits (ADD Lines 26a through 26e); 27. Overpayment. If Line 25 is less than Line 26f, SUBTRACT Line 25 from Line 26f; 28a. Refund to be credited to 2026 Estimated Tax Payment; 28b. Refund to be credited to 2026 Property Tax Bill; 29. REFUND AMOUNT (SUBTRACT Lines 28a and 28b from Line 27); 30. If Line 25 is more than Line 26f, subtract Line 26f from Line 25; 31. Interest and Penalty on Underpayment of Estimated Tax (Worksheet IN-152 or IN-152A); 32. AMOUNT DUE (ADD Lines 30 & 31).' SCHEDULE IN-112 PART I (verbatim): additions '3. Income from Non-Vermont State and Local Obligations; 4. Bonus Depreciation Allowed under federal law; 6. Total Additions (ADD Line 3 and Line 4)'; subtractions '7. Interest Income from U.S. Obligations; 8. Capital Gains Exclusion (Schedule IN-153, Line 21); 9. Adjustment for Prior Years' Bonus Depreciation; 10. Taxable Refunds of State and Local Income Taxes; 11. Medical Expense Deduction; 12. Retirement Benefits Exempt from Taxation; 13. Military retirement and Survivor Benefit exempt from Taxation; 14. Railroad Retirement income; 15. Bond/note interest income from [Vermont Student Assistance Corporation, Build America, Vermont Telecommunications Authority, Vermont Public Power Supply Authority]; 16c. [student loan interest]; 18. Total Subtractions (ADD Lines 7 through 15 and Line 16c); 19. SUBTRACT Line 18 from Line 6. Enter on Form IN-111, Line 2.' PART II refundable credits: '2. Vermont Child and Dependent Care Credit; 4. Child Tax Credit; 7. Vermont Earned Income Tax Credit; 12. [Veteran Tax Credit]; 13. Total Vermont Refundable Tax Credits (ADD Lines 2, 4, 7, and 12). Full-Year Residents: Enter this amount on Form IN-111, Line 26c.' MEDICAL DEDUCTION WORKSHEET (IN-112 Instructions, verbatim): '1a. Medical and Dental Expense from federal Form 1040, Schedule A, Line 4. 1b. Non-allowable expenses included in Line 1a [recurring monthly payments or entrance fees to a retirement community]. 1c. Total. Line 1a minus Line 1b. 2. Amount from Vermont Form IN-111, Line 6. 3. Subtract Line 2 from Line 1c. Enter here and on Schedule IN-112, Part I, Line 11. If amount on Line 3 is negative, STOP.' — § 5811(21)(C)(iv). FILING STATUS: the printed statuses are Single; Married/CU Filing Jointly; Married/CU Filing Separately; Head of Household; Qualifying Widow(er). A qualifying widow(er) takes the joint standard deduction ($15,300), the joint rate column (Schedule Y-1 and the table footnote), the non-joint retirement thresholds (§ 5830e lists 'surviving spouse' with single), the non-joint student loan limit ('filing jointly' means the joint status), NO spouse exemption (line 5b), and is one person for the additional deduction boxes. Civil union partners file as married (§ 5812). 2025 Act 27 § E.111.2 amended § 5861(c) so that spouses 'shall file a joint Vermont personal income tax return for any taxable year for which the spouses file ... a joint federal income tax return', so the Vermont status mirrors the federal one (the booklet allows a recomputed separate return only for civil unions and for a couple where only one spouse has Vermont nexus). OUT OF SCOPE, named: Schedule IN-113 (part-year and nonresident income adjustment — line 15 is 100% for a full-year resident); the Renter Credit (Form RCC-146, a separate claim computed from household income, family size and county fair market rent, paid outside Form IN-111); the Property Tax Credit (Form HS-122 / HI-144, chapter 154); Schedule IN-119 Part II business credits other than the 24% items (charitable housing, mobile home, research and development, affordable housing, historic rehabilitation, facade, code improvements — transcribed as an input; the VHEIP credit on line 1 is us.vt.vheip_credit); nonresident real estate withholding and Schedule K-1VT payments (inputs); IN-152 underpayment interest (input); bonus depreciation and QSBS modifications (inputs on the generic additions and subtractions). LEGISLATIVE CURRENCY: 2025 Act 71 (S.51, signed June 25, 2025), retroactive to tax years from January 1, 2025 — § 1 child tax credit age five to six; § 2 childless EITC 38% to 100%; § 3 every retirement-exclusion AGI threshold up $5,000 and the military retirement/survivor exclusion at $125,000-$175,000 for every status, electable alongside one other; §§ 4-5 the $250 veteran credit. 2026 Act 164 (H.933, June 18, 2026): § 55 amends § 5811(21)(B) to add subtractions for R&E amortization and decouples from IRC § 168(n) (bonus depreciation on qualified production property) — effective retroactively January 1, 2026 and applying to taxable years from January 1, 2025 under the act's § (8); § 55a requires an addback of the federal qualified small business stock exclusion for taxable years beginning on and after January 1, 2026; §§ 56-57 recast the § 5822(e) apportionment for part-year and nonresident filers; §§ 60-61 link Vermont income tax to federal law as of December 31, 2025, applying to taxable years from January 1, 2025. NONE of these touches the 2025 rates, brackets, deduction, exemption, or credit amounts. For the retroactive TY2025 items the Department issued the 2025 Vermont Income Tax Form Instructions Federal Conformity Supplement (Rev. 6/26), which routes the IRC § 168(n) and large-business § 174A addbacks and subtractions through Schedule IN-112 lines 4 and 9 — the generic additions and subtractions inputs here. The 2026 Highlights also record 2026 Act 169 (H.949) §§ 8-9, which raise the RENTER credit to 12.5% of fair market rent and $3,250 for claim year 2027 only (outside Form IN-111), and § 10, which raises the property tax credit's $47,000 tiers to $50,000 from claim year 2028. Every dollar amount in §§ 5811(21)(C) and 5822(a) is indexed annually by the Commissioner; the 2026 Form IN-111, rate schedule and table publish ~December 2026, so the 2025 rate and deduction rules end 2026-01-01. TY2026 is partly published: the 2026 Form IN-114 Instructions print '2026 Preliminary Vermont Tax Rates' for all four statuses (us.vt.income_tax version 2) and GB-1210-2026 prints the $5,400 withholding allowance that is the personal exemption (us.vt.personal_exemption version 2); the 2026 standard deduction is not printed anywhere (the withholding offsets imply $7,850 single and $15,700 joint, with no head-of-household figure), so us.vt.standard_deduction ends 2026-01-01 and a TY2026 return refuses at line 4 until the 2026 Form IN-111 publishes (~December 2026)."
+        },
+        "effective": "[2025-01-01, 2027-01-01)",
+        "byFilingStatus": {},
+        "parameters": {
+          "standardDeductionSingle": "$7,650.00",
+          "standardDeductionJoint": "$15,300.00",
+          "standardDeductionHoh": "$11,450.00",
+          "additionalDeductionPerBox": "$1,250.00",
+          "personalExemption": "$5,300.00",
+          "minimumTaxAgiThreshold": "$150,000.00",
+          "tableTop": "$75,000.00",
+          "charitableCreditMax": "$1,000.00",
+          "childTaxCreditPerChild": "$1,000.00",
+          "veteranCredit": "$250.00",
+          "capitalGainsFlat": "$5,000.00",
+          "capitalGainsCap": "$350,000.00"
+        }
+      },
+      {
+        "ruleId": "us.ct.eitc",
+        "title": "Connecticut earned income tax credit — 40% of the federal EIC (prorated by separate ÷ joint federal AGI when a joint federal filer must file separately for Connecticut) plus a flat $250 with at least one qualifying child (PA 25-168); refundable (Form CT-1040 line 20a / Schedule CT-EITC)",
+        "citation": {
+          "source": "Conn. Gen. Stat. § 12-704e as amended by 2025 Conn. Acts 25-168, § 371 (the $250 increase, tax years beginning on or after January 1, 2025); 2025 Schedule CT-EITC lines 1-16 and its instructions pp. 16-17; OLR 2025-R-0093 'Acts Affecting Taxes' p. 6",
+          "section": "§ 12-704e(a)-(c); PA 25-168 § 371; Schedule CT-EITC",
+          "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/schedule-ct-eitc_1225.pdf",
+          "excerpt": "STATUTE (§ 12-704e(a), verbatim): 'a credit … in an amount equal to the applicable percentage of the earned income credit claimed and allowed for the same taxable year under Section 32 of the Internal Revenue Code … \"applicable percentage\" means … (3) forty per cent for taxable years commencing on or after January 1, 2023.' (b): 'If the amount of the credit … exceeds the taxpayer's liability … the Commissioner … shall refund the amount of such excess, without interest.' (c): a joint federal filer required to file separately for Connecticut receives the credit 'multiplied by a fraction, the numerator of which is such individual's federal adjusted gross income … and the denominator of which is the federal adjusted gross income reported on the joint return'. PA 25-168 § 371 (OLR, verbatim): 'increases the credit's amount by $250 for eligible taxpayers with at least one qualifying child for federal income tax purposes … applicable to tax years beginning on or after January 1, 2025.' SCHEDULE CT-EITC (printed): 1 claimed the 2025 federal EIC (else stop); 2 investment income over $11,950 → stop (the federal § 32(i) limit); 4-5 qualifying children listed; 8 federal EIC (1040 line 27a); 9 rate '40% (.40)'; 10 = 8 × 9; 11-14 the MFS-for-Connecticut proration ('Divide Line 12 by Line 13. If Line 12 is equal to or greater than Line 13, enter 1.0000' — four decimals); 15 = 10 × 14; 15a 'If you list a qualifying child on Line 5, enter $250. Otherwise, enter $0'; 16 = 10 + 15a, or 15 + 15a → Form CT-1040 line 20a (Part 3 payments — REFUNDABLE). The $250 is NOT prorated and does not vary with the number of children. Full-year residents only (part-year/nonresidents 'do not qualify … and must file Form CT-1040NR/PY'); valid SSNs required by the due date (no amended claim after obtaining one). Whole dollars. TY2026: 40% + $250 continue (no 2026 act changed § 12-704e). [Inputs: ctFederalEic, ctEitcQualifyingChild, ctEitcSeparateFagi and ctEitcJointFagi (both 0 = no proration).]"
+        },
+        "effective": "[2025-01-01, 2027-01-01)",
+        "byFilingStatus": {},
+        "parameters": {
+          "childAddOn": "$250.00",
+          "investmentIncomeLimit2025": "$11,950.00"
+        }
+      },
+      {
+        "ruleId": "us.federal.actc",
+        "title": "Additional child tax credit — refundable (simplified: 3+-child SS-tax alternative not modeled)",
+        "citation": {
+          "source": "26 U.S.C. § 24(d), (h)(5); Rev. Proc. 2024-40 § 2.05 / Rev. Proc. 2025-32 § 4.05",
+          "section": "§ 24(d)(1); § 24(h)(5)",
+          "url": "https://www.law.cornell.edu/uscode/text/26/24",
+          "excerpt": "The credit is refundable up to $1,700 per qualifying child (2025 and 2026, as adjusted), limited to 15 percent of so much of earned income as exceeds $2,500, and to the portion of the credit not used against tax. [The § 24(d)(1)(B)(ii) alternative for taxpayers with 3+ children (social security taxes minus EIC) is NOT modeled — it can only increase the refund at very low earned income; disclosed. Earned income approximated as wages.]"
+        },
+        "effective": "[2025-01-01, open)",
+        "byFilingStatus": {},
+        "parameters": {
+          "refundableCapPerChild": "$1,700.00",
+          "earnedIncomeFloor": "$2,500.00"
+        }
+      }
+    ],
+    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+  }
+}

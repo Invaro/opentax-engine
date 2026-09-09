@@ -1,0 +1,12 @@
+{
+  "description": "ND Form ND-1 line 12: the College SAVE deduction is capped at $5,000, or $10,000 on a joint return. Rollovers from another section 529 plan do not qualify.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ndCollegeSaveContributions": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.college_save_deduction",
+  "expect": {
+    "valueCents": "1000000"
+  }
+}

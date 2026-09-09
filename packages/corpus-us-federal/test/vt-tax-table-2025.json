@@ -1,0 +1,6005 @@
+{
+"source": "VermontTaxTables-2025.pdf (tax.vermont.gov), parsed by pdftotext -layout",
+"rows": [
+{
+"atLeast": 0,
+"lessThan": 100,
+"single": 0,
+"mfj": 0,
+"mfs": 0,
+"hoh": 0
+},
+{
+"atLeast": 100,
+"lessThan": 200,
+"single": 5,
+"mfj": 5,
+"mfs": 5,
+"hoh": 5
+},
+{
+"atLeast": 200,
+"lessThan": 300,
+"single": 8,
+"mfj": 8,
+"mfs": 8,
+"hoh": 8
+},
+{
+"atLeast": 300,
+"lessThan": 400,
+"single": 12,
+"mfj": 12,
+"mfs": 12,
+"hoh": 12
+},
+{
+"atLeast": 400,
+"lessThan": 500,
+"single": 15,
+"mfj": 15,
+"mfs": 15,
+"hoh": 15
+},
+{
+"atLeast": 500,
+"lessThan": 600,
+"single": 18,
+"mfj": 18,
+"mfs": 18,
+"hoh": 18
+},
+{
+"atLeast": 600,
+"lessThan": 700,
+"single": 22,
+"mfj": 22,
+"mfs": 22,
+"hoh": 22
+},
+{
+"atLeast": 700,
+"lessThan": 800,
+"single": 25,
+"mfj": 25,
+"mfs": 25,
+"hoh": 25
+},
+{
+"atLeast": 800,
+"lessThan": 900,
+"single": 28,
+"mfj": 28,
+"mfs": 28,
+"hoh": 28
+},
+{
+"atLeast": 900,
+"lessThan": 1000,
+"single": 32,
+"mfj": 32,
+"mfs": 32,
+"hoh": 32
+},
+{
+"atLeast": 1000,
+"lessThan": 1100,
+"single": 35,
+"mfj": 35,
+"mfs": 35,
+"hoh": 35
+},
+{
+"atLeast": 1100,
+"lessThan": 1200,
+"single": 39,
+"mfj": 39,
+"mfs": 39,
+"hoh": 39
+},
+{
+"atLeast": 1200,
+"lessThan": 1300,
+"single": 42,
+"mfj": 42,
+"mfs": 42,
+"hoh": 42
+},
+{
+"atLeast": 1300,
+"lessThan": 1400,
+"single": 45,
+"mfj": 45,
+"mfs": 45,
+"hoh": 45
+},
+{
+"atLeast": 1400,
+"lessThan": 1500,
+"single": 49,
+"mfj": 49,
+"mfs": 49,
+"hoh": 49
+},
+{
+"atLeast": 1500,
+"lessThan": 1600,
+"single": 52,
+"mfj": 52,
+"mfs": 52,
+"hoh": 52
+},
+{
+"atLeast": 1600,
+"lessThan": 1700,
+"single": 55,
+"mfj": 55,
+"mfs": 55,
+"hoh": 55
+},
+{
+"atLeast": 1700,
+"lessThan": 1800,
+"single": 59,
+"mfj": 59,
+"mfs": 59,
+"hoh": 59
+},
+{
+"atLeast": 1800,
+"lessThan": 1900,
+"single": 62,
+"mfj": 62,
+"mfs": 62,
+"hoh": 62
+},
+{
+"atLeast": 1900,
+"lessThan": 2000,
+"single": 65,
+"mfj": 65,
+"mfs": 65,
+"hoh": 65
+},
+{
+"atLeast": 2000,
+"lessThan": 2100,
+"single": 69,
+"mfj": 69,
+"mfs": 69,
+"hoh": 69
+},
+{
+"atLeast": 2100,
+"lessThan": 2200,
+"single": 72,
+"mfj": 72,
+"mfs": 72,
+"hoh": 72
+},
+{
+"atLeast": 2200,
+"lessThan": 2300,
+"single": 75,
+"mfj": 75,
+"mfs": 75,
+"hoh": 75
+},
+{
+"atLeast": 2300,
+"lessThan": 2400,
+"single": 79,
+"mfj": 79,
+"mfs": 79,
+"hoh": 79
+},
+{
+"atLeast": 2400,
+"lessThan": 2500,
+"single": 82,
+"mfj": 82,
+"mfs": 82,
+"hoh": 82
+},
+{
+"atLeast": 2500,
+"lessThan": 2600,
+"single": 85,
+"mfj": 85,
+"mfs": 85,
+"hoh": 85
+},
+{
+"atLeast": 2600,
+"lessThan": 2700,
+"single": 89,
+"mfj": 89,
+"mfs": 89,
+"hoh": 89
+},
+{
+"atLeast": 2700,
+"lessThan": 2800,
+"single": 92,
+"mfj": 92,
+"mfs": 92,
+"hoh": 92
+},
+{
+"atLeast": 2800,
+"lessThan": 2900,
+"single": 95,
+"mfj": 95,
+"mfs": 95,
+"hoh": 95
+},
+{
+"atLeast": 2900,
+"lessThan": 3000,
+"single": 99,
+"mfj": 99,
+"mfs": 99,
+"hoh": 99
+},
+{
+"atLeast": 3000,
+"lessThan": 3100,
+"single": 102,
+"mfj": 102,
+"mfs": 102,
+"hoh": 102
+},
+{
+"atLeast": 3100,
+"lessThan": 3200,
+"single": 106,
+"mfj": 106,
+"mfs": 106,
+"hoh": 106
+},
+{
+"atLeast": 3200,
+"lessThan": 3300,
+"single": 109,
+"mfj": 109,
+"mfs": 109,
+"hoh": 109
+},
+{
+"atLeast": 3300,
+"lessThan": 3400,
+"single": 112,
+"mfj": 112,
+"mfs": 112,
+"hoh": 112
+},
+{
+"atLeast": 3400,
+"lessThan": 3500,
+"single": 116,
+"mfj": 116,
+"mfs": 116,
+"hoh": 116
+},
+{
+"atLeast": 3500,
+"lessThan": 3600,
+"single": 119,
+"mfj": 119,
+"mfs": 119,
+"hoh": 119
+},
+{
+"atLeast": 3600,
+"lessThan": 3700,
+"single": 122,
+"mfj": 122,
+"mfs": 122,
+"hoh": 122
+},
+{
+"atLeast": 3700,
+"lessThan": 3800,
+"single": 126,
+"mfj": 126,
+"mfs": 126,
+"hoh": 126
+},
+{
+"atLeast": 3800,
+"lessThan": 3900,
+"single": 129,
+"mfj": 129,
+"mfs": 129,
+"hoh": 129
+},
+{
+"atLeast": 3900,
+"lessThan": 4000,
+"single": 132,
+"mfj": 132,
+"mfs": 132,
+"hoh": 132
+},
+{
+"atLeast": 4000,
+"lessThan": 4100,
+"single": 136,
+"mfj": 136,
+"mfs": 136,
+"hoh": 136
+},
+{
+"atLeast": 4100,
+"lessThan": 4200,
+"single": 139,
+"mfj": 139,
+"mfs": 139,
+"hoh": 139
+},
+{
+"atLeast": 4200,
+"lessThan": 4300,
+"single": 142,
+"mfj": 142,
+"mfs": 142,
+"hoh": 142
+},
+{
+"atLeast": 4300,
+"lessThan": 4400,
+"single": 146,
+"mfj": 146,
+"mfs": 146,
+"hoh": 146
+},
+{
+"atLeast": 4400,
+"lessThan": 4500,
+"single": 149,
+"mfj": 149,
+"mfs": 149,
+"hoh": 149
+},
+{
+"atLeast": 4500,
+"lessThan": 4600,
+"single": 152,
+"mfj": 152,
+"mfs": 152,
+"hoh": 152
+},
+{
+"atLeast": 4600,
+"lessThan": 4700,
+"single": 156,
+"mfj": 156,
+"mfs": 156,
+"hoh": 156
+},
+{
+"atLeast": 4700,
+"lessThan": 4800,
+"single": 159,
+"mfj": 159,
+"mfs": 159,
+"hoh": 159
+},
+{
+"atLeast": 4800,
+"lessThan": 4900,
+"single": 162,
+"mfj": 162,
+"mfs": 162,
+"hoh": 162
+},
+{
+"atLeast": 4900,
+"lessThan": 5000,
+"single": 166,
+"mfj": 166,
+"mfs": 166,
+"hoh": 166
+},
+{
+"atLeast": 5000,
+"lessThan": 5100,
+"single": 169,
+"mfj": 169,
+"mfs": 169,
+"hoh": 169
+},
+{
+"atLeast": 5100,
+"lessThan": 5200,
+"single": 173,
+"mfj": 173,
+"mfs": 173,
+"hoh": 173
+},
+{
+"atLeast": 5200,
+"lessThan": 5300,
+"single": 176,
+"mfj": 176,
+"mfs": 176,
+"hoh": 176
+},
+{
+"atLeast": 5300,
+"lessThan": 5400,
+"single": 179,
+"mfj": 179,
+"mfs": 179,
+"hoh": 179
+},
+{
+"atLeast": 5400,
+"lessThan": 5500,
+"single": 183,
+"mfj": 183,
+"mfs": 183,
+"hoh": 183
+},
+{
+"atLeast": 5500,
+"lessThan": 5600,
+"single": 186,
+"mfj": 186,
+"mfs": 186,
+"hoh": 186
+},
+{
+"atLeast": 5600,
+"lessThan": 5700,
+"single": 189,
+"mfj": 189,
+"mfs": 189,
+"hoh": 189
+},
+{
+"atLeast": 5700,
+"lessThan": 5800,
+"single": 193,
+"mfj": 193,
+"mfs": 193,
+"hoh": 193
+},
+{
+"atLeast": 5800,
+"lessThan": 5900,
+"single": 196,
+"mfj": 196,
+"mfs": 196,
+"hoh": 196
+},
+{
+"atLeast": 5900,
+"lessThan": 6000,
+"single": 199,
+"mfj": 199,
+"mfs": 199,
+"hoh": 199
+},
+{
+"atLeast": 6000,
+"lessThan": 6100,
+"single": 203,
+"mfj": 203,
+"mfs": 203,
+"hoh": 203
+},
+{
+"atLeast": 6100,
+"lessThan": 6200,
+"single": 206,
+"mfj": 206,
+"mfs": 206,
+"hoh": 206
+},
+{
+"atLeast": 6200,
+"lessThan": 6300,
+"single": 209,
+"mfj": 209,
+"mfs": 209,
+"hoh": 209
+},
+{
+"atLeast": 6300,
+"lessThan": 6400,
+"single": 213,
+"mfj": 213,
+"mfs": 213,
+"hoh": 213
+},
+{
+"atLeast": 6400,
+"lessThan": 6500,
+"single": 216,
+"mfj": 216,
+"mfs": 216,
+"hoh": 216
+},
+{
+"atLeast": 6500,
+"lessThan": 6600,
+"single": 219,
+"mfj": 219,
+"mfs": 219,
+"hoh": 219
+},
+{
+"atLeast": 6600,
+"lessThan": 6700,
+"single": 223,
+"mfj": 223,
+"mfs": 223,
+"hoh": 223
+},
+{
+"atLeast": 6700,
+"lessThan": 6800,
+"single": 226,
+"mfj": 226,
+"mfs": 226,
+"hoh": 226
+},
+{
+"atLeast": 6800,
+"lessThan": 6900,
+"single": 229,
+"mfj": 229,
+"mfs": 229,
+"hoh": 229
+},
+{
+"atLeast": 6900,
+"lessThan": 7000,
+"single": 233,
+"mfj": 233,
+"mfs": 233,
+"hoh": 233
+},
+{
+"atLeast": 7000,
+"lessThan": 7100,
+"single": 236,
+"mfj": 236,
+"mfs": 236,
+"hoh": 236
+},
+{
+"atLeast": 7100,
+"lessThan": 7200,
+"single": 240,
+"mfj": 240,
+"mfs": 240,
+"hoh": 240
+},
+{
+"atLeast": 7200,
+"lessThan": 7300,
+"single": 243,
+"mfj": 243,
+"mfs": 243,
+"hoh": 243
+},
+{
+"atLeast": 7300,
+"lessThan": 7400,
+"single": 246,
+"mfj": 246,
+"mfs": 246,
+"hoh": 246
+},
+{
+"atLeast": 7400,
+"lessThan": 7500,
+"single": 250,
+"mfj": 250,
+"mfs": 250,
+"hoh": 250
+},
+{
+"atLeast": 7500,
+"lessThan": 7600,
+"single": 253,
+"mfj": 253,
+"mfs": 253,
+"hoh": 253
+},
+{
+"atLeast": 7600,
+"lessThan": 7700,
+"single": 256,
+"mfj": 256,
+"mfs": 256,
+"hoh": 256
+},
+{
+"atLeast": 7700,
+"lessThan": 7800,
+"single": 260,
+"mfj": 260,
+"mfs": 260,
+"hoh": 260
+},
+{
+"atLeast": 7800,
+"lessThan": 7900,
+"single": 263,
+"mfj": 263,
+"mfs": 263,
+"hoh": 263
+},
+{
+"atLeast": 7900,
+"lessThan": 8000,
+"single": 266,
+"mfj": 266,
+"mfs": 266,
+"hoh": 266
+},
+{
+"atLeast": 8000,
+"lessThan": 8100,
+"single": 270,
+"mfj": 270,
+"mfs": 270,
+"hoh": 270
+},
+{
+"atLeast": 8100,
+"lessThan": 8200,
+"single": 273,
+"mfj": 273,
+"mfs": 273,
+"hoh": 273
+},
+{
+"atLeast": 8200,
+"lessThan": 8300,
+"single": 276,
+"mfj": 276,
+"mfs": 276,
+"hoh": 276
+},
+{
+"atLeast": 8300,
+"lessThan": 8400,
+"single": 280,
+"mfj": 280,
+"mfs": 280,
+"hoh": 280
+},
+{
+"atLeast": 8400,
+"lessThan": 8500,
+"single": 283,
+"mfj": 283,
+"mfs": 283,
+"hoh": 283
+},
+{
+"atLeast": 8500,
+"lessThan": 8600,
+"single": 286,
+"mfj": 286,
+"mfs": 286,
+"hoh": 286
+},
+{
+"atLeast": 8600,
+"lessThan": 8700,
+"single": 290,
+"mfj": 290,
+"mfs": 290,
+"hoh": 290
+},
+{
+"atLeast": 8700,
+"lessThan": 8800,
+"single": 293,
+"mfj": 293,
+"mfs": 293,
+"hoh": 293
+},
+{
+"atLeast": 8800,
+"lessThan": 8900,
+"single": 296,
+"mfj": 296,
+"mfs": 296,
+"hoh": 296
+},
+{
+"atLeast": 8900,
+"lessThan": 9000,
+"single": 300,
+"mfj": 300,
+"mfs": 300,
+"hoh": 300
+},
+{
+"atLeast": 9000,
+"lessThan": 9100,
+"single": 303,
+"mfj": 303,
+"mfs": 303,
+"hoh": 303
+},
+{
+"atLeast": 9100,
+"lessThan": 9200,
+"single": 307,
+"mfj": 307,
+"mfs": 307,
+"hoh": 307
+},
+{
+"atLeast": 9200,
+"lessThan": 9300,
+"single": 310,
+"mfj": 310,
+"mfs": 310,
+"hoh": 310
+},
+{
+"atLeast": 9300,
+"lessThan": 9400,
+"single": 313,
+"mfj": 313,
+"mfs": 313,
+"hoh": 313
+},
+{
+"atLeast": 9400,
+"lessThan": 9500,
+"single": 317,
+"mfj": 317,
+"mfs": 317,
+"hoh": 317
+},
+{
+"atLeast": 9500,
+"lessThan": 9600,
+"single": 320,
+"mfj": 320,
+"mfs": 320,
+"hoh": 320
+},
+{
+"atLeast": 9600,
+"lessThan": 9700,
+"single": 323,
+"mfj": 323,
+"mfs": 323,
+"hoh": 323
+},
+{
+"atLeast": 9700,
+"lessThan": 9800,
+"single": 327,
+"mfj": 327,
+"mfs": 327,
+"hoh": 327
+},
+{
+"atLeast": 9800,
+"lessThan": 9900,
+"single": 330,
+"mfj": 330,
+"mfs": 330,
+"hoh": 330
+},
+{
+"atLeast": 9900,
+"lessThan": 10000,
+"single": 333,
+"mfj": 333,
+"mfs": 333,
+"hoh": 333
+},
+{
+"atLeast": 10000,
+"lessThan": 10100,
+"single": 337,
+"mfj": 337,
+"mfs": 337,
+"hoh": 337
+},
+{
+"atLeast": 10100,
+"lessThan": 10200,
+"single": 340,
+"mfj": 340,
+"mfs": 340,
+"hoh": 340
+},
+{
+"atLeast": 10200,
+"lessThan": 10300,
+"single": 343,
+"mfj": 343,
+"mfs": 343,
+"hoh": 343
+},
+{
+"atLeast": 10300,
+"lessThan": 10400,
+"single": 347,
+"mfj": 347,
+"mfs": 347,
+"hoh": 347
+},
+{
+"atLeast": 10400,
+"lessThan": 10500,
+"single": 350,
+"mfj": 350,
+"mfs": 350,
+"hoh": 350
+},
+{
+"atLeast": 10500,
+"lessThan": 10600,
+"single": 353,
+"mfj": 353,
+"mfs": 353,
+"hoh": 353
+},
+{
+"atLeast": 10600,
+"lessThan": 10700,
+"single": 357,
+"mfj": 357,
+"mfs": 357,
+"hoh": 357
+},
+{
+"atLeast": 10700,
+"lessThan": 10800,
+"single": 360,
+"mfj": 360,
+"mfs": 360,
+"hoh": 360
+},
+{
+"atLeast": 10800,
+"lessThan": 10900,
+"single": 363,
+"mfj": 363,
+"mfs": 363,
+"hoh": 363
+},
+{
+"atLeast": 10900,
+"lessThan": 11000,
+"single": 367,
+"mfj": 367,
+"mfs": 367,
+"hoh": 367
+},
+{
+"atLeast": 11000,
+"lessThan": 11100,
+"single": 370,
+"mfj": 370,
+"mfs": 370,
+"hoh": 370
+},
+{
+"atLeast": 11100,
+"lessThan": 11200,
+"single": 374,
+"mfj": 374,
+"mfs": 374,
+"hoh": 374
+},
+{
+"atLeast": 11200,
+"lessThan": 11300,
+"single": 377,
+"mfj": 377,
+"mfs": 377,
+"hoh": 377
+},
+{
+"atLeast": 11300,
+"lessThan": 11400,
+"single": 380,
+"mfj": 380,
+"mfs": 380,
+"hoh": 380
+},
+{
+"atLeast": 11400,
+"lessThan": 11500,
+"single": 384,
+"mfj": 384,
+"mfs": 384,
+"hoh": 384
+},
+{
+"atLeast": 11500,
+"lessThan": 11600,
+"single": 387,
+"mfj": 387,
+"mfs": 387,
+"hoh": 387
+},
+{
+"atLeast": 11600,
+"lessThan": 11700,
+"single": 390,
+"mfj": 390,
+"mfs": 390,
+"hoh": 390
+},
+{
+"atLeast": 11700,
+"lessThan": 11800,
+"single": 394,
+"mfj": 394,
+"mfs": 394,
+"hoh": 394
+},
+{
+"atLeast": 11800,
+"lessThan": 11900,
+"single": 397,
+"mfj": 397,
+"mfs": 397,
+"hoh": 397
+},
+{
+"atLeast": 11900,
+"lessThan": 12000,
+"single": 400,
+"mfj": 400,
+"mfs": 400,
+"hoh": 400
+},
+{
+"atLeast": 12000,
+"lessThan": 12100,
+"single": 404,
+"mfj": 404,
+"mfs": 404,
+"hoh": 404
+},
+{
+"atLeast": 12100,
+"lessThan": 12200,
+"single": 407,
+"mfj": 407,
+"mfs": 407,
+"hoh": 407
+},
+{
+"atLeast": 12200,
+"lessThan": 12300,
+"single": 410,
+"mfj": 410,
+"mfs": 410,
+"hoh": 410
+},
+{
+"atLeast": 12300,
+"lessThan": 12400,
+"single": 414,
+"mfj": 414,
+"mfs": 414,
+"hoh": 414
+},
+{
+"atLeast": 12400,
+"lessThan": 12500,
+"single": 417,
+"mfj": 417,
+"mfs": 417,
+"hoh": 417
+},
+{
+"atLeast": 12500,
+"lessThan": 12600,
+"single": 420,
+"mfj": 420,
+"mfs": 420,
+"hoh": 420
+},
+{
+"atLeast": 12600,
+"lessThan": 12700,
+"single": 424,
+"mfj": 424,
+"mfs": 424,
+"hoh": 424
+},
+{
+"atLeast": 12700,
+"lessThan": 12800,
+"single": 427,
+"mfj": 427,
+"mfs": 427,
+"hoh": 427
+},
+{
+"atLeast": 12800,
+"lessThan": 12900,
+"single": 430,
+"mfj": 430,
+"mfs": 430,
+"hoh": 430
+},
+{
+"atLeast": 12900,
+"lessThan": 13000,
+"single": 434,
+"mfj": 434,
+"mfs": 434,
+"hoh": 434
+},
+{
+"atLeast": 13000,
+"lessThan": 13100,
+"single": 437,
+"mfj": 437,
+"mfs": 437,
+"hoh": 437
+},
+{
+"atLeast": 13100,
+"lessThan": 13200,
+"single": 441,
+"mfj": 441,
+"mfs": 441,
+"hoh": 441
+},
+{
+"atLeast": 13200,
+"lessThan": 13300,
+"single": 444,
+"mfj": 444,
+"mfs": 444,
+"hoh": 444
+},
+{
+"atLeast": 13300,
+"lessThan": 13400,
+"single": 447,
+"mfj": 447,
+"mfs": 447,
+"hoh": 447
+},
+{
+"atLeast": 13400,
+"lessThan": 13500,
+"single": 451,
+"mfj": 451,
+"mfs": 451,
+"hoh": 451
+},
+{
+"atLeast": 13500,
+"lessThan": 13600,
+"single": 454,
+"mfj": 454,
+"mfs": 454,
+"hoh": 454
+},
+{
+"atLeast": 13600,
+"lessThan": 13700,
+"single": 457,
+"mfj": 457,
+"mfs": 457,
+"hoh": 457
+},
+{
+"atLeast": 13700,
+"lessThan": 13800,
+"single": 461,
+"mfj": 461,
+"mfs": 461,
+"hoh": 461
+},
+{
+"atLeast": 13800,
+"lessThan": 13900,
+"single": 464,
+"mfj": 464,
+"mfs": 464,
+"hoh": 464
+},
+{
+"atLeast": 13900,
+"lessThan": 14000,
+"single": 467,
+"mfj": 467,
+"mfs": 467,
+"hoh": 467
+},
+{
+"atLeast": 14000,
+"lessThan": 14100,
+"single": 471,
+"mfj": 471,
+"mfs": 471,
+"hoh": 471
+},
+{
+"atLeast": 14100,
+"lessThan": 14200,
+"single": 474,
+"mfj": 474,
+"mfs": 474,
+"hoh": 474
+},
+{
+"atLeast": 14200,
+"lessThan": 14300,
+"single": 477,
+"mfj": 477,
+"mfs": 477,
+"hoh": 477
+},
+{
+"atLeast": 14300,
+"lessThan": 14400,
+"single": 481,
+"mfj": 481,
+"mfs": 481,
+"hoh": 481
+},
+{
+"atLeast": 14400,
+"lessThan": 14500,
+"single": 484,
+"mfj": 484,
+"mfs": 484,
+"hoh": 484
+},
+{
+"atLeast": 14500,
+"lessThan": 14600,
+"single": 487,
+"mfj": 487,
+"mfs": 487,
+"hoh": 487
+},
+{
+"atLeast": 14600,
+"lessThan": 14700,
+"single": 491,
+"mfj": 491,
+"mfs": 491,
+"hoh": 491
+},
+{
+"atLeast": 14700,
+"lessThan": 14800,
+"single": 494,
+"mfj": 494,
+"mfs": 494,
+"hoh": 494
+},
+{
+"atLeast": 14800,
+"lessThan": 14900,
+"single": 497,
+"mfj": 497,
+"mfs": 497,
+"hoh": 497
+},
+{
+"atLeast": 14900,
+"lessThan": 15000,
+"single": 501,
+"mfj": 501,
+"mfs": 501,
+"hoh": 501
+},
+{
+"atLeast": 15000,
+"lessThan": 15100,
+"single": 504,
+"mfj": 504,
+"mfs": 504,
+"hoh": 504
+},
+{
+"atLeast": 15100,
+"lessThan": 15200,
+"single": 508,
+"mfj": 508,
+"mfs": 508,
+"hoh": 508
+},
+{
+"atLeast": 15200,
+"lessThan": 15300,
+"single": 511,
+"mfj": 511,
+"mfs": 511,
+"hoh": 511
+},
+{
+"atLeast": 15300,
+"lessThan": 15400,
+"single": 514,
+"mfj": 514,
+"mfs": 514,
+"hoh": 514
+},
+{
+"atLeast": 15400,
+"lessThan": 15500,
+"single": 518,
+"mfj": 518,
+"mfs": 518,
+"hoh": 518
+},
+{
+"atLeast": 15500,
+"lessThan": 15600,
+"single": 521,
+"mfj": 521,
+"mfs": 521,
+"hoh": 521
+},
+{
+"atLeast": 15600,
+"lessThan": 15700,
+"single": 524,
+"mfj": 524,
+"mfs": 524,
+"hoh": 524
+},
+{
+"atLeast": 15700,
+"lessThan": 15800,
+"single": 528,
+"mfj": 528,
+"mfs": 528,
+"hoh": 528
+},
+{
+"atLeast": 15800,
+"lessThan": 15900,
+"single": 531,
+"mfj": 531,
+"mfs": 531,
+"hoh": 531
+},
+{
+"atLeast": 15900,
+"lessThan": 16000,
+"single": 534,
+"mfj": 534,
+"mfs": 534,
+"hoh": 534
+},
+{
+"atLeast": 16000,
+"lessThan": 16100,
+"single": 538,
+"mfj": 538,
+"mfs": 538,
+"hoh": 538
+},
+{
+"atLeast": 16100,
+"lessThan": 16200,
+"single": 541,
+"mfj": 541,
+"mfs": 541,
+"hoh": 541
+},
+{
+"atLeast": 16200,
+"lessThan": 16300,
+"single": 544,
+"mfj": 544,
+"mfs": 544,
+"hoh": 544
+},
+{
+"atLeast": 16300,
+"lessThan": 16400,
+"single": 548,
+"mfj": 548,
+"mfs": 548,
+"hoh": 548
+},
+{
+"atLeast": 16400,
+"lessThan": 16500,
+"single": 551,
+"mfj": 551,
+"mfs": 551,
+"hoh": 551
+},
+{
+"atLeast": 16500,
+"lessThan": 16600,
+"single": 554,
+"mfj": 554,
+"mfs": 554,
+"hoh": 554
+},
+{
+"atLeast": 16600,
+"lessThan": 16700,
+"single": 558,
+"mfj": 558,
+"mfs": 558,
+"hoh": 558
+},
+{
+"atLeast": 16700,
+"lessThan": 16800,
+"single": 561,
+"mfj": 561,
+"mfs": 561,
+"hoh": 561
+},
+{
+"atLeast": 16800,
+"lessThan": 16900,
+"single": 564,
+"mfj": 564,
+"mfs": 564,
+"hoh": 564
+},
+{
+"atLeast": 16900,
+"lessThan": 17000,
+"single": 568,
+"mfj": 568,
+"mfs": 568,
+"hoh": 568
+},
+{
+"atLeast": 17000,
+"lessThan": 17100,
+"single": 571,
+"mfj": 571,
+"mfs": 571,
+"hoh": 571
+},
+{
+"atLeast": 17100,
+"lessThan": 17200,
+"single": 575,
+"mfj": 575,
+"mfs": 575,
+"hoh": 575
+},
+{
+"atLeast": 17200,
+"lessThan": 17300,
+"single": 578,
+"mfj": 578,
+"mfs": 578,
+"hoh": 578
+},
+{
+"atLeast": 17300,
+"lessThan": 17400,
+"single": 581,
+"mfj": 581,
+"mfs": 581,
+"hoh": 581
+},
+{
+"atLeast": 17400,
+"lessThan": 17500,
+"single": 585,
+"mfj": 585,
+"mfs": 585,
+"hoh": 585
+},
+{
+"atLeast": 17500,
+"lessThan": 17600,
+"single": 588,
+"mfj": 588,
+"mfs": 588,
+"hoh": 588
+},
+{
+"atLeast": 17600,
+"lessThan": 17700,
+"single": 591,
+"mfj": 591,
+"mfs": 591,
+"hoh": 591
+},
+{
+"atLeast": 17700,
+"lessThan": 17800,
+"single": 595,
+"mfj": 595,
+"mfs": 595,
+"hoh": 595
+},
+{
+"atLeast": 17800,
+"lessThan": 17900,
+"single": 598,
+"mfj": 598,
+"mfs": 598,
+"hoh": 598
+},
+{
+"atLeast": 17900,
+"lessThan": 18000,
+"single": 601,
+"mfj": 601,
+"mfs": 601,
+"hoh": 601
+},
+{
+"atLeast": 18000,
+"lessThan": 18100,
+"single": 605,
+"mfj": 605,
+"mfs": 605,
+"hoh": 605
+},
+{
+"atLeast": 18100,
+"lessThan": 18200,
+"single": 608,
+"mfj": 608,
+"mfs": 608,
+"hoh": 608
+},
+{
+"atLeast": 18200,
+"lessThan": 18300,
+"single": 611,
+"mfj": 611,
+"mfs": 611,
+"hoh": 611
+},
+{
+"atLeast": 18300,
+"lessThan": 18400,
+"single": 615,
+"mfj": 615,
+"mfs": 615,
+"hoh": 615
+},
+{
+"atLeast": 18400,
+"lessThan": 18500,
+"single": 618,
+"mfj": 618,
+"mfs": 618,
+"hoh": 618
+},
+{
+"atLeast": 18500,
+"lessThan": 18600,
+"single": 621,
+"mfj": 621,
+"mfs": 621,
+"hoh": 621
+},
+{
+"atLeast": 18600,
+"lessThan": 18700,
+"single": 625,
+"mfj": 625,
+"mfs": 625,
+"hoh": 625
+},
+{
+"atLeast": 18700,
+"lessThan": 18800,
+"single": 628,
+"mfj": 628,
+"mfs": 628,
+"hoh": 628
+},
+{
+"atLeast": 18800,
+"lessThan": 18900,
+"single": 631,
+"mfj": 631,
+"mfs": 631,
+"hoh": 631
+},
+{
+"atLeast": 18900,
+"lessThan": 19000,
+"single": 635,
+"mfj": 635,
+"mfs": 635,
+"hoh": 635
+},
+{
+"atLeast": 19000,
+"lessThan": 19100,
+"single": 638,
+"mfj": 638,
+"mfs": 638,
+"hoh": 638
+},
+{
+"atLeast": 19100,
+"lessThan": 19200,
+"single": 642,
+"mfj": 642,
+"mfs": 642,
+"hoh": 642
+},
+{
+"atLeast": 19200,
+"lessThan": 19300,
+"single": 645,
+"mfj": 645,
+"mfs": 645,
+"hoh": 645
+},
+{
+"atLeast": 19300,
+"lessThan": 19400,
+"single": 648,
+"mfj": 648,
+"mfs": 648,
+"hoh": 648
+},
+{
+"atLeast": 19400,
+"lessThan": 19500,
+"single": 652,
+"mfj": 652,
+"mfs": 652,
+"hoh": 652
+},
+{
+"atLeast": 19500,
+"lessThan": 19600,
+"single": 655,
+"mfj": 655,
+"mfs": 655,
+"hoh": 655
+},
+{
+"atLeast": 19600,
+"lessThan": 19700,
+"single": 658,
+"mfj": 658,
+"mfs": 658,
+"hoh": 658
+},
+{
+"atLeast": 19700,
+"lessThan": 19800,
+"single": 662,
+"mfj": 662,
+"mfs": 662,
+"hoh": 662
+},
+{
+"atLeast": 19800,
+"lessThan": 19900,
+"single": 665,
+"mfj": 665,
+"mfs": 665,
+"hoh": 665
+},
+{
+"atLeast": 19900,
+"lessThan": 20000,
+"single": 668,
+"mfj": 668,
+"mfs": 668,
+"hoh": 668
+},
+{
+"atLeast": 20000,
+"lessThan": 20100,
+"single": 672,
+"mfj": 672,
+"mfs": 672,
+"hoh": 672
+},
+{
+"atLeast": 20100,
+"lessThan": 20200,
+"single": 675,
+"mfj": 675,
+"mfs": 675,
+"hoh": 675
+},
+{
+"atLeast": 20200,
+"lessThan": 20300,
+"single": 678,
+"mfj": 678,
+"mfs": 678,
+"hoh": 678
+},
+{
+"atLeast": 20300,
+"lessThan": 20400,
+"single": 682,
+"mfj": 682,
+"mfs": 682,
+"hoh": 682
+},
+{
+"atLeast": 20400,
+"lessThan": 20500,
+"single": 685,
+"mfj": 685,
+"mfs": 685,
+"hoh": 685
+},
+{
+"atLeast": 20500,
+"lessThan": 20600,
+"single": 688,
+"mfj": 688,
+"mfs": 688,
+"hoh": 688
+},
+{
+"atLeast": 20600,
+"lessThan": 20700,
+"single": 692,
+"mfj": 692,
+"mfs": 692,
+"hoh": 692
+},
+{
+"atLeast": 20700,
+"lessThan": 20800,
+"single": 695,
+"mfj": 695,
+"mfs": 695,
+"hoh": 695
+},
+{
+"atLeast": 20800,
+"lessThan": 20900,
+"single": 698,
+"mfj": 698,
+"mfs": 698,
+"hoh": 698
+},
+{
+"atLeast": 20900,
+"lessThan": 21000,
+"single": 702,
+"mfj": 702,
+"mfs": 702,
+"hoh": 702
+},
+{
+"atLeast": 21000,
+"lessThan": 21100,
+"single": 705,
+"mfj": 705,
+"mfs": 705,
+"hoh": 705
+},
+{
+"atLeast": 21100,
+"lessThan": 21200,
+"single": 709,
+"mfj": 709,
+"mfs": 709,
+"hoh": 709
+},
+{
+"atLeast": 21200,
+"lessThan": 21300,
+"single": 712,
+"mfj": 712,
+"mfs": 712,
+"hoh": 712
+},
+{
+"atLeast": 21300,
+"lessThan": 21400,
+"single": 715,
+"mfj": 715,
+"mfs": 715,
+"hoh": 715
+},
+{
+"atLeast": 21400,
+"lessThan": 21500,
+"single": 719,
+"mfj": 719,
+"mfs": 719,
+"hoh": 719
+},
+{
+"atLeast": 21500,
+"lessThan": 21600,
+"single": 722,
+"mfj": 722,
+"mfs": 722,
+"hoh": 722
+},
+{
+"atLeast": 21600,
+"lessThan": 21700,
+"single": 725,
+"mfj": 725,
+"mfs": 725,
+"hoh": 725
+},
+{
+"atLeast": 21700,
+"lessThan": 21800,
+"single": 729,
+"mfj": 729,
+"mfs": 729,
+"hoh": 729
+},
+{
+"atLeast": 21800,
+"lessThan": 21900,
+"single": 732,
+"mfj": 732,
+"mfs": 732,
+"hoh": 732
+},
+{
+"atLeast": 21900,
+"lessThan": 22000,
+"single": 735,
+"mfj": 735,
+"mfs": 735,
+"hoh": 735
+},
+{
+"atLeast": 22000,
+"lessThan": 22100,
+"single": 739,
+"mfj": 739,
+"mfs": 739,
+"hoh": 739
+},
+{
+"atLeast": 22100,
+"lessThan": 22200,
+"single": 742,
+"mfj": 742,
+"mfs": 742,
+"hoh": 742
+},
+{
+"atLeast": 22200,
+"lessThan": 22300,
+"single": 745,
+"mfj": 745,
+"mfs": 745,
+"hoh": 745
+},
+{
+"atLeast": 22300,
+"lessThan": 22400,
+"single": 749,
+"mfj": 749,
+"mfs": 749,
+"hoh": 749
+},
+{
+"atLeast": 22400,
+"lessThan": 22500,
+"single": 752,
+"mfj": 752,
+"mfs": 752,
+"hoh": 752
+},
+{
+"atLeast": 22500,
+"lessThan": 22600,
+"single": 755,
+"mfj": 755,
+"mfs": 755,
+"hoh": 755
+},
+{
+"atLeast": 22600,
+"lessThan": 22700,
+"single": 759,
+"mfj": 759,
+"mfs": 759,
+"hoh": 759
+},
+{
+"atLeast": 22700,
+"lessThan": 22800,
+"single": 762,
+"mfj": 762,
+"mfs": 762,
+"hoh": 762
+},
+{
+"atLeast": 22800,
+"lessThan": 22900,
+"single": 765,
+"mfj": 765,
+"mfs": 765,
+"hoh": 765
+},
+{
+"atLeast": 22900,
+"lessThan": 23000,
+"single": 769,
+"mfj": 769,
+"mfs": 769,
+"hoh": 769
+},
+{
+"atLeast": 23000,
+"lessThan": 23100,
+"single": 772,
+"mfj": 772,
+"mfs": 772,
+"hoh": 772
+},
+{
+"atLeast": 23100,
+"lessThan": 23200,
+"single": 776,
+"mfj": 776,
+"mfs": 776,
+"hoh": 776
+},
+{
+"atLeast": 23200,
+"lessThan": 23300,
+"single": 779,
+"mfj": 779,
+"mfs": 779,
+"hoh": 779
+},
+{
+"atLeast": 23300,
+"lessThan": 23400,
+"single": 782,
+"mfj": 782,
+"mfs": 782,
+"hoh": 782
+},
+{
+"atLeast": 23400,
+"lessThan": 23500,
+"single": 786,
+"mfj": 786,
+"mfs": 786,
+"hoh": 786
+},
+{
+"atLeast": 23500,
+"lessThan": 23600,
+"single": 789,
+"mfj": 789,
+"mfs": 789,
+"hoh": 789
+},
+{
+"atLeast": 23600,
+"lessThan": 23700,
+"single": 792,
+"mfj": 792,
+"mfs": 792,
+"hoh": 792
+},
+{
+"atLeast": 23700,
+"lessThan": 23800,
+"single": 796,
+"mfj": 796,
+"mfs": 796,
+"hoh": 796
+},
+{
+"atLeast": 23800,
+"lessThan": 23900,
+"single": 799,
+"mfj": 799,
+"mfs": 799,
+"hoh": 799
+},
+{
+"atLeast": 23900,
+"lessThan": 24000,
+"single": 802,
+"mfj": 802,
+"mfs": 802,
+"hoh": 802
+},
+{
+"atLeast": 24000,
+"lessThan": 24100,
+"single": 806,
+"mfj": 806,
+"mfs": 806,
+"hoh": 806
+},
+{
+"atLeast": 24100,
+"lessThan": 24200,
+"single": 809,
+"mfj": 809,
+"mfs": 809,
+"hoh": 809
+},
+{
+"atLeast": 24200,
+"lessThan": 24300,
+"single": 812,
+"mfj": 812,
+"mfs": 812,
+"hoh": 812
+},
+{
+"atLeast": 24300,
+"lessThan": 24400,
+"single": 816,
+"mfj": 816,
+"mfs": 816,
+"hoh": 816
+},
+{
+"atLeast": 24400,
+"lessThan": 24500,
+"single": 819,
+"mfj": 819,
+"mfs": 819,
+"hoh": 819
+},
+{
+"atLeast": 24500,
+"lessThan": 24600,
+"single": 822,
+"mfj": 822,
+"mfs": 822,
+"hoh": 822
+},
+{
+"atLeast": 24600,
+"lessThan": 24700,
+"single": 826,
+"mfj": 826,
+"mfs": 826,
+"hoh": 826
+},
+{
+"atLeast": 24700,
+"lessThan": 24800,
+"single": 829,
+"mfj": 829,
+"mfs": 829,
+"hoh": 829
+},
+{
+"atLeast": 24800,
+"lessThan": 24900,
+"single": 832,
+"mfj": 832,
+"mfs": 832,
+"hoh": 832
+},
+{
+"atLeast": 24900,
+"lessThan": 25000,
+"single": 836,
+"mfj": 836,
+"mfs": 836,
+"hoh": 836
+},
+{
+"atLeast": 25000,
+"lessThan": 25100,
+"single": 839,
+"mfj": 839,
+"mfs": 839,
+"hoh": 839
+},
+{
+"atLeast": 25100,
+"lessThan": 25200,
+"single": 843,
+"mfj": 843,
+"mfs": 843,
+"hoh": 843
+},
+{
+"atLeast": 25200,
+"lessThan": 25300,
+"single": 846,
+"mfj": 846,
+"mfs": 846,
+"hoh": 846
+},
+{
+"atLeast": 25300,
+"lessThan": 25400,
+"single": 849,
+"mfj": 849,
+"mfs": 849,
+"hoh": 849
+},
+{
+"atLeast": 25400,
+"lessThan": 25500,
+"single": 853,
+"mfj": 853,
+"mfs": 853,
+"hoh": 853
+},
+{
+"atLeast": 25500,
+"lessThan": 25600,
+"single": 856,
+"mfj": 856,
+"mfs": 856,
+"hoh": 856
+},
+{
+"atLeast": 25600,
+"lessThan": 25700,
+"single": 859,
+"mfj": 859,
+"mfs": 859,
+"hoh": 859
+},
+{
+"atLeast": 25700,
+"lessThan": 25800,
+"single": 863,
+"mfj": 863,
+"mfs": 863,
+"hoh": 863
+},
+{
+"atLeast": 25800,
+"lessThan": 25900,
+"single": 866,
+"mfj": 866,
+"mfs": 866,
+"hoh": 866
+},
+{
+"atLeast": 25900,
+"lessThan": 26000,
+"single": 869,
+"mfj": 869,
+"mfs": 869,
+"hoh": 869
+},
+{
+"atLeast": 26000,
+"lessThan": 26100,
+"single": 873,
+"mfj": 873,
+"mfs": 873,
+"hoh": 873
+},
+{
+"atLeast": 26100,
+"lessThan": 26200,
+"single": 876,
+"mfj": 876,
+"mfs": 876,
+"hoh": 876
+},
+{
+"atLeast": 26200,
+"lessThan": 26300,
+"single": 879,
+"mfj": 879,
+"mfs": 879,
+"hoh": 879
+},
+{
+"atLeast": 26300,
+"lessThan": 26400,
+"single": 883,
+"mfj": 883,
+"mfs": 883,
+"hoh": 883
+},
+{
+"atLeast": 26400,
+"lessThan": 26500,
+"single": 886,
+"mfj": 886,
+"mfs": 886,
+"hoh": 886
+},
+{
+"atLeast": 26500,
+"lessThan": 26600,
+"single": 889,
+"mfj": 889,
+"mfs": 889,
+"hoh": 889
+},
+{
+"atLeast": 26600,
+"lessThan": 26700,
+"single": 893,
+"mfj": 893,
+"mfs": 893,
+"hoh": 893
+},
+{
+"atLeast": 26700,
+"lessThan": 26800,
+"single": 896,
+"mfj": 896,
+"mfs": 896,
+"hoh": 896
+},
+{
+"atLeast": 26800,
+"lessThan": 26900,
+"single": 899,
+"mfj": 899,
+"mfs": 899,
+"hoh": 899
+},
+{
+"atLeast": 26900,
+"lessThan": 27000,
+"single": 903,
+"mfj": 903,
+"mfs": 903,
+"hoh": 903
+},
+{
+"atLeast": 27000,
+"lessThan": 27100,
+"single": 906,
+"mfj": 906,
+"mfs": 906,
+"hoh": 906
+},
+{
+"atLeast": 27100,
+"lessThan": 27200,
+"single": 910,
+"mfj": 910,
+"mfs": 910,
+"hoh": 910
+},
+{
+"atLeast": 27200,
+"lessThan": 27300,
+"single": 913,
+"mfj": 913,
+"mfs": 913,
+"hoh": 913
+},
+{
+"atLeast": 27300,
+"lessThan": 27400,
+"single": 916,
+"mfj": 916,
+"mfs": 916,
+"hoh": 916
+},
+{
+"atLeast": 27400,
+"lessThan": 27500,
+"single": 920,
+"mfj": 920,
+"mfs": 920,
+"hoh": 920
+},
+{
+"atLeast": 27500,
+"lessThan": 27600,
+"single": 923,
+"mfj": 923,
+"mfs": 923,
+"hoh": 923
+},
+{
+"atLeast": 27600,
+"lessThan": 27700,
+"single": 926,
+"mfj": 926,
+"mfs": 926,
+"hoh": 926
+},
+{
+"atLeast": 27700,
+"lessThan": 27800,
+"single": 930,
+"mfj": 930,
+"mfs": 930,
+"hoh": 930
+},
+{
+"atLeast": 27800,
+"lessThan": 27900,
+"single": 933,
+"mfj": 933,
+"mfs": 933,
+"hoh": 933
+},
+{
+"atLeast": 27900,
+"lessThan": 28000,
+"single": 936,
+"mfj": 936,
+"mfs": 936,
+"hoh": 936
+},
+{
+"atLeast": 28000,
+"lessThan": 28100,
+"single": 940,
+"mfj": 940,
+"mfs": 940,
+"hoh": 940
+},
+{
+"atLeast": 28100,
+"lessThan": 28200,
+"single": 943,
+"mfj": 943,
+"mfs": 943,
+"hoh": 943
+},
+{
+"atLeast": 28200,
+"lessThan": 28300,
+"single": 946,
+"mfj": 946,
+"mfs": 946,
+"hoh": 946
+},
+{
+"atLeast": 28300,
+"lessThan": 28400,
+"single": 950,
+"mfj": 950,
+"mfs": 950,
+"hoh": 950
+},
+{
+"atLeast": 28400,
+"lessThan": 28500,
+"single": 953,
+"mfj": 953,
+"mfs": 953,
+"hoh": 953
+},
+{
+"atLeast": 28500,
+"lessThan": 28600,
+"single": 956,
+"mfj": 956,
+"mfs": 956,
+"hoh": 956
+},
+{
+"atLeast": 28600,
+"lessThan": 28700,
+"single": 960,
+"mfj": 960,
+"mfs": 960,
+"hoh": 960
+},
+{
+"atLeast": 28700,
+"lessThan": 28800,
+"single": 963,
+"mfj": 963,
+"mfs": 963,
+"hoh": 963
+},
+{
+"atLeast": 28800,
+"lessThan": 28900,
+"single": 966,
+"mfj": 966,
+"mfs": 966,
+"hoh": 966
+},
+{
+"atLeast": 28900,
+"lessThan": 29000,
+"single": 970,
+"mfj": 970,
+"mfs": 970,
+"hoh": 970
+},
+{
+"atLeast": 29000,
+"lessThan": 29100,
+"single": 973,
+"mfj": 973,
+"mfs": 973,
+"hoh": 973
+},
+{
+"atLeast": 29100,
+"lessThan": 29200,
+"single": 977,
+"mfj": 977,
+"mfs": 977,
+"hoh": 977
+},
+{
+"atLeast": 29200,
+"lessThan": 29300,
+"single": 980,
+"mfj": 980,
+"mfs": 980,
+"hoh": 980
+},
+{
+"atLeast": 29300,
+"lessThan": 29400,
+"single": 983,
+"mfj": 983,
+"mfs": 983,
+"hoh": 983
+},
+{
+"atLeast": 29400,
+"lessThan": 29500,
+"single": 987,
+"mfj": 987,
+"mfs": 987,
+"hoh": 987
+},
+{
+"atLeast": 29500,
+"lessThan": 29600,
+"single": 990,
+"mfj": 990,
+"mfs": 990,
+"hoh": 990
+},
+{
+"atLeast": 29600,
+"lessThan": 29700,
+"single": 993,
+"mfj": 993,
+"mfs": 993,
+"hoh": 993
+},
+{
+"atLeast": 29700,
+"lessThan": 29800,
+"single": 997,
+"mfj": 997,
+"mfs": 997,
+"hoh": 997
+},
+{
+"atLeast": 29800,
+"lessThan": 29900,
+"single": 1000,
+"mfj": 1000,
+"mfs": 1000,
+"hoh": 1000
+},
+{
+"atLeast": 29900,
+"lessThan": 30000,
+"single": 1003,
+"mfj": 1003,
+"mfs": 1003,
+"hoh": 1003
+},
+{
+"atLeast": 30000,
+"lessThan": 30100,
+"single": 1007,
+"mfj": 1007,
+"mfs": 1007,
+"hoh": 1007
+},
+{
+"atLeast": 30100,
+"lessThan": 30200,
+"single": 1010,
+"mfj": 1010,
+"mfs": 1010,
+"hoh": 1010
+},
+{
+"atLeast": 30200,
+"lessThan": 30300,
+"single": 1013,
+"mfj": 1013,
+"mfs": 1013,
+"hoh": 1013
+},
+{
+"atLeast": 30300,
+"lessThan": 30400,
+"single": 1017,
+"mfj": 1017,
+"mfs": 1017,
+"hoh": 1017
+},
+{
+"atLeast": 30400,
+"lessThan": 30500,
+"single": 1020,
+"mfj": 1020,
+"mfs": 1020,
+"hoh": 1020
+},
+{
+"atLeast": 30500,
+"lessThan": 30600,
+"single": 1023,
+"mfj": 1023,
+"mfs": 1023,
+"hoh": 1023
+},
+{
+"atLeast": 30600,
+"lessThan": 30700,
+"single": 1027,
+"mfj": 1027,
+"mfs": 1027,
+"hoh": 1027
+},
+{
+"atLeast": 30700,
+"lessThan": 30800,
+"single": 1030,
+"mfj": 1030,
+"mfs": 1030,
+"hoh": 1030
+},
+{
+"atLeast": 30800,
+"lessThan": 30900,
+"single": 1033,
+"mfj": 1033,
+"mfs": 1033,
+"hoh": 1033
+},
+{
+"atLeast": 30900,
+"lessThan": 31000,
+"single": 1037,
+"mfj": 1037,
+"mfs": 1037,
+"hoh": 1037
+},
+{
+"atLeast": 31000,
+"lessThan": 31100,
+"single": 1040,
+"mfj": 1040,
+"mfs": 1040,
+"hoh": 1040
+},
+{
+"atLeast": 31100,
+"lessThan": 31200,
+"single": 1044,
+"mfj": 1044,
+"mfs": 1044,
+"hoh": 1044
+},
+{
+"atLeast": 31200,
+"lessThan": 31300,
+"single": 1047,
+"mfj": 1047,
+"mfs": 1047,
+"hoh": 1047
+},
+{
+"atLeast": 31300,
+"lessThan": 31400,
+"single": 1050,
+"mfj": 1050,
+"mfs": 1050,
+"hoh": 1050
+},
+{
+"atLeast": 31400,
+"lessThan": 31500,
+"single": 1054,
+"mfj": 1054,
+"mfs": 1054,
+"hoh": 1054
+},
+{
+"atLeast": 31500,
+"lessThan": 31600,
+"single": 1057,
+"mfj": 1057,
+"mfs": 1057,
+"hoh": 1057
+},
+{
+"atLeast": 31600,
+"lessThan": 31700,
+"single": 1060,
+"mfj": 1060,
+"mfs": 1060,
+"hoh": 1060
+},
+{
+"atLeast": 31700,
+"lessThan": 31800,
+"single": 1064,
+"mfj": 1064,
+"mfs": 1064,
+"hoh": 1064
+},
+{
+"atLeast": 31800,
+"lessThan": 31900,
+"single": 1067,
+"mfj": 1067,
+"mfs": 1067,
+"hoh": 1067
+},
+{
+"atLeast": 31900,
+"lessThan": 32000,
+"single": 1070,
+"mfj": 1070,
+"mfs": 1070,
+"hoh": 1070
+},
+{
+"atLeast": 32000,
+"lessThan": 32100,
+"single": 1074,
+"mfj": 1074,
+"mfs": 1074,
+"hoh": 1074
+},
+{
+"atLeast": 32100,
+"lessThan": 32200,
+"single": 1077,
+"mfj": 1077,
+"mfs": 1077,
+"hoh": 1077
+},
+{
+"atLeast": 32200,
+"lessThan": 32300,
+"single": 1080,
+"mfj": 1080,
+"mfs": 1080,
+"hoh": 1080
+},
+{
+"atLeast": 32300,
+"lessThan": 32400,
+"single": 1084,
+"mfj": 1084,
+"mfs": 1084,
+"hoh": 1084
+},
+{
+"atLeast": 32400,
+"lessThan": 32500,
+"single": 1087,
+"mfj": 1087,
+"mfs": 1087,
+"hoh": 1087
+},
+{
+"atLeast": 32500,
+"lessThan": 32600,
+"single": 1090,
+"mfj": 1090,
+"mfs": 1090,
+"hoh": 1090
+},
+{
+"atLeast": 32600,
+"lessThan": 32700,
+"single": 1094,
+"mfj": 1094,
+"mfs": 1094,
+"hoh": 1094
+},
+{
+"atLeast": 32700,
+"lessThan": 32800,
+"single": 1097,
+"mfj": 1097,
+"mfs": 1097,
+"hoh": 1097
+},
+{
+"atLeast": 32800,
+"lessThan": 32900,
+"single": 1100,
+"mfj": 1100,
+"mfs": 1100,
+"hoh": 1100
+},
+{
+"atLeast": 32900,
+"lessThan": 33000,
+"single": 1104,
+"mfj": 1104,
+"mfs": 1104,
+"hoh": 1104
+},
+{
+"atLeast": 33000,
+"lessThan": 33100,
+"single": 1107,
+"mfj": 1107,
+"mfs": 1107,
+"hoh": 1107
+},
+{
+"atLeast": 33100,
+"lessThan": 33200,
+"single": 1111,
+"mfj": 1111,
+"mfs": 1111,
+"hoh": 1111
+},
+{
+"atLeast": 33200,
+"lessThan": 33300,
+"single": 1114,
+"mfj": 1114,
+"mfs": 1114,
+"hoh": 1114
+},
+{
+"atLeast": 33300,
+"lessThan": 33400,
+"single": 1117,
+"mfj": 1117,
+"mfs": 1117,
+"hoh": 1117
+},
+{
+"atLeast": 33400,
+"lessThan": 33500,
+"single": 1121,
+"mfj": 1121,
+"mfs": 1121,
+"hoh": 1121
+},
+{
+"atLeast": 33500,
+"lessThan": 33600,
+"single": 1124,
+"mfj": 1124,
+"mfs": 1124,
+"hoh": 1124
+},
+{
+"atLeast": 33600,
+"lessThan": 33700,
+"single": 1127,
+"mfj": 1127,
+"mfs": 1127,
+"hoh": 1127
+},
+{
+"atLeast": 33700,
+"lessThan": 33800,
+"single": 1131,
+"mfj": 1131,
+"mfs": 1131,
+"hoh": 1131
+},
+{
+"atLeast": 33800,
+"lessThan": 33900,
+"single": 1134,
+"mfj": 1134,
+"mfs": 1134,
+"hoh": 1134
+},
+{
+"atLeast": 33900,
+"lessThan": 34000,
+"single": 1137,
+"mfj": 1137,
+"mfs": 1137,
+"hoh": 1137
+},
+{
+"atLeast": 34000,
+"lessThan": 34100,
+"single": 1141,
+"mfj": 1141,
+"mfs": 1141,
+"hoh": 1141
+},
+{
+"atLeast": 34100,
+"lessThan": 34200,
+"single": 1144,
+"mfj": 1144,
+"mfs": 1144,
+"hoh": 1144
+},
+{
+"atLeast": 34200,
+"lessThan": 34300,
+"single": 1147,
+"mfj": 1147,
+"mfs": 1147,
+"hoh": 1147
+},
+{
+"atLeast": 34300,
+"lessThan": 34400,
+"single": 1151,
+"mfj": 1151,
+"mfs": 1151,
+"hoh": 1151
+},
+{
+"atLeast": 34400,
+"lessThan": 34500,
+"single": 1154,
+"mfj": 1154,
+"mfs": 1154,
+"hoh": 1154
+},
+{
+"atLeast": 34500,
+"lessThan": 34600,
+"single": 1157,
+"mfj": 1157,
+"mfs": 1157,
+"hoh": 1157
+},
+{
+"atLeast": 34600,
+"lessThan": 34700,
+"single": 1161,
+"mfj": 1161,
+"mfs": 1161,
+"hoh": 1161
+},
+{
+"atLeast": 34700,
+"lessThan": 34800,
+"single": 1164,
+"mfj": 1164,
+"mfs": 1164,
+"hoh": 1164
+},
+{
+"atLeast": 34800,
+"lessThan": 34900,
+"single": 1167,
+"mfj": 1167,
+"mfs": 1167,
+"hoh": 1167
+},
+{
+"atLeast": 34900,
+"lessThan": 35000,
+"single": 1171,
+"mfj": 1171,
+"mfs": 1171,
+"hoh": 1171
+},
+{
+"atLeast": 35000,
+"lessThan": 35100,
+"single": 1174,
+"mfj": 1174,
+"mfs": 1174,
+"hoh": 1174
+},
+{
+"atLeast": 35100,
+"lessThan": 35200,
+"single": 1178,
+"mfj": 1178,
+"mfs": 1178,
+"hoh": 1178
+},
+{
+"atLeast": 35200,
+"lessThan": 35300,
+"single": 1181,
+"mfj": 1181,
+"mfs": 1181,
+"hoh": 1181
+},
+{
+"atLeast": 35300,
+"lessThan": 35400,
+"single": 1184,
+"mfj": 1184,
+"mfs": 1184,
+"hoh": 1184
+},
+{
+"atLeast": 35400,
+"lessThan": 35500,
+"single": 1188,
+"mfj": 1188,
+"mfs": 1188,
+"hoh": 1188
+},
+{
+"atLeast": 35500,
+"lessThan": 35600,
+"single": 1191,
+"mfj": 1191,
+"mfs": 1191,
+"hoh": 1191
+},
+{
+"atLeast": 35600,
+"lessThan": 35700,
+"single": 1194,
+"mfj": 1194,
+"mfs": 1194,
+"hoh": 1194
+},
+{
+"atLeast": 35700,
+"lessThan": 35800,
+"single": 1198,
+"mfj": 1198,
+"mfs": 1198,
+"hoh": 1198
+},
+{
+"atLeast": 35800,
+"lessThan": 35900,
+"single": 1201,
+"mfj": 1201,
+"mfs": 1201,
+"hoh": 1201
+},
+{
+"atLeast": 35900,
+"lessThan": 36000,
+"single": 1204,
+"mfj": 1204,
+"mfs": 1204,
+"hoh": 1204
+},
+{
+"atLeast": 36000,
+"lessThan": 36100,
+"single": 1208,
+"mfj": 1208,
+"mfs": 1208,
+"hoh": 1208
+},
+{
+"atLeast": 36100,
+"lessThan": 36200,
+"single": 1211,
+"mfj": 1211,
+"mfs": 1211,
+"hoh": 1211
+},
+{
+"atLeast": 36200,
+"lessThan": 36300,
+"single": 1214,
+"mfj": 1214,
+"mfs": 1214,
+"hoh": 1214
+},
+{
+"atLeast": 36300,
+"lessThan": 36400,
+"single": 1218,
+"mfj": 1218,
+"mfs": 1218,
+"hoh": 1218
+},
+{
+"atLeast": 36400,
+"lessThan": 36500,
+"single": 1221,
+"mfj": 1221,
+"mfs": 1221,
+"hoh": 1221
+},
+{
+"atLeast": 36500,
+"lessThan": 36600,
+"single": 1224,
+"mfj": 1224,
+"mfs": 1224,
+"hoh": 1224
+},
+{
+"atLeast": 36600,
+"lessThan": 36700,
+"single": 1228,
+"mfj": 1228,
+"mfs": 1228,
+"hoh": 1228
+},
+{
+"atLeast": 36700,
+"lessThan": 36800,
+"single": 1231,
+"mfj": 1231,
+"mfs": 1231,
+"hoh": 1231
+},
+{
+"atLeast": 36800,
+"lessThan": 36900,
+"single": 1234,
+"mfj": 1234,
+"mfs": 1234,
+"hoh": 1234
+},
+{
+"atLeast": 36900,
+"lessThan": 37000,
+"single": 1238,
+"mfj": 1238,
+"mfs": 1238,
+"hoh": 1238
+},
+{
+"atLeast": 37000,
+"lessThan": 37100,
+"single": 1241,
+"mfj": 1241,
+"mfs": 1241,
+"hoh": 1241
+},
+{
+"atLeast": 37100,
+"lessThan": 37200,
+"single": 1245,
+"mfj": 1245,
+"mfs": 1245,
+"hoh": 1245
+},
+{
+"atLeast": 37200,
+"lessThan": 37300,
+"single": 1248,
+"mfj": 1248,
+"mfs": 1248,
+"hoh": 1248
+},
+{
+"atLeast": 37300,
+"lessThan": 37400,
+"single": 1251,
+"mfj": 1251,
+"mfs": 1251,
+"hoh": 1251
+},
+{
+"atLeast": 37400,
+"lessThan": 37500,
+"single": 1255,
+"mfj": 1255,
+"mfs": 1255,
+"hoh": 1255
+},
+{
+"atLeast": 37500,
+"lessThan": 37600,
+"single": 1258,
+"mfj": 1258,
+"mfs": 1258,
+"hoh": 1258
+},
+{
+"atLeast": 37600,
+"lessThan": 37700,
+"single": 1261,
+"mfj": 1261,
+"mfs": 1261,
+"hoh": 1261
+},
+{
+"atLeast": 37700,
+"lessThan": 37800,
+"single": 1265,
+"mfj": 1265,
+"mfs": 1265,
+"hoh": 1265
+},
+{
+"atLeast": 37800,
+"lessThan": 37900,
+"single": 1268,
+"mfj": 1268,
+"mfs": 1268,
+"hoh": 1268
+},
+{
+"atLeast": 37900,
+"lessThan": 38000,
+"single": 1271,
+"mfj": 1271,
+"mfs": 1271,
+"hoh": 1271
+},
+{
+"atLeast": 38000,
+"lessThan": 38100,
+"single": 1275,
+"mfj": 1275,
+"mfs": 1275,
+"hoh": 1275
+},
+{
+"atLeast": 38100,
+"lessThan": 38200,
+"single": 1278,
+"mfj": 1278,
+"mfs": 1278,
+"hoh": 1278
+},
+{
+"atLeast": 38200,
+"lessThan": 38300,
+"single": 1281,
+"mfj": 1281,
+"mfs": 1281,
+"hoh": 1281
+},
+{
+"atLeast": 38300,
+"lessThan": 38400,
+"single": 1285,
+"mfj": 1285,
+"mfs": 1285,
+"hoh": 1285
+},
+{
+"atLeast": 38400,
+"lessThan": 38500,
+"single": 1288,
+"mfj": 1288,
+"mfs": 1288,
+"hoh": 1288
+},
+{
+"atLeast": 38500,
+"lessThan": 38600,
+"single": 1291,
+"mfj": 1291,
+"mfs": 1291,
+"hoh": 1291
+},
+{
+"atLeast": 38600,
+"lessThan": 38700,
+"single": 1295,
+"mfj": 1295,
+"mfs": 1295,
+"hoh": 1295
+},
+{
+"atLeast": 38700,
+"lessThan": 38800,
+"single": 1298,
+"mfj": 1298,
+"mfs": 1298,
+"hoh": 1298
+},
+{
+"atLeast": 38800,
+"lessThan": 38900,
+"single": 1301,
+"mfj": 1301,
+"mfs": 1301,
+"hoh": 1301
+},
+{
+"atLeast": 38900,
+"lessThan": 39000,
+"single": 1305,
+"mfj": 1305,
+"mfs": 1305,
+"hoh": 1305
+},
+{
+"atLeast": 39000,
+"lessThan": 39100,
+"single": 1308,
+"mfj": 1308,
+"mfs": 1308,
+"hoh": 1308
+},
+{
+"atLeast": 39100,
+"lessThan": 39200,
+"single": 1312,
+"mfj": 1312,
+"mfs": 1312,
+"hoh": 1312
+},
+{
+"atLeast": 39200,
+"lessThan": 39300,
+"single": 1315,
+"mfj": 1315,
+"mfs": 1315,
+"hoh": 1315
+},
+{
+"atLeast": 39300,
+"lessThan": 39400,
+"single": 1318,
+"mfj": 1318,
+"mfs": 1318,
+"hoh": 1318
+},
+{
+"atLeast": 39400,
+"lessThan": 39500,
+"single": 1322,
+"mfj": 1322,
+"mfs": 1322,
+"hoh": 1322
+},
+{
+"atLeast": 39500,
+"lessThan": 39600,
+"single": 1325,
+"mfj": 1325,
+"mfs": 1325,
+"hoh": 1325
+},
+{
+"atLeast": 39600,
+"lessThan": 39700,
+"single": 1328,
+"mfj": 1328,
+"mfs": 1328,
+"hoh": 1328
+},
+{
+"atLeast": 39700,
+"lessThan": 39800,
+"single": 1332,
+"mfj": 1332,
+"mfs": 1332,
+"hoh": 1332
+},
+{
+"atLeast": 39800,
+"lessThan": 39900,
+"single": 1335,
+"mfj": 1335,
+"mfs": 1335,
+"hoh": 1335
+},
+{
+"atLeast": 39900,
+"lessThan": 40000,
+"single": 1338,
+"mfj": 1338,
+"mfs": 1338,
+"hoh": 1338
+},
+{
+"atLeast": 40000,
+"lessThan": 40100,
+"single": 1342,
+"mfj": 1342,
+"mfs": 1342,
+"hoh": 1342
+},
+{
+"atLeast": 40100,
+"lessThan": 40200,
+"single": 1345,
+"mfj": 1345,
+"mfs": 1345,
+"hoh": 1345
+},
+{
+"atLeast": 40200,
+"lessThan": 40300,
+"single": 1348,
+"mfj": 1348,
+"mfs": 1348,
+"hoh": 1348
+},
+{
+"atLeast": 40300,
+"lessThan": 40400,
+"single": 1352,
+"mfj": 1352,
+"mfs": 1352,
+"hoh": 1352
+},
+{
+"atLeast": 40400,
+"lessThan": 40500,
+"single": 1355,
+"mfj": 1355,
+"mfs": 1355,
+"hoh": 1355
+},
+{
+"atLeast": 40500,
+"lessThan": 40600,
+"single": 1358,
+"mfj": 1358,
+"mfs": 1358,
+"hoh": 1358
+},
+{
+"atLeast": 40600,
+"lessThan": 40700,
+"single": 1362,
+"mfj": 1362,
+"mfs": 1362,
+"hoh": 1362
+},
+{
+"atLeast": 40700,
+"lessThan": 40800,
+"single": 1365,
+"mfj": 1365,
+"mfs": 1365,
+"hoh": 1365
+},
+{
+"atLeast": 40800,
+"lessThan": 40900,
+"single": 1368,
+"mfj": 1368,
+"mfs": 1368,
+"hoh": 1368
+},
+{
+"atLeast": 40900,
+"lessThan": 41000,
+"single": 1372,
+"mfj": 1372,
+"mfs": 1372,
+"hoh": 1372
+},
+{
+"atLeast": 41000,
+"lessThan": 41100,
+"single": 1375,
+"mfj": 1375,
+"mfs": 1375,
+"hoh": 1375
+},
+{
+"atLeast": 41100,
+"lessThan": 41200,
+"single": 1379,
+"mfj": 1379,
+"mfs": 1379,
+"hoh": 1379
+},
+{
+"atLeast": 41200,
+"lessThan": 41300,
+"single": 1382,
+"mfj": 1382,
+"mfs": 1382,
+"hoh": 1382
+},
+{
+"atLeast": 41300,
+"lessThan": 41400,
+"single": 1385,
+"mfj": 1385,
+"mfs": 1389,
+"hoh": 1385
+},
+{
+"atLeast": 41400,
+"lessThan": 41500,
+"single": 1389,
+"mfj": 1389,
+"mfs": 1395,
+"hoh": 1389
+},
+{
+"atLeast": 41500,
+"lessThan": 41600,
+"single": 1392,
+"mfj": 1392,
+"mfs": 1402,
+"hoh": 1392
+},
+{
+"atLeast": 41600,
+"lessThan": 41700,
+"single": 1395,
+"mfj": 1395,
+"mfs": 1408,
+"hoh": 1395
+},
+{
+"atLeast": 41700,
+"lessThan": 41800,
+"single": 1399,
+"mfj": 1399,
+"mfs": 1415,
+"hoh": 1399
+},
+{
+"atLeast": 41800,
+"lessThan": 41900,
+"single": 1402,
+"mfj": 1402,
+"mfs": 1422,
+"hoh": 1402
+},
+{
+"atLeast": 41900,
+"lessThan": 42000,
+"single": 1405,
+"mfj": 1405,
+"mfs": 1428,
+"hoh": 1405
+},
+{
+"atLeast": 42000,
+"lessThan": 42100,
+"single": 1409,
+"mfj": 1409,
+"mfs": 1435,
+"hoh": 1409
+},
+{
+"atLeast": 42100,
+"lessThan": 42200,
+"single": 1412,
+"mfj": 1412,
+"mfs": 1441,
+"hoh": 1412
+},
+{
+"atLeast": 42200,
+"lessThan": 42300,
+"single": 1415,
+"mfj": 1415,
+"mfs": 1448,
+"hoh": 1415
+},
+{
+"atLeast": 42300,
+"lessThan": 42400,
+"single": 1419,
+"mfj": 1419,
+"mfs": 1455,
+"hoh": 1419
+},
+{
+"atLeast": 42400,
+"lessThan": 42500,
+"single": 1422,
+"mfj": 1422,
+"mfs": 1461,
+"hoh": 1422
+},
+{
+"atLeast": 42500,
+"lessThan": 42600,
+"single": 1425,
+"mfj": 1425,
+"mfs": 1468,
+"hoh": 1425
+},
+{
+"atLeast": 42600,
+"lessThan": 42700,
+"single": 1429,
+"mfj": 1429,
+"mfs": 1474,
+"hoh": 1429
+},
+{
+"atLeast": 42700,
+"lessThan": 42800,
+"single": 1432,
+"mfj": 1432,
+"mfs": 1481,
+"hoh": 1432
+},
+{
+"atLeast": 42800,
+"lessThan": 42900,
+"single": 1435,
+"mfj": 1435,
+"mfs": 1488,
+"hoh": 1435
+},
+{
+"atLeast": 42900,
+"lessThan": 43000,
+"single": 1439,
+"mfj": 1439,
+"mfs": 1494,
+"hoh": 1439
+},
+{
+"atLeast": 43000,
+"lessThan": 43100,
+"single": 1442,
+"mfj": 1442,
+"mfs": 1501,
+"hoh": 1442
+},
+{
+"atLeast": 43100,
+"lessThan": 43200,
+"single": 1446,
+"mfj": 1446,
+"mfs": 1507,
+"hoh": 1446
+},
+{
+"atLeast": 43200,
+"lessThan": 43300,
+"single": 1449,
+"mfj": 1449,
+"mfs": 1514,
+"hoh": 1449
+},
+{
+"atLeast": 43300,
+"lessThan": 43400,
+"single": 1452,
+"mfj": 1452,
+"mfs": 1521,
+"hoh": 1452
+},
+{
+"atLeast": 43400,
+"lessThan": 43500,
+"single": 1456,
+"mfj": 1456,
+"mfs": 1527,
+"hoh": 1456
+},
+{
+"atLeast": 43500,
+"lessThan": 43600,
+"single": 1459,
+"mfj": 1459,
+"mfs": 1534,
+"hoh": 1459
+},
+{
+"atLeast": 43600,
+"lessThan": 43700,
+"single": 1462,
+"mfj": 1462,
+"mfs": 1540,
+"hoh": 1462
+},
+{
+"atLeast": 43700,
+"lessThan": 43800,
+"single": 1466,
+"mfj": 1466,
+"mfs": 1547,
+"hoh": 1466
+},
+{
+"atLeast": 43800,
+"lessThan": 43900,
+"single": 1469,
+"mfj": 1469,
+"mfs": 1554,
+"hoh": 1469
+},
+{
+"atLeast": 43900,
+"lessThan": 44000,
+"single": 1472,
+"mfj": 1472,
+"mfs": 1560,
+"hoh": 1472
+},
+{
+"atLeast": 44000,
+"lessThan": 44100,
+"single": 1476,
+"mfj": 1476,
+"mfs": 1567,
+"hoh": 1476
+},
+{
+"atLeast": 44100,
+"lessThan": 44200,
+"single": 1479,
+"mfj": 1479,
+"mfs": 1573,
+"hoh": 1479
+},
+{
+"atLeast": 44200,
+"lessThan": 44300,
+"single": 1482,
+"mfj": 1482,
+"mfs": 1580,
+"hoh": 1482
+},
+{
+"atLeast": 44300,
+"lessThan": 44400,
+"single": 1486,
+"mfj": 1486,
+"mfs": 1587,
+"hoh": 1486
+},
+{
+"atLeast": 44400,
+"lessThan": 44500,
+"single": 1489,
+"mfj": 1489,
+"mfs": 1593,
+"hoh": 1489
+},
+{
+"atLeast": 44500,
+"lessThan": 44600,
+"single": 1492,
+"mfj": 1492,
+"mfs": 1600,
+"hoh": 1492
+},
+{
+"atLeast": 44600,
+"lessThan": 44700,
+"single": 1496,
+"mfj": 1496,
+"mfs": 1606,
+"hoh": 1496
+},
+{
+"atLeast": 44700,
+"lessThan": 44800,
+"single": 1499,
+"mfj": 1499,
+"mfs": 1613,
+"hoh": 1499
+},
+{
+"atLeast": 44800,
+"lessThan": 44900,
+"single": 1502,
+"mfj": 1502,
+"mfs": 1620,
+"hoh": 1502
+},
+{
+"atLeast": 44900,
+"lessThan": 45000,
+"single": 1506,
+"mfj": 1506,
+"mfs": 1626,
+"hoh": 1506
+},
+{
+"atLeast": 45000,
+"lessThan": 45100,
+"single": 1509,
+"mfj": 1509,
+"mfs": 1633,
+"hoh": 1509
+},
+{
+"atLeast": 45100,
+"lessThan": 45200,
+"single": 1513,
+"mfj": 1513,
+"mfs": 1639,
+"hoh": 1513
+},
+{
+"atLeast": 45200,
+"lessThan": 45300,
+"single": 1516,
+"mfj": 1516,
+"mfs": 1646,
+"hoh": 1516
+},
+{
+"atLeast": 45300,
+"lessThan": 45400,
+"single": 1519,
+"mfj": 1519,
+"mfs": 1653,
+"hoh": 1519
+},
+{
+"atLeast": 45400,
+"lessThan": 45500,
+"single": 1523,
+"mfj": 1523,
+"mfs": 1659,
+"hoh": 1523
+},
+{
+"atLeast": 45500,
+"lessThan": 45600,
+"single": 1526,
+"mfj": 1526,
+"mfs": 1666,
+"hoh": 1526
+},
+{
+"atLeast": 45600,
+"lessThan": 45700,
+"single": 1529,
+"mfj": 1529,
+"mfs": 1672,
+"hoh": 1529
+},
+{
+"atLeast": 45700,
+"lessThan": 45800,
+"single": 1533,
+"mfj": 1533,
+"mfs": 1679,
+"hoh": 1533
+},
+{
+"atLeast": 45800,
+"lessThan": 45900,
+"single": 1536,
+"mfj": 1536,
+"mfs": 1686,
+"hoh": 1536
+},
+{
+"atLeast": 45900,
+"lessThan": 46000,
+"single": 1539,
+"mfj": 1539,
+"mfs": 1692,
+"hoh": 1539
+},
+{
+"atLeast": 46000,
+"lessThan": 46100,
+"single": 1543,
+"mfj": 1543,
+"mfs": 1699,
+"hoh": 1543
+},
+{
+"atLeast": 46100,
+"lessThan": 46200,
+"single": 1546,
+"mfj": 1546,
+"mfs": 1705,
+"hoh": 1546
+},
+{
+"atLeast": 46200,
+"lessThan": 46300,
+"single": 1549,
+"mfj": 1549,
+"mfs": 1712,
+"hoh": 1549
+},
+{
+"atLeast": 46300,
+"lessThan": 46400,
+"single": 1553,
+"mfj": 1553,
+"mfs": 1719,
+"hoh": 1553
+},
+{
+"atLeast": 46400,
+"lessThan": 46500,
+"single": 1556,
+"mfj": 1556,
+"mfs": 1725,
+"hoh": 1556
+},
+{
+"atLeast": 46500,
+"lessThan": 46600,
+"single": 1559,
+"mfj": 1559,
+"mfs": 1732,
+"hoh": 1559
+},
+{
+"atLeast": 46600,
+"lessThan": 46700,
+"single": 1563,
+"mfj": 1563,
+"mfs": 1738,
+"hoh": 1563
+},
+{
+"atLeast": 46700,
+"lessThan": 46800,
+"single": 1566,
+"mfj": 1566,
+"mfs": 1745,
+"hoh": 1566
+},
+{
+"atLeast": 46800,
+"lessThan": 46900,
+"single": 1569,
+"mfj": 1569,
+"mfs": 1752,
+"hoh": 1569
+},
+{
+"atLeast": 46900,
+"lessThan": 47000,
+"single": 1573,
+"mfj": 1573,
+"mfs": 1758,
+"hoh": 1573
+},
+{
+"atLeast": 47000,
+"lessThan": 47100,
+"single": 1576,
+"mfj": 1576,
+"mfs": 1765,
+"hoh": 1576
+},
+{
+"atLeast": 47100,
+"lessThan": 47200,
+"single": 1580,
+"mfj": 1580,
+"mfs": 1771,
+"hoh": 1580
+},
+{
+"atLeast": 47200,
+"lessThan": 47300,
+"single": 1583,
+"mfj": 1583,
+"mfs": 1778,
+"hoh": 1583
+},
+{
+"atLeast": 47300,
+"lessThan": 47400,
+"single": 1586,
+"mfj": 1586,
+"mfs": 1785,
+"hoh": 1586
+},
+{
+"atLeast": 47400,
+"lessThan": 47500,
+"single": 1590,
+"mfj": 1590,
+"mfs": 1791,
+"hoh": 1590
+},
+{
+"atLeast": 47500,
+"lessThan": 47600,
+"single": 1593,
+"mfj": 1593,
+"mfs": 1798,
+"hoh": 1593
+},
+{
+"atLeast": 47600,
+"lessThan": 47700,
+"single": 1596,
+"mfj": 1596,
+"mfs": 1804,
+"hoh": 1596
+},
+{
+"atLeast": 47700,
+"lessThan": 47800,
+"single": 1600,
+"mfj": 1600,
+"mfs": 1811,
+"hoh": 1600
+},
+{
+"atLeast": 47800,
+"lessThan": 47900,
+"single": 1603,
+"mfj": 1603,
+"mfs": 1818,
+"hoh": 1603
+},
+{
+"atLeast": 47900,
+"lessThan": 48000,
+"single": 1606,
+"mfj": 1606,
+"mfs": 1824,
+"hoh": 1606
+},
+{
+"atLeast": 48000,
+"lessThan": 48100,
+"single": 1610,
+"mfj": 1610,
+"mfs": 1831,
+"hoh": 1610
+},
+{
+"atLeast": 48100,
+"lessThan": 48200,
+"single": 1613,
+"mfj": 1613,
+"mfs": 1837,
+"hoh": 1613
+},
+{
+"atLeast": 48200,
+"lessThan": 48300,
+"single": 1616,
+"mfj": 1616,
+"mfs": 1844,
+"hoh": 1616
+},
+{
+"atLeast": 48300,
+"lessThan": 48400,
+"single": 1620,
+"mfj": 1620,
+"mfs": 1851,
+"hoh": 1620
+},
+{
+"atLeast": 48400,
+"lessThan": 48500,
+"single": 1623,
+"mfj": 1623,
+"mfs": 1857,
+"hoh": 1623
+},
+{
+"atLeast": 48500,
+"lessThan": 48600,
+"single": 1626,
+"mfj": 1626,
+"mfs": 1864,
+"hoh": 1626
+},
+{
+"atLeast": 48600,
+"lessThan": 48700,
+"single": 1630,
+"mfj": 1630,
+"mfs": 1870,
+"hoh": 1630
+},
+{
+"atLeast": 48700,
+"lessThan": 48800,
+"single": 1633,
+"mfj": 1633,
+"mfs": 1877,
+"hoh": 1633
+},
+{
+"atLeast": 48800,
+"lessThan": 48900,
+"single": 1636,
+"mfj": 1636,
+"mfs": 1884,
+"hoh": 1636
+},
+{
+"atLeast": 48900,
+"lessThan": 49000,
+"single": 1640,
+"mfj": 1640,
+"mfs": 1890,
+"hoh": 1640
+},
+{
+"atLeast": 49000,
+"lessThan": 49100,
+"single": 1643,
+"mfj": 1643,
+"mfs": 1897,
+"hoh": 1643
+},
+{
+"atLeast": 49100,
+"lessThan": 49200,
+"single": 1647,
+"mfj": 1647,
+"mfs": 1903,
+"hoh": 1647
+},
+{
+"atLeast": 49200,
+"lessThan": 49300,
+"single": 1650,
+"mfj": 1650,
+"mfs": 1910,
+"hoh": 1650
+},
+{
+"atLeast": 49300,
+"lessThan": 49400,
+"single": 1653,
+"mfj": 1653,
+"mfs": 1917,
+"hoh": 1653
+},
+{
+"atLeast": 49400,
+"lessThan": 49500,
+"single": 1658,
+"mfj": 1657,
+"mfs": 1923,
+"hoh": 1657
+},
+{
+"atLeast": 49500,
+"lessThan": 49600,
+"single": 1665,
+"mfj": 1660,
+"mfs": 1930,
+"hoh": 1660
+},
+{
+"atLeast": 49600,
+"lessThan": 49700,
+"single": 1672,
+"mfj": 1663,
+"mfs": 1936,
+"hoh": 1663
+},
+{
+"atLeast": 49700,
+"lessThan": 49800,
+"single": 1678,
+"mfj": 1667,
+"mfs": 1943,
+"hoh": 1667
+},
+{
+"atLeast": 49800,
+"lessThan": 49900,
+"single": 1685,
+"mfj": 1670,
+"mfs": 1950,
+"hoh": 1670
+},
+{
+"atLeast": 49900,
+"lessThan": 50000,
+"single": 1691,
+"mfj": 1673,
+"mfs": 1956,
+"hoh": 1673
+},
+{
+"atLeast": 50000,
+"lessThan": 50100,
+"single": 1698,
+"mfj": 1677,
+"mfs": 1963,
+"hoh": 1677
+},
+{
+"atLeast": 50100,
+"lessThan": 50200,
+"single": 1705,
+"mfj": 1680,
+"mfs": 1969,
+"hoh": 1680
+},
+{
+"atLeast": 50200,
+"lessThan": 50300,
+"single": 1711,
+"mfj": 1683,
+"mfs": 1976,
+"hoh": 1683
+},
+{
+"atLeast": 50300,
+"lessThan": 50400,
+"single": 1718,
+"mfj": 1687,
+"mfs": 1983,
+"hoh": 1687
+},
+{
+"atLeast": 50400,
+"lessThan": 50500,
+"single": 1724,
+"mfj": 1690,
+"mfs": 1989,
+"hoh": 1690
+},
+{
+"atLeast": 50500,
+"lessThan": 50600,
+"single": 1731,
+"mfj": 1693,
+"mfs": 1996,
+"hoh": 1693
+},
+{
+"atLeast": 50600,
+"lessThan": 50700,
+"single": 1738,
+"mfj": 1697,
+"mfs": 2002,
+"hoh": 1697
+},
+{
+"atLeast": 50700,
+"lessThan": 50800,
+"single": 1744,
+"mfj": 1700,
+"mfs": 2009,
+"hoh": 1700
+},
+{
+"atLeast": 50800,
+"lessThan": 50900,
+"single": 1751,
+"mfj": 1703,
+"mfs": 2016,
+"hoh": 1703
+},
+{
+"atLeast": 50900,
+"lessThan": 51000,
+"single": 1757,
+"mfj": 1707,
+"mfs": 2022,
+"hoh": 1707
+},
+{
+"atLeast": 51000,
+"lessThan": 51100,
+"single": 1764,
+"mfj": 1710,
+"mfs": 2029,
+"hoh": 1710
+},
+{
+"atLeast": 51100,
+"lessThan": 51200,
+"single": 1771,
+"mfj": 1714,
+"mfs": 2035,
+"hoh": 1714
+},
+{
+"atLeast": 51200,
+"lessThan": 51300,
+"single": 1777,
+"mfj": 1717,
+"mfs": 2042,
+"hoh": 1717
+},
+{
+"atLeast": 51300,
+"lessThan": 51400,
+"single": 1784,
+"mfj": 1720,
+"mfs": 2049,
+"hoh": 1720
+},
+{
+"atLeast": 51400,
+"lessThan": 51500,
+"single": 1790,
+"mfj": 1724,
+"mfs": 2055,
+"hoh": 1724
+},
+{
+"atLeast": 51500,
+"lessThan": 51600,
+"single": 1797,
+"mfj": 1727,
+"mfs": 2062,
+"hoh": 1727
+},
+{
+"atLeast": 51600,
+"lessThan": 51700,
+"single": 1804,
+"mfj": 1730,
+"mfs": 2068,
+"hoh": 1730
+},
+{
+"atLeast": 51700,
+"lessThan": 51800,
+"single": 1810,
+"mfj": 1734,
+"mfs": 2075,
+"hoh": 1734
+},
+{
+"atLeast": 51800,
+"lessThan": 51900,
+"single": 1817,
+"mfj": 1737,
+"mfs": 2082,
+"hoh": 1737
+},
+{
+"atLeast": 51900,
+"lessThan": 52000,
+"single": 1823,
+"mfj": 1740,
+"mfs": 2088,
+"hoh": 1740
+},
+{
+"atLeast": 52000,
+"lessThan": 52100,
+"single": 1830,
+"mfj": 1744,
+"mfs": 2095,
+"hoh": 1744
+},
+{
+"atLeast": 52100,
+"lessThan": 52200,
+"single": 1837,
+"mfj": 1747,
+"mfs": 2101,
+"hoh": 1747
+},
+{
+"atLeast": 52200,
+"lessThan": 52300,
+"single": 1843,
+"mfj": 1750,
+"mfs": 2108,
+"hoh": 1750
+},
+{
+"atLeast": 52300,
+"lessThan": 52400,
+"single": 1850,
+"mfj": 1754,
+"mfs": 2115,
+"hoh": 1754
+},
+{
+"atLeast": 52400,
+"lessThan": 52500,
+"single": 1856,
+"mfj": 1757,
+"mfs": 2121,
+"hoh": 1757
+},
+{
+"atLeast": 52500,
+"lessThan": 52600,
+"single": 1863,
+"mfj": 1760,
+"mfs": 2128,
+"hoh": 1760
+},
+{
+"atLeast": 52600,
+"lessThan": 52700,
+"single": 1870,
+"mfj": 1764,
+"mfs": 2134,
+"hoh": 1764
+},
+{
+"atLeast": 52700,
+"lessThan": 52800,
+"single": 1876,
+"mfj": 1767,
+"mfs": 2141,
+"hoh": 1767
+},
+{
+"atLeast": 52800,
+"lessThan": 52900,
+"single": 1883,
+"mfj": 1770,
+"mfs": 2148,
+"hoh": 1770
+},
+{
+"atLeast": 52900,
+"lessThan": 53000,
+"single": 1889,
+"mfj": 1774,
+"mfs": 2154,
+"hoh": 1774
+},
+{
+"atLeast": 53000,
+"lessThan": 53100,
+"single": 1896,
+"mfj": 1777,
+"mfs": 2161,
+"hoh": 1777
+},
+{
+"atLeast": 53100,
+"lessThan": 53200,
+"single": 1903,
+"mfj": 1781,
+"mfs": 2167,
+"hoh": 1781
+},
+{
+"atLeast": 53200,
+"lessThan": 53300,
+"single": 1909,
+"mfj": 1784,
+"mfs": 2174,
+"hoh": 1784
+},
+{
+"atLeast": 53300,
+"lessThan": 53400,
+"single": 1916,
+"mfj": 1787,
+"mfs": 2181,
+"hoh": 1787
+},
+{
+"atLeast": 53400,
+"lessThan": 53500,
+"single": 1922,
+"mfj": 1791,
+"mfs": 2187,
+"hoh": 1791
+},
+{
+"atLeast": 53500,
+"lessThan": 53600,
+"single": 1929,
+"mfj": 1794,
+"mfs": 2194,
+"hoh": 1794
+},
+{
+"atLeast": 53600,
+"lessThan": 53700,
+"single": 1936,
+"mfj": 1797,
+"mfs": 2200,
+"hoh": 1797
+},
+{
+"atLeast": 53700,
+"lessThan": 53800,
+"single": 1942,
+"mfj": 1801,
+"mfs": 2207,
+"hoh": 1801
+},
+{
+"atLeast": 53800,
+"lessThan": 53900,
+"single": 1949,
+"mfj": 1804,
+"mfs": 2214,
+"hoh": 1804
+},
+{
+"atLeast": 53900,
+"lessThan": 54000,
+"single": 1955,
+"mfj": 1807,
+"mfs": 2220,
+"hoh": 1807
+},
+{
+"atLeast": 54000,
+"lessThan": 54100,
+"single": 1962,
+"mfj": 1811,
+"mfs": 2227,
+"hoh": 1811
+},
+{
+"atLeast": 54100,
+"lessThan": 54200,
+"single": 1969,
+"mfj": 1814,
+"mfs": 2233,
+"hoh": 1814
+},
+{
+"atLeast": 54200,
+"lessThan": 54300,
+"single": 1975,
+"mfj": 1817,
+"mfs": 2240,
+"hoh": 1817
+},
+{
+"atLeast": 54300,
+"lessThan": 54400,
+"single": 1982,
+"mfj": 1821,
+"mfs": 2247,
+"hoh": 1821
+},
+{
+"atLeast": 54400,
+"lessThan": 54500,
+"single": 1988,
+"mfj": 1824,
+"mfs": 2253,
+"hoh": 1824
+},
+{
+"atLeast": 54500,
+"lessThan": 54600,
+"single": 1995,
+"mfj": 1827,
+"mfs": 2260,
+"hoh": 1827
+},
+{
+"atLeast": 54600,
+"lessThan": 54700,
+"single": 2002,
+"mfj": 1831,
+"mfs": 2266,
+"hoh": 1831
+},
+{
+"atLeast": 54700,
+"lessThan": 54800,
+"single": 2008,
+"mfj": 1834,
+"mfs": 2273,
+"hoh": 1834
+},
+{
+"atLeast": 54800,
+"lessThan": 54900,
+"single": 2015,
+"mfj": 1837,
+"mfs": 2280,
+"hoh": 1837
+},
+{
+"atLeast": 54900,
+"lessThan": 55000,
+"single": 2021,
+"mfj": 1841,
+"mfs": 2286,
+"hoh": 1841
+},
+{
+"atLeast": 55000,
+"lessThan": 55100,
+"single": 2028,
+"mfj": 1844,
+"mfs": 2293,
+"hoh": 1844
+},
+{
+"atLeast": 55100,
+"lessThan": 55200,
+"single": 2035,
+"mfj": 1848,
+"mfs": 2299,
+"hoh": 1848
+},
+{
+"atLeast": 55200,
+"lessThan": 55300,
+"single": 2041,
+"mfj": 1851,
+"mfs": 2306,
+"hoh": 1851
+},
+{
+"atLeast": 55300,
+"lessThan": 55400,
+"single": 2048,
+"mfj": 1854,
+"mfs": 2313,
+"hoh": 1854
+},
+{
+"atLeast": 55400,
+"lessThan": 55500,
+"single": 2054,
+"mfj": 1858,
+"mfs": 2319,
+"hoh": 1858
+},
+{
+"atLeast": 55500,
+"lessThan": 55600,
+"single": 2061,
+"mfj": 1861,
+"mfs": 2326,
+"hoh": 1861
+},
+{
+"atLeast": 55600,
+"lessThan": 55700,
+"single": 2068,
+"mfj": 1864,
+"mfs": 2332,
+"hoh": 1864
+},
+{
+"atLeast": 55700,
+"lessThan": 55800,
+"single": 2074,
+"mfj": 1868,
+"mfs": 2339,
+"hoh": 1868
+},
+{
+"atLeast": 55800,
+"lessThan": 55900,
+"single": 2081,
+"mfj": 1871,
+"mfs": 2346,
+"hoh": 1871
+},
+{
+"atLeast": 55900,
+"lessThan": 56000,
+"single": 2087,
+"mfj": 1874,
+"mfs": 2352,
+"hoh": 1874
+},
+{
+"atLeast": 56000,
+"lessThan": 56100,
+"single": 2094,
+"mfj": 1878,
+"mfs": 2359,
+"hoh": 1878
+},
+{
+"atLeast": 56100,
+"lessThan": 56200,
+"single": 2101,
+"mfj": 1881,
+"mfs": 2365,
+"hoh": 1881
+},
+{
+"atLeast": 56200,
+"lessThan": 56300,
+"single": 2107,
+"mfj": 1884,
+"mfs": 2372,
+"hoh": 1884
+},
+{
+"atLeast": 56300,
+"lessThan": 56400,
+"single": 2114,
+"mfj": 1888,
+"mfs": 2379,
+"hoh": 1888
+},
+{
+"atLeast": 56400,
+"lessThan": 56500,
+"single": 2120,
+"mfj": 1891,
+"mfs": 2385,
+"hoh": 1891
+},
+{
+"atLeast": 56500,
+"lessThan": 56600,
+"single": 2127,
+"mfj": 1894,
+"mfs": 2392,
+"hoh": 1894
+},
+{
+"atLeast": 56600,
+"lessThan": 56700,
+"single": 2134,
+"mfj": 1898,
+"mfs": 2398,
+"hoh": 1898
+},
+{
+"atLeast": 56700,
+"lessThan": 56800,
+"single": 2140,
+"mfj": 1901,
+"mfs": 2405,
+"hoh": 1901
+},
+{
+"atLeast": 56800,
+"lessThan": 56900,
+"single": 2147,
+"mfj": 1904,
+"mfs": 2412,
+"hoh": 1904
+},
+{
+"atLeast": 56900,
+"lessThan": 57000,
+"single": 2153,
+"mfj": 1908,
+"mfs": 2418,
+"hoh": 1908
+},
+{
+"atLeast": 57000,
+"lessThan": 57100,
+"single": 2160,
+"mfj": 1911,
+"mfs": 2425,
+"hoh": 1911
+},
+{
+"atLeast": 57100,
+"lessThan": 57200,
+"single": 2167,
+"mfj": 1915,
+"mfs": 2431,
+"hoh": 1915
+},
+{
+"atLeast": 57200,
+"lessThan": 57300,
+"single": 2173,
+"mfj": 1918,
+"mfs": 2438,
+"hoh": 1918
+},
+{
+"atLeast": 57300,
+"lessThan": 57400,
+"single": 2180,
+"mfj": 1921,
+"mfs": 2445,
+"hoh": 1921
+},
+{
+"atLeast": 57400,
+"lessThan": 57500,
+"single": 2186,
+"mfj": 1925,
+"mfs": 2451,
+"hoh": 1925
+},
+{
+"atLeast": 57500,
+"lessThan": 57600,
+"single": 2193,
+"mfj": 1928,
+"mfs": 2458,
+"hoh": 1928
+},
+{
+"atLeast": 57600,
+"lessThan": 57700,
+"single": 2200,
+"mfj": 1931,
+"mfs": 2464,
+"hoh": 1931
+},
+{
+"atLeast": 57700,
+"lessThan": 57800,
+"single": 2206,
+"mfj": 1935,
+"mfs": 2471,
+"hoh": 1935
+},
+{
+"atLeast": 57800,
+"lessThan": 57900,
+"single": 2213,
+"mfj": 1938,
+"mfs": 2478,
+"hoh": 1938
+},
+{
+"atLeast": 57900,
+"lessThan": 58000,
+"single": 2219,
+"mfj": 1941,
+"mfs": 2484,
+"hoh": 1941
+},
+{
+"atLeast": 58000,
+"lessThan": 58100,
+"single": 2226,
+"mfj": 1945,
+"mfs": 2491,
+"hoh": 1945
+},
+{
+"atLeast": 58100,
+"lessThan": 58200,
+"single": 2233,
+"mfj": 1948,
+"mfs": 2497,
+"hoh": 1948
+},
+{
+"atLeast": 58200,
+"lessThan": 58300,
+"single": 2239,
+"mfj": 1951,
+"mfs": 2504,
+"hoh": 1951
+},
+{
+"atLeast": 58300,
+"lessThan": 58400,
+"single": 2246,
+"mfj": 1955,
+"mfs": 2511,
+"hoh": 1955
+},
+{
+"atLeast": 58400,
+"lessThan": 58500,
+"single": 2252,
+"mfj": 1958,
+"mfs": 2517,
+"hoh": 1958
+},
+{
+"atLeast": 58500,
+"lessThan": 58600,
+"single": 2259,
+"mfj": 1961,
+"mfs": 2524,
+"hoh": 1961
+},
+{
+"atLeast": 58600,
+"lessThan": 58700,
+"single": 2266,
+"mfj": 1965,
+"mfs": 2530,
+"hoh": 1965
+},
+{
+"atLeast": 58700,
+"lessThan": 58800,
+"single": 2272,
+"mfj": 1968,
+"mfs": 2537,
+"hoh": 1968
+},
+{
+"atLeast": 58800,
+"lessThan": 58900,
+"single": 2279,
+"mfj": 1971,
+"mfs": 2544,
+"hoh": 1971
+},
+{
+"atLeast": 58900,
+"lessThan": 59000,
+"single": 2285,
+"mfj": 1975,
+"mfs": 2550,
+"hoh": 1975
+},
+{
+"atLeast": 59000,
+"lessThan": 59100,
+"single": 2292,
+"mfj": 1978,
+"mfs": 2557,
+"hoh": 1978
+},
+{
+"atLeast": 59100,
+"lessThan": 59200,
+"single": 2299,
+"mfj": 1982,
+"mfs": 2563,
+"hoh": 1982
+},
+{
+"atLeast": 59200,
+"lessThan": 59300,
+"single": 2305,
+"mfj": 1985,
+"mfs": 2570,
+"hoh": 1985
+},
+{
+"atLeast": 59300,
+"lessThan": 59400,
+"single": 2312,
+"mfj": 1988,
+"mfs": 2577,
+"hoh": 1988
+},
+{
+"atLeast": 59400,
+"lessThan": 59500,
+"single": 2318,
+"mfj": 1992,
+"mfs": 2583,
+"hoh": 1992
+},
+{
+"atLeast": 59500,
+"lessThan": 59600,
+"single": 2325,
+"mfj": 1995,
+"mfs": 2590,
+"hoh": 1995
+},
+{
+"atLeast": 59600,
+"lessThan": 59700,
+"single": 2332,
+"mfj": 1998,
+"mfs": 2596,
+"hoh": 1998
+},
+{
+"atLeast": 59700,
+"lessThan": 59800,
+"single": 2338,
+"mfj": 2002,
+"mfs": 2603,
+"hoh": 2002
+},
+{
+"atLeast": 59800,
+"lessThan": 59900,
+"single": 2345,
+"mfj": 2005,
+"mfs": 2610,
+"hoh": 2005
+},
+{
+"atLeast": 59900,
+"lessThan": 60000,
+"single": 2351,
+"mfj": 2008,
+"mfs": 2616,
+"hoh": 2008
+},
+{
+"atLeast": 60000,
+"lessThan": 60100,
+"single": 2358,
+"mfj": 2012,
+"mfs": 2623,
+"hoh": 2012
+},
+{
+"atLeast": 60100,
+"lessThan": 60200,
+"single": 2365,
+"mfj": 2015,
+"mfs": 2629,
+"hoh": 2015
+},
+{
+"atLeast": 60200,
+"lessThan": 60300,
+"single": 2371,
+"mfj": 2018,
+"mfs": 2636,
+"hoh": 2018
+},
+{
+"atLeast": 60300,
+"lessThan": 60400,
+"single": 2378,
+"mfj": 2022,
+"mfs": 2643,
+"hoh": 2022
+},
+{
+"atLeast": 60400,
+"lessThan": 60500,
+"single": 2384,
+"mfj": 2025,
+"mfs": 2649,
+"hoh": 2025
+},
+{
+"atLeast": 60500,
+"lessThan": 60600,
+"single": 2391,
+"mfj": 2028,
+"mfs": 2656,
+"hoh": 2028
+},
+{
+"atLeast": 60600,
+"lessThan": 60700,
+"single": 2398,
+"mfj": 2032,
+"mfs": 2662,
+"hoh": 2032
+},
+{
+"atLeast": 60700,
+"lessThan": 60800,
+"single": 2404,
+"mfj": 2035,
+"mfs": 2669,
+"hoh": 2035
+},
+{
+"atLeast": 60800,
+"lessThan": 60900,
+"single": 2411,
+"mfj": 2038,
+"mfs": 2676,
+"hoh": 2038
+},
+{
+"atLeast": 60900,
+"lessThan": 61000,
+"single": 2417,
+"mfj": 2042,
+"mfs": 2682,
+"hoh": 2042
+},
+{
+"atLeast": 61000,
+"lessThan": 61100,
+"single": 2424,
+"mfj": 2045,
+"mfs": 2689,
+"hoh": 2045
+},
+{
+"atLeast": 61100,
+"lessThan": 61200,
+"single": 2431,
+"mfj": 2049,
+"mfs": 2695,
+"hoh": 2049
+},
+{
+"atLeast": 61200,
+"lessThan": 61300,
+"single": 2437,
+"mfj": 2052,
+"mfs": 2702,
+"hoh": 2052
+},
+{
+"atLeast": 61300,
+"lessThan": 61400,
+"single": 2444,
+"mfj": 2055,
+"mfs": 2709,
+"hoh": 2055
+},
+{
+"atLeast": 61400,
+"lessThan": 61500,
+"single": 2450,
+"mfj": 2059,
+"mfs": 2715,
+"hoh": 2059
+},
+{
+"atLeast": 61500,
+"lessThan": 61600,
+"single": 2457,
+"mfj": 2062,
+"mfs": 2722,
+"hoh": 2062
+},
+{
+"atLeast": 61600,
+"lessThan": 61700,
+"single": 2464,
+"mfj": 2065,
+"mfs": 2728,
+"hoh": 2065
+},
+{
+"atLeast": 61700,
+"lessThan": 61800,
+"single": 2470,
+"mfj": 2069,
+"mfs": 2735,
+"hoh": 2069
+},
+{
+"atLeast": 61800,
+"lessThan": 61900,
+"single": 2477,
+"mfj": 2072,
+"mfs": 2742,
+"hoh": 2072
+},
+{
+"atLeast": 61900,
+"lessThan": 62000,
+"single": 2483,
+"mfj": 2075,
+"mfs": 2748,
+"hoh": 2075
+},
+{
+"atLeast": 62000,
+"lessThan": 62100,
+"single": 2490,
+"mfj": 2079,
+"mfs": 2755,
+"hoh": 2079
+},
+{
+"atLeast": 62100,
+"lessThan": 62200,
+"single": 2497,
+"mfj": 2082,
+"mfs": 2761,
+"hoh": 2082
+},
+{
+"atLeast": 62200,
+"lessThan": 62300,
+"single": 2503,
+"mfj": 2085,
+"mfs": 2768,
+"hoh": 2085
+},
+{
+"atLeast": 62300,
+"lessThan": 62400,
+"single": 2510,
+"mfj": 2089,
+"mfs": 2775,
+"hoh": 2089
+},
+{
+"atLeast": 62400,
+"lessThan": 62500,
+"single": 2516,
+"mfj": 2092,
+"mfs": 2781,
+"hoh": 2092
+},
+{
+"atLeast": 62500,
+"lessThan": 62600,
+"single": 2523,
+"mfj": 2095,
+"mfs": 2788,
+"hoh": 2095
+},
+{
+"atLeast": 62600,
+"lessThan": 62700,
+"single": 2530,
+"mfj": 2099,
+"mfs": 2794,
+"hoh": 2099
+},
+{
+"atLeast": 62700,
+"lessThan": 62800,
+"single": 2536,
+"mfj": 2102,
+"mfs": 2801,
+"hoh": 2102
+},
+{
+"atLeast": 62800,
+"lessThan": 62900,
+"single": 2543,
+"mfj": 2105,
+"mfs": 2808,
+"hoh": 2105
+},
+{
+"atLeast": 62900,
+"lessThan": 63000,
+"single": 2549,
+"mfj": 2109,
+"mfs": 2814,
+"hoh": 2109
+},
+{
+"atLeast": 63000,
+"lessThan": 63100,
+"single": 2556,
+"mfj": 2112,
+"mfs": 2821,
+"hoh": 2112
+},
+{
+"atLeast": 63100,
+"lessThan": 63200,
+"single": 2563,
+"mfj": 2116,
+"mfs": 2827,
+"hoh": 2116
+},
+{
+"atLeast": 63200,
+"lessThan": 63300,
+"single": 2569,
+"mfj": 2119,
+"mfs": 2834,
+"hoh": 2119
+},
+{
+"atLeast": 63300,
+"lessThan": 63400,
+"single": 2576,
+"mfj": 2122,
+"mfs": 2841,
+"hoh": 2122
+},
+{
+"atLeast": 63400,
+"lessThan": 63500,
+"single": 2582,
+"mfj": 2126,
+"mfs": 2847,
+"hoh": 2126
+},
+{
+"atLeast": 63500,
+"lessThan": 63600,
+"single": 2589,
+"mfj": 2129,
+"mfs": 2854,
+"hoh": 2129
+},
+{
+"atLeast": 63600,
+"lessThan": 63700,
+"single": 2596,
+"mfj": 2132,
+"mfs": 2860,
+"hoh": 2132
+},
+{
+"atLeast": 63700,
+"lessThan": 63800,
+"single": 2602,
+"mfj": 2136,
+"mfs": 2867,
+"hoh": 2136
+},
+{
+"atLeast": 63800,
+"lessThan": 63900,
+"single": 2609,
+"mfj": 2139,
+"mfs": 2874,
+"hoh": 2139
+},
+{
+"atLeast": 63900,
+"lessThan": 64000,
+"single": 2615,
+"mfj": 2142,
+"mfs": 2880,
+"hoh": 2142
+},
+{
+"atLeast": 64000,
+"lessThan": 64100,
+"single": 2622,
+"mfj": 2146,
+"mfs": 2887,
+"hoh": 2146
+},
+{
+"atLeast": 64100,
+"lessThan": 64200,
+"single": 2629,
+"mfj": 2149,
+"mfs": 2893,
+"hoh": 2149
+},
+{
+"atLeast": 64200,
+"lessThan": 64300,
+"single": 2635,
+"mfj": 2152,
+"mfs": 2900,
+"hoh": 2152
+},
+{
+"atLeast": 64300,
+"lessThan": 64400,
+"single": 2642,
+"mfj": 2156,
+"mfs": 2907,
+"hoh": 2156
+},
+{
+"atLeast": 64400,
+"lessThan": 64500,
+"single": 2648,
+"mfj": 2159,
+"mfs": 2913,
+"hoh": 2159
+},
+{
+"atLeast": 64500,
+"lessThan": 64600,
+"single": 2655,
+"mfj": 2162,
+"mfs": 2920,
+"hoh": 2162
+},
+{
+"atLeast": 64600,
+"lessThan": 64700,
+"single": 2662,
+"mfj": 2166,
+"mfs": 2926,
+"hoh": 2166
+},
+{
+"atLeast": 64700,
+"lessThan": 64800,
+"single": 2668,
+"mfj": 2169,
+"mfs": 2933,
+"hoh": 2169
+},
+{
+"atLeast": 64800,
+"lessThan": 64900,
+"single": 2675,
+"mfj": 2172,
+"mfs": 2940,
+"hoh": 2172
+},
+{
+"atLeast": 64900,
+"lessThan": 65000,
+"single": 2681,
+"mfj": 2176,
+"mfs": 2946,
+"hoh": 2176
+},
+{
+"atLeast": 65000,
+"lessThan": 65100,
+"single": 2688,
+"mfj": 2179,
+"mfs": 2953,
+"hoh": 2179
+},
+{
+"atLeast": 65100,
+"lessThan": 65200,
+"single": 2695,
+"mfj": 2183,
+"mfs": 2959,
+"hoh": 2183
+},
+{
+"atLeast": 65200,
+"lessThan": 65300,
+"single": 2701,
+"mfj": 2186,
+"mfs": 2966,
+"hoh": 2186
+},
+{
+"atLeast": 65300,
+"lessThan": 65400,
+"single": 2708,
+"mfj": 2189,
+"mfs": 2973,
+"hoh": 2189
+},
+{
+"atLeast": 65400,
+"lessThan": 65500,
+"single": 2714,
+"mfj": 2193,
+"mfs": 2979,
+"hoh": 2193
+},
+{
+"atLeast": 65500,
+"lessThan": 65600,
+"single": 2721,
+"mfj": 2196,
+"mfs": 2986,
+"hoh": 2196
+},
+{
+"atLeast": 65600,
+"lessThan": 65700,
+"single": 2728,
+"mfj": 2199,
+"mfs": 2992,
+"hoh": 2199
+},
+{
+"atLeast": 65700,
+"lessThan": 65800,
+"single": 2734,
+"mfj": 2203,
+"mfs": 2999,
+"hoh": 2203
+},
+{
+"atLeast": 65800,
+"lessThan": 65900,
+"single": 2741,
+"mfj": 2206,
+"mfs": 3006,
+"hoh": 2206
+},
+{
+"atLeast": 65900,
+"lessThan": 66000,
+"single": 2747,
+"mfj": 2209,
+"mfs": 3012,
+"hoh": 2209
+},
+{
+"atLeast": 66000,
+"lessThan": 66100,
+"single": 2754,
+"mfj": 2213,
+"mfs": 3019,
+"hoh": 2213
+},
+{
+"atLeast": 66100,
+"lessThan": 66200,
+"single": 2761,
+"mfj": 2216,
+"mfs": 3025,
+"hoh": 2216
+},
+{
+"atLeast": 66200,
+"lessThan": 66300,
+"single": 2767,
+"mfj": 2219,
+"mfs": 3032,
+"hoh": 2221
+},
+{
+"atLeast": 66300,
+"lessThan": 66400,
+"single": 2774,
+"mfj": 2223,
+"mfs": 3039,
+"hoh": 2228
+},
+{
+"atLeast": 66400,
+"lessThan": 66500,
+"single": 2780,
+"mfj": 2226,
+"mfs": 3045,
+"hoh": 2235
+},
+{
+"atLeast": 66500,
+"lessThan": 66600,
+"single": 2787,
+"mfj": 2229,
+"mfs": 3052,
+"hoh": 2241
+},
+{
+"atLeast": 66600,
+"lessThan": 66700,
+"single": 2794,
+"mfj": 2233,
+"mfs": 3058,
+"hoh": 2248
+},
+{
+"atLeast": 66700,
+"lessThan": 66800,
+"single": 2800,
+"mfj": 2236,
+"mfs": 3065,
+"hoh": 2254
+},
+{
+"atLeast": 66800,
+"lessThan": 66900,
+"single": 2807,
+"mfj": 2239,
+"mfs": 3072,
+"hoh": 2261
+},
+{
+"atLeast": 66900,
+"lessThan": 67000,
+"single": 2813,
+"mfj": 2243,
+"mfs": 3078,
+"hoh": 2268
+},
+{
+"atLeast": 67000,
+"lessThan": 67100,
+"single": 2820,
+"mfj": 2246,
+"mfs": 3085,
+"hoh": 2274
+},
+{
+"atLeast": 67100,
+"lessThan": 67200,
+"single": 2827,
+"mfj": 2250,
+"mfs": 3091,
+"hoh": 2281
+},
+{
+"atLeast": 67200,
+"lessThan": 67300,
+"single": 2833,
+"mfj": 2253,
+"mfs": 3098,
+"hoh": 2287
+},
+{
+"atLeast": 67300,
+"lessThan": 67400,
+"single": 2840,
+"mfj": 2256,
+"mfs": 3105,
+"hoh": 2294
+},
+{
+"atLeast": 67400,
+"lessThan": 67500,
+"single": 2846,
+"mfj": 2260,
+"mfs": 3111,
+"hoh": 2301
+},
+{
+"atLeast": 67500,
+"lessThan": 67600,
+"single": 2853,
+"mfj": 2263,
+"mfs": 3118,
+"hoh": 2307
+},
+{
+"atLeast": 67600,
+"lessThan": 67700,
+"single": 2860,
+"mfj": 2266,
+"mfs": 3124,
+"hoh": 2314
+},
+{
+"atLeast": 67700,
+"lessThan": 67800,
+"single": 2866,
+"mfj": 2270,
+"mfs": 3131,
+"hoh": 2320
+},
+{
+"atLeast": 67800,
+"lessThan": 67900,
+"single": 2873,
+"mfj": 2273,
+"mfs": 3138,
+"hoh": 2327
+},
+{
+"atLeast": 67900,
+"lessThan": 68000,
+"single": 2879,
+"mfj": 2276,
+"mfs": 3144,
+"hoh": 2334
+},
+{
+"atLeast": 68000,
+"lessThan": 68100,
+"single": 2886,
+"mfj": 2280,
+"mfs": 3151,
+"hoh": 2340
+},
+{
+"atLeast": 68100,
+"lessThan": 68200,
+"single": 2893,
+"mfj": 2283,
+"mfs": 3157,
+"hoh": 2347
+},
+{
+"atLeast": 68200,
+"lessThan": 68300,
+"single": 2899,
+"mfj": 2286,
+"mfs": 3164,
+"hoh": 2353
+},
+{
+"atLeast": 68300,
+"lessThan": 68400,
+"single": 2906,
+"mfj": 2290,
+"mfs": 3171,
+"hoh": 2360
+},
+{
+"atLeast": 68400,
+"lessThan": 68500,
+"single": 2912,
+"mfj": 2293,
+"mfs": 3177,
+"hoh": 2367
+},
+{
+"atLeast": 68500,
+"lessThan": 68600,
+"single": 2919,
+"mfj": 2296,
+"mfs": 3184,
+"hoh": 2373
+},
+{
+"atLeast": 68600,
+"lessThan": 68700,
+"single": 2926,
+"mfj": 2300,
+"mfs": 3190,
+"hoh": 2380
+},
+{
+"atLeast": 68700,
+"lessThan": 68800,
+"single": 2932,
+"mfj": 2303,
+"mfs": 3197,
+"hoh": 2386
+},
+{
+"atLeast": 68800,
+"lessThan": 68900,
+"single": 2939,
+"mfj": 2306,
+"mfs": 3204,
+"hoh": 2393
+},
+{
+"atLeast": 68900,
+"lessThan": 69000,
+"single": 2945,
+"mfj": 2310,
+"mfs": 3210,
+"hoh": 2400
+},
+{
+"atLeast": 69000,
+"lessThan": 69100,
+"single": 2952,
+"mfj": 2313,
+"mfs": 3217,
+"hoh": 2406
+},
+{
+"atLeast": 69100,
+"lessThan": 69200,
+"single": 2959,
+"mfj": 2317,
+"mfs": 3223,
+"hoh": 2413
+},
+{
+"atLeast": 69200,
+"lessThan": 69300,
+"single": 2965,
+"mfj": 2320,
+"mfs": 3230,
+"hoh": 2419
+},
+{
+"atLeast": 69300,
+"lessThan": 69400,
+"single": 2972,
+"mfj": 2323,
+"mfs": 3237,
+"hoh": 2426
+},
+{
+"atLeast": 69400,
+"lessThan": 69500,
+"single": 2978,
+"mfj": 2327,
+"mfs": 3243,
+"hoh": 2433
+},
+{
+"atLeast": 69500,
+"lessThan": 69600,
+"single": 2985,
+"mfj": 2330,
+"mfs": 3250,
+"hoh": 2439
+},
+{
+"atLeast": 69600,
+"lessThan": 69700,
+"single": 2992,
+"mfj": 2333,
+"mfs": 3256,
+"hoh": 2446
+},
+{
+"atLeast": 69700,
+"lessThan": 69800,
+"single": 2998,
+"mfj": 2337,
+"mfs": 3263,
+"hoh": 2452
+},
+{
+"atLeast": 69800,
+"lessThan": 69900,
+"single": 3005,
+"mfj": 2340,
+"mfs": 3270,
+"hoh": 2459
+},
+{
+"atLeast": 69900,
+"lessThan": 70000,
+"single": 3011,
+"mfj": 2343,
+"mfs": 3276,
+"hoh": 2466
+},
+{
+"atLeast": 70000,
+"lessThan": 70100,
+"single": 3018,
+"mfj": 2347,
+"mfs": 3283,
+"hoh": 2472
+},
+{
+"atLeast": 70100,
+"lessThan": 70200,
+"single": 3025,
+"mfj": 2350,
+"mfs": 3289,
+"hoh": 2479
+},
+{
+"atLeast": 70200,
+"lessThan": 70300,
+"single": 3031,
+"mfj": 2353,
+"mfs": 3296,
+"hoh": 2485
+},
+{
+"atLeast": 70300,
+"lessThan": 70400,
+"single": 3038,
+"mfj": 2357,
+"mfs": 3303,
+"hoh": 2492
+},
+{
+"atLeast": 70400,
+"lessThan": 70500,
+"single": 3044,
+"mfj": 2360,
+"mfs": 3309,
+"hoh": 2499
+},
+{
+"atLeast": 70500,
+"lessThan": 70600,
+"single": 3051,
+"mfj": 2363,
+"mfs": 3316,
+"hoh": 2505
+},
+{
+"atLeast": 70600,
+"lessThan": 70700,
+"single": 3058,
+"mfj": 2367,
+"mfs": 3322,
+"hoh": 2512
+},
+{
+"atLeast": 70700,
+"lessThan": 70800,
+"single": 3064,
+"mfj": 2370,
+"mfs": 3329,
+"hoh": 2518
+},
+{
+"atLeast": 70800,
+"lessThan": 70900,
+"single": 3071,
+"mfj": 2373,
+"mfs": 3336,
+"hoh": 2525
+},
+{
+"atLeast": 70900,
+"lessThan": 71000,
+"single": 3077,
+"mfj": 2377,
+"mfs": 3342,
+"hoh": 2532
+},
+{
+"atLeast": 71000,
+"lessThan": 71100,
+"single": 3084,
+"mfj": 2380,
+"mfs": 3349,
+"hoh": 2538
+},
+{
+"atLeast": 71100,
+"lessThan": 71200,
+"single": 3091,
+"mfj": 2384,
+"mfs": 3355,
+"hoh": 2545
+},
+{
+"atLeast": 71200,
+"lessThan": 71300,
+"single": 3097,
+"mfj": 2387,
+"mfs": 3362,
+"hoh": 2551
+},
+{
+"atLeast": 71300,
+"lessThan": 71400,
+"single": 3104,
+"mfj": 2390,
+"mfs": 3369,
+"hoh": 2558
+},
+{
+"atLeast": 71400,
+"lessThan": 71500,
+"single": 3110,
+"mfj": 2394,
+"mfs": 3375,
+"hoh": 2565
+},
+{
+"atLeast": 71500,
+"lessThan": 71600,
+"single": 3117,
+"mfj": 2397,
+"mfs": 3382,
+"hoh": 2571
+},
+{
+"atLeast": 71600,
+"lessThan": 71700,
+"single": 3124,
+"mfj": 2400,
+"mfs": 3388,
+"hoh": 2578
+},
+{
+"atLeast": 71700,
+"lessThan": 71800,
+"single": 3130,
+"mfj": 2404,
+"mfs": 3395,
+"hoh": 2584
+},
+{
+"atLeast": 71800,
+"lessThan": 71900,
+"single": 3137,
+"mfj": 2407,
+"mfs": 3402,
+"hoh": 2591
+},
+{
+"atLeast": 71900,
+"lessThan": 72000,
+"single": 3143,
+"mfj": 2410,
+"mfs": 3408,
+"hoh": 2598
+},
+{
+"atLeast": 72000,
+"lessThan": 72100,
+"single": 3150,
+"mfj": 2414,
+"mfs": 3415,
+"hoh": 2604
+},
+{
+"atLeast": 72100,
+"lessThan": 72200,
+"single": 3157,
+"mfj": 2417,
+"mfs": 3421,
+"hoh": 2611
+},
+{
+"atLeast": 72200,
+"lessThan": 72300,
+"single": 3163,
+"mfj": 2420,
+"mfs": 3428,
+"hoh": 2617
+},
+{
+"atLeast": 72300,
+"lessThan": 72400,
+"single": 3170,
+"mfj": 2424,
+"mfs": 3435,
+"hoh": 2624
+},
+{
+"atLeast": 72400,
+"lessThan": 72500,
+"single": 3176,
+"mfj": 2427,
+"mfs": 3441,
+"hoh": 2631
+},
+{
+"atLeast": 72500,
+"lessThan": 72600,
+"single": 3183,
+"mfj": 2430,
+"mfs": 3448,
+"hoh": 2637
+},
+{
+"atLeast": 72600,
+"lessThan": 72700,
+"single": 3190,
+"mfj": 2434,
+"mfs": 3454,
+"hoh": 2644
+},
+{
+"atLeast": 72700,
+"lessThan": 72800,
+"single": 3196,
+"mfj": 2437,
+"mfs": 3461,
+"hoh": 2650
+},
+{
+"atLeast": 72800,
+"lessThan": 72900,
+"single": 3203,
+"mfj": 2440,
+"mfs": 3468,
+"hoh": 2657
+},
+{
+"atLeast": 72900,
+"lessThan": 73000,
+"single": 3209,
+"mfj": 2444,
+"mfs": 3474,
+"hoh": 2664
+},
+{
+"atLeast": 73000,
+"lessThan": 73100,
+"single": 3216,
+"mfj": 2447,
+"mfs": 3481,
+"hoh": 2670
+},
+{
+"atLeast": 73100,
+"lessThan": 73200,
+"single": 3223,
+"mfj": 2451,
+"mfs": 3487,
+"hoh": 2677
+},
+{
+"atLeast": 73200,
+"lessThan": 73300,
+"single": 3229,
+"mfj": 2454,
+"mfs": 3494,
+"hoh": 2683
+},
+{
+"atLeast": 73300,
+"lessThan": 73400,
+"single": 3236,
+"mfj": 2457,
+"mfs": 3501,
+"hoh": 2690
+},
+{
+"atLeast": 73400,
+"lessThan": 73500,
+"single": 3242,
+"mfj": 2461,
+"mfs": 3507,
+"hoh": 2697
+},
+{
+"atLeast": 73500,
+"lessThan": 73600,
+"single": 3249,
+"mfj": 2464,
+"mfs": 3514,
+"hoh": 2703
+},
+{
+"atLeast": 73600,
+"lessThan": 73700,
+"single": 3256,
+"mfj": 2467,
+"mfs": 3520,
+"hoh": 2710
+},
+{
+"atLeast": 73700,
+"lessThan": 73800,
+"single": 3262,
+"mfj": 2471,
+"mfs": 3527,
+"hoh": 2716
+},
+{
+"atLeast": 73800,
+"lessThan": 73900,
+"single": 3269,
+"mfj": 2474,
+"mfs": 3534,
+"hoh": 2723
+},
+{
+"atLeast": 73900,
+"lessThan": 74000,
+"single": 3275,
+"mfj": 2477,
+"mfs": 3540,
+"hoh": 2730
+},
+{
+"atLeast": 74000,
+"lessThan": 74100,
+"single": 3282,
+"mfj": 2481,
+"mfs": 3547,
+"hoh": 2736
+},
+{
+"atLeast": 74100,
+"lessThan": 74200,
+"single": 3289,
+"mfj": 2484,
+"mfs": 3553,
+"hoh": 2743
+},
+{
+"atLeast": 74200,
+"lessThan": 74300,
+"single": 3295,
+"mfj": 2487,
+"mfs": 3560,
+"hoh": 2749
+},
+{
+"atLeast": 74300,
+"lessThan": 74400,
+"single": 3302,
+"mfj": 2491,
+"mfs": 3567,
+"hoh": 2756
+},
+{
+"atLeast": 74400,
+"lessThan": 74500,
+"single": 3308,
+"mfj": 2494,
+"mfs": 3573,
+"hoh": 2763
+},
+{
+"atLeast": 74500,
+"lessThan": 74600,
+"single": 3315,
+"mfj": 2497,
+"mfs": 3580,
+"hoh": 2769
+},
+{
+"atLeast": 74600,
+"lessThan": 74700,
+"single": 3322,
+"mfj": 2501,
+"mfs": 3586,
+"hoh": 2776
+},
+{
+"atLeast": 74700,
+"lessThan": 74800,
+"single": 3328,
+"mfj": 2504,
+"mfs": 3593,
+"hoh": 2782
+},
+{
+"atLeast": 74800,
+"lessThan": 74900,
+"single": 3335,
+"mfj": 2507,
+"mfs": 3600,
+"hoh": 2789
+},
+{
+"atLeast": 74900,
+"lessThan": 75000,
+"single": 3341,
+"mfj": 2511,
+"mfs": 3606,
+"hoh": 2796
+}
+]
+}

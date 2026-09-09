@@ -1,0 +1,12 @@
+{
+  "description": "ND TY2026 top bracket: single at $300,000 pays 3,916.09 + 2.5% x (300,000 - 250,400) = 5,156.09 -> $5,156.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "515600"
+  }
+}

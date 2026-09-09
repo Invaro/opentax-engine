@@ -1,0 +1,11 @@
+{
+  "description": "HI 2025 standard deduction, qss: $8,800 (\u00a7 235-2.4(a)(2)(E)).",
+  "facts": {
+    "filingStatus": "qss"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "880000"
+  }
+}

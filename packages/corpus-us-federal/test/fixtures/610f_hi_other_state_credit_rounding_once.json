@@ -1,0 +1,18 @@
+{
+  "description": "HI other-state worksheet line 15 rounds once: single TI $100,062 (tax 6,375 via the capital gains worksheet), line 27a 76,062, out-of-state income 76,000 incl. LTCG 76,000, paid 9,000: 10 = 24,062; 11 = 62; 12 = 24,000; 14 = table(24,000) = 861; 15 = 7.25% x 62 = 4.495 -> 4; 16 = 865; 17 = 6,375 - 865 = 5,510; min(9,000, 5,510) -> $5,510 (a cents-first rounding would give 5 and $5,509).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100062,
+    "hiNetCapitalGainLine27a": 76062,
+    "hiOutOfStateIncome": 76000,
+    "hiOutOfStateLtcg": 76000,
+    "hiOtherStateTaxEligible": 9000,
+    "hiTaxLine13": 6375,
+    "hiAdjustedTaxLiability": 6375
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.other_state_credit",
+  "expect": {
+    "valueCents": "551000"
+  }
+}

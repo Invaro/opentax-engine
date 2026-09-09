@@ -1,0 +1,15 @@
+{
+  "description": "VT Schedule IN-117: line 14 tax $3,140 x line 9 $40,000 / line 17 $100,000 = $1,256, less than the $2,500 paid to the other state.",
+  "facts": {
+    "filingStatus": "single",
+    "vtOtherStateIncome": 40000,
+    "vtModifiedAgi": 100000,
+    "vtIncomeTax": 3140,
+    "vtOtherStateTaxPaid": 2500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.other_state_credit",
+  "expect": {
+    "valueCents": "125600"
+  }
+}

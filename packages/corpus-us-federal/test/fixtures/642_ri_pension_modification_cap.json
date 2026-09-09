@@ -1,0 +1,14 @@
+{
+  "description": "RI Schedule M line 1t table line 3: 'For each person, enter the amount from line 2 or $50,000, whichever is less' \u2014 $60,000 of pension income is capped at $50,000 for 2025 (raised from $20,000).",
+  "facts": {
+    "filingStatus": "single",
+    "riFederalAgi": 100000,
+    "riTaxpayerFullRetirementAge": true,
+    "riTaxpayerPensionIncome": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.pension_modification",
+  "expect": {
+    "valueCents": "5000000"
+  }
+}

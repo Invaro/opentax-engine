@@ -16,7 +16,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { getCorpus } from "../dist/index.js";
+import { getCorpus, STALE_AT_HORIZON, STALE_HORIZON } from "../dist/index.js";
 
 const args = process.argv.slice(2);
 const asJson = args.includes("--json");
@@ -26,7 +26,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 // Jurisdictions with a printed-form composer (keep in sync with
 // packages/compose/src/index.ts — the composer dispatcher).
-const COMPOSED = new Set(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv", "me"]);
+const COMPOSED = new Set(["il", "va", "ca", "ny", "pa", "nj", "oh", "nc", "ga", "md", "mo", "wi", "mn", "sc", "al", "or", "ok", "ct", "ks", "ar", "nm", "ne", "id", "wv", "me", "hi", "ri", "mt", "de", "nd", "vt"]);
 
 const ALL_STATES = "al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy".split(" ");
 
@@ -93,7 +93,13 @@ for (const j of ["federal", ...ALL_STATES]) {
     computable: e?.computable ?? 0,
     fixtures: fixtureCount[j] ?? 0,
     coverageThrough: !covered ? null : e.openEnded ? "open-ended" : e.maxEffectiveTo,
-    staleAtHorizon: covered && !e.openEnded && e.maxEffectiveTo <= horizon,
+    // stale = ANY non-parameters rule's latest version ends by the horizon (a state whose credits all
+    // run to 2027 but whose income tax or standard deduction ends at 2026-01-01 cannot compose a
+    // 2026 return); the checked-in declaration (src/staleness.ts, enforced by staleness.test.ts)
+    // carries the tier and the publication that unblocks it
+    staleAtHorizon: covered && (e?.expiringSoon ?? []).some((x) => !x.id.endsWith(".parameters")),
+    staleTier: horizon === STALE_HORIZON ? (STALE_AT_HORIZON[j]?.tier ?? null) : null,
+    unblockedBy: horizon === STALE_HORIZON ? (STALE_AT_HORIZON[j]?.unblockedBy ?? null) : null,
     expiringSoon: e?.expiringSoon ?? [],
   });
 }
@@ -121,7 +127,7 @@ if (asJson) {
   console.log(pad("jur", 9) + pad("tier", 16) + pad("rules", 7) + pad("fixtures", 10) + "coverage through");
   for (const r of rows) {
     if (r.tier === "UNCOVERED") continue;
-    const flag = r.staleAtHorizon ? "  ⚠ stale at horizon" : "";
+    const flag = r.staleAtHorizon ? (r.staleTier === "return" ? "  ⚠ STALE: return not composable" : r.staleTier === "lines" ? "  ⚠ stale: lines blank" : "  ⚠ stale at horizon (undeclared)") : "";
     console.log(pad(r.jurisdiction, 9) + pad(r.tier, 16) + pad(r.rules, 7) + pad(r.fixtures, 10) + (r.coverageThrough ?? "-") + flag);
   }
   console.log(`\nUNCOVERED (${summary.totals.uncovered.length}): ${summary.totals.uncovered.join(" ") || "none"}`);

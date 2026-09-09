@@ -1,0 +1,14 @@
+{
+  "description": "HI Tax on Capital Gains Worksheet, single TI $100,000, LTCG = net CG $60,000: line 13 = max(40,000, printed 24,000) = 40,000; line 15 = table(40,000) = 1,675 + 7.2% x 4,025 = 1,964.80 -> 1,965; line 16 = 7.25% x 60,000 = 4,350; line 17 = 6,315 < line 18 (Schedule I 6,491) -> $6,315.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000,
+    "hiNetLongTermCapitalGain": 60000,
+    "hiNetCapitalGain": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "631500"
+  }
+}

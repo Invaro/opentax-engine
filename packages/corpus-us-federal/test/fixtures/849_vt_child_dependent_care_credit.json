@@ -1,0 +1,12 @@
+{
+  "description": "VT child and dependent care credit: 72% x $1,200 federal = $864, refundable (\u00a7 5828c).",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalChildCareCredit": 1200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "86400"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "HI claimable as a dependent -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 10000,
+    "hiRentPaid": 5000,
+    "hiRentersExemptions": 1,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

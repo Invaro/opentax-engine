@@ -1,0 +1,17 @@
+{
+  "description": "Form RI-1040H Part 4, two-person household: income 15,000 is in the 13,971-17,460 band, where the '2 or more' column is 5%; line 8 = 20% x 6,000 rent = 1,200; line 10 = 750; line 11 = $450.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riHouseholdIncome": 15000,
+    "riHouseholdMembers": 2,
+    "riAge65OrDisabled": true,
+    "riPropertyTaxPaid": 0,
+    "riRentPaid": 6000,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.property_tax_relief_credit",
+  "expect": {
+    "valueCents": "45000"
+  }
+}

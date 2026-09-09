@@ -1,0 +1,14 @@
+{
+  "description": "VT line 8 above $150,000 of federal AGI compares the 3% minimum with the RATE SCHEDULE ('tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule'), never the Tax Table: single $74,999 taxable -> schedule 1,655 + 6.6% x 25,599 = 3,344.53 -> $3,345 (the table row prints $3,341); the floor 3% x (200,000 - 112,051) = 2,638.47 does not bind.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 74999,
+    "vtFederalAgi": 200000,
+    "vtUsObligationInterest": 112051
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "334500"
+  }
+}

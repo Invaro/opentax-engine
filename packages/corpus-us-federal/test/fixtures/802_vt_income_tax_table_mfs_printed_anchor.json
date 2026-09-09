@@ -1,0 +1,12 @@
+{
+  "description": "VT Tax Table row 41,300-41,400 married filing separately prints $1,389 = printed anchor 1,382 + 6.6% x (41,350 - 41,250) = 1,388.60; the exact cumulative schedule (1,381.875 + 6.60 = 1,388.475) would print $1,388. The table follows the printed anchor at every one of the 154 cells where they differ.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 41300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "138900"
+  }
+}

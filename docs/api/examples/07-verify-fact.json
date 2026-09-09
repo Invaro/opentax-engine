@@ -1,0 +1,82 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 7,
+    "method": "tools/call",
+    "params": {
+      "name": "verify_fact",
+      "arguments": {
+        "query": "standard deduction married filing jointly 2025",
+        "claimedAmount": 30000
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 7,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "verdict": "refuted",
+    "claimed": "$30,000.00",
+    "message": "no corpus value near this query equals the claim — the actual values are listed below",
+    "nearbyValues": [
+      {
+        "rule": "us.me.standard_deduction",
+        "field": "single",
+        "value": "$15,700.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "standardDeductionSingle",
+        "value": "$7,650.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "standardDeductionJoint",
+        "value": "$15,300.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "standardDeductionHoh",
+        "value": "$11,450.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "additionalDeductionPerBox",
+        "value": "$1,250.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "personalExemption",
+        "value": "$5,300.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "minimumTaxAgiThreshold",
+        "value": "$150,000.00"
+      },
+      {
+        "rule": "us.vt.parameters",
+        "field": "tableTop",
+        "value": "$75,000.00"
+      }
+    ],
+    "citation": {
+      "source": "36 M.R.S. § 5124-C(1-C) as enacted by P.L. 2025, c. 650, Pt. K, § 14 ('$15,700' basic amount for tax years beginning in 2026; HOH × 1.5; joint × 2; plus the Code § 63(c)(3) additional amounts); MRS 'State of Maine 2026 Individual Income Tax Rates' (Revised May 20, 2026); 2026 Form 1040ES-ME 'Standard Deduction for 2026'",
+      "section": "§ 5124-C(1-C); Form 1040ME line 17",
+      "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/2026-05/ind_tax_rate_sched_2026_rev.pdf",
+      "excerpt": "MRS 2026 RATES (verbatim): 'Standard Deduction: Single - $15,700; Married Filing Jointly - $31,400; Head of Household - $23,550; Married Filing Separately - $15,700. Additional Amount for Age or Blindness: $1,650 if married (whether filing jointly or separately) or a qualified surviving spouse. The additional amount is $3,300 if one spouse is 65 or over and blind, $3,300* if both spouses are 65 or over, $6,600* if both spouses are 65 or over and blind, etc. *If married filing separately, these amounts apply only if you can claim an exemption for your spouse. $2,050 if unmarried (single or head of household). The additional amount is $4,100 if the individual is both 65 or over and blind.' 2026 FORM 1040ES-ME (verbatim): 'Standard Deduction for 2026: Single $15,700; Head of Household $23,550; Married Filing Separately $15,700; Married Filing Jointly or Qualifying Surviving Spouse $31,400. Additional Standard Deduction for Age and/or Blindness: Married (whether filing jointly or separately) or a qualified widow(er): the additional standard deduction is $1,650 if one spouse is age 65 or over OR blind; $3,300 if one spouse is 65 or over AND blind; $3,300 if both spouses are 65 or over OR blind; $6,600 if both spouses are 65 or over AND blind, etc.' STATUTE (§ 5124-C(1-C) as enacted by c. 650, Pt. K, § 14, verbatim): 'For tax years beginning on or after January 1, 2026 and before January 1, 2027 … basic standard deduction is: (1) For single individuals and married persons filing separate returns, $15,700; (2) … heads of households, the amount allowed under subparagraph (1) multiplied by 1.5; and (3) … married joint returns or surviving spouses, the amount … multiplied by 2' plus the § 63(c)(3) additional amounts; (1-D) makes 2027 and later 'equal to the federal standard deduction'. A filer claimable as a dependent gets the same chart amount (no § 63(c)(5) limitation is incorporated)."
+    },
+    "asOf": "2026-09-09",
+    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+  }
+}

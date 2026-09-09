@@ -1,0 +1,14 @@
+{
+  "description": "HI HOH 65+, one dependent: 3 exemptions x $50 = $150.",
+  "facts": {
+    "filingStatus": "hoh",
+    "hiAgi": 10000,
+    "hiRentPaid": 5000,
+    "hiRentersExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "15000"
+  }
+}

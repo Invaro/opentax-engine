@@ -1,0 +1,14 @@
+{
+  "description": "DE lines 27a and 27b: four exemptions at $110 plus two persons 60 or over at $110 = $660.",
+  "facts": {
+    "filingStatus": "mfj",
+    "deExemptions": 4,
+    "deAge60Persons": 2,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.personal_credits",
+  "expect": {
+    "valueCents": "66000"
+  }
+}

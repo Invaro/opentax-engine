@@ -1,0 +1,12 @@
+{
+  "description": "VT TY2026 personal exemption $5,400 (GB-1210-2026: 'one withholding allowance equals $5400.00'): 2 x 5,400 = $10,800.",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtExemptions": 2
+  },
+  "asOf": "2026-12-31",
+  "target": "us.vt.personal_exemption",
+  "expect": {
+    "valueCents": "1080000"
+  }
+}

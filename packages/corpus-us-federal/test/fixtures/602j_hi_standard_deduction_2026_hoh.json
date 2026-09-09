@@ -1,0 +1,11 @@
+{
+  "description": "HI TY2026 standard deduction, HOH: $12,000.",
+  "facts": {
+    "filingStatus": "hoh"
+  },
+  "asOf": "2026-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "1200000"
+  }
+}

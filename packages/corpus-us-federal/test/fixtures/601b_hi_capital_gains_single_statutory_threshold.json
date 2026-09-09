@@ -1,0 +1,15 @@
+{
+  "description": "HI same facts with hiCapitalGainsStatutoryThreshold: line 13 = max(40,000, 48,000) = 48,000; line 15 = table(48,000) = 2,539 + 7.6% x 25 = 2,540.90 -> 2,541; line 14 = 52,000 x 7.25% = 3,770; 17 = 6,311 -> $6,311.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000,
+    "hiNetLongTermCapitalGain": 60000,
+    "hiNetCapitalGain": 60000,
+    "hiCapitalGainsStatutoryThreshold": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "631100"
+  }
+}

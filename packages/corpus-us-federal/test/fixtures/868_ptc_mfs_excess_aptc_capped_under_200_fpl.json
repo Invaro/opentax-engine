@@ -1,0 +1,15 @@
+{
+  "description": "Excess advance PTC repayment, MFS below 200% FPL: wages $30,000 / $15,060 = 199%, so the \u00a7 36B(f)(2)(B) cap for a taxpayer NOT taxed under \u00a7 1(c) applies \u2014 $750 for TY2025 (Rev. Proc. 2024-40 \u00a7 2.07); min($6,000, $750) = $750.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 30000,
+    "advancePTC": 6000,
+    "ptcHouseholdSize": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ptc.excess_aptc_repayment",
+  "expect": {
+    "valueCents": "75000"
+  }
+}

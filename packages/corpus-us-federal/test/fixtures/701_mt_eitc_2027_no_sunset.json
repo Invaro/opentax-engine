@@ -1,0 +1,12 @@
+{
+  "description": "MT earned income credit TY2027 remains 20%: House Bill 337 section 7 terminates '[Section 1]' \u2014 the section 15-30-2103 (Temporary) RATE table \u2014 not section 3, which amends the earned income credit.",
+  "facts": {
+    "filingStatus": "single",
+    "mtFederalEic": 5000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.mt.eitc",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

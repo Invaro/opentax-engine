@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 top bracket from the published anchor: 8,035.88 + 5.99% x (200,000 - 186,450) = 8,847.525 -> $8,848.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 200000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "884800"
+  }
+}

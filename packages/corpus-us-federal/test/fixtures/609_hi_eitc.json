@@ -1,0 +1,12 @@
+{
+  "description": "HI EITC = 40% x 2,345 = $938.",
+  "facts": {
+    "filingStatus": "hoh",
+    "hiFederalEic": 2345
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.eitc",
+  "expect": {
+    "valueCents": "93800"
+  }
+}

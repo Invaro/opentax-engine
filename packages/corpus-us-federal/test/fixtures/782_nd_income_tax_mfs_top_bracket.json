@@ -1,0 +1,12 @@
+{
+  "description": "ND married filing separately above the table: $200,000 pays 2,116.73 + 2.5% x (200,000 - 149,025) = 3,391.105 -> $3,391. The separate schedule is its own column, not half the joint one.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "339100"
+  }
+}

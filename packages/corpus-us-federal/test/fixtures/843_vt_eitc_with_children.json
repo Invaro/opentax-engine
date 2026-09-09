@@ -1,0 +1,13 @@
+{
+  "description": "VT earned income credit with a qualifying child: 38% x $1,000 federal = $380, refundable.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalEic": 1000,
+    "vtEitcQualifyingChildren": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.eitc",
+  "expect": {
+    "valueCents": "38000"
+  }
+}

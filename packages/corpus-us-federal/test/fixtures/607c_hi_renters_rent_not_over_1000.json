@@ -1,0 +1,14 @@
+{
+  "description": "HI rent exactly $1,000 -> 'If this amount is $1,000, or less, STOP' -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 20000,
+    "hiRentPaid": 1000,
+    "hiRentersExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

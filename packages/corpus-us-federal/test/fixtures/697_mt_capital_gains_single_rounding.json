@@ -1,0 +1,13 @@
+{
+  "description": "REGRESSION (double rounding): worksheet line 10 is a whole-dollar box, so 4.1% of $256 = 10.496 prints as $10. Rounding to cents first (10.50) and then to dollars would give $11. Ordinary income of $29,744 already exceeds the $21,100 threshold, so the whole gain sits in the 4.1% band.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 30000,
+    "mtNetLongTermCapitalGains": 256
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.capital_gains_tax",
+  "expect": {
+    "valueCents": "1000"
+  }
+}

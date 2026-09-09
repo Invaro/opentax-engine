@@ -1,0 +1,13 @@
+{
+  "description": "Without socialSecurityWagesProvided a $0 socialSecurityWages is 'not supplied' and Schedule SE line 8a falls back to box-1 wages (the documented approximation): joint return, wages $100,000, SE profit $50,000 -> line 10 = min(46,175, 176,100 - 100,000 = 76,100) x 12.4% = 5,725.70 -> $5,726 (still under the remaining base), line 11 $1,339, total $7,065 \u2014 identical here because the base is not binding; the flag matters when wages exceed the base.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 100000,
+    "selfEmploymentNetProfit": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "706500"
+  }
+}

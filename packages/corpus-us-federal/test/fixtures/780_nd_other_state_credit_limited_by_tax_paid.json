@@ -1,0 +1,15 @@
+{
+  "description": "ND Schedule ND-1CR line 7: 'Enter the smaller of line 5 or line 6' \u2014 a $150 net tax actually paid to the other state caps the credit.",
+  "facts": {
+    "filingStatus": "single",
+    "ndDoublyTaxedIncome": 20000,
+    "ndOtherStateIncomeBase": 100000,
+    "ndIncomeTaxBeforeCredits": 2000,
+    "ndOtherStateTaxPaid": 150
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.other_state_credit",
+  "expect": {
+    "valueCents": "15000"
+  }
+}

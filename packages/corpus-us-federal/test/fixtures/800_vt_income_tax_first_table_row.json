@@ -1,0 +1,12 @@
+{
+  "description": "VT Tax Table first row 0-100 prints $0 in every column where the midpoint arithmetic (3.35% x $50 = 1.675) would give $2 \u2014 the one exception to the midpoint convention on all 3,000 cells.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 99
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

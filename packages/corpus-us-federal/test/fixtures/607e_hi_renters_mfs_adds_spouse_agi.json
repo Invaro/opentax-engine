@@ -1,0 +1,15 @@
+{
+  "description": "HI MFS: 20,000 + spouse's 15,000 = 35,000 -> $0.",
+  "facts": {
+    "filingStatus": "mfs",
+    "hiAgi": 20000,
+    "hiSpouseAgi": 15000,
+    "hiRentPaid": 9000,
+    "hiRentersExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

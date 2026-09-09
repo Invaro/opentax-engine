@@ -1,0 +1,14 @@
+{
+  "description": "VT 3% minimum tax base is federal AGI LESS U.S. obligation interest per the Form IN-111 line 8 instruction (the statute says 3% of federal AGI): (200,000 - 50,000) x 3% = $4,500 beats the $1,340 table tax.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 40000,
+    "vtFederalAgi": 200000,
+    "vtUsObligationInterest": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "450000"
+  }
+}

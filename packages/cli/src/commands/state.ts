@@ -46,7 +46,11 @@ export function runState(flags: { facts: string; asOf?: string; json?: boolean }
       const { value } = evaluate(corpus, facts as never, { asOf, target });
       return value.type === "money" ? value.cents : 0n;
     }, args);
-    const { lines, notes } = composeStateReturn(args as StateReturnInput, evalStateTax);
+    // asOf reaches the composers too: a composer whose printed form differs by tax
+    // year (ND, whose $50 Tax Table exists only for a published year) needs it to
+    // describe the method it actually applied. The MCP tool already carries asOf
+    // inside its parsed args; the CLI takes it from the flag, so merge it in here.
+    const { lines, notes } = composeStateReturn({ ...args, asOf } as unknown as StateReturnInput, evalStateTax);
     if (flags.json) {
       print({
         ok: true,

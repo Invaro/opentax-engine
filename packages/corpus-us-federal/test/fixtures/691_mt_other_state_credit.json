@@ -1,0 +1,16 @@
+{
+  "description": "MT Schedule III Part II ordinary block: all 20,000 of other-state income is sourced there (ratio 1.000000), so line 7 = the full $1,000 paid; the Montana ratio is 20,000/100,000 = 0.200000, so line 9 = 5,000 x 0.2 = $1,000; line 10 takes the least of 1,000 / 1,000 / 1,000 = $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "mtOtherStateOrdinaryIncome": 20000,
+    "mtOtherStateTotalIncome": 20000,
+    "mtOrdinaryIncomeSourcedToMontana": 100000,
+    "mtOtherStateTaxPaid": 1000,
+    "mtOrdinaryIncomeTax": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.other_state_credit",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

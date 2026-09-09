@@ -1,0 +1,14 @@
+{
+  "description": "RI Schedule U line 6, printed USE TAX TABLE: federal AGI 50,000 falls in the 41,750-50,150 band -> $30.",
+  "facts": {
+    "filingStatus": "single",
+    "riFederalAgi": 50000,
+    "riUseTaxLookupTable": true,
+    "riLargePurchasesNetUseTax": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.use_tax",
+  "expect": {
+    "valueCents": "3000"
+  }
+}

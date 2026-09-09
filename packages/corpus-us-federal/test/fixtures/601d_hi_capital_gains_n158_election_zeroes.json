@@ -1,0 +1,15 @@
+{
+  "description": "HI worksheet line 10 = line 8 minus Form N-158 line 4e: 60,000 - 60,000 = 0 -> 'stop here' -> regular tax $6,491.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000,
+    "hiNetLongTermCapitalGain": 60000,
+    "hiNetCapitalGain": 60000,
+    "hiInvestmentInterestN158": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "649100"
+  }
+}

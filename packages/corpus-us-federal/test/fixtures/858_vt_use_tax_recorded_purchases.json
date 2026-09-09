@@ -1,0 +1,15 @@
+{
+  "description": "VT use tax from records: 6% x $500 small purchases ($30) + 6% x $2,000 large ($120) - $40 paid to another state = $110.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 50000,
+    "vtUseTaxSmallPurchases": 500,
+    "vtUseTaxLargePurchases": 2000,
+    "vtUseTaxPaidOtherState": 40
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.use_tax",
+  "expect": {
+    "valueCents": "11000"
+  }
+}

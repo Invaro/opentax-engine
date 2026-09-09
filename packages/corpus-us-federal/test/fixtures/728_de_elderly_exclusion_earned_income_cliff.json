@@ -1,0 +1,14 @@
+{
+  "description": "DE line 11 is a CLIFF, not a phase-out: earned income must be LESS THAN $2,500, so exactly $2,500 fails and the exclusion is $0.",
+  "facts": {
+    "filingStatus": "single",
+    "deQualifiesElderlyDisabled": true,
+    "deEarnedIncome": 2500,
+    "deAgiBeforeExclusion": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.elderly_disabled_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

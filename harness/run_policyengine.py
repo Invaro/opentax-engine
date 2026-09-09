@@ -80,7 +80,8 @@ def main():
             out[s["id"]] = "ERROR:%s" % type(e).__name__
         if (i + 1) % 50 == 0:
             print("  %d/%d" % (i + 1, len(scenarios)), file=sys.stderr)
-    json.dump({"engine": "policyengine-us", "results": out}, sys.stdout, indent=1)
+    from importlib.metadata import version as _v
+    json.dump({"engine": "policyengine-us", "version": _v("policyengine-us"), "results": out}, sys.stdout, indent=1)
     print()
 
 

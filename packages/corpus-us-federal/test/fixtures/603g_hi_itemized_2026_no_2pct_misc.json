@@ -1,0 +1,15 @@
+{
+  "description": "HI TY2026 (Act 35, SLH 2026 conforms to the \u00a7 67 disallowance): single AGI $60,000, mortgage 8,000 + job expenses 3,000 -> $8,000 (2025 would allow 3,000 - 1,200 = 1,800 more).",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 60000,
+    "hiFederalAgi": 60000,
+    "hiHomeMortgageInterest": 8000,
+    "hiJobAndMiscExpenses": 3000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.hi.itemized_deductions",
+  "expect": {
+    "valueCents": "800000"
+  }
+}

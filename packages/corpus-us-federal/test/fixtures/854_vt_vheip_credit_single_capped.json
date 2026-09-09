@@ -1,0 +1,13 @@
+{
+  "description": "VT Higher Education Investment Plan credit, single: 10% of the first $2,500 per beneficiary \u2014 $4,000 for one beneficiary -> $250.",
+  "facts": {
+    "filingStatus": "single",
+    "vtVheipContributions": 4000,
+    "vtVheipBeneficiaries": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.vheip_credit",
+  "expect": {
+    "valueCents": "25000"
+  }
+}

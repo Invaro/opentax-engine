@@ -1,0 +1,12 @@
+{
+  "description": "RI TY2026 top band: $200,021 pays 5.99% x 200,021 - 3,132.48 = 8,848.7779 -> $8,849 — and the rounded-anchor method (8,035.88 + 5.99% x 13,571 = 8,848.7829) agrees here, which is why a fixture at $82,421 pins the difference and this one pins the band constant $3,132.48 = 820.50 + 186,450 x 1.24%.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 200021
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "884900"
+  }
+}

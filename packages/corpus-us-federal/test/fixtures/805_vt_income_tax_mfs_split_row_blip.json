@@ -1,0 +1,12 @@
+{
+  "description": "VT married filing separately at EXACTLY $75,000: the printed row 'over 41,250 but not over 75,000' gives 1,382 + 6.6% x 33,750 = 3,609.50 -> $3,610, while the 'over 75,000' row's printed base is $3,609 (exact 3,609.375 rounded). Read literally the schedule steps DOWN $1 at $75,000.01 \u2014 encoded as printed.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 75000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "361000"
+  }
+}

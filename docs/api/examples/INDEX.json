@@ -1,0 +1,62 @@
+[
+  {
+    "file": "01-calculate-tax-mfj-two-kids.json",
+    "tool": "calculate_tax",
+    "ok": true,
+    "summary": "ok, target, asOf, answer, valueCents, meaning"
+  },
+  {
+    "file": "02-compute-return-from-w2.json",
+    "tool": "compute_return",
+    "ok": true,
+    "summary": "ok, asOf, documentNotes, lines, note, assumptions"
+  },
+  {
+    "file": "03-compute-state-return-vt.json",
+    "tool": "compute_state_return",
+    "ok": true,
+    "summary": "$1,576"
+  },
+  {
+    "file": "04-compute-state-return-ca-mfj.json",
+    "tool": "compute_state_return",
+    "ok": true,
+    "summary": "ok, asOf, jurisdiction, lines"
+  },
+  {
+    "file": "05-calculate-business-tax-1120.json",
+    "tool": "calculate_business_tax",
+    "ok": true,
+    "summary": "ok, target, asOf, answer, valueCents, assumptions"
+  },
+  {
+    "file": "06-lookup-tax-parameter.json",
+    "tool": "lookup_tax_parameter",
+    "ok": true,
+    "summary": "ok, query, asOf, hits, corpusMerkleRoot"
+  },
+  {
+    "file": "07-verify-fact.json",
+    "tool": "verify_fact",
+    "ok": true,
+    "summary": "ok, verdict, claimed, message, nearbyValues, citation"
+  },
+  {
+    "file": "08-refusal-needs-facts.json",
+    "tool": "calculate_tax",
+    "ok": false,
+    "summary": "NEEDS_FACTS"
+  },
+  {
+    "file": "09-refusal-no-applicable-rule-vt-2026.json",
+    "tool": "compute_state_return",
+    "ok": false,
+    "summary": "ERROR"
+  },
+  {
+    "file": "10-explain-rule.json",
+    "tool": "explain_rule",
+    "ok": true,
+    "summary": "ok, versions"
+  }
+]

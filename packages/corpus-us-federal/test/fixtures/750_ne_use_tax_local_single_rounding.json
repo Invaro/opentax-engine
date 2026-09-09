@@ -1,0 +1,13 @@
+{
+  "description": "REGRESSION (double rounding): Nebraska's use tax has TWO whole-dollar boxes and the booklet says 'round your results, and then add them together'. 1.5% of $33 is 0.495 -> $0 local, plus 5.5% x 33 = 1.815 -> $2 state = $2. A cent-then-dollar chain rounded the local line to $1 and returned $3.",
+  "facts": {
+    "filingStatus": "single",
+    "neUseTaxPurchases": 33,
+    "neLocalUseTaxRateBps": 150
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.use_tax",
+  "expect": {
+    "valueCents": "200"
+  }
+}

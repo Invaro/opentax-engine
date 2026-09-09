@@ -1,0 +1,12 @@
+{
+  "description": "VT TY2026 preliminary schedule (2026 Form IN-114 instructions): single $100,000 -> 1,700 + 6.6% x (100,000 - 50,750) = 1,700 + 3,250.50 = 4,950.50 -> $4,951. No 2026 table exists; the schedule applies at the exact income.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "495100"
+  }
+}

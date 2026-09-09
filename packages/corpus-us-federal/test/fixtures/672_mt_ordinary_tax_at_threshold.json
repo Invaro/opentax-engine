@@ -1,0 +1,12 @@
+{
+  "description": "MT 2025, married filing jointly at exactly $42,200 \u2014 the schedule reads '$42,200 or greater', so 5.9% less $506 applies: 2,489.80 - 506 = 1,983.80 -> $1,984. The printed constant makes the boundary a dollar higher than pure bracketing would.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 42200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "198400"
+  }
+}

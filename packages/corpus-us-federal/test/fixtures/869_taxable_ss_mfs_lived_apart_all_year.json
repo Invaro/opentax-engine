@@ -1,0 +1,15 @@
+{
+  "description": "\u00a7 86(c)(1)(C)(ii): an MFS filer who lived apart from the spouse at all times during the year uses the unmarried base amounts. Wages $20,000, benefits $1,000: provisional income 20,000 + 500 = 20,500 < $25,000 -> $0 taxable. With the base zeroed the engine had taxed $850.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 20000,
+    "socialSecurityBenefits": 1000,
+    "mfsLivedApartAllYear": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.taxable_social_security",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "VT Higher Education Investment Plan credit on a joint return: 10% of the first $5,000 per beneficiary \u2014 $4,000 contributed for one beneficiary -> $400.",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtVheipContributions": 4000,
+    "vtVheipBeneficiaries": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.vheip_credit",
+  "expect": {
+    "valueCents": "40000"
+  }
+}

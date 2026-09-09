@@ -1,0 +1,14 @@
+{
+  "description": "\u00a7 86(c)(1)(C)(ii) counter-case: MFS and NOT apart all year -> base amount $0, so the lesser of 85% of benefits ($850) and 85% of provisional income ($17,425) = $850 taxable.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 20000,
+    "socialSecurityBenefits": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.taxable_social_security",
+  "expect": {
+    "valueCents": "85000"
+  }
+}

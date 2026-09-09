@@ -1,0 +1,13 @@
+{
+  "description": "VT child tax credit phase-out, 'or fraction thereof': AGI $125,001 is one $1,000 step -> $980 per child (the printed table row 125,001-126,000), x 2 = $1,960.",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtFederalAgi": 125001,
+    "vtChildrenSixOrUnder": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.child_tax_credit",
+  "expect": {
+    "valueCents": "196000"
+  }
+}

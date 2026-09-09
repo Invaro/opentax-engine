@@ -1,0 +1,14 @@
+{
+  "description": "REGRESSION (double rounding): Maine's 0.04%-of-AGI use tax estimate. 0.04% of $1,238 is 0.4952 -> $0; a cent-then-dollar chain rounded it to $0.50 and then up to $1 \u2014 wrong for 960 of 200,000 AGI values.",
+  "facts": {
+    "filingStatus": "single",
+    "meUseTaxPurchases": 0,
+    "meAgi": 1238,
+    "meUseTaxEstimate": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.use_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

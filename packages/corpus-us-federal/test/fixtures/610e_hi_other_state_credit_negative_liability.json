@@ -1,0 +1,16 @@
+{
+  "description": "HI line 34 negative (refundable credits exceed the tax) -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 80000,
+    "hiOutOfStateIncome": 30000,
+    "hiOtherStateTaxEligible": 2000,
+    "hiTaxLine13": 4973,
+    "hiAdjustedTaxLiability": -200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.other_state_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

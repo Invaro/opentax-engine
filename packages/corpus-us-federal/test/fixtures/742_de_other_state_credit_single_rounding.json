@@ -1,0 +1,15 @@
+{
+  "description": "REGRESSION (double rounding): the other-state worksheet applies the ratio to the line 24 tax in a whole-dollar box. 1,100 x 5,359/30,000 = 196.4967 -> $196; a cent-then-dollar chain gives $197.",
+  "facts": {
+    "filingStatus": "single",
+    "deAdjustedGrossIncome": 30000,
+    "deIncomeTax": 1100,
+    "deOtherStateIncome": 5359,
+    "deOtherStateTaxPaid": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.other_state_credit",
+  "expect": {
+    "valueCents": "19600"
+  }
+}

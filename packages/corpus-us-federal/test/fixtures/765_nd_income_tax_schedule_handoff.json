@@ -1,0 +1,12 @@
+{
+  "description": "ND hands off to the rate schedules at $100,000: a single filer pays 1.95% x (100,000 - 48,475) = 1,004.7375 -> $1,005 on the exact income, one dollar more than the table's last row.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "100500"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "HI Total Itemized Deductions Worksheet: single AGI $200,000; deductions 40,000 (RE 6,000 + mortgage 20,000 + investment interest 4,000 + charity 10,000); line 3 = 4,000; 5 = 80% x 36,000 = 28,800; 8 = 200,000 - 166,800 = 33,200; 9 = 3% = 996; 10 = 996 -> $39,004.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 200000,
+    "hiFederalAgi": 200000,
+    "hiRealEstateTaxes": 6000,
+    "hiHomeMortgageInterest": 20000,
+    "hiInvestmentInterest": 4000,
+    "hiCharitableContributions": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.itemized_deductions",
+  "expect": {
+    "valueCents": "3900400"
+  }
+}

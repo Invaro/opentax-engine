@@ -1,0 +1,12 @@
+{
+  "description": "MT Schedule I line 16: the family education savings subtraction is capped at $4,500, or $9,000 on a joint return (House Bill 845 raised it from $3,000 for TY2025).",
+  "facts": {
+    "filingStatus": "mfj",
+    "mtTuitionSavingsContributions": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.tuition_savings_subtraction",
+  "expect": {
+    "valueCents": "900000"
+  }
+}

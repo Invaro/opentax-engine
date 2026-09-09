@@ -1,0 +1,14 @@
+{
+  "description": "VT student loan interest subtraction: $3,000 paid less $2,500 deducted federally = $500, joint AGI $150,000 under the $200,000 limit.",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtFederalAgi": 150000,
+    "vtStudentLoanInterestPaid": 3000,
+    "vtStudentLoanInterestDeductedFederally": 2500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.student_loan_interest_subtraction",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

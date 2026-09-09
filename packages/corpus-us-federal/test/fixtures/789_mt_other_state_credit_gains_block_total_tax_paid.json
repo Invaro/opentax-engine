@@ -1,0 +1,19 @@
+{
+  "description": "MT Schedule III Part II with a capital-gains block: single, $100,000 taxable of which $40,000 is net LTCG; $60,000 sourced to the other state ($20,000 ordinary + $40,000 gains); $3,000 total tax paid there. Ordinary block: line 6 = 20,000/60,000 = 0.333333, line 7 = 3,000 x 0.333333 = $1,000; line 8 = 20,000/60,000, line 9 = 3,287 x 0.333333 = $1,096; line 10 = $1,000. Gains block: line 14 is the SAME $3,000 total as line 4 (booklet p. 35 — line 16's ratio does the attribution); line 16 = 40,000/60,000 = 0.666667, line 17 = 3,000 x 0.666667 = $2,000; line 18 = 40,000/40,000 = 1.000000, line 19 = $1,640; line 20 = $1,640. Line 21 = $2,640. Before the fix the gains block took a separate pre-attributed fact defaulting to $0 and the credit was $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "mtOtherStateOrdinaryIncome": 20000,
+    "mtOtherStateCapitalGains": 40000,
+    "mtOtherStateTotalIncome": 60000,
+    "mtOrdinaryIncomeSourcedToMontana": 60000,
+    "mtFederalNetLongTermCapitalGains": 40000,
+    "mtOtherStateTaxPaid": 3000,
+    "mtOrdinaryIncomeTax": 3287,
+    "mtCapitalGainsTax": 1640
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.other_state_credit",
+  "expect": {
+    "valueCents": "264000"
+  }
+}

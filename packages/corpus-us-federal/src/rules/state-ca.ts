@@ -189,7 +189,7 @@ export const caRules: Rule[] = [
   },
   {
     id: "us.ca.caleitc",
-    version: 5, // v3's phase-in kept the floor-aligned midpoint, misplacing $50-multiple incomes into the next row; v4 aligns the phase-in to the table's true upper-bound rows (mid = ceil(x/50)*50 - 24.50), matching the post-peak segments; v5 recalibrates the 0-kid GENTLE phase-out anchor from an unverified construction ($216 @ mid $9,475.50, rate -43/4680, "unverified-but-consistent") to a printed-table-confirmed anchor ($183 @ mid $12,975.50 = bracket 12,951-13,000, rate -9/1000 = -0.9%/$1) — the prior anchor produced $184 for that row, one dollar off the 2025 FTB 3514 booklet's printed credit
+    version: 6, // v5 read the EITC Table at earned income only; the FTB 3514 Step 6 worksheet (2025 booklet p. 7, lines 3-6) re-reads it at federal AGI when AGI differs from earned income and is at or above the line-5 floor ($4,661 / $6,998 / $9,823 by 0 / 1 / 2+ children) and keeps the SMALLER — v3's phase-in kept the floor-aligned midpoint, misplacing $50-multiple incomes into the next row; v4 aligns the phase-in to the table's true upper-bound rows (mid = ceil(x/50)*50 - 24.50), matching the post-peak segments; v5 recalibrates the 0-kid GENTLE phase-out anchor from an unverified construction ($216 @ mid $9,475.50, rate -43/4680, "unverified-but-consistent") to a printed-table-confirmed anchor ($183 @ mid $12,975.50 = bracket 12,951-13,000, rate -9/1000 = -0.9%/$1) — the prior anchor produced $184 for that row, one dollar off the 2025 FTB 3514 booklet's printed credit
     jurisdiction: "us.ca",
     title: "California Earned Income Tax Credit (R&TC § 17052, FTB 3514) — 2025, full range",
     citation: {
@@ -197,13 +197,17 @@ export const caRules: Rule[] = [
       section: "R&TC § 17052",
       url: "https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.pdf",
       excerpt:
-        "2025 CalEITC: income ceiling $32,900 (all family sizes, both earned income AND federal AGI must be under $32,901 or the credit is $0); maximum credit $302 (0 kids, peak bracket $4,651-$4,700) / $2,016 (1 kid, peak $6,951-$7,000) / $3,339 (2 kids, peak $9,801-$9,850) / $3,756 (3+ kids, same $9,801-$9,850 peak). DECODED STRUCTURE (July 2026 web-verification: the printed table was parsed in full, all 658 $50-wide brackets from $1-$32,900, `pdftotext -layout`, and formula-fit): no plateau — every column peaks at a single $50 bracket and immediately begins declining. The decline is NOT one straight line: it has a KINK where the phase-out slope changes from steep to gentle, at 0 kids $5,450/$5,451, 1 kid $11,800/$11,801, 2 kids $17,800/$17,801, 3+ kids $18,000/$18,001 — confirmed by row-to-row deltas dropping from roughly $17-19 per $50 bracket (steep) to roughly $2-3 per bracket (gentle) exactly at each boundary. THIS RULE NOW COMPUTES ALL THREE SEGMENTS: (1) PHASE-IN (unchanged from v1): credit = round(bracket-midpoint × combined rate), combined rate = federal § 32(b) phase-in rate × the 85% § 17052(c) adjustment factor (7.65/34/40/45% × 85% = 6.5025/28.90/34.00/38.25%), using the floor-aligned $50-bracket midpoint — verified against the printed row 2,201-2,250 → 851 for 3+ children (2,225.50 × 45% × 85% = 851.25 → 851). (2) STEEP PHASE-OUT (peak to kink): the printed table declines at (within rounding) the SAME rate magnitude as the phase-in line (a symmetric V through the peak) — credit = round(anchor value − combined phase-in rate × (bracket-midpoint − anchor-bracket-midpoint)), using the TRUE (upper-bound-aligned) $50-bracket midpoint. For 1/2/3+ kids the line is anchored to an actual printed table row (1 kid: bracket 9,451-9,500, $1,306; 2 kids and 3+ kids: bracket 9,951-10,000, $3,288/$3,699) rather than the theoretical peak itself — the peak POINT sits fractionally off this line for 1 kid specifically (a peak-anchored construction understates by roughly $13 there), so a real table row is used everywhere data exists. Verified EXACT against every printed row in this zone for 1/2/3+ kids (e.g. 2 kids: $10,000 → 3,288 exact, $16,500 → 1,078 exact, $17,500 → 738 exact; 3+ kids: $16,500 → 1,213 exact; 1 kid: $9,500 → 1,306 exact, $11,000 → 873 exact). (3) GENTLE PHASE-OUT (kink to ceiling): a SEPARATE, shallower line anchored to a printed table row just past the kink, at the independently-fit rate (0 kids = −0.9%/$1 i.e. −9/1000 per $1 of midpoint, CONFIRMED against the printed 2025 FTB 3514 booklet row $12,951-$13,000 → $183 exact, web-verified July 2026 — corrects a prior unverified anchor that produced $184 for that row; 1 kid ≈ −3.01%/$1 i.e. −541/18000, 2 kids ≈ −4.19%/$1 i.e. −25/596, 3+ kids ≈ −4.26%/$1 i.e. −613/14400) — verified within ≤$1 across every printed row from the kink to $32,900 (e.g. 0 kids: $17,000 → 147 exact; 2 kids: $18,000 → 626 exact, $25,000 → 333 vs. computed 332, $30,000 → 123 vs. computed 123). Max residual across all 658 rows, all four columns: ≤ $2 pre-rounding (a single pre-existing phase-in-region anomaly just below the 2/3+-kid peak, at $9,500, runs to $17-19 — inherited from the v1 floor-aligned phase-in formula, unchanged here per the phase-in region's own design, and confined to that one boundary row). The 0-kid STEEP segment (peak to $5,450) has no printed table data in the range this session could source ($9,500+) to verify against; it uses the peak-anchor construction (disclosed as unverified-but-consistent with the confirmed symmetric-V structure elsewhere) — only the GENTLE segment's 0-kid anchor is table-confirmed as of v5. Earned income here = wages (line 1z, INCLUDING any taxable dependent-care benefits on line 1e) + max(0, SE profit − ½SE tax) − Schedule C loss, same composition as the federal § 32(c)(2) input. CAUTION: when a spouse's own Schedule C loss makes that spouse's Form 2441 earned income zero or negative, the § 129 exclusion for W-2 box 10 dependent care benefits is $0 — the FULL box-10 amount becomes taxable wages (line 1e), raising both federal AGI and this credit's earned income (federal earned 10,500 + 6,000 fully-taxable DCB → CA earned 16,500 → credit 1,078 from the printed row). Kids = qualifyingChildren + eitcAdditionalQualifyingChildren.",
+        "2025 CalEITC: income ceiling $32,900 (all family sizes, both earned income AND federal AGI must be under $32,901 or the credit is $0); Step 6 worksheet (booklet p. 7): line 2 looks the credit up at California earned income; line 4 'Are the amounts on line 1 and line 3 [federal AGI] the same?' — if not, line 5: unless AGI is below $4,661 (no children) / $6,998 (1) / $9,823 (2 or more), 'Look up the amount on line 3 in the EITC Table ... Compare the amounts on line 5 and line 2, enter the smaller amount on line 6'; maximum credit $302 (0 kids, peak bracket $4,651-$4,700) / $2,016 (1 kid, peak $6,951-$7,000) / $3,339 (2 kids, peak $9,801-$9,850) / $3,756 (3+ kids, same $9,801-$9,850 peak). DECODED STRUCTURE (July 2026 web-verification: the printed table was parsed in full, all 658 $50-wide brackets from $1-$32,900, `pdftotext -layout`, and formula-fit): no plateau — every column peaks at a single $50 bracket and immediately begins declining. The decline is NOT one straight line: it has a KINK where the phase-out slope changes from steep to gentle, at 0 kids $5,450/$5,451, 1 kid $11,800/$11,801, 2 kids $17,800/$17,801, 3+ kids $18,000/$18,001 — confirmed by row-to-row deltas dropping from roughly $17-19 per $50 bracket (steep) to roughly $2-3 per bracket (gentle) exactly at each boundary. THIS RULE NOW COMPUTES ALL THREE SEGMENTS: (1) PHASE-IN (unchanged from v1): credit = round(bracket-midpoint × combined rate), combined rate = federal § 32(b) phase-in rate × the 85% § 17052(c) adjustment factor (7.65/34/40/45% × 85% = 6.5025/28.90/34.00/38.25%), using the floor-aligned $50-bracket midpoint — verified against the printed row 2,201-2,250 → 851 for 3+ children (2,225.50 × 45% × 85% = 851.25 → 851). (2) STEEP PHASE-OUT (peak to kink): the printed table declines at (within rounding) the SAME rate magnitude as the phase-in line (a symmetric V through the peak) — credit = round(anchor value − combined phase-in rate × (bracket-midpoint − anchor-bracket-midpoint)), using the TRUE (upper-bound-aligned) $50-bracket midpoint. For 1/2/3+ kids the line is anchored to an actual printed table row (1 kid: bracket 9,451-9,500, $1,306; 2 kids and 3+ kids: bracket 9,951-10,000, $3,288/$3,699) rather than the theoretical peak itself — the peak POINT sits fractionally off this line for 1 kid specifically (a peak-anchored construction understates by roughly $13 there), so a real table row is used everywhere data exists. Verified EXACT against every printed row in this zone for 1/2/3+ kids (e.g. 2 kids: $10,000 → 3,288 exact, $16,500 → 1,078 exact, $17,500 → 738 exact; 3+ kids: $16,500 → 1,213 exact; 1 kid: $9,500 → 1,306 exact, $11,000 → 873 exact). (3) GENTLE PHASE-OUT (kink to ceiling): a SEPARATE, shallower line anchored to a printed table row just past the kink, at the independently-fit rate (0 kids = −0.9%/$1 i.e. −9/1000 per $1 of midpoint, CONFIRMED against the printed 2025 FTB 3514 booklet row $12,951-$13,000 → $183 exact, web-verified July 2026 — corrects a prior unverified anchor that produced $184 for that row; 1 kid ≈ −3.01%/$1 i.e. −541/18000, 2 kids ≈ −4.19%/$1 i.e. −25/596, 3+ kids ≈ −4.26%/$1 i.e. −613/14400) — verified within ≤$1 across every printed row from the kink to $32,900 (e.g. 0 kids: $17,000 → 147 exact; 2 kids: $18,000 → 626 exact, $25,000 → 333 vs. computed 332, $30,000 → 123 vs. computed 123). Max residual across all 658 rows, all four columns: ≤ $2 pre-rounding (a single pre-existing phase-in-region anomaly just below the 2/3+-kid peak, at $9,500, runs to $17-19 — inherited from the v1 floor-aligned phase-in formula, unchanged here per the phase-in region's own design, and confined to that one boundary row). The 0-kid STEEP segment (peak to $5,450) has no printed table data in the range this session could source ($9,500+) to verify against; it uses the peak-anchor construction (disclosed as unverified-but-consistent with the confirmed symmetric-V structure elsewhere) — only the GENTLE segment's 0-kid anchor is table-confirmed as of v5. Earned income here = wages (line 1z, INCLUDING any taxable dependent-care benefits on line 1e) + max(0, SE profit − ½SE tax) − Schedule C loss, same composition as the federal § 32(c)(2) input. CAUTION: when a spouse's own Schedule C loss makes that spouse's Form 2441 earned income zero or negative, the § 129 exclusion for W-2 box 10 dependent care benefits is $0 — the FULL box-10 amount becomes taxable wages (line 1e), raising both federal AGI and this credit's earned income (federal earned 10,500 + 6,000 fully-taxable DCB → CA earned 16,500 → credit 1,078 from the printed row). Kids = qualifyingChildren + eitcAdditionalQualifyingChildren.",
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: {
       ceiling: { value: "3290000", type: "money" }, // $32,900
+      // Step 6 worksheet line 5 floors (2025 booklet, verbatim amounts): AGI below these skips the AGI lookup
+      agiLookupFloor0kids: { value: "466100", type: "money" }, // $4,661
+      agiLookupFloor1kid: { value: "699800", type: "money" }, // $6,998
+      agiLookupFloor2kids: { value: "982300", type: "money" }, // $9,823 (2 or more)
       max0kids: { value: "30200", type: "money" }, // $302 (also the steep segment's peak anchor)
       max1kid: { value: "201600", type: "money" }, // $2,016
       max2kids: { value: "333900", type: "money" }, // $3,339
@@ -245,7 +249,18 @@ export const caRules: Rule[] = [
       gentleAnchorValue3kids: { value: "61400", type: "money" }, // $614 printed
     },
     formula: (() => {
-      const earned: Expr = {
+      const kids: Expr = {
+        kind: "add",
+        args: [fact("qualifyingChildren"), fact("eitcAdditionalQualifyingChildren")],
+      };
+      const kidsEq = (n: string): Expr => ({
+        kind: "cmp",
+        op: "eq",
+        left: kids,
+        right: { kind: "int", value: n },
+      });
+      const param = (name: string): Expr => ({ kind: "param", name });
+      const earnedIncome: Expr = {
         kind: "max0",
         arg: {
           kind: "sub",
@@ -266,6 +281,10 @@ export const caRules: Rule[] = [
           right: fact("scheduleCNetLoss"),
         },
       };
+      // The printed EITC Table as a function of the looked-up income: the Step 6 worksheet
+      // reads it once at line 1 (earned income) and, when federal AGI differs and is at or
+      // above the line-5 floor, again at line 3 (AGI), keeping the smaller.
+      const creditAt = (earned: Expr): Expr => {
       // post-peak midpoint: TRUE $50-bracket midpoint, aligned to the printed
       // table's own "at least X - but not over Y" rows (Y a multiple of $50,
       // X = Y-49) — ceil(earned/$50)*$50 - $24.50. Needed because the peak and
@@ -279,16 +298,6 @@ export const caRules: Rule[] = [
         },
         right: money("2450"), // $24.50
       };
-      const kids: Expr = {
-        kind: "add",
-        args: [fact("qualifyingChildren"), fact("eitcAdditionalQualifyingChildren")],
-      };
-      const kidsEq = (n: string): Expr => ({
-        kind: "cmp",
-        op: "eq",
-        left: kids,
-        right: { kind: "int", value: n },
-      });
       // phase-in: combined rate = federal phase-in × 85% adjustment factor
       const tentative = (num: string, den: string): Expr => ({
         kind: "roundToDollar",
@@ -324,7 +333,6 @@ export const caRules: Rule[] = [
         },
         mode: "half-up",
       });
-      const param = (name: string): Expr => ({ kind: "param", name });
       const segment = (
         peakUpperParam: string,
         kinkUpperParam: string,
@@ -370,6 +378,28 @@ export const caRules: Rule[] = [
         linear(param("steepAnchorMid3kids"), param("steepAnchorValue3kids"), "-153", "400"),
         linear(param("gentleAnchorMid3kids"), param("gentleAnchorValue3kids"), "-613", "14400"),
       );
+        return {
+          kind: "if",
+          cond: kidsEq("0"),
+          then: col0,
+          else: {
+            kind: "if",
+            cond: kidsEq("1"),
+            then: col1,
+            else: { kind: "if", cond: kidsEq("2"), then: col2, else: col3 },
+          },
+        } as Expr;
+      };
+      const agi = ruleRef("us.federal.agi");
+      const atEarned = creditAt(earnedIncome);
+      // worksheet line 5 floors ("is the amount on line 3 less than ..."): below them the AGI
+      // lookup is skipped and line 2 (the earned-income credit) is the credit
+      const agiLookupFloor: Expr = {
+        kind: "if",
+        cond: kidsEq("0"),
+        then: param("agiLookupFloor0kids"),
+        else: { kind: "if", cond: kidsEq("1"), then: param("agiLookupFloor1kid"), else: param("agiLookupFloor2kids") },
+      };
       return {
         kind: "if",
         // BOTH earned income AND federal AGI must be under the ceiling
@@ -378,35 +408,23 @@ export const caRules: Rule[] = [
         cond: {
           kind: "or",
           args: [
-            {
-              kind: "cmp",
-              op: "ge",
-              left: earned,
-              right: { kind: "param", name: "ceiling" },
-            },
-            {
-              kind: "cmp",
-              op: "ge",
-              left: ruleRef("us.federal.agi"),
-              right: { kind: "param", name: "ceiling" },
-            },
+            { kind: "cmp", op: "ge", left: earnedIncome, right: param("ceiling") },
+            { kind: "cmp", op: "ge", left: agi, right: param("ceiling") },
           ],
         },
         then: money("0"),
         else: {
           kind: "if",
-          cond: kidsEq("0"),
-          then: col0,
+          // worksheet line 4: earned income and federal AGI the same → line 2 is the credit
+          cond: { kind: "cmp", op: "eq", left: agi, right: earnedIncome },
+          then: atEarned,
           else: {
             kind: "if",
-            cond: kidsEq("1"),
-            then: col1,
-            else: {
-              kind: "if",
-              cond: kidsEq("2"),
-              then: col2,
-              else: col3,
-            },
+            cond: { kind: "cmp", op: "lt", left: agi, right: agiLookupFloor },
+            then: atEarned,
+            // line 5: "Look up the amount on line 3 in the EITC Table ... Compare the amounts
+            // on line 5 and line 2, enter the smaller amount on line 6"
+            else: { kind: "min", args: [atEarned, creditAt(agi)] },
           },
         },
       } as Expr;
@@ -414,7 +432,7 @@ export const caRules: Rule[] = [
   },
   {
     id: "us.ca.yctc",
-    version: 1,
+    version: 2, // v1 gated on the child and earned income only and refused the phase-out band; v2 adds the Step 8 gates (CalEITC allowed, federal AGI ≤ $32,900, wages ≤ $35,640) and computes lines 25-28 verbatim from the 2025 form
     jurisdiction: "us.ca",
     title: "California Young Child Tax Credit (R&TC § 17052.1, FTB 3514) — 2025",
     citation: {
@@ -429,8 +447,10 @@ export const caRules: Rule[] = [
     output: { type: "money" },
     parameters: {
       maxCredit: { value: "118900", type: "money" }, // $1,189
-      phaseOutStart: { value: "2742500", type: "money" }, // $27,425
-      phaseOutComplete: { value: "3290100", type: "money" }, // $32,901
+      phaseOutStart: { value: "2742500", type: "money" }, // $27,425 (line 25 threshold)
+      reductionPer100: { value: "2171", type: "money" }, // $21.71 per $100 of excess (line 27)
+      agiCeiling: { value: "3290000", type: "money" }, // line 23b: "federal AGI exceeds $32,900" → no credit
+      wageCeiling: { value: "3564000", type: "money" }, // line 23a: wages over $35,640 → no credit
     },
     formula: (() => {
       const earned: Expr = {
@@ -454,24 +474,55 @@ export const caRules: Rule[] = [
           right: fact("scheduleCNetLoss"),
         },
       };
-      return {
+      const param = (name: string): Expr => ({ kind: "param", name });
+      const agi = ruleRef("us.federal.agi");
+      // FTB 3514 lines 25-28 (2025): line 25 = earned − $27,425; line 26 = line 25 ÷ 100 "as a
+      // decimal out to two decimal places, do not round"; line 27 = line 26 × $21.71, again two
+      // places not rounded; line 28 = $1,189 − line 27, "If your credit amount is between $0 and
+      // $1, enter $1. If your credit amount is over $1, round to the nearest whole dollar."
+      const excess: Expr = { kind: "sub", left: earned, right: param("phaseOutStart") };
+      const line26Hundredths: Expr = { kind: "stepUnits", value: excess, unitCents: "100", mode: "floor" }; // line 26 × 100
+      const line27Cents: Expr = {
+        kind: "mulInt",
+        base: money("1"),
+        count: {
+          kind: "stepUnits",
+          value: { kind: "mulInt", base: param("reductionPer100"), count: line26Hundredths }, // line 26 × 100 × 2,171 = line 27 × 100 (cents)
+          unitCents: "100",
+          mode: "floor",
+        },
+      };
+      const line28: Expr = { kind: "sub", left: param("maxCredit"), right: line27Cents };
+      const rounded: Expr = {
         kind: "if",
-        cond: { kind: "not", arg: fact("hasChildUnderSix") },
+        cond: { kind: "cmp", op: "le", left: line28, right: money("0") },
         then: money("0"),
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "ge", left: earned, right: { kind: "param", name: "phaseOutComplete" } },
-          then: money("0"),
-          else: {
-            kind: "if",
-            cond: { kind: "cmp", op: "le", left: earned, right: { kind: "param", name: "phaseOutStart" } },
-            then: { kind: "param", name: "maxCredit" },
-            else: {
-              kind: "unsupported",
-              reason:
-                "YCTC phase-out band ($27,425–$32,901 earned income): the per-increment reduction is table-published, not formula-published — read the 2025 FTB 3514 worksheet and disclose",
-            },
-          },
+          cond: { kind: "cmp", op: "le", left: line28, right: money("100") },
+          then: money("100"),
+          else: { kind: "roundToDollar", value: line28, mode: "half-up" },
+        },
+      };
+      return {
+        kind: "if",
+        cond: {
+          kind: "or",
+          args: [
+            { kind: "not", arg: fact("hasChildUnderSix") },
+            // Step 8: "You have been allowed the California EITC on this form" (line 20 > 0) when
+            // earned income is greater than zero; line 23b: federal AGI over $32,900 → no credit
+            { kind: "and", args: [{ kind: "cmp", op: "gt", left: earned, right: money("0") }, { kind: "cmp", op: "le", left: ruleRef("us.ca.caleitc"), right: money("0") }] },
+            { kind: "cmp", op: "gt", left: agi, right: param("agiCeiling") },
+            { kind: "cmp", op: "gt", left: fact("wages"), right: param("wageCeiling") }, // line 23a
+          ],
+        },
+        then: money("0"),
+        else: {
+          kind: "if",
+          cond: { kind: "cmp", op: "le", left: earned, right: param("phaseOutStart") },
+          then: param("maxCredit"),
+          else: rounded,
         },
       } as Expr;
     })(),

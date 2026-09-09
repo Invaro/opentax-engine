@@ -814,7 +814,7 @@ export const facts: FactSpec[] = [
     id: "mfsLivedApartAllYear",
     type: "bool",
     description:
-      "MFS filer lived apart from the spouse AT ALL TIMES during the year — § 469(i)(5) (halves the special allowance to $12,500/$50,000; living together at any time = NO allowance) AND § 219(g)(4) (an MFS filer who lived apart all year is NOT treated as married for the IRA-deduction phaseout: the single ranges apply and no spousal-coverage attribution occurs).",
+      "MFS filer lived apart from the spouse AT ALL TIMES during the year — § 469(i)(5) (halves the special allowance to $12,500/$50,000; living together at any time = NO allowance) AND § 219(g)(4) (an MFS filer who lived apart all year is NOT treated as married for the IRA-deduction phaseout: the single ranges apply and no spousal-coverage attribution occurs) AND § 86(c)(1)(C)(ii) (the $0 social-security base amount applies only to an MFS filer who did NOT live apart all year; one who did uses the $25,000/$34,000 unmarried amounts).",
     default: {
       value: false,
       rationale:
@@ -1088,6 +1088,13 @@ export const facts: FactSpec[] = [
       rationale:
         "Approximated by box 1 wages absent contrary input (Schedule SE line 8a wants box 3)",
     },
+  },
+  {
+    id: "socialSecurityWagesProvided",
+    type: "bool",
+    description:
+      "socialSecurityWages is an EXPLICIT figure for the self-employment earner — set it (with socialSecurityWages, even $0) when that person's own W-2 box 3 is known, so Schedule SE line 8a uses it instead of falling back to box-1 wages. The documents compiler sets it from W-2 recipients; a joint return where the SE earner has no W-2 needs it with socialSecurityWages 0 (us.federal.se_tax).",
+    default: { value: false, rationale: "Not provided — Schedule SE line 8a falls back to box-1 wages when box 3 is absent" },
   },
   {
     id: "stateTaxableIncome",
@@ -3910,6 +3917,489 @@ export const facts: FactSpec[] = [
       "Form 1040ME line 30: use the 0.04% of Maine AGI estimate for unknown untaxed purchases (us.me.use_tax).",
     default: { value: false, rationale: "Assumed exact purchases are reported" },
   },
+  // ---- Hawaii (Form N-11) ----
+  {
+    id: "hiUseRateSchedule",
+    type: "bool",
+    description:
+      "Compute Form N-11 line 27 from the Tax Rate Schedules at the exact income instead of the Tax Table (taxable income under $100,000 uses the table's $50-row midpoint by default; $100,000 or more always uses the schedules) (us.hi.income_tax, us.hi.capital_gains_tax, us.hi.other_state_credit).",
+    default: { value: false, rationale: "The line 27 instruction directs filers under $100,000 to the Tax Table" },
+  },
+  {
+    id: "hiNetLongTermCapitalGain",
+    type: "money",
+    description:
+      "Tax on Capital Gains Worksheet line 4: Hawaii net long-term capital gain (federal Schedule D line 15 plus Hawaii long-term adjustments) (us.hi.capital_gains_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no long-term capital gain absent contrary input" },
+  },
+  {
+    id: "hiNetCapitalGain",
+    type: "money",
+    description:
+      "Tax on Capital Gains Worksheet line 7: Hawaii net capital gain (federal Schedule D line 16 plus Hawaii adjustments) (us.hi.capital_gains_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed no net capital gain absent contrary input" },
+  },
+  {
+    id: "hiInvestmentInterestN158",
+    type: "money",
+    min: "0",
+    description:
+      "Tax on Capital Gains Worksheet line 9: Form N-158 line 4e — net capital gain elected as investment income (us.hi.capital_gains_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed no Form N-158 election absent contrary input" },
+  },
+  {
+    id: "hiCapitalGainsStatutoryThreshold",
+    type: "bool",
+    description:
+      "Tax on Capital Gains Worksheet line 12: use HRS § 235-51(f)(1)(B)'s 'taxable income taxed at a rate below 7.25 per cent' under the 2025 brackets ($48,000 single/MFS, $72,000 HOH, $96,000 MFJ/QSS) instead of the printed $24,000 / $36,000 / $48,000 (us.hi.capital_gains_tax).",
+    default: { value: false, rationale: "The printed 2025 worksheet amounts are the default; the statutory amounts are an election to disclose" },
+  },
+  {
+    id: "hiEarnedIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Earned income (wages, salaries, tips, professional fees, taxable scholarships, net business and farm income less the SE tax deduction) — the dependent-filer standard deduction (us.hi.standard_deduction) and Schedule X line 23 (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiAgi",
+    type: "money",
+    description:
+      "Hawaii adjusted gross income, Form N-11 line 20 — the medical, casualty, and miscellaneous floors and the overall limitation (us.hi.itemized_deductions), the renters credit AGI test (us.hi.renters_credit), and the child care percentage (us.hi.child_dependent_care_credit). May be negative. In dollars.",
+  },
+  {
+    id: "hiFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, Form N-11 line 7 — the state income/sales tax deduction gate (us.hi.itemized_deductions) and the food/excise credit table (us.hi.food_excise_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiMedicalExpenses",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-1 line 1: medical and dental expenses before the 7.5% floor (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiStateLocalIncomeTaxes",
+    type: "money",
+    min: "0",
+    description:
+      "Worksheet A-2 line 5: state and local income taxes (or the elected general sales taxes) — allowed only when federal AGI is under $100,000 single/MFS, $150,000 HOH, $200,000 MFJ/QSS; exclude amounts claimed under the other-state credit (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiRealEstateTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 6: real estate taxes (no foreign real property taxes) (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiPersonalPropertyTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 7: personal property taxes paid to other states (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiOtherTaxes",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-2 line 8: other deductible taxes (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiHomeMortgageInterest",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-3 lines 10-12: home mortgage interest and points (pre-TCJA limits) (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiInvestmentInterest",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-3 line 13: investment interest from Form N-158 — protected from the overall limitation (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiCharitableContributions",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-4 line 18: gifts to charity (cash, other, carryover) within the AGI limits (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiCasualtyLosses",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-5 line 19: casualty and theft losses after the $100-per-casualty reduction, before the 10% floor (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiJobAndMiscExpenses",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-6 line 26: unreimbursed employee business expenses, tax preparation fees, and other expenses subject to the 2% floor (us.hi.itemized_deductions; ignored for TY2026). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiOtherMiscDeductions",
+    type: "money",
+    min: "0",
+    description: "Worksheet A-6 line 30: other deductions not subject to the 2% limit (gambling losses to the extent of winnings, impairment-related work expenses) (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiGamblingLossesInMisc",
+    type: "money",
+    min: "0",
+    description: "Total Itemized Deductions Worksheet line 2d: gambling and casualty or theft losses included in Worksheet A-6 line 30 — protected from the overall limitation (us.hi.itemized_deductions). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Form N-11 line 6e: total exemptions (yourself, spouse, dependents, plus one more for each taxpayer or spouse 65 or older) — $1,144 each (us.hi.personal_exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "hiDisabledPersons",
+    type: "int",
+    min: "0",
+    max: "2",
+    description:
+      "Form N-11 line 25 ovals: taxpayers (you and/or your spouse) claiming the $7,000 blind, deaf, or totally disabled exemption in lieu of all regular exemptions (Form N-172 certified) (us.hi.personal_exemption).",
+    default: { value: "0", rationale: "Assumed no disability exemption absent contrary input" },
+  },
+  {
+    id: "hiNonDisabledSpouseAge65",
+    type: "bool",
+    description:
+      "With one disabled spouse on a joint return, the non-disabled spouse is 65 or older — $9,288 instead of $8,144 (us.hi.personal_exemption).",
+    default: { value: false, rationale: "Assumed the non-disabled spouse is under 65" },
+  },
+  {
+    id: "hiReservePay",
+    type: "money",
+    min: "0",
+    description: "Form N-11 line 15: the taxpayer's military reserve or Hawaii National Guard duty pay (W-2 Box 16 from the reserve component) — the first $8,636 is excluded (us.hi.reserve_pay_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no reserve pay absent contrary input" },
+  },
+  {
+    id: "hiSpouseReservePay",
+    type: "money",
+    min: "0",
+    description: "Form N-11 line 15: the spouse's reserve or National Guard duty pay on a joint return (us.hi.reserve_pay_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed no spouse reserve pay absent contrary input" },
+  },
+  {
+    id: "hiSpouseFederalAgi",
+    type: "money",
+    description: "Form N-311 line 5: the spouse's federal AGI, added for married filing separately (us.hi.food_excise_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiFoodExciseQualifiedExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Form N-311 line 8: qualified exemptions — yourself, spouse, and dependents present in Hawaii more than nine months and not claimable by another (not the extra age-65 exemption), plus minor children supported by public agencies (us.hi.food_excise_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input — the nine-month presence test is an attestation" },
+  },
+  {
+    id: "hiSpouseAgi",
+    type: "money",
+    description: "Schedule X Part I: the spouse's Hawaii adjusted gross income, added for married filing separately (us.hi.renters_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiRentPaid",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule X line 7: rent paid in 2025 for the Hawaii residence (not exempt from real property tax) net of utilities, parking, ground rent, and subsidies — must exceed $1,000 (us.hi.renters_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no rent paid absent contrary input" },
+  },
+  {
+    id: "hiRentersExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Schedule X line 11: qualified exemptions (yourself, spouse, dependents present more than nine months and not claimable by another) plus one more for you and one for your spouse if 65 or older — $50 each (us.hi.renters_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input — the nine-month presence test is an attestation" },
+  },
+  {
+    id: "hiChildCareExpenses",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 20/22: qualified child and dependent care expenses paid in 2025 (before the $10,000 / $20,000 cap) (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiChildCareQualifyingPersons",
+    type: "int",
+    min: "0",
+    description: "Schedule X line 17: qualifying persons (1 → $10,000 cap; 2 or more → $20,000) (us.hi.child_dependent_care_credit).",
+    default: { value: "1", rationale: "Assumed one qualifying person when expenses are given" },
+  },
+  {
+    id: "hiDependentCareBenefits",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 18: deductible and excluded dependent care benefits (lines 14 + 15) that reduce the expense cap (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed no dependent care benefits absent contrary input" },
+  },
+  {
+    id: "hiSpouseEarnedIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule X line 24: the spouse's earned income on a joint return (or the $200 / $400 monthly deemed amount for a student or disabled spouse) (us.hi.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiMfsConsideredUnmarried",
+    type: "bool",
+    description:
+      "Schedule X Part II checkbox: a married-filing-separately filer who lived apart from the spouse the last six months, kept the qualifying person's home, and paid over half its cost (us.hi.child_dependent_care_credit).",
+    default: { value: false, rationale: "MFS filers are married for the credit unless attested" },
+  },
+  {
+    id: "hiFederalEic",
+    type: "money",
+    min: "0",
+    description: "Form N-356 line 2: the federal earned income credit claimed on the federal return (Form 1040 line 27a) — 40% (us.hi.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiNetCapitalGainLine27a",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 2: the net capital gain beside Form N-11 line 27a (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiOutOfStateIncome",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 3: out-of-state income including capital gains, excluding Hawaii-exempt income (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiOutOfStateLtcg",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 4: long-term capital gains from sources outside Hawaii (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiOtherStateTaxEligible",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 9: tax paid to other states plus foreign tax not credited federally (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiTaxLine13",
+    type: "money",
+    min: "0",
+    description: "Other State and Foreign Tax Credit Worksheet line 13: the Form N-11 line 27 tax from the table, schedule, or capital gains worksheet (us.hi.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "hiAdjustedTaxLiability",
+    type: "money",
+    description: "Other State and Foreign Tax Credit Worksheet line 19: Form N-11 line 34 adjusted tax liability (us.hi.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  // ---- Rhode Island (Form RI-1040) ----
+  {
+    id: "riUseRateSchedule",
+    type: "bool",
+    description:
+      "Compute Form RI-1040 line 8 with the Tax Computation Worksheet arithmetic at the exact income instead of the Tax Table (taxable income under $100,000 uses the table's $50-row midpoint by default; $100,000 or more always uses the worksheet) (us.ri.income_tax).",
+    default: { value: false, rationale: "The line 8 instruction directs filers under $100,000 to the Tax Table" },
+  },
+  {
+    id: "riModifiedAgi",
+    type: "money",
+    description:
+      "Modified federal adjusted gross income, Form RI-1040 line 3 (federal AGI plus RI Schedule M net modifications) — the standard deduction and exemption phase-outs (us.ri.standard_deduction, us.ri.exemption) and the other-state credit ratio (us.ri.other_state_credit). May be negative. In dollars.",
+  },
+  {
+    id: "riExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "RI Schedule E line 5: total exemptions — yourself (unless claimable by another), your spouse on a joint return, and dependents — $5,100 each (us.ri.exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "riFederalAgi",
+    type: "money",
+    description:
+      "Federal adjusted gross income, Form RI-1040 line 1 — the Social Security and pension modification income tests and the use tax lookup table (us.ri.social_security_modification, us.ri.pension_modification, us.ri.use_tax). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riTaxpayerFullRetirementAge",
+    type: "bool",
+    description:
+      "The taxpayer has reached Social Security full retirement age — born on or before March 1, 1959 for 2025 (Social Security Worksheet line 5; Schedule M line 1t question 1) (us.ri.social_security_modification, us.ri.pension_modification).",
+    default: { value: false, rationale: "Assumed under full retirement age unless stated" },
+  },
+  {
+    id: "riSpouseFullRetirementAge",
+    type: "bool",
+    description:
+      "The spouse has reached Social Security full retirement age — born on or before March 1, 1959 for 2025 (joint returns) (us.ri.social_security_modification, us.ri.pension_modification).",
+    default: { value: false, rationale: "Assumed under full retirement age unless stated" },
+  },
+  {
+    id: "riSocialSecurityBenefits",
+    type: "money",
+    min: "0",
+    description: "Social Security Worksheet line 8: total Social Security benefits, Form 1040 line 6a (us.ri.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riSocialSecurityBenefitsFraPerson",
+    type: "money",
+    min: "0",
+    description:
+      "Social Security Worksheet line 9: the part of line 8 attributed to the spouse who has reached full retirement age when only one spouse has (us.ri.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riTaxableSocialSecurity",
+    type: "money",
+    min: "0",
+    description: "Social Security Worksheet line 11: taxable Social Security, Form 1040 line 6b (us.ri.social_security_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riTaxpayerPensionIncome",
+    type: "money",
+    min: "0",
+    description:
+      "Schedule M line 1t table line 2 column (a): the taxpayer's federally taxable pension and annuity income (Form 1040 line 5b), not IRA distributions or military service pensions (us.ri.pension_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riSpousePensionIncome",
+    type: "money",
+    min: "0",
+    description: "Schedule M line 1t table line 2 column (b): the spouse's taxable pension and annuity income on a joint return (us.ri.pension_modification). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riFederalChildCareCredit",
+    type: "money",
+    min: "0",
+    description: "RI Schedule I line 20: the federal child and dependent care credit, Schedule 3 line 2 — 25% (us.ri.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riIncomeTax",
+    type: "money",
+    min: "0",
+    description: "RI Schedule I line 19: Form RI-1040 line 8 income tax — the cap on the child care credit (us.ri.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riIncomeTaxAfterFederalCredit",
+    type: "money",
+    min: "0",
+    description: "RI Schedule II line 23: line 8 income tax less the Schedule I line 22 credit (us.ri.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riOtherStateIncome",
+    type: "money",
+    min: "0",
+    description: "RI Schedule II line 24: income derived from the other state (Form RI-1040MU line 29 for several states) (us.ri.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riOtherStateTaxPaid",
+    type: "money",
+    min: "0",
+    description: "RI Schedule II line 28: income tax due and paid to the other state (not withholding; $0 if fully refunded) (us.ri.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riFederalEic",
+    type: "money",
+    min: "0",
+    description: "RI Schedule EIC line 39: the federal earned income credit, Form 1040 line 27a — 16% (us.ri.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riHouseholdIncome",
+    type: "money",
+    description: "Form RI-1040H line 32: total 2025 household income of every household member, taxable and nontaxable, with losses added back (us.ri.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riHouseholdMembers",
+    type: "int",
+    min: "1",
+    description: "Form RI-1040H line 1f: persons in the household — the '1 person' or '2 or more' percentage column (us.ri.property_tax_relief_credit).",
+    default: { value: "1", rationale: "Assumed a one-person household absent contrary input" },
+  },
+  {
+    id: "riAge65OrDisabled",
+    type: "bool",
+    description:
+      "Form RI-1040H Part 1 question D: you or your spouse were 65 or older, or receiving Social Security disability benefits, as of December 31, 2025 — plus domicile for the whole year and current taxes/rent (us.ri.property_tax_relief_credit).",
+    default: { value: false, rationale: "Eligibility is an attestation; absent it the credit is $0" },
+  },
+  {
+    id: "riPropertyTaxPaid",
+    type: "money",
+    min: "0",
+    description: "Form RI-1040H line 2: property taxes paid or payable for 2025 on the homestead (the owner's share) (us.ri.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riRentPaid",
+    type: "money",
+    min: "0",
+    description: "Form RI-1040H line 7: rent paid in 2025 for occupancy only (net of utilities and furnishings), also rented land under a taxed home — 20% counts as property tax (us.ri.property_tax_relief_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riUseTaxLookupTable",
+    type: "bool",
+    description: "RI Schedule U Option #2: use the safe-harbor lookup table on federal AGI instead of actual purchases (us.ri.use_tax).",
+    default: { value: false, rationale: "Actual purchases (Option #1) unless the lookup table is elected" },
+  },
+  {
+    id: "riUseTaxPurchases",
+    type: "money",
+    min: "0",
+    description: "RI Schedule U line 1: total price of purchases subject to use tax — 7% (us.ri.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riSalesTaxPaidOtherStates",
+    type: "money",
+    min: "0",
+    description: "RI Schedule U line 3: sales taxes paid in other states on the line 1 purchases (us.ri.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "riLargePurchasesNetUseTax",
+    type: "money",
+    min: "0",
+    description: "RI Schedule U line 7e: net use tax due on single purchases of $1,000 or more (7% less sales tax paid) added to the lookup amount (us.ri.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
   // ---- West Virginia (Form IT-140) ----
   {
     id: "wvUseRateSchedule",
@@ -5210,5 +5700,674 @@ export const facts: FactSpec[] = [
     description:
       "Federal child and dependent care credit ALLOWED (Form 2441 / Schedule 3 line 2) — Kansas allows 50%, nonrefundable, residents only (us.ks.child_care_credit). In dollars.",
     default: { value: "0", rationale: "Assumed no federal child care credit absent contrary input" },
+  },
+  // ---- Montana (Form 2) ----
+  {
+    id: "mtNetLongTermCapitalGains",
+    type: "money",
+    description:
+      "Form 2 page 2 line 2: net long-term capital gains subject to the federal net long-term capital gains tax — generally the LESSER of federal Schedule D line 15 or line 16 (us.mt.income_tax, us.mt.capital_gains_tax). Montana taxes these at 3% / 4.1%; qualified dividends are NOT included (they are Montana ordinary income). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtTaxpayerAge65",
+    type: "bool",
+    description:
+      "Form 2 line 6: you attained age 65 — a $5,660 subtraction from federal taxable income for 2025 (us.mt.age65_subtraction).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtSpouseAge65",
+    type: "bool",
+    description:
+      "Form 2 line 6: your spouse attained age 65 — a second $5,660 subtraction, on a JOINT return only (us.mt.age65_subtraction).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtFederalEic",
+    type: "money",
+    description:
+      "Form 2 line 15: the federal earned income credit from federal Form 1040 line 27 — Montana allows 10% of it for 2025, 20% from 2026, refundable (us.mt.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtAge62",
+    type: "bool",
+    description:
+      "Schedule 2EC eligibility: the claimant reached age 62 by December 31 of the tax year (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtResided9Months",
+    type: "bool",
+    description:
+      "Schedule 2EC eligibility: the claimant resided in Montana for at least nine months during the tax year (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtOccupied6Months",
+    type: "bool",
+    description:
+      "Schedule 2EC eligibility: the claimant occupied a Montana residence as an owner, renter or lessee for at least six months during the tax year (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtSoleHouseholdClaimant",
+    type: "bool",
+    description:
+      "Schedule 2EC attestation: 'I am the only member of my household claiming this credit' — only one elderly homeowner/renter credit is allowed per household (us.mt.elderly_homeowner_renter_credit).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtGrossHouseholdIncome",
+    type: "money",
+    description:
+      "Schedule 2EC line 18: GROSS household income — all income of ALL household members, taxable and non-taxable, including the full amount of pensions and annuities, Railroad Retirement and veterans' disability benefits, excluded capital gains, alimony, support money, cash public assistance, tax-exempt interest, all Social Security, and refundable credits received in cash (expressly including the 2024 Montana property tax rebate). This is NOT federal AGI. Must be under $45,000 (us.mt.elderly_homeowner_renter_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtPropertyTaxBilled",
+    type: "money",
+    description:
+      "Schedule 2EC line 23: property tax billed on the Montana residence and up to one acre, including special assessments and fees but excluding penalties and interest (us.mt.elderly_homeowner_renter_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtRentPaid",
+    type: "money",
+    description:
+      "Schedule 2EC line 24: rent paid in the tax year for the Montana residence — 15% of it is the rent-equivalent tax paid. Excludes mortgage payments, nursing home costs paid directly from Social Security, and rent paid by a rental assistance program (us.mt.elderly_homeowner_renter_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtOrdinaryIncomeTax",
+    type: "money",
+    description:
+      "Schedule III Part II line 5: Montana ordinary income tax from Form 2 page 2 line 12 — the base the other-state credit's ordinary block is limited by (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtCapitalGainsTax",
+    type: "money",
+    description:
+      "Schedule III Part II line 15: Montana net long-term capital gains tax from Form 2 page 2 line 11 — the base the other-state credit's capital gains block is limited by (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtOtherStateOrdinaryIncome",
+    type: "money",
+    description:
+      "Schedule III Part II line 1: income sourced and taxable to the other state or country that is included in Montana taxable income, EXCLUDING net long-term capital gains (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtOtherStateCapitalGains",
+    type: "money",
+    description:
+      "Schedule III Part II line 11: net long-term capital gain sourced and taxable to the other state or country and included in Montana taxable income (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtOtherStateTotalIncome",
+    type: "money",
+    description:
+      "Schedule III Part II lines 2 and 12: ALL income sourced and taxable to the other state or country — the denominator of the first ratio (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtOrdinaryIncomeSourcedToMontana",
+    type: "money",
+    description:
+      "Schedule III Part II line 3: income sourced and taxable to Montana excluding net long-term capital gains (full-year residents: federal Form 1040 line 9 excluding net long-term capital gains, less related expenses) — the denominator of the second ratio (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtFederalNetLongTermCapitalGains",
+    type: "money",
+    description:
+      "Schedule III Part II line 13: federal net long-term capital gains — the denominator of the capital gains block's second ratio (us.mt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtOtherStateTaxPaid",
+    type: "money",
+    description:
+      "Schedule III Part II lines 4 AND 14: the TOTAL income tax liability actually paid to the other state or country, excluding penalties and interest (us.mt.other_state_credit). The same figure feeds both blocks — the line 16 ratio attributes the capital-gains share; do not pre-attribute. North Dakota WAGES are not eligible (reciprocity); foreign tax is not eligible if a federal Form 1116 credit was claimed. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtTuitionSavingsContributions",
+    type: "money",
+    description:
+      "Schedule I line 16: contributions to a Montana family education savings (section 529) account — up to $4,500, or $9,000 on a joint return, for 2025 (us.mt.tuition_savings_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtAbleContributions",
+    type: "money",
+    description:
+      "Schedule I line 17: contributions to an Achieving a Better Life Experience (ABLE) account — up to $3,000, or $6,000 on a joint return (us.mt.able_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtMilitaryRetirementIncome",
+    type: "money",
+    description:
+      "Schedule I line 13: military pension, military retirement income, or military survivor benefits (Form WMRE) — the subtraction is the LESSER of Montana source wage income or 50% of this amount (us.mt.military_retirement_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtMontanaSourceWageIncome",
+    type: "money",
+    description:
+      "MCA 15-30-2120(8)(b): Montana source wage income — the cap on the military retirement subtraction. The statute defines it as wages, salary, tips and other compensation for services performed in Montana PLUS net income from a trade, business, profession or occupation carried on in Montana PLUS net income from Montana farming, so Schedule C and F net income count; a fully retired veteran with none of the three gets nothing (us.mt.military_retirement_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "mtMilitaryRetireeEligible",
+    type: "bool",
+    description:
+      "MCA 15-30-2120(9)(a): the military retiree either became a Montana resident on or after June 30, 2023, or was a resident before receiving the pension and remained one after (us.mt.military_retirement_subtraction).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  {
+    id: "mtMilitaryRetireeWithinFiveYears",
+    type: "bool",
+    description:
+      "MCA 15-30-2120(9)(b): the subtraction is being claimed within the five consecutive years allowed after first qualifying (us.mt.military_retirement_subtraction).",
+    default: { value: false, rationale: "Assumed not attested — Montana attestations produce $0 unless stated" },
+  },
+  // ---- Delaware (Form PIT-RES) ----
+  {
+    id: "deUseRateSchedule",
+    type: "bool",
+    description:
+      "Form PIT-RES line 24: compute from the rate schedule at the exact taxable income instead of the printed Tax Table (taxable income under $60,000 uses the table's row midpoint by instruction; $60,000 or more always uses the schedule) (us.de.income_tax).",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "deItemizes",
+    type: "bool",
+    description:
+      "Form PIT-RES line 20b: itemizing Delaware deductions instead of the standard deduction. Delaware's election is INDEPENDENT of the federal one, but it disallows the line 21 additional standard deduction entirely (us.de.standard_deduction).",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "deAdditionalDeductionBoxes",
+    type: "int",
+    description:
+      "Form PIT-RES line 21: the number of boxes checked for age 65 or over and blindness — $2,500 each, maximum two boxes ($5,000) per person. Four boxes are possible on a joint return, and on a married-filing-separate return (status 3) when the spouse's boxes qualify under 30 Del. C. § 1108(b)(2)/(4): that spouse is 65 or over or blind, has NO gross income, and is not another taxpayer's dependent. Two boxes for every other status, and per column of a combined separate return. Not allowed with itemized deductions (us.de.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deExemptions",
+    type: "int",
+    description:
+      "Form PIT-RES line 27a: the number of federal exemptions (yourself, your spouse on a joint return, and dependents) — $110 each. A childless joint return enters 2 (us.de.personal_credits).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deAge60Persons",
+    type: "int",
+    description:
+      "Form PIT-RES line 27b: the number of persons 60 or over on December 31 (you and/or your spouse) — an additional $110 each (us.de.personal_credits).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deAge60OrOver",
+    type: "bool",
+    description:
+      "Form PIT-RES line 6: the person claiming the pension exclusion was 60 or over on December 31 of the tax year — the 60-or-over tier allows $12,500 of pension PLUS eligible retirement income, while under 60 allows only $2,000 of pension (us.de.pension_exclusion).",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "deDomiciledForPensionExclusion",
+    type: "bool",
+    description:
+      "TY2026 and after: the person claiming the 60-or-over pension exclusion has been legally domiciled in Delaware (a 'resident individual' under 30 Del. C. § 1103) for at least three years — 30 Del. C. § 1106(b)(3)f.4, added by 85 Del. Laws c. 426 effective August 17, 2026. A 60-or-over person who does not meet it gets NO pension exclusion at all, not the under-60 tier (us.de.pension_exclusion version 2). Not needed for TY2025.",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "deMilitaryPension",
+    type: "bool",
+    description:
+      "Form PIT-RES line 6 checkbox: the pension is a United States military pension — raises the UNDER-60 exclusion from $2,000 to $12,500. Since 84 Del. Laws c. 437 the definition covers the Army, Navy, Air Force, Marine Corps, Space Force, Coast Guard, the NOAA and Public Health Service commissioned corps, and the National Guard (us.de.pension_exclusion).",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "dePensionIncome",
+    type: "money",
+    description:
+      "Form PIT-RES line 6: amounts received as pensions from employers, the United States, this State or its subdivisions. Excludes early distributions (1099-R box 7 code 1, or an early-withdrawal penalty) and employer-paid disability pension income before minimum retirement age (us.de.pension_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deEligibleRetirementIncome",
+    type: "money",
+    description:
+      "Form PIT-RES line 6, 60-or-over worksheet: eligible retirement income — dividends, capital gains net of losses, interest, net rental income from real property, and qualified retirement plan distributions (IRA, 401(k), Keogh, and IRC 457 government deferred compensation). Counts ONLY for a person 60 or over (us.de.pension_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deAgiBeforeExclusion",
+    type: "money",
+    description:
+      "Form PIT-RES line 10: adjusted gross income after the Section B subtractions but BEFORE the line 11 exclusion — the statutory 'adjusted gross income (without reduction by this exclusion)' income test (us.de.elderly_disabled_exclusion). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deEarnedIncome",
+    type: "money",
+    description:
+      "Form PIT-RES line 11 worksheet: earned income (wages, tips, farm or business income) — must be under $2,500, or under $5,000 on a joint return, for the elderly/disabled exclusion (us.de.elderly_disabled_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deQualifiesElderlyDisabled",
+    type: "bool",
+    description:
+      "Form PIT-RES line 11 worksheet: you were at least 60 years old OR totally and permanently disabled on December 31 (us.de.elderly_disabled_exclusion).",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "deSpouseQualifiesElderlyDisabled",
+    type: "bool",
+    description:
+      "Form PIT-RES line 11 worksheet: your spouse was at least 60 years old OR totally and permanently disabled on December 31 — the $4,000 joint tier requires BOTH spouses to qualify (us.de.elderly_disabled_exclusion).",
+    default: { value: false, rationale: "Assumed not attested — Delaware attestations produce $0 unless stated" },
+  },
+  {
+    id: "deFederalEic",
+    type: "money",
+    description:
+      "DE Schedule II line 13: the federal earned income credit from federal Form 1040 line 27. Delaware allows either 20% limited to the tax or 4.5% fully refundable (us.de.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deEitcTaxAfterCredits",
+    type: "money",
+    description:
+      "DE Schedule II line 12: Form PIT-RES line 33 — the Delaware tax after ALL other non-refundable credits, which decides which earned income credit branch applies (us.de.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deFederalChildCareCredit",
+    type: "money",
+    description:
+      "Form PIT-RES line 31 worksheet: the federal child and dependent care credit from federal Form 2441 line 11. Delaware allows 50% of it, capped at $3,000 and at the tax (us.de.child_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deAdjustedGrossIncome",
+    type: "money",
+    description:
+      "Form PIT-RES line 12: Delaware adjusted gross income — the denominator of the other-state credit ratio (us.de.other_state_credit). May be negative. In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deIncomeTax",
+    type: "money",
+    description:
+      "Form PIT-RES line 24: the Delaware tax before credits, which the other-state credit ratio is applied to (us.de.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deOtherStateIncome",
+    type: "money",
+    description:
+      "Other-state credit worksheet line 1: adjusted gross income from the other state's return. The ratio to Delaware AGI is capped at 100% (us.de.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deOtherStateTaxPaid",
+    type: "money",
+    description:
+      "Other-state credit worksheet line 6: income tax paid to the other state net of its credits. EXCLUDES city and county taxes; the District of Columbia counts as a state (us.de.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "deVolunteerFirefighters",
+    type: "int",
+    description:
+      "Form PIT-RES line 29: the number of qualifying active volunteer firefighters or members of a volunteer fire company auxiliary, ambulance or rescue squad on the return (0, 1 or 2) — $1,000 each. The Division verifies this credit before processing, so it defaults to none (us.de.volunteer_firefighter_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  // ---- North Dakota (Form ND-1) ----
+  {
+    id: "ndUseRateSchedule",
+    type: "bool",
+    description:
+      "Form ND-1 line 20: compute from the rate schedule at the exact taxable income instead of the printed Tax Table (taxable income under $100,000 uses the table's $50-row midpoint, which section 57-38-30.3(10) makes mandatory; $100,000 or more always uses the schedule) (us.nd.income_tax).",
+    default: { value: false, rationale: "Assumed not elected — the Tax Table governs below $100,000" },
+  },
+  {
+    id: "ndNetLongTermCapitalGain",
+    type: "money",
+    description:
+      "Net long-term capital gain worksheet line 3: the SMALLER of federal Schedule D lines 15 and 16 — or, when no Schedule D was required, the capital gain distributions from Form 1040 line 7. The worksheet stops outright if either Schedule D figure is zero or less, so a net loss yields no exclusion (us.nd.capital_gain_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndCapitalGainAlreadyExcluded",
+    type: "money",
+    description:
+      "Net long-term capital gain worksheet line 6: the portion of that gain already included in an amount entered on Form ND-1 line 7 (exempt Native American income) or line 16 (Schedule ND-1SA subtractions), which is not eligible for the 40% exclusion (us.nd.capital_gain_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndQualifiedDividends",
+    type: "money",
+    description:
+      "Form ND-1 line 13: qualified dividends from federal Form 1040 or 1040-SR line 3a — North Dakota excludes 40%. A part-year resident or nonresident uses the portion reported to North Dakota (us.nd.qualified_dividend_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndCollegeSaveContributions",
+    type: "money",
+    description:
+      "Form ND-1 line 12: contributions to a North Dakota College SAVE account administered by the Bank of North Dakota — capped at $5,000, or $10,000 on a joint return. Rollovers from another section 529 plan do NOT qualify (us.nd.college_save_deduction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndTaxableIncome",
+    type: "money",
+    description:
+      "Form ND-1 line 18: North Dakota taxable income — the marriage penalty credit requires it to exceed $81,036 for 2025 (us.nd.marriage_penalty_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndLowerQualifiedIncome",
+    type: "money",
+    description:
+      "Marriage Penalty Credit Worksheet: the qualified income of the LOWER-earning spouse, which must exceed $47,550 for 2025 (us.nd.marriage_penalty_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndSingleScheduleTaxA",
+    type: "money",
+    description:
+      "Marriage Penalty Credit Worksheet line 7: the tax on WORKSHEET LINE 6 computed on the SINGLE rate schedule (us.nd.marriage_penalty_credit). Line 6 is the lower-earning spouse's qualified income MINUS the worksheet's preprinted $15,750 (half the federal joint standard deduction) — the rule takes this line as a computed amount and does NOT subtract the $15,750 itself, so a caller supplying the tax on the unreduced income overstates the credit. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndSingleScheduleTaxB",
+    type: "money",
+    description:
+      "Marriage Penalty Credit Worksheet line 9: the tax on WORKSHEET LINE 8 computed on the SINGLE rate schedule (us.nd.marriage_penalty_credit). Line 8 is Form ND-1 line 18 taxable income MINUS that same worksheet line 6 amount (the lower-earning spouse's qualified income less the preprinted $15,750). The rule takes this line as a computed amount and performs neither subtraction itself. In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndJointScheduleTax",
+    type: "money",
+    description:
+      "Marriage Penalty Credit Worksheet line 10: the tax on WORKSHEET LINE 1 — the couple's Form ND-1 line 18 taxable income, NOT their qualified income — computed on the MARRIED FILING JOINTLY rate schedule (us.nd.marriage_penalty_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndDoublyTaxedIncome",
+    type: "money",
+    description:
+      "Schedule ND-1CR line 1c: the part of federal AGI sourced to the other state that was received or earned while a North Dakota resident — the numerator of the four-decimal ratio (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndOtherStateIncomeBase",
+    type: "money",
+    description:
+      "Schedule ND-1CR line 2: for a full-year resident, federal AGI (Form ND-1 line 1a) LESS the line 5 United States obligation interest — the denominator of the ratio (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndIncomeTaxBeforeCredits",
+    type: "money",
+    description:
+      "Schedule ND-1CR line 4: the North Dakota tax from Form ND-1 line 20, which the ratio is applied to (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "ndOtherStateTaxPaid",
+    type: "money",
+    description:
+      "Schedule ND-1CR line 6: the NET income tax shown on the other state's return — after that state's credits but before its withholding and estimated payments — plus any local jurisdiction tax in that same state. Foreign countries do not qualify, and Montana and Minnesota WAGES are excluded by reciprocity (us.nd.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  // ---- Vermont (Form IN-111) ----
+  {
+    id: "vtUseRateSchedule",
+    type: "bool",
+    description:
+      "Form IN-111 line 8: apply the rate schedule at the exact taxable income instead of the printed Tax Table (taxable income under $75,000 uses the $100-row midpoint; 'TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES') (us.vt.income_tax).",
+    default: { value: false, rationale: "Assumed not elected — the Tax Table governs below $75,000" },
+  },
+  {
+    id: "vtFederalAgi",
+    type: "money",
+    description:
+      "Form IN-111 line 1: federal adjusted gross income — the base for the 3% minimum tax above $150,000, the retirement and military exclusion phase-outs, the child tax credit and veteran credit phase-outs, the student loan interest limit and the estimated use tax table (us.vt.income_tax and the Vermont credit and exclusion rules). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtUsObligationInterest",
+    type: "money",
+    description:
+      "Schedule IN-112 Part I line 7: interest income from U.S. government obligations — subtracted from federal AGI before the 3% minimum tax is figured, per the Form IN-111 line 8 instruction (us.vt.income_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtAdditionalDeductionBoxes",
+    type: "int",
+    min: "0",
+    max: "4",
+    description:
+      "Form IN-111 line 4: the number of standard deduction boxes checked on federal Form 1040 (born before January 2, 1961, or blind) — $1,250 each; the chart allows at most two for single and head of household and four for the 'Married Filing Jointly or Qualifying Widow(er)' row and for married filing separately (us.vt.standard_deduction).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "vtExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Form IN-111 line 5d: total personal exemptions — 1 for yourself unless someone can claim you, 1 for a spouse on a joint return only (NOT a qualifying widow(er) or married filing separately), plus other dependents (us.vt.personal_exemption).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "vtRetirementElection",
+    type: "enum",
+    enumValues: ["none", "social_security", "contributory_system"],
+    description:
+      "Schedule IN-112 line 12 election under 32 V.S.A. § 5830e(e)(1): exclude EITHER federally taxable Social Security ('social_security') OR up to $10,000 of Civil Service Retirement System / other non-Social-Security contributory system income ('contributory_system'); only one may be elected (us.vt.retirement_income_exclusion).",
+    default: { value: "none", rationale: "Assumed no election — the exclusion is claimed only when the filer elects it" },
+  },
+  {
+    id: "vtTaxableSocialSecurity",
+    type: "money",
+    description:
+      "Federal Form 1040 line 6b: federally taxable Social Security benefits — excluded in full at federal AGI up to $55,000 ($70,000 joint), phased out to $65,000 ($80,000 joint), when the Social Security election is made (us.vt.retirement_income_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtContributorySystemIncome",
+    type: "money",
+    description:
+      "Retirement Income Exemption Worksheet line 11: income received from the Civil Service Retirement System or another contributory system of the U.S., Vermont or another state based on earnings NOT covered by Social Security — the first $10,000 is excludable on the same AGI thresholds as Social Security, when that election is made (us.vt.retirement_income_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtMilitaryRetirementIncome",
+    type: "money",
+    description:
+      "Schedule IN-112 line 13: federally taxable U.S. military retirement income and military survivor benefit income (federal Form 1040 line 5b, DFAS 1099-R) — excluded in full at federal AGI up to $125,000, phased out to $175,000, for every filing status (us.vt.military_retirement_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtNetAdjustedCapitalGain",
+    type: "money",
+    description:
+      "Schedule IN-153 Part I line 8: net adjusted capital gain — the smaller of federal Schedule D lines 15 and 16, less qualified dividends and other ineligible amounts, less allocated investment interest expense; the base of the $5,000 flat exclusion. Zero when the federal return shows a net capital loss (us.vt.capital_gains_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtEligibleLongTermGain",
+    type: "money",
+    description:
+      "Schedule IN-153 Part II line 17: net adjusted capital gain from assets held MORE than three years, excluding gain on a primary or nonprimary residence, depreciable personal property (other than farm property and standing timber), and publicly traded stocks, bonds and financial instruments, less allocated investment interest — 40% is excludable up to $350,000 (us.vt.capital_gains_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtFederalTaxableIncome",
+    type: "money",
+    description:
+      "Schedule IN-153 line 20 base: federal taxable income (Form 1040 line 15) — the capital gains exclusion cannot exceed 40% of it (us.vt.capital_gains_exclusion). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input — with no federal taxable income the exclusion is $0" },
+  },
+  {
+    id: "vtStudentLoanInterestPaid",
+    type: "money",
+    description:
+      "Schedule IN-112 line 16a: total interest paid in the year on qualified student loans (us.vt.student_loan_interest_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtStudentLoanInterestDeductedFederally",
+    type: "money",
+    description:
+      "Schedule IN-112 line 16b: student loan interest already deducted on federal Form 1040 Schedule 1 line 21 — only the excess is subtracted for Vermont (us.vt.student_loan_interest_subtraction). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtCharitableContributions",
+    type: "money",
+    description:
+      "Form IN-111 line 11: charitable contributions allowable under IRC § 170, whether or not itemized federally — the credit is 5% of the first $20,000 (us.vt.charitable_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtFederalTaxAdjustmentBase",
+    type: "money",
+    description:
+      "Schedule IN-119 Part I line 4 (federal tax on qualified plans and tax-favored accounts, investment credit recapture, Form 4972 lump-sum tax) or Part II line 11 (federal credit for the elderly or disabled, Vermont-based investment credit, farm income averaging) — 24% of it is the Vermont adjustment (us.vt.federal_tax_adjustment). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtOtherStateIncome",
+    type: "money",
+    description:
+      "Schedule IN-117 line 9: modified adjusted gross income taxed by the other state or Canadian province AND by Vermont — the AGI taxed there plus its bonus depreciation and non-Vermont obligation addbacks, less bonus depreciation and U.S. government interest subtracted there (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtModifiedAgi",
+    type: "money",
+    description:
+      "Schedule IN-117 line 17: modified Vermont adjusted gross income — federal AGI plus Schedule IN-112 lines 3 and 4, less lines 7 and 9 (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtIncomeTax",
+    type: "money",
+    description:
+      "Schedule IN-117 line 18: Vermont income tax from Form IN-111 line 14 (after the charitable credit, before the income adjustment and credits) (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtOtherStateTaxPaid",
+    type: "money",
+    description:
+      "Schedule IN-117 line 20: income tax PAID to the other state or Canadian province on the line 9 income — not withholding, not city or county tax, and not the portion of Canadian tax taken as a federal foreign tax credit (us.vt.other_state_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtFederalEic",
+    type: "money",
+    description:
+      "Schedule IN-112 Part II line 6: the federal earned income credit from Form 1040 — Vermont allows 38% with qualifying children, 100% without (us.vt.eitc). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtEitcQualifyingChildren",
+    type: "int",
+    min: "0",
+    description:
+      "Schedule IN-112 Part II line 5: number of qualifying children from federal Schedule EIC — one or more makes the Vermont credit 38% of the federal credit; none makes it 100% (us.vt.eitc).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "vtChildrenSixOrUnder",
+    type: "int",
+    min: "0",
+    description:
+      "Schedule IN-112 Part II line 3: number of qualifying children (IRC § 152(c)) who were six years of age or younger at the close of the calendar year — born 2019 through 2025 for tax year 2025 — $1,000 each before the AGI phase-out (us.vt.child_tax_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
+  },
+  {
+    id: "vtFederalChildCareCredit",
+    type: "money",
+    description:
+      "Schedule IN-112 Part II line 1: the federal child and dependent care credit from Form 2441 line 11 — Vermont allows 72%, refundable (us.vt.child_dependent_care_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtVeteranDischargeRecord",
+    type: "bool",
+    description:
+      "Schedule IN-112 Part II lines 8-12: the filer has a discharge record or other record of separation from active duty verifying service in the uniformed services — the eligibility condition for the $250 veteran credit under 32 V.S.A. § 5830g(b) (us.vt.veteran_credit).",
+    default: { value: false, rationale: "Assumed not attested — the credit is claimed only with the record" },
+  },
+  {
+    id: "vtUseTaxEstimateFromTable",
+    type: "bool",
+    description:
+      "Use Tax Worksheet Part 1: the filer did NOT keep records of untaxed purchases under $1,000 and uses the Estimated Use Tax Table on federal AGI instead of 6% of recorded purchases (us.vt.use_tax).",
+    default: { value: false, rationale: "Assumed records were kept — the table is an estimate the filer elects" },
+  },
+  {
+    id: "vtUseTaxSmallPurchases",
+    type: "money",
+    description:
+      "Use Tax Worksheet line 2a: total untaxed purchases of items under $1,000 each, from records (us.vt.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtUseTaxLargePurchases",
+    type: "money",
+    description:
+      "Use Tax Worksheet line 3a: total untaxed purchases of items $1,000 or more each — always reported item by item, even when the table estimates the small purchases (us.vt.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtUseTaxPaidOtherState",
+    type: "money",
+    description:
+      "Use Tax Worksheet line 3d: sales tax paid to another state on the purchases reported on lines 2a and 3a (us.vt.use_tax). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtSelfEmploymentIncome",
+    type: "money",
+    description:
+      "Child Care Contribution Worksheet line 1: net earnings from self-employment, federal Schedule SE line 6 (us.vt.child_care_contribution). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtSelfEmploymentIncomeOutsideVermont",
+    type: "money",
+    description:
+      "Child Care Contribution Worksheet line 2: the part of Schedule SE line 6 earned for work performed outside Vermont (us.vt.child_care_contribution). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtVheipContributions",
+    type: "money",
+    description:
+      "Schedule IN-119 Part II line 1: contributions during the year to Vermont Higher Education Investment Plan (VHEIP / VT529) accounts — the credit is 10% of the first $2,500 per beneficiary ($5,000 on a joint return) (us.vt.vheip_credit). In dollars.",
+    default: { value: "0", rationale: "Assumed $0 absent contrary input" },
+  },
+  {
+    id: "vtVheipBeneficiaries",
+    type: "int",
+    min: "0",
+    description:
+      "Schedule IN-119 Part II line 1: the number of VHEIP account beneficiaries contributed for — each carries its own $2,500 ($5,000 joint) contribution cap (us.vt.vheip_credit).",
+    default: { value: "0", rationale: "Assumed 0 absent contrary input" },
   },
 ];

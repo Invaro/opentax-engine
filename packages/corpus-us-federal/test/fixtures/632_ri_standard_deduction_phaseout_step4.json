@@ -1,0 +1,12 @@
+{
+  "description": "Standard Deduction Worksheet, MFJ at the top of the phase-out range: 283,250 - 254,250 = 29,000, which is NOT 'more than $29,000', so line 6 = 4 -> 0.2000; 21,800 x 0.2 = $4,360.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riModifiedAgi": 283250
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.standard_deduction",
+  "expect": {
+    "valueCents": "436000"
+  }
+}

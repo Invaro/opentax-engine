@@ -1,0 +1,12 @@
+{
+  "description": "DE prints ONE 'Tax due' column and section 1102(a) draws no distinction by filing status \u2014 a joint filer at $250,000 pays the same as a single filer: 2,943.50 + 6.6% x 190,000 = 15,483.50 -> $15,484.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 250000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.income_tax",
+  "expect": {
+    "valueCents": "1548400"
+  }
+}

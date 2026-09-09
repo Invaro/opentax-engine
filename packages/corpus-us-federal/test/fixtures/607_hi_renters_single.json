@@ -1,0 +1,14 @@
+{
+  "description": "HI Schedule X Part I: single Hawaii AGI $25,000, rent $6,000, 1 exemption -> $50.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 25000,
+    "hiRentPaid": 6000,
+    "hiRentersExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "5000"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "'If your Federal AGI is $100,300 or greater, multiply line 1 by 0.08% (0.0008)': 150,000 x 0.0008 = $120.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalAgi": 150000,
+    "riUseTaxLookupTable": true,
+    "riLargePurchasesNetUseTax": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.use_tax",
+  "expect": {
+    "valueCents": "12000"
+  }
+}

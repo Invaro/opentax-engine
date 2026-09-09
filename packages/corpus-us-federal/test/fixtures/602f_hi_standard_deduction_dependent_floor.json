@@ -1,0 +1,13 @@
+{
+  "description": "HI dependent filer, earned income $300 -> greater of $500 or earned income = $500.",
+  "facts": {
+    "filingStatus": "single",
+    "isClaimedAsDependent": true,
+    "hiEarnedIncome": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

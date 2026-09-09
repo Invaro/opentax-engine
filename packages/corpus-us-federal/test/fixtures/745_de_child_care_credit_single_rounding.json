@@ -1,0 +1,12 @@
+{
+  "description": "REGRESSION (double rounding): 50% of a $1,000.99 federal credit is 500.495 -> $500, not $501.",
+  "facts": {
+    "filingStatus": "single",
+    "deFederalChildCareCredit": "1000.99"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.child_care_credit",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

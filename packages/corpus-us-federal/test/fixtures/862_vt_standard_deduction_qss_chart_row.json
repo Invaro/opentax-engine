@@ -1,0 +1,12 @@
+{
+  "description": "VT standard deduction chart row 'Married Filing Jointly or Qualifying Widow(er)' has four box columns, so a qualifying widow(er) with three boxes takes 15,300 + 3 x 1,250 = $19,050 as printed (a federal Form 1040 for a widow(er) carries at most two boxes in practice).",
+  "facts": {
+    "filingStatus": "qss",
+    "vtAdditionalDeductionBoxes": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.standard_deduction",
+  "expect": {
+    "valueCents": "1905000"
+  }
+}

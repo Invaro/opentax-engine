@@ -1,0 +1,16 @@
+{
+  "description": "HI MFJ AGI $44,000, two persons, expenses 25,000 (cap 20,000), earned 30,000 / spouse 14,000 -> 14,000 x 21% = $2,940.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiAgi": 44000,
+    "hiChildCareExpenses": 25000,
+    "hiChildCareQualifyingPersons": 2,
+    "hiEarnedIncome": 30000,
+    "hiSpouseEarnedIncome": 14000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "294000"
+  }
+}

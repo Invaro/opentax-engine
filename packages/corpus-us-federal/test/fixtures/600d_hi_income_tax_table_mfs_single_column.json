@@ -1,0 +1,12 @@
+{
+  "description": "HI MFS uses the 'Single or Married filing separately' column: $50,000 -> $2,693.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "269300"
+  }
+}

@@ -76,9 +76,15 @@ function seTaxRule(
 // fallback approximation when box 3 was not supplied (box 3 caps at the
 // wage base and excludes some box-1 items, so box 1 can only overstate
 // the subtraction — conservative for SE tax)
+// socialSecurityWagesProvided marks an EXPLICIT box-3 figure (including a genuine $0: the SE
+// earner had no W-2 while the spouse did) — without it a zero would fall through to the
+// couple's combined box-1 wages, which belong to the wrong person on a joint return
 const wagesForBase: Expr = {
   kind: "if",
-  cond: { kind: "cmp", op: "gt", left: fact("socialSecurityWages"), right: zero },
+  cond: {
+    kind: "or",
+    args: [fact("socialSecurityWagesProvided"), { kind: "cmp", op: "gt", left: fact("socialSecurityWages"), right: zero }],
+  },
   then: fact("socialSecurityWages"),
   else: fact("wages"),
 };

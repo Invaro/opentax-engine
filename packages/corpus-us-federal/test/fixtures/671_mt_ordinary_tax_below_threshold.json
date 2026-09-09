@@ -1,0 +1,12 @@
+{
+  "description": "MT 2025, married filing jointly at $42,199 \u2014 one dollar under the threshold, so the flat 4.7% applies: 42,199 x 4.7% = 1,983.35 -> $1,983.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 42199
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "198300"
+  }
+}

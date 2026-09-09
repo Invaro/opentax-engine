@@ -1,0 +1,13 @@
+{
+  "description": "VT 3% minimum tax: federal AGI $200,000 exceeds $150,000, so line 8 is the greater of the table tax on $40,000 of taxable income ($1,340) and 3% x $200,000 = $6,000 (\u00a7 5822(a)(6)).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 40000,
+    "vtFederalAgi": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

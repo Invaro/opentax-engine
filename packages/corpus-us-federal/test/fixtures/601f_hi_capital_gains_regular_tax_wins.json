@@ -1,0 +1,14 @@
+{
+  "description": "HI single TI $30,000, gains $2,000: 13 = max(28,000, 24,000); 15 = table(28,000) = 859 + 6.8% x 4,025 = 1,132.70 -> 1,133; 16 = 145; 17 = 1,278 > 18 = table(30,000) = 1,268.70 -> 1,269 -> $1,269.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 30000,
+    "hiNetLongTermCapitalGain": 2000,
+    "hiNetCapitalGain": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "126900"
+  }
+}

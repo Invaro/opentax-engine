@@ -1,0 +1,12 @@
+{
+  "description": "HI 1 exemption x $1,144.",
+  "facts": {
+    "filingStatus": "single",
+    "hiExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "114400"
+  }
+}

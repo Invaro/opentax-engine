@@ -1,0 +1,13 @@
+{
+  "description": "VT child tax credit: 2 children six or younger x $1,000 at AGI $125,000 (the phase-out starts above it).",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtFederalAgi": 125000,
+    "vtChildrenSixOrUnder": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.child_tax_credit",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

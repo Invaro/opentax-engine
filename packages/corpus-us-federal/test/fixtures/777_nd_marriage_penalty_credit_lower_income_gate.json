@@ -1,0 +1,16 @@
+{
+  "description": "ND Marriage Penalty Credit Worksheet line 5: the lower-earning spouse's qualified income must be MORE THAN $47,550 \u2014 exactly $47,550 fails.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ndTaxableIncome": 120000,
+    "ndLowerQualifiedIncome": 47550,
+    "ndJointScheduleTax": 900,
+    "ndSingleScheduleTaxA": 300,
+    "ndSingleScheduleTaxB": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.marriage_penalty_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

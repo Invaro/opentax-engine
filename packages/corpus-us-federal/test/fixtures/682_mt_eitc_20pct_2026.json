@@ -1,0 +1,12 @@
+{
+  "description": "MT earned income credit TY2026 = 20% of the federal credit (HB 337 sections 3 and 6).",
+  "facts": {
+    "filingStatus": "single",
+    "mtFederalEic": 5000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.mt.eitc",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

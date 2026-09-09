@@ -1,0 +1,14 @@
+{
+  "description": "REGRESSION (double rounding): RI Schedule U line 6 is 0.08% of federal AGI in a whole-dollar box. 0.0008 x $100,619 = 80.4952, which the form prints as $80. Rounding to cents first (80.50) and then to dollars gives $81 \u2014 wrong for roughly 0.48% of AGI values above the $100,300 table top.",
+  "facts": {
+    "filingStatus": "single",
+    "riFederalAgi": 100619,
+    "riUseTaxLookupTable": true,
+    "riLargePurchasesNetUseTax": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.use_tax",
+  "expect": {
+    "valueCents": "8000"
+  }
+}

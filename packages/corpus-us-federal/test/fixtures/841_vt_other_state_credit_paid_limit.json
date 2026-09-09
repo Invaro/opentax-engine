@@ -1,0 +1,15 @@
+{
+  "description": "VT Schedule IN-117: the ratio-limited $1,256 exceeds the $900 actually paid to the other state, so $900 (line 21, 'the lesser of Line 19 or 20').",
+  "facts": {
+    "filingStatus": "single",
+    "vtOtherStateIncome": 40000,
+    "vtModifiedAgi": 100000,
+    "vtIncomeTax": 3140,
+    "vtOtherStateTaxPaid": 900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.other_state_credit",
+  "expect": {
+    "valueCents": "90000"
+  }
+}

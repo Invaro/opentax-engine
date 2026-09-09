@@ -1,0 +1,12 @@
+{
+  "description": "MT pairs 'married filing jointly and qualifying surviving spouse' in every rate table, so a QSS at $42,200 gets the joint $42,200 threshold and the $506 constant: $1,984.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 42200
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "198400"
+  }
+}

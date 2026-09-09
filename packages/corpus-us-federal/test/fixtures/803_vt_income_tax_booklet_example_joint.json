@@ -1,0 +1,12 @@
+{
+  "description": "VT rate schedule worked example (Schedule Y-1): joint $85,000 -> Base Tax $2,764 + 6.6% x $2,500 = $2,929.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 85000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "292900"
+  }
+}

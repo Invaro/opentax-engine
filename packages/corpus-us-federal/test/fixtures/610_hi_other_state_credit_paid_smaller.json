@@ -1,0 +1,16 @@
+{
+  "description": "HI other-state worksheet: single TI $80,000 (tax 4,973), out-of-state income 30,000, tax paid 2,000: line 12 = 50,000; 14 = table(50,000) = 2,693; 17 = 4,973 - 2,693 = 2,280; 18 = min(2,000, 2,280) = 2,000; 19 = 4,973 -> $2,000.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 80000,
+    "hiOutOfStateIncome": 30000,
+    "hiOtherStateTaxEligible": 2000,
+    "hiTaxLine13": 4973,
+    "hiAdjustedTaxLiability": 4973
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.other_state_credit",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

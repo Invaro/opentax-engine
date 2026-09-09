@@ -1,0 +1,14 @@
+{
+  "description": "VT Social Security exclusion at the ceiling: single AGI $65,000 ('equal to or greater than $65,000.00') excludes nothing.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 65000,
+    "vtRetirementElection": "social_security",
+    "vtTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.retirement_income_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

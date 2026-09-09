@@ -1,0 +1,13 @@
+{
+  "description": "HI disability exemption, one individual: $7,000 in lieu (line 6e ignored).",
+  "facts": {
+    "filingStatus": "single",
+    "hiExemptions": 2,
+    "hiDisabledPersons": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "700000"
+  }
+}

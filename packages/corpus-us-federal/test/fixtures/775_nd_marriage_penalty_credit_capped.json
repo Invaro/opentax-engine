@@ -1,0 +1,16 @@
+{
+  "description": "ND Marriage Penalty Credit Worksheet line 13: 'Maximum credit ... 312.00'. An excess of $600 is capped at $312.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ndTaxableIncome": 120000,
+    "ndLowerQualifiedIncome": 55000,
+    "ndJointScheduleTax": 1200,
+    "ndSingleScheduleTaxA": 300,
+    "ndSingleScheduleTaxB": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.marriage_penalty_credit",
+  "expect": {
+    "valueCents": "31200"
+  }
+}

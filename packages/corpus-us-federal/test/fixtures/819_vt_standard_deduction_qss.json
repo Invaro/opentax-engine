@@ -1,0 +1,11 @@
+{
+  "description": "VT standard deduction, qualifying widow(er): the joint $15,300 ('Qualifying Widow(er) ($15,300)' on the form).",
+  "facts": {
+    "filingStatus": "qss"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.standard_deduction",
+  "expect": {
+    "valueCents": "1530000"
+  }
+}

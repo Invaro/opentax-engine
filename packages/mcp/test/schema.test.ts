@@ -258,4 +258,104 @@ describe("the documents compiler (transcription, not judgment)", () => {
     // W-2 box 2 (1,500) + SSA-1099 box 6 (900)
     expect(facts.federalTaxWithheld).toEqual({ type: "money", value: "240000" });
   });
+
+  it("leaves w2Box1Cents undefined when the documents block has no W-2 (line 1a falls back to wages)", () => {
+    const { facts, w2Box1Cents, documentNotes } = buildFactsValidated({
+      filing: { filingStatus: "single" },
+      documents: { f1099ints: [{ box1: 300 }] },
+      asOf: "2025-12-31",
+    });
+    expect(w2Box1Cents).toBeUndefined();
+    // a documents-only return with no W-2 has $0 of wages by transcription — not NEEDS_FACTS
+    expect(facts.wages).toEqual({ type: "money", value: "0" });
+    expect(documentNotes.some((n) => /no W-2 in the documents block/.test(n))).toBe(true);
+  });
+
+  it("Schedule SE coordination is per person: only the SE earner's tagged W-2 feeds socialSecurityWages", () => {
+    const { facts } = buildFactsValidated({
+      filing: { filingStatus: "mfj" },
+      income: { selfEmploymentNetProfit: 50000 },
+      documents: {
+        selfEmploymentEarner: "spouse",
+        w2s: [
+          { box1: 200000, box3: 176100, recipient: "taxpayer" },
+          { box1: 12000, box3: 12000, recipient: "spouse" },
+        ],
+      },
+      asOf: "2025-12-31",
+    });
+    expect(facts.wages).toEqual({ type: "money", value: "21200000" });
+    expect(facts.socialSecurityWages).toEqual({ type: "money", value: "1200000" }); // the spouse's own box 3 only
+    expect(facts.socialSecurityWagesProvided).toEqual({ type: "bool", value: true });
+  });
+
+  it("SE earner with no W-2 of their own: socialSecurityWages is an explicit $0, not the spouse's wages", () => {
+    const { facts } = buildFactsValidated({
+      filing: { filingStatus: "mfj" },
+      income: { selfEmploymentNetProfit: 50000 },
+      documents: {
+        selfEmploymentEarner: "spouse",
+        w2s: [{ box1: 200000, box3: 176100, recipient: "taxpayer" }],
+      },
+      asOf: "2025-12-31",
+    });
+    expect(facts.socialSecurityWages).toEqual({ type: "money", value: "0" });
+    expect(facts.socialSecurityWagesProvided).toEqual({ type: "bool", value: true });
+  });
+
+  it("refuses to guess whose W-2 is whose on a joint return with self-employment income", () => {
+    expect(() =>
+      buildFactsValidated({
+        filing: { filingStatus: "mfj" },
+        income: { selfEmploymentNetProfit: 50000 },
+        documents: { w2s: [{ box1: 200000, box3: 176100 }] },
+        asOf: "2025-12-31",
+      }),
+    ).toThrowError(/Schedule SE coordination is PER PERSON/);
+  });
+
+  it("a single untagged W-2 on a non-joint return with SE income is the earner's own", () => {
+    const { facts } = buildFactsValidated({
+      filing: { filingStatus: "single" },
+      income: { selfEmploymentNetProfit: 50000 },
+      documents: { w2s: [{ box1: 150000, box3: 150000 }] },
+      asOf: "2025-12-31",
+    });
+    expect(facts.socialSecurityWages).toEqual({ type: "money", value: "15000000" });
+    expect(facts.socialSecurityWagesProvided).toEqual({ type: "bool", value: true });
+  });
+
+  it("income.otherEarnedIncome (lines 1b-1h) folds into wages beside a documents block and splits 1a/1h", () => {
+    const withDocs = buildFactsValidated({
+      filing: { filingStatus: "single" },
+      income: { otherEarnedIncome: 6000 }, // Form 2441 Part III taxable dependent care benefits → line 1e
+      documents: { w2s: [{ box1: 22000 }] },
+      asOf: "2025-12-31",
+    });
+    expect(withDocs.facts.wages).toEqual({ type: "money", value: "2800000" });
+    expect(withDocs.w2Box1Cents).toBe(2200000n);
+    const flat = buildFactsValidated({ filing: { filingStatus: "single" }, income: { wages: 22000, otherEarnedIncome: 6000 }, asOf: "2025-12-31" });
+    expect(flat.facts.wages).toEqual({ type: "money", value: "2800000" });
+    expect(flat.w2Box1Cents).toBe(2200000n);
+    expect(() => buildFactsValidated({ income: { otherEarnedIncome: -1 }, asOf: "2025-12-31" })).toThrowError(/non-negative/);
+  });
+
+  it("code-G 1099-R with box 2a is a Roth conversion: box 2a taxable, not a $0 rollover", () => {
+    const { facts, documentNotes } = buildFactsValidated({
+      filing: { filingStatus: "single" },
+      documents: {
+        taxpayerDateOfBirth: "1953-04-01",
+        w2s: [{ box1: 30000 }],
+        f1099rs: [
+          { box1: 20300, box2a: 10300, box4: 2555, box7: "G" }, // direct rollover to a Roth, taxable amount in 2a
+          { box1: 5000, box2a: 0, box7: "G" }, // a plain direct rollover
+        ],
+      },
+      asOf: "2025-12-31",
+    });
+    expect(facts.taxablePensionsAndAnnuities).toEqual({ type: "money", value: "1030000" });
+    expect(facts.federalTaxWithheld).toEqual({ type: "money", value: "255500" });
+    expect(documentNotes.some((n) => /direct rollover to a ROTH/.test(n))).toBe(true);
+    expect(documentNotes.some((n) => /1099-R #2: treated as ROLLOVER/.test(n))).toBe(true);
+  });
 });

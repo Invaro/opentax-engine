@@ -1,0 +1,13 @@
+{
+  "description": "HI QSS AGI $30,000, 2 exemptions -> 2 x $110 = $220.",
+  "facts": {
+    "filingStatus": "qss",
+    "hiFederalAgi": 30000,
+    "hiFoodExciseQualifiedExemptions": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.food_excise_credit",
+  "expect": {
+    "valueCents": "22000"
+  }
+}

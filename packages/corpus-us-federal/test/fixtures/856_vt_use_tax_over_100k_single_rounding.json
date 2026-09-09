@@ -1,0 +1,13 @@
+{
+  "description": "VT estimated use tax above $100,000: 0.05% x $100,001 = 50.0005 -> $50 in one rounding (5 basis points is not an integer-cent rate).",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 100001,
+    "vtUseTaxEstimateFromTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.use_tax",
+  "expect": {
+    "valueCents": "5000"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "MT Schedule 2EC: gross household income 20,000; line 20 = 20,000 - 12,600 = 7,400, whose reduction multiplier is 0.035, so line 22 = $259; line 26 = 1,500 property tax; line 27 = 1,241; line 28 caps at $1,150; the credit multiplier for income under $35,000 is 1.00 -> $1,150.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 20000,
+    "mtPropertyTaxBilled": 1500,
+    "mtSoleHouseholdClaimant": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "115000"
+  }
+}

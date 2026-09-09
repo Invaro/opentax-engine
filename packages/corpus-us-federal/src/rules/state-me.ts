@@ -81,7 +81,10 @@ const printedSchedule = (base: Expr, rows: { thresholdCents: string; fixedCents:
 };
 /** ratio to four decimals, half-up, capped at 1.0000 — returned as basis points ×100 (an int 0..10000) in cents units */
 const ratio4 = (num: Expr, den: string): Expr => minE({ kind: "mulDiv", a: max0(num), b: money("10000"), c: money(den), round: "half-up" }, money("10000"));
-const applyRatio = (base: Expr, r: Expr): Expr => rd({ kind: "mulDiv", a: base, b: r, c: money("10000"), round: "half-up" });
+/** base × a four-decimal ratio, ONE half-up rounding to whole dollars — every consumer is a single
+ *  printed whole-dollar line ("7. Multiply line 6 by line 5", "4a"); rounding to cents first and then
+ *  to dollars is a second rounding the worksheets do not perform */
+const applyRatio = (base: Expr, r: Expr): Expr => times({ kind: "mulDiv", a: base, b: r, c: money("1000000"), round: "half-up" }, "100");
 
 // 2025 Rate Schedules (MRS "2025 Rates", February 3, 2026; booklet p. 12)
 const SCHED_SINGLE = [
@@ -510,7 +513,13 @@ export const meRules: Rule[] = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { rateBps: { value: "550", type: "int" }, estimateBps: { value: "4", type: "int" } },
-    formula: add(rd(pct(max0(fact("meUseTaxPurchases")), "55", "1000")), iff(fact("meUseTaxEstimate"), rd(pct(max0(fact("meAgi")), "4", "10000")), money("0"))),
+    formula: add(
+      // whole-dollar lines: ONE half-up rounding each. Rounding to cents first and then to
+      // dollars double-rounds — 5.5% of $209 is 11.495 ($11, not $12), and 0.04% of $1,238
+      // is 0.4952 ($0, not $1).
+      dollarsFromScaled(times(max0(fact("meUseTaxPurchases")), "550")),
+      iff(fact("meUseTaxEstimate"), dollarsFromScaled(times(max0(fact("meAgi")), "4")), money("0")),
+    ),
   },
   {
     id: "us.me.parameters",

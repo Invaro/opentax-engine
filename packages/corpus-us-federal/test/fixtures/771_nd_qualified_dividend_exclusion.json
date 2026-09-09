@@ -1,0 +1,12 @@
+{
+  "description": "ND Form ND-1 line 13: 40% of the qualified dividends on federal Form 1040 line 3a. 40% of $5,000 = $2,000.",
+  "facts": {
+    "filingStatus": "single",
+    "ndQualifiedDividends": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.qualified_dividend_exclusion",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

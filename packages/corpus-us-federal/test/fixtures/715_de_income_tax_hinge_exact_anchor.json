@@ -1,0 +1,12 @@
+{
+  "description": "DE at exactly $60,000 the schedule takes over and the anchor is the EXACT $2,943.50, which rounds half-up to $2,944. The 2026 PIT-EST estimated-tax worksheet prints the anchor as $2,943.00; the filing-season table's exact figure governs.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.income_tax",
+  "expect": {
+    "valueCents": "294400"
+  }
+}

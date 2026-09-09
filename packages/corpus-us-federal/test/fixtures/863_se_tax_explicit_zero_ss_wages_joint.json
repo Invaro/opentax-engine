@@ -1,0 +1,15 @@
+{
+  "description": "Schedule SE is per person: on a joint return the SE earner has no W-2 while the spouse earned $100,000 (box 3 $100,000). With socialSecurityWagesProvided true and socialSecurityWages 0, line 8a is $0 and the full OASDI base applies: 50,000 x 92.35% = 46,175; line 10 = 46,175 x 12.4% = 5,725.70 -> $5,726; line 11 = 46,175 x 2.9% = 1,339.075 -> $1,339; line 12 = $7,065. Before the flag, a $0 fell through to the couple's $100,000 of wages and understated OASDI.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 100000,
+    "selfEmploymentNetProfit": 50000,
+    "socialSecurityWages": 0,
+    "socialSecurityWagesProvided": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "706500"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "The same facts with a ONE-person household: the 13,971-17,460 band reads 6% in the '1 person' column, so line 10 = 900 and the credit is $300 \u2014 the only band where household size changes the answer.",
+  "facts": {
+    "filingStatus": "single",
+    "riHouseholdIncome": 15000,
+    "riHouseholdMembers": 1,
+    "riAge65OrDisabled": true,
+    "riPropertyTaxPaid": 0,
+    "riRentPaid": 6000,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.property_tax_relief_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "MT 2025 head of household at exactly $31,700: 5.9% x 31,700 - 380 = 1,490.30 -> $1,490.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 31700
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "149000"
+  }
+}

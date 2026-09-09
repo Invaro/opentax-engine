@@ -1,0 +1,16 @@
+{
+  "description": "HI same with 3,000 paid -> limited to line 17 = $2,280.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 80000,
+    "hiOutOfStateIncome": 30000,
+    "hiOtherStateTaxEligible": 3000,
+    "hiTaxLine13": 4973,
+    "hiAdjustedTaxLiability": 4973
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.other_state_credit",
+  "expect": {
+    "valueCents": "228000"
+  }
+}

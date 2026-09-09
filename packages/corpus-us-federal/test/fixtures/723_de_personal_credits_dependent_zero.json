@@ -1,0 +1,14 @@
+{
+  "description": "DE: 'You are not entitled to a Delaware Personal Credit if you are listed as a dependent on another individual's Federal return. Enter 0.'",
+  "facts": {
+    "filingStatus": "single",
+    "deExemptions": 1,
+    "deAge60Persons": 0,
+    "isClaimedAsDependent": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.personal_credits",
+  "expect": {
+    "valueCents": "0"
+  }
+}

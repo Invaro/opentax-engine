@@ -248,7 +248,9 @@ export const neRules: Rule[] = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pctTimes10: { value: "296", type: "int" } },
-    formula: rd(pct(max0(fact("neFederalOtherTax")), "296", "1000")),
+    // Form 1040N line 16: "multiply line 16c by 29.6% (x .296)" into a whole-dollar box — ONE rounding.
+    // 29.6% is not an integer-cent rate: 76 x 0.296 = 22.496 prints $22, but cents-first gives 22.50 -> $23.
+    formula: times({ kind: "mulDiv", a: max0(fact("neFederalOtherTax")), b: money("296"), c: money("100000"), round: "half-up" }, "100"),
   },
   {
     id: "us.ne.child_care_credit_nonrefundable",
@@ -364,7 +366,8 @@ export const neRules: Rule[] = [
       const denom = add(fact("neAgi"), fact("neAdjustmentsIncreasing"), { kind: "sub", left: money("0"), right: fact("neAdjustmentsDecreasing") });
       // ratio × 100,000 as an integer number of cents (money("100000") = 100,000 cents)
       const ratio: Expr = { kind: "mulDiv", a: max0(fact("neOtherStateAgi")), b: money("100000"), c: denom, round: "half-up" };
-      const l4 = rd({ kind: "mulDiv", a: l1, b: ratio, c: money("100000"), round: "half-up" });
+      // Schedule II line 4: "Multiply the ratio (line 3) by the total Nebraska tax" — one whole-dollar rounding
+      const l4 = times({ kind: "mulDiv", a: l1, b: ratio, c: money("10000000"), round: "half-up" }, "100");
       return iff(gt(denom, money("0")), minE(l1, l4, max0(fact("neOtherStateTaxPaid"))), money("0"));
     })(),
   },
@@ -386,8 +389,12 @@ export const neRules: Rule[] = [
     parameters: { stateRateBps: { value: "550", type: "int" } },
     formula: (() => {
       const p = max0(fact("neUseTaxPurchases"));
-      const state = rd(pct(p, "55", "1000"));
-      const local = rd({ kind: "mulDiv", a: p, b: mulInt(money("1"), fact("neLocalUseTaxRateBps")), c: money("10000"), round: "half-up" });
+      // whole-dollar box: ONE half-up rounding. 5.5% of $209 is 11.495, which the booklet
+      // prints as $11; rounding to cents first (11.50) and then to dollars gives $12.
+      const state = dollarsFromScaled(times(p, "550"), "1000000");
+      // the local box rounds ONCE too: 1.5% of $33 is 0.495, which the booklet prints as $0
+      // ("round your results, and then add them together"); a cent-then-dollar chain gives $1.
+      const local = dollarsFromScaled({ kind: "mulDiv", a: p, b: mulInt(money("1"), fact("neLocalUseTaxRateBps")), c: money("1"), round: "half-up" }, "1000000");
       return add(state, local);
     })(),
   },

@@ -1,0 +1,16 @@
+{
+  "description": "'NOTE: Only retirement income received by the taxpayer born on or before March 1, 1959 qualifies' \u2014 the taxpayer's own $40,000 is excluded and only the spouse's $20,000 column is taken.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalAgi": 120000,
+    "riTaxpayerFullRetirementAge": false,
+    "riSpouseFullRetirementAge": true,
+    "riTaxpayerPensionIncome": 40000,
+    "riSpousePensionIncome": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.pension_modification",
+  "expect": {
+    "valueCents": "2000000"
+  }
+}

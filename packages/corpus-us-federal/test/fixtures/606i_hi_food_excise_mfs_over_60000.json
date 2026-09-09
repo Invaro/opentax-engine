@@ -1,0 +1,14 @@
+{
+  "description": "HI MFS: 35,000 + spouse's 25,000 = 60,000 -> $0.",
+  "facts": {
+    "filingStatus": "mfs",
+    "hiFederalAgi": 35000,
+    "hiSpouseFederalAgi": 25000,
+    "hiFoodExciseQualifiedExemptions": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.food_excise_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

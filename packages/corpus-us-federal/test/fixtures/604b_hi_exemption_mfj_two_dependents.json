@@ -1,0 +1,12 @@
+{
+  "description": "HI MFJ 2 + 2 dependents = 4 x $1,144 = $4,576.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiExemptions": 4
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "457600"
+  }
+}

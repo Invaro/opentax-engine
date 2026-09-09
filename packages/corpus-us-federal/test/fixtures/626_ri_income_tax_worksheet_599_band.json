@@ -1,0 +1,12 @@
+{
+  "description": "RI Tax Computation Worksheet, 5.99% band: 250,000 x 5.99% - 3,051.46 = 11,923.54 -> $11,924.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 250000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "1192400"
+  }
+}

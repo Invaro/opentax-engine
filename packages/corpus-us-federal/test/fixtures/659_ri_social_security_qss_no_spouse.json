@@ -1,0 +1,16 @@
+{
+  "description": "REGRESSION: a qualifying widow(er) has NO spouse, so the worksheet's 'If you AND your spouse, if applicable, were born on or before 03/01/1959' is satisfied and the eligible percentage is 1.0000 \u2014 the whole $15,000 of taxable Social Security. QW shares the MFJ $133,750 threshold but never the spouse column.",
+  "facts": {
+    "filingStatus": "qss",
+    "riFederalAgi": 100000,
+    "riTaxpayerFullRetirementAge": true,
+    "riSocialSecurityBenefits": 20000,
+    "riSocialSecurityBenefitsFraPerson": 0,
+    "riTaxableSocialSecurity": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.social_security_modification",
+  "expect": {
+    "valueCents": "1500000"
+  }
+}

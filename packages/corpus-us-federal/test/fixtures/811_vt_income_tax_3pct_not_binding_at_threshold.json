@@ -1,0 +1,13 @@
+{
+  "description": "VT 3% minimum does not apply at exactly $150,000 of federal AGI ('exceeds $150,000'): the table tax on $40,000 single, 40,050 x 3.35% = 1,341.675 -> $1,342, stands.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 40000,
+    "vtFederalAgi": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "134200"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "Form RI-1040H Part 1 question D (65 or older and/or disabled) is unattested \u2014 the conservative default is no credit.",
+  "facts": {
+    "filingStatus": "single",
+    "riHouseholdIncome": 20000,
+    "riHouseholdMembers": 1,
+    "riAge65OrDisabled": false,
+    "riPropertyTaxPaid": 2000,
+    "riRentPaid": 0,
+    "isClaimedAsDependent": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.property_tax_relief_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

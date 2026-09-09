@@ -1,0 +1,12 @@
+{
+  "description": "VT qualifying widow(er) uses Schedule Y-1: $85,000 -> $2,929, the same as married filing jointly.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 85000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "292900"
+  }
+}

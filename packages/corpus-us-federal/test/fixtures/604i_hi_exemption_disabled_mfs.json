@@ -1,0 +1,14 @@
+{
+  "description": "HI MFS disabled filer: $7,000 only (no spouse share outside a joint return).",
+  "facts": {
+    "filingStatus": "mfs",
+    "hiExemptions": 2,
+    "hiDisabledPersons": 1,
+    "hiNonDisabledSpouseAge65": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "700000"
+  }
+}
