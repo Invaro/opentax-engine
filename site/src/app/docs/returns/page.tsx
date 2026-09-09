@@ -60,6 +60,45 @@ export default function ReturnsPage() {
 }`}
       />
 
+      <h2>Federal scope in three buckets</h2>
+      <p>Every federal item falls into exactly one of these. The <Link href="/docs/coverage">coverage matrix</Link> lists the rules; this is the form-level view an integrator needs.</p>
+      <div className="table-wrap">
+        <table className="data">
+          <thead>
+            <tr>
+              <th>bucket</th>
+              <th>what you get</th>
+              <th>today</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Complete line set</td>
+              <td>Machine-readable printed-form lines, whole-dollar rounded, composed by the engine.</td>
+              <td>Form 1040 bottom-line set (lines 1a to 37); 31 state resident returns.</td>
+            </tr>
+            <tr>
+              <td>Calculated target, no printed schedule</td>
+              <td>The correct amount with a cited proof tree, which you place on the schedule yourself.</td>
+              <td>
+                Schedules A, SE, 1, 2, 3; Forms 8812, 8863, 8995, 6251, 8960, 8959, 2210, 8615, 8606, 8582, 2555, 8962, 8880, 8839;
+                Schedule R; <strong>Schedule H</strong> (<C>us.federal.household_employment_taxes</C>: the tax, not the printed
+                schedule lines); Form 1120 items.
+              </td>
+            </tr>
+            <tr>
+              <td>Not covered</td>
+              <td>No rule in the corpus; the engine refuses rather than approximates.</td>
+              <td>
+                <strong>Form 5695</strong> (residential energy credits); Schedule 3 line 11 excess social security withholding;
+                Form 1065 and Schedule K-1 preparation; Form 990; part-year and nonresident state returns; PDF and MeF output.
+                Any of these can be scheduled as a priced deliverable.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <h2>Whole-dollar rounding, missing boxes, strict mode</h2>
       <p>
         <C>compute_return</C> follows the Form 1040 instructions on rounding: document amounts are summed in cents
