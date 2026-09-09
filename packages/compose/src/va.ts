@@ -126,7 +126,7 @@ export function composeVA(
         vagi: l9,
         familyVagi: input.vaFamilyVagi !== undefined ? rd(c(input.vaFamilyVagi)) : undefined,
         exemptions: n,
-        barred: age > 0n || (((input.ageOrBlindBoxes as number) ?? 0) > 0),
+        barred: age > 0n || abBoxes > 0, // same per-spouse boxes line 12 uses (not only the flat count)
       },
       notes,
     );

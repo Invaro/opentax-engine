@@ -1,0 +1,13 @@
+{
+  "description": "MT Form 2 page 2 line 3 'Enter the lesser of line 1 or line 2': gains of $40,000 against $25,000 of taxable income are capped at $25,000, leaving zero ordinary income. Line 6 = 21,100; line 7 = 21,100 at 3% = $633; line 9 = 3,900 at 4.1% = 159.90 -> $160; total $793.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25000,
+    "mtNetLongTermCapitalGains": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "79300"
+  }
+}

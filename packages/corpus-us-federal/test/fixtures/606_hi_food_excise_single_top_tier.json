@@ -1,0 +1,13 @@
+{
+  "description": "HI Form N-311: single federal AGI $14,999, 3 qualified exemptions -> 3 x $220 = $660.",
+  "facts": {
+    "filingStatus": "single",
+    "hiFederalAgi": 14999,
+    "hiFoodExciseQualifiedExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.food_excise_credit",
+  "expect": {
+    "valueCents": "66000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "DE: only a joint return has two people, so four boxes ($10,000) are reachable there \u2014 $6,500 + $10,000 = $16,500.",
+  "facts": {
+    "filingStatus": "mfj",
+    "deAdditionalDeductionBoxes": 4,
+    "deItemizes": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.standard_deduction",
+  "expect": {
+    "valueCents": "1650000"
+  }
+}

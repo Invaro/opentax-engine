@@ -1,0 +1,12 @@
+{
+  "description": "RI Tax Table row 79,900-79,950 (first row in the 4.75% bracket) prints $2,997: midpoint 79,925 x 4.75% - 799.00 = 2,997.4375 -> 2,997. The bracket edge falls exactly on a row boundary, so no printed row straddles it.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 79949
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "299700"
+  }
+}

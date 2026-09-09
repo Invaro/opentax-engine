@@ -1,0 +1,14 @@
+{
+  "description": "DE line 6, 60-or-over tier: pension $10,000 plus eligible retirement income $4,500 = $14,500, capped at $12,500 \u2014 the booklet's own worked example.",
+  "facts": {
+    "filingStatus": "single",
+    "deAge60OrOver": true,
+    "dePensionIncome": 10000,
+    "deEligibleRetirementIncome": 4500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.pension_exclusion",
+  "expect": {
+    "valueCents": "1250000"
+  }
+}

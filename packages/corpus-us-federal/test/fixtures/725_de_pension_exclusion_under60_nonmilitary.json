@@ -1,0 +1,14 @@
+{
+  "description": "DE line 6: under 60 with a non-military pension, the exclusion is $2,000 or the pension, whichever is less \u2014 eligible retirement income does NOT count below 60.",
+  "facts": {
+    "filingStatus": "single",
+    "deAge60OrOver": false,
+    "dePensionIncome": 30000,
+    "deEligibleRetirementIncome": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.pension_exclusion",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "VT charitable contribution credit: 5% x $1,230 = $61.50 -> $62, one half-up rounding.",
+  "facts": {
+    "filingStatus": "single",
+    "vtCharitableContributions": 1230
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.charitable_credit",
+  "expect": {
+    "valueCents": "6200"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ND TY2026 (Form ND-1ES 2026): the rates are unchanged and only the thresholds move \u2014 a single filer at $49,575 still owes nothing, where the same income was taxable in 2025.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 49575
+  },
+  "asOf": "2026-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

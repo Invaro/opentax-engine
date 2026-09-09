@@ -1,0 +1,107 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "tools/call",
+    "params": {
+      "name": "compute_state_return",
+      "arguments": {
+        "jurisdiction": "vt",
+        "asOf": "2025-12-31",
+        "filingStatus": "single",
+        "federalAGI": 60000,
+        "stateWithholding": 1800
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "asOf": "2025-12-31",
+    "jurisdiction": "vt",
+    "lines": {
+      "1_federal_agi": "$60,000",
+      "IN112_3_non_vermont_obligations": "$0",
+      "IN112_4_bonus_depreciation_and_other_additions": "$0",
+      "IN112_6_total_additions": "$0",
+      "IN112_7_us_obligation_interest": "$0",
+      "IN112_8_capital_gains_exclusion": "$0",
+      "IN112_9_prior_year_bonus_depreciation": "$0",
+      "IN112_10_taxable_state_refunds": "$0",
+      "IN112_11_medical_expense_deduction": "$0",
+      "IN112_12_retirement_exclusion": "$0",
+      "IN112_13_military_retirement_exclusion": "$0",
+      "IN112_14_railroad_retirement": "$0",
+      "IN112_15_exempt_bond_interest": "$0",
+      "IN112_16c_student_loan_interest": "$0",
+      "IN112_18_total_subtractions": "$0",
+      "2_net_modifications": "$0",
+      "3_agi_with_modifications": "$60,000",
+      "4_standard_deduction": "$7,650",
+      "5d_total_exemptions": "1",
+      "5e_personal_exemptions": "$5,300",
+      "6_deduction_plus_exemptions": "$12,950",
+      "7_vt_taxable_income": "$47,050",
+      "8_vt_income_tax": "$1,576",
+      "IN119_5_24pct_of_federal_additional_taxes": "$0",
+      "IN119_7_additions_to_vt_tax": "$0",
+      "IN119_12_24pct_of_federal_credits": "$0",
+      "IN119_14_subtractions_from_vt_tax": "$0",
+      "9_net_adjustment": "$0",
+      "10_tax_with_adjustment": "$1,576",
+      "11_charitable_contributions": "$0",
+      "12_five_percent": "$0",
+      "13_charitable_credit": "$0",
+      "14_vt_income_tax": "$1,576",
+      "15_income_adjustment_pct": "100.0000%",
+      "16_adjusted_vt_income_tax": "$1,576",
+      "17_other_state_credit": "$0",
+      "IN119_II_1_vheip_credit": "$0",
+      "18_vt_tax_credits": "$0",
+      "19_total_credits": "$0",
+      "20_tax_after_credits": "$1,576",
+      "21_child_care_contribution": "$0",
+      "22_use_tax": "$0",
+      "23_total_vt_taxes": "$1,576",
+      "24e_voluntary_contributions": "$0",
+      "25_total_taxes_and_contributions": "$1,576",
+      "26a_withholding": "$1,800",
+      "26b_estimated_and_extension_payments": "$0",
+      "IN112_II_2_child_dependent_care_credit": "$0",
+      "IN112_II_4_child_tax_credit": "$0",
+      "IN112_II_7_earned_income_credit": "$0",
+      "IN112_II_12_veteran_credit": "$0",
+      "IN112_II_13_total_refundable_credits": "$0",
+      "26c_refundable_credits": "$0",
+      "26d_real_estate_withholding": "$0",
+      "26e_nonresident_estimated_payments": "$0",
+      "26f_total_payments_and_credits": "$1,800",
+      "27_overpayment": "$224",
+      "28a_credited_to_2026_estimated_tax": "$0",
+      "28b_credited_to_2026_property_tax": "$0",
+      "29_refund": "$224",
+      "30_tax_due": "$0",
+      "31_underpayment_interest_penalty": "$0",
+      "32_amount_due": "$0"
+    },
+    "notes": [
+      "VT line 5: 1 exemption(s) x $5,300 = $5,300",
+      "VT line 8: the 2025 Vermont Tax Table — the $100 row containing $47,050, priced at the row midpoint through the printed schedule (\"TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES\")",
+      "VT line 15: 100.0000% — this composer produces a FULL-YEAR RESIDENT return; a part-year resident or nonresident needs Schedule IN-113, whose line 35 percentage multiplies line 14 and whose lines 14A/14B prorate the refundable credits, and which 2026 Act 164 §§ 56-57 recast onto modified AGI retroactively for 2025 — out of scope here",
+      "VT line 22: use tax $0 — no untaxed purchases were reported; the form requires the filer to check the certification box if no use tax is due",
+      "VT line 29: refund $224",
+      "VT: the Renter Credit (Form RCC-146) and the Property Tax Credit (Form HS-122 / HI-144) are separate claims computed by the Department from household income, family size and county figures — they are not lines of Form IN-111 and are not composed here"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "RI Schedule U lines 1-4 (actual method): 7% x $1,000 of purchases = $70, less $30 of sales tax paid to other states = $40.",
+  "facts": {
+    "filingStatus": "single",
+    "riUseTaxPurchases": 1000,
+    "riSalesTaxPaidOtherStates": 30,
+    "riUseTaxLookupTable": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.use_tax",
+  "expect": {
+    "valueCents": "4000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "MT earned income credit 2025 = 10% of the federal credit, refundable (Form 2 line 15). The current MCA text already reads 20%, but HB 337 section 6 applies that to tax years beginning January 1, 2026.",
+  "facts": {
+    "filingStatus": "single",
+    "mtFederalEic": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.eitc",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

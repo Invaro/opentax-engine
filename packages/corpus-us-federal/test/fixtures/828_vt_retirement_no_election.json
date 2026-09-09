@@ -1,0 +1,14 @@
+{
+  "description": "VT retirement exclusion with no election claims nothing \u2014 \u00a7 5830e(e)(1) requires the filer to elect one of the Social Security and contributory-system exclusions.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 50000,
+    "vtTaxableSocialSecurity": 20000,
+    "vtContributorySystemIncome": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.retirement_income_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

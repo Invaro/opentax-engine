@@ -1,0 +1,16 @@
+{
+  "description": "\u00a7 44-30-12(c)(9) conditions the modification on federal AGI 'less than' the limit \u2014 exactly $133,750 on a joint return does not qualify, so $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalAgi": 133750,
+    "riTaxpayerFullRetirementAge": true,
+    "riSpouseFullRetirementAge": true,
+    "riTaxpayerPensionIncome": 60000,
+    "riSpousePensionIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.pension_modification",
+  "expect": {
+    "valueCents": "0"
+  }
+}

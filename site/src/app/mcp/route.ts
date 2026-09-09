@@ -20,7 +20,7 @@ type RpcPeek = {
   params?: { name?: string; clientInfo?: { name?: string; version?: string } };
 };
 
-function logUsage(req: Request): void {
+function logUsage(req: Request, account?: Account): void {
   const clone = req.clone();
   const ip = clientIp(req);
   after(async () => {
@@ -34,6 +34,11 @@ function logUsage(req: Request): void {
         tool: first.method === "tools/call" ? (first.params?.name ?? "") : "",
         client: first.method === "initialize" ? (first.params?.clientInfo?.name ?? "") : "",
         clientVersion: first.method === "initialize" ? (first.params?.clientInfo?.version ?? "") : "",
+        // account attribution for keyed calls (the email/org from OPENTAX_API_KEYS — never the key itself);
+        // the tool ARGUMENTS are never read here, so no taxpayer data reaches the log
+        account: account?.account ?? "",
+        org: account?.org ?? "",
+        plan: account?.plan ?? "",
         at: new Date().toISOString(),
       };
       console.log(JSON.stringify(record));
@@ -65,8 +70,39 @@ const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Expose-Headers": "Mcp-Session-Id",
 };
 
+/**
+ * Optional API keys. OPENTAX_API_KEYS is a JSON object { "<key>": { "account": "email", "org": "name", "plan": "evaluation" } }
+ * set in the deployment environment (never in the repo). A request with a valid `Authorization: Bearer <key>` is attributed
+ * to that account in the usage records and gets the keyed rate budget; a request with an UNKNOWN key is refused; a request
+ * with no key stays anonymous (public MCP connectors) at the anonymous budget. Keys are never logged.
+ */
+type Account = { account: string; org?: string; plan?: string };
+function resolveKey(req: Request): { status: "anonymous" } | { status: "ok"; account: Account; keyId: string } | { status: "unknown" } {
+  const header = req.headers.get("authorization") ?? "";
+  const m = /^Bearer\s+(\S+)$/i.exec(header);
+  if (!m) return { status: "anonymous" };
+  let keys: Record<string, Account> = {};
+  try {
+    keys = JSON.parse(process.env.OPENTAX_API_KEYS ?? "{}") as Record<string, Account>;
+  } catch {
+    keys = {};
+  }
+  const account = keys[m[1]];
+  if (!account) return { status: "unknown" };
+  return { status: "ok", account, keyId: m[1].slice(0, 8) };
+}
+
 export async function POST(req: Request): Promise<Response> {
-  logUsage(req);
+  const auth = resolveKey(req);
+  if (auth.status === "unknown") {
+    return new Response(JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32001, message: "unknown API key" } }), { status: 401, headers: { "Content-Type": "application/json", ...CORS_HEADERS } });
+  }
+  const budgetKey = auth.status === "ok" ? `mcp:key:${auth.keyId}` : `mcp:ip:${clientIp(req)}`;
+  const budget = auth.status === "ok" ? 6000 : 600; // requests per hour per instance
+  if (!rateLimit(budgetKey, budget, 3600 * 1000)) {
+    return new Response(JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32002, message: "rate limit exceeded" } }), { status: 429, headers: { "Content-Type": "application/json", "Retry-After": "60", ...CORS_HEADERS } });
+  }
+  logUsage(req, auth.status === "ok" ? auth.account : undefined);
   const server = createServer();
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined, // stateless

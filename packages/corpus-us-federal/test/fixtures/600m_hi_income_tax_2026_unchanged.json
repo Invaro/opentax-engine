@@ -1,0 +1,12 @@
+{
+  "description": "HI TY2026 keeps the 2025 schedules (Act 24, SLH 2026 applies to taxable years beginning after 12/31/2026): single $50,000 -> $2,693.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "269300"
+  }
+}

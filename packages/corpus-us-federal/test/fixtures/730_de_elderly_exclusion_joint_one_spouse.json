@@ -1,0 +1,15 @@
+{
+  "description": "DE line 11: a JOINT return on which only ONE spouse qualifies gets NOTHING, not $2,000. The printed worksheet offers exactly two columns and the joint column's first question is 'Were BOTH spouses at least 60 years old or totally and permanently disabled'; the booklet's note settles it \u2014 'If you are filing a joint return and only one spouse qualifies for this exclusion, you should consider filing separate returns (Filing Status 3 or 4)', advice that would be pointless if the joint return already produced $2,000. Section 1106(b)(2) read alone might suggest the single $2,000; the form does not allow it.",
+  "facts": {
+    "filingStatus": "mfj",
+    "deQualifiesElderlyDisabled": true,
+    "deSpouseQualifiesElderlyDisabled": false,
+    "deEarnedIncome": 4999,
+    "deAgiBeforeExclusion": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.elderly_disabled_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -35,6 +35,12 @@ import { composeNE } from "./ne.js";
 import { composeID } from "./id.js";
 import { composeWV } from "./wv.js";
 import { composeME } from "./me.js";
+import { composeRI } from "./ri.js";
+import { composeMT } from "./mt.js";
+import { composeDE } from "./de.js";
+import { composeND } from "./nd.js";
+import { composeVT } from "./vt.js";
+import { composeHI } from "./hi.js";
 import { composeSC } from "./sc.js";
 import { composeVA } from "./va.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
@@ -98,7 +104,7 @@ export function composeStateReturn(
   // Arkansas AGI from its own lines 8-24 (federalAGI only feeds AR2441) — none
   // of the five requires federalAGI.
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
-    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me state returns — run compute_return first and pass Form 1040 line 11 verbatim");
+    throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me/hi/vt state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
   if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
@@ -124,5 +130,11 @@ export function composeStateReturn(
   if (j === "id") return { lines: composeID(input, evalStateTax, notes), notes };
   if (j === "wv") return { lines: composeWV(input, evalStateTax, notes), notes };
   if (j === "me") return { lines: composeME(input, evalStateTax, notes), notes };
+  if (j === "hi") return { lines: composeHI(input, evalStateTax, notes), notes };
+  if (j === "ri") return { lines: composeRI(input, evalStateTax, notes), notes };
+  if (j === "mt") return { lines: composeMT(input, evalStateTax, notes), notes };
+  if (j === "de") return { lines: composeDE(input, evalStateTax, notes), notes };
+  if (j === "nd") return { lines: composeND(input, evalStateTax, notes), notes };
+  if (j === "vt") return { lines: composeVT(input, evalStateTax, notes), notes };
   return { lines: composeNY(input, evalStateTax, notes), notes };
 }

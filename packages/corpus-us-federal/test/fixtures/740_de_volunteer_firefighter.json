@@ -1,0 +1,12 @@
+{
+  "description": "DE line 29: $1,000 per qualifying volunteer firefighter, so a joint return on which both spouses qualify claims $2,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "deVolunteerFirefighters": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.volunteer_firefighter_credit",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "HI single: the spouse column does not apply -> $8,636.",
+  "facts": {
+    "filingStatus": "single",
+    "hiReservePay": 9000,
+    "hiSpouseReservePay": 9000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.reserve_pay_exclusion",
+  "expect": {
+    "valueCents": "863600"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ND 2.50% bracket off the printed anchor: single at $300,000 pays 3,828.83 + 2.5% x (300,000 - 244,825) = 5,208.205 -> $5,208.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "520800"
+  }
+}

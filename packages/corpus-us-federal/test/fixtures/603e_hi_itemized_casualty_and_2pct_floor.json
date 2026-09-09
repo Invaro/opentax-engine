@@ -1,0 +1,17 @@
+{
+  "description": "HI HOH AGI $50,000: casualty 8,000 - 10% x 50,000 = 3,000; job expenses 500 - 2% x 50,000 -> 0; other misc (gambling) 700 -> $3,700.",
+  "facts": {
+    "filingStatus": "hoh",
+    "hiAgi": 50000,
+    "hiFederalAgi": 50000,
+    "hiCasualtyLosses": 8000,
+    "hiJobAndMiscExpenses": 500,
+    "hiOtherMiscDeductions": 700,
+    "hiGamblingLossesInMisc": 700
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.itemized_deductions",
+  "expect": {
+    "valueCents": "370000"
+  }
+}

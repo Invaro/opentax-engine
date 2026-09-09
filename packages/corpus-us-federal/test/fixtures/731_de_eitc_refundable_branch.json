@@ -1,0 +1,13 @@
+{
+  "description": "DE Schedule II: 4.5% of the $5,000 federal credit is $225, which is at least the $100 of remaining tax, so the REFUNDABLE branch applies and the whole $225 is allowed.",
+  "facts": {
+    "filingStatus": "single",
+    "deFederalEic": 5000,
+    "deEitcTaxAfterCredits": 100
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.eitc",
+  "expect": {
+    "valueCents": "22500"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "VT student loan interest subtraction denied: single AGI $120,001 exceeds the $120,000 limit of \u00a7 5811(29)(B) \u2014 'if AGI is greater than $120,000, enter -0-'.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 120001,
+    "vtStudentLoanInterestPaid": 3000,
+    "vtStudentLoanInterestDeductedFederally": 2500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.student_loan_interest_subtraction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

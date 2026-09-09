@@ -1,0 +1,18 @@
+{
+  "description": "HI MFJ TI $150,000, line 27a 100,000 (tax 9,106), out-of-state income 60,000 incl. LTCG 40,000, paid 5,000: 10 = 90,000; 11 = 60,000; 12 = 30,000; 14 = table(30,000) = 576 + 5.5% x 1,225 = 643.375 -> 643; 15 = 4,350; 16 = 4,993; 17 = 4,113 -> $4,113.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 150000,
+    "hiNetCapitalGainLine27a": 100000,
+    "hiOutOfStateIncome": 60000,
+    "hiOutOfStateLtcg": 40000,
+    "hiOtherStateTaxEligible": 5000,
+    "hiTaxLine13": 9106,
+    "hiAdjustedTaxLiability": 9106
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.other_state_credit",
+  "expect": {
+    "valueCents": "411300"
+  }
+}

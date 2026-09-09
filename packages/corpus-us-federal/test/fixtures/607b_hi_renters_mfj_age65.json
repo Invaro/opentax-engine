@@ -1,0 +1,14 @@
+{
+  "description": "HI MFJ AGI $29,999, rent $12,000, 4 exemptions (2 + 2 age-65 extras) -> $200.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiAgi": 29999,
+    "hiRentPaid": 12000,
+    "hiRentersExemptions": 4
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.renters_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

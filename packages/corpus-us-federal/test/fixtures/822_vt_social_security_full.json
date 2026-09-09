@@ -1,0 +1,14 @@
+{
+  "description": "VT Social Security exclusion in full: single, federal AGI exactly $55,000 ('less than or equal to $55,000.00'), $18,000 of taxable benefits excluded.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 55000,
+    "vtRetirementElection": "social_security",
+    "vtTaxableSocialSecurity": 18000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.retirement_income_exclusion",
+  "expect": {
+    "valueCents": "1800000"
+  }
+}

@@ -51,6 +51,11 @@ const isStatus = (v: string): Expr => cmp("eq", fact("filingStatus"), { kind: "e
 const isJointLike: Expr = or(isStatus("mfj"), isStatus("qss"), isStatus("hoh")); // § 63-3024(2)(b): surviving spouse and HOH "shall be treated as a joint return"
 const isMfj: Expr = isStatus("mfj");
 const pct = (base: Expr, num: string, den: string): Expr => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+const timesNum = (base: Expr, num: string): Expr => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
+/** scaled integer (cents x 10^4) -> whole-dollar money, ONE half-up rounding. Wrapping a
+ *  mulRate in roundToDollar rounds twice — to cents, then to dollars — which overstates
+ *  any value whose true amount lands just under a half dollar. */
+const dollarsFromScaled = (n: Expr): Expr => timesNum({ kind: "mulDiv", a: n, b: money("1"), c: money("1000000"), round: "half-up" }, "100");
 const half = (x: Expr): Expr => pct(x, "1", "2");
 
 const BOOKLET_URL = "https://tax.idaho.gov/document-mngr/forms_EIN00046/";
@@ -81,7 +86,7 @@ export const idRules: Rule[] = [
       statutoryBaseSingle: { value: "250000", type: "money" },
       statutoryBaseJoint: { value: "500000", type: "money" },
     },
-    formula: rd(pct(max0(sub(max0(fact("stateTaxableIncome")), iff(isJointLike, money("962200"), money("481100")))), "53", "1000")),
+    formula: dollarsFromScaled(timesNum(max0(sub(max0(fact("stateTaxableIncome")), iff(isJointLike, money("962200"), money("481100")))), "530")),
   },
   {
     id: "us.id.standard_deduction",
@@ -201,7 +206,8 @@ export const idRules: Rule[] = [
       const l1 = max0(fact("idTaxBeforeCredits"));
       const l3 = fact("idAdjustedIncome");
       const ratio: Expr = { kind: "mulDiv", a: max0(fact("idOtherStateIncome")), b: money("10000"), c: l3, round: "half-up" }; // ×10,000 (four decimals), money("10000") = 10,000 cents
-      const l5 = rd({ kind: "mulDiv", a: l1, b: ratio, c: money("10000"), round: "half-up" });
+      // Form 39R Part C line 5: "Multiply line 1 by line 4" into a whole-dollar box — ONE rounding
+      const l5 = timesNum({ kind: "mulDiv", a: l1, b: ratio, c: money("1000000"), round: "half-up" }, "100");
       return iff(gt(l3, money("0")), minE(l5, max0(fact("idOtherStateTaxDue")), l1), money("0"));
     })(),
   },

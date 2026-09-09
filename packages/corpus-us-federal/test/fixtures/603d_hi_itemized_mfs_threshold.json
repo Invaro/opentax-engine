@@ -1,0 +1,16 @@
+{
+  "description": "HI MFS threshold $83,400: AGI $100,000, RE 5,000 + mortgage 10,000 = 15,000; 5 = 12,000; 8 = 16,600; 9 = 498 -> $14,502 (state income taxes blocked: FAGI not under $100,000).",
+  "facts": {
+    "filingStatus": "mfs",
+    "hiAgi": 100000,
+    "hiFederalAgi": 100000,
+    "hiStateLocalIncomeTaxes": 4000,
+    "hiRealEstateTaxes": 5000,
+    "hiHomeMortgageInterest": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.itemized_deductions",
+  "expect": {
+    "valueCents": "1450200"
+  }
+}

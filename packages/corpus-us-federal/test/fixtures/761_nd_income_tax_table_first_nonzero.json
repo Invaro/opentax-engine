@@ -1,0 +1,12 @@
+{
+  "description": "ND Tax Table: the first nonzero single cell is the 48,500-48,550 row, whose midpoint 48,525 gives 1.95% x $50 = $0.975 -> $1.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 48500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "100"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "DE: 'If you elect to itemize your deductions, you do not qualify for the additional standard deduction even though you may be 65 years of age or older and/or blind.' An itemizer gets nothing from this rule.",
+  "facts": {
+    "filingStatus": "single",
+    "deAdditionalDeductionBoxes": 2,
+    "deItemizes": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.standard_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

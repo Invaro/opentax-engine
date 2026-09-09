@@ -1,0 +1,12 @@
+{
+  "description": "DE Tax Table last row 59,950-60,000 prints $2,942: midpoint 59,975 gives 2,943.50 - 5.55% x 25 = 2,942.11 -> $2,942.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 59999
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.income_tax",
+  "expect": {
+    "valueCents": "294200"
+  }
+}

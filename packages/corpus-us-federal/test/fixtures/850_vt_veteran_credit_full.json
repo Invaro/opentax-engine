@@ -1,0 +1,13 @@
+{
+  "description": "VT veteran tax credit $250 at AGI $25,000 or less, with the discharge record attested (\u00a7 5830g, new for 2025).",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 25000,
+    "vtVeteranDischargeRecord": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.veteran_credit",
+  "expect": {
+    "valueCents": "25000"
+  }
+}

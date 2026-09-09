@@ -1,0 +1,12 @@
+{
+  "description": "HI 2025 tax table printed example: 'Mr. & Mrs. Brown ... taxable income is $23,275 ... $399' (row 23,250-23,300; midpoint 23,275: 269 + 3.2% x 4,075 = 399.40).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 23275
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "39900"
+  }
+}

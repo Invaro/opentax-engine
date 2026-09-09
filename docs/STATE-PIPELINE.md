@@ -105,6 +105,18 @@ test plan), merge auto-deploys the hosted MCP endpoint.
 Currency work is different from coverage work: smaller, calendar-driven, and
 almost fully automatable.
 
+- **The staleness declaration is code, not a report.** `packages/corpus-us-federal/src/staleness.ts`
+  lists every state with a rule whose latest version ends by the horizon, the
+  rule ids, a tier — `return` (the income tax, standard deduction, exemption or
+  starting-point deduction is stale, so `compute_state_return` refuses a
+  horizon-year return) or `lines` (only credits/subtractions are stale and the
+  composer leaves those lines blank) — and the publication that unblocks it.
+  `test/staleness.test.ts` recomputes all of that from the rule windows and
+  fails on drift, so a rule cannot quietly expire unlisted and a new
+  horizon-year version cannot land without retiring its entry. The coverage
+  report labels each row from the declaration (`⚠ STALE: return not composable`
+  / `⚠ stale: lines blank`). Encoding a state's next-year booklet means: add the
+  rule versions, delete the entry, run the test.
 - **Annual parameter cycle.** Federal: the October Revenue Procedure seeds
   every indexed TY(n+1) parameter as new rule *versions* with new windows —
   never in-place edits, so old proofs stay verifiable. States: each DOR

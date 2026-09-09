@@ -1,0 +1,14 @@
+{
+  "description": "HI AGI exactly $25,000 -> 'Not over $25,000 25%': 4,000 x 25% = $1,000.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 25000,
+    "hiChildCareExpenses": 4000,
+    "hiEarnedIncome": 25000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

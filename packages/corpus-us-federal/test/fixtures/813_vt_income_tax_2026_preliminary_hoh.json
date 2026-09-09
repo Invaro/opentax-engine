@@ -1,0 +1,12 @@
+{
+  "description": "VT TY2026 preliminary schedule, head of household $300,000: 17,630 + 8.75% x (300,000 - 284,150) = 17,630 + 1,386.875 = 19,016.875 -> $19,017.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "1901700"
+  }
+}

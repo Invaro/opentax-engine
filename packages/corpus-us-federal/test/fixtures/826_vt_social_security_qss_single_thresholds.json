@@ -1,0 +1,14 @@
+{
+  "description": "VT qualifying surviving spouse uses the single thresholds for the retirement exclusion (\u00a7 5830e(a)(1) lists 'surviving spouse' with single): AGI $70,000 is over $65,000, so $0 \u2014 a joint filer at the same AGI would exclude everything.",
+  "facts": {
+    "filingStatus": "qss",
+    "vtFederalAgi": 70000,
+    "vtRetirementElection": "social_security",
+    "vtTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.retirement_income_exclusion",
+  "expect": {
+    "valueCents": "0"
+  }
+}

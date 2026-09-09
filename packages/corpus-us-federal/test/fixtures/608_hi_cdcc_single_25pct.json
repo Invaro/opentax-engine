@@ -1,0 +1,15 @@
+{
+  "description": "HI Schedule X Part II: single AGI $20,000, expenses 6,000, earned 20,000 -> 6,000 x 25% = $1,500.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 20000,
+    "hiChildCareExpenses": 6000,
+    "hiChildCareQualifyingPersons": 1,
+    "hiEarnedIncome": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "150000"
+  }
+}

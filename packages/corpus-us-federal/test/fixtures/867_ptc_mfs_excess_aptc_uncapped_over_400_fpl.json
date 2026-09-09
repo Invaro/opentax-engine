@@ -1,0 +1,15 @@
+{
+  "description": "Excess advance PTC repayment for the MFS filer above: household income $181,542 is 1,205% of the $15,060 poverty line, so the \u00a7 36B(f)(2)(B) cap does not apply and the entire $6,000 advance is repaid on Schedule 2 line 2 \u2014 with no SLCSP needed.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 181542,
+    "advancePTC": 6000,
+    "ptcHouseholdSize": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ptc.excess_aptc_repayment",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

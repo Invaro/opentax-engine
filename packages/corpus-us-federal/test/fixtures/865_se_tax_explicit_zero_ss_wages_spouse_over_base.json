@@ -1,0 +1,15 @@
+{
+  "description": "The case the flag exists for: the spouse's $200,000 of box-1 wages exceed the $176,100 wage base, but they are the SPOUSE's \u2014 the SE earner's own social security wages are an explicit $0, so OASDI applies to the full 46,175 of net earnings: line 10 $5,726 + line 11 $1,339 = $7,065. Falling back to the couple's wages would have wiped the OASDI (line 8a 200,000 > 176,100) and produced $1,339.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "selfEmploymentNetProfit": 50000,
+    "socialSecurityWages": 0,
+    "socialSecurityWagesProvided": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "706500"
+  }
+}

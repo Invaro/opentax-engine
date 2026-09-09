@@ -1,0 +1,13 @@
+{
+  "description": "VT estimated use tax above $100,000 is capped at $150: 0.05% x $500,000 = $250 -> $150.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 500000,
+    "vtUseTaxEstimateFromTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.use_tax",
+  "expect": {
+    "valueCents": "15000"
+  }
+}

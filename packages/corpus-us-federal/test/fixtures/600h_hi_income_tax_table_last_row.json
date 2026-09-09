@@ -1,0 +1,12 @@
+{
+  "description": "HI last table row '99,950 100,000 6,489 5,380 5,935': single $99,999 -> midpoint 99,975: 2,539 + 7.6% x 51,975 = 6,489.10 -> $6,489.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 99999
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "648900"
+  }
+}

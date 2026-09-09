@@ -1,0 +1,12 @@
+{
+  "description": "VT TY2026 married filing separately $41,300: no 2026 Tax Table, so the schedule at the exact income \u2014 41,300 x 3.35% = 1,383.55 -> $1,384 (the 2025 table row printed $1,389 on the 2025 brackets).",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 41300
+  },
+  "asOf": "2026-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "138400"
+  }
+}

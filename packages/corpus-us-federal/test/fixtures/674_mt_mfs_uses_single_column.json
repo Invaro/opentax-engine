@@ -1,0 +1,12 @@
+{
+  "description": "MT groups married filing separately with single: at exactly $21,100, 5.9% x 21,100 - 253 = 991.90 -> $992.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 21100
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "99200"
+  }
+}

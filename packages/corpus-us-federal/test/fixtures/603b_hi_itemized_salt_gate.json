@@ -1,0 +1,15 @@
+{
+  "description": "HI \u00a7 235-2.4(k)(2): single federal AGI $120,000 -> state income taxes not deductible; real estate taxes 3,000 -> $3,000.",
+  "facts": {
+    "filingStatus": "single",
+    "hiAgi": 120000,
+    "hiFederalAgi": 120000,
+    "hiStateLocalIncomeTaxes": 5000,
+    "hiRealEstateTaxes": 3000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.itemized_deductions",
+  "expect": {
+    "valueCents": "300000"
+  }
+}

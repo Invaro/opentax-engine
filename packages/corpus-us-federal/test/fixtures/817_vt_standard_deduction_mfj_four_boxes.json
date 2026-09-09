@@ -1,0 +1,12 @@
+{
+  "description": "VT standard deduction, married filing jointly with all four boxes (both 65+, both blind): 15,300 + 4 x 1,250 = $20,300, the chart's last column.",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtAdditionalDeductionBoxes": 4
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.standard_deduction",
+  "expect": {
+    "valueCents": "2030000"
+  }
+}

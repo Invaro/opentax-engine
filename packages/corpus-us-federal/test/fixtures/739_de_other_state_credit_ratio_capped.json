@@ -1,0 +1,15 @@
+{
+  "description": "DE line 28 worksheet line 3: 'If Line 1 is greater than Line 2: enter 100%.' Other-state income above Delaware AGI does not push the ratio past 1.",
+  "facts": {
+    "filingStatus": "single",
+    "deAdjustedGrossIncome": 50000,
+    "deIncomeTax": 2000,
+    "deOtherStateIncome": 80000,
+    "deOtherStateTaxPaid": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.other_state_credit",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

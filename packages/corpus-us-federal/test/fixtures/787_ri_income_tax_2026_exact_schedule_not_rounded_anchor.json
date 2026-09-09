@@ -1,0 +1,12 @@
+{
+  "description": "RI TY2026: $82,421 of taxable income is 4.75% x 82,421 - 820.50 = 3,094.4975 -> $3,094 on the exact schedule. The published 'Pay' anchor $3,076.88 is a display rounding of 3,076.875; applying it plus 4.75% x 371 gives 3,094.5025 -> $3,095, a $1 overstatement that recurs at 1,589 of the 400,001 whole-dollar incomes to $400,000. The Division's worksheet constants are exact (TY2025 proves it), so the exact schedule is encoded.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 82421
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "309400"
+  }
+}

@@ -131,6 +131,16 @@ describe("composeVA — 2025 Form 760", () => {
     expect(dollars(lines, "17_spouse_tax_adjustment")).toBe("$259");
   });
 
+  it("va-007: the low-income credit bar reads the per-spouse age/blind boxes, not only the flat count", () => {
+    const base = { jurisdiction: "va" as const, filingStatus: "single", federalAGI: 14000, exemptions: 1, federalEITC: 0, vaFamilyVagi: 14000 };
+    const open = composeStateReturn({ ...base }, stubEval).lines;
+    const barredFlat = composeStateReturn({ ...base, ageOrBlindBoxes: 1 }, stubEval).lines;
+    const barredSpouseInputs = composeStateReturn({ ...base, vaYourAgeBlindBoxes: 1 }, stubEval).lines;
+    expect(dollars(open, "23_low_income_or_eitc_credit")).not.toBe("$0");
+    expect(dollars(barredFlat, "23_low_income_or_eitc_credit")).toBe("$0");
+    expect(dollars(barredSpouseInputs, "23_low_income_or_eitc_credit")).toBe("$0"); // was "open" before the fix
+  });
+
   it("splits estimated payments, prior-year credit, and extension onto lines 20/21/22", () => {
     const { lines } = composeStateReturn(
       {
@@ -232,6 +242,20 @@ describe("composeIL — 2025 IL-1040", () => {
     expect(dollars(lines, "10_exemption_allowance")).toBe("$0");
     expect(dollars(lines, "11_net_income")).toBe("$39,658");
     expect(dollars(lines, "12_tax")).toBe("$1,963"); // 39,658 x 4.95%
+  });
+
+  it("il-004: the 1299-C educator credit caps EACH spouse's column at $500 ($900 + $100 = $600)", () => {
+    const joint = composeStateReturn(
+      { jurisdiction: "il", filingStatus: "mfj", federalAGI: 90000, ilTeacherExpenses: 900, ilSpouseTeacherExpenses: 100 },
+      stubEval,
+    ).lines;
+    expect(dollars(joint, "18_nonrefundable_credits")).toBe("$600");
+    // a separate/single return has no spouse column — the spouse amount is ignored, not summed
+    const single = composeStateReturn(
+      { jurisdiction: "il", filingStatus: "single", federalAGI: 90000, ilTeacherExpenses: 900, ilSpouseTeacherExpenses: 100 },
+      stubEval,
+    ).lines;
+    expect(dollars(single, "18_nonrefundable_credits")).toBe("$500");
   });
 });
 
@@ -2164,5 +2188,1168 @@ describe("composeME — 2025 Form 1040ME (real corpus targets)", () => {
     const re = composeStateReturn(e, realPaEval(e));
     expect(dollars(re.lines, "A4_earned_income_credit")).toBe("$300");
     expect(re.notes.some((n) => n.includes("pass meHasQualifyingChild"))).toBe(true);
+  });
+});
+
+describe("composeHI — 2025 Form N-11 (real corpus targets)", () => {
+  it("single wage earner: $4,400 standard deduction, one $1,144 exemption, tax table, balance due", () => {
+    // 20 = 60,000; 23 = 4,400; 24 = 55,600; 25 = 1,144; 26 = 54,456 → row [54,450, 54,500) midpoint 54,475: 2,539 + 7.6% × 6,475 = 3,031.10 → $3,031;
+    // food/excise: single federal AGI 60,000 ≥ 40,000 → 0; withholding 2,500 → owe 531
+    const input = { jurisdiction: "hi" as const, filingStatus: "single", federalAGI: 60000, stateWithholding: 2500, hiPresentOverNineMonths: true };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["6e_total_exemptions"]).toBe("1");
+    expect(dollars(lines, "23_standard_deduction")).toBe("$4,400");
+    expect(dollars(lines, "25_exemptions")).toBe("$1,144");
+    expect(dollars(lines, "26_taxable_income")).toBe("$54,456");
+    expect(dollars(lines, "27_tax")).toBe("$3,031");
+    expect(lines._tax_method).toBe("tax table");
+    expect(lines["28_food_excise_credit"]).toBeUndefined();
+    expect(dollars(lines, "48_amount_owed")).toBe("$531");
+    expect(notes.some((n) => n.includes("$40,000 or more"))).toBe(true);
+  });
+
+  it("MFJ retirees: pension and Social Security excluded, four exemptions with the age-65 extras, renters credit refunds the tax", () => {
+    // 19 = 30,000 + 15,000 = 45,000; 20 = 25,000; 23 = 8,800; 24 = 16,200; 25 = 4 × 1,144 = 4,576; 26 = 11,624 → midpoint 11,625 × 1.4% = 162.75 → $163;
+    // food/excise: federal AGI 70,000 ≥ 60,000 → 0; renters: Hawaii AGI 25,000 < 30,000, rent 15,000, 4 exemptions → 200; 34 = 163 − 200 = −37 → refund 37
+    const input = {
+      jurisdiction: "hi" as const, filingStatus: "mfj", federalAGI: 70000, taxableSocialSecurity: 15000, hiPensionExclusion: 30000, hiTaxpayerAge65: true, hiSpouseAge65: true,
+      hiRentPaid: 15000, hiPresentOverNineMonths: true,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["6e_total_exemptions"]).toBe("4");
+    expect(dollars(lines, "20_hawaii_agi")).toBe("$25,000");
+    expect(dollars(lines, "25_exemptions")).toBe("$4,576");
+    expect(dollars(lines, "27_tax")).toBe("$163");
+    expect(dollars(lines, "29_renters_credit")).toBe("$200");
+    expect(dollars(lines, "34_adjusted_tax_liability")).toBe("-$37");
+    expect(dollars(lines, "42_overpaid")).toBe("$37");
+    expect(dollars(lines, "47a_refund")).toBe("$37");
+  });
+
+  it("low-income HOH with two children: food/excise, child care, restraint, and EITC credits", () => {
+    // 6e = 3; 23 = 6,424; 24 = 25,576; 25 = 3,432; 26 = 22,144 → HOH midpoint 22,125: 432 + 5.5% × 525 = 460.875 → $461;
+    // 28: HOH federal AGI 32,000 → $110 × 3 = 330; 30: 5,000 (cap 20,000) × 23% (AGI 30,001-35,000) = 1,150; 31 = 25; CR8 = 40% × 4,000 = 1,600;
+    // 33 = 3,105; 34 = −2,644; 41 = 600; 42 = 2,644 + 600 = 3,244
+    const input = {
+      jurisdiction: "hi" as const, filingStatus: "hoh", federalAGI: 32000, dependents: 2, hiEarnedIncome: 32000, hiChildCareExpenses: 5000, hiChildCareQualifyingPersons: 2, federalEITC: 4000,
+      hiPresentOverNineMonths: true, hiChildRestraintSystemPurchased: true, stateWithholding: 600,
+    };
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "27_tax")).toBe("$461");
+    expect(dollars(lines, "28_food_excise_credit")).toBe("$330");
+    expect(dollars(lines, "30_child_dependent_care_credit")).toBe("$1,150");
+    expect(dollars(lines, "31_child_passenger_restraint_credit")).toBe("$25");
+    expect(dollars(lines, "CR8_earned_income_credit")).toBe("$1,600");
+    expect(dollars(lines, "33_total_refundable_credits")).toBe("$3,105");
+    expect(dollars(lines, "42_overpaid")).toBe("$3,244");
+    expect(dollars(lines, "47a_refund")).toBe("$3,244");
+    expect(dollars(lines, "48_amount_owed")).toBe("$0");
+  });
+
+  it("high-income itemizer: SALT gate, overall limitation, capital gains worksheet, other-state credit", () => {
+    // itemized 8,000 + 30,000 + 12,000 = 50,000 (income taxes blocked, FAGI ≥ 100,000); limitation: 80% × 50,000 = 40,000 vs 3% × 83,200 = 2,496 → 22 = 47,504;
+    // 24 = 202,496; 25 = 1,144; 26 = 201,352; Schedule I: 12,341 + 8.25% × 26,352 = 14,515.04 → 14,515;
+    // capital gains: 13 = max(121,352, 24,000); 15 = 2,539 + 7.6% × 73,352 = 8,113.75 → 8,114; 16 = 7.25% × 80,000 = 5,800; 17 = 13,914 < 14,515 → tax 13,914, 27a = 80,000;
+    // other state: 12 = 201,352 − 40,000 − 80,000 = 81,352 → table row [81,350, 81,400): 5,076; 15 = 5,800; 17 = 13,914 − 10,876 = 3,038; min(3,000, 3,038) = 3,000;
+    // 36 = 10,914; withholding 15,000 → refund 4,086
+    const input = {
+      jurisdiction: "hi" as const, filingStatus: "single", federalAGI: 250000, hiItemize: true, hiStateLocalIncomeTaxes: 15000, hiRealEstateTaxes: 8000, hiHomeMortgageInterest: 30000, hiCharitableContributions: 12000,
+      hiNetCapitalGain: 80000, hiNetLongTermCapitalGain: 80000, hiOtherStateTaxEligible: 3000, hiOutOfStateIncome: 40000, stateWithholding: 15000,
+    };
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines._deduction_method).toBe("itemized");
+    expect(lines["21b_taxes"]).toBe("$8,000");
+    expect(dollars(lines, "22_total_itemized_deductions")).toBe("$47,504");
+    expect(dollars(lines, "26_taxable_income")).toBe("$201,352");
+    expect(lines._tax_method).toBe("capital gains worksheet");
+    expect(dollars(lines, "27_tax")).toBe("$13,914");
+    expect(dollars(lines, "27a_net_capital_gain")).toBe("$80,000");
+    expect(dollars(lines, "CR12_other_state_credit")).toBe("$3,000");
+    expect(dollars(lines, "36_balance")).toBe("$10,914");
+    expect(dollars(lines, "47a_refund")).toBe("$4,086");
+    expect(notes.some((n) => n.includes("PRINTED 2025 amounts"))).toBe(true);
+    expect(notes.some((n) => n.includes("not deductible — federal AGI"))).toBe(true);
+  });
+
+  it("MFS spouse exemption with the age-65 oval, a dependent filer, and the disability exemption", () => {
+    // MFS: 6b = 2 (spouse + 65), 6e = 3; 24 = 35,600; 25 = 3,432; 26 = 32,168 → single midpoint 32,175: 859 + 6.8% × 8,175 = 1,414.90 → $1,415
+    const m = { jurisdiction: "hi" as const, filingStatus: "mfs", federalAGI: 40000, hiSpouseExemptionMfs: true, hiSpouseAge65: true };
+    const lm = composeStateReturn(m, realPaEval(m)).lines;
+    expect(lm["6b_spouse"]).toBe("2");
+    expect(dollars(lm, "25_exemptions")).toBe("$3,432");
+    expect(dollars(lm, "27_tax")).toBe("$1,415");
+    // dependent filer: 6a = 0; standard deduction min(4,400, max(500, 6,000)) = 4,400; 25 = 0; 26 = 1,600 → midpoint 1,625 × 1.4% = 22.75 → $23; no credits; refund 80 − 23 = 57
+    const d = { jurisdiction: "hi" as const, filingStatus: "single", federalAGI: 6000, claimedAsDependent: true, hiEarnedIncome: 6000, hiPresentOverNineMonths: true, stateWithholding: 80 };
+    const rd_ = composeStateReturn(d, realPaEval(d));
+    expect(rd_.lines["6a_yourself"]).toBe("0");
+    expect(dollars(rd_.lines, "25_exemptions")).toBe("$0");
+    expect(dollars(rd_.lines, "27_tax")).toBe("$23");
+    expect(rd_.lines["28_food_excise_credit"]).toBeUndefined();
+    expect(dollars(rd_.lines, "47a_refund")).toBe("$57");
+    // disabled single: 25 = 7,000; 26 = 30,000 − 4,400 − 7,000 = 18,600 → midpoint 18,625: 288 + 5.5% × 4,225 = 520.375 → $520
+    const s = { jurisdiction: "hi" as const, filingStatus: "single", federalAGI: 30000, hiDisabledPersons: 1 };
+    const ls = composeStateReturn(s, realPaEval(s)).lines;
+    expect(dollars(ls, "25_exemptions")).toBe("$7,000");
+    expect(dollars(ls, "27_tax")).toBe("$520");
+    // unattested nine-month presence: the food/excise credit is not claimed, with a note
+    const u = { jurisdiction: "hi" as const, filingStatus: "single", federalAGI: 20000 };
+    const ru = composeStateReturn(u, realPaEval(u));
+    expect(ru.lines["28_food_excise_credit"]).toBeUndefined();
+    expect(ru.notes.some((n) => n.includes("pass hiPresentOverNineMonths"))).toBe(true);
+  });
+});
+
+describe("composeHI — review-driven edge cases", () => {
+  it("QSS has no spouse: own earned income for the child care credit, $5,000 IHA cap, $7,000 disability exemption; MFS keeps a federally allowed EIC", () => {
+    const q = { jurisdiction: "hi" as const, filingStatus: "qss", federalAGI: 50000, dependents: 1, hiEarnedIncome: 50000, hiChildCareExpenses: 5000, hiIhaPayments: 10000 };
+    const lq = composeStateReturn(q, realPaEval(q)).lines;
+    expect(dollars(lq, "30_child_dependent_care_credit")).toBe("$1,050"); // Hawaii AGI 50,000 − 5,000 IHA = 45,000 → 21% band; 5,000 × 21%
+    expect(dollars(lq, "16_individual_housing_account")).toBe("$5,000");
+    const qd = { jurisdiction: "hi" as const, filingStatus: "qss", federalAGI: 50000, dependents: 1, hiDisabledPersons: 1, hiSpouseAge65: true };
+    expect(dollars(composeStateReturn(qd, realPaEval(qd)).lines, "25_exemptions")).toBe("$7,000");
+    const m = { jurisdiction: "hi" as const, filingStatus: "mfs", federalAGI: 20000, federalEITC: 1000, dependents: 1 };
+    expect(dollars(composeStateReturn(m, realPaEval(m)).lines, "CR8_earned_income_credit")).toBe("$400");
+  });
+
+  it("dependent filers on a joint return get no 6b exemption; the disabled-spouse flag assigns the $2,288 correctly", () => {
+    const j = { jurisdiction: "hi" as const, filingStatus: "mfj", federalAGI: 8000, claimedAsDependent: true, hiEarnedIncome: 8000 };
+    const lj = composeStateReturn(j, realPaEval(j)).lines;
+    expect(lj["6b_spouse"]).toBe("0");
+    expect(dollars(lj, "25_exemptions")).toBe("$0");
+    // disabled taxpayer who is 65, spouse under 65 → 8,144 (the extra goes with the NON-disabled spouse's age)
+    const a = { jurisdiction: "hi" as const, filingStatus: "mfj", federalAGI: 50000, hiDisabledPersons: 1, hiTaxpayerAge65: true };
+    expect(dollars(composeStateReturn(a, realPaEval(a)).lines, "25_exemptions")).toBe("$8,144");
+    // disabled spouse, taxpayer 65 → 9,288
+    const b = { jurisdiction: "hi" as const, filingStatus: "mfj", federalAGI: 50000, hiDisabledPersons: 1, hiSpouseDisabled: true, hiTaxpayerAge65: true };
+    expect(dollars(composeStateReturn(b, realPaEval(b)).lines, "25_exemptions")).toBe("$9,288");
+    // MFS food/excise note shows the combined AGI
+    const f = { jurisdiction: "hi" as const, filingStatus: "mfs", federalAGI: 10000, hiSpouseFederalAgi: 55000, hiPresentOverNineMonths: true };
+    expect(composeStateReturn(f, realPaEval(f)).notes.some((n) => n.includes("$65,000 (yours plus your spouse's) is $60,000 or more"))).toBe(true);
+  });
+});
+
+describe("composeRI — 2025 Form RI-1040 (real corpus targets)", () => {
+  const ri = (extra: Record<string, unknown>) => ({ jurisdiction: "ri" as const, asOf: "2025-12-31", ...extra });
+
+  it("single wage earner: standard deduction, one exemption, Tax Table, refund", () => {
+    // 1 = 60,000; 4 = 10,900; 5 = 49,100; 6 = 1 x 5,100; 7 = 44,000 -> table row
+    // 44,000-44,050, midpoint 44,025 x 3.75% = 1,650.94 -> 1,651; withheld 2,000 -> refund 349
+    const input = ri({ filingStatus: "single", federalAGI: 60000, stateWithholding: 2000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "3_modified_federal_agi")).toBe("$60,000");
+    expect(dollars(lines, "4_standard_deduction")).toBe("$10,900");
+    expect(lines["E_5_total_exemptions"]).toBe("1");
+    expect(dollars(lines, "7_ri_taxable_income")).toBe("$44,000");
+    expect(dollars(lines, "8_ri_income_tax")).toBe("$1,651");
+    expect(dollars(lines, "16_amount_overpaid")).toBe("$349");
+    expect(dollars(lines, "17_refund")).toBe("$349");
+  });
+
+  it("retired joint couple: Social Security and per-person pension modifications zero the tax", () => {
+    // 1s = 20,000 (both born on or before 03/01/1959, AGI 90,000 < 133,750, percentage 1.0000);
+    // 1t = min(30,000, 50,000) + min(10,000, 50,000) = 40,000; 2 = -60,000; 3 = 30,000;
+    // 4 = 21,800; 5 = 8,200; 6 = 2 x 5,100 = 10,200; 7 = 0 -> tax 0; withheld 500 -> refund 500
+    const input = ri({
+      filingStatus: "mfj", federalAGI: 90000, taxableSocialSecurity: 20000, riSocialSecurityBenefits: 24000,
+      riTaxpayerFullRetirementAge: true, riSpouseFullRetirementAge: true,
+      riTaxpayerPensionIncome: 30000, riSpousePensionIncome: 10000, stateWithholding: 500,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "M_1s_social_security_modification")).toBe("$20,000");
+    expect(dollars(lines, "M_1t_pension_modification")).toBe("$40,000");
+    expect(dollars(lines, "2_net_modifications")).toBe("-$60,000");
+    expect(dollars(lines, "3_modified_federal_agi")).toBe("$30,000");
+    expect(dollars(lines, "7_ri_taxable_income")).toBe("$0");
+    expect(dollars(lines, "8_ri_income_tax")).toBe("$0");
+    expect(dollars(lines, "17_refund")).toBe("$500");
+  });
+
+  it("HOH with two children: Schedule I capped at the tax, refundable 16% earned income credit", () => {
+    // 7 = 35,000 - 16,350 - 15,300 = 3,350 -> row 3,350-3,400, midpoint 3,375 x 3.75% = 126.56 -> 127;
+    // Schedule I: 25% x 1,200 = 300, capped at the 127 tax -> 127; 10a = 0;
+    // Schedule EIC: 16% x 5,000 = 800 (refundable); payments 300 + 800 -> refund 1,100
+    const input = ri({
+      filingStatus: "hoh", federalAGI: 35000, dependents: 2, federalEITC: 5000,
+      riFederalChildCareCredit: 1200, stateWithholding: 300,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(lines["E_5_total_exemptions"]).toBe("3");
+    expect(dollars(lines, "8_ri_income_tax")).toBe("$127");
+    expect(dollars(lines, "I_21_tentative_federal_credit")).toBe("$300");
+    expect(dollars(lines, "9a_allowable_federal_credit")).toBe("$127");
+    expect(dollars(lines, "10a_tax_after_credits")).toBe("$0");
+    expect(dollars(lines, "14d_ri_earned_income_credit")).toBe("$800");
+    expect(dollars(lines, "17_refund")).toBe("$1,100");
+  });
+
+  it("high income: both phase-outs exhausted, Tax Computation Worksheet, Schedule II ratio", () => {
+    // 3 = 300,000 > 283,250 -> deduction 0 and exemption 0; 7 = 300,000;
+    // 8 = 300,000 x 5.99% - 3,051.46 = 14,918.54 -> 14,919;
+    // Schedule II: 100,000 / 300,000 = 0.3333; 14,919 x 0.3333 = 4,972.50 -> 4,973;
+    // smallest of 14,919 / 4,973 / 6,000 -> 4,973; 10a = 9,946; withheld 12,000 -> overpaid 2,054
+    const input = ri({
+      filingStatus: "single", federalAGI: 300000, riOtherStateIncome: 100000,
+      riOtherStateTaxPaid: 6000, stateWithholding: 12000,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_standard_deduction")).toBe("$0");
+    expect(dollars(lines, "6_exemptions")).toBe("$0");
+    expect(dollars(lines, "8_ri_income_tax")).toBe("$14,919");
+    expect(dollars(lines, "II_23_tax_less_federal_credit")).toBe("$14,919");
+    expect(dollars(lines, "9b_other_state_credit")).toBe("$4,973");
+    expect(dollars(lines, "10a_tax_after_credits")).toBe("$9,946");
+    expect(dollars(lines, "16_amount_overpaid")).toBe("$2,054");
+  });
+
+  it("elderly renter: RI-1040H property tax relief, Schedule U lookup table, checkoff contributions", () => {
+    // 7 = 18,000 - 10,900 - 5,100 = 2,000 -> printed row 2,000-2,050 = 76;
+    // checkoffs 10; use tax lookup band 16,700-25,050 = 15; 13a = 101;
+    // RI-1040H: income 18,000 in the 17,461-40,730 band (6%) -> 1,080; 20% x 9,000 rent = 1,800;
+    // 1,800 - 1,080 = 720, capped at the $700 maximum; overpaid 700 - 101 = 599
+    const input = ri({
+      filingStatus: "single", federalAGI: 18000, riAge65OrDisabled: true, riHouseholdIncome: 18000,
+      riHouseholdMembers: 1, riRentPaid: 9000, riUseTaxLookupTable: true, riCheckoffContributions: 10,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_ri_income_tax")).toBe("$76");
+    expect(dollars(lines, "11_checkoff_contributions")).toBe("$10");
+    expect(dollars(lines, "12a_use_tax")).toBe("$15");
+    expect(dollars(lines, "13a_total_tax_and_checkoffs")).toBe("$101");
+    expect(dollars(lines, "14c_property_tax_relief_credit")).toBe("$700");
+    expect(dollars(lines, "17_refund")).toBe("$599");
+  });
+
+  it("a filer claimable by another gets no exemption", () => {
+    const input = ri({ filingStatus: "single", federalAGI: 8000, claimedAsDependent: true, stateWithholding: 50 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(lines["E_5_total_exemptions"]).toBe("0");
+    expect(dollars(lines, "6_exemptions")).toBe("$0");
+    expect(dollars(lines, "7_ri_taxable_income")).toBe("$0");
+    expect(dollars(lines, "17_refund")).toBe("$50");
+    expect(notes.some((n) => n.includes("your exemption amount is zero"))).toBe(true);
+  });
+
+  it("applies the statute's strict 'less than' AGI test and discloses the booklet's looser wording", () => {
+    const at = ri({
+      filingStatus: "single", federalAGI: 107000, taxableSocialSecurity: 12000, riSocialSecurityBenefits: 14000,
+      riTaxpayerFullRetirementAge: true, riTaxpayerPensionIncome: 20000,
+    });
+    const { lines, notes } = composeStateReturn(at, realPaEval(at));
+    expect(dollars(lines, "M_1s_social_security_modification")).toBe("$0");
+    expect(dollars(lines, "M_1t_pension_modification")).toBe("$0");
+    expect(notes.some((n) => n.includes("is not LESS THAN"))).toBe(true);
+    expect(notes.some((n) => n.includes('the booklet\'s question 2 reads "less than or equal to"'))).toBe(true);
+    // one dollar lower and both modifications are allowed
+    const under = { ...at, federalAGI: 106999 };
+    const { lines: l2 } = composeStateReturn(under, realPaEval(under));
+    expect(dollars(l2, "M_1s_social_security_modification")).toBe("$12,000");
+    expect(dollars(l2, "M_1t_pension_modification")).toBe("$20,000");
+  });
+
+  it("ignores a spouse pension column on a return that has no spouse column", () => {
+    const input = ri({
+      filingStatus: "single", federalAGI: 60000, riTaxpayerFullRetirementAge: true,
+      riTaxpayerPensionIncome: 10000, riSpousePensionIncome: 25000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "M_1t_pension_modification")).toBe("$10,000");
+    expect(notes.some((n) => n.includes("riSpousePensionIncome ignored"))).toBe(true);
+  });
+
+  it("leaves the un-indexed 2026 lines blank instead of guessing, and says why", () => {
+    const input = ri({
+      filingStatus: "single", federalAGI: 50000, taxableSocialSecurity: 10000, riSocialSecurityBenefits: 12000,
+      riTaxpayerFullRetirementAge: true, riAge65OrDisabled: true, riHouseholdIncome: 20000, riPropertyTaxPaid: 2000,
+    });
+    const evaluator = makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf: "2026-12-31", target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+    const { lines, notes } = composeStateReturn(input, evaluator);
+    // the TY2026 rate schedule, standard deduction and exemption ARE published
+    expect(dollars(lines, "4_standard_deduction")).toBe("$11,200");
+    expect(dollars(lines, "6_exemptions")).toBe("$5,250");
+    // the Social Security modification and RI-1040H amounts are not
+    expect(dollars(lines, "M_1s_social_security_modification")).toBe("$0");
+    expect(dollars(lines, "14c_property_tax_relief_credit")).toBe("$0");
+    expect(notes.filter((n) => n.includes("has no applicable rule as of this date")).length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("composeRI — adversarial-review regressions", () => {
+  const ri = (extra: Record<string, unknown>) => ({ jurisdiction: "ri" as const, asOf: "2025-12-31", ...extra });
+  const riEvalAt = (input: Record<string, unknown>, asOf: string): StateTaxEvaluator =>
+    makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf, target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+
+  it("prints line 16 net of the line 15b underestimating interest, so lines 17 + 18 reconcile to it", () => {
+    // INDEPENDENT-VERIFIER REGRESSION: line 16 printed the gross overpayment while 17/18 were net,
+    // so 16 != 17 + 18. Printed form: "If there is an amount due for underestimating interest on
+    // line 15b, subtract line 15b from line 16."
+    const input = ri({ filingStatus: "single", federalAGI: 30000, stateWithholding: 1500, riUnderestimatingInterest: 300 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    const gross = Number(dollars(lines, "14i_net_payments").replace(/[$,]/g, "")) - Number(dollars(lines, "13b_total_tax_and_checkoffs").replace(/[$,]/g, ""));
+    const l16 = Number(dollars(lines, "16_amount_overpaid").replace(/[$,]/g, ""));
+    expect(l16).toBe(gross - 300);
+    expect(l16).toBe(Number(dollars(lines, "17_refund").replace(/[$,]/g, "")) + Number(dollars(lines, "18_applied_to_2026").replace(/[$,]/g, "")));
+    expect(dollars(lines, "15c_total_amount_due")).toBe("$0");
+  });
+
+  it("gives a qualifying widow(er) the right reason for a missing Social Security modification", () => {
+    // INDEPENDENT-VERIFIER REGRESSION: the note tested `joint && spFra` (joint includes QSS) and
+    // blamed the AGI limit; the rule only honors the spouse on MFJ, so the real reason is that
+    // the taxpayer has not reached full retirement age.
+    const input = ri({ filingStatus: "qss", federalAGI: 90000, taxableSocialSecurity: 10000, riSocialSecurityBenefits: 12000, riTaxpayerFullRetirementAge: false, riSpouseFullRetirementAge: true });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "2_net_modifications")).toBe("$0");
+    const note = notes.find((n) => n.startsWith("RI Schedule M line 1s"));
+    expect(note).toContain("not attested");
+    expect(note).not.toContain("not LESS THAN");
+  });
+
+  it("says the schedule ran, not the Tax Table, on a TY2026 return below $100,000", () => {
+    // INDEPENDENT-VERIFIER REGRESSION: TY2026 has no published table; the note claimed one.
+    const input = ri({ asOf: "2026-12-31", filingStatus: "single", federalAGI: 60000 });
+    const { notes } = composeStateReturn(input, riEvalAt(input, "2026-12-31"));
+    const l8 = notes.find((n) => n.startsWith("RI line 8"));
+    expect(l8).toContain("NOT the Tax Table");
+    expect(l8).not.toContain("the $50 row containing");
+  });
+
+  it("gives a qualifying widow(er) the joint AMOUNTS but never a spouse column", () => {
+    // 7 = 80,000 - 21,800 (joint standard deduction) - 2 x 5,100 = 48,000 -> printed row 48,000-48,050 = 1,801.
+    // The spouse exemption, the second $50,000 pension column and the $1,000 joint 529 cap all require a joint return.
+    const input = ri({
+      filingStatus: "qss", federalAGI: 80000, dependents: 1, riTuitionSavingsContributions: 1000,
+      riTaxpayerFullRetirementAge: true, riSpouseFullRetirementAge: true,
+      riTaxpayerPensionIncome: 60000, riSpousePensionIncome: 30000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_standard_deduction")).toBe("$21,800"); // shared joint amount
+    expect(lines["E_5_total_exemptions"]).toBe("2"); // self + dependent, NOT a spouse
+    expect(dollars(lines, "M_1t_pension_modification")).toBe("$50,000"); // one column only
+    expect(notes.some((n) => n.includes("riSpousePensionIncome ignored"))).toBe(true);
+    expect(notes.some((n) => n.includes("capped at $500"))).toBe(true); // not the $1,000 joint cap
+  });
+
+  it("will not prorate the Social Security modification without worksheet line 9", () => {
+    const input = ri({
+      filingStatus: "mfj", federalAGI: 120000, taxableSocialSecurity: 20000, riSocialSecurityBenefits: 40000,
+      riTaxpayerFullRetirementAge: true, riSpouseFullRetirementAge: false,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "M_1s_social_security_modification")).toBe("$0");
+    expect(notes.some((n) => n.includes("riSocialSecurityBenefitsFraPerson was not supplied"))).toBe(true);
+    // supplying it produces the worksheet's prorated answer: 16,000 / 40,000 = 0.4000 x 20,000
+    const withShare = { ...input, riSocialSecurityBenefitsFraPerson: 16000 };
+    expect(dollars(composeStateReturn(withShare, realPaEval(withShare)).lines, "M_1s_social_security_modification")).toBe("$8,000");
+  });
+
+  it("will not pay the RI-1040H credit without household income", () => {
+    const input = ri({ filingStatus: "single", federalAGI: 45000, riAge65OrDisabled: true, riPropertyTaxPaid: 3000, stateWithholding: 1500 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "14c_property_tax_relief_credit")).toBe("$0");
+    expect(notes.some((n) => n.includes("there is no safe default"))).toBe(true);
+    // and with the real household income it correctly fails the $40,730 test
+    const withIncome = { ...input, riHouseholdIncome: 45000 };
+    expect(dollars(composeStateReturn(withIncome, realPaEval(withIncome)).lines, "14c_property_tax_relief_credit")).toBe("$0");
+  });
+
+  it("counts a Form RI-4868 extension payment on line 14f", () => {
+    const input = ri({ filingStatus: "single", federalAGI: 60000, stateWithholding: 1000, extensionPayment: 1000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "14f_other_payments")).toBe("$1,000");
+    expect(dollars(lines, "14g_total_payments_and_credits")).toBe("$2,000");
+    expect(dollars(lines, "17_refund")).toBe("$349");
+  });
+
+  it("turns underestimating interest larger than the overpayment into an amount due", () => {
+    // 13a 1,651; payments 1,701; overpaid 50; interest 200 -> net $150 owed, not a silent $0/$0
+    const input = ri({ filingStatus: "single", federalAGI: 60000, stateWithholding: 1701, riUnderestimatingInterest: 200 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "16_amount_overpaid")).toBe("$50");
+    expect(dollars(lines, "15c_total_amount_due")).toBe("$150");
+    expect(dollars(lines, "17_refund")).toBe("$0");
+  });
+
+  it("never quotes a stale tax year's thresholds in its notes", () => {
+    const input = ri({ filingStatus: "single", federalAGI: 258000 });
+    const evaluator = makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf: "2026-12-31", target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+    const { lines, notes } = composeStateReturn(input, evaluator);
+    // TY2026 threshold is $261,000, so NO phase-out happened
+    expect(dollars(lines, "4_standard_deduction")).toBe("$11,200");
+    expect(dollars(lines, "6_exemptions")).toBe("$5,250");
+    expect(dollars(lines, "8_ri_income_tax")).toBe("$11,336"); // 8,035.88 + 5.99% x 55,100
+    const all = notes.join(" | ");
+    expect(all).not.toContain("$254,250");
+    expect(all).not.toContain("$283,250");
+    expect(all).not.toContain("$5,100");
+    expect(all).not.toContain("$3,051.46");
+  });
+});
+
+describe("composeMT — 2025 Form 2 (real corpus targets)", () => {
+  const mt = (extra: Record<string, unknown>) => ({ jurisdiction: "mt" as const, ...extra });
+
+  it("single wage earner: federal deduction flows through, no Montana deduction or exemption", () => {
+    // 3 = 70,000 - 15,750 = 54,250 = 7 (no adjustments); 54,250 >= 21,100 so
+    // 5.9% x 54,250 - 253 = 3,200.75 - 253 = 2,947.75 -> 2,948; withheld 3,000 -> overpaid 52
+    const input = mt({ filingStatus: "single", federalAGI: 70000, mtFederalDeductions: 15750, stateWithholding: 3000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "3_federal_taxable_income")).toBe("$54,250");
+    expect(dollars(lines, "6_age65_subtraction")).toBe("$0");
+    expect(dollars(lines, "7_montana_taxable_income")).toBe("$54,250");
+    expect(dollars(lines, "8_tax_before_credits")).toBe("$2,948");
+    expect(dollars(lines, "23_tax_overpaid")).toBe("$52");
+    expect(dollars(lines, "26_refund")).toBe("$52");
+    expect(notes.some((n) => n.includes("NO standard deduction and NO personal exemption"))).toBe(true);
+  });
+
+  it("retired couple with capital gains: age-65 subtraction and the stacked 4.1% rate", () => {
+    // 3 = 120,000 - 35,000 = 85,000; 6 = 11,320 (both 65 on a joint return); 7 = 73,680.
+    // Worksheet: gains 30,000, ordinary 43,680 > 42,200 so the 3% band is empty and all
+    // 30,000 is taxed at 4.1% = 1,230 (line 11); ordinary 5.9% x 43,680 - 506 = 2,071 (line 12); 13 = 3,301
+    const input = mt({
+      filingStatus: "mfj", federalAGI: 120000, mtFederalDeductions: 35000,
+      mtTaxpayerAge65: true, mtSpouseAge65: true, mtNetLongTermCapitalGains: 30000, stateWithholding: 3500,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_age65_subtraction")).toBe("$11,320");
+    expect(dollars(lines, "7_montana_taxable_income")).toBe("$73,680");
+    expect(dollars(lines, "W_4_montana_ordinary_income")).toBe("$43,680");
+    expect(dollars(lines, "W_11_capital_gains_tax")).toBe("$1,230");
+    expect(dollars(lines, "W_12_ordinary_income_tax")).toBe("$2,071");
+    expect(dollars(lines, "8_tax_before_credits")).toBe("$3,301");
+    expect(dollars(lines, "22_tax_due")).toBe("$0");
+  });
+
+  it("low-income elderly renter: refundable earned income and Schedule 2EC credits", () => {
+    // 7 = 20,000 - 15,750 = 4,250 -> 4.7% x 4,250 = 199.75 -> 200;
+    // EITC 10% x 600 = 60; 2EC: line 20 = 7,400 -> 0.035 -> 259; 15% x 6,000 rent = 900; 27 = 641;
+    // multiplier 1.00 (income under 35,000) -> 641; payments 701; overpaid 501
+    const input = mt({
+      filingStatus: "single", federalAGI: 20000, mtFederalDeductions: 15750, federalEITC: 600,
+      mtAge62: true, mtResided9Months: true, mtOccupied6Months: true, mtSoleHouseholdClaimant: true,
+      mtGrossHouseholdIncome: 20000, mtRentPaid: 6000,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_tax_before_credits")).toBe("$200");
+    expect(dollars(lines, "15_earned_income_credit")).toBe("$60");
+    expect(dollars(lines, "16_elderly_homeowner_renter_credit")).toBe("$641");
+    expect(dollars(lines, "21_total_payments")).toBe("$701");
+    expect(dollars(lines, "26_refund")).toBe("$501");
+  });
+
+  it("qualifying surviving spouse: joint rate column, but single-return subtraction caps", () => {
+    const input = mt({
+      filingStatus: "qss", federalAGI: 80000, mtFederalDeductions: 31500,
+      mtTaxpayerAge65: true, mtSpouseAge65: true, mtTuitionSavingsContributions: 12000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_age65_subtraction")).toBe("$5,660"); // not $11,320
+    expect(dollars(lines, "I_16_tuition_savings_subtraction")).toBe("$4,500"); // not $9,000
+    expect(notes.some((n) => n.includes("mtSpouseAge65 ignored"))).toBe(true);
+    expect(notes.some((n) => n.includes("it is NOT a joint return"))).toBe(true);
+  });
+
+  it("military retirement subtraction is capped by Montana wage income, and refuses unattested", () => {
+    const working = mt({
+      filingStatus: "single", federalAGI: 60000, mtFederalDeductions: 15750,
+      mtMilitaryRetirementIncome: 30000, mtMontanaSourceWageIncome: 10000,
+      mtMilitaryRetireeEligible: true, mtMilitaryRetireeWithinFiveYears: true,
+    });
+    expect(dollars(composeStateReturn(working, realPaEval(working)).lines, "I_13_military_retirement_subtraction")).toBe("$10,000");
+    const retired = { ...working, mtMontanaSourceWageIncome: 0 };
+    const r = composeStateReturn(retired, realPaEval(retired));
+    expect(dollars(r.lines, "I_13_military_retirement_subtraction")).toBe("$0");
+    expect(r.notes.some((n) => n.includes("a fully retired veteran with none of them gets nothing"))).toBe(true);
+    expect(r.notes.some((n) => n.includes("trade, business, profession or occupation"))).toBe(true); // § 15-30-2120(8)(b) counts business and farm net income, not just wages
+    const unattested = { ...working, mtMilitaryRetireeEligible: false };
+    const u = composeStateReturn(unattested, realPaEval(unattested));
+    expect(dollars(u.lines, "I_13_military_retirement_subtraction")).toBe("$0");
+    expect(u.notes.some((n) => n.includes("five consecutive years"))).toBe(true);
+  });
+
+  it("taxes Social Security with no state subtraction, and says so", () => {
+    const input = mt({ filingStatus: "single", federalAGI: 40000, mtFederalDeductions: 15750, taxableSocialSecurity: 12000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "5_montana_subtractions")).toBe("$0");
+    expect(notes.some((n) => n.includes("NO state subtraction"))).toBe(true);
+  });
+
+  it("will not claim the elderly credit without gross household income", () => {
+    const input = mt({ filingStatus: "single", federalAGI: 30000, mtFederalDeductions: 15750, mtAge62: true, mtPropertyTaxBilled: 2000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "16_elderly_homeowner_renter_credit")).toBe("$0");
+    expect(notes.some((n) => n.includes("has no safe default"))).toBe(true);
+  });
+
+  it("refuses the federal-deduction line rather than guessing a Montana deduction", () => {
+    const input = mt({ filingStatus: "single", federalAGI: 70000 });
+    expect(() => composeStateReturn(input, realPaEval(input))).toThrow(/mtFederalDeductions is required/);
+  });
+
+  it("moves to the House Bill 337 brackets and the 20% credit for TY2026, and leaves the un-indexed line blank", () => {
+    const input = mt({ filingStatus: "single", federalAGI: 70000, mtFederalDeductions: 15750, federalEITC: 600, mtTaxpayerAge65: true });
+    const evaluator = makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf: "2026-12-31", target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+    const { lines, notes } = composeStateReturn(input, evaluator);
+    // 54,250 > 47,500: 4.7% x 47,500 + 5.65% x 6,750 = 2,232.50 + 381.375 = 2,613.875 -> 2,614
+    expect(dollars(lines, "8_tax_before_credits")).toBe("$2,614");
+    expect(dollars(lines, "15_earned_income_credit")).toBe("$120"); // 20% of 600
+    expect(dollars(lines, "6_age65_subtraction")).toBe("$0"); // the 2026 indexed amount is unpublished
+    expect(notes.some((n) => n.includes("has no applicable rule as of this date"))).toBe(true);
+  });
+});
+
+describe("composeDE — 2025 Form PIT-RES (real corpus targets)", () => {
+  const de = (extra: Record<string, unknown>) => ({ jurisdiction: "de" as const, ...extra });
+
+  it("single wage earner: $3,250 standard deduction, $110 personal credit, table lookup", () => {
+    // 12 = 60,000; 22 = 3,250; 23 = 56,750 -> table midpoint 56,775: 1,001 + 5.55% x 31,775 = 2,764.51 -> 2,765
+    // 27 = 110; 33 = 2,655; withheld 3,000 -> refund 345
+    const input = de({ filingStatus: "single", federalAGI: 60000, deExemptions: 1, stateWithholding: 3000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "12_delaware_agi")).toBe("$60,000");
+    expect(dollars(lines, "22_total_deductions")).toBe("$3,250");
+    expect(dollars(lines, "23_taxable_income")).toBe("$56,750");
+    expect(dollars(lines, "24_tax")).toBe("$2,765");
+    expect(dollars(lines, "27_personal_credits")).toBe("$110");
+    expect(dollars(lines, "33_tax_after_nonrefundable_credits")).toBe("$2,655");
+    expect(dollars(lines, "refund")).toBe("$345");
+  });
+
+  it("retired joint couple: pension exclusion capped at $12,500 and Social Security out in full", () => {
+    // 6 = min(15,000 + 3,000, 12,500) = 12,500; 8a = 15,000; 12 = 52,500; 22 = 6,500; 23 = 46,000
+    // table midpoint 46,025: 1,001 + 5.55% x 21,025 = 2,167.89 -> 2,168; credits 2 x 110 + 2 x 110 = 440
+    const input = de({
+      filingStatus: "mfj", federalAGI: 80000, taxableSocialSecurity: 15000,
+      deAge60OrOver: true, dePensionIncome: 15000, deEligibleRetirementIncome: 3000,
+      deExemptions: 2, deAge60Persons: 2, stateWithholding: 2000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_pension_exclusion")).toBe("$12,500");
+    expect(dollars(lines, "8a_social_security_rr")).toBe("$15,000");
+    expect(dollars(lines, "12_delaware_agi")).toBe("$52,500");
+    expect(dollars(lines, "23_taxable_income")).toBe("$46,000");
+    expect(dollars(lines, "24_tax")).toBe("$2,168");
+    expect(dollars(lines, "27_personal_credits")).toBe("$440");
+    expect(notes.some((n) => n.includes("subtracted IN FULL"))).toBe(true);
+    expect(notes.some((n) => n.includes("85 Del. Laws c. 426") && n.includes("domicile"))).toBe(true);
+  });
+
+  it("filing status 4 runs two returns on one form and beats the joint return", () => {
+    // Column B 55,000 - 3,250 = 51,750 -> midpoint 51,775: 1,001 + 5.55% x 26,775 = 2,487.01 -> 2,487
+    // Column A 45,000 - 3,250 = 41,750 -> midpoint 41,775: 1,001 + 5.55% x 16,775 = 1,932.01 -> 1,932
+    const combined = de({
+      filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 55000, deSpouseFederalAgi: 45000,
+      deExemptions: 1, deSpouseExemptions: 1,
+    });
+    const { lines, notes } = composeStateReturn(combined, realPaEval(combined));
+    expect(dollars(lines, "23_taxable_income_colB")).toBe("$51,750");
+    expect(dollars(lines, "23_taxable_income_colA")).toBe("$41,750");
+    expect(dollars(lines, "24_tax_colB")).toBe("$2,487");
+    expect(dollars(lines, "24_tax_colA")).toBe("$1,932");
+    expect(dollars(lines, "24_tax")).toBe("$4,419");
+    expect(dollars(lines, "22_deductions_colA")).toBe("$3,250"); // each column its own
+    expect(notes.some((n) => n.includes("two separate returns which have been combined"))).toBe(true);
+    // the same couple filing jointly: 100,000 - 6,500 = 93,500, above the table, so
+    // 2,943.50 + 6.6% x 33,500 = 5,154.50 -> 5,155 — $736 worse
+    const joint = de({ filingStatus: "mfj", federalAGI: 100000, deExemptions: 2 });
+    expect(dollars(composeStateReturn(joint, realPaEval(joint)).lines, "24_tax")).toBe("$5,155");
+  });
+
+  it("requires the spouse column when filing status 4 is elected", () => {
+    const input = de({ filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 55000 });
+    expect(() => composeStateReturn(input, realPaEval(input))).toThrow(/deSpouseFederalAgi is required/);
+    const bad = de({ filingStatus: "mfj", deCombinedSeparate: true, federalAGI: 55000, deSpouseFederalAgi: 45000 });
+    expect(() => composeStateReturn(bad, realPaEval(bad))).toThrow(/cannot be used with filingStatus 'mfj'/);
+  });
+
+  it("takes the refundable earned income branch when it beats the non-refundable one", () => {
+    // 12 = 18,000; 23 = 14,750 -> midpoint 14,775: 261 + 4.8% x 4,775 = 490.2 -> 490
+    // credits 110 -> 33 = 380; 4.5% x 3,000 = 135 < 380, so the NON-refundable branch: min(380, 600) = 380
+    const input = de({ filingStatus: "single", federalAGI: 18000, deExemptions: 1, federalEITC: 3000, stateWithholding: 200 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "33_tax_after_nonrefundable_credits")).toBe("$380");
+    expect(dollars(lines, "34_earned_income_credit")).toBe("$380");
+    expect(notes.some((n) => n.includes("NON-REFUNDABLE 20%"))).toBe(true);
+    // with no Delaware tax left, the refundable 4.5% branch pays out instead
+    const lowIncome = de({ filingStatus: "single", federalAGI: 5000, deExemptions: 1, federalEITC: 3000 });
+    const r = composeStateReturn(lowIncome, realPaEval(lowIncome));
+    expect(dollars(r.lines, "34_earned_income_credit")).toBe("$135");
+    expect(r.notes.some((n) => n.includes("REFUNDABLE 4.5%"))).toBe(true);
+  });
+
+  it("forfeits the additional standard deduction when the filer itemizes", () => {
+    const std = de({ filingStatus: "single", federalAGI: 40000, deExemptions: 1, deAdditionalDeductionBoxes: 2 });
+    expect(dollars(composeStateReturn(std, realPaEval(std)).lines, "22_total_deductions")).toBe("$8,250"); // 3,250 + 5,000
+    const item = de({ filingStatus: "single", federalAGI: 40000, deExemptions: 1, deAdditionalDeductionBoxes: 2, deItemizes: true, deItemizedDeductions: 9000 });
+    const { lines, notes } = composeStateReturn(item, realPaEval(item));
+    expect(dollars(lines, "22_total_deductions")).toBe("$9,000"); // the itemized amount alone
+    expect(notes.some((n) => n.includes("forfeits the line 21 additional standard deduction"))).toBe(true);
+  });
+
+  it("caps the non-refundable block at the tax and zeroes a dependent filer's personal credit", () => {
+    const dep = de({ filingStatus: "single", federalAGI: 12000, deExemptions: 1, claimedAsDependent: true });
+    expect(dollars(composeStateReturn(dep, realPaEval(dep)).lines, "27_personal_credits")).toBe("$0");
+    // volunteer firefighter credit larger than the tax is limited to it
+    const ff = de({ filingStatus: "single", federalAGI: 12000, deExemptions: 1, deVolunteerFirefighters: 1 });
+    const { lines, notes } = composeStateReturn(ff, realPaEval(ff));
+    expect(dollars(lines, "33_tax_after_nonrefundable_credits")).toBe("$0");
+    expect(notes.some((n) => n.includes("limited to it"))).toBe(true);
+  });
+
+  it("adds Schedule III contributions to the balance rather than treating them as credits", () => {
+    const input = de({ filingStatus: "single", federalAGI: 60000, deExemptions: 1, stateWithholding: 3000, deCharitableContributions: 100 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "43_contributions")).toBe("$100");
+    expect(dollars(lines, "refund")).toBe("$245"); // 345 - 100
+    expect(notes.some((n) => n.includes("they are contributions, not credits"))).toBe(true);
+  });
+});
+
+describe("composeDE — adversarial-review regressions", () => {
+  const de = (extra: Record<string, unknown>) => ({ jurisdiction: "de" as const, ...extra });
+
+  it("gives each spouse their own pension exclusion on a JOINT return", () => {
+    // "Spouses who each receive pensions are entitled to one exclusion each" — two
+    // $12,500-eligible pensions must produce $25,000 of exclusion, not one $12,500 cap
+    const input = de({
+      filingStatus: "mfj", federalAGI: 90000, deExemptions: 2,
+      deAge60OrOver: true, dePensionIncome: 25000,
+      deSpouseAge60OrOver: true, deSpousePensionIncome: 12500,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_pension_exclusion")).toBe("$25,000");
+    expect(dollars(lines, "12_delaware_agi")).toBe("$65,000");
+    // and a single filer still gets exactly one
+    const solo = de({ filingStatus: "single", federalAGI: 60000, deExemptions: 1, deAge60OrOver: true, dePensionIncome: 30000 });
+    expect(dollars(composeStateReturn(solo, realPaEval(solo)).lines, "6_pension_exclusion")).toBe("$12,500");
+  });
+
+  it("does not double the itemized deduction or the generic credits across the two columns", () => {
+    const input = de({
+      filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 55000, deSpouseFederalAgi: 45000,
+      deExemptions: 1, deSpouseExemptions: 1,
+      deItemizes: true, deItemizedDeductions: 12000, deSpouseItemizedDeductions: 8000,
+      nonrefundableCredits: 500,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "22_deductions_colB")).toBe("$12,000");
+    expect(dollars(lines, "22_deductions_colA")).toBe("$8,000");
+    expect(dollars(lines, "22_total_deductions")).toBe("$20,000"); // not $24,000
+    // the single $500 generic credit lands once, in column B
+    expect(dollars(lines, "27_personal_credits")).toBe("$220");
+    expect(dollars(lines, "32_total_nonrefundable_credits")).toBe("$720"); // 110 + 110 + 500
+  });
+
+  it("labels the earned income branch from the rule, not from floating point", () => {
+    // fed 2,211: 4.5% = 99.495 -> $99, which is under the $100 of remaining tax, so the
+    // NON-refundable branch applies. A float recomputation rounds 99.495 up to $100 and
+    // would mislabel it refundable.
+    const input = de({ filingStatus: "single", federalAGI: 9125, deExemptions: 1, claimedAsDependent: true, federalEITC: 2211 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "33_tax_after_nonrefundable_credits")).toBe("$100");
+    const label = notes.find((n) => n.includes("earned income credit") && n.includes("branch"));
+    expect(label).toBeDefined();
+    expect(label).toContain("NON-REFUNDABLE 20%");
+  });
+
+  it("attributes the pension note to the right column's age", () => {
+    const input = de({
+      filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 60000, deSpouseFederalAgi: 30000,
+      deExemptions: 1, deSpouseExemptions: 1,
+      deAge60OrOver: true, dePensionIncome: 20000,
+      deSpouseAge60OrOver: false, deSpousePensionIncome: 8000,
+    });
+    const { notes } = composeStateReturn(input, realPaEval(input));
+    const colA = notes.find((n) => n.includes("line 6 (Column A)"));
+    const colB = notes.find((n) => n.includes("line 6 (Column B)"));
+    expect(colA).toContain("under 60"); // the spouse is under 60 — $2,000 only
+    expect(colB).toContain("60-or-over tier");
+  });
+
+  it("describes the 2026 domicile amendment as forward-looking rather than a live 2025 gate", () => {
+    const input = de({ filingStatus: "single", federalAGI: 60000, deExemptions: 1, deAge60OrOver: true, dePensionIncome: 20000 });
+    const { notes } = composeStateReturn(input, realPaEval(input));
+    const dom = notes.find((n) => n.includes("domicile"));
+    expect(dom).toContain("Neither touches a TY2025 return");
+    expect(dom).toContain("deDomiciledForPensionExclusion");
+  });
+});
+
+describe("composeDE — independent-verification regressions", () => {
+  const de = (extra: Record<string, unknown>) => ({ jurisdiction: "de" as const, asOf: "2025-12-31", ...extra });
+  const deEvalAt = (input: Record<string, unknown>, asOf: string): StateTaxEvaluator =>
+    makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf, target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+
+  it("status 4: takes the earned income credit ONCE, in the column with the higher taxable income", () => {
+    // § 1117(b): the credit "may only be used by the spouse with the greater tax otherwise due";
+    // Schedule II line 12: "enter the PIT-RES Line 33 amount from the same column with the higher
+    // taxable income". A joint federal return has ONE federal EIC. Column A (spouse) $80,000 AGI,
+    // Column B $30,000; $3,000 federal EIC -> the 20% nonrefundable branch, $600, once (was $1,200).
+    const input = de({ filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 30000, deSpouseFederalAgi: 80000, deExemptions: 1, deSpouseExemptions: 1, federalEITC: 3000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "34_earned_income_credit")).toBe("$600");
+    expect(notes.some((n) => n.includes("taken ONCE, in Column A"))).toBe(true);
+  });
+
+  it("status 4: applies the child care credit ONCE, against the spouse with the lower taxable income", () => {
+    // § 1114(b): "may only be applied against the tax imposed on the spouse with the lower taxable
+    // income ... and shall not exceed such tax". $1,000 federal credit -> $500, in Column B here.
+    const input = de({ filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 30000, deSpouseFederalAgi: 80000, deExemptions: 1, deSpouseExemptions: 1, deFederalChildCareCredit: 1000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "31_child_care_credit")).toBe("$500");
+    expect(notes.some((n) => n.includes("applied ONCE, against Column B"))).toBe(true);
+  });
+
+  it("prints line 40 as the refundable CREDITS total (lines 35-39), without the line 34 earned income credit", () => {
+    // Instructions p. 10: "Calculate your total refundable credits by adding lines 35 through 39";
+    // line 41 then tests "Line 34 plus Line 40" against line 33.
+    const input = de({ filingStatus: "mfj", federalAGI: 40000, deExemptions: 2, stateWithholding: 1000, federalEITC: 400 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "40_total_refundable_credits")).toBe("$1,000");
+    expect(dollars(lines, "34_earned_income_credit")).not.toBe("$0");
+  });
+
+  it("allows a married-filing-separate filer the spouse's line 21 boxes, but clamps a status-4 column to two", () => {
+    // § 1108(b)(2)/(4): $2,500 "for the spouse of the taxpayer if a joint return is not made" when that
+    // spouse is 65+/blind, has no gross income and is nobody's dependent; printed line 21 "Column A - if
+    // Spouse was: 65 or over / blind".
+    const s3 = de({ filingStatus: "mfs", federalAGI: 50000, deExemptions: 1, deAdditionalDeductionBoxes: 4 });
+    const r3 = composeStateReturn(s3, realPaEval(s3));
+    expect(dollars(r3.lines, "22_total_deductions")).toBe("$13,250");
+    expect(r3.notes.some((n) => n.includes("status 3") && n.includes("NO gross income"))).toBe(true);
+    const s4 = de({ filingStatus: "mfs", deCombinedSeparate: true, federalAGI: 50000, deSpouseFederalAgi: 20000, deExemptions: 1, deSpouseExemptions: 1, deAdditionalDeductionBoxes: 4 });
+    const r4 = composeStateReturn(s4, realPaEval(s4));
+    expect(dollars(r4.lines, "22_deductions_colB")).toBe("$8,250");
+    expect(r4.notes.some((n) => n.includes("4 boxes reduced to 2"))).toBe(true);
+  });
+
+  it("TY2026: pays the 60-or-over pension exclusion only to a person domiciled in Delaware for three years", () => {
+    // 85 Del. Laws c. 426 (August 17, 2026), § 1106(b)(3)f.4 — a 60-or-over person without the domicile
+    // test gets NO exclusion, not the under-60 tier. TY2025 is untouched.
+    const base = { filingStatus: "single", federalAGI: 40000, deExemptions: 1, deAge60OrOver: true, dePensionIncome: 10000 };
+    const no = de({ ...base, asOf: "2026-12-31" });
+    expect(dollars(composeStateReturn(no, deEvalAt(no, "2026-12-31")).lines, "6_pension_exclusion")).toBe("$0");
+    const yes = de({ ...base, asOf: "2026-12-31", deDomiciledForPensionExclusion: true });
+    expect(dollars(composeStateReturn(yes, deEvalAt(yes, "2026-12-31")).lines, "6_pension_exclusion")).toBe("$10,000");
+    const y25 = de(base);
+    expect(dollars(composeStateReturn(y25, realPaEval(y25)).lines, "6_pension_exclusion")).toBe("$10,000");
+  });
+});
+
+describe("composeVT — 2025 Form IN-111 (real corpus targets)", () => {
+  const vt = (extra: Record<string, unknown>) => ({ jurisdiction: "vt" as const, asOf: "2025-12-31", ...extra });
+  const vtEvalAt = (input: Record<string, unknown>, asOf: string): StateTaxEvaluator =>
+    makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf, target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+
+  it("single wage earner: standard deduction, one exemption, Tax Table, refund", () => {
+    // 60,000 - (7,650 + 5,300) = 47,050; table row 47,000-47,100 single = 47,050 x 3.35% = 1,576.175 -> $1,576
+    const input = vt({ filingStatus: "single", federalAGI: 60000, stateWithholding: 1800 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_standard_deduction")).toBe("$7,650");
+    expect(dollars(lines, "5e_personal_exemptions")).toBe("$5,300");
+    expect(dollars(lines, "7_vt_taxable_income")).toBe("$47,050");
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$1,576");
+    expect(dollars(lines, "29_refund")).toBe("$224");
+    expect(notes.some((n) => n.includes("2025 Vermont Tax Table"))).toBe(true);
+  });
+
+  it("retired joint couple: Social Security election excluded in full, two age boxes, table joint column", () => {
+    // 60,000 AGI - 20,000 SS = 40,000; deduction 15,300 + 2 x 1,250 = 17,800; exemptions 2 x 5,300; 7 = 11,600 -> row 11,600 = $390
+    const input = vt({ filingStatus: "mfj", federalAGI: 60000, taxableSocialSecurity: 20000, vtRetirementElection: "social_security", ageOrBlindBoxes: 2 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "IN112_12_retirement_exclusion")).toBe("$20,000");
+    expect(dollars(lines, "2_net_modifications")).toBe("-$20,000");
+    expect(dollars(lines, "4_standard_deduction")).toBe("$17,800");
+    expect(dollars(lines, "7_vt_taxable_income")).toBe("$11,600");
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$390");
+  });
+
+  it("applies the 3% minimum tax when federal AGI exceeds $150,000 and the modifications hollow out taxable income", () => {
+    // AGI 160,000 with $120,000 of railroad retirement subtracted: 7 = 40,000 - 12,950 = 27,050 -> table $906; 3% x 160,000 = $4,800 governs
+    const input = vt({ filingStatus: "single", federalAGI: 160000, vtRailroadRetirement: 120000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "7_vt_taxable_income")).toBe("$27,050");
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$4,800");
+    expect(notes.some((n) => n.includes("3% MINIMUM TAX applies"))).toBe(true);
+  });
+
+  it("pays the refundable child tax and child care credits and prices the joint schedule above $75,000", () => {
+    // 7 = 130,000 - (15,300 + 4 x 5,300) = 93,500 -> 2,764 + 6.6% x 11,000 = $3,490
+    // CTC: ceil(5,000 / 1,000) = 5 steps -> $900 x 2 = $1,800; CDCC 72% x 1,200 = $864
+    const input = vt({ filingStatus: "mfj", federalAGI: 130000, dependents: 2, vtChildrenSixOrUnder: 2, vtFederalChildCareCredit: 1200, stateWithholding: 3000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$3,490");
+    expect(dollars(lines, "26c_refundable_credits")).toBe("$2,664");
+    expect(dollars(lines, "27_overpayment")).toBe("$2,174");
+    expect(dollars(lines, "29_refund")).toBe("$2,174");
+  });
+
+  it("gives a childless worker 100% of the federal EITC and a veteran the $250 credit", () => {
+    // 7 = 24,000 - 12,950 = 11,050 -> row 11,000 = $370; refundable 500 + 250 = 750; withholding 300 -> refund 680
+    const input = vt({ filingStatus: "single", federalAGI: 24000, federalEITC: 500, vtEitcQualifyingChildren: 0, vtVeteranDischargeRecord: true, stateWithholding: 300 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$370");
+    expect(dollars(lines, "26c_refundable_credits")).toBe("$750");
+    expect(dollars(lines, "29_refund")).toBe("$680");
+    expect(notes.some((n) => n.includes("100% of the federal credit with NO qualifying children"))).toBe(true);
+  });
+
+  it("stacks the charitable, other-state and VHEIP credits in the printed order", () => {
+    // 7 = 87,050 -> 3,345 + 6.6% x 12,050 = 4,140.30 -> $4,140; 13 = $1,000 (cap); 14 = 3,140
+    // IN-117: 3,140 x 40,000 / 100,000 = 1,256 < 2,500 paid; VHEIP 10% x 2,500 = 250; 20 = 3,140 - 1,506 = 1,634
+    const input = vt({ filingStatus: "single", federalAGI: 100000, vtCharitableContributions: 30000, vtOtherStateIncome: 40000, vtOtherStateTaxPaid: 2500, vtVheipContributions: 3000, vtVheipBeneficiaries: 1 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$4,140");
+    expect(dollars(lines, "13_charitable_credit")).toBe("$1,000");
+    expect(dollars(lines, "14_vt_income_tax")).toBe("$3,140");
+    expect(dollars(lines, "17_other_state_credit")).toBe("$1,256");
+    expect(dollars(lines, "18_vt_tax_credits")).toBe("$250");
+    expect(dollars(lines, "20_tax_after_credits")).toBe("$1,634");
+  });
+
+  it("adds the child care contribution and the estimated use tax to the total Vermont taxes", () => {
+    // 7 = 42,050 -> 42,050 x 3.35% = 1,408.675 -> $1,409; 0.11% x 40,000 = $44; table $25 + 6% x 2,000 = $120 -> $145
+    const input = vt({ filingStatus: "single", federalAGI: 55000, vtSelfEmploymentIncome: 45000, vtSelfEmploymentIncomeOutsideVermont: 5000, vtUseTaxEstimateFromTable: true, vtUseTaxLargePurchases: 2000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$1,409");
+    expect(dollars(lines, "21_child_care_contribution")).toBe("$44");
+    expect(dollars(lines, "22_use_tax")).toBe("$145");
+    expect(dollars(lines, "23_total_vt_taxes")).toBe("$1,598");
+  });
+
+  it("gives a qualifying widow(er) the joint deduction and column but no spouse exemption", () => {
+    // 4 = 15,300; 5d = self + 1 dependent = 2 -> 10,600; 7 = 50,000 - 25,900 = 24,100 -> joint column 24,150 x 3.35% = 809.025 -> $809
+    const input = vt({ filingStatus: "qss", federalAGI: 50000, dependents: 1 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "4_standard_deduction")).toBe("$15,300");
+    expect(lines["5d_total_exemptions"]).toBe("2");
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$809");
+    expect(notes.some((n) => n.includes("NO spouse exemption on line 5b"))).toBe(true);
+  });
+
+  it("subtracts only the medical expenses in excess of the deduction plus exemptions", () => {
+    // 19,000 allowable - 12,950 = 6,050; 3 = 33,950; 7 = 21,000 -> 21,050 x 3.35% = 705.175 -> $705
+    const input = vt({ filingStatus: "single", federalAGI: 40000, vtFederalMedicalExpenses: 20000, vtNonAllowableMedicalExpenses: 1000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "IN112_11_medical_expense_deduction")).toBe("$6,050");
+    expect(dollars(lines, "7_vt_taxable_income")).toBe("$21,000");
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$705");
+  });
+
+  it("builds the IN-117 modified AGI from the WHOLE of IN-112 line 4, including generic additions", () => {
+    // REVIEW REGRESSION: line 17's base dropped `additions` that IN-112 line 4 carried, overstating the credit.
+    // 3 = 125,000; 7 = 112,050 -> 3,345 + 6.6% x 37,050 = 5,790.30 -> 5,790; 14 = 5,790
+    // IN-117: 5,790 x 50,000 / 125,000 = 2,316 (not 2,757 on a 105,000 base)
+    const input = vt({ filingStatus: "single", federalAGI: 100000, additions: 20000, vtBonusDepreciationAddback: 5000, vtOtherStateIncome: 50000, vtOtherStateTaxPaid: 9000 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "IN112_4_bonus_depreciation_and_other_additions")).toBe("$25,000");
+    expect(dollars(lines, "14_vt_income_tax")).toBe("$5,790");
+    expect(dollars(lines, "17_other_state_credit")).toBe("$2,316");
+  });
+
+  it("compares the 3% minimum with the RATE SCHEDULE, not the table, when federal AGI exceeds $150,000", () => {
+    // Booklet line 8: "... 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule".
+    // 3 = 200,000 - 112,051 - 1 = 87,948; 7 = 74,998 -> schedule 1,655 + 6.6% x 25,598 = 3,344.47 -> 3,344 (table row prints 3,341);
+    // floor 3% x (200,000 - 112,051) = 2,638.47 does not bind
+    const input = vt({ filingStatus: "single", federalAGI: 200000, vtUsObligationInterest: 112051, vtRailroadRetirement: 1 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "7_vt_taxable_income")).toBe("$74,998");
+    expect(dollars(lines, "8_vt_income_tax")).toBe("$3,344");
+    expect(notes.some((n) => n.includes("even though that is under $75,000"))).toBe(true);
+    // the same taxable income at $150,000 of AGI (not over) uses the table row, 3,341
+    const low = vt({ filingStatus: "single", federalAGI: 150000, vtUsObligationInterest: 62051, vtRailroadRetirement: 1 });
+    expect(dollars(composeStateReturn(low, realPaEval(low)).lines, "8_vt_income_tax")).toBe("$3,341");
+  });
+
+  it("emits the Schedule IN-112 Part II and IN-119 feeder lines that lines 9, 18 and 26c consume", () => {
+    const input = vt({ filingStatus: "mfj", federalAGI: 130000, dependents: 2, vtChildrenSixOrUnder: 2, vtFederalChildCareCredit: 1200, vtFederalAdditionalTaxes: 1000, vtFederalElderlyDisabledCredit: 500, vtVheipContributions: 1000, vtVheipBeneficiaries: 1 });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "IN112_II_4_child_tax_credit")).toBe("$1,800");
+    expect(dollars(lines, "IN112_II_2_child_dependent_care_credit")).toBe("$864");
+    expect(dollars(lines, "IN112_II_13_total_refundable_credits")).toBe(dollars(lines, "26c_refundable_credits"));
+    expect(dollars(lines, "IN119_5_24pct_of_federal_additional_taxes")).toBe("$240");
+    expect(dollars(lines, "IN119_12_24pct_of_federal_credits")).toBe("$120");
+    expect(dollars(lines, "9_net_adjustment")).toBe("$120");
+    expect(dollars(lines, "IN119_II_1_vheip_credit")).toBe("$100");
+  });
+
+  it("refuses a TY2026 return at line 4 because the 2026 standard deduction is unpublished", () => {
+    const input = vt({ asOf: "2026-12-31", filingStatus: "single", federalAGI: 60000 });
+    expect(() => composeStateReturn(input, vtEvalAt(input, "2026-12-31"))).toThrow(/standard deduction for this tax year is not published/);
+  });
+
+  it("refuses without federalAGI", () => {
+    const input = vt({ filingStatus: "single" });
+    expect(() => composeStateReturn(input, realPaEval(input))).toThrow(/federalAGI is required/);
+  });
+});
+
+describe("composeMT — independent-verification regressions", () => {
+  const mt = (extra: Record<string, unknown>) => ({ jurisdiction: "mt" as const, asOf: "2025-12-31", ...extra });
+
+  it("attributes the other-state tax to the capital-gains block through the line 16 ratio, not a pre-attributed input", () => {
+    // Booklet p. 35: line 14 carries the SAME total as line 4 ("Enter the actual tax liability
+    // paid by you or on your behalf to the other state or country") and line 16 "represents the
+    // proportion of tax paid to the other state or country on only your net long-term capital
+    // gains". Single, taxable $100,000 with $40,000 of net LTCG; $60,000 sourced to the other
+    // state ($20,000 ordinary + $40,000 gains); $3,000 paid there.
+    // Ordinary block: line 5 = 5.9% x 60,000 - 253 = 3,287; line 7 = 3,000 x 0.333333 = 1,000;
+    // line 9 = 3,287 x 0.333333 = 1,096; line 10 = 1,000.
+    // Gains block: line 15 = 4.1% x 40,000 = 1,640; line 17 = 3,000 x 0.666667 = 2,000;
+    // line 19 = 1,640 x 1.000000; line 20 = 1,640. Line 21 = 2,640 (was 1,000 before the fix).
+    const input = mt({
+      filingStatus: "single", federalAGI: 115750, mtFederalDeductions: 15750, mtNetLongTermCapitalGains: 40000,
+      mtOtherStateOrdinaryIncome: 20000, mtOtherStateCapitalGains: 40000, mtOtherStateTotalIncome: 60000,
+      mtOrdinaryIncomeSourcedToMontana: 60000, mtFederalNetLongTermCapitalGains: 40000, mtOtherStateTaxPaid: 3000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "7_montana_taxable_income")).toBe("$100,000");
+    expect(dollars(lines, "8_tax_before_credits")).toBe("$4,927"); // 3,287 + 1,640
+    expect(dollars(lines, "9_nonrefundable_credits")).toBe("$2,640");
+    expect(notes.some((n) => n.includes("other-state credit $2,640"))).toBe(true);
+  });
+
+  it("pays the elderly homeowner/renter credit to a claimant who is someone else's dependent", () => {
+    // § 15-30-2338(1) has four conditions — age 62, nine months' residency, six months' occupancy,
+    // gross household income under $45,000 — and Schedule 2EC adds only the sole-claimant
+    // attestation. A dependent test was an invention; a 62+ parent claimed by an adult child qualifies.
+    const base = {
+      filingStatus: "single", federalAGI: 20000, mtFederalDeductions: 15750,
+      mtAge62: true, mtResided9Months: true, mtOccupied6Months: true, mtSoleHouseholdClaimant: true,
+      mtGrossHouseholdIncome: 20000, mtRentPaid: 9000,
+    };
+    const dep = mt({ ...base, claimedAsDependent: true });
+    const not = mt({ ...base, claimedAsDependent: false });
+    const a = composeStateReturn(dep, realPaEval(dep)).lines;
+    const b = composeStateReturn(not, realPaEval(not)).lines;
+    expect(dollars(a, "16_elderly_homeowner_renter_credit")).toBe(dollars(b, "16_elderly_homeowner_renter_credit"));
+    expect(dollars(a, "16_elderly_homeowner_renter_credit")).not.toBe("$0");
+  });
+});
+
+describe("composeND — 2025 Form ND-1 (real corpus targets)", () => {
+  const nd = (extra: Record<string, unknown>) => ({ jurisdiction: "nd" as const, asOf: "2025-12-31", ...extra });
+  const ndEvalAt = (input: Record<string, unknown>, asOf: string): StateTaxEvaluator =>
+    makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf, target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input);
+
+  it("starts from federal taxable income and taxes nothing in the zero bracket", () => {
+    // 1b = 45,000; no adjustments; 18 = 45,000, which is under the $48,475 single zero-bracket top
+    const input = nd({ filingStatus: "single", federalAGI: 60000, ndFederalTaxableIncome: 45000, stateWithholding: 300 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "18_nd_taxable_income")).toBe("$45,000");
+    expect(dollars(lines, "20_tax")).toBe("$0");
+    expect(dollars(lines, "32_refund")).toBe("$300");
+    expect(notes.some((n) => n.includes("ZERO-PERCENT first bracket"))).toBe(true);
+    expect(notes.some((n) => n.includes("federal adjusted gross income is captured but feeds NOTHING"))).toBe(true);
+  });
+
+  it("excludes Social Security, military pay and military retirement in full", () => {
+    // 1b = 90,000; subtractions 15,000 + 20,000 + 10,000 = 45,000; 18 = 45,000 -> still zero bracket
+    const input = nd({
+      filingStatus: "single", federalAGI: 100000, ndFederalTaxableIncome: 90000,
+      taxableSocialSecurity: 15000, ndMilitaryPay: 20000, ndMilitaryRetirement: 10000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "15_social_security_exclusion")).toBe("$15,000");
+    expect(dollars(lines, "17_total_subtractions")).toBe("$45,000");
+    expect(dollars(lines, "18_nd_taxable_income")).toBe("$45,000");
+    expect(dollars(lines, "20_tax")).toBe("$0");
+    expect(notes.some((n) => n.includes("no cap, no age test, no phase-out"))).toBe(true);
+  });
+
+  it("applies the 40% capital gain and qualified dividend exclusions", () => {
+    // 1b = 120,000; 6 = 40% x 20,000 = 8,000; 13 = 40% x 5,000 = 2,000; 18 = 110,000
+    // 110,000 >= 100,000 so the schedule applies: 1.95% x (110,000 - 48,475) = 1,199.7375 -> 1,200
+    const input = nd({
+      filingStatus: "single", federalAGI: 140000, ndFederalTaxableIncome: 120000,
+      ndNetLongTermCapitalGain: 20000, ndQualifiedDividends: 5000, stateWithholding: 1500,
+    });
+    const { lines } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "6_capital_gain_exclusion")).toBe("$8,000");
+    expect(dollars(lines, "13_qualified_dividend_exclusion")).toBe("$2,000");
+    expect(dollars(lines, "18_nd_taxable_income")).toBe("$110,000");
+    expect(dollars(lines, "20_tax")).toBe("$1,200");
+    expect(dollars(lines, "32_refund")).toBe("$300");
+  });
+
+  it("prices a joint return off the Tax Table, matching the booklet's own example", () => {
+    // the booklet: "$91,900 of ND taxable income falls in the $91,900 - $91,950 row and owes $214"
+    const input = nd({ filingStatus: "mfj", federalAGI: 120000, ndFederalTaxableIncome: 91900 });
+    expect(dollars(composeStateReturn(input, realPaEval(input)).lines, "20_tax")).toBe("$214");
+    // a qualifying surviving spouse uses the same joint column
+    const q = nd({ filingStatus: "qss", federalAGI: 120000, ndFederalTaxableIncome: 91900 });
+    const { lines, notes } = composeStateReturn(q, realPaEval(q));
+    expect(dollars(lines, "20_tax")).toBe("$214");
+    expect(notes.some((n) => n.includes("it is NOT a joint return"))).toBe(true);
+  });
+
+  it("caps the College SAVE deduction, doubled only on a joint return", () => {
+    const j = nd({ filingStatus: "mfj", federalAGI: 150000, ndFederalTaxableIncome: 130000, ndCollegeSaveContributions: 15000 });
+    expect(dollars(composeStateReturn(j, realPaEval(j)).lines, "12_college_save_deduction")).toBe("$10,000");
+    const q = nd({ filingStatus: "qss", federalAGI: 150000, ndFederalTaxableIncome: 130000, ndCollegeSaveContributions: 15000 });
+    expect(dollars(composeStateReturn(q, realPaEval(q)).lines, "12_college_save_deduction")).toBe("$5,000");
+  });
+
+  it("runs the marriage penalty credit worksheet through both schedules", () => {
+    // 18 = 200,000; lower qualified income 90,000; worksheet line 6 = 90,000 - 15,750 = 74,250
+    // line 7 = single tax on 74,250 = 1.95% x (74,250 - 48,475) = 502.6125 -> 503
+    // line 8 = 200,000 - 74,250 = 125,750; line 9 = single tax = 1.95% x 77,275 = 1,506.8625 -> 1,507
+    // line 10 = joint tax on 200,000 = 1.95% x (200,000 - 80,975) = 2,320.9875 -> 2,321
+    // line 12 = 2,321 - (503 + 1,507) = 311, under the $312 cap
+    const input = nd({
+      filingStatus: "mfj", federalAGI: 230000, ndFederalTaxableIncome: 200000,
+      ndLowerQualifiedIncome: 90000, stateWithholding: 2500,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "18_nd_taxable_income")).toBe("$200,000");
+    expect(dollars(lines, "20_tax")).toBe("$2,321");
+    expect(dollars(lines, "22_marriage_penalty_credit")).toBe("$311");
+    expect(dollars(lines, "25_net_tax_liability")).toBe("$2,010");
+    expect(notes.some((n) => n.includes("half the federal joint standard deduction"))).toBe(true);
+  });
+
+  it("limits the other-state credit to the net tax actually paid", () => {
+    const input = nd({
+      filingStatus: "single", federalAGI: 150000, ndFederalTaxableIncome: 130000,
+      ndDoublyTaxedIncome: 30000, ndOtherStateTaxPaid: 2000, stateWithholding: 1500,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    // 20 = 1.95% x (130,000 - 48,475) = 1,589.7375 -> 1,590; ratio 30,000/150,000 = 0.2000 -> 318
+    expect(dollars(lines, "20_tax")).toBe("$1,590");
+    expect(dollars(lines, "21_other_state_credit")).toBe("$318");
+    expect(notes.some((n) => n.includes("Montana and Minnesota WAGES are excluded by reciprocity"))).toBe(true);
+  });
+
+  it("carries a negative federal taxable income and floors the state figure at zero", () => {
+    const input = nd({ filingStatus: "single", federalAGI: 20000, ndFederalTaxableIncome: -8000, ndMilitaryPay: 1000 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "1b_federal_taxable_income")).toBe("-$8,000");
+    expect(dollars(lines, "18_nd_taxable_income")).toBe("$0");
+    expect(dollars(lines, "20_tax")).toBe("$0");
+    expect(notes.some((n) => n.includes("identical instruction for Form ND-EZ"))).toBe(true);
+  });
+
+  it("refuses the starting-point line rather than falling back to AGI", () => {
+    const input = nd({ filingStatus: "single", federalAGI: 60000 });
+    expect(() => composeStateReturn(input, realPaEval(input))).toThrow(/ndFederalTaxableIncome is required/);
+  });
+
+  it("reconciles every printed subtraction line to the line 17 total", () => {
+    // REGRESSION: line 17 summed lines 7, 9 and 16, but the composer emitted none
+    // of them — a $6,000 total with no supporting line on the printed form.
+    const input = nd({
+      filingStatus: "single", federalAGI: 60000, ndFederalTaxableIncome: 40000,
+      additions: 500, ndExemptTribalIncome: 1000, ndPeaceOfficerRetirement: 2000, subtractions: 3000,
+    });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "3_other_additions")).toBe("$500");
+    expect(dollars(lines, "7_exempt_tribal_income")).toBe("$1,000");
+    expect(dollars(lines, "9_peace_officer_retirement")).toBe("$2,000");
+    expect(dollars(lines, "10_nonresident_scra_adjustment")).toBe("$0");
+    expect(dollars(lines, "16_other_subtractions")).toBe("$3,000");
+    expect(dollars(lines, "17_total_subtractions")).toBe("$6,000");
+    expect(dollars(lines, "19_nd_taxable_income_page_2")).toBe(dollars(lines, "18_nd_taxable_income"));
+    // lines 5-16 must add up to line 17 exactly, as the printed form directs
+    const sum = ["5_us_obligation_interest", "6_capital_gain_exclusion", "7_exempt_tribal_income", "8_railroad_retirement",
+      "9_peace_officer_retirement", "10_nonresident_scra_adjustment", "11_military_pay_exclusion", "12_college_save_deduction",
+      "13_qualified_dividend_exclusion", "14_military_retirement_exclusion", "15_social_security_exclusion", "16_other_subtractions"]
+      .reduce((a, k) => a + Number(dollars(lines, k).replace(/[$,]/g, "")), 0);
+    expect(sum).toBe(6000);
+    expect(notes.some((n) => n.includes("Schedule ND-1NR"))).toBe(true);
+  });
+
+  it("says the SCHEDULE ran, not the Tax Table, on a TY2026 return below $100,000", () => {
+    // REGRESSION: us.nd.income_tax v2 has no table at all, but the note claimed the
+    // Tax Table applied — and the two methods disagree here by a dollar (the
+    // schedule at the exact $60,000 gives $203; the midpoint method gives $204).
+    const input = nd({ asOf: "2026-12-31", filingStatus: "single", federalAGI: 80000, ndFederalTaxableIncome: 60000 });
+    const { lines, notes } = composeStateReturn(input, ndEvalAt(input, "2026-12-31"));
+    expect(dollars(lines, "20_tax")).toBe("$203"); // 1.95% x (60,000 - 49,575) = 203.2875
+    const l20 = notes.find((n) => n.startsWith("ND line 20"));
+    expect(l20).toContain("RATE SCHEDULE applied at the exact");
+    expect(l20).not.toContain("the $50 row containing");
+    // and TY2025 still says the table, because TY2025 has one
+    const y25 = nd({ filingStatus: "single", federalAGI: 80000, ndFederalTaxableIncome: 60000 });
+    const r25 = composeStateReturn(y25, realPaEval(y25));
+    expect(dollars(r25.lines, "20_tax")).toBe("$225");
+    expect(r25.notes.find((n) => n.startsWith("ND line 20"))).toContain("MANDATORY in its range");
+  });
+
+  it("does not quote the 2025 marriage penalty worksheet on a year whose worksheet has not published", () => {
+    // REGRESSION: tryEval correctly reported the credit unavailable for TY2026,
+    // then the eligibility note fired anyway and quoted the 2025 $81,036/$47,550
+    // gates as though they governed the return.
+    const input = nd({ asOf: "2026-12-31", filingStatus: "mfj", federalAGI: 230000, ndFederalTaxableIncome: 200000, ndLowerQualifiedIncome: 90000 });
+    const { lines, notes } = composeStateReturn(input, ndEvalAt(input, "2026-12-31"));
+    expect(dollars(lines, "22_marriage_penalty_credit")).toBe("$0");
+    expect(notes.some((n) => n.includes("re-run once the year's forms publish"))).toBe(true);
+    expect(notes.some((n) => n.includes("$81,036"))).toBe(false);
+  });
+
+  it("distinguishes a lower spouse with no qualified income from a missing input", () => {
+    const zero = nd({ filingStatus: "mfj", federalAGI: 230000, ndFederalTaxableIncome: 200000, ndLowerQualifiedIncome: 0 });
+    expect(composeStateReturn(zero, realPaEval(zero)).notes.some((n) => n.includes("computed $0, not a missing input"))).toBe(true);
+    const absent = nd({ filingStatus: "mfj", federalAGI: 230000, ndFederalTaxableIncome: 200000 });
+    expect(composeStateReturn(absent, realPaEval(absent)).notes.some((n) => n.includes("pass ndLowerQualifiedIncome"))).toBe(true);
+  });
+
+  it("composes the printed refund and balance-due block, lines 29-37, with the $5.00 floors", () => {
+    // INDEPENDENT-VERIFIER REGRESSION: the form runs to line 37; the composer stopped at 28 and
+    // emitted synthetic balance_due/overpaid keys with no $5 de minimis.
+    // overpaid: 20_tax $30 (table row 50,000-50,050), withholding $500 -> 29 = $470; apply $100; give $20; refund $350
+    const over = nd({ filingStatus: "single", federalAGI: 60000, ndFederalTaxableIncome: 50000, stateWithholding: 500, ndAppliedToNextYear: 100, ndVoluntaryContributions: 20 });
+    const o = composeStateReturn(over, realPaEval(over)).lines;
+    expect(dollars(o, "29_overpayment")).toBe("$470");
+    expect(dollars(o, "30_applied_to_2026")).toBe("$100");
+    expect(dollars(o, "31_voluntary_contributions")).toBe("$20");
+    expect(dollars(o, "32_refund")).toBe("$350");
+    expect(dollars(o, "33_tax_due")).toBe("$0");
+    expect(dollars(o, "35_voluntary_contributions")).toBe("$0");
+    expect(dollars(o, "36_balance_due")).toBe("$0");
+    // due: tax $1,200 (schedule at $110,000), withholding $1,000 -> 33 = $200; penalty $10 + interest $5; gift $25; ND-1UT $15 -> 36 = $255
+    const due = nd({ filingStatus: "single", federalAGI: 140000, ndFederalTaxableIncome: 110000, stateWithholding: 1000, ndPenalty: 10, ndInterest: 5, ndVoluntaryContributions: 25, ndUnderpaymentInterest: 15 });
+    const d = composeStateReturn(due, realPaEval(due)).lines;
+    expect(dollars(d, "29_overpayment")).toBe("$0");
+    expect(dollars(d, "33_tax_due")).toBe("$200");
+    expect(dollars(d, "34_penalty_and_interest")).toBe("$15");
+    expect(dollars(d, "35_voluntary_contributions")).toBe("$25");
+    expect(dollars(d, "37_underpayment_interest")).toBe("$15");
+    expect(dollars(d, "36_balance_due")).toBe("$255");
+    // the printed $5.00 floors: a $4 overpayment and a $4 tax due both print as $0
+    const small = nd({ filingStatus: "single", federalAGI: 60000, ndFederalTaxableIncome: 50000, stateWithholding: 34 });
+    const s = composeStateReturn(small, realPaEval(small));
+    expect(dollars(s.lines, "29_overpayment")).toBe("$0");
+    expect(dollars(s.lines, "32_refund")).toBe("$0");
+    expect(s.notes.some((n) => n.includes("under the printed $5.00 floor"))).toBe(true);
+    const smallDue = nd({ filingStatus: "single", federalAGI: 60000, ndFederalTaxableIncome: 50000, stateWithholding: 26 });
+    expect(dollars(composeStateReturn(smallDue, realPaEval(smallDue)).lines, "33_tax_due")).toBe("$0");
+  });
+
+  it("loses credits above the tax — every North Dakota credit is nonrefundable", () => {
+    const input = nd({ filingStatus: "single", federalAGI: 60000, ndFederalTaxableIncome: 50000, nonrefundableCredits: 500 });
+    const { lines, notes } = composeStateReturn(input, realPaEval(input));
+    expect(dollars(lines, "20_tax")).toBe("$30"); // table row 50,000-50,050
+    expect(dollars(lines, "25_net_tax_liability")).toBe("$0");
+    expect(notes.some((n) => n.includes("the excess is lost"))).toBe(true);
   });
 });

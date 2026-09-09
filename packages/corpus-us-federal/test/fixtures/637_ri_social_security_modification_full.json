@@ -1,0 +1,16 @@
+{
+  "description": "RI Schedule M line 1s: single, born on or before 03/01/1959, federal AGI 106,999 is LESS THAN the $107,000 filing-status amount -> eligible percentage 1.0000 x $20,000 taxable Social Security.",
+  "facts": {
+    "filingStatus": "single",
+    "riFederalAgi": 106999,
+    "riTaxpayerFullRetirementAge": true,
+    "riSocialSecurityBenefits": 24000,
+    "riSocialSecurityBenefitsFraPerson": 24000,
+    "riTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.social_security_modification",
+  "expect": {
+    "valueCents": "2000000"
+  }
+}

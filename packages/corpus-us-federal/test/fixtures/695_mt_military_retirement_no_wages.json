@@ -1,0 +1,15 @@
+{
+  "description": "MT: a fully retired veteran with no Montana wage income gets $0 \u2014 the subtraction is designed for WORKING military retirees and is capped by wages.",
+  "facts": {
+    "filingStatus": "single",
+    "mtMilitaryRetireeEligible": true,
+    "mtMilitaryRetireeWithinFiveYears": true,
+    "mtMilitaryRetirementIncome": 30000,
+    "mtMontanaSourceWageIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.military_retirement_subtraction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

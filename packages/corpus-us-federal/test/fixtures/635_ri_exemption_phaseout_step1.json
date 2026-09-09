@@ -1,0 +1,13 @@
+{
+  "description": "Exemption Worksheet: 4 exemptions x $5,100 = 20,400; modified AGI 260,000 - 254,250 = 5,750; ceil(5,750 / 7,250) = 1 -> 0.8000; 20,400 x 0.8 = $16,320.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riExemptions": 4,
+    "riModifiedAgi": 260000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.exemption",
+  "expect": {
+    "valueCents": "1632000"
+  }
+}

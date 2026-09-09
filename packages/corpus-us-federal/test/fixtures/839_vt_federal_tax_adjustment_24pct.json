@@ -1,0 +1,12 @@
+{
+  "description": "VT Schedule IN-119 24% adjustment: 24% x $1,275 of federal tax on early retirement distributions = $306.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalTaxAdjustmentBase": 1275
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.federal_tax_adjustment",
+  "expect": {
+    "valueCents": "30600"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "description": "DE line 28: the credit is the LESSER of the ratio-limited amount and the tax actually paid \u2014 $500 paid caps it.",
+  "facts": {
+    "filingStatus": "single",
+    "deAdjustedGrossIncome": 100000,
+    "deIncomeTax": 4000,
+    "deOtherStateIncome": 30000,
+    "deOtherStateTaxPaid": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.other_state_credit",
+  "expect": {
+    "valueCents": "50000"
+  }
+}

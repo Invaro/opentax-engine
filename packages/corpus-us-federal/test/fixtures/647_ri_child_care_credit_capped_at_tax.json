@@ -1,0 +1,13 @@
+{
+  "description": "RI Schedule I line 22 'Line 19 or 21, whichever is SMALLER': 25% x $4,000 = $1,000 exceeds the $800 Rhode Island tax, so the nonrefundable credit is $800.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalChildCareCredit": 4000,
+    "riIncomeTax": 800
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "80000"
+  }
+}

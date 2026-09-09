@@ -1,0 +1,15 @@
+{
+  "description": "\u00a7 36B(c)(1)(C): married filing separately without the Reg. \u00a7 1.36B-2(b)(2) relief gets no premium tax credit \u2014 decided before any SLCSP benchmark is needed. Advance PTC $6,000 paid, no slcspAnnualPremium supplied: credit $0 (previously refused as NOT_MODELED for the missing SLCSP).",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 181542,
+    "advancePTC": 6000,
+    "ptcHouseholdSize": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ptc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

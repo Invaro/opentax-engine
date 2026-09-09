@@ -1,0 +1,36 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 9,
+    "method": "tools/call",
+    "params": {
+      "name": "compute_state_return",
+      "arguments": {
+        "jurisdiction": "vt",
+        "asOf": "2026-12-31",
+        "filingStatus": "single",
+        "federalAGI": 60000
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 9,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ],
+      "isError": true
+    }
+  },
+  "decodedResult": {
+    "ok": false,
+    "error": {
+      "code": "ERROR",
+      "message": "The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) — Form IN-111 line 4 cannot be composed. The 2026 Form IN-111 publishes around December 2026; re-run then"
+    }
+  }
+}

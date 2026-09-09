@@ -1,0 +1,12 @@
+{
+  "description": "ND head of household above the table: $300,000 pays 4,026.75 + 2.5% x (300,000 - 271,450) = 4,740.50 -> $4,741 (half-up on the exact half cent).",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "474100"
+  }
+}

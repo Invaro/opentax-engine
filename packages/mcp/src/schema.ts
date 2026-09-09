@@ -146,6 +146,7 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "unemploymentCompensation",
     "otherOrdinaryIncome",
     "socialSecurityWages",
+    "socialSecurityWagesProvided",
     "medicareWages",
     "foreignEarnedIncome",
   ],
@@ -645,6 +646,168 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "meDependents13a",
     "meUseTaxPurchases",
     "meUseTaxEstimate",
+    "hiUseRateSchedule",
+    "hiNetLongTermCapitalGain",
+    "hiNetCapitalGain",
+    "hiInvestmentInterestN158",
+    "hiCapitalGainsStatutoryThreshold",
+    "hiEarnedIncome",
+    "hiAgi",
+    "hiFederalAgi",
+    "hiMedicalExpenses",
+    "hiStateLocalIncomeTaxes",
+    "hiRealEstateTaxes",
+    "hiPersonalPropertyTaxes",
+    "hiOtherTaxes",
+    "hiHomeMortgageInterest",
+    "hiInvestmentInterest",
+    "hiCharitableContributions",
+    "hiCasualtyLosses",
+    "hiJobAndMiscExpenses",
+    "hiOtherMiscDeductions",
+    "hiGamblingLossesInMisc",
+    "hiExemptions",
+    "hiDisabledPersons",
+    "hiNonDisabledSpouseAge65",
+    "hiReservePay",
+    "hiSpouseReservePay",
+    "hiSpouseFederalAgi",
+    "hiFoodExciseQualifiedExemptions",
+    "hiSpouseAgi",
+    "hiRentPaid",
+    "hiRentersExemptions",
+    "hiChildCareExpenses",
+    "hiChildCareQualifyingPersons",
+    "hiDependentCareBenefits",
+    "hiSpouseEarnedIncome",
+    "hiMfsConsideredUnmarried",
+    "hiFederalEic",
+    "hiNetCapitalGainLine27a",
+    "hiOutOfStateIncome",
+    "hiOutOfStateLtcg",
+    "hiOtherStateTaxEligible",
+    "hiTaxLine13",
+    "hiAdjustedTaxLiability",
+    "riUseRateSchedule",
+    "riModifiedAgi",
+    "riExemptions",
+    "riFederalAgi",
+    "riTaxpayerFullRetirementAge",
+    "riSpouseFullRetirementAge",
+    "riSocialSecurityBenefits",
+    "riSocialSecurityBenefitsFraPerson",
+    "riTaxableSocialSecurity",
+    "riTaxpayerPensionIncome",
+    "riSpousePensionIncome",
+    "riFederalChildCareCredit",
+    "riIncomeTax",
+    "riIncomeTaxAfterFederalCredit",
+    "riOtherStateIncome",
+    "riOtherStateTaxPaid",
+    "riFederalEic",
+    "riHouseholdIncome",
+    "riHouseholdMembers",
+    "riAge65OrDisabled",
+    "riPropertyTaxPaid",
+    "riRentPaid",
+    "riUseTaxLookupTable",
+    "riUseTaxPurchases",
+    "riSalesTaxPaidOtherStates",
+    "riLargePurchasesNetUseTax",
+    "mtNetLongTermCapitalGains",
+    "mtTaxpayerAge65",
+    "mtSpouseAge65",
+    "mtFederalEic",
+    "mtAge62",
+    "mtResided9Months",
+    "mtOccupied6Months",
+    "mtSoleHouseholdClaimant",
+    "mtGrossHouseholdIncome",
+    "mtPropertyTaxBilled",
+    "mtRentPaid",
+    "mtOrdinaryIncomeTax",
+    "mtCapitalGainsTax",
+    "mtOtherStateOrdinaryIncome",
+    "mtOtherStateCapitalGains",
+    "mtOtherStateTotalIncome",
+    "mtOrdinaryIncomeSourcedToMontana",
+    "mtFederalNetLongTermCapitalGains",
+    "mtOtherStateTaxPaid",
+    "mtTuitionSavingsContributions",
+    "mtAbleContributions",
+    "mtMilitaryRetirementIncome",
+    "mtMontanaSourceWageIncome",
+    "mtMilitaryRetireeEligible",
+    "mtMilitaryRetireeWithinFiveYears",
+    "deUseRateSchedule",
+    "deItemizes",
+    "deAdditionalDeductionBoxes",
+    "deExemptions",
+    "deAge60Persons",
+    "deAge60OrOver",
+    "deDomiciledForPensionExclusion",
+    "deMilitaryPension",
+    "dePensionIncome",
+    "deEligibleRetirementIncome",
+    "deAgiBeforeExclusion",
+    "deEarnedIncome",
+    "deQualifiesElderlyDisabled",
+    "deSpouseQualifiesElderlyDisabled",
+    "deFederalEic",
+    "deEitcTaxAfterCredits",
+    "deFederalChildCareCredit",
+    "deAdjustedGrossIncome",
+    "deIncomeTax",
+    "deOtherStateIncome",
+    "deOtherStateTaxPaid",
+    "deVolunteerFirefighters",
+    "ndUseRateSchedule",
+    "ndNetLongTermCapitalGain",
+    "ndCapitalGainAlreadyExcluded",
+    "ndQualifiedDividends",
+    "ndCollegeSaveContributions",
+    "ndTaxableIncome",
+    "ndLowerQualifiedIncome",
+    "ndSingleScheduleTaxA",
+    "ndSingleScheduleTaxB",
+    "ndJointScheduleTax",
+    "ndDoublyTaxedIncome",
+    "ndOtherStateIncomeBase",
+    "ndIncomeTaxBeforeCredits",
+    "ndOtherStateTaxPaid",
+    "vtUseRateSchedule",
+    "vtFederalAgi",
+    "vtUsObligationInterest",
+    "vtAdditionalDeductionBoxes",
+    "vtExemptions",
+    "vtRetirementElection",
+    "vtTaxableSocialSecurity",
+    "vtContributorySystemIncome",
+    "vtMilitaryRetirementIncome",
+    "vtNetAdjustedCapitalGain",
+    "vtEligibleLongTermGain",
+    "vtFederalTaxableIncome",
+    "vtStudentLoanInterestPaid",
+    "vtStudentLoanInterestDeductedFederally",
+    "vtCharitableContributions",
+    "vtFederalTaxAdjustmentBase",
+    "vtOtherStateIncome",
+    "vtModifiedAgi",
+    "vtIncomeTax",
+    "vtOtherStateTaxPaid",
+    "vtFederalEic",
+    "vtEitcQualifyingChildren",
+    "vtChildrenSixOrUnder",
+    "vtFederalChildCareCredit",
+    "vtVeteranDischargeRecord",
+    "vtUseTaxEstimateFromTable",
+    "vtUseTaxSmallPurchases",
+    "vtUseTaxLargePurchases",
+    "vtUseTaxPaidOtherState",
+    "vtSelfEmploymentIncome",
+    "vtSelfEmploymentIncomeOutsideVermont",
+    "vtVheipContributions",
+    "vtVheipBeneficiaries",
   ],
   household_employer: ["householdEmployeeCashWages", "householdFutaTestMet"],
   payments_estimates: [
@@ -703,11 +866,26 @@ const GROUP_DESCRIPTIONS: Record<string, string> = {
 };
 
 /** Nested individual schema advertised on calculate_tax. */
+/**
+ * Form 1040 lines 1b-1h earned income that is not on a W-2 box 1: taxable dependent care
+ * benefits (Form 2441 Part III line 26 → line 1e), household employee wages not on a W-2
+ * (line 1b), unreported tips (line 1c), Medicaid waiver payments elected in (line 1d),
+ * nonqualified deferred compensation (line 1g). Folded into the wages fact (earned income for
+ * the EITC, CTC and CalEITC) and shown on compute_return's line 1h — usable alongside a
+ * documents block, unlike income.wages.
+ */
+const OTHER_EARNED_INCOME = z
+  .union([z.number(), z.string()])
+  .optional()
+  .describe(
+    "Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 — taxable dependent care benefits (Form 2441 Part III, line 26 → line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.",
+  );
+
 export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
   const shape: Record<string, z.ZodTypeAny> = {};
   for (const [group, ids] of Object.entries(INDIVIDUAL_GROUPS)) {
     shape[group] = z
-      .object(shapeFor(ids))
+      .object(group === "income" ? { ...shapeFor(ids), otherEarnedIncome: OTHER_EARNED_INCOME } : shapeFor(ids))
       .strict()
       .optional()
       .describe(GROUP_DESCRIPTIONS[group] ?? group);
@@ -868,9 +1046,20 @@ export function buildFactsValidated(
         'asOf is required — pass the year-end date of the intended tax year (e.g. "2025-12-31" for TY2025). This tool refuses to default to today: a 2025 return computed under 2026 parameters is a silent wrong answer.',
       );
     }
-    const compiled = compileDocuments(parsedDocs.data, flat.asOf);
+    const seProfit = flat.selfEmploymentNetProfit;
+    const compiled = compileDocuments(parsedDocs.data, flat.asOf, {
+      filingStatus: typeof flat.filingStatus === "string" ? flat.filingStatus : undefined,
+      hasSelfEmployment: seProfit !== undefined && Number(String(seProfit).replace(/[$,]/g, "")) > 0,
+      socialSecurityWagesSupplied: "socialSecurityWages" in flat,
+    });
     documentNotes = compiled.notes;
     w2Box1Cents = compiled.w2Box1Cents;
+    // a documents-only return with no W-2 (a retiree with 1099-R/SSA-1099/1099-INT, say) has
+    // $0 of wages by transcription; do not demand the fact the documents already answer
+    if (!(parsedDocs.data.w2s ?? []).length && !("wages" in flat) && !("wages" in compiled.facts)) {
+      compiled.facts.wages = 0;
+      documentNotes.push("no W-2 in the documents block: wages $0 (Form 1040 line 1a)");
+    }
     for (const [id, v] of Object.entries(compiled.facts)) {
       if (id in flat) {
         throw new Error(
@@ -879,6 +1068,17 @@ export function buildFactsValidated(
       }
       flat[id] = v;
     }
+  }
+  // lines 1b-1h earned income folds into the wages fact (line 1h on compute_return)
+  if ("otherEarnedIncome" in flat) {
+    const num = (v: unknown): number => Number(String(v ?? 0).replace(/[$,]/g, ""));
+    const other = num(flat.otherEarnedIncome);
+    if (!Number.isFinite(other) || other < 0) throw new Error("income.otherEarnedIncome must be a non-negative dollar amount");
+    // without a documents block line 1a is the wages passed directly; keep 1a/1h split
+    if (w2Box1Cents === undefined) w2Box1Cents = BigInt(Math.round(num(flat.wages) * 100));
+    flat.wages = num(flat.wages) + other;
+    delete flat.otherEarnedIncome;
+    documentNotes.push(`line 1h: $${other.toLocaleString("en-US")} of non-W-2 earned income (income.otherEarnedIncome) added to wages`);
   }
   const parsed = STRICT_FLAT.safeParse(flat);
   if (!parsed.success) {

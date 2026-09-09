@@ -1,0 +1,12 @@
+{
+  "description": "HI QSS uses the married filing jointly column ('*This column must also be used by qualifying surviving spouse'): $23,275 -> $399.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 23275
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "39900"
+  }
+}

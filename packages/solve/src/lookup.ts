@@ -72,6 +72,12 @@ const JURISDICTION_NAMES: Record<string, string> = {
   "us.id": "idaho id form 40 form 39r boise grocery credit food tax credit permanent building fund",
   "us.wv": "west virginia wv it-140 schedule m charleston family tax credit senior citizens tax credit homestead excess",
   "us.me": "maine me 1040me portland augusta property tax fairness credit sales tax fairness credit pension income deduction",
+  "us.hi": "hawaii hi n-11 honolulu maui kauai food excise tax credit low-income household renters credit capital gains alternative tax",
+  "us.nd": "north dakota nd form nd-1 fargo bismarck grand forks marriage penalty credit capital gain exclusion college save social security exclusion",
+  "us.vt": "vermont vt form in-111 burlington montpelier rutland social security exclusion military retirement capital gains exclusion child tax credit veteran credit charitable credit renter credit",
+  "us.de": "delaware de pit-res wilmington dover newark pension exclusion personal credits combined separate return volunteer firefighter",
+  "us.mt": "montana mt form 2 billings missoula bozeman helena elderly homeowner renter credit net long-term capital gains ordinary income",
+  "us.ri": "rhode island ri ri-1040 providence warwick cranston property tax relief credit 1040h social security modification pension modification",
 };
 
 export function lookupParameters(

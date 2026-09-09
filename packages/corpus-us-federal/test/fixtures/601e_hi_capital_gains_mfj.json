@@ -1,0 +1,14 @@
+{
+  "description": "HI MFJ TI $150,000, LTCG = NCG $100,000: line 13 = max(50,000, 48,000) = 50,000; 15 = table(50,000) = 1,718 + 6.8% x 2,025 = 1,855.70 -> 1,856; 16 = 7,250; 17 = 9,106 < 18 (Schedule II 5,078 + 7.6% x 54,000 = 9,182) -> $9,106.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 150000,
+    "hiNetLongTermCapitalGain": 100000,
+    "hiNetCapitalGain": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "910600"
+  }
+}

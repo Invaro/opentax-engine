@@ -1,0 +1,13 @@
+{
+  "description": "DE doubles the standard deduction ONLY for filing status 2 (joint) \u2014 $6,500. Statuses 1, 3, 4 and 5 each take $3,250, and on a combined separate return each COLUMN takes its own $3,250.",
+  "facts": {
+    "filingStatus": "mfj",
+    "deAdditionalDeductionBoxes": 0,
+    "deItemizes": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.standard_deduction",
+  "expect": {
+    "valueCents": "650000"
+  }
+}

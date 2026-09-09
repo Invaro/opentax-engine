@@ -242,6 +242,18 @@ function ptcRule(
     },
     formula: {
       kind: "if",
+      // § 36B(c)(1)(C) is decided FIRST: a married-filing-separately filer without the
+      // Reg. § 1.36B-2(b)(2) relief is not an applicable taxpayer at all, so the credit is $0 and
+      // any advance is repaid in full (subject only to the § 36B(f)(2)(B) cap by household income)
+      // — none of which needs the SLCSP benchmark premium. Refusing for a missing SLCSP here
+      // would block a reconciliation the statute fully determines.
+      cond: {
+        kind: "and",
+        args: [isStatus("mfs"), { kind: "not", arg: fact("mfsAbuseOrAbandonmentException") }],
+      },
+      then: zero,
+      else: {
+      kind: "if",
       cond: { kind: "not", arg: gt0(fact("slcspAnnualPremium")) },
       then: {
         kind: "if",
@@ -265,6 +277,7 @@ function ptcRule(
         },
         then: zero, // § 36B(c)(1)(C): MFS without the relief attestation gets no PTC
         else: core,
+      },
       },
     },
   };

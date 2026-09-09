@@ -1,0 +1,13 @@
+{
+  "description": "REGRESSION (double rounding): the Nebraska booklet says 'round your results, and then add them together'. 5.5% of $209 is 11.495 -> $11; a cent-then-dollar chain gave $12. The booklet's own worked example ($1,500 -> $83) is exact, which is why this shipped.",
+  "facts": {
+    "filingStatus": "single",
+    "neUseTaxPurchases": 209,
+    "neLocalUseTaxRateBps": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ne.use_tax",
+  "expect": {
+    "valueCents": "1100"
+  }
+}

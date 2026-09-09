@@ -1,0 +1,12 @@
+{
+  "description": "ND Tax Table footnote: 'If a Qualifying surviving spouse, use the Married filing jointly column.' A QSS at $91,900 owes the same $214 as a joint filer.",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 91900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "21400"
+  }
+}

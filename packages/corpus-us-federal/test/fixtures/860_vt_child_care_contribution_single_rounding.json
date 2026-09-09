@@ -1,0 +1,12 @@
+{
+  "description": "VT child care contribution rounds once: 0.11% x $40,450 = 44.495 -> $44 (rounding to cents first, 44.50, would give $45).",
+  "facts": {
+    "filingStatus": "single",
+    "vtSelfEmploymentIncome": 40450
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.child_care_contribution",
+  "expect": {
+    "valueCents": "4400"
+  }
+}

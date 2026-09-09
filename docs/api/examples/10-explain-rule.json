@@ -1,0 +1,210 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 10,
+    "method": "tools/call",
+    "params": {
+      "name": "explain_rule",
+      "arguments": {
+        "ruleId": "us.vt.income_tax"
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 10,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "versions": [
+      {
+        "id": "us.vt.income_tax",
+        "version": 1,
+        "title": "Vermont income tax 2025 — Form IN-111 line 8: the Tax Table below $75,000 ($100-row midpoint through the printed rate schedule), the rate schedule with its printed VT Base Tax anchors at $75,000 or more (3.35% / 6.60% / 7.60% / 8.75%), and the 3%-of-federal-AGI minimum when federal AGI exceeds $150,000",
+        "citation": {
+          "source": "32 V.S.A. § 5822(a) (rates and the (a)(6) minimum), § 5822(b)(2) (annual inflation adjustment by the Commissioner); 2025 Vermont Tax Rate Schedules (TaxRateSched-2025.pdf); 2025 Vermont Tax Tables (VermontTaxTables-2025.pdf, 5 pages, 750 rows); 2025 Form IN-111 Instructions p. 6, line 8",
+          "section": "32 V.S.A. § 5822(a); Form IN-111 line 8",
+          "url": "https://tax.vermont.gov/sites/tax/files/documents/TaxRateSched-2025.pdf",
+          "excerpt": "2025 VERMONT TAX RATE SCHEDULES (verbatim): 'Single Individuals, Schedule X — If VT Taxable Income is Over / But Not Over / VT Base Tax is / Plus / of the amount over: 0 / 49,400 / 0.00 / 3.35% / 0; 49,400 / 75,000 / 1,655.00 / 6.60% / 49,400; TAXABLE INCOME UNDER $75,000 USE THE TAX TABLES; 75,000 / 119,700 / 3,345.00 / 6.60% / 75,000; 119,700 / 249,700 / 6,295.00 / 7.60% / 119,700; 249,700 / - / 16,175.00 / 8.75% / 249,700.' 'Married Filing Jointly, Schedule Y-1 — Use if your filing status is: Married Filing Jointly; Qualifying Widow(er); or Civil Union Filing Jointly: 0 / 75,000 / 0.00 / 3.35% / 0; 75,000 / 82,500 / 2,513.00 / 3.35% / 75,000; 82,500 / 199,450 / 2,764.00 / 6.60% / 82,500; 199,450 / 304,000 / 10,482.00 / 7.60% / 199,450; 304,000 / - / 18,428.00 / 8.75% / 304,000.' 'Married Filing Separately, Schedule Y-2: 0 / 41,250 / 0.00 / 3.35%; 41,250 / 75,000 / 1,382.00 / 6.60% / 41,250; 75,000 / 99,725 / 3,609.00 / 6.60% / 75,000; 99,725 / 152,000 / 5,241.00 / 7.60% / 99,725; 152,000 / - / 9,214.00 / 8.75% / 152,000.' 'Heads of Household, Schedule Z: 0 / 66,200 / 0.00 / 3.35%; 66,200 / 75,000 / 2,218.00 / 6.60% / 66,200; 75,000 / 171,000 / 2,799.00 / 6.60% / 75,000; 171,000 / 276,850 / 9,135.00 / 7.60% / 171,000; 276,850 / - / 17,179.00 / 8.75% / 276,850.' WORKED EXAMPLE (verbatim): 'Vermont Taxable Income is $85,000 (Form IN-111, Line 7). Filing Status is Married Filing Jointly. Use Schedule Y-1. Base Tax is $2,764. Subtract $82,500 from $85,000. Multiply the result ($2,500) by 6.6%. Add this amount ($165) to Base Tax ($2,764) for Vermont Tax of $2,929.' FOOTNOTE (verbatim): 'For Adjusted Gross Incomes (IN-111, Line 1) exceeding $150,000, Line 8 is the greater of 1) 3% of Adjusted Gross Income less interest from U.S. obligations, or 2) Tax Rate Schedule calculation.' BOOKLET LINE 8 (p. 6, verbatim): 'Taxpayers who have a federal Adjusted Gross Income (AGI) greater than $150,000 must pay a minimum Vermont tax of 3% of federal AGI. If your federal AGI, Line 1, is greater than $150,000, enter the amount that is higher: 1) 3% of your federal AGI less interest from U.S. obligations, or 2) tax calculated on Vermont Taxable Income, Line 7, using the applicable tax rate schedule. If your federal AGI, Line 1, is less than or equal to $150,000, calculate your Vermont tax on Vermont Taxable Income, Line 7, using the applicable tax table or rate schedule.' READ LITERALLY: the over-$150,000 branch names only the RATE SCHEDULE, and the schedule page's footnote likewise says 'Tax Rate Schedule calculation', so for a filer with federal AGI over $150,000 the tax is the greater of the 3% floor and the schedule at the exact taxable income even below $75,000 — the Tax Table (which differs from the schedule by up to $4 in that range) is used only at or below $150,000 of AGI. STATUTE (§ 5822(a)(6), verbatim): 'If the federal adjusted gross income of the taxpayer exceeds $150,000.00, then the tax calculated under this subsection shall be the greater of the tax calculated under subdivisions (1)-(5) of this subsection or three percent of the taxpayer's federal adjusted gross income.' — the statute says 3% of federal AGI; the booklet and schedule footnote subtract U.S. obligation interest first. The booklet governs the filed return and is encoded (vtUsObligationInterest). TAX TABLE: 750 rows of $100 from $0 to $75,000 in four columns (Single; Married filing jointly*; Married filing separately**; Head of household), footnoted '* This column also applies to qualifying widow(er) and civil union filing jointly status' and '** This column also applies to civil union filing separately status'. CONVENTION, proved on all 3,000 cells: the schedule with its PRINTED whole-dollar anchors evaluated at the row midpoint, rounded half-up (2,996 cells); the first row 0-100 prints 0 in every column where the arithmetic gives 2 (4 cells). At the 154 cells where the printed anchor and the exact cumulative schedule give different dollars, the table follows the printed anchor at all 154. ANCHORS: every printed 'VT Base Tax' is the half-up rounding of the exact cumulative tax at the threshold — GB-1210-2025's annual withholding table prints the unrounded values 1,654.90 / 6,294.70 / 16,174.70 (single) and 2,763.75 / 10,482.45 / 18,428.25 (married), and 41,250 x 3.35% = 1,381.875 -> 1,382, 66,200 x 3.35% = 2,217.70 -> 2,218. SPLIT-ROW ARTIFACT, encoded as printed: at exactly $75,000 a married-filing-separately filer is in the row 'over 41,250 but not over 75,000' (1,382 + 6.6% x 33,750 = 3,609.50 -> $3,610) while one dollar more is in the row 'over 75,000' whose printed base is $3,609 (exact 3,609.375 rounded), so the literal schedule steps down $1 between $75,000.00 and $75,000.01; the single, joint and head-of-household split rows are continuous (3,344.60 -> 3,345; 2,512.50 -> 2,513; 2,798.80 -> 2,799). ROUNDING: whole dollars, one half-up rounding per printed box. INDEXATION: § 5822(b)(2) directs the Commissioner to adjust the bracket amounts annually by the CPI-U; the codified § 5822(a) still prints the base amounts ($38,700 / $93,700 / $195,450 single) and always will, so the operative thresholds exist only in the Department's published schedules. TY2026: the Department has not published the 2026 IN-111 rate schedule or table (both ~December 2026); GB-1210-2026's annual withholding tables imply single brackets of $50,750 / $122,850 / $256,300 and joint $84,700 / $204,750 / $312,050 (the printed thresholds less the printed offsets of half and three-quarters of the standard deduction, a construction that reproduces every 2025 threshold exactly), and the 2026 Form IN-114 Instructions print '2026 Preliminary Vermont Tax Rates' for all four statuses, encoded as version 2 of this rule; this version ends 2026-01-01 because the Tax Table it applies is the 2025 table."
+        },
+        "effectiveFrom": "2025-01-01",
+        "effectiveTo": "2026-01-01",
+        "parameters": {
+          "rate1Bps": {
+            "value": "335",
+            "type": "int"
+          },
+          "rate2Bps": {
+            "value": "660",
+            "type": "int"
+          },
+          "rate3Bps": {
+            "value": "760",
+            "type": "int"
+          },
+          "rate4Bps": {
+            "value": "875",
+            "type": "int"
+          },
+          "tableTop": {
+            "value": "7500000",
+            "type": "money"
+          },
+          "singleBracket1": {
+            "value": "4940000",
+            "type": "money"
+          },
+          "singleBracket2": {
+            "value": "11970000",
+            "type": "money"
+          },
+          "singleBracket3": {
+            "value": "24970000",
+            "type": "money"
+          },
+          "jointBracket1": {
+            "value": "8250000",
+            "type": "money"
+          },
+          "jointBracket2": {
+            "value": "19945000",
+            "type": "money"
+          },
+          "jointBracket3": {
+            "value": "30400000",
+            "type": "money"
+          },
+          "mfsBracket1": {
+            "value": "4125000",
+            "type": "money"
+          },
+          "mfsBracket2": {
+            "value": "9972500",
+            "type": "money"
+          },
+          "mfsBracket3": {
+            "value": "15200000",
+            "type": "money"
+          },
+          "hohBracket1": {
+            "value": "6620000",
+            "type": "money"
+          },
+          "hohBracket2": {
+            "value": "17100000",
+            "type": "money"
+          },
+          "hohBracket3": {
+            "value": "27685000",
+            "type": "money"
+          },
+          "minimumTaxAgiThreshold": {
+            "value": "15000000",
+            "type": "money"
+          },
+          "minimumTaxRateBps": {
+            "value": "300",
+            "type": "int"
+          }
+        },
+        "hash": "sha256:3ec857ed314df5962cb4688ba98f41297425ceb68f5bbf0369a866427e208491"
+      },
+      {
+        "id": "us.vt.income_tax",
+        "version": 2,
+        "title": "Vermont income tax TY2026 (preliminary) — the same 3.35% / 6.60% / 7.60% / 8.75% rates on the Commissioner's indexed brackets: $50,750 / $122,850 / $256,300 single, $84,700 / $204,750 / $312,050 joint and qualifying widow(er), $42,350 / $102,375 / $156,025 married filing separately, $68,000 / $175,500 / $284,150 head of household; schedule only, and the 3%-of-AGI minimum above $150,000",
+        "citation": {
+          "source": "2026 Form IN-114 Instructions (IN-114-Instr-2026.pdf, Rev. 10/25) p. 2, '2026 Preliminary Vermont Tax Rates'; corroborated by the 2026 Income Tax Withholding Instructions (GB-1210-2026) annual payroll tables; 32 V.S.A. § 5822(a), (b)(2)",
+          "section": "32 V.S.A. § 5822(a); 2026 Form IN-114 Instructions p. 2",
+          "url": "https://tax.vermont.gov/sites/tax/files/documents/IN-114-Instr-2026.pdf",
+          "excerpt": "2026 PRELIMINARY VERMONT TAX RATES (verbatim): 'Single Individuals, Schedule X — 0 / 50,750 / 0.00 / 3.35% / 0; 50,750 / 122,850 / 1,700.00 / 6.60% / 50,750; 122,850 / 256,300 / 6,459.00 / 7.60% / 122,850; 256,300 / - / 16,601.00 / 8.75% / 256,300.' 'Married Filing Jointly, Schedule Y-1 — Use if your filing status is: Married Filing Jointly; Qualifying Widow(er) or Civil Union Filing Jointly — 0 / 84,700 / 0.00 / 3.35% / 0; 84,700 / 204,750 / 2,837.00 / 6.60% / 84,700; 204,750 / 312,050 / 10,761.00 / 7.60% / 204,750; 312,050 / - / 18,916.00 / 8.75% / 312,050.' 'Married Filing Separately, Schedule Y-2 — 0 / 42,350 / 0.00 / 3.35%; 42,350 / 102,375 / 1,419.00 / 6.60% / 42,350; 102,375 / 156,025 / 5,380.00 / 7.60% / 102,375; 156,025 / - / 9,458.00 / 8.75% / 156,025.' 'Heads of Household, Schedule Z — 0 / 68,000 / 0.00 / 3.35%; 68,000 / 175,500 / 2,278.00 / 6.60% / 68,000; 175,500 / 284,150 / 9,373.00 / 7.60% / 175,500; 284,150 / - / 17,630.00 / 8.75% / 284,150.' CORROBORATION: GB-1210-2026's annual withholding tables run single $3,925 to $54,675 at 3.35% then $1,700.13 + 6.60% to $126,775, $6,458.73 + 7.60% to $260,225, $16,600.93 + 8.75% — each threshold is the schedule bracket plus a $3,925 offset (half the standard deduction, exactly as the 2025 table's $3,825 offset is half of $7,650), and married $11,775 to $96,475, $2,837.45 + 6.60% to $216,525, $10,760.75 + 7.60% to $323,825, $18,915.55 + 8.75% (offset $11,775, three-quarters of the standard deduction, as 2025's $11,475 is three-quarters of $15,300). Every preliminary base is the half-up rounding of those exact figures (1,700.125 -> 1,700; 2,837.45 -> 2,837). ENCODING: the schedule with its printed whole-dollar bases applied at the exact income — the 2025 filed-return convention — for every status; no 2026 Tax Table exists, so nothing below $75,000 is a table lookup, and there is no $75,000 split row. The $150,000 minimum-tax threshold in § 5822(a)(6) is a fixed statutory amount outside the § 5822(b)(2) indexation and carries over unchanged. LABELLED PRELIMINARY by the Department: re-verify against the 2026 Form IN-111 rate schedule and Tax Table when they publish (~December 2026), and expect at most half a row of divergence from the eventual table below $75,000."
+        },
+        "effectiveFrom": "2026-01-01",
+        "effectiveTo": "2027-01-01",
+        "parameters": {
+          "rate1Bps": {
+            "value": "335",
+            "type": "int"
+          },
+          "rate2Bps": {
+            "value": "660",
+            "type": "int"
+          },
+          "rate3Bps": {
+            "value": "760",
+            "type": "int"
+          },
+          "rate4Bps": {
+            "value": "875",
+            "type": "int"
+          },
+          "singleBracket1": {
+            "value": "5075000",
+            "type": "money"
+          },
+          "singleBracket2": {
+            "value": "12285000",
+            "type": "money"
+          },
+          "singleBracket3": {
+            "value": "25630000",
+            "type": "money"
+          },
+          "jointBracket1": {
+            "value": "8470000",
+            "type": "money"
+          },
+          "jointBracket2": {
+            "value": "20475000",
+            "type": "money"
+          },
+          "jointBracket3": {
+            "value": "31205000",
+            "type": "money"
+          },
+          "mfsBracket1": {
+            "value": "4235000",
+            "type": "money"
+          },
+          "mfsBracket2": {
+            "value": "10237500",
+            "type": "money"
+          },
+          "mfsBracket3": {
+            "value": "15602500",
+            "type": "money"
+          },
+          "hohBracket1": {
+            "value": "6800000",
+            "type": "money"
+          },
+          "hohBracket2": {
+            "value": "17550000",
+            "type": "money"
+          },
+          "hohBracket3": {
+            "value": "28415000",
+            "type": "money"
+          },
+          "minimumTaxAgiThreshold": {
+            "value": "15000000",
+            "type": "money"
+          },
+          "minimumTaxRateBps": {
+            "value": "300",
+            "type": "int"
+          }
+        },
+        "hash": "sha256:69767e8183a7979903f2254deeb9799cd090f8ac420ef8eb88ce7cc083656223"
+      }
+    ]
+  }
+}

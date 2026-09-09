@@ -1,0 +1,12 @@
+{
+  "description": "VT married filing separately at $75,001: the 'over 75,000' row, 3,609 + 6.6% x 1 = 3,609.066 -> $3,609.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 75001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "360900"
+  }
+}

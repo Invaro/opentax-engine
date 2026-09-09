@@ -1,0 +1,12 @@
+{
+  "description": "HI '100,000 OR OVER - You MUST use the tax rate schedules': single $100,000 -> Schedule I: 2,539 + 7.6% x 52,000 = $6,491.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "649100"
+  }
+}

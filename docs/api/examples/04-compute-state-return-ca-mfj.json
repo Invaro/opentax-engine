@@ -1,0 +1,54 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 4,
+    "method": "tools/call",
+    "params": {
+      "name": "compute_state_return",
+      "arguments": {
+        "jurisdiction": "ca",
+        "asOf": "2025-12-31",
+        "filingStatus": "mfj",
+        "federalAGI": 150000,
+        "dependents": 1,
+        "stateWithholding": 6000
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 4,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "asOf": "2025-12-31",
+    "jurisdiction": "ca",
+    "lines": {
+      "13_federal_agi": "$150,000",
+      "17_ca_agi": "$150,000",
+      "18_ca_deduction": "$11,412",
+      "19_ca_taxable_income": "$138,588",
+      "31_tax": "$5,855",
+      "32_exemption_credits": "$781",
+      "46_renters_credit": "$0",
+      "48_tax_after_credits": "$5,074",
+      "64_total_tax": "$5,074",
+      "71_ca_withholding": "$6,000",
+      "72_estimated_payments": "$0",
+      "75_caleitc": "$0",
+      "76_yctc": "$0",
+      "78_total_payments": "$6,000",
+      "97_overpaid": "$926",
+      "111_amount_owed": "$0",
+      "115_refund": "$926"
+    }
+  }
+}

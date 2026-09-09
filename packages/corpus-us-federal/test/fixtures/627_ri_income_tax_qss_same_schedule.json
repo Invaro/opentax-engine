@@ -1,0 +1,12 @@
+{
+  "description": "RI prints ONE rate schedule for every filing status. Qualifying widow(er) at the $181,650 bracket top: 181,650 x 4.75% - 799.00 = 7,829.375 -> $7,829 (the schedule's printed 'Pay' anchor is 7,829.38).",
+  "facts": {
+    "filingStatus": "qss",
+    "stateTaxableIncome": 181650
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "782900"
+  }
+}

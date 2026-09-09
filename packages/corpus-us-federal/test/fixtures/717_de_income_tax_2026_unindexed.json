@@ -1,0 +1,12 @@
+{
+  "description": "DE does not index: sections 1102, 1108 and 1110 were not amended in the 152nd or 153rd General Assembly, and the 2026 PIT-EST Instructions reprint the same schedule. TY2026 at $50,000 gives the same $2,390 as TY2025 \u2014 the printed table row 50,000-50,050, whose midpoint 50,025 gives 1,001 + 5.55% x 25,025 = 2,389.89.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.de.income_tax",
+  "expect": {
+    "valueCents": "239000"
+  }
+}

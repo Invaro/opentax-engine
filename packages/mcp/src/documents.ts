@@ -35,11 +35,19 @@ export const documentsShape = z
             box5: usd.optional().describe("Medicare wages and tips"),
             box6: usd.optional().describe("Medicare tax withheld — Part IV excess over 1.45% of box 5 is added to withholding automatically"),
             box17: usd.optional().describe("state income tax withheld — surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing"),
+            recipient: z
+              .enum(["taxpayer", "spouse"])
+              .optional()
+              .describe("whose W-2 this is (box e) — REQUIRED on a joint return with self-employment income, because Schedule SE line 8a coordinates the wage base with the SE earner's OWN box 3 only"),
           })
           .strict(),
       )
       .optional()
       .describe("one entry per W-2, boxes transcribed verbatim"),
+    selfEmploymentEarner: z
+      .enum(["taxpayer", "spouse"])
+      .optional()
+      .describe("who earned the self-employment income (Schedule C / 1099-NEC / 1099-K) — defaults to the taxpayer; on a joint return this selects whose W-2 box 3 feeds Schedule SE line 8a"),
     f1099rs: z
       .array(
         z
@@ -50,7 +58,7 @@ export const documentsShape = z
             box7: z.string().describe('distribution code(s), e.g. "1", "7", "4", "G", "3", "C"'),
             iraSepSimple: z.boolean().optional().describe("the IRA/SEP/SIMPLE checkbox"),
             recipient: z.enum(["taxpayer", "spouse"]).optional().describe("whose distribution (for the age-based penalty test); default taxpayer"),
-            rolledOver: z.boolean().optional().describe("interview-confirmed full rollover (e.g. 'distributions less rollovers = 0') — excluded from taxable income regardless of box 2a"),
+            rolledOver: z.boolean().optional().describe("interview-confirmed full rollover (e.g. 'distributions less rollovers = 0') — excluded from taxable income regardless of box 2a. NOT for a code-G direct rollover to a ROTH: the payer reports the converted amount in box 2a and it IS taxable"),
             disabilityBeforeRetirementAge: z.boolean().optional().describe("code-3 disability received before minimum retirement age — reported as WAGES (Pub. 525) and counted as § 22 disability income"),
           })
           .strict(),
@@ -205,10 +213,14 @@ export interface CompiledDocs {
   /** Sum of W-2 box 1 in cents — Form 1040 line 1a is W-2 box 1 ONLY; any other
    * amount folded into the wages fact (e.g. pre-retirement disability, Pub. 525)
    * is line 1h other earned income. */
-  w2Box1Cents: bigint;
+  w2Box1Cents: bigint | undefined;
 }
 
-export function compileDocuments(docs: Docs, asOf: string): CompiledDocs {
+export function compileDocuments(
+  docs: Docs,
+  asOf: string,
+  ctx: { filingStatus?: string; hasSelfEmployment?: boolean; socialSecurityWagesSupplied?: boolean } = {},
+): CompiledDocs {
   const taxYear = Number(asOf.slice(0, 4));
   const sums: Record<string, bigint> = {};
   const ints: Record<string, number> = {};
@@ -234,18 +246,49 @@ export function compileDocuments(docs: Docs, asOf: string): CompiledDocs {
   }
 
   // --- W-2s -------------------------------------------------------------------
-  const multiW2 = (docs.w2s ?? []).length > 1;
-  if (multiW2 && (docs.w2s ?? []).some((w) => w.box3 !== undefined)) {
-    notes.push(
-      "MULTIPLE W-2s: box-3 sums are NOT set as socialSecurityWages (Schedule SE coordination is PER PERSON — if there is self-employment income, set income.socialSecurityWages to the SE-earner's OWN box 3 yourself)",
-    );
+  const w2s = docs.w2s ?? [];
+  const multiW2 = w2s.length > 1;
+  const joint = ctx.filingStatus === "mfj";
+  const docsHaveSE = (docs.f1099necs ?? []).length > 0 || (docs.f1099ks ?? []).length > 0 || docs.scheduleCExpensesTotal !== undefined;
+  const hasSE = ctx.hasSelfEmployment === true || docsHaveSE;
+  const earner = docs.selfEmploymentEarner ?? "taxpayer";
+  // Schedule SE line 8a is PER PERSON: the OASDI wage base is reduced only by the SE earner's own
+  // W-2 social security wages. On a joint return the compiler therefore needs to know whose W-2
+  // each one is; it never guesses, and it never sums two spouses' box 3 into one Schedule SE.
+  const allTagged = w2s.length > 0 && w2s.every((w) => w.recipient !== undefined);
+  if (hasSE && w2s.length > 0 && ctx.socialSecurityWagesSupplied) {
+    notes.push("Schedule SE line 8a: income.socialSecurityWages was passed directly (the SE earner's own box 3) — the W-2 box-3 amounts in the documents block are not used for the wage base");
+  } else if (hasSE && w2s.length > 0) {
+    if (allTagged) {
+      const own = w2s.filter((w) => w.recipient === earner);
+      const ssw = own.reduce((t, w) => t + toCents(w.box3 ?? w.box1), 0n);
+      add("socialSecurityWages", ssw);
+      bools.socialSecurityWagesProvided = true;
+      notes.push(
+        `Schedule SE line 8a: ${own.length} W-2(s) belong to the ${earner} (the SE earner) — social security wages $${dollars(ssw)} coordinate the OASDI wage base${own.some((w) => w.box3 === undefined) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`,
+      );
+    } else if (joint || multiW2) {
+      throw new Error(
+        "Schedule SE coordination is PER PERSON: this return has self-employment income and " +
+          (joint ? "is a joint return" : "more than one W-2") +
+          ", so tag every documents.w2s entry with recipient ('taxpayer' or 'spouse') and, if the spouse is the self-employed one, set documents.selfEmploymentEarner — or drop the W-2 documents and pass income.socialSecurityWages (the SE earner's OWN box 3, even 0) with income.socialSecurityWagesProvided true",
+      );
+    }
+    // a single untagged W-2 on a non-joint return is the SE earner's own: handled in the loop below
+  } else if (multiW2 && w2s.some((w) => w.box3 !== undefined)) {
+    notes.push("MULTIPLE W-2s: box-3 sums are not set as socialSecurityWages (no self-employment income, so Schedule SE line 8a is not needed)");
   }
-  let w2Box1Cents = 0n;
+  // undefined when the block carries no W-2 at all, so a hand-mapped income.wages still prints on
+  // line 1a (a documents block with only dates of birth or dependents must not zero the line)
+  let w2Box1Cents: bigint | undefined = (docs.w2s ?? []).length ? 0n : undefined;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
     add("wages", toCents(w.box1));
-    w2Box1Cents += toCents(w.box1);
+    w2Box1Cents = (w2Box1Cents ?? 0n) + toCents(w.box1);
     if (w.box2 !== undefined) add("federalTaxWithheld", toCents(w.box2));
-    if (w.box3 !== undefined && !multiW2) add("socialSecurityWages", toCents(w.box3));
+    if (w.box3 !== undefined && !multiW2 && !allTagged && !joint && !ctx.socialSecurityWagesSupplied) {
+      add("socialSecurityWages", toCents(w.box3));
+      if (hasSE) bools.socialSecurityWagesProvided = true;
+    }
     if (w.box5 !== undefined) {
       const b5 = toCents(w.box5);
       add("medicareWages", b5);
@@ -272,9 +315,15 @@ export function compileDocuments(docs: Docs, asOf: string): CompiledDocs {
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== undefined) add("federalTaxWithheld", toCents(r.box4));
     const taxable = toCents(r.box2a);
-    if (r.rolledOver || r.box7.toUpperCase().includes("G")) {
+    if (r.rolledOver || (r.box7.toUpperCase().includes("G") && taxable === 0n)) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) — gross on 4a/5a only, $0 taxable`);
       continue;
+    }
+    if (r.box7.toUpperCase().includes("G")) {
+      // 2025 Instructions for Forms 1099-R and 5498, box 2a: a direct rollover to a Roth IRA /
+      // designated Roth account reports the taxable amount in box 2a with code G — it is
+      // a conversion, taxed as ordinary income (§ 408A(d)(3)(A)), not a $0 rollover.
+      notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars(taxable)} — a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
     }
     if (r.disabilityBeforeRetirementAge) {
       add("wages", taxable);

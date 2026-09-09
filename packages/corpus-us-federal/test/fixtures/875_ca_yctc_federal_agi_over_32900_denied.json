@@ -1,0 +1,15 @@
+{
+  "description": "FTB 3514 (2025) line 23b / booklet Step 8: 'If your federal AGI exceeds $32,900, check the box on line 23b and stop here, you do not qualify for the credit.' Earned $20,000 (under the $27,425 threshold) but interest $13,000 lifts federal AGI to $33,000 -> $0.",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "wages": 20000,
+    "taxableInterest": 13000,
+    "hasChildUnderSix": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.yctc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

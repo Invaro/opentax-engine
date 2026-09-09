@@ -1,0 +1,15 @@
+{
+  "description": "HI MFJ spouse earned income $0 -> line 25 = 0 -> $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiAgi": 30000,
+    "hiChildCareExpenses": 5000,
+    "hiEarnedIncome": 30000,
+    "hiSpouseEarnedIncome": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.child_dependent_care_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

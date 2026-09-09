@@ -1,0 +1,12 @@
+{
+  "description": "RI Tax Table first row: '0 50 0'. Taxable income $49 prints $0, NOT the midpoint's $1 (25 x 3.75% = 0.9375) \u2014 the one printed row that departs from the midpoint rule.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 49
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

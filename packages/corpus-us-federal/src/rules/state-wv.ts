@@ -319,7 +319,9 @@ export const wvRules: Rule[] = [
       const l2 = max0(fact("wvTaxBeforeCredits"));
       const l3 = max0(fact("wvOtherStateIncome"));
       const l4 = fact("wvAdjustedGrossIncome");
-      const l5 = rd({ kind: "mulDiv", a: l2, b: l3, c: l4, round: "half-up" });
+      // Schedule E line 5 "LIMITATION OF CREDIT (LINE 2 MULTIPLIED BY LINE 3 DIVIDED BY LINE 4)" in a
+      // ".00" box — one rounding of the exact quotient: l2 × l3 / (l4 × 100) is already whole dollars
+      const l5 = times({ kind: "mulDiv", a: l2, b: l3, c: times(l4, "100"), round: "half-up" }, "100");
       const l8 = max0(sub(l2, max0(fact("wvAlternativeTax"))));
       const l9 = max0(sub(l2, max0(fact("wvOtherRecapCredits"))));
       return iff(gt(l4, money("0")), minE(l1, l2, l5, l8, l9), money("0"));

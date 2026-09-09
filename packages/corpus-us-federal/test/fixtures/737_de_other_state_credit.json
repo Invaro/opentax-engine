@@ -1,0 +1,15 @@
+{
+  "description": "DE line 28 worksheet: the ratio of $30,000 of other-state income to $100,000 of Delaware AGI applied to the $4,000 tax gives $1,200, which is less than the $2,000 paid, so the credit is $1,200.",
+  "facts": {
+    "filingStatus": "single",
+    "deAdjustedGrossIncome": 100000,
+    "deIncomeTax": 4000,
+    "deOtherStateIncome": 30000,
+    "deOtherStateTaxPaid": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.other_state_credit",
+  "expect": {
+    "valueCents": "120000"
+  }
+}

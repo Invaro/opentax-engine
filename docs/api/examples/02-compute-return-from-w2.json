@@ -1,0 +1,742 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "compute_return",
+      "arguments": {
+        "filing": {
+          "filingStatus": "single"
+        },
+        "documents": {
+          "taxpayerDateOfBirth": "1990-05-14",
+          "w2s": [
+            {
+              "box1": 68000,
+              "box2": 7200,
+              "box3": 68000,
+              "box5": 68000,
+              "box6": 986,
+              "box17": 2400
+            }
+          ]
+        },
+        "asOf": "2025-12-31"
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "asOf": "2025-12-31",
+    "documentNotes": [
+      "taxpayer age at year end: 35 (from 1990-05-14)",
+      "W-2 #1: box 17 state income tax $2400.00 is DOCUMENTED — include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous"
+    ],
+    "lines": {
+      "1a_wages": "$68,000.00",
+      "6b_taxable_social_security": "$0.00",
+      "9_total_income": "$68,000.00",
+      "10_adjustments": "$0.00",
+      "11_agi": "$68,000.00",
+      "12e_deduction": "$15,750.00",
+      "15_taxable_income": "$52,250.00",
+      "16_tax": "$6,415.00",
+      "17_amt": "$0.00",
+      "19_ctc_odc": "$0.00",
+      "22_tax_after_credits": "$6,415.00",
+      "23_other_taxes": "$0.00",
+      "24_total_tax": "$6,415.00",
+      "25d_withholding": "$7,200.00",
+      "26_estimated_payments": "$0.00",
+      "27a_eitc": "$0.00",
+      "28_actc": "$0.00",
+      "29_aotc_refundable": "$0.00",
+      "32_refundable_credits": "$0.00",
+      "33_total_payments": "$7,200.00",
+      "34_refund_or_37_owed": "refund $785.00"
+    },
+    "note": "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Report these numbers as-is.",
+    "assumptions": [
+      {
+        "factId": "isSubjectToKiddieTax",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed not a kiddie-tax child absent contrary input (the claimant is typically the parent)"
+      },
+      {
+        "factId": "foreignEarnedIncome",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no foreign earned income absent contrary input"
+      },
+      {
+        "factId": "taxableInterest",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no taxable interest absent contrary input"
+      },
+      {
+        "factId": "shortTermCapitalGains",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no net short-term capital gain absent contrary input"
+      },
+      {
+        "factId": "longTermCapitalGains",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no capital gains or qualified dividends absent contrary input"
+      },
+      {
+        "factId": "netCapitalLoss",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no net capital loss absent contrary input"
+      },
+      {
+        "factId": "longTermCapitalLoss",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no net long-term capital loss absent contrary input"
+      },
+      {
+        "factId": "shortTermCapitalLoss",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no net short-term capital loss absent contrary input"
+      },
+      {
+        "factId": "qualifiedDividends",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no qualified dividends absent contrary input"
+      },
+      {
+        "factId": "ordinaryDividends",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no ordinary (non-qualified) dividends absent contrary input"
+      },
+      {
+        "factId": "selfEmploymentNetProfit",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no self-employment income absent contrary input"
+      },
+      {
+        "factId": "k1OrdinaryBusinessIncome",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no K-1 pass-through business income absent contrary input"
+      },
+      {
+        "factId": "taxableIraDistributions",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no IRA distributions absent contrary input"
+      },
+      {
+        "factId": "taxablePensionsAndAnnuities",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no pension or annuity income absent contrary input"
+      },
+      {
+        "factId": "pensionGrossPayments",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no simplified-method annuity absent contrary input"
+      },
+      {
+        "factId": "pensionCostBasis",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed zero after-tax basis (fully taxable pension) absent contrary input"
+      },
+      {
+        "factId": "unemploymentCompensation",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no unemployment compensation absent contrary input"
+      },
+      {
+        "factId": "otherOrdinaryIncome",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no other Schedule 1 income absent contrary input"
+      },
+      {
+        "factId": "alimonyReceivedPre2019",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no pre-2019 alimony received absent contrary input"
+      },
+      {
+        "factId": "hsaDistributions",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no HSA distributions absent contrary input"
+      },
+      {
+        "factId": "hsaQualifiedMedicalExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed distributions were not for qualified medical expenses absent contrary input (conservative: taxable)"
+      },
+      {
+        "factId": "scheduleENetIncome",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no non-QBI Schedule E income absent contrary input"
+      },
+      {
+        "factId": "rentalDepreciableBasis",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no depreciable rental property absent contrary input"
+      },
+      {
+        "factId": "rentalIncomeBeforeDepreciation",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no rental activity reported through the depreciation path absent contrary input"
+      },
+      {
+        "factId": "socialSecurityBenefits",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no social security benefits absent contrary input"
+      },
+      {
+        "factId": "nonpassiveScheduleELoss",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no nonpassive Schedule E losses absent contrary input"
+      },
+      {
+        "factId": "scheduleCNetLoss",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no self-employment loss absent contrary input"
+      },
+      {
+        "factId": "useFormulaMethod",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "The printed-form methods (Tax Table, EIC Table, Schedule SE rounding) are how filed returns compute"
+      },
+      {
+        "factId": "hsaContribution",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no HSA contributions absent contrary input"
+      },
+      {
+        "factId": "sepContribution",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no self-employed retirement contribution absent contrary input"
+      },
+      {
+        "factId": "selfEmployedHealthPremiums",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no self-employed health insurance premiums absent contrary input"
+      },
+      {
+        "factId": "educatorExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no educator expenses absent contrary input"
+      },
+      {
+        "factId": "spouseEducatorExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed the spouse is not an eligible educator absent contrary input"
+      },
+      {
+        "factId": "earlyWithdrawalPenaltyPaid",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no early-withdrawal penalty absent contrary input"
+      },
+      {
+        "factId": "alimonyPaidPre2019",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no pre-2019 alimony paid absent contrary input"
+      },
+      {
+        "factId": "otherAdjustments",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no Schedule 1 line-24 write-in adjustments absent contrary input"
+      },
+      {
+        "factId": "iraContribution",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no traditional IRA contributions absent contrary input"
+      },
+      {
+        "factId": "studentLoanInterest",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no student loan interest absent contrary input"
+      },
+      {
+        "factId": "forceItemized",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed the tax-minimizing standard-or-itemized election absent contrary input"
+      },
+      {
+        "factId": "isClaimedAsDependent",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed not claimable as a dependent absent contrary input"
+      },
+      {
+        "factId": "isBlind",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed not blind absent contrary input"
+      },
+      {
+        "factId": "casualtyQualifiedDisasterLosses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no qualified disaster losses absent contrary input"
+      },
+      {
+        "factId": "stateAndLocalTaxesPaid",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no deductible state and local taxes absent contrary input"
+      },
+      {
+        "factId": "mortgageInterestPaid",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no home mortgage interest absent contrary input"
+      },
+      {
+        "factId": "charitableCashContributions",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no charitable cash contributions absent contrary input"
+      },
+      {
+        "factId": "noncashCharitableContributions",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no noncash charitable contributions absent contrary input"
+      },
+      {
+        "factId": "medicalExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no unreimbursed medical expenses absent contrary input"
+      },
+      {
+        "factId": "casualtyFederalDisasterLosses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no federally-declared-disaster casualty losses absent contrary input"
+      },
+      {
+        "factId": "investmentInterestDeduction",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no deductible investment interest absent contrary input"
+      },
+      {
+        "factId": "gamblingLossesItemized",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no deductible gambling losses absent contrary input"
+      },
+      {
+        "factId": "otherItemizedDeductions",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no Schedule A line-16 write-in deductions absent contrary input"
+      },
+      {
+        "factId": "qualifiedTips",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no qualified tips absent contrary input"
+      },
+      {
+        "factId": "qualifiedOvertimePremium",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no qualified overtime premium absent contrary input"
+      },
+      {
+        "factId": "carLoanInterest",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no qualified vehicle loan interest absent contrary input"
+      },
+      {
+        "factId": "amtIsoExerciseSpread",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no ISO exercises absent contrary input"
+      },
+      {
+        "factId": "amtOtherPreferences",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no other AMT preference items absent contrary input"
+      },
+      {
+        "factId": "dependentCareExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no dependent care expenses absent contrary input"
+      },
+      {
+        "factId": "aotcExpensesStudent1",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no American Opportunity credit expenses absent contrary input"
+      },
+      {
+        "factId": "aotcExpensesStudent2",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no second AOTC student absent contrary input"
+      },
+      {
+        "factId": "aotcExpensesStudent3",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no third AOTC student absent contrary input"
+      },
+      {
+        "factId": "llcQualifiedExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no Lifetime Learning Credit expenses absent contrary input"
+      },
+      {
+        "factId": "qualifiedAdoptionExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no adoption expenses absent contrary input"
+      },
+      {
+        "factId": "adoptionIsSpecialNeeds",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed not a special-needs adoption absent contrary input"
+      },
+      {
+        "factId": "isRetiredOnTotalDisability",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed not retired on total disability absent contrary input"
+      },
+      {
+        "factId": "qualifyingChildren",
+        "value": {
+          "type": "int",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no qualifying children absent contrary input"
+      },
+      {
+        "factId": "otherDependents",
+        "value": {
+          "type": "int",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no other dependents absent contrary input"
+      },
+      {
+        "factId": "niitInvestmentExpenses",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no properly-allocable investment deductions absent contrary input"
+      },
+      {
+        "factId": "hsaDistributionPenaltyExempt",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed no penalty exception absent contrary input"
+      },
+      {
+        "factId": "earlyDistributionSubjectToPenalty",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no penalized early distributions absent contrary input"
+      },
+      {
+        "factId": "advancePTC",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no advance PTC payments absent contrary input"
+      },
+      {
+        "factId": "householdEmployeeCashWages",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no household employees absent contrary input"
+      },
+      {
+        "factId": "householdFutaTestMet",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed the FUTA quarter test not met absent contrary input"
+      },
+      {
+        "factId": "eitcAdditionalQualifyingChildren",
+        "value": {
+          "type": "int",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no EIC-only qualifying children absent contrary input (the CTC child count is the floor)"
+      },
+      {
+        "factId": "slcspAnnualPremium",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no Marketplace coverage absent contrary input"
+      }
+    ],
+    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+  }
+}

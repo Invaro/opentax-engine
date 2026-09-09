@@ -1,0 +1,18 @@
+{
+  "description": "MT Schedule 2EC eligibility: gross household income must be LESS THAN $45,000 \u2014 exactly $45,000 fails and the credit is $0.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 45000,
+    "mtPropertyTaxBilled": 2000,
+    "mtSoleHouseholdClaimant": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "VT estimated use tax from the AGI table: $20,001 to $30,000 -> $10.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 20001,
+    "vtUseTaxEstimateFromTable": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.use_tax",
+  "expect": {
+    "valueCents": "1000"
+  }
+}

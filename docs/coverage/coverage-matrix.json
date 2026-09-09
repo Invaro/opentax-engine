@@ -1,0 +1,3093 @@
+{
+  "generated": "2026-09-09T12:45:33.840Z",
+  "corpusVersion": "0.39.0",
+  "merkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+  "horizon": "2026-12-31",
+  "taxYears": [
+    "2025",
+    "2026"
+  ],
+  "federal": {
+    "individual": [
+      {
+        "id": "us.federal.excess_business_loss_disallowed",
+        "title": "Excess business loss disallowed (§ 461(l), TY2026)",
+        "form": "Form 461",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.qsbs_exclusion",
+        "title": "QSBS gain exclusion — OBBBA tiers (50/75/100% at 3/4/5 years) or prior-law 100% at 5 years",
+        "form": "Schedule D / Form 8949",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.standard_deduction.base_amount",
+        "title": "Basic standard deduction amount by filing status (TY2026)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.standard_deduction.base",
+        "title": "Basic standard deduction",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.standard_deduction.dependent_limit",
+        "title": "Limitation on basic standard deduction of a dependent",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.standard_deduction.mfs_spouse_itemizes",
+        "title": "MFS standard deduction is zero when the spouse itemizes",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.standard_deduction.additional",
+        "title": "Additional standard deduction for the aged and blind (TY2026)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.standard_deduction",
+        "title": "Standard deduction",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.amt",
+        "title": "Alternative minimum tax — Form 6251 (TY2026)",
+        "form": "Form 6251",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.salt_deduction",
+        "title": "State and local tax deduction with the OBBBA cap (TY2026: $40,400, 30% phase-down over $505,000 MAGI, $10,000 floor)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.mortgage_interest_deduction",
+        "title": "Home mortgage interest on acquisition debt up to $750,000 ($375,000 MFS)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.charitable_deduction_itemizer",
+        "title": "Charitable deduction for itemizers (TY2026+: 60% of AGI limit, then the OBBBA 0.5% floor)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.medical_expense_deduction",
+        "title": "Medical expense deduction (expenses over 7.5% of AGI)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.casualty_loss_deduction",
+        "title": "Personal casualty losses — federally declared disasters (10% AGI floor) + qualified disaster losses (no AGI floor)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.itemized_deductions_before_limitation",
+        "title": "Itemized deductions before the § 68 overall limitation (SALT + mortgage + charitable cash/noncash + medical + casualty + investment interest + gambling losses)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.itemized_deductions",
+        "title": "Itemized deductions after the § 68 overall limitation (TY2026+: 2/37 of the amount over the 37% bracket)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.deduction_election",
+        "title": "Standard-or-itemized election (greater bundle by default; qualified disaster losses increase the standard side; forceItemized honors an explicit § 63(e) election)",
+        "form": "Schedule A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.education.aotc_tentative",
+        "title": "American Opportunity Tax Credit before phase-out (per student, up to 3 students)",
+        "form": "Form 8863",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.education.aotc",
+        "title": "American Opportunity Tax Credit after the MAGI phase-out",
+        "form": "Form 8863",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.education.aotc_refundable",
+        "title": "Refundable portion of the AOTC (40%; none for a kiddie-tax child)",
+        "form": "Form 8863",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.education.llc",
+        "title": "Lifetime Learning Credit after the MAGI phase-out (per return)",
+        "form": "Form 8863",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.education.nonrefundable",
+        "title": "Nonrefundable education credits (60% of the AOTC + all of the LLC), limited to remaining tax",
+        "form": "Form 8863",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ira_deduction",
+        "title": "Traditional IRA deduction (TY2026)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ira8606.taxable_amount",
+        "title": "Taxable IRA distributions and Roth conversions with basis — Form 8606 Part I pro-rata (§ 408(d))",
+        "form": "Form 8606",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ira8606.basis_carryforward",
+        "title": "Traditional IRA basis carried to next year — Form 8606 line 14",
+        "form": "Form 8606",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.schedule_d.preferential_lt_gain",
+        "title": "Net capital gain (§ 1222(11)): net LT gain reduced by any net ST loss",
+        "form": "Schedule D / Form 8949",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.schedule_d.ordinary_st_gain",
+        "title": "Net short-term capital gain surviving netting (§ 1222(5), (9)): ordinary-rate",
+        "form": "Schedule D / Form 8949",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.schedule_d.net_loss",
+        "title": "Net capital loss after netting (§ 1222(10)), feeding the § 1211(b) offset",
+        "form": "Schedule D / Form 8949",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.rental.depreciation",
+        "title": "Residential rental depreciation (§ 168 GDS: 27.5-yr straight line, mid-month)",
+        "form": "Schedule E / Form 8582",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.rental.net_income",
+        "title": "Net rental income: Schedule E result before depreciation minus § 168 depreciation",
+        "form": "Schedule E / Form 8582",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.pension.simplified_method_exclusion",
+        "title": "Simplified Method tax-free portion (§ 72(d): cost ÷ anticipated payments × months, capped at unrecovered cost)",
+        "form": "Form 1040 line 5 (Simplified Method)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.pension.simplified_method_taxable",
+        "title": "Taxable pension under the Simplified Method (gross payments minus the § 72(d) exclusion)",
+        "form": "Form 1040 line 5 (Simplified Method)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.capital_loss_ordinary_offset",
+        "title": "Capital loss allowed against ordinary income ($3,000 / $1,500 MFS limit)",
+        "form": "Schedule D / Form 8949",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.capital_loss_carryover",
+        "title": "Capital loss carryover to the following year (simplified)",
+        "form": "Schedule D / Form 8949",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.kiddie.net_unearned_income",
+        "title": "Net unearned income of a § 1(g) child",
+        "form": "Form 1040 line 16 / Tax Table / Form 8615 / Schedule D worksheet",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.kiddie_tax",
+        "title": "Kiddie tax — the Form 8615 greater-of computation (TY2026)",
+        "form": "Form 1040 line 16 / Tax Table / Form 8615 / Schedule D worksheet",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.income_tax_before_credits.kiddie",
+        "title": "§ 1(g) override: a kiddie child's income tax is the Form 8615 tax",
+        "form": "Form 1040 line 16 / Tax Table / Form 8615 / Schedule D worksheet",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.gross_income",
+        "title": "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income − allowed capital loss − § 911 exclusion)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.above_the_line_adjustments",
+        "title": "Above-the-line adjustments before the student-loan deduction (½ SE tax + HSA + SEP + SE health insurance + educator + early-withdrawal penalty)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.agi_before_student_loan",
+        "title": "AGI before the student-loan deduction (§ 221(b)(2)(C) MAGI base)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.agi",
+        "title": "Adjusted gross income",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.taxable_income_before_qbi",
+        "title": "Taxable income before § 199A (standard-or-itemized election + OBBBA senior/tips/overtime/car-loan deductions)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.taxable_income",
+        "title": "Taxable income",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ordinary_taxable_income",
+        "title": "Taxable income taxed at ordinary rates (excludes preferential gains and qualified dividends)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.income_tax_before_credits",
+        "title": "Income tax before credits (2026 rate tables + capital gains stack)",
+        "form": "Form 1040 line 16 / Tax Table / Form 8615 / Schedule D worksheet",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.income_tax_before_credits.tax_table",
+        "title": "IRS Tax Table method for taxable income under $100,000 (2026)",
+        "form": "Form 1040 line 16 / Tax Table / Form 8615 / Schedule D worksheet",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ctc.tentative",
+        "title": "Child tax credit + credit for other dependents, before phase-out (as amended by OBBBA)",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ctc.phaseout_threshold",
+        "title": "CTC phase-out threshold by filing status",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ctc.reduction",
+        "title": "CTC phase-out reduction",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ctc.after_phaseout",
+        "title": "Child tax credit after phase-out (before the liability limit)",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ctc",
+        "title": "Child tax credit + ODC (nonrefundable portion, after other Schedule 3 credits)",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.actc",
+        "title": "Additional child tax credit — refundable (simplified: 3+-child SS-tax alternative not modeled)",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.income_tax_after_credits",
+        "title": "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + CTC/ODC)",
+        "form": "Form 1040 lines 22-37 / Schedule 2 / Schedule 3",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.cdcc.tentative",
+        "title": "Child and dependent care credit before the liability limit (TY2026: OBBBA 50% → 35% → 20%)",
+        "form": "Form 2441",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.cdcc",
+        "title": "Child and dependent care credit, limited to tax (§ 26(a))",
+        "form": "Form 2441",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.savers.tentative",
+        "title": "Saver's credit before the liability limit (§ 25B, TY2026)",
+        "form": "Form 8880",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.savers_credit",
+        "title": "Saver's credit, limited to remaining tax (§ 26(a) after CDCC + education)",
+        "form": "Form 8880",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.adoption.allowed",
+        "title": "Adoption credit after the MAGI phase-out (§ 23, TY2026)",
+        "form": "Form 8839",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.adoption.refundable",
+        "title": "Refundable portion of the adoption credit (§ 23(a)(4), $5,120)",
+        "form": "Form 8839",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.adoption.nonrefundable",
+        "title": "Nonrefundable adoption credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's)",
+        "form": "Form 8839",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.adoption.carryforward",
+        "title": "Adoption credit carryforward generated (§ 23(c), nonrefundable portion only)",
+        "form": "Form 8839",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ptc",
+        "title": "Premium tax credit (§ 36B, TY2026: indexed statutory table, the 400% cliff returns)",
+        "form": "Form 8962",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ptc.net",
+        "title": "Net premium tax credit (credit in excess of advance payments)",
+        "form": "Form 8962",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.ptc.excess_aptc_repayment",
+        "title": "Excess advance PTC repayment — UNCAPPED (OBBBA repealed § 36B(f)(2)(B), TY2026+)",
+        "form": "Form 8962",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.feie.exclusion",
+        "title": "Foreign earned income exclusion (§ 911, $132,900)",
+        "form": "Form 2555",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.income_tax_before_credits.feie",
+        "title": "§ 911(f) stacking: tax at the rates that would apply with the excluded income (TY2026)",
+        "form": "Form 1040 line 16 / Tax Table / Form 8615 / Schedule D worksheet",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.eitc.feie_denial",
+        "title": "§ 911 claimants get no earned income credit",
+        "form": "Schedule EIC / EIC Table",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.household_employment_taxes",
+        "title": "Household employment taxes — Schedule H ($3,000 FICA threshold)",
+        "form": "Schedule H",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.required_annual_payment.farmer",
+        "title": "Required annual payment — farmers and fishermen (66⅔%, § 6654(i))",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.home_office_simplified",
+        "title": "Home office deduction — simplified safe harbor ($5/sq ft, 300 sq ft cap)",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.senior_deduction",
+        "title": "Temporary deduction for seniors (OBBBA; simplified: MAGI approximated as AGI)",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.senior_deduction.magi_threshold",
+        "title": "Senior deduction MAGI phase-out threshold by filing status",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.taxable_social_security",
+        "title": "Taxable Social Security benefits (§ 86: the 0/50/85% worksheet)",
+        "form": "Form 1040 line 6 (§ 86 worksheet)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.tips_deduction",
+        "title": "Deduction for qualified tips (OBBBA; eligibility fully determined; MAGI ≈ AGI)",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.overtime_deduction",
+        "title": "Deduction for qualified overtime compensation (OBBBA; simplified: MAGI approximated as AGI)",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.eligible.tips_occupation",
+        "title": "Occupation is on the Treasury Tipped Occupation list (§ 224 'customarily and regularly received tips')",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.eligible.tips_deduction",
+        "title": "Eligible to claim the qualified-tips deduction (§ 224)",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.car_loan_interest_deduction",
+        "title": "Qualified passenger vehicle loan interest deduction (OBBBA; simplified: MAGI approximated as AGI)",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.charitable_deduction_nonitemizer",
+        "title": "Charitable deduction for non-itemizers (OBBBA, permanent from 2026)",
+        "form": "Schedule 1-A (OBBBA deductions)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.eitc",
+        "title": "Earned income credit (TY2026; EIC Table method — § 32(f) $50 brackets at midpoints; § 32(d) separated spouses not modeled)",
+        "form": "Schedule EIC / EIC Table",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.eitc_no_age_gate",
+        "title": "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2026; for state decoupling statutes only)",
+        "form": "Schedule EIC / EIC Table",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.employer.payroll_tax",
+        "title": "Employer payroll tax per employee (FICA + FUTA, TY2026)",
+        "form": "Forms 941 / 940 (employer payroll tax per employee)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.credit.research_asc",
+        "title": "Research credit — alternative simplified credit (§ 41(c)(4))",
+        "form": "Form 6765 (§ 41 ASC)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": true
+      },
+      {
+        "id": "us.federal.se_net_earnings",
+        "title": "Net earnings from self-employment (92.35% of net profit)",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.se_tax",
+        "title": "Self-employment tax (TY2026; Schedule SE line 8a uses socialSecurityWages when given, else box-1 wages)",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.se_tax_half_deduction",
+        "title": "Deduction for one-half of self-employment tax",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.passive_loss_allowed",
+        "title": "Passive losses allowed this year — Form 8582 core (§ 469: income absorption + the § 469(i) $25,000 rental allowance)",
+        "form": "Schedule E / Form 8582",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.passive_loss_suspended",
+        "title": "Passive losses suspended to next year (§ 469(b) carryforward)",
+        "form": "Schedule E / Form 8582",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.schedule_r.tentative",
+        "title": "Credit for the elderly or the disabled — tentative (§ 22, Schedule R)",
+        "form": "Schedule R",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.schedule_r_credit",
+        "title": "Schedule R credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's + adoption)",
+        "form": "Schedule R",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.vehicle_standard_mileage",
+        "title": "Business standard mileage deduction (72.5 cents/mile, Notice 2026-10)",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.hsa_deduction",
+        "title": "HSA deduction (TY2026; HDHP eligibility assumed)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.sep_deduction",
+        "title": "SEP / solo-401(k) employer contribution deduction (TY2026)",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.sehi_deduction",
+        "title": "Self-employed health insurance deduction (§ 162(l))",
+        "form": "Schedule C / Schedule SE / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.student_loan_interest_deduction",
+        "title": "Student loan interest deduction (TY2026)",
+        "form": "Form 1040 / Schedule 1",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.qbi_deduction",
+        "title": "Qualified business income deduction (TY2026; full W-2/UBIA + SSTB mechanics)",
+        "form": "Form 8995 / 8995-A (§ 199A)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.niit",
+        "title": "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) − allocable deductions; MAGI ≈ AGI)",
+        "form": "Form 8960",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.additional_medicare_tax",
+        "title": "Additional Medicare Tax (0.9%; Form 8959 uses medicareWages box 5 when given, else box-1 wages)",
+        "form": "Form 8959",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.other_taxes",
+        "title": "Other taxes (SE tax + Additional Medicare + NIIT + § 72(t) + excess APTC + Schedule H)",
+        "form": "Form 1040 lines 22-37 / Schedule 2 / Schedule 3",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.refundable_credits",
+        "title": "Refundable credits (EITC + ACTC + 40% AOTC + refundable adoption + net PTC)",
+        "form": "Form 1040 lines 22-37 / Schedule 2 / Schedule 3",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.net_tax",
+        "title": "Total federal tax net of refundable credits (income + SE + NIIT + Add'l Medicare; negative = refund)",
+        "form": "Form 1040 lines 22-37 / Schedule 2 / Schedule 3",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.balance_due",
+        "title": "Balance due after withholding (negative = refund expected at filing)",
+        "form": "Form 1040 lines 22-37 / Schedule 2 / Schedule 3",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.required_annual_payment",
+        "title": "Required annual payment (§ 6654 safe harbor)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.required_annual_payment.high_agi",
+        "title": "Required annual payment — 110% prong for prior-year AGI over $150,000",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.quarterly_payment",
+        "title": "Required quarterly estimated payment (even installments, withholding deemed even)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.safe_harbor_met",
+        "title": "Withholding alone already satisfies § 6654 (no estimated payments needed)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.annualized_installment_q1",
+        "title": "Annualized-income required installment #1 (§ 6654(d)(2), TY2026)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.annualized_installment_q2",
+        "title": "Annualized-income required installment #2 (§ 6654(d)(2), TY2026)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.annualized_installment_q3",
+        "title": "Annualized-income required installment #3 (§ 6654(d)(2), TY2026)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.estimated.annualized_installment_q4",
+        "title": "Annualized-income required installment #4 (§ 6654(d)(2), TY2026)",
+        "form": "Form 2210 / Schedule AI / § 6654",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.dependent.qualifying_child",
+        "title": "Candidate is a qualifying child (§ 152(c))",
+        "form": "§ 152 dependent determination (Form 1040 dependents)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.dependent.qualifying_relative",
+        "title": "Candidate is a qualifying relative (§ 152(d), TY2026)",
+        "form": "§ 152 dependent determination (Form 1040 dependents)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.dependent.qualifying_relative.multiple_support",
+        "title": "Multiple-support agreement: over-10% contributor treated as providing over half (§ 152(d)(3), TY2026)",
+        "form": "§ 152 dependent determination (Form 1040 dependents)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.dependent.qualifying_child.divorced_release",
+        "title": "Divorced or separated parents: the Form 8332 release reallocates the qualifying child (§ 152(e))",
+        "form": "§ 152 dependent determination (Form 1040 dependents)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.dependent.is_dependent",
+        "title": "Candidate can be claimed as the taxpayer's dependent (§ 152(a))",
+        "form": "§ 152 dependent determination (Form 1040 dependents)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      }
+    ],
+    "businessEntity": [
+      {
+        "id": "us.federal.corp.entity_classification",
+        "title": "Federal tax classification of the business entity (check-the-box)",
+        "form": "Form 8832 / Reg. § 301.7701-3 (entity classification)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.income_tax",
+        "title": "C corporation income tax — flat 21% of taxable income less the § 250 deduction (§ 11)",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.stock_buyback_excise",
+        "title": "Stock repurchase excise tax — 1% of net repurchases (§ 4501)",
+        "form": "Form 7208 (§ 4501 excise)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.entity_level_income_tax",
+        "title": "Entity-level federal income tax by classification (pass-throughs: $0, taxed on the owners' returns)",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.depreciation_deduction",
+        "title": "Bonus depreciation — 100% expensing (§ 168(k), OBBBA-permanent)",
+        "form": "Form 4562 (§ 179, § 168(k))",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.research_deduction",
+        "title": "Research deduction — § 174A domestic expensing + § 174 foreign 15-year amortization",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.interest_deduction",
+        "title": "Business interest deduction — § 163(j) 30%-of-ATI limit, EBITDA base (2026)",
+        "form": "Form 8990 (§ 163(j))",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.section179_deduction",
+        "title": "§ 179 expensing — $2,560,000 limit, $4,090,000 phase-out (TY2026)",
+        "form": "Form 4562 (§ 179, § 168(k))",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.section179_carryforward",
+        "title": "§ 179 deduction carried forward — the § 179(b)(3)(B) income-limit excess (TY2026)",
+        "form": "Form 4562 (§ 179, § 168(k))",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.charitable_deduction",
+        "title": "Corporate charitable deduction — 10% ceiling + the OBBBA 1% floor (TY2026+, permanent)",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.dividends_received_deduction",
+        "title": "Dividends-received deduction (50%/65%/100% by ownership tier, § 246(b) limit, § 246A reduction)",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.nol_deduction",
+        "title": "Net operating loss deduction (80% of taxable income, § 172)",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.taxable_income",
+        "title": "Corporate taxable income (Form 1120 line 30 — given, or computed)",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.capital_loss_carryover_generated",
+        "title": "Corporate capital loss carryover generated (§ 1212(a))",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.estimated.required_annual_payment",
+        "title": "Corporate required annual payment (§ 6655(d); tax per § 6655(g)(1) — after credits, plus BEAT)",
+        "form": "Form 1120-W / § 6655 corporate estimates",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.estimated.quarterly_payment",
+        "title": "Corporate required quarterly installment (25%; none if tax under $500)",
+        "form": "Form 1120-W / § 6655 corporate estimates",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.s_corp_entity_taxes",
+        "title": "S corporation entity-level taxes: § 1375 excess net passive income + § 1374 built-in gains",
+        "form": "Form 1120-S (§ 1374 / § 1375 entity-level taxes only)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.accumulated_earnings_tax",
+        "title": "Accumulated earnings tax — 20% of accumulated taxable income (§ 531)",
+        "form": "Form 1120 Schedule PH / §§ 531, 541",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.is_personal_holding_company",
+        "title": "Personal holding company determination (§ 542 income + ownership tests)",
+        "form": "Form 1120 Schedule PH / §§ 531, 541",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.phc_tax",
+        "title": "Personal holding company tax — 20% of undistributed PHC income (§ 541)",
+        "form": "Form 1120 Schedule PH / §§ 531, 541",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.annualized_installment_q1",
+        "title": "Corporate annualized required installment #1 (§ 6655(e): first 3 months ×4, 25%)",
+        "form": "Form 1120-W / § 6655 corporate estimates",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.annualized_installment_q2",
+        "title": "Corporate annualized required installment #2 (§ 6655(e): first 3 months ×4, 50%)",
+        "form": "Form 1120-W / § 6655 corporate estimates",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.annualized_installment_q3",
+        "title": "Corporate annualized required installment #3 (§ 6655(e): first 6 months ×2, 75%)",
+        "form": "Form 1120-W / § 6655 corporate estimates",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.annualized_installment_q4",
+        "title": "Corporate annualized required installment #4 (§ 6655(e): first 9 months ×4/3, 100%)",
+        "form": "Form 1120-W / § 6655 corporate estimates",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.ftc",
+        "title": "Corporate foreign tax credit — § 904 basket limitation (TY2026+: the OBBBA 90% NCTI-basket allowance)",
+        "form": "Form 1118 (corporate FTC)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.beat",
+        "title": "Base erosion and anti-abuse tax (§ 59A, TY2026+, permanent)",
+        "form": "Form 8991 (BEAT)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.section250_deduction",
+        "title": "§ 250 deduction (TY2026+: 33.34% of FDDEI + 40% of NCTI (OBBBA))",
+        "form": "Form 8993 / § 250, § 245A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.gbc_allowed",
+        "title": "General business credit allowed (§ 38(c) limitation)",
+        "form": "Form 3800 (general business credit)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.income_tax_after_credits",
+        "title": "Corporate income tax after the general business credit",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.gbc_carryforward",
+        "title": "General business credit carryforward generated (§ 39)",
+        "form": "Form 3800 (general business credit)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.section245a_drd",
+        "title": "§ 245A participation-exemption DRD (100% of eligible foreign-sub dividends)",
+        "form": "Form 8993 / § 250, § 245A",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.charitable_carryover",
+        "title": "Corporate charitable contribution carryover generated (§ 170(d)(2))",
+        "form": "Form 1120 (corporate income tax computation)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.corp.interest_carryforward",
+        "title": "Disallowed business interest carried forward (§ 163(j)(2))",
+        "form": "Form 8990 (§ 163(j))",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.fiduciary.income_tax",
+        "title": "Estate/trust income tax — § 1(e) compressed brackets (TY2026)",
+        "form": "Form 1041 (§ 1(e) rate schedule and § 642(b) exemption only)",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      }
+    ]
+  },
+  "federalComposition": {
+    "form1040": "compute_return emits the Form 1040 bottom-line set (lines 1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37) plus Part IV withholding and penalties from transcribed documents; every other federal item is a calculate_tax target with a proof tree, not a printed line set",
+    "schedulesComposed": []
+  },
+  "businessReturns": [
+    {
+      "form": "1120 (C corporation)",
+      "coverage": "calculation-only",
+      "detail": "Taxable income (line 30 given or computed: § 179, § 168(k), § 174A, § 163(j), DRD/§ 245A, NOL, charitable ceiling and floor), 21% tax, § 250, GBC/§ 38(c), FTC/§ 904, BEAT, AET, PHC, § 4501 excise, § 6655 estimates and annualized installments. No printed-form line set, no Schedule L/M-1/M-2/K, no state corporate returns."
+    },
+    {
+      "form": "1120-S (S corporation)",
+      "coverage": "calculation-only, entity-level taxes only",
+      "detail": "§ 1374 built-in gains and § 1375 excess net passive income taxes; S-election validity via entity classification. Owner-level K-1 income flows into calculate_tax (QBI, no SE tax). No Form 1120-S line set, no Schedule K-1 generation, no basis/AAA tracking."
+    },
+    {
+      "form": "1065 (partnership)",
+      "coverage": "classification only",
+      "detail": "Check-the-box classification (disregarded / partnership / S / C) with proof; partner K-1 box 1 income flows into calculate_tax. No Form 1065 computation, no § 704 allocations, no partner basis."
+    },
+    {
+      "form": "1041 (estate / trust)",
+      "coverage": "calculation-only, rate schedule only",
+      "detail": "§ 1(e) compressed brackets and the § 642(b) exemption on taxable income after the distribution deduction. Retained capital gains REFUSE (§ 1(h) trust breakpoints not modeled); no DNI, no Schedule K-1, no Form 1041 line set."
+    },
+    {
+      "form": "990 (exempt organizations)",
+      "coverage": "none",
+      "detail": "Not modeled."
+    },
+    {
+      "form": "State business returns",
+      "coverage": "none",
+      "detail": "No state corporate, partnership, franchise or PTE-tax returns are modeled."
+    }
+  ],
+  "states": [
+    {
+      "state": "AL",
+      "tier": "deep+composer",
+      "form": "Form 40",
+      "rules": [
+        "us.al.income_tax",
+        "us.al.standard_deduction",
+        "us.al.dependent_exemption",
+        "us.al.federal_tax_deduction",
+        "us.al.retirement_exclusion",
+        "us.al.overtime_premium_deduction"
+      ],
+      "fixtures": 14,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "AK",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.ak.income_tax"
+      ],
+      "fixtures": 0,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "AZ",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.az.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "AR",
+      "tier": "deep+composer",
+      "form": "Form AR1000F",
+      "rules": [
+        "us.ar.income_tax",
+        "us.ar.low_income_tax",
+        "us.ar.standard_deduction",
+        "us.ar.personal_tax_credits",
+        "us.ar.additional_tax_credit",
+        "us.ar.child_care_credit",
+        "us.ar.retirement_exclusion",
+        "us.ar.capital_gains",
+        "us.ar.itemized_deductions"
+      ],
+      "fixtures": 10,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.ar.income_tax",
+          "us.ar.low_income_tax",
+          "us.ar.standard_deduction",
+          "us.ar.personal_tax_credits",
+          "us.ar.additional_tax_credit",
+          "us.ar.child_care_credit",
+          "us.ar.retirement_exclusion",
+          "us.ar.capital_gains",
+          "us.ar.itemized_deductions"
+        ],
+        "unblockedBy": "2026 DFA indexed bracket and threshold sheets and the 2026 AR1000F booklet (dfa.arkansas.gov/incometax, ~November-December 2026); Acts 1-2 of the 2026 1st Ex. Sess. already cut the top rate to 3.7%"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "CA",
+      "tier": "deep+composer",
+      "form": "Form 540",
+      "rules": [
+        "us.ca.income_tax",
+        "us.ca.caleitc",
+        "us.ca.yctc",
+        "us.ca.renters_credit",
+        "us.ca.cdcc",
+        "us.ca.amt",
+        "us.ca.bhst"
+      ],
+      "fixtures": 28,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.ca.income_tax",
+          "us.ca.caleitc",
+          "us.ca.yctc",
+          "us.ca.renters_credit",
+          "us.ca.cdcc",
+          "us.ca.amt",
+          "us.ca.bhst"
+        ],
+        "unblockedBy": "FTB's 2026 indexed amounts (brackets, exemption credits, standard deduction, CalEITC tables) and the 2026 Form 540 booklet (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "CO",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.co.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "CT",
+      "tier": "deep+composer",
+      "form": "Form CT-1040",
+      "rules": [
+        "us.ct.personal_exemption",
+        "us.ct.income_tax",
+        "us.ct.property_tax_credit",
+        "us.ct.eitc",
+        "us.ct.social_security_adjustment",
+        "us.ct.pension_annuity_subtraction"
+      ],
+      "fixtures": 15,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "DE",
+      "tier": "deep+composer",
+      "form": "Form PIT-RES",
+      "rules": [
+        "us.de.income_tax",
+        "us.de.standard_deduction",
+        "us.de.personal_credits",
+        "us.de.pension_exclusion",
+        "us.de.elderly_disabled_exclusion",
+        "us.de.eitc",
+        "us.de.child_care_credit",
+        "us.de.other_state_credit",
+        "us.de.volunteer_firefighter_credit"
+      ],
+      "fixtures": 36,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": "OUT OF SCOPE: nonresident and part-year returns (Form PIT-NON), the separate tax on lump-sum distributions (Form PIT-STC, § 1102(b)), the itemized-deduction detail on Form PIT-RSA, Delaware S corporation payments (Schedule V), and county or school district levies (Delaware has no local income tax)."
+    },
+    {
+      "state": "FL",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.fl.income_tax"
+      ],
+      "fixtures": 0,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "GA",
+      "tier": "deep+composer",
+      "form": "Form 500",
+      "rules": [
+        "us.ga.income_tax",
+        "us.ga.standard_deduction",
+        "us.ga.dependent_exemption",
+        "us.ga.retirement_exclusion",
+        "us.ga.low_income_credit",
+        "us.ga.cdcc"
+      ],
+      "fixtures": 13,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.ga.retirement_exclusion",
+          "us.ga.low_income_credit",
+          "us.ga.cdcc"
+        ],
+        "unblockedBy": "2026 Form 500 booklet (retirement exclusion, low income credit table, dependent care credit) (~January 2027)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "HI",
+      "tier": "deep+composer",
+      "form": "Form N-11",
+      "rules": [
+        "us.hi.income_tax",
+        "us.hi.capital_gains_tax",
+        "us.hi.standard_deduction",
+        "us.hi.itemized_deductions",
+        "us.hi.personal_exemption",
+        "us.hi.reserve_pay_exclusion",
+        "us.hi.food_excise_credit",
+        "us.hi.renters_credit",
+        "us.hi.child_dependent_care_credit",
+        "us.hi.eitc",
+        "us.hi.other_state_credit"
+      ],
+      "fixtures": 12,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.hi.reserve_pay_exclusion"
+        ],
+        "unblockedBy": "2026 Form N-11 instructions (the reserve pay exclusion is the E-5 pay-grade amount, re-set each year)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "ID",
+      "tier": "deep+composer",
+      "form": "Form 40",
+      "rules": [
+        "us.id.income_tax",
+        "us.id.standard_deduction",
+        "us.id.itemized_deductions",
+        "us.id.child_tax_credit",
+        "us.id.food_tax_credit",
+        "us.id.other_state_credit",
+        "us.id.educational_contribution_credit",
+        "us.id.youth_rehab_contribution_credit",
+        "us.id.live_organ_donation_credit",
+        "us.id.retirement_benefits_deduction",
+        "us.id.child_care_deduction",
+        "us.id.health_insurance_deduction",
+        "us.id.long_term_care_deduction",
+        "us.id.alternative_energy_device_deduction",
+        "us.id.capital_gains_deduction",
+        "us.id.permanent_building_fund_tax",
+        "us.id.home_for_family_member_credit",
+        "us.id.use_tax"
+      ],
+      "fixtures": 20,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.id.income_tax",
+          "us.id.standard_deduction",
+          "us.id.itemized_deductions",
+          "us.id.child_tax_credit",
+          "us.id.retirement_benefits_deduction",
+          "us.id.alternative_energy_device_deduction"
+        ],
+        "unblockedBy": "2026 Form 40 booklet (EIN00046: indexed brackets and federal standard deduction conformity; the $205 child tax credit sunset after TY2025 under § 63-3029L) (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "IL",
+      "tier": "deep+composer",
+      "form": "Form IL-1040",
+      "rules": [
+        "us.il.income_tax",
+        "us.il.eitc",
+        "us.il.subtractions",
+        "us.il.use_tax"
+      ],
+      "fixtures": 3,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.il.income_tax",
+          "us.il.eitc",
+          "us.il.subtractions",
+          "us.il.use_tax"
+        ],
+        "unblockedBy": "2026 IL-1040 booklet (exemption allowance, use tax table) (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "IN",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.in.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "IA",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.ia.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "KS",
+      "tier": "deep+composer",
+      "form": "Form K-40",
+      "rules": [
+        "us.ks.income_tax",
+        "us.ks.standard_deduction",
+        "us.ks.exemptions",
+        "us.ks.itemized_deductions",
+        "us.ks.eitc",
+        "us.ks.child_care_credit"
+      ],
+      "fixtures": 10,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "KY",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.ky.income_tax"
+      ],
+      "fixtures": 2,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "LA",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.la.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "ME",
+      "tier": "deep+composer",
+      "form": "Form 1040ME",
+      "rules": [
+        "us.me.income_tax",
+        "us.me.standard_deduction",
+        "us.me.itemized_deductions",
+        "us.me.deduction_phaseout",
+        "us.me.personal_exemption",
+        "us.me.pension_deduction",
+        "us.me.dependent_exemption_credit",
+        "us.me.child_care_credit",
+        "us.me.adult_dependent_care_credit",
+        "us.me.eitc",
+        "us.me.other_jurisdiction_credit",
+        "us.me.property_tax_fairness_credit",
+        "us.me.sales_tax_fairness_credit",
+        "us.me.use_tax"
+      ],
+      "fixtures": 21,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.me.pension_deduction",
+          "us.me.dependent_exemption_credit",
+          "us.me.property_tax_fairness_credit",
+          "us.me.sales_tax_fairness_credit"
+        ],
+        "unblockedBy": "2026 Form 1040ME booklet (indexed pension deduction; P.L. 2025 c. 650's 2026 dependent credit repeal and PTFC $1,500 cap; STFC tables) (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MD",
+      "tier": "deep+composer",
+      "form": "Form 502",
+      "rules": [
+        "us.md.income_tax",
+        "us.md.local_tax",
+        "us.md.exemption_amount",
+        "us.md.ctc",
+        "us.md.poverty_level_credit",
+        "us.md.capital_gains_surtax",
+        "us.md.pension_exclusion"
+      ],
+      "fixtures": 17,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.md.income_tax",
+          "us.md.local_tax",
+          "us.md.exemption_amount",
+          "us.md.ctc",
+          "us.md.poverty_level_credit",
+          "us.md.capital_gains_surtax",
+          "us.md.pension_exclusion"
+        ],
+        "unblockedBy": "2026 Form 502 booklet and the Comptroller's 2026 local income tax rates (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MA",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.ma.income_tax"
+      ],
+      "fixtures": 2,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MI",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.mi.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MN",
+      "tier": "deep+composer",
+      "form": "Form M1",
+      "rules": [
+        "us.mn.income_tax",
+        "us.mn.standard_deduction",
+        "us.mn.exemptions",
+        "us.mn.social_security_subtraction",
+        "us.mn.niit"
+      ],
+      "fixtures": 14,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.mn.income_tax",
+          "us.mn.standard_deduction",
+          "us.mn.exemptions",
+          "us.mn.social_security_subtraction",
+          "us.mn.niit"
+        ],
+        "unblockedBy": "2026 Form M1 booklet and the Department of Revenue's 2026 inflation adjustments (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MS",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.ms.income_tax"
+      ],
+      "fixtures": 2,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MO",
+      "tier": "deep+composer",
+      "form": "Form MO-1040",
+      "rules": [
+        "us.mo.income_tax",
+        "us.mo.federal_tax_deduction",
+        "us.mo.public_pension_exemption",
+        "us.mo.wftc",
+        "us.mo.business_income_deduction"
+      ],
+      "fixtures": 9,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.mo.income_tax",
+          "us.mo.federal_tax_deduction",
+          "us.mo.public_pension_exemption",
+          "us.mo.wftc",
+          "us.mo.business_income_deduction"
+        ],
+        "unblockedBy": "2026 MO-1040 booklet and tax chart (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "MT",
+      "tier": "deep+composer",
+      "form": "Form 2",
+      "rules": [
+        "us.mt.ordinary_income_tax",
+        "us.mt.capital_gains_tax",
+        "us.mt.income_tax",
+        "us.mt.age65_subtraction",
+        "us.mt.eitc",
+        "us.mt.elderly_homeowner_renter_credit",
+        "us.mt.other_state_credit",
+        "us.mt.tuition_savings_subtraction",
+        "us.mt.able_subtraction",
+        "us.mt.military_retirement_subtraction"
+      ],
+      "fixtures": 33,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.mt.age65_subtraction",
+          "us.mt.tuition_savings_subtraction"
+        ],
+        "unblockedBy": "2026 Form 2 booklet (the CPI-indexed age-65 subtraction and the 529 subtraction cap) (~September 2026; the 2025 booklet already prints the TY2026 and TY2027 rate tables)"
+      },
+      "businessState": false,
+      "outOfScope": "OUT OF SCOPE: nonresident, part-year and mixed-residency returns (Schedule II apportionment), the Montana medical savings account Part II adjustment, Schedule IV penalties and interest, the pass-through entity tax credit, and the property tax rebate (House Bill 231 rebated TAX YEAR 2024 property taxes on a separate application at getmyrebate.mt.gov and never touches Form 2 — but the booklet requires counting it in gross household income on Schedule 2EC line 8)."
+    },
+    {
+      "state": "NE",
+      "tier": "deep+composer",
+      "form": "Form 1040N",
+      "rules": [
+        "us.ne.income_tax",
+        "us.ne.standard_deduction",
+        "us.ne.itemized_deductions",
+        "us.ne.personal_exemption_credit",
+        "us.ne.other_tax",
+        "us.ne.child_care_credit_nonrefundable",
+        "us.ne.child_care_credit_refundable",
+        "us.ne.eitc",
+        "us.ne.tax_after_credits",
+        "us.ne.other_state_credit",
+        "us.ne.use_tax"
+      ],
+      "fixtures": 16,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "NV",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.nv.income_tax"
+      ],
+      "fixtures": 0,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "NH",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.nh.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "NJ",
+      "tier": "deep+composer",
+      "form": "Form NJ-1040",
+      "rules": [
+        "us.nj.income_tax",
+        "us.nj.eitc",
+        "us.nj.cdcc",
+        "us.nj.ctc",
+        "us.nj.pension_exclusion",
+        "us.nj.property_tax_deduction",
+        "us.nj.use_tax"
+      ],
+      "fixtures": 17,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.nj.income_tax",
+          "us.nj.eitc",
+          "us.nj.cdcc",
+          "us.nj.ctc",
+          "us.nj.pension_exclusion",
+          "us.nj.property_tax_deduction",
+          "us.nj.use_tax"
+        ],
+        "unblockedBy": "2026 NJ-1040 booklet (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "NM",
+      "tier": "deep+composer",
+      "form": "Form PIT-1",
+      "rules": [
+        "us.nm.income_tax",
+        "us.nm.salt_addback",
+        "us.nm.dependents_deduction",
+        "us.nm.low_middle_income_exemption",
+        "us.nm.age65_blind_exemption",
+        "us.nm.social_security_exemption",
+        "us.nm.capital_gains_deduction",
+        "us.nm.armed_forces_retirement_exemption",
+        "us.nm.medical_expense_exemption_65",
+        "us.nm.medical_care_credit_65",
+        "us.nm.lictr",
+        "us.nm.working_families_credit",
+        "us.nm.child_income_tax_credit",
+        "us.nm.property_tax_rebate_65",
+        "us.nm.county_property_tax_rebate"
+      ],
+      "fixtures": 15,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.nm.lictr",
+          "us.nm.child_income_tax_credit"
+        ],
+        "unblockedBy": "2026 PIT-RC (LICTR and child income tax credit tables are CPI-indexed) (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "NY",
+      "tier": "deep+composer",
+      "form": "Form IT-201",
+      "rules": [
+        "us.ny.it214",
+        "us.ny.nyc_cdcc",
+        "us.ny.income_tax",
+        "us.ny.nyc_income_tax",
+        "us.ny.yonkers_surcharge"
+      ],
+      "fixtures": 11,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.ny.it214",
+          "us.ny.nyc_cdcc",
+          "us.ny.nyc_income_tax",
+          "us.ny.yonkers_surcharge"
+        ],
+        "unblockedBy": "2026 IT-201 instructions and the 2026 NYC rate schedule / IT-214 (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "NC",
+      "tier": "deep+composer",
+      "form": "Form D-400",
+      "rules": [
+        "us.nc.income_tax",
+        "us.nc.standard_deduction",
+        "us.nc.child_deduction",
+        "us.nc.itemized_deductions",
+        "us.nc.use_tax"
+      ],
+      "fixtures": 8,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.nc.use_tax"
+        ],
+        "unblockedBy": "2026 Form D-400 booklet use tax table (~January 2027)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "ND",
+      "tier": "deep+composer",
+      "form": "Form ND-1",
+      "rules": [
+        "us.nd.income_tax",
+        "us.nd.capital_gain_exclusion",
+        "us.nd.qualified_dividend_exclusion",
+        "us.nd.college_save_deduction",
+        "us.nd.marriage_penalty_credit",
+        "us.nd.other_state_credit"
+      ],
+      "fixtures": 27,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.nd.marriage_penalty_credit"
+        ],
+        "unblockedBy": "2026 Form ND-1 booklet's Marriage Penalty Credit Worksheet (the preprinted half-standard-deduction figure, the gates and the maximum are re-set yearly) (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "OH",
+      "tier": "deep+composer",
+      "form": "Form IT 1040",
+      "rules": [
+        "us.oh.income_tax",
+        "us.oh.business_income_tax",
+        "us.oh.exemption_amount",
+        "us.oh.joint_filing_credit",
+        "us.oh.retirement_income_credit",
+        "us.oh.senior_citizen_credit",
+        "us.oh.exemption_credit",
+        "us.oh.eic",
+        "us.oh.cdcc"
+      ],
+      "fixtures": 15,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.oh.exemption_amount",
+          "us.oh.joint_filing_credit",
+          "us.oh.retirement_income_credit",
+          "us.oh.senior_citizen_credit",
+          "us.oh.exemption_credit",
+          "us.oh.eic",
+          "us.oh.cdcc"
+        ],
+        "unblockedBy": "2026 Ohio IT 1040 booklet — the indexed personal exemption amount, without which the return cannot be composed, and the Schedule of Credits (~December 2026); HB 96's TY2026 rate changes are already encoded"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "OK",
+      "tier": "deep+composer",
+      "form": "Form 511",
+      "rules": [
+        "us.ok.income_tax",
+        "us.ok.standard_deduction",
+        "us.ok.itemized_deductions",
+        "us.ok.exemptions",
+        "us.ok.retirement_exclusion",
+        "us.ok.child_care_child_tax_credit",
+        "us.ok.eic_2020_rules",
+        "us.ok.eic",
+        "us.ok.sales_tax_relief_credit",
+        "us.ok.property_tax_relief_credit",
+        "us.ok.use_tax"
+      ],
+      "fixtures": 22,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.ok.use_tax"
+        ],
+        "unblockedBy": "2026 Form 511 packet use tax table (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "OR",
+      "tier": "deep+composer",
+      "form": "Form OR-40",
+      "rules": [
+        "us.or.income_tax",
+        "us.or.federal_tax_subtraction",
+        "us.or.standard_deduction",
+        "us.or.exemption_credit",
+        "us.or.eic",
+        "us.or.kids_credit",
+        "us.or.kicker"
+      ],
+      "fixtures": 16,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.or.income_tax",
+          "us.or.federal_tax_subtraction",
+          "us.or.standard_deduction",
+          "us.or.exemption_credit",
+          "us.or.eic",
+          "us.or.kids_credit",
+          "us.or.kicker"
+        ],
+        "unblockedBy": "2026 Form OR-40 booklet and the Department of Revenue's 2026 indexed amounts (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "PA",
+      "tier": "deep+composer",
+      "form": "Form PA-40",
+      "rules": [
+        "us.pa.taxable_income",
+        "us.pa.other_deductions",
+        "us.pa.income_tax",
+        "us.pa.tax_forgiveness",
+        "us.pa.cdcc",
+        "us.pa.wptc"
+      ],
+      "fixtures": 9,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.pa.cdcc"
+        ],
+        "unblockedBy": "2026 PA-40 booklet (the child and dependent care enhancement credit) (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "RI",
+      "tier": "deep+composer",
+      "form": "Form RI-1040",
+      "rules": [
+        "us.ri.income_tax",
+        "us.ri.standard_deduction",
+        "us.ri.exemption",
+        "us.ri.social_security_modification",
+        "us.ri.pension_modification",
+        "us.ri.child_dependent_care_credit",
+        "us.ri.other_state_credit",
+        "us.ri.eitc",
+        "us.ri.property_tax_relief_credit",
+        "us.ri.use_tax"
+      ],
+      "fixtures": 48,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.ri.social_security_modification",
+          "us.ri.pension_modification",
+          "us.ri.property_tax_relief_credit",
+          "us.ri.use_tax"
+        ],
+        "unblockedBy": "Division of Taxation ADV 2026-xx (the indexed Social Security and pension modification limits and RI-1040H figures, ~November 2026) and the 2026 RI-1040 booklet"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "SC",
+      "tier": "deep+composer",
+      "form": "Form SC1040",
+      "rules": [
+        "us.sc.income_tax",
+        "us.sc.income_adjusted_deduction",
+        "us.sc.dependent_exemption",
+        "us.sc.retirement_deduction",
+        "us.sc.age65_deduction",
+        "us.sc.two_wage_earner_credit",
+        "us.sc.cdcc"
+      ],
+      "fixtures": 23,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.sc.dependent_exemption",
+          "us.sc.retirement_deduction",
+          "us.sc.age65_deduction",
+          "us.sc.two_wage_earner_credit",
+          "us.sc.cdcc"
+        ],
+        "unblockedBy": "2026 SC1040 booklet (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "SD",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.sd.income_tax"
+      ],
+      "fixtures": 0,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "TN",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.tn.income_tax"
+      ],
+      "fixtures": 0,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "TX",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.tx.income_tax"
+      ],
+      "fixtures": 1,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "UT",
+      "tier": "calculation-only",
+      "form": "rate/parameter rules only — no printed-form line set",
+      "rules": [
+        "us.ut.income_tax"
+      ],
+      "fixtures": 2,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "VT",
+      "tier": "deep+composer",
+      "form": "Form IN-111",
+      "rules": [
+        "us.vt.income_tax",
+        "us.vt.standard_deduction",
+        "us.vt.personal_exemption",
+        "us.vt.retirement_income_exclusion",
+        "us.vt.military_retirement_exclusion",
+        "us.vt.capital_gains_exclusion",
+        "us.vt.student_loan_interest_subtraction",
+        "us.vt.charitable_credit",
+        "us.vt.federal_tax_adjustment",
+        "us.vt.other_state_credit",
+        "us.vt.eitc",
+        "us.vt.child_tax_credit",
+        "us.vt.child_dependent_care_credit",
+        "us.vt.veteran_credit",
+        "us.vt.use_tax",
+        "us.vt.child_care_contribution",
+        "us.vt.vheip_credit"
+      ],
+      "fixtures": 63,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.vt.standard_deduction",
+          "us.vt.use_tax"
+        ],
+        "unblockedBy": "2026 Form IN-111 booklet — the indexed standard deduction and per-box amount (§ 5811(21)(D)) and the Estimated Use Tax Table (~December 2026); the 2026 rate schedules and $5,400 exemption are already encoded from the 2026 IN-114 instructions and GB-1210-2026"
+      },
+      "businessState": false,
+      "outOfScope": "OUT OF SCOPE, named: Schedule IN-113 (part-year and nonresident income adjustment — line 15 is 100% for a full-year resident); the Renter Credit (Form RCC-146, a separate claim computed from household income, family size and county fair market rent, paid outside Form IN-111); the Property Tax Credit (Form HS-122 / HI-144, chapter 154); Schedule IN-119 Part II business credits other than the 24% items (charitable housing, mobile home, research and development, affordable housing, historic rehabilitation, facade, code improvements — transcribed as an input; the VHEIP credit on line 1 is us.vt.vheip_credit); nonresident real estate withholding and Schedule K-1VT payments (inputs); IN-152 underpayment interest (input); bonus depreciation and QSBS modifications (inputs on the generic additions and subtractions). LEGISLATIVE CURRENCY: 2025 Act 71 (S.51, signed June 25, 2025), retroactive to tax years from January 1, 2025 — § 1 child tax credit age five to six; § 2 childless EITC 38% to 100%; § 3 every retirement-exclusion AGI threshold up $5,000 and the military retirement/survivor exclusion at $125,000-$175,000 for every status, electable alongside one other; §§ 4-5 the $250 veteran credit. 2026 Act 164 (H.933, June 18, 2026): § 55 amends § 5811(21)(B) to add subtractions for R&E amortization and decouples from IRC § 168(n) (bonus depreciation on qualified production property) — effective retroactively January 1, 2026 and applying to taxable years from January 1, 2025 under the act's § (8); § 55a requires an addback of the federal qualified small business stock exclusion for taxable years beginning on and after January 1, 2026; §§ 56-57 recast the § 5822(e) apportionment for part-year and nonresident filers; §§ 60-61 link Vermont income tax to federal law as of December 31, 2025, applying to taxable years from January 1, 2025"
+    },
+    {
+      "state": "VA",
+      "tier": "deep+composer",
+      "form": "Form 760",
+      "rules": [
+        "us.va.income_tax",
+        "us.va.subtractions",
+        "us.va.spouse_tax_adjustment",
+        "us.va.standard_deduction"
+      ],
+      "fixtures": 4,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.va.income_tax",
+          "us.va.subtractions",
+          "us.va.spouse_tax_adjustment"
+        ],
+        "unblockedBy": "2026 Form 760 booklet and Tax Table (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "WA",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.wa.income_tax"
+      ],
+      "fixtures": 2,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "WV",
+      "tier": "deep+composer",
+      "form": "Form IT-140",
+      "rules": [
+        "us.wv.income_tax",
+        "us.wv.exemption_deduction",
+        "us.wv.low_income_exclusion",
+        "us.wv.social_security_modification",
+        "us.wv.senior_citizen_modification",
+        "us.wv.surviving_spouse_modification",
+        "us.wv.family_tax_credit",
+        "us.wv.other_state_credit",
+        "us.wv.child_care_credit",
+        "us.wv.senior_citizens_tax_credit",
+        "us.wv.homestead_excess_property_tax_credit",
+        "us.wv.use_tax"
+      ],
+      "fixtures": 14,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": true,
+        "staleTier": "lines",
+        "staleRules": [
+          "us.wv.family_tax_credit",
+          "us.wv.senior_citizens_tax_credit",
+          "us.wv.homestead_excess_property_tax_credit"
+        ],
+        "unblockedBy": "2026 IT-140 booklet (the Family Tax Credit table follows the 2026 HHS poverty guideline; SCTC-A and HEPTC-1) (~December 2026); SB 392's TY2026 rates are already encoded"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "WI",
+      "tier": "deep+composer",
+      "form": "Form 1",
+      "rules": [
+        "us.wi.income_tax",
+        "us.wi.standard_deduction",
+        "us.wi.eic",
+        "us.wi.married_couple_credit",
+        "us.wi.school_property_tax_credit",
+        "us.wi.retirement_subtraction_67"
+      ],
+      "fixtures": 17,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "full printed-form line set (compute_state_return)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": false,
+        "returnComposable": false,
+        "staleTier": "return",
+        "staleRules": [
+          "us.wi.income_tax",
+          "us.wi.standard_deduction",
+          "us.wi.eic",
+          "us.wi.married_couple_credit",
+          "us.wi.school_property_tax_credit",
+          "us.wi.retirement_subtraction_67"
+        ],
+        "unblockedBy": "2026 Form 1 booklet and the Department of Revenue's 2026 indexed brackets and standard deduction table (~December 2026)"
+      },
+      "businessState": false,
+      "outOfScope": null
+    },
+    {
+      "state": "WY",
+      "tier": "no-income-tax",
+      "form": null,
+      "rules": [
+        "us.wy.income_tax"
+      ],
+      "fixtures": 0,
+      "residency": {
+        "fullYearResident": true,
+        "partYear": false,
+        "nonresident": false
+      },
+      "composition": "calculation only (calculate_tax targets)",
+      "ty2025": true,
+      "ty2026": {
+        "anyRule": true,
+        "returnComposable": null,
+        "staleTier": null,
+        "staleRules": [],
+        "unblockedBy": null
+      },
+      "businessState": false,
+      "outOfScope": null
+    }
+  ],
+  "refusals": [
+    {
+      "code": "NEEDS_FACTS",
+      "meaning": "a required input is missing; error.data.missing lists each fact id, type and description",
+      "exit": 2
+    },
+    {
+      "code": "NO_APPLICABLE_RULE",
+      "meaning": "no rule version is valid on the asOf date (e.g. a TY2026 state amount the Department has not published)",
+      "exit": 3
+    },
+    {
+      "code": "UNHANDLED_ENUM_CASE",
+      "meaning": "a filing status / classification combination the corpus does not encode",
+      "exit": 3
+    },
+    {
+      "code": "unsupported (rule-level)",
+      "meaning": "the rule exists but declares the situation out of scope (CAMT $1B+ AFSI; retained trust capital gains; kiddie preferential income; 4th simultaneous AOTC student; § 199A interaction with the § 68 haircut)",
+      "exit": 3
+    },
+    {
+      "code": "composer refusal (throw)",
+      "meaning": "a state composer refuses rather than compose on a missing starting point (e.g. ndFederalTaxableIncome, mtFederalDeductions, deSpouseFederalAgi for DE status 4) or an unpublished year (VT line 4 for TY2026)",
+      "exit": 1
+    },
+    {
+      "code": "input validation",
+      "meaning": "unknown keys are rejected (strict schemas); money must be dollars; counts are bounded (max exemptions, boxes)",
+      "exit": 1
+    }
+  ],
+  "outputs": {
+    "taxTotals": true,
+    "formLineSets": "federal bottom-line set + 31 state resident returns",
+    "proofsAndCitations": true,
+    "renderedPdf": false,
+    "mefXml": false
+  },
+  "approximations": [
+    {
+      "id": "us.federal.pension.simplified_method_exclusion",
+      "title": "Simplified Method tax-free portion (§ 72(d): cost ÷ anticipated payments × months, capped at unrecovered cost)"
+    },
+    {
+      "id": "us.federal.pension.simplified_method_taxable",
+      "title": "Taxable pension under the Simplified Method (gross payments minus the § 72(d) exclusion)"
+    },
+    {
+      "id": "us.federal.capital_loss_carryover",
+      "title": "Capital loss carryover to the following year (simplified)"
+    },
+    {
+      "id": "us.federal.gross_income",
+      "title": "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income − allowed capital loss − § 911 exclusion)"
+    },
+    {
+      "id": "us.federal.actc",
+      "title": "Additional child tax credit — refundable (simplified: 3+-child SS-tax alternative not modeled)"
+    },
+    {
+      "id": "us.federal.home_office_simplified",
+      "title": "Home office deduction — simplified safe harbor ($5/sq ft, 300 sq ft cap)"
+    },
+    {
+      "id": "us.federal.senior_deduction",
+      "title": "Temporary deduction for seniors (OBBBA; simplified: MAGI approximated as AGI)"
+    },
+    {
+      "id": "us.federal.overtime_deduction",
+      "title": "Deduction for qualified overtime compensation (OBBBA; simplified: MAGI approximated as AGI)"
+    },
+    {
+      "id": "us.federal.car_loan_interest_deduction",
+      "title": "Qualified passenger vehicle loan interest deduction (OBBBA; simplified: MAGI approximated as AGI)"
+    },
+    {
+      "id": "us.federal.eitc",
+      "title": "Earned income credit (TY2026; EIC Table method — § 32(f) $50 brackets at midpoints; § 32(d) separated spouses not modeled)"
+    },
+    {
+      "id": "us.federal.credit.research_asc",
+      "title": "Research credit — alternative simplified credit (§ 41(c)(4))"
+    }
+  ]
+}

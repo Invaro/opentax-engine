@@ -1,0 +1,11 @@
+{
+  "description": "HI parameters rule is documentation only.",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.parameters",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

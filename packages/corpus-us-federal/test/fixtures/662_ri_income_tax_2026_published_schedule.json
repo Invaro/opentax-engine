@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 encodes only what the Division has published: the ADV 2025-22 / Form RI-1040ES rate schedule applied at the exact income, printed anchor plus rate on the excess. 3,076.88 + 4.75% x (90,000 - 82,050) = 3,454.505 -> $3,455. No 2026 Tax Table is invented.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 90000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "345500"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "REGRESSION: the RI Schedule M line 1t table's '(b) Spouse' column exists only on a joint return, so a qualifying widow(er) gets ONE $50,000 cap \u2014 not a second column. riSpousePensionIncome of $30,000 is ignored.",
+  "facts": {
+    "filingStatus": "qss",
+    "riFederalAgi": 100000,
+    "riTaxpayerFullRetirementAge": true,
+    "riSpouseFullRetirementAge": true,
+    "riTaxpayerPensionIncome": 60000,
+    "riSpousePensionIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.pension_modification",
+  "expect": {
+    "valueCents": "5000000"
+  }
+}

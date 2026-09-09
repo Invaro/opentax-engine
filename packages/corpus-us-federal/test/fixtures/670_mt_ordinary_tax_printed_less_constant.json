@@ -1,0 +1,12 @@
+{
+  "description": "MT 2025 ordinary income tax, single: taxable income $50,000 is at or above the $21,100 threshold, so the printed schedule applies 5.9% less the printed $253 constant: 2,950 - 253 = $2,697. The $253 is the exact 1.2-point figure (253.20) truncated as printed, so the schedule sits $0.20 above pure bracketing.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "269700"
+  }
+}

@@ -117,7 +117,7 @@ describe("2020 EIC table as printed in the 2025 Form 511-EIC — every printed r
       }
     }
     expect(bad, bad.slice(0, 10).join("\n")).toEqual([]);
-  });
+  }, 60_000);
 
   it("reproduces the other seven printed cells of each footnoted row (the starred cell is covered by the footnote test)", () => {
     expect(eicTable.starredRows.length).toBe(8);

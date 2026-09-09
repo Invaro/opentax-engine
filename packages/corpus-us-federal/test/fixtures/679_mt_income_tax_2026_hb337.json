@@ -1,0 +1,12 @@
+{
+  "description": "MT TY2026 under House Bill 337 (Ch. 227, L. 2025): 4.7% to $47,500 then 5.65%. At $50,000: 4.7% x 47,500 + 5.65% x 2,500 = 2,232.50 + 141.25 = 2,373.75 -> $2,374. No 'Less' constant is printed for 2026, so the brackets accumulate exactly.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "237400"
+  }
+}

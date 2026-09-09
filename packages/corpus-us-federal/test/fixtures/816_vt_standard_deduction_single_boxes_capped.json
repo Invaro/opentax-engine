@@ -1,0 +1,12 @@
+{
+  "description": "VT standard deduction, single with 3 boxes claimed: capped at the chart's two columns, $10,150.",
+  "facts": {
+    "filingStatus": "single",
+    "vtAdditionalDeductionBoxes": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.standard_deduction",
+  "expect": {
+    "valueCents": "1015000"
+  }
+}

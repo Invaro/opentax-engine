@@ -1,0 +1,13 @@
+{
+  "description": "HI hiUseRateSchedule: single $50,000 at the exact income: 2,539 + 7.6% x 2,000 = $2,691 (the table midpoint gives $2,693).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000,
+    "hiUseRateSchedule": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "269100"
+  }
+}

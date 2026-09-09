@@ -1,0 +1,13 @@
+{
+  "description": "REGRESSION: the additional standard deduction is 'a maximum of $5,000 per individual' \u2014 two boxes (65-or-over and blind). A single filer cannot reach four boxes, so $3,250 + $5,000 = $8,250 even if four are passed.",
+  "facts": {
+    "filingStatus": "single",
+    "deAdditionalDeductionBoxes": 4,
+    "deItemizes": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.standard_deduction",
+  "expect": {
+    "valueCents": "825000"
+  }
+}

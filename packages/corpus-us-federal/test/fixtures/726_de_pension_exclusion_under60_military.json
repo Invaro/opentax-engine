@@ -1,0 +1,14 @@
+{
+  "description": "DE line 6: under 60 and retired from the United States military, the exclusion rises to $12,500.",
+  "facts": {
+    "filingStatus": "single",
+    "deAge60OrOver": false,
+    "deMilitaryPension": true,
+    "dePensionIncome": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.pension_exclusion",
+  "expect": {
+    "valueCents": "1250000"
+  }
+}

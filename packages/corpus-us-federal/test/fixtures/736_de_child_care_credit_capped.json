@@ -1,0 +1,12 @@
+{
+  "description": "DE line 31 worksheet: 'Do not enter an amount in excess of $3,000.' 50% of $8,000 is $4,000, capped at $3,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "deFederalChildCareCredit": 8000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.child_care_credit",
+  "expect": {
+    "valueCents": "300000"
+  }
+}

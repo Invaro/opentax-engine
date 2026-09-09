@@ -1,0 +1,12 @@
+{
+  "description": "VT Tax Table row 47,000-47,100 single: 47,050 x 3.35% = 1,576.175 -> $1,576, at both ends of the row.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 47099
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "157600"
+  }
+}

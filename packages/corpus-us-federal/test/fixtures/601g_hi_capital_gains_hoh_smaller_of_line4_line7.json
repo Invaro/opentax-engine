@@ -1,0 +1,14 @@
+{
+  "description": "HI HOH TI $80,000, LTCG $50,000 but net CG $30,000 (short-term losses): line 8 = 30,000; 13 = max(50,000, 36,000); 15 = table HOH(50,000) = 2,243; 16 = 2,175; 17 = 4,418; 18 = table(80,000) = 3,809 + 7.6% x 8,025 = 4,418.90 -> 4,419 -> $4,418.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 80000,
+    "hiNetLongTermCapitalGain": 50000,
+    "hiNetCapitalGain": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "441800"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "HI dependent of another: line 6e = 0 -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "hiExemptions": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ND TY2026 married filing separately off the indexed anchor: $200,000 pays 2,164.99 + 2.5% x (200,000 - 152,425) = 3,354.365 -> $3,354.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 200000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "335400"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "HI 'Taxpayer and Spouse (non-disabled spouse under 65) \u2014 8,144': $7,000 + $1,144.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiExemptions": 4,
+    "hiDisabledPersons": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "814400"
+  }
+}

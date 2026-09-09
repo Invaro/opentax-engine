@@ -1,0 +1,12 @@
+{
+  "description": "RI Tax Table, the booklet's own worked EXAMPLE: taxable income $25,300 falls in the 25,300-25,350 row, which prints $950 (midpoint 25,325 x 3.75% = 949.6875 -> 950).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "95000"
+  }
+}

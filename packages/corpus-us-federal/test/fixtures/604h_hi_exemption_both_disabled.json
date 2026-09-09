@@ -1,0 +1,13 @@
+{
+  "description": "HI 'Taxpayer and Spouse (both disabled) \u2014 14,000'.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiExemptions": 2,
+    "hiDisabledPersons": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.personal_exemption",
+  "expect": {
+    "valueCents": "1400000"
+  }
+}

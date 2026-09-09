@@ -1,0 +1,52 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 8,
+    "method": "tools/call",
+    "params": {
+      "name": "calculate_tax",
+      "arguments": {
+        "income": {
+          "wages": 50000
+        },
+        "asOf": "2025-12-31"
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 8,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ],
+      "isError": true
+    }
+  },
+  "decodedResult": {
+    "ok": false,
+    "error": {
+      "code": "NEEDS_FACTS",
+      "message": "cannot evaluate: missing fact(s): filingStatus",
+      "data": {
+        "missing": [
+          {
+            "factId": "filingStatus",
+            "type": "enum",
+            "enumValues": [
+              "single",
+              "mfj",
+              "mfs",
+              "hoh",
+              "qss"
+            ],
+            "description": "Filing status (26 U.S.C. § 1, § 2). One of: single, mfj, mfs, hoh, qss."
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 5,
+    "method": "tools/call",
+    "params": {
+      "name": "calculate_business_tax",
+      "arguments": {
+        "entityLegalForm": "corporation",
+        "corpTaxableIncome": 1000000,
+        "asOf": "2025-12-31"
+      }
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 5,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "(see decodedResult)"
+        }
+      ]
+    }
+  },
+  "decodedResult": {
+    "ok": true,
+    "target": "us.federal.corp.entity_level_income_tax",
+    "asOf": "2025-12-31",
+    "answer": "$210,000.00",
+    "valueCents": "21000000",
+    "assumptions": [
+      {
+        "factId": "filedForm2553SElection",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed no S election absent contrary input"
+      },
+      {
+        "factId": "corpAvgAdjustedFinancialStatementIncome",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed 3-year-average AFSI at or below the $1 billion CAMT threshold absent contrary input"
+      },
+      {
+        "factId": "corpIsREITorRIC",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed not a REIT/RIC absent contrary input"
+      },
+      {
+        "factId": "corpFiscalYearFiler",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Calendar taxable year assumed — fiscal-year and short-period returns refuse"
+      },
+      {
+        "factId": "corpFilesConsolidatedReturn",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed a separate (non-consolidated) return absent contrary input"
+      },
+      {
+        "factId": "corpFDDEI",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no foreign-derived eligible income absent contrary input"
+      },
+      {
+        "factId": "corpNCTI",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no CFC inclusion absent contrary input"
+      },
+      {
+        "factId": "corpBaseErosionTestMet",
+        "value": {
+          "type": "bool",
+          "value": false
+        },
+        "source": "default",
+        "rationale": "Assumed the 3% base-erosion test is not met absent contrary input (BEAT reaches only large multinationals with substantial related-party deductions)"
+      }
+    ],
+    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+    "artifactHash": "sha256:c1db837ab77c46714d1733df3fc7ff3313ed5ba9b6a65af90dbde2c69e0f2e7d",
+    "note": "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice."
+  }
+}

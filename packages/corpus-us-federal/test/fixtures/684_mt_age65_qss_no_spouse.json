@@ -1,0 +1,13 @@
+{
+  "description": "REGRESSION: a qualifying surviving spouse has no spouse, so only the taxpayer's own $5,660 applies even if mtSpouseAge65 is passed.",
+  "facts": {
+    "filingStatus": "qss",
+    "mtTaxpayerAge65": true,
+    "mtSpouseAge65": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.age65_subtraction",
+  "expect": {
+    "valueCents": "566000"
+  }
+}

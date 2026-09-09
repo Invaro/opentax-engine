@@ -1,0 +1,13 @@
+{
+  "description": "DE Schedule II non-refundable branch limited by the tax: 20% of $5,000 is $1,000 but only $600 of tax remains.",
+  "facts": {
+    "filingStatus": "single",
+    "deFederalEic": 5000,
+    "deEitcTaxAfterCredits": 600
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.eitc",
+  "expect": {
+    "valueCents": "60000"
+  }
+}

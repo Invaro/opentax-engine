@@ -1,0 +1,11 @@
+{
+  "description": "HI TY2026 standard deduction, single: $8,000 (\u00a7 235-2.4(a)(2)(F), Act 46).",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2026-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "800000"
+  }
+}

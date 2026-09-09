@@ -1,0 +1,13 @@
+{
+  "description": "HI HOH AGI $59,999, 2 exemptions -> 2 x $70 = $140.",
+  "facts": {
+    "filingStatus": "hoh",
+    "hiFederalAgi": 59999,
+    "hiFoodExciseQualifiedExemptions": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.food_excise_credit",
+  "expect": {
+    "valueCents": "14000"
+  }
+}

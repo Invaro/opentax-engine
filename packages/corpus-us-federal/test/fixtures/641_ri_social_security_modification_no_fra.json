@@ -1,0 +1,17 @@
+{
+  "description": "Worksheet Step 1 question 5 fails \u2014 neither spouse was born on or before 03/01/1959, so there is no modification regardless of income.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalAgi": 50000,
+    "riTaxpayerFullRetirementAge": false,
+    "riSpouseFullRetirementAge": false,
+    "riSocialSecurityBenefits": 30000,
+    "riSocialSecurityBenefitsFraPerson": 0,
+    "riTaxableSocialSecurity": 15000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.social_security_modification",
+  "expect": {
+    "valueCents": "0"
+  }
+}

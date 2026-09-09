@@ -1,0 +1,12 @@
+{
+  "description": "RI Tax Table row 79,850-79,900 (last row wholly in the 3.75% bracket) prints $2,995: midpoint 79,875 x 3.75% = 2,995.3125 -> 2,995.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 79850
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "299500"
+  }
+}

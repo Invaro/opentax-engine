@@ -1,0 +1,12 @@
+{
+  "description": "HI Schedule II top bracket: MFJ $700,000 -> $51,932 + 11% x 50,000 = $57,432.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 700000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "5743200"
+  }
+}

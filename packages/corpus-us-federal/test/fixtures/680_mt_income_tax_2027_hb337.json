@@ -1,0 +1,12 @@
+{
+  "description": "MT TY2027 under House Bill 337 section 2: 4.7% to $65,000 then 5.4%. At $70,000: 3,055 + 270 = $3,325.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 70000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.mt.income_tax",
+  "expect": {
+    "valueCents": "332500"
+  }
+}

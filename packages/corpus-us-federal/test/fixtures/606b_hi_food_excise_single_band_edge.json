@@ -1,0 +1,13 @@
+{
+  "description": "HI single AGI exactly $15,000 -> the '$15,000 and over but under $20,000' tier: $200.",
+  "facts": {
+    "filingStatus": "single",
+    "hiFederalAgi": 15000,
+    "hiFoodExciseQualifiedExemptions": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.food_excise_credit",
+  "expect": {
+    "valueCents": "20000"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "Worksheet Step 2: 'If you AND your spouse, if applicable, were born on or before 03/01/1959, enter 1.0000 on line 12 and skip lines 8 through 10' \u2014 the whole $25,000 of taxable Social Security.",
+  "facts": {
+    "filingStatus": "mfj",
+    "riFederalAgi": 133749,
+    "riTaxpayerFullRetirementAge": true,
+    "riSpouseFullRetirementAge": true,
+    "riSocialSecurityBenefits": 40000,
+    "riSocialSecurityBenefitsFraPerson": 30000,
+    "riTaxableSocialSecurity": 25000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.social_security_modification",
+  "expect": {
+    "valueCents": "2500000"
+  }
+}

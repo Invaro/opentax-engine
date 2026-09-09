@@ -1,0 +1,12 @@
+{
+  "description": "HI no federal EIC -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "hiFederalEic": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.eitc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

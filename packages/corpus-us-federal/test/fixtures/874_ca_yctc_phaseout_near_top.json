@@ -1,0 +1,14 @@
+{
+  "description": "FTB 3514 (2025) lines 25-28 at earned $32,800 (1 child under 6, CalEITC $1 at row 32,751-32,800 region still allowed): line 25 = 5,375; line 26 = 53.75; line 27 = 53.75 x 21.71 = 1,166.91 (truncated from 1,166.9125); line 28 = 1,189 - 1,166.91 = 22.09 -> $22.",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "wages": 32800,
+    "hasChildUnderSix": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.yctc",
+  "expect": {
+    "valueCents": "2200"
+  }
+}

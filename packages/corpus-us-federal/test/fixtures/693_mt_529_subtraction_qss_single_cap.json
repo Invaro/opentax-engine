@@ -1,0 +1,12 @@
+{
+  "description": "REGRESSION: the doubled $9,000 cap needs a JOINT return \u2014 a qualifying surviving spouse gets the single $4,500 cap.",
+  "facts": {
+    "filingStatus": "qss",
+    "mtTuitionSavingsContributions": 12000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.tuition_savings_subtraction",
+  "expect": {
+    "valueCents": "450000"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "ND Marriage Penalty Credit Worksheet lines 11-14: the joint-schedule tax of $900 less the two single-schedule results ($300 + $300) is $300, under the $312 maximum.",
+  "facts": {
+    "filingStatus": "mfj",
+    "ndTaxableIncome": 120000,
+    "ndLowerQualifiedIncome": 55000,
+    "ndJointScheduleTax": 900,
+    "ndSingleScheduleTaxA": 300,
+    "ndSingleScheduleTaxB": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.marriage_penalty_credit",
+  "expect": {
+    "valueCents": "30000"
+  }
+}

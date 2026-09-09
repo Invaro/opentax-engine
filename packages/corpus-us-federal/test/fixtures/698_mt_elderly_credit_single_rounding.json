@@ -1,0 +1,18 @@
+{
+  "description": "REGRESSION (double rounding): Schedule 2EC line 20 = 15,016 - 12,600 = 2,416, multiplier 0.006, so line 22 = 14.496 -> the whole-dollar box $14, leaving line 27 = 1,000 - 14 = $986. A cent-then-dollar chain would make line 22 $15 and UNDERSTATE this refundable credit by $1.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "mtSoleHouseholdClaimant": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 15016,
+    "mtPropertyTaxBilled": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "98600"
+  }
+}

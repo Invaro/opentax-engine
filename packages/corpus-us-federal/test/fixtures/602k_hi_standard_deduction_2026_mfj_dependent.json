@@ -1,0 +1,13 @@
+{
+  "description": "HI TY2026 dependent filer on a joint return with $20,000 earned income -> capped at $16,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "isClaimedAsDependent": true,
+    "hiEarnedIncome": 20000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "1600000"
+  }
+}

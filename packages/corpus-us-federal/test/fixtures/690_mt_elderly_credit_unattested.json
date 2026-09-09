@@ -1,0 +1,18 @@
+{
+  "description": "MT Schedule 2EC: the age-62 attestation is not made, so the credit is $0 \u2014 an unattested gate never pays.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": false,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 20000,
+    "mtPropertyTaxBilled": 1500,
+    "mtSoleHouseholdClaimant": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

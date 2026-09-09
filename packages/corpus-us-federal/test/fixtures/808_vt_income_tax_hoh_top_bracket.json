@@ -1,0 +1,12 @@
+{
+  "description": "VT head of household $300,000: 17,179 + 8.75% x (300,000 - 276,850) = 17,179 + 2,025.625 = 19,204.625 -> $19,205.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.income_tax",
+  "expect": {
+    "valueCents": "1920500"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "DE: no tax on the first $2,000. The table's two $1,000 rows below $2,000 both print $0.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 1999
+  },
+  "asOf": "2025-12-31",
+  "target": "us.de.income_tax",
+  "expect": {
+    "valueCents": "0"
+  }
+}

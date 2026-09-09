@@ -1,0 +1,12 @@
+{
+  "description": "RI standard deduction 2025, single, modified federal AGI under the $254,250 threshold: $10,900. Rhode Island allows no federal itemized deductions and no age-65 or blindness addition.",
+  "facts": {
+    "filingStatus": "single",
+    "riModifiedAgi": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.standard_deduction",
+  "expect": {
+    "valueCents": "1090000"
+  }
+}

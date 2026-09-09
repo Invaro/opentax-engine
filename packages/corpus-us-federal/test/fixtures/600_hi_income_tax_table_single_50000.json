@@ -1,0 +1,12 @@
+{
+  "description": "HI 2025 tax table, single $50,000 -> row [50,000, 50,050) midpoint 50,025: $2,539 + 7.6% x 2,025 = 2,692.90 -> $2,693.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.income_tax",
+  "expect": {
+    "valueCents": "269300"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "FTB 3514 Step 6 worksheet line 5: earned $5,000 (1 child) -> printed row 4,951-5,000 = $1,438; AGI $6,500 is LESS than the $6,998 floor for 1 child, so 'Leave line 5 blank; enter the amount from line 2 on line 6' -> $1,438 (no AGI lookup).",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "wages": 5000,
+    "taxableInterest": 1500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": {
+    "valueCents": "143800"
+  }
+}

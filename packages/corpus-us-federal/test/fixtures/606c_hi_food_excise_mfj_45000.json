@@ -1,0 +1,13 @@
+{
+  "description": "HI MFJ AGI $45,000, 4 exemptions -> 4 x $90 = $360.",
+  "facts": {
+    "filingStatus": "mfj",
+    "hiFederalAgi": 45000,
+    "hiFoodExciseQualifiedExemptions": 4
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.food_excise_credit",
+  "expect": {
+    "valueCents": "36000"
+  }
+}

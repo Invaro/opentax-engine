@@ -1,0 +1,14 @@
+{
+  "description": "VT capital gains exclusion, the $350,000 statutory cap: 40% x $1,000,000 = $400,000 is limited to $350,000 (IN-153 line 18), under 40% of $2,000,000 of federal taxable income.",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtNetAdjustedCapitalGain": 1000000,
+    "vtEligibleLongTermGain": 1000000,
+    "vtFederalTaxableIncome": 2000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.capital_gains_exclusion",
+  "expect": {
+    "valueCents": "35000000"
+  }
+}

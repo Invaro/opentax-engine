@@ -1,0 +1,15 @@
+{
+  "description": "MT MCA 15-30-2120(9)(b): the subtraction may be claimed for five consecutive years only \u2014 outside that window it is $0.",
+  "facts": {
+    "filingStatus": "single",
+    "mtMilitaryRetireeEligible": true,
+    "mtMilitaryRetireeWithinFiveYears": false,
+    "mtMilitaryRetirementIncome": 30000,
+    "mtMontanaSourceWageIncome": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.military_retirement_subtraction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

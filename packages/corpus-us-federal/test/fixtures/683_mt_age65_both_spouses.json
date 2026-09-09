@@ -1,0 +1,13 @@
+{
+  "description": "MT Form 2 line 6: $5,660 per taxpayer 65 or older, $11,320 when both spouses on a JOINT return are 65 or older.",
+  "facts": {
+    "filingStatus": "mfj",
+    "mtTaxpayerAge65": true,
+    "mtSpouseAge65": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.age65_subtraction",
+  "expect": {
+    "valueCents": "1132000"
+  }
+}

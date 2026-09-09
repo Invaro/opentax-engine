@@ -1,0 +1,14 @@
+{
+  "description": "HI line 16 rounds ONCE: single TI $100,062, gains $76,062: 13 = max(24,000, 24,000) = 24,000; 14 = 76,062; 16 = 7.25% x 76,062 = 5,514.495 -> $5,514 (not 5,514.50 -> 5,515); 15 = table(24,000) = 861; 17 = 6,375 < 18 = 2,539 + 7.6% x 52,062 = 6,495.71 -> 6,496 -> $6,375.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 100062,
+    "hiNetLongTermCapitalGain": 76062,
+    "hiNetCapitalGain": 76062
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "637500"
+  }
+}

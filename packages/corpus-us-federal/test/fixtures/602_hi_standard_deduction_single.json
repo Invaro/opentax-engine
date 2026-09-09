@@ -1,0 +1,11 @@
+{
+  "description": "HI 2025 standard deduction, single: $4,400 (\u00a7 235-2.4(a)(2)(E)).",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.standard_deduction",
+  "expect": {
+    "valueCents": "440000"
+  }
+}

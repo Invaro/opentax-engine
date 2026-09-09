@@ -1,0 +1,13 @@
+{
+  "description": "HI QSS: the spouse column applies only to a joint return -> $8,636.",
+  "facts": {
+    "filingStatus": "qss",
+    "hiReservePay": 9000,
+    "hiSpouseReservePay": 9000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.reserve_pay_exclusion",
+  "expect": {
+    "valueCents": "863600"
+  }
+}

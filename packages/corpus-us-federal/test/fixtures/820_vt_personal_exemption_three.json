@@ -1,0 +1,12 @@
+{
+  "description": "VT personal exemption: 3 exemptions x $5,300 = $15,900 (Form IN-111 line 5e).",
+  "facts": {
+    "filingStatus": "mfj",
+    "vtExemptions": 3
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.personal_exemption",
+  "expect": {
+    "valueCents": "1590000"
+  }
+}

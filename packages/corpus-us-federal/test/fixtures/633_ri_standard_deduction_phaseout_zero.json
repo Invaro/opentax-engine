@@ -1,0 +1,12 @@
+{
+  "description": "Standard Deduction Worksheet: modified AGI 283,251 makes line 5 = 29,001, 'more than $29,000' -> STOP, the standard deduction is zero.",
+  "facts": {
+    "filingStatus": "single",
+    "riModifiedAgi": 283251
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.standard_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

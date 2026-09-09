@@ -1,0 +1,18 @@
+{
+  "description": "MT Schedule 2EC at the top of the range: gross household income 44,999 is in the '$42,501 to $44,999' band at 0.10. Line 22 = 32,399 x 0.05 = 1,619.95 -> 1,620; line 27 = 380; line 30 = 380 x 0.10 = $38.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 44999,
+    "mtPropertyTaxBilled": 2000,
+    "mtSoleHouseholdClaimant": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "3800"
+  }
+}

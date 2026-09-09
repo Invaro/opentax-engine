@@ -56,10 +56,14 @@ function ilNonrefundableCredits(input: StateReturnInput, taxDue: Cents, notes: s
     return credit > 75000n ? 75000n : credit;
   })();
   const teacher = (() => {
-    const t = rd(c(input.ilTeacherExpenses));
-    // 1299-C cap: $500, or $1,000 MFJ when both spouses are educators
-    const cap = isJoint(input) ? 100000n : 50000n;
-    return t > cap ? cap : t;
+    // Schedule 1299-I, Instructional Materials and Supplies Credit worksheet: one column per
+    // educator, "The maximum credit amount allowed for each column is $500", then "Line 12 - Add
+    // Line 11d, Columns A and B" — so a joint return caps EACH spouse at $500 ($900 + $100 is
+    // $600, not $1,000). The spouse's column exists only on a joint return.
+    const cap1 = (x: bigint) => (x > 50000n ? 50000n : x);
+    const own = cap1(rd(c(input.ilTeacherExpenses)));
+    const spouse = isJoint(input) ? cap1(rd(c(input.ilSpouseTeacherExpenses))) : 0n;
+    return own + spouse;
   })();
   const available = propertyTax + k12 + teacher + rd(c(input.nonrefundableCredits));
   const allowed = available > taxDue ? taxDue : available;

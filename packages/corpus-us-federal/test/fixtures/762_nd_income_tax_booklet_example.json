@@ -1,0 +1,12 @@
+{
+  "description": "ND booklet's own worked example: 'a married couple filing jointly with $91,900 of ND taxable income falls in the $91,900 - $91,950 row and owes $214' \u2014 midpoint 91,925 gives 1.95% x $10,950 = 213.525 -> $214.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 91900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "21400"
+  }
+}

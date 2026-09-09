@@ -1,0 +1,14 @@
+{
+  "description": "HI 'If your taxable income is ... $24,000 for Single ... or under, do not use this worksheet': single TI $24,000 with gains -> regular table tax: midpoint 24,025: 859 + 6.8% x 25 = 860.70 -> $861.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 24000,
+    "hiNetLongTermCapitalGain": 20000,
+    "hiNetCapitalGain": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.hi.capital_gains_tax",
+  "expect": {
+    "valueCents": "86100"
+  }
+}

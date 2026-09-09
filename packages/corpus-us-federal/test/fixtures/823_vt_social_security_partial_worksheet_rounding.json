@@ -1,0 +1,14 @@
+{
+  "description": "VT Social Security partial exclusion: single AGI $60,190 -> (65,000 - 60,190) / 10,000 = .481, rounded to .48 exactly as the worksheet's own example says; $20,000 x .48 = $9,600.",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalAgi": 60190,
+    "vtRetirementElection": "social_security",
+    "vtTaxableSocialSecurity": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.retirement_income_exclusion",
+  "expect": {
+    "valueCents": "960000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "description": "ND Tax Table last row 99,950-100,000, married filing separately: midpoint 99,975 gives 1.95% x (99,975 - 40,475) = 1,160.25 -> $1,160.",
+  "facts": {
+    "filingStatus": "mfs",
+    "stateTaxableIncome": 99999
+  },
+  "asOf": "2025-12-31",
+  "target": "us.nd.income_tax",
+  "expect": {
+    "valueCents": "116000"
+  }
+}

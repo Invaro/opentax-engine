@@ -1,0 +1,12 @@
+{
+  "description": "REGRESSION (double rounding): Maine's use tax line is whole dollars. 5.5% of $209 is 11.495 -> $11, not $12.",
+  "facts": {
+    "filingStatus": "single",
+    "meUseTaxPurchases": 209
+  },
+  "asOf": "2025-12-31",
+  "target": "us.me.use_tax",
+  "expect": {
+    "valueCents": "1100"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "VT earned income credit with NO qualifying children: 100% of the $649 federal credit (2025 Act 71 \u00a7 2, up from 38%).",
+  "facts": {
+    "filingStatus": "single",
+    "vtFederalEic": 649,
+    "vtEitcQualifyingChildren": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.eitc",
+  "expect": {
+    "valueCents": "64900"
+  }
+}

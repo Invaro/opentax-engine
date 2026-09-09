@@ -1,0 +1,14 @@
+{
+  "description": "FTB 3514 Step 6 worksheet (2025 booklet p. 7): earned income $10,000 (1 child) reads the EITC Table at $1,162 (printed row 9,951-10,000); federal AGI $16,000 (interest 6,000) differs and is above the $6,998 line-5 floor, so line 5 looks the table up at AGI: printed row 15,951-16,000 = $509; 'enter the smaller amount on line 6' -> $509.",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "wages": 10000,
+    "taxableInterest": 6000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": {
+    "valueCents": "50900"
+  }
+}

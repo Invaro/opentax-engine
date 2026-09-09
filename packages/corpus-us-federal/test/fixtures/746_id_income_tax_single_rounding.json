@@ -1,0 +1,12 @@
+{
+  "description": "REGRESSION (double rounding): Idaho Form 40 line 20 is a whole-dollar line. Taxable income of $4,877 is $66 over the $4,811 threshold, and 5.3% x 66 = 3.498 -> $3. Rounding to cents first (3.50) and then to dollars gave $4 \u2014 wrong for 276 of 55,189 taxable incomes, always overstating, on Idaho's MAIN rate.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 4877
+  },
+  "asOf": "2025-12-31",
+  "target": "us.id.income_tax",
+  "expect": {
+    "valueCents": "300"
+  }
+}

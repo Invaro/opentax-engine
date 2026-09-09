@@ -1,0 +1,13 @@
+{
+  "description": "riUseRateSchedule applies the Tax Computation Worksheet arithmetic below $100,000: 25,300 x 3.75% = 948.75 -> $949, one dollar under the $950 the Tax Table prints for that row (the table prices the row midpoint).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 25300,
+    "riUseRateSchedule": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ri.income_tax",
+  "expect": {
+    "valueCents": "94900"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "MT Schedule 2EC credit multiplier: gross household income 36,000 falls in the '$35,000 to $37,500' band at 0.40. Line 22 = 23,400 x 0.05 = 1,170; line 27 = 1,830; line 28 = 1,150; line 30 = 1,150 x 0.40 = $460.",
+  "facts": {
+    "filingStatus": "single",
+    "mtAge62": true,
+    "mtResided9Months": true,
+    "mtOccupied6Months": true,
+    "isClaimedAsDependent": false,
+    "mtGrossHouseholdIncome": 36000,
+    "mtPropertyTaxBilled": 3000,
+    "mtSoleHouseholdClaimant": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.mt.elderly_homeowner_renter_credit",
+  "expect": {
+    "valueCents": "46000"
+  }
+}

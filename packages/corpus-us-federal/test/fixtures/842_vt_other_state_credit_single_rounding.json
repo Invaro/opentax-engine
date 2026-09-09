@@ -1,0 +1,15 @@
+{
+  "description": "VT Schedule IN-117 line 19 is one whole-dollar rounding of the exact product: $2,001 x 49,500 / 100,000 = 990.495 -> $990 (rounding to cents first would give $991).",
+  "facts": {
+    "filingStatus": "single",
+    "vtOtherStateIncome": 49500,
+    "vtModifiedAgi": 100000,
+    "vtIncomeTax": 2001,
+    "vtOtherStateTaxPaid": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.vt.other_state_credit",
+  "expect": {
+    "valueCents": "99000"
+  }
+}
