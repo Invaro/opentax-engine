@@ -45,7 +45,7 @@ const examples = index.map((e) => {
   let proofTrimmed = false;
   if (result && typeof result === "object" && "proof" in result) {
     const { proof, ...rest } = result;
-    trimmed = { ...rest, proof: "(proof tree omitted here — every response carries the full tree; see /docs/returns)" };
+    trimmed = { ...rest, proof: "(proof tree omitted here — returned when includeProof is true; see /docs/returns)" };
     proofTrimmed = Boolean(proof);
   }
   return {

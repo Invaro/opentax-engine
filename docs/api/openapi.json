@@ -5,7 +5,7 @@
     "version": "corpus 0.39.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
     "x-corpus-merkle-root": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "x-generated": "2026-09-09T12:45:33.138Z"
+    "x-generated": "2026-09-09T15:34:32.837Z"
   },
   "servers": [
     {
@@ -5533,6 +5533,10 @@
                             "type": "string",
                             "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
                             "description": "REQUIRED for computation: the law-in-force date — use the intended tax year's year-end (e.g. \"2025-12-31\" for TY2025). Omitting it is an error, never a default."
+                          },
+                          "includeProof": {
+                            "type": "boolean",
+                            "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
                         "additionalProperties": false,
@@ -6013,6 +6017,10 @@
                             "type": "string",
                             "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
                             "description": "REQUIRED for computation: the law-in-force date — use the intended tax year's year-end (e.g. \"2025-12-31\" for TY2025). Omitting it is an error, never a default."
+                          },
+                          "includeProof": {
+                            "type": "boolean",
+                            "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
                         "additionalProperties": false,
@@ -6113,6 +6121,10 @@
                             "type": "string",
                             "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
                             "description": "REQUIRED for computation: the law-in-force date — use the intended tax year's year-end (e.g. \"2025-12-31\" for TY2025). Omitting it is an error, never a default."
+                          },
+                          "includeProof": {
+                            "type": "boolean",
+                            "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
                         "additionalProperties": false,
@@ -6268,6 +6280,10 @@
                             "type": "string",
                             "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
                             "description": "REQUIRED for computation: the law-in-force date — use the intended tax year's year-end (e.g. \"2025-12-31\" for TY2025). Omitting it is an error, never a default."
+                          },
+                          "includeProof": {
+                            "type": "boolean",
+                            "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
                         "additionalProperties": false,
@@ -15872,6 +15888,10 @@
                             "type": "string",
                             "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
                             "description": "REQUIRED for computation: the law-in-force date — use the intended tax year's year-end (e.g. \"2025-12-31\" for TY2025). Omitting it is an error, never a default."
+                          },
+                          "includeProof": {
+                            "type": "boolean",
+                            "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
                         "additionalProperties": false,

@@ -30,7 +30,7 @@ export const MCP_URL = `${SITE}/mcp`;
 export const TOOL_GROUPS: Array<{ title: string; blurb: string; tools: string[] }> = [
   {
     title: "Compute",
-    blurb: "Facts in, a cited answer or a printed line set out. Every result carries a proof tree.",
+    blurb: "Facts in, a cited answer or a printed line set out. Every result is hashed; includeProof returns the tree.",
     tools: [
       "calculate_tax",
       "compute_return",
@@ -55,7 +55,7 @@ export const TOOL_GROUPS: Array<{ title: string; blurb: string; tools: string[] 
 ];
 
 export const TOOL_ONE_LINERS: Record<string, string> = {
-  calculate_tax: "Any federal individual target (default net tax) from grouped facts, with a full proof tree.",
+  calculate_tax: "Any federal individual target (default net tax) from grouped facts; includeProof adds the full proof tree.",
   compute_return: "The Form 1040 bottom-line line set from transcribed W-2, 1099 and SSA-1099 boxes.",
   compute_state_return: "The printed line set of a state's full-year-resident return, 31 states.",
   calculate_business_tax: "Form 1120 taxable income and tax, S-corp entity taxes, classification, estimates. Calculation only.",

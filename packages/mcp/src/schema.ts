@@ -881,6 +881,14 @@ const OTHER_EARNED_INCOME = z
     "Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 — taxable dependent care benefits (Form 2441 Part III, line 26 → line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.",
   );
 
+/** Opt-in: attach the full PROOF-FORMAT v2 artifact to the response. */
+const includeProofParam = z
+  .boolean()
+  .optional()
+  .describe(
+    "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned.",
+  );
+
 export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
   const shape: Record<string, z.ZodTypeAny> = {};
   for (const [group, ids] of Object.entries(INDIVIDUAL_GROUPS)) {
@@ -896,6 +904,7 @@ export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
     "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met",
   );
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 
@@ -907,6 +916,7 @@ export const businessShape: Record<string, z.ZodTypeAny> = (() => {
     "Other targets: us.federal.corp.entity_classification, .taxable_income, .income_tax_after_credits, .beat, .estimated.quarterly_payment, .stock_buyback_excise, .accumulated_earnings_tax, .phc_tax, .s_corp_entity_taxes",
   );
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 
@@ -915,6 +925,7 @@ export const fiduciaryShape: Record<string, z.ZodTypeAny> = (() => {
   const shape = shapeFor(factIdsForDomain("fiduciary"));
   shape.target = targetParam("us.federal.fiduciary.income_tax");
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 
@@ -926,6 +937,7 @@ export const dependentShape: Record<string, z.ZodTypeAny> = (() => {
     "Other targets: us.federal.dependent.qualifying_child, us.federal.dependent.qualifying_relative",
   );
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 
@@ -1032,6 +1044,7 @@ export function buildFactsValidated(
   let w2Box1Cents: bigint | undefined;
   const docsRaw = input.documents;
   delete input.documents;
+  delete input.includeProof; // response option, not a fact
   const flat = flattenFactsArg(input);
   if (docsRaw !== undefined) {
     const parsedDocs = documentsShape.safeParse(docsRaw);

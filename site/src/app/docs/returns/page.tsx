@@ -62,17 +62,21 @@ export default function ReturnsPage() {
 
       <h2>Calculation proofs and citations</h2>
       <p>
-        Every rule carries a statutory or form citation with a verbatim excerpt. <C>calculate_tax</C> returns a full
-        proof tree: every applied rule, every input, every assumption, every rounding, hashed under the corpus
-        Merkle root so the derivation verifies offline months later. The format is specified so a third party can
-        write an independent checker:{" "}
+        Every rule carries a statutory or form citation with a verbatim excerpt. Every computing response carries{" "}
+        <C>corpusMerkleRoot</C> and <C>artifactHash</C>; pass <C>includeProof: true</C> to <C>calculate_tax</C>,{" "}
+        <C>compute_return</C>, <C>calculate_business_tax</C>, <C>calculate_fiduciary_tax</C> or <C>determine_dependent</C> and the response
+        also carries <C>proof</C>, the full artifact (about 200 KB): every applied rule, every input, every assumption,
+        every rounding, hashed under the corpus Merkle root so the derivation verifies offline months later. The format
+        is specified so a third party can write an independent checker:{" "}
         <a href="https://github.com/Invaro/opentax-engine/blob/main/docs/PROOF-FORMAT.md">PROOF-FORMAT.md</a>.{" "}
         <C>explain_rule</C> returns any rule&apos;s formula and law text on its own.
       </p>
       <CodeBlock
         lang="bash"
-        code={`# save a proof from the CLI, verify it byte for byte
-npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2 --proof proof.json
+        code={`# ask the API for the proof, then verify it byte for byte with the CLI
+curl -s https://opentax.invaro.ai/v1/tools/calculate_tax -H "Content-Type: application/json" \\
+  -d '{"filing":{"filingStatus":"mfj"},"income":{"wages":120000},"credits":{"qualifyingChildren":2},"asOf":"2025-12-31","includeProof":true}' \\
+  | jq .proof > proof.json
 npx -y @invaro/opentax verify proof.json`}
       />
 

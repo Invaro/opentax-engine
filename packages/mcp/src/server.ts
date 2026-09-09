@@ -86,6 +86,7 @@ server.registerTool(
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...(args.includeProof === true ? { proof } : {}),
         note: "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice.",
       });
     } catch (err) {
@@ -118,6 +119,7 @@ server.registerTool(
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...(args.includeProof === true ? { proof } : {}),
         note: "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice.",
       });
     } catch (err) {
@@ -150,6 +152,7 @@ server.registerTool(
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...(args.includeProof === true ? { proof } : {}),
         note: "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice.",
       });
     } catch (err) {
@@ -182,6 +185,7 @@ server.registerTool(
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...(args.includeProof === true ? { proof } : {}),
       });
     } catch (err) {
       return fail(err);
@@ -296,6 +300,8 @@ server.registerTool(
         note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Report these numbers as-is.",
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
+        artifactHash: proof.artifactHash,
+        ...(args.includeProof === true ? { proof, proofTarget: "us.federal.net_tax" } : {}),
       });
     } catch (err) {
       return fail(err);

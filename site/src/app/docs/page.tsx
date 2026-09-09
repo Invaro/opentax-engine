@@ -19,7 +19,7 @@ export default function DocsOverview() {
       </h1>
       <p className="lede">
         The engine runs as a stateless HTTP service. Send the facts, get back the number, every assumption it
-        made, the statute behind each rule, and a proof tree you can verify offline. Nothing you send is stored.
+        made, the statute behind each rule, and on request the proof tree you can verify offline. Nothing you send is stored.
       </p>
 
       <div className="border border-border grid sm:grid-cols-3 text-xs">

@@ -59553,6 +59553,7 @@ var GROUP_DESCRIPTIONS = {
   payments_estimates: "withholding, prior-year safe harbor, annualized installments"
 };
 var OTHER_EARNED_INCOME = external_exports.union([external_exports.number(), external_exports.string()]).optional().describe("Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 \u2014 taxable dependent care benefits (Form 2441 Part III, line 26 \u2192 line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.");
+var includeProofParam = external_exports.boolean().optional().describe("include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false \u2014 the hashes alone are returned.");
 var individualNestedShape = (() => {
   const shape = {};
   for (const [group, ids] of Object.entries(INDIVIDUAL_GROUPS)) {
@@ -59561,24 +59562,28 @@ var individualNestedShape = (() => {
   shape.documents = documentsShape.optional();
   shape.target = targetParam("net tax; balance due when payments_estimates.federalTaxWithheld is given", "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met");
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 var businessShape = (() => {
   const shape = shapeFor(factIdsForDomain("business"));
   shape.target = targetParam("us.federal.corp.entity_level_income_tax \u2014 the classification-aware entity income tax", "Other targets: us.federal.corp.entity_classification, .taxable_income, .income_tax_after_credits, .beat, .estimated.quarterly_payment, .stock_buyback_excise, .accumulated_earnings_tax, .phc_tax, .s_corp_entity_taxes");
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 var fiduciaryShape = (() => {
   const shape = shapeFor(factIdsForDomain("fiduciary"));
   shape.target = targetParam("us.federal.fiduciary.income_tax");
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 var dependentShape = (() => {
   const shape = shapeFor(factIdsForDomain("dependent"));
   shape.target = targetParam("us.federal.dependent.is_dependent", "Other targets: us.federal.dependent.qualifying_child, us.federal.dependent.qualifying_relative");
   shape.asOf = asOfParam;
+  shape.includeProof = includeProofParam;
   return shape;
 })();
 var FACT_SHAPE = (() => {
@@ -59649,6 +59654,7 @@ function buildFactsValidated(factsArg, defaultTarget) {
   let w2Box1Cents;
   const docsRaw = input.documents;
   delete input.documents;
+  delete input.includeProof;
   const flat = flattenFactsArg(input);
   if (docsRaw !== void 0) {
     const parsedDocs = documentsShape.safeParse(docsRaw);
@@ -59739,6 +59745,7 @@ function createServer() {
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...args.includeProof === true ? { proof } : {},
         note: "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice."
       });
     } catch (err) {
@@ -59762,6 +59769,7 @@ function createServer() {
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...args.includeProof === true ? { proof } : {},
         note: "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice."
       });
     } catch (err) {
@@ -59785,6 +59793,7 @@ function createServer() {
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        ...args.includeProof === true ? { proof } : {},
         note: "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice."
       });
     } catch (err) {
@@ -59806,7 +59815,8 @@ function createServer() {
         answer,
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
-        artifactHash: proof.artifactHash
+        artifactHash: proof.artifactHash,
+        ...args.includeProof === true ? { proof } : {}
       });
     } catch (err) {
       return fail(err);
@@ -59905,7 +59915,9 @@ function createServer() {
         },
         note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Report these numbers as-is.",
         assumptions: proof.assumptions,
-        corpusMerkleRoot: proof.corpus.merkleRoot
+        corpusMerkleRoot: proof.corpus.merkleRoot,
+        artifactHash: proof.artifactHash,
+        ...args.includeProof === true ? { proof, proofTarget: "us.federal.net_tax" } : {}
       });
     } catch (err) {
       return fail(err);

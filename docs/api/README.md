@@ -43,7 +43,7 @@ curl -s https://opentax.invaro.ai/mcp \
 The result is `result.content[0].text`, a JSON string:
 
 ```json
-{ "ok": true, "value": { "type": "money", "value": "..." }, "formatted": "$...", "assumptions": [...], "corpusMerkleRoot": "sha256:...", "proof": { ... } }
+{ "ok": true, "value": { "type": "money", "value": "..." }, "formatted": "$...", "assumptions": [...], "corpusMerkleRoot": "sha256:...", "artifactHash": "sha256:...", "proof": { ... } }   // proof only when includeProof: true
 ```
 
 or, on refusal:
@@ -58,12 +58,12 @@ or, on refusal:
 
 | tool | what it does |
 |---|---|
-| `calculate_tax` | Individual federal computation of any target (default net tax) with a full proof tree. Grouped inputs: `filing`, `income`, `tips_overtime`, `retirement`, `self_employment`, `adjustments`, `itemized`, `credits`, `healthcare_ptc`, `kiddie_tax`, `investor_amt`, `rentals_passive`, `state`, `household_employer`. |
+| `calculate_tax` | Individual federal computation of any target (default net tax); `includeProof: true` adds the full proof artifact. Grouped inputs: `filing`, `income`, `tips_overtime`, `retirement`, `self_employment`, `adjustments`, `itemized`, `credits`, `healthcare_ptc`, `kiddie_tax`, `investor_amt`, `rentals_passive`, `state`, `household_employer`. |
 | `compute_return` | The Form 1040 bottom-line line set from transcribed documents (W-2, 1099-R, SSA-1099, 1099-NEC/K/INT/DIV, dependents' birth dates), with Part IV withholding and § 6654 penalty. |
 | `compute_state_return` | The printed line set of a state's full-year-resident return (31 states — see the [coverage matrix](../coverage/coverage-matrix.md)). `jurisdiction` + `asOf` required; `federalAGI` required for AGI states. |
 | `calculate_business_tax` | Federal business-entity computation: check-the-box classification, Form 1120 taxable income and tax (§§ 179, 168(k), 174A, 163(j), DRD, NOL, 250, GBC, FTC, BEAT), S-corp entity-level taxes, corporate estimates, AET/PHC, § 4501. Calculation only — no 1120 line set. |
 | `calculate_fiduciary_tax` | Form 1041 § 1(e) rate schedule and § 642(b) exemption on post-distribution taxable income. Retained capital gains refuse. |
-| `determine_dependent` | § 152 qualifying child / qualifying relative determination with proof (multiple-support agreements, divorced-parent release). |
+| `determine_dependent` | § 152 qualifying child / qualifying relative determination, proof on request (multiple-support agreements, divorced-parent release). |
 | `verify_tax_claim` | Gate a claimed amount against the engine: `verified` / `refuted` with the correct value. |
 | `verify_fact` | Fact-check a claimed parameter ("CTC is $2,000/child") against the corpus. |
 | `lookup_tax_parameter` | Search the corpus's dollar amounts, rates and thresholds with citations. |
