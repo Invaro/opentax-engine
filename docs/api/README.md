@@ -43,7 +43,7 @@ curl -s https://opentax.invaro.ai/mcp \
 The result is `result.content[0].text`, a JSON string:
 
 ```json
-{ "ok": true, "value": { "type": "money", "value": "..." }, "formatted": "$...", "assumptions": [...], "corpusMerkleRoot": "sha256:...", "artifactHash": "sha256:...", "proof": { ... } }   // proof only when includeProof: true
+{ "ok": true, "value": { "type": "money", "value": "..." }, "formatted": "$...", "assumptions": [...], "corpusMerkleRoot": "sha256:...", "artifactHash": "sha256:...", "versions": { "engine": "0.1.0", "composer": "0.5.0", "corpus": "0.39.0", "corpusMerkleRoot": "sha256:..." }, "proof": { ... } }   // proof only when includeProof: true
 ```
 
 or, on refusal:

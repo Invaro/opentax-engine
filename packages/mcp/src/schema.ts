@@ -25,7 +25,7 @@
  */
 
 import { z } from "zod";
-import { coerceFacts } from "@invaro/opentax-core";
+import { coerceFacts, NeedsFactsError } from "@invaro/opentax-core";
 import type { TypedValueJSON } from "@invaro/opentax-core";
 import { DEFAULT_TARGET, getCorpus, matchOccupation } from "@invaro/opentax-corpus-us-federal";
 import { compileDocuments, documentsShape } from "./documents.js";
@@ -881,6 +881,14 @@ const OTHER_EARNED_INCOME = z
     "Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 — taxable dependent care benefits (Form 2441 Part III, line 26 → line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.",
   );
 
+/** Opt-in: refuse instead of assuming $0 when a transcribed document omits a withholding box. */
+const strictParam = z
+  .boolean()
+  .optional()
+  .describe(
+    "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes.",
+  );
+
 /** Opt-in: attach the full PROOF-FORMAT v2 artifact to the response. */
 const includeProofParam = z
   .boolean()
@@ -899,6 +907,7 @@ export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
       .describe(GROUP_DESCRIPTIONS[group] ?? group);
   }
   shape.documents = documentsShape.optional();
+  shape.strict = strictParam;
   shape.target = targetParam(
     "net tax; balance due when payments_estimates.federalTaxWithheld is given",
     "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met",
@@ -1035,16 +1044,19 @@ export function buildFacts(
 export function buildFactsValidated(
   factsArg: unknown,
   defaultTarget?: string,
-): ReturnType<typeof buildFacts> & { documentNotes: string[]; w2Box1Cents?: bigint } {
+): ReturnType<typeof buildFacts> & { documentNotes: string[]; documentMissing: string[]; w2Box1Cents?: bigint } {
   const input =
     factsArg && typeof factsArg === "object" && !Array.isArray(factsArg)
       ? { ...(factsArg as Record<string, unknown>) }
       : {};
   let documentNotes: string[] = [];
+  let documentMissing: string[] = [];
   let w2Box1Cents: bigint | undefined;
   const docsRaw = input.documents;
   delete input.documents;
   delete input.includeProof; // response option, not a fact
+  const strict = input.strict === true;
+  delete input.strict;
   const flat = flattenFactsArg(input);
   if (docsRaw !== undefined) {
     const parsedDocs = documentsShape.safeParse(docsRaw);
@@ -1066,7 +1078,17 @@ export function buildFactsValidated(
       socialSecurityWagesSupplied: "socialSecurityWages" in flat,
     });
     documentNotes = compiled.notes;
+    documentMissing = compiled.missing;
     w2Box1Cents = compiled.w2Box1Cents;
+    if (strict && documentMissing.length) {
+      throw new NeedsFactsError(
+        documentMissing.map((path) => ({
+          factId: path,
+          type: "money" as const,
+          description: "transcribed document box the completed return depends on; pass it (0 if blank) — strict mode refuses to assume $0",
+        })),
+      );
+    }
     // a documents-only return with no W-2 (a retiree with 1099-R/SSA-1099/1099-INT, say) has
     // $0 of wages by transcription; do not demand the fact the documents already answer
     if (!(parsedDocs.data.w2s ?? []).length && !("wages" in flat) && !("wages" in compiled.facts)) {
@@ -1104,7 +1126,7 @@ export function buildFactsValidated(
   }
   return {
     ...buildFacts(parsed.data as Record<string, unknown>, defaultTarget),
-    documentNotes,
+    documentNotes, documentMissing,
     ...(w2Box1Cents !== undefined ? { w2Box1Cents } : {}),
   };
 }

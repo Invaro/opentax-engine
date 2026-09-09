@@ -60,14 +60,41 @@ export default function ReturnsPage() {
 }`}
       />
 
+      <h2>Whole-dollar rounding, missing boxes, strict mode</h2>
+      <p>
+        <C>compute_return</C> follows the Form 1040 instructions on rounding: document amounts are summed in cents
+        first, then every money input is rounded to the nearest dollar (50 cents up) before any computation, so line
+        15 and the Tax Table row are always the same number and document order can never change a result. The
+        rounding is disclosed in <C>documentNotes</C>. <C>calculate_tax</C> computes in exact cents; it is a
+        calculator, not a return.
+      </p>
+      <p>
+        A transcribed document that omits a box the return depends on (a W-2 without box 2) is treated as $0 and
+        named in <C>documentNotes</C>. Pass <C>strict: true</C> to refuse instead: the response is{" "}
+        <C>NEEDS_FACTS</C> with <C>error.data.missing</C> listing each box by path, so an unknown withholding is never
+        finalised into a refund or balance due. W-2 box 4 (social security tax withheld) is accepted and recorded;
+        the Schedule 3 line 11 excess-withholding credit across several employers is not computed and a note says so.
+      </p>
+
+      <h2>Build identity</h2>
+      <p>
+        Every response carries <C>versions</C>: the engine, the composer (this server) and the corpus version with
+        its Merkle root. Pin all three. The corpus changes when tax law or a state pack changes; the composer
+        changes when a line-composition behaviour changes (this page is composer 0.5.0); the engine changes when
+        evaluation semantics change.
+      </p>
+
       <h2>Calculation proofs and citations</h2>
       <p>
         Every rule carries a statutory or form citation with a verbatim excerpt. Every computing response carries{" "}
         <C>corpusMerkleRoot</C> and <C>artifactHash</C>; pass <C>includeProof: true</C> to <C>calculate_tax</C>,{" "}
         <C>compute_return</C>, <C>calculate_business_tax</C>, <C>calculate_fiduciary_tax</C> or <C>determine_dependent</C> and the response
         also carries <C>proof</C>, the full artifact (about 200 KB): every applied rule, every input, every assumption,
-        every rounding, hashed under the corpus Merkle root so the derivation verifies offline months later. The format
-        is specified so a third party can write an independent checker:{" "}
+        every rounding, hashed under the corpus Merkle root so the derivation verifies offline months later. On{" "}
+        <C>compute_return</C> the artifact covers the <C>us.federal.net_tax</C> derivation (lines 9 to 24) and the
+        response says so in <C>proofScope</C>; the other lines are separate cited targets on the same rounded facts,
+        each available with its own tree through <C>calculate_tax</C>. The format is specified so a third party can
+        write an independent checker:{" "}
         <a href="https://github.com/Invaro/opentax-engine/blob/main/docs/PROOF-FORMAT.md">PROOF-FORMAT.md</a>.{" "}
         <C>explain_rule</C> returns any rule&apos;s formula and law text on its own.
       </p>

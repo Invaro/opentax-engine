@@ -21635,8 +21635,8 @@ function loadCorpus(input) {
     }
     validateExpressions(rule, byIdRefChecker(input), factById2, issues);
   }
-  for (const [id, versions] of byId) {
-    const sorted = [...versions].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
+  for (const [id, versions2] of byId) {
+    const sorted = [...versions2].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
     for (let i = 0; i + 1 < sorted.length; i++) {
       const cur = sorted[i];
       const next = sorted[i + 1];
@@ -21746,10 +21746,10 @@ function validateExpressions(rule, knownRuleIds, factById2, issues) {
   }
 }
 function selectVersion(corpus2, ruleId, asOf) {
-  const versions = corpus2.byId.get(ruleId) ?? [];
-  const match = versions.find((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo));
+  const versions2 = corpus2.byId.get(ruleId) ?? [];
+  const match = versions2.find((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo));
   if (!match) {
-    throw new NoApplicableRuleError(ruleId, asOf, versions.map((v) => ({
+    throw new NoApplicableRuleError(ruleId, asOf, versions2.map((v) => ({
       version: v.version,
       effectiveFrom: v.effectiveFrom,
       effectiveTo: v.effectiveTo
@@ -22294,6 +22294,9 @@ function coerceFacts(corpus2, plain) {
   }
   return out;
 }
+
+// dist/version.js
+var COMPOSER_VERSION = "0.5.0";
 
 // ../solve/dist/sweep.js
 function evaluateAt(corpus2, baseFacts, options, atCents) {
@@ -56693,6 +56696,7 @@ var documentsShape = external_exports.object({
     box1: usd2.describe("wages, tips, other compensation"),
     box2: usd2.optional().describe("federal income tax withheld"),
     box3: usd2.optional().describe("social security wages"),
+    box4: usd2.optional().describe("social security tax withheld \u2014 recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"),
     box5: usd2.optional().describe("Medicare wages and tips"),
     box6: usd2.optional().describe("Medicare tax withheld \u2014 Part IV excess over 1.45% of box 5 is added to withholding automatically"),
     box17: usd2.optional().describe("state income tax withheld \u2014 surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing"),
@@ -56783,6 +56787,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
   const ints = {};
   const bools = {};
   const notes = [];
+  const missing = [];
   const add20 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
@@ -56822,11 +56827,18 @@ function compileDocuments(docs, asOf, ctx = {}) {
     notes.push("MULTIPLE W-2s: box-3 sums are not set as socialSecurityWages (no self-employment income, so Schedule SE line 8a is not needed)");
   }
   let w2Box1Cents = (docs.w2s ?? []).length ? 0n : void 0;
+  let ssTaxWithheld = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
     add20("wages", toCents(w.box1));
     w2Box1Cents = (w2Box1Cents ?? 0n) + toCents(w.box1);
     if (w.box2 !== void 0)
       add20("federalTaxWithheld", toCents(w.box2));
+    else {
+      missing.push(`documents.w2s[${i}].box2`);
+      notes.push(`W-2 #${i + 1}: box 2 NOT transcribed \u2014 federal income tax withheld treated as $0 for this W-2; pass box2 (0 if the box is blank) to confirm, or set strict: true to refuse instead`);
+    }
+    if (w.box4 !== void 0)
+      ssTaxWithheld += toCents(w.box4);
     if (w.box3 !== void 0 && !multiW2 && !allTagged && !joint && !ctx.socialSecurityWagesSupplied) {
       add20("socialSecurityWages", toCents(w.box3));
       if (hasSE)
@@ -56846,6 +56858,15 @@ function compileDocuments(docs, asOf, ctx = {}) {
     }
     if (w.box17 !== void 0 && toCents(w.box17) > 0n) {
       notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars4(toCents(w.box17))} is DOCUMENTED \u2014 include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
+    }
+  }
+  const SS_TAX_MAX = { 2025: 1091820n };
+  if (ssTaxWithheld > 0n) {
+    const max2 = SS_TAX_MAX[taxYear];
+    if (multiW2 && max2 !== void 0 && ssTaxWithheld > max2) {
+      notes.push(`W-2 box 4 total $${dollars4(ssTaxWithheld)} across ${w2s.length} employers exceeds the ${taxYear} maximum $${dollars4(max2)} by $${dollars4(ssTaxWithheld - max2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; claim it on the return yourself`);
+    } else {
+      notes.push(`W-2 box 4 social security tax withheld $${dollars4(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
     }
   }
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
@@ -57010,7 +57031,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
     facts2[id] = dollars4(c2);
   for (const [id, n] of Object.entries(ints))
     facts2[id] = n;
-  return { facts: facts2, notes, w2Box1Cents };
+  return { facts: facts2, notes, w2Box1Cents, missing };
 }
 
 // dist/schema.js
@@ -57807,6 +57828,7 @@ var GROUP_DESCRIPTIONS = {
   payments_estimates: "withholding, prior-year safe harbor, annualized installments"
 };
 var OTHER_EARNED_INCOME = external_exports.union([external_exports.number(), external_exports.string()]).optional().describe("Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 \u2014 taxable dependent care benefits (Form 2441 Part III, line 26 \u2192 line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.");
+var strictParam = external_exports.boolean().optional().describe("strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false \u2014 the $0 assumption is disclosed in documentNotes.");
 var includeProofParam = external_exports.boolean().optional().describe("include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false \u2014 the hashes alone are returned.");
 var individualNestedShape = (() => {
   const shape = {};
@@ -57814,6 +57836,7 @@ var individualNestedShape = (() => {
     shape[group] = external_exports.object(group === "income" ? { ...shapeFor(ids), otherEarnedIncome: OTHER_EARNED_INCOME } : shapeFor(ids)).strict().optional().describe(GROUP_DESCRIPTIONS[group] ?? group);
   }
   shape.documents = documentsShape.optional();
+  shape.strict = strictParam;
   shape.target = targetParam("net tax; balance due when payments_estimates.federalTaxWithheld is given", "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met");
   shape.asOf = asOfParam;
   shape.includeProof = includeProofParam;
@@ -57905,10 +57928,13 @@ function buildFacts(args, defaultTarget = DEFAULT_TARGET) {
 function buildFactsValidated(factsArg, defaultTarget) {
   const input = factsArg && typeof factsArg === "object" && !Array.isArray(factsArg) ? { ...factsArg } : {};
   let documentNotes = [];
+  let documentMissing = [];
   let w2Box1Cents;
   const docsRaw = input.documents;
   delete input.documents;
   delete input.includeProof;
+  const strict = input.strict === true;
+  delete input.strict;
   const flat = flattenFactsArg(input);
   if (docsRaw !== void 0) {
     const parsedDocs = documentsShape.safeParse(docsRaw);
@@ -57926,7 +57952,15 @@ function buildFactsValidated(factsArg, defaultTarget) {
       socialSecurityWagesSupplied: "socialSecurityWages" in flat
     });
     documentNotes = compiled.notes;
+    documentMissing = compiled.missing;
     w2Box1Cents = compiled.w2Box1Cents;
+    if (strict && documentMissing.length) {
+      throw new NeedsFactsError(documentMissing.map((path) => ({
+        factId: path,
+        type: "money",
+        description: "transcribed document box the completed return depends on; pass it (0 if blank) \u2014 strict mode refuses to assume $0"
+      })));
+    }
     if (!(parsedDocs.data.w2s ?? []).length && !("wages" in flat) && !("wages" in compiled.facts)) {
       compiled.facts.wages = 0;
       documentNotes.push("no W-2 in the documents block: wages $0 (Form 1040 line 1a)");
@@ -57957,13 +57991,23 @@ function buildFactsValidated(factsArg, defaultTarget) {
   return {
     ...buildFacts(parsed.data, defaultTarget),
     documentNotes,
+    documentMissing,
     ...w2Box1Cents !== void 0 ? { w2Box1Cents } : {}
   };
 }
 
 // dist/server.js
+function versions() {
+  return {
+    engine: ENGINE.version,
+    composer: COMPOSER_VERSION,
+    corpus: corpus.version,
+    corpusMerkleRoot: corpus.merkleRoot
+  };
+}
 function ok(payload) {
-  return { content: [{ type: "text", text: JSON.stringify(payload, null, 2) }] };
+  const body = payload && typeof payload === "object" ? { ...payload, versions: versions() } : payload;
+  return { content: [{ type: "text", text: JSON.stringify(body, null, 2) }] };
 }
 function fail(err) {
   const payload = err instanceof OpenTaxError ? { ok: false, error: err.toJSON() } : { ok: false, error: { code: "ERROR", message: String(err?.message ?? err) } };
@@ -57979,7 +58023,7 @@ var fmt2 = (cents) => {
   return `${sign}$${dollars5}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
 function createServer() {
-  const server = new McpServer({ name: "opentax", version: "0.1.0" });
+  const server = new McpServer({ name: "opentax", version: COMPOSER_VERSION });
   server.registerTool("calculate_tax", {
     description: "Compute US federal INDIVIDUAL income tax (or balance due if withholding is given) from a content-addressed corpus of cited rules. NEVER estimate tax yourself \u2014 call this, and report ONLY numbers returned by oracle calls made with the real facts (never hand-check or approximate a line the oracle can compute: your recalled parameters may be stale). Negative result = refund. Returns the answer, every assumption made, and hashes that let anyone re-verify the full derivation offline. Facts are grouped (filing, income, retirement, credits, \u2026) \u2014 fill the groups that apply; unknown keys are rejected, and the engine names any missing fact the target needs. When source documents CONFLICT on a value, do not silently pick one: compute both branches, disclose the conflict and your choice; an interview/confirmation answer (rollover, conversion, taxable-amount screens) usually reflects taxpayer intent better than a payer form's box code \u2014 prefer it and disclose. That heuristic covers FACTS only: LEGAL classifications (qualifying child vs other dependent, filing status, SSTB) follow the statute's tests, not intake checkbox labels \u2014 a generic 'claim dependent credit' flag does not convert a qualifying child into an ODC dependent. TRANSCRIBE documented amounts as given even when they look anomalous (e.g. state withholding in a no-income-tax state): disclose the anomaly, never delete or 'correct' a documented number from outside knowledge. If you believe an oracle result is wrong, report the ORACLE's number and note your dissent \u2014 never substitute your own: the corpus is primary-source-verified and your recollection is not. Business entities \u2192 calculate_business_tax; estates/trusts \u2192 calculate_fiduciary_tax; \xA7 152 dependency \u2192 determine_dependent.",
     inputSchema: external_exports.object(individualNestedShape).strict()
@@ -58099,16 +58143,33 @@ function createServer() {
     inputSchema: external_exports.object(individualNestedShape).strict()
   }, async (args) => {
     try {
-      const { facts: facts2, asOf, documentNotes, w2Box1Cents } = buildFactsValidated(args);
-      const get = (target) => {
-        const { value } = evaluate(corpus, facts2, { asOf, target });
-        return value.type === "money" ? value.cents : 0n;
-      };
+      const built = buildFactsValidated(args);
+      const { asOf, documentNotes } = built;
       const rd26 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
         return neg ? -r : r;
+      };
+      const facts2 = {};
+      let roundedInputs = 0;
+      for (const [id, v] of Object.entries(built.facts)) {
+        if (v.type === "money") {
+          const cents = BigInt(v.value);
+          const r = rd26(cents);
+          if (r !== cents)
+            roundedInputs += 1;
+          facts2[id] = { type: "money", value: r.toString() };
+        } else
+          facts2[id] = v;
+      }
+      const w2Box1Cents = built.w2Box1Cents === void 0 ? void 0 : rd26(built.w2Box1Cents);
+      if (roundedInputs > 0) {
+        documentNotes.push(`whole-dollar rounding: ${roundedInputs} money input(s) rounded to the nearest dollar (50 cents up) after summing documents, before computation \u2014 Form 1040 instructions, Rounding Off to Whole Dollars`);
+      }
+      const get = (target) => {
+        const { value } = evaluate(corpus, facts2, { asOf, target });
+        return value.type === "money" ? value.cents : 0n;
       };
       const gross = get("us.federal.gross_income");
       const agi2 = get("us.federal.agi");
@@ -58171,6 +58232,7 @@ function createServer() {
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        proofScope: "the proof artifact covers the us.federal.net_tax derivation (lines 9-24); other lines are separate cited targets evaluated on the same rounded facts \u2014 request each with calculate_tax + includeProof for its own tree",
         ...args.includeProof === true ? { proof, proofTarget: "us.federal.net_tax" } : {}
       });
     } catch (err) {
@@ -58228,14 +58290,14 @@ function createServer() {
       ruleId: external_exports.string().describe('e.g. "us.federal.standard_deduction" \u2014 list via calculate_tax proof or corpus')
     }).strict()
   }, async ({ ruleId }) => {
-    const versions = corpus.byId.get(ruleId);
-    if (!versions) {
+    const versions2 = corpus.byId.get(ruleId);
+    if (!versions2) {
       const near = [...corpus.byId.keys()].filter((id) => id.includes(ruleId));
       return fail(new Error(`unknown rule "${ruleId}"${near.length ? ` \u2014 did you mean: ${near.slice(0, 5).join(", ")}` : ""}`));
     }
     return ok({
       ok: true,
-      versions: versions.map((r) => ({
+      versions: versions2.map((r) => ({
         id: r.id,
         version: r.version,
         title: r.title,

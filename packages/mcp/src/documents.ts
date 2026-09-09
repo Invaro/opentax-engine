@@ -32,6 +32,11 @@ export const documentsShape = z
             box1: usd.describe("wages, tips, other compensation"),
             box2: usd.optional().describe("federal income tax withheld"),
             box3: usd.optional().describe("social security wages"),
+            box4: usd
+              .optional()
+              .describe(
+                "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum",
+              ),
             box5: usd.optional().describe("Medicare wages and tips"),
             box6: usd.optional().describe("Medicare tax withheld — Part IV excess over 1.45% of box 5 is added to withholding automatically"),
             box17: usd.optional().describe("state income tax withheld — surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing"),
@@ -210,6 +215,9 @@ function ageYearsExact(dobStr: string, taxYear: number): number {
 export interface CompiledDocs {
   facts: Record<string, unknown>;
   notes: string[];
+  /** Document boxes that were not transcribed and were therefore treated as $0
+   * (e.g. `documents.w2s[0].box2`). A strict caller refuses on any entry. */
+  missing: string[];
   /** Sum of W-2 box 1 in cents — Form 1040 line 1a is W-2 box 1 ONLY; any other
    * amount folded into the wages fact (e.g. pre-retirement disability, Pub. 525)
    * is line 1h other earned income. */
@@ -226,6 +234,7 @@ export function compileDocuments(
   const ints: Record<string, number> = {};
   const bools: Record<string, boolean> = {};
   const notes: string[] = [];
+  const missing: string[] = [];
   const add = (id: string, c: bigint) => {
     sums[id] = (sums[id] ?? 0n) + c;
   };
@@ -281,10 +290,18 @@ export function compileDocuments(
   // undefined when the block carries no W-2 at all, so a hand-mapped income.wages still prints on
   // line 1a (a documents block with only dates of birth or dependents must not zero the line)
   let w2Box1Cents: bigint | undefined = (docs.w2s ?? []).length ? 0n : undefined;
+  let ssTaxWithheld = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
     add("wages", toCents(w.box1));
     w2Box1Cents = (w2Box1Cents ?? 0n) + toCents(w.box1);
     if (w.box2 !== undefined) add("federalTaxWithheld", toCents(w.box2));
+    else {
+      missing.push(`documents.w2s[${i}].box2`);
+      notes.push(
+        `W-2 #${i + 1}: box 2 NOT transcribed — federal income tax withheld treated as $0 for this W-2; pass box2 (0 if the box is blank) to confirm, or set strict: true to refuse instead`,
+      );
+    }
+    if (w.box4 !== undefined) ssTaxWithheld += toCents(w.box4);
     if (w.box3 !== undefined && !multiW2 && !allTagged && !joint && !ctx.socialSecurityWagesSupplied) {
       add("socialSecurityWages", toCents(w.box3));
       if (hasSE) bools.socialSecurityWagesProvided = true;
@@ -307,6 +324,21 @@ export function compileDocuments(
     }
     if (w.box17 !== undefined && toCents(w.box17) > 0n) {
       notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars(toCents(w.box17))} is DOCUMENTED — include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
+    }
+  }
+
+  // W-2 box 4: social security tax withheld. Not a federal-income-tax payment; the only return
+  // effect is the Schedule 3 line 11 credit for excess withholding across SEVERAL employers
+  // (§ 31(b)), which has no corpus rule yet — disclose rather than compute.
+  const SS_TAX_MAX: Record<number, bigint> = { 2025: 1091820n }; // 6.2% × $176,100
+  if (ssTaxWithheld > 0n) {
+    const max = SS_TAX_MAX[taxYear];
+    if (multiW2 && max !== undefined && ssTaxWithheld > max) {
+      notes.push(
+        `W-2 box 4 total $${dollars(ssTaxWithheld)} across ${w2s.length} employers exceeds the ${taxYear} maximum $${dollars(max)} by $${dollars(ssTaxWithheld - max)} — the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; claim it on the return yourself`,
+      );
+    } else {
+      notes.push(`W-2 box 4 social security tax withheld $${dollars(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
     }
   }
 
@@ -475,5 +507,5 @@ export function compileDocuments(
   const facts: Record<string, unknown> = { ...bools };
   for (const [id, c] of Object.entries(sums)) facts[id] = dollars(c);
   for (const [id, n] of Object.entries(ints)) facts[id] = n;
-  return { facts, notes, w2Box1Cents };
+  return { facts, notes, w2Box1Cents, missing };
 }

@@ -5,7 +5,7 @@
     "version": "corpus 0.39.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
     "x-corpus-merkle-root": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "x-generated": "2026-09-09T15:34:32.837Z"
+    "x-generated": "2026-09-09T21:30:06.179Z"
   },
   "servers": [
     {
@@ -5186,6 +5186,10 @@
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                                       "description": "social security wages"
                                     },
+                                    "box4": {
+                                      "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
+                                      "description": "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"
+                                    },
                                     "box5": {
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                                       "description": "Medicare wages and tips"
@@ -5524,6 +5528,10 @@
                             },
                             "additionalProperties": false,
                             "description": "RAW document transcription (preferred over hand-mapped facts): W-2 boxes, 1099-R boxes/codes, SSA-1099 boxes, dependents' birth dates. SSA-1099s are first-class: box 5 sums into socialSecurityBenefits and box 6 into withholding, so the § 86 taxable-benefits worksheet runs on the transcribed total instead of a hand-mapped guess. The tool derives wages/withholding (incl. Form 8959 Part IV), box-3/5 wage coordination, dependent classifications, age facts, and early-distribution penalties deterministically — and errors if the same value is also passed as a hand-mapped fact."
+                          },
+                          "strict": {
+                            "type": "boolean",
+                            "description": "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes."
                           },
                           "target": {
                             "type": "string",
@@ -15541,6 +15549,10 @@
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                                       "description": "social security wages"
                                     },
+                                    "box4": {
+                                      "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
+                                      "description": "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"
+                                    },
                                     "box5": {
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                                       "description": "Medicare wages and tips"
@@ -15879,6 +15891,10 @@
                             },
                             "additionalProperties": false,
                             "description": "RAW document transcription (preferred over hand-mapped facts): W-2 boxes, 1099-R boxes/codes, SSA-1099 boxes, dependents' birth dates. SSA-1099s are first-class: box 5 sums into socialSecurityBenefits and box 6 into withholding, so the § 86 taxable-benefits worksheet runs on the transcribed total instead of a hand-mapped guess. The tool derives wages/withholding (incl. Form 8959 Part IV), box-3/5 wage coordination, dependent classifications, age facts, and early-distribution penalties deterministically — and errors if the same value is also passed as a hand-mapped fact."
+                          },
+                          "strict": {
+                            "type": "boolean",
+                            "description": "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes."
                           },
                           "target": {
                             "type": "string",

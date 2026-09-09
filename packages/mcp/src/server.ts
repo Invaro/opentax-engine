@@ -11,7 +11,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { evaluate, OpenTaxError, parseDollars } from "@invaro/opentax-core";
+import { ENGINE, evaluate, OpenTaxError, parseDollars } from "@invaro/opentax-core";
+import { COMPOSER_VERSION } from "./version.js";
 import { compareAcross, factCheck, findCliffs, lookupParameters, searchRules } from "@invaro/opentax-solve";
 import { composeStateReturn, makeStateTaxEvaluator, stateReturnShape } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
@@ -26,8 +27,19 @@ import {
   money,
 } from "./schema.js";
 
+/** Build identity on every successful response: pin these, not just the corpus hash. */
+function versions() {
+  return {
+    engine: ENGINE.version,
+    composer: COMPOSER_VERSION,
+    corpus: corpus.version,
+    corpusMerkleRoot: corpus.merkleRoot,
+  };
+}
+
 function ok(payload: unknown) {
-  return { content: [{ type: "text" as const, text: JSON.stringify(payload, null, 2) }] };
+  const body = payload && typeof payload === "object" ? { ...(payload as Record<string, unknown>), versions: versions() } : payload;
+  return { content: [{ type: "text" as const, text: JSON.stringify(body, null, 2) }] };
 }
 
 function fail(err: unknown) {
@@ -54,7 +66,7 @@ const fmt = (cents: bigint) => {
 
 /** Build a fully-registered opentax MCP server (one per transport/session). */
 export function createServer(): McpServer {
-const server = new McpServer({ name: "opentax", version: "0.1.0" });
+const server = new McpServer({ name: "opentax", version: COMPOSER_VERSION });
 
 server.registerTool(
   "calculate_tax",
@@ -227,16 +239,38 @@ server.registerTool(
   },
   async (args: Record<string, unknown>) => {
     try {
-      const { facts, asOf, documentNotes, w2Box1Cents } = buildFactsValidated(args);
-      const get = (target: string): bigint => {
-        const { value } = evaluate(corpus, facts, { asOf, target });
-        return value.type === "money" ? value.cents : 0n;
-      };
+      const built = buildFactsValidated(args);
+      const { asOf, documentNotes } = built;
       const rd = (c: bigint): bigint => {
         const neg = c < 0n;
         const abs = neg ? -c : c;
         const r = ((abs + 50n) / 100n) * 100n;
         return neg ? -r : r;
+      };
+      // Form 1040 instructions ("Rounding Off to Whole Dollars"): amounts may be rounded to
+      // whole dollars, and if any are, all must be; cents are summed BEFORE rounding when
+      // several documents feed one line. The line set is whole-dollar, so every money input
+      // is rounded here — after document aggregation — so that line 15 and the Tax Table
+      // input are the same number (59,499.50 → 59,500 → the 59,500 row, not the 59,450 row).
+      const facts: typeof built.facts = {};
+      let roundedInputs = 0;
+      for (const [id, v] of Object.entries(built.facts)) {
+        if (v.type === "money") {
+          const cents = BigInt(v.value);
+          const r = rd(cents);
+          if (r !== cents) roundedInputs += 1;
+          facts[id] = { type: "money", value: r.toString() };
+        } else facts[id] = v;
+      }
+      const w2Box1Cents = built.w2Box1Cents === undefined ? undefined : rd(built.w2Box1Cents);
+      if (roundedInputs > 0) {
+        documentNotes.push(
+          `whole-dollar rounding: ${roundedInputs} money input(s) rounded to the nearest dollar (50 cents up) after summing documents, before computation — Form 1040 instructions, Rounding Off to Whole Dollars`,
+        );
+      }
+      const get = (target: string): bigint => {
+        const { value } = evaluate(corpus, facts, { asOf, target });
+        return value.type === "money" ? value.cents : 0n;
       };
       const gross = get("us.federal.gross_income");
       const agi = get("us.federal.agi");
@@ -301,6 +335,8 @@ server.registerTool(
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
+        proofScope:
+          "the proof artifact covers the us.federal.net_tax derivation (lines 9-24); other lines are separate cited targets evaluated on the same rounded facts — request each with calculate_tax + includeProof for its own tree",
         ...(args.includeProof === true ? { proof, proofTarget: "us.federal.net_tax" } : {}),
       });
     } catch (err) {

@@ -5013,6 +5013,10 @@
                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                       "description": "social security wages"
                     },
+                    "box4": {
+                      "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
+                      "description": "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"
+                    },
                     "box5": {
                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                       "description": "Medicare wages and tips"
@@ -5351,6 +5355,10 @@
             },
             "additionalProperties": false,
             "description": "RAW document transcription (preferred over hand-mapped facts): W-2 boxes, 1099-R boxes/codes, SSA-1099 boxes, dependents' birth dates. SSA-1099s are first-class: box 5 sums into socialSecurityBenefits and box 6 into withholding, so the § 86 taxable-benefits worksheet runs on the transcribed total instead of a hand-mapped guess. The tool derives wages/withholding (incl. Form 8959 Part IV), box-3/5 wage coordination, dependent classifications, age facts, and early-distribution penalties deterministically — and errors if the same value is also passed as a hand-mapped fact."
+          },
+          "strict": {
+            "type": "boolean",
+            "description": "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes."
           },
           "target": {
             "type": "string",
@@ -15098,6 +15106,10 @@
                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                       "description": "social security wages"
                     },
+                    "box4": {
+                      "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
+                      "description": "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"
+                    },
                     "box5": {
                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
                       "description": "Medicare wages and tips"
@@ -15436,6 +15448,10 @@
             },
             "additionalProperties": false,
             "description": "RAW document transcription (preferred over hand-mapped facts): W-2 boxes, 1099-R boxes/codes, SSA-1099 boxes, dependents' birth dates. SSA-1099s are first-class: box 5 sums into socialSecurityBenefits and box 6 into withholding, so the § 86 taxable-benefits worksheet runs on the transcribed total instead of a hand-mapped guess. The tool derives wages/withholding (incl. Form 8959 Part IV), box-3/5 wage coordination, dependent classifications, age facts, and early-distribution penalties deterministically — and errors if the same value is also passed as a hand-mapped fact."
+          },
+          "strict": {
+            "type": "boolean",
+            "description": "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes."
           },
           "target": {
             "type": "string",
