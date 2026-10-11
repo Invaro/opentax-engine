@@ -111,8 +111,19 @@ export default function ReturnsPage() {
         A transcribed document that omits a box the return depends on (a W-2 without box 2) is treated as $0 and
         named in <C>documentNotes</C>. Pass <C>strict: true</C> to refuse instead: the response is{" "}
         <C>NEEDS_FACTS</C> with <C>error.data.missing</C> listing each box by path, so an unknown withholding is never
-        finalised into a refund or balance due. W-2 box 4 (social security tax withheld) is accepted and recorded;
-        the Schedule 3 line 11 excess-withholding credit across several employers is not computed and a note says so.
+        finalised into a refund or balance due.
+      </p>
+      <p>
+        <strong>Completeness is machine-readable.</strong> Every <C>compute_return</C> and <C>compute_state_return</C>{" "}
+        response carries <C>complete: true | false</C> and <C>incomplete</C>: an empty list, or one item per printed
+        line this build does not compute, each with <C>code</C> (<C>NOT_COMPUTED</C> — no rule exists for the item,
+        such as the Schedule 3 line 11 credit for excess social security withholding across several employers, reported
+        with its amount and the Form 1040 lines it is missing from; or <C>UNPUBLISHED</C> — the rule exists but has no
+        version valid on <C>asOf</C>, a tax year whose amounts the agency has not published, so the line holds a $0
+        placeholder and the item names the rule), the form, the line, the reason and the action. With{" "}
+        <C>strict: true</C> the same situation is a refusal: <C>INCOMPLETE_RETURN</C> with the list under{" "}
+        <C>error.data.incomplete</C>. Route on <C>complete</C> or the error code, never on the prose in{" "}
+        <C>notes</C>.
       </p>
 
       <h2>Build identity</h2>

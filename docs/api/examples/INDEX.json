@@ -9,7 +9,7 @@
     "file": "02-compute-return-from-w2.json",
     "tool": "compute_return",
     "ok": true,
-    "summary": "ok, asOf, documentNotes, lines, note, assumptions"
+    "summary": "ok, asOf, complete, incomplete, documentNotes, lines"
   },
   {
     "file": "03-compute-state-return-vt.json",
@@ -21,7 +21,7 @@
     "file": "04-compute-state-return-ca-mfj.json",
     "tool": "compute_state_return",
     "ok": true,
-    "summary": "ok, asOf, jurisdiction, lines"
+    "summary": "ok, asOf, jurisdiction, complete, incomplete, lines"
   },
   {
     "file": "05-calculate-business-tax-1120.json",
@@ -33,7 +33,7 @@
     "file": "06-lookup-tax-parameter.json",
     "tool": "lookup_tax_parameter",
     "ok": true,
-    "summary": "ok, query, asOf, hits, corpusMerkleRoot"
+    "summary": "ok, query, asOf, hits, corpusMerkleRoot, versions"
   },
   {
     "file": "07-verify-fact.json",
@@ -51,12 +51,12 @@
     "file": "09-refusal-no-applicable-rule-vt-2026.json",
     "tool": "compute_state_return",
     "ok": false,
-    "summary": "ERROR"
+    "summary": "INCOMPLETE_RETURN"
   },
   {
     "file": "10-explain-rule.json",
     "tool": "explain_rule",
     "ok": true,
-    "summary": "ok, versions"
+    "summary": "ok, ruleId, asOf, ruleVersions, note, versions"
   }
 ]

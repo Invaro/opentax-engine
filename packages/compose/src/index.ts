@@ -12,6 +12,7 @@
  * composer never invents them; worksheets the printed forms prescribe
  * (VA Schedule A / STA / age deduction, CA Schedule P) are computed here.
  */
+import { incompleteItems, type IncompleteItem } from "./incomplete.js";
 import { composeCA } from "./ca.js";
 import { composeGA } from "./ga.js";
 import { composeIL } from "./il.js";
@@ -46,6 +47,8 @@ import { composeVA } from "./va.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 export { stateReturnShape } from "./shape.js";
+export { incompleteItems, markUnpublished, IncompleteReturnRefusal, isIncompleteReturnRefusal } from "./incomplete.js";
+export type { IncompleteCode, IncompleteItem } from "./incomplete.js";
 export type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 /**
@@ -87,8 +90,17 @@ export function makeStateTaxEvaluator(
 export function composeStateReturn(
   input: StateReturnInput,
   evalStateTax: StateTaxEvaluator,
-): { lines: Record<string, string>; notes: string[] } {
+): { lines: Record<string, string>; notes: string[]; incomplete: IncompleteItem[] } {
   const notes: string[] = [];
+  const lines = composeLines(input, evalStateTax, notes);
+  return { lines, notes, incomplete: incompleteItems(notes) };
+}
+
+function composeLines(
+  input: StateReturnInput,
+  evalStateTax: StateTaxEvaluator,
+  notes: string[],
+): Record<string, string> {
   // filingStatus (when provided) is authoritative — derive the legacy flags
   const fs = (input as { filingStatus?: string }).filingStatus;
   if (fs) {
@@ -106,35 +118,35 @@ export function composeStateReturn(
   if (j !== "pa" && j !== "nj" && j !== "sc" && j !== "al" && j !== "ar" && typeof input.federalAGI !== "number") {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me/hi/vt state returns — run compute_return first and pass Form 1040 line 11 verbatim");
   }
-  if (j === "il") return { lines: composeIL(input, evalStateTax, notes), notes };
-  if (j === "va") return { lines: composeVA(input, evalStateTax, notes), notes };
-  if (j === "ca") return { lines: composeCA(input, evalStateTax, notes), notes };
-  if (j === "pa") return { lines: composePA(input, evalStateTax, notes), notes };
-  if (j === "nj") return { lines: composeNJ(input, evalStateTax, notes), notes };
-  if (j === "oh") return { lines: composeOH(input, evalStateTax, notes), notes };
-  if (j === "nc") return { lines: composeNC(input, evalStateTax, notes), notes };
-  if (j === "ga") return { lines: composeGA(input, evalStateTax, notes), notes };
-  if (j === "md") return { lines: composeMD(input, evalStateTax, notes), notes };
-  if (j === "mo") return { lines: composeMO(input, evalStateTax, notes), notes };
-  if (j === "wi") return { lines: composeWI(input, evalStateTax, notes), notes };
-  if (j === "mn") return { lines: composeMN(input, evalStateTax, notes), notes };
-  if (j === "sc") return { lines: composeSC(input, evalStateTax, notes), notes };
-  if (j === "al") return { lines: composeAL(input, evalStateTax, notes), notes };
-  if (j === "or") return { lines: composeOR(input, evalStateTax, notes), notes };
-  if (j === "ok") return { lines: composeOK(input, evalStateTax, notes), notes };
-  if (j === "ct") return { lines: composeCT(input, evalStateTax, notes), notes };
-  if (j === "ks") return { lines: composeKS(input, evalStateTax, notes), notes };
-  if (j === "ar") return { lines: composeAR(input, evalStateTax, notes), notes };
-  if (j === "nm") return { lines: composeNM(input, evalStateTax, notes), notes };
-  if (j === "ne") return { lines: composeNE(input, evalStateTax, notes), notes };
-  if (j === "id") return { lines: composeID(input, evalStateTax, notes), notes };
-  if (j === "wv") return { lines: composeWV(input, evalStateTax, notes), notes };
-  if (j === "me") return { lines: composeME(input, evalStateTax, notes), notes };
-  if (j === "hi") return { lines: composeHI(input, evalStateTax, notes), notes };
-  if (j === "ri") return { lines: composeRI(input, evalStateTax, notes), notes };
-  if (j === "mt") return { lines: composeMT(input, evalStateTax, notes), notes };
-  if (j === "de") return { lines: composeDE(input, evalStateTax, notes), notes };
-  if (j === "nd") return { lines: composeND(input, evalStateTax, notes), notes };
-  if (j === "vt") return { lines: composeVT(input, evalStateTax, notes), notes };
-  return { lines: composeNY(input, evalStateTax, notes), notes };
+  if (j === "il") return composeIL(input, evalStateTax, notes);
+  if (j === "va") return composeVA(input, evalStateTax, notes);
+  if (j === "ca") return composeCA(input, evalStateTax, notes);
+  if (j === "pa") return composePA(input, evalStateTax, notes);
+  if (j === "nj") return composeNJ(input, evalStateTax, notes);
+  if (j === "oh") return composeOH(input, evalStateTax, notes);
+  if (j === "nc") return composeNC(input, evalStateTax, notes);
+  if (j === "ga") return composeGA(input, evalStateTax, notes);
+  if (j === "md") return composeMD(input, evalStateTax, notes);
+  if (j === "mo") return composeMO(input, evalStateTax, notes);
+  if (j === "wi") return composeWI(input, evalStateTax, notes);
+  if (j === "mn") return composeMN(input, evalStateTax, notes);
+  if (j === "sc") return composeSC(input, evalStateTax, notes);
+  if (j === "al") return composeAL(input, evalStateTax, notes);
+  if (j === "or") return composeOR(input, evalStateTax, notes);
+  if (j === "ok") return composeOK(input, evalStateTax, notes);
+  if (j === "ct") return composeCT(input, evalStateTax, notes);
+  if (j === "ks") return composeKS(input, evalStateTax, notes);
+  if (j === "ar") return composeAR(input, evalStateTax, notes);
+  if (j === "nm") return composeNM(input, evalStateTax, notes);
+  if (j === "ne") return composeNE(input, evalStateTax, notes);
+  if (j === "id") return composeID(input, evalStateTax, notes);
+  if (j === "wv") return composeWV(input, evalStateTax, notes);
+  if (j === "me") return composeME(input, evalStateTax, notes);
+  if (j === "hi") return composeHI(input, evalStateTax, notes);
+  if (j === "ri") return composeRI(input, evalStateTax, notes);
+  if (j === "mt") return composeMT(input, evalStateTax, notes);
+  if (j === "de") return composeDE(input, evalStateTax, notes);
+  if (j === "nd") return composeND(input, evalStateTax, notes);
+  if (j === "vt") return composeVT(input, evalStateTax, notes);
+  return composeNY(input, evalStateTax, notes);
 }

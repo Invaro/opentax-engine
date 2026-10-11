@@ -14,6 +14,7 @@
  * full-year resident; part-year and nonresident returns are out of scope.
  */
 import { c, rd, max0, min2, fmtD, type Cents } from "./money.js";
+import { incompleteItems, markUnpublished, IncompleteReturnRefusal } from "./incomplete.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 const D = (x: unknown): Cents => rd(c(x));
@@ -31,8 +32,7 @@ export function composeVT(input: StateReturnInput, evalStateTax: StateTaxEvaluat
       return rd(evalStateTax(target, base, extra));
     } catch (err) {
       if (!isNoApplicableRule(err)) throw err;
-      notes.push(`VT ${label}: ${target} has no applicable rule as of this date — line left blank; re-run once the year's forms publish`);
-      return null;
+      return markUnpublished(notes, { form: "VT IN-111", line: label, target, note: `VT ${label}: ${target} has no applicable rule as of this date — line left blank; re-run once the year's forms publish` });
     }
   };
   const agiFacts = { vtFederalAgi: l1 };
@@ -83,7 +83,13 @@ export function composeVT(input: StateReturnInput, evalStateTax: StateTaxEvaluat
   const boxes = Math.max(0, (input.ageOrBlindBoxes as number) ?? 0);
   const l4 = tryEval("us.vt.standard_deduction", 0n, { vtAdditionalDeductionBoxes: boxes }, "line 4 (standard deduction)");
   const boxCap = mfj || qss || fs === "mfs" ? 4 : 2;
-  if (l4 === null) throw new Error("The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) — Form IN-111 line 4 cannot be composed. The 2026 Form IN-111 publishes around December 2026; re-run then");
+  if (l4 === null) {
+    // every line below 4 depends on it — a $0 placeholder would be a silent wrong answer
+    throw new IncompleteReturnRefusal(
+      "The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) — Form IN-111 line 4 cannot be composed, and every line after it depends on it. The 2026 Form IN-111 publishes around December 2026; re-run then",
+      incompleteItems(notes).map((i) => ({ ...i, rendered: "not composed — the whole return refuses", action: "re-run once the 2026 Form IN-111 publishes (around December 2026); no line set is returned until then" })),
+    );
+  }
   if (boxes > 0) notes.push(`VT line 4: standard deduction ${fmtD(l4)} — ${fmtD(l4 - 125000n * BigInt(Math.min(boxes, boxCap)))} for the filing status plus $1,250 for each of ${Math.min(boxes, boxCap)} federal age-65/blind box(es) (the chart allows at most two for single and head of household, four for the joint / qualifying widow(er) row and for separate)`);
   const dependentFiler = input.claimedAsDependent === true;
   const l5a = dependentFiler ? 0 : 1;

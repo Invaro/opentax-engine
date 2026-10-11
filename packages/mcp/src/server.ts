@@ -11,10 +11,12 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { ENGINE, evaluate, OpenTaxError, parseDollars } from "@invaro/opentax-core";
+import { ENGINE, evaluate, OpenTaxError, parseDollars, walkExpr } from "@invaro/opentax-core";
+import type { Expr, Rule } from "@invaro/opentax-core";
+import { IncompleteReturnError } from "./completeness.js";
 import { COMPOSER_VERSION } from "./version.js";
 import { compareAcross, factCheck, findCliffs, lookupParameters, searchRules } from "@invaro/opentax-solve";
-import { composeStateReturn, makeStateTaxEvaluator, stateReturnShape } from "@invaro/opentax-compose";
+import { composeStateReturn, isIncompleteReturnRefusal, makeStateTaxEvaluator, stateReturnShape } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
 import {
   buildFactsValidated,
@@ -38,11 +40,17 @@ function versions() {
 }
 
 function ok(payload: unknown) {
+  // `versions` is RESERVED for build identity on every response. A tool payload that used the
+  // key would be silently overwritten (explain_rule's rule list was, in 0.5.0) — refuse instead.
+  if (payload && typeof payload === "object" && "versions" in (payload as Record<string, unknown>)) {
+    throw new Error("internal: tool payload must not define `versions` (reserved for build identity)");
+  }
   const body = payload && typeof payload === "object" ? { ...(payload as Record<string, unknown>), versions: versions() } : payload;
   return { content: [{ type: "text" as const, text: JSON.stringify(body, null, 2) }] };
 }
 
 function fail(err: unknown) {
+  if (isIncompleteReturnRefusal(err)) err = new IncompleteReturnError(err.incomplete, err.message);
   const payload =
     err instanceof OpenTaxError
       ? { ok: false, error: err.toJSON() }
@@ -61,6 +69,21 @@ const fmt = (cents: bigint) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${sign}$${dollars}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
+
+/** The rules and facts a rule's formula and guard reference — what the CLI's `explain` prints. */
+function ruleDependencies(rule: Rule): { rules: string[]; facts: string[] } {
+  const rules = new Set<string>();
+  const facts = new Set<string>();
+  const roots: Expr[] = [rule.formula];
+  if (rule.applicability) roots.push(rule.applicability);
+  for (const root of roots) {
+    walkExpr(root, (e) => {
+      if (e.kind === "rule") rules.add(e.ruleId);
+      if (e.kind === "fact") facts.add(e.factId);
+    });
+  }
+  return { rules: [...rules].sort(), facts: [...facts].sort() };
+}
 
 // ---------------------------------------------------------------------------
 
@@ -211,7 +234,19 @@ server.registerTool(
     description:
       "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME / HI N-11, RI-1040, MT Form 2, DE PIT-RES, ND-1, VT IN-111) — correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. DE filing status 4 (married filing combined separate) is TWO returns on one form: pass filingStatus 'mfs' with deCombinedSeparate plus the deSpouse* column-A inputs, and each column gets its own $3,250 deduction and its own bracket climb. MT starts from FEDERAL TAXABLE INCOME and has no standard deduction, personal exemption or Social Security subtraction of its own, so mtFederalDeductions (federal Form 1040 lines 12e and 13b) is REQUIRED and the composer refuses without it; long-term capital gains are taxed separately at 3%/4.1% on the page 2 worksheet. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets — a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) — federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets — disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) — those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax — line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. — Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 — post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit — the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC → mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME — pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions — the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself — never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion — still $6,000 in 2026, HB388 died) — federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption — the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 — the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage — Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 — the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election — the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 — REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents → $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 — the § 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions × $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI ≤ $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold. For HI, pass federalAGI (line 7) plus hiPensionExclusion (employer-funded pensions are exempt), taxableSocialSecurity (100% subtracted), hiReservePay, dependents and hiTaxpayerAge65/hiSpouseAge65 (each 65+ oval is one more $1,144 exemption; hiDisabledPersons for the $7,000 in-lieu exemption), the Worksheets A-1 to A-6 amounts for an itemizer (no SALT cap, but hiStateLocalIncomeTaxes needs federal AGI under $100,000 / $150,000 / $200,000; the § 68 limitation applies over $166,800), hiNetCapitalGain + hiNetLongTermCapitalGain for the 7.25% alternative tax, hiPresentOverNineMonths (REQUIRED attestation for the food/excise and renters credits) with hiRentPaid, hiChildCareExpenses + hiEarnedIncome (+ hiSpouseEarnedIncome) for the Schedule X credit, federalEITC (40%, refundable), hiOtherStateTaxEligible + hiOutOfStateIncome for the other-state credit, and stateWithholding; the standard deduction is $4,400 / $8,800 / $6,424 for 2025 (dependent filers: greater of $500 or hiEarnedIncome); a federal QSS uses Schedule II. For ND, the base is FEDERAL TAXABLE INCOME (Form 1040 line 15) — pass ndFederalTaxableIncome, which is REQUIRED and which the composer refuses without; it may be NEGATIVE (the booklet directs the filer to enter the negative number on line 1b even though Form 1040 line 15 shows 0), and federalAGI is line 1a only, feeding NOTHING. There is no North Dakota standard deduction and no personal exemption. The first bracket is ZERO PERCENT (0.00% / 1.95% / 2.50%), so a great many returns owe nothing at all; below $100,000 the $50 Tax Table is MANDATORY under section 57-38-30.3(10) and prices the row MIDPOINT, which the composer applies for TY2025 (set ndUseRateSchedule only to see the schedule's figure). Pass taxableSocialSecurity (excluded IN FULL, no cap or age test), ndMilitaryPay and ndMilitaryRetirement (both excluded in full), ndRailroadRetirementBenefits (line 8 — a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 by gross benefits), ndNetLongTermCapitalGain with ndCapitalGainAlreadyExcluded for the 40% exclusion and ndQualifiedDividends for the parallel 40%, ndCollegeSaveContributions ($5,000, doubled ONLY on a joint return), and ndLowerQualifiedIncome for the marriage penalty credit (joint returns only; the composer runs the whole worksheet, including the preprinted $15,750). QSS uses the joint COLUMN of the table and the joint rate schedule but is NOT a joint return — its College SAVE cap stays $5,000 and it gets no marriage penalty credit. Every North Dakota credit is NONREFUNDABLE. Schedule ND-1NR (part-year and nonresident) and Schedule ND-1FA farm income averaging are not composed. For VT, pass federalAGI (line 1) and the Schedule IN-112 pieces: taxableSocialSecurity with vtRetirementElection ('social_security' OR 'contributory_system' with vtContributorySystemIncome — the filer may elect only ONE, excluded in full at federal AGI up to $55,000 / $70,000 joint and phased out to $65,000 / $80,000), vtMilitaryRetirementIncome (a SEPARATE exclusion, full to $125,000 and phased out to $175,000, claimable in addition), vtNetAdjustedCapitalGain + vtEligibleLongTermGain + vtFederalTaxableIncome for the Schedule IN-153 exclusion (the greater of $5,000 and 40% of over-three-year gain, capped at 40% of federal taxable income), vtUsObligationInterest, vtFederalMedicalExpenses (only the excess over the Vermont deduction plus exemptions is subtracted), ageOrBlindBoxes ($1,250 each on line 4), dependents (line 5c), vtCharitableContributions (5%, max $1,000, itemizing not required), vtOtherStateIncome + vtOtherStateTaxPaid (Schedule IN-117), and the refundable Schedule IN-112 Part II inputs — federalEITC with vtEitcQualifyingChildren (38% with children, 100% WITHOUT), vtChildrenSixOrUnder ($1,000 each, phased out $20 per $1,000 of AGI over $125,000), vtFederalChildCareCredit (72%), vtVeteranDischargeRecord ($250 to $30,000 of AGI). Vermont has NO itemized deduction; below $75,000 the Tax Table is mandatory and the composer applies it; above $150,000 of federal AGI the tax is at least 3% of AGI less U.S. obligation interest. A federal QSS takes the joint deduction and column but no spouse exemption. The Renter Credit (RCC-146) and Property Tax Credit (HS-122) are separate claims, not composed; TY2026 refuses at line 4 until the 2026 standard deduction publishes.",
     inputSchema: z
-      .object({ ...stateReturnShape, asOf: z.string().describe("year-end date, e.g. 2025-12-31 — REQUIRED"), filingJoint: z.boolean().optional(), filingHoh: z.boolean().optional(), filingHohOrQss: z.boolean().optional() })
+      .object({
+        ...stateReturnShape,
+        asOf: z.string().describe("year-end date, e.g. 2025-12-31 — REQUIRED"),
+        strict: z
+          .boolean()
+          .optional()
+          .describe(
+            "refuse with INCOMPLETE_RETURN (error.data.incomplete lists each affected printed line) when any line's target has no rule valid on asOf — a tax year whose amounts are not yet published. Default false — the response then carries complete:false and the same list under `incomplete`, and the affected lines hold a $0 placeholder.",
+          ),
+        filingJoint: z.boolean().optional(),
+        filingHoh: z.boolean().optional(),
+        filingHohOrQss: z.boolean().optional(),
+      })
       .strict(),
   },
   async (args: Record<string, unknown>) => {
@@ -222,8 +257,18 @@ server.registerTool(
         const { value } = evaluate(corpus, facts as never, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       }, args);
-      const { lines, notes } = composeStateReturn(args as never, evalStateTax);
-      return ok({ ok: true, asOf, jurisdiction: args.jurisdiction, lines, ...(notes.length ? { notes } : {}) });
+      const { strict, ...composerArgs } = args;
+      const { lines, notes, incomplete } = composeStateReturn(composerArgs as never, evalStateTax);
+      if (strict === true && incomplete.length) throw new IncompleteReturnError(incomplete);
+      return ok({
+        ok: true,
+        asOf,
+        jurisdiction: args.jurisdiction,
+        complete: incomplete.length === 0,
+        incomplete,
+        lines,
+        ...(notes.length ? { notes } : {}),
+      });
     } catch (err) {
       return fail(err);
     }
@@ -241,6 +286,10 @@ server.registerTool(
     try {
       const built = buildFactsValidated(args);
       const { asOf, documentNotes } = built;
+      // the completeness contract: anything the documents call for that this build does not
+      // compute is a structured item, never only a note — strict callers are refused outright
+      const incomplete = built.documentUnsupported;
+      if (args.strict === true && incomplete.length) throw new IncompleteReturnError(incomplete);
       const rd = (c: bigint): bigint => {
         const neg = c < 0n;
         const abs = neg ? -c : c;
@@ -301,6 +350,8 @@ server.registerTool(
       return ok({
         ok: true,
         asOf,
+        complete: incomplete.length === 0,
+        incomplete,
         ...(documentNotes.length ? { documentNotes } : {}),
         lines: {
           // Form 1040 line 1a is W-2 box 1 ONLY; anything else folded into the
@@ -410,16 +461,20 @@ server.registerTool(
   "explain_rule",
   {
     description:
-      "Get a tax rule's statutory citation, verbatim excerpt, validity window, parameters, and dependencies. Use to quote the actual law behind an answer.",
+      "Get a tax rule in full: statutory citation with its verbatim excerpt, validity window, parameters, the formula and applicability guard (the rule IR — rules are data), the rules and facts it depends on, and its content hash. Use to quote and explain the actual law behind an answer. Pass asOf to see only the version in force on that date.",
     inputSchema: z
       .object({
         ruleId: z
           .string()
-          .describe('e.g. "us.federal.standard_deduction" — list via calculate_tax proof or corpus'),
+          .describe('e.g. "us.federal.standard_deduction" — list via calculate_tax proof, search_tax_rules, or the corpus'),
+        asOf: z
+          .string()
+          .optional()
+          .describe("ISO date; when given, only the version valid on that date is returned (omit for every version)"),
       })
       .strict(),
   },
-  async ({ ruleId }) => {
+  async ({ ruleId, asOf }) => {
     const versions = corpus.byId.get(ruleId);
     if (!versions) {
       const near = [...corpus.byId.keys()].filter((id) => id.includes(ruleId));
@@ -427,18 +482,38 @@ server.registerTool(
         new Error(`unknown rule "${ruleId}"${near.length ? ` — did you mean: ${near.slice(0, 5).join(", ")}` : ""}`),
       );
     }
+    const shown = asOf
+      ? versions.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === undefined || asOf < r.effectiveTo))
+      : versions;
+    if (!shown.length) {
+      return fail(
+        new Error(
+          `rule "${ruleId}" has no version valid on ${asOf} — known windows: ${versions.map((r) => `v${r.version} [${r.effectiveFrom}, ${r.effectiveTo ?? "open"})`).join(", ")}`,
+        ),
+      );
+    }
     return ok({
       ok: true,
-      versions: versions.map((r) => ({
+      ruleId,
+      ...(asOf ? { asOf } : {}),
+      ruleVersions: shown.map((r) => ({
         id: r.id,
         version: r.version,
+        jurisdiction: r.jurisdiction,
         title: r.title,
         citation: r.citation,
+        excerpt: r.citation.excerpt ?? null,
         effectiveFrom: r.effectiveFrom,
         effectiveTo: r.effectiveTo ?? "open",
-        parameters: r.parameters,
+        output: r.output,
+        parameters: r.parameters ?? {},
+        ...(r.applicability ? { applicability: r.applicability } : {}),
+        formula: r.formula,
+        ...(r.overrides ? { overrides: r.overrides } : {}),
+        dependencies: ruleDependencies(r),
         hash: corpus.ruleHashes.get(`${r.id}@${r.version}`),
       })),
+      note: "ruleVersions lists every version of the rule (one per validity window; `versions` is the build identity). formula and applicability are the rule IR (PROOF-FORMAT v2 expressions): kind 'rule' nodes reference other rules, kind 'fact' nodes read inputs, kind 'param' nodes read this rule's parameters. The hash covers id, version, citation, dates, parameters and formula.",
     });
   },
 );

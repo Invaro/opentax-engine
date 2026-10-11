@@ -29,8 +29,23 @@
   "decodedResult": {
     "ok": false,
     "error": {
-      "code": "ERROR",
-      "message": "The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) — Form IN-111 line 4 cannot be composed. The 2026 Form IN-111 publishes around December 2026; re-run then"
+      "code": "INCOMPLETE_RETURN",
+      "message": "The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) — Form IN-111 line 4 cannot be composed, and every line after it depends on it. The 2026 Form IN-111 publishes around December 2026; re-run then",
+      "data": {
+        "incomplete": [
+          {
+            "code": "UNPUBLISHED",
+            "form": "VT IN-111",
+            "line": "line 4 (standard deduction)",
+            "item": "line 4 (standard deduction)",
+            "target": "us.vt.standard_deduction",
+            "reason": "us.vt.standard_deduction has no applicable rule as of this date — this tax year's amount is not yet published or encoded",
+            "action": "re-run once the 2026 Form IN-111 publishes (around December 2026); no line set is returned until then",
+            "rendered": "not composed — the whole return refuses"
+          }
+        ],
+        "hint": "every item names the printed form and line, the reason, and what to do; the non-strict call returns the same list under `incomplete` with complete:false"
+      }
     }
   }
 }

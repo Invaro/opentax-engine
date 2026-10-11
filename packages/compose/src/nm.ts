@@ -13,6 +13,7 @@
  * refund chain. A federal QSS is a New Mexico "surviving spouse".
  */
 import { c, rd, max0, min2, fmtD, type Cents } from "./money.js";
+import { markUnpublished } from "./incomplete.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 const D = (x: unknown): Cents => rd(c(x));
@@ -47,8 +48,7 @@ export function composeNM(input: StateReturnInput, evalStateTax: StateTaxEvaluat
       return rd(evalStateTax(target, base, extra));
     } catch (err) {
       if (!isNoApplicableRule(err)) throw err;
-      notes.push(`NM ${label}: the inflation-adjusted table for this tax year has not been published by TRD (${target} has no applicable rule as of this date) — line left blank; re-run when the PIT-RC instructions are out`);
-      return null;
+      return markUnpublished(notes, { form: "NM PIT-1 / PIT-RC", line: label, target, note: `NM ${label}: the inflation-adjusted table for this tax year has not been published by TRD (${target} has no applicable rule as of this date) — line left blank; re-run when the PIT-RC instructions are out`, action: "re-run when TRD publishes the PIT-RC instructions; until then this line set is not a complete return" });
     }
   };
   const l5 = dependentFiler ? 0 : 1 + (mfj ? 1 : 0) + deps;

@@ -25,7 +25,7 @@
   "decodedResult": {
     "ok": true,
     "query": "child tax credit per child 2025",
-    "asOf": "2026-09-09",
+    "asOf": "2026-10-11",
     "hits": [
       {
         "ruleId": "us.de.child_care_credit",
@@ -87,38 +87,46 @@
         }
       },
       {
-        "ruleId": "us.ct.eitc",
-        "title": "Connecticut earned income tax credit — 40% of the federal EIC (prorated by separate ÷ joint federal AGI when a joint federal filer must file separately for Connecticut) plus a flat $250 with at least one qualifying child (PA 25-168); refundable (Form CT-1040 line 20a / Schedule CT-EITC)",
+        "ruleId": "us.vt.veteran_credit",
+        "title": "Vermont veteran tax credit 2025 — $250 refundable for a filer with a discharge or separation record verifying service in the uniformed services, reduced $5 per full $100 of federal AGI over $25,000 and gone at $30,000 (Schedule IN-112 Part II lines 8-12)",
         "citation": {
-          "source": "Conn. Gen. Stat. § 12-704e as amended by 2025 Conn. Acts 25-168, § 371 (the $250 increase, tax years beginning on or after January 1, 2025); 2025 Schedule CT-EITC lines 1-16 and its instructions pp. 16-17; OLR 2025-R-0093 'Acts Affecting Taxes' p. 6",
-          "section": "§ 12-704e(a)-(c); PA 25-168 § 371; Schedule CT-EITC",
-          "url": "https://portal.ct.gov/-/media/drs/forms/2025/income/schedule-ct-eitc_1225.pdf",
-          "excerpt": "STATUTE (§ 12-704e(a), verbatim): 'a credit … in an amount equal to the applicable percentage of the earned income credit claimed and allowed for the same taxable year under Section 32 of the Internal Revenue Code … \"applicable percentage\" means … (3) forty per cent for taxable years commencing on or after January 1, 2023.' (b): 'If the amount of the credit … exceeds the taxpayer's liability … the Commissioner … shall refund the amount of such excess, without interest.' (c): a joint federal filer required to file separately for Connecticut receives the credit 'multiplied by a fraction, the numerator of which is such individual's federal adjusted gross income … and the denominator of which is the federal adjusted gross income reported on the joint return'. PA 25-168 § 371 (OLR, verbatim): 'increases the credit's amount by $250 for eligible taxpayers with at least one qualifying child for federal income tax purposes … applicable to tax years beginning on or after January 1, 2025.' SCHEDULE CT-EITC (printed): 1 claimed the 2025 federal EIC (else stop); 2 investment income over $11,950 → stop (the federal § 32(i) limit); 4-5 qualifying children listed; 8 federal EIC (1040 line 27a); 9 rate '40% (.40)'; 10 = 8 × 9; 11-14 the MFS-for-Connecticut proration ('Divide Line 12 by Line 13. If Line 12 is equal to or greater than Line 13, enter 1.0000' — four decimals); 15 = 10 × 14; 15a 'If you list a qualifying child on Line 5, enter $250. Otherwise, enter $0'; 16 = 10 + 15a, or 15 + 15a → Form CT-1040 line 20a (Part 3 payments — REFUNDABLE). The $250 is NOT prorated and does not vary with the number of children. Full-year residents only (part-year/nonresidents 'do not qualify … and must file Form CT-1040NR/PY'); valid SSNs required by the due date (no amended claim after obtaining one). Whole dollars. TY2026: 40% + $250 continue (no 2026 act changed § 12-704e). [Inputs: ctFederalEic, ctEitcQualifyingChild, ctEitcSeparateFagi and ctEitcJointFagi (both 0 = no proration).]"
+          "source": "32 V.S.A. § 5830g, added by 2025 Act 71 § 5 (eff. January 1, 2025); 2025 Schedule IN-112 Part II lines 8-12 and its instructions p. 4",
+          "section": "32 V.S.A. § 5830g; Schedule IN-112 line 12",
+          "url": "https://legislature.vermont.gov/statutes/section/32/151/05830g",
+          "excerpt": "STATUTE (§ 5830g, verbatim): '(a) A resident individual or part-year resident individual who served in the uniformed services shall be entitled to a refundable credit against the tax imposed by section 5822 of this title for the taxable year. (b) A taxpayer shall be eligible for the credit under this section provided the taxpayer has a discharge record, or other record of separation from active duty, verifying service in the uniformed services. (c)(1) If the federal adjusted gross income of the taxpayer is less than or equal to $25,000.00, the amount of tax credit provided under this section shall be $250.00. (2) If the federal adjusted gross income of the taxpayer is greater than $25,000.00 but less than $30,000.00, the amount of credit shall be $250.00 less $5.00 per $100.00 of federal adjusted gross income exceeding $25,000.00 of federal adjusted gross income. (3) If the federal adjusted gross income of the taxpayer is $30,000.00 or greater, no amount of credit shall be provided under this section.' SCHEDULE IN-112 (verbatim): '8. Enter your AGI from Form IN-111, Line 1. 9. If Line 8 is $25,000 or less, enter -0- and skip to Line 12. Otherwise, SUBTRACT $25,000 from Line 8. 10. DIVIDE Line 9 by 100, rounding down to the nearest whole number. 11. MULTIPLY Line 10 by $5. 12. If Line 9 is zero, enter $250. Otherwise, enter $250 MINUS Line 11.' ENCODING: the discharge record is an attestation (vtVeteranDischargeRecord) with a $0 default; the $5 steps use the FLOOR of the excess in hundreds, exactly as line 10 prints; the result is a whole number of dollars by construction. One credit per return as the schedule prints it."
         },
         "effective": "[2025-01-01, 2027-01-01)",
         "byFilingStatus": {},
         "parameters": {
-          "childAddOn": "$250.00",
-          "investmentIncomeLimit2025": "$11,950.00"
+          "credit": "$250.00",
+          "phaseoutStart": "$25,000.00",
+          "phaseoutEnd": "$30,000.00",
+          "reductionPerHundred": "$5.00"
         }
       },
       {
-        "ruleId": "us.federal.actc",
-        "title": "Additional child tax credit — refundable (simplified: 3+-child SS-tax alternative not modeled)",
+        "ruleId": "us.vt.vheip_credit",
+        "title": "Vermont Higher Education Investment Plan credit 2025 — 10% of the first $2,500 contributed per beneficiary ($5,000 per beneficiary on a joint return), nonrefundable (Schedule IN-119 Part II line 1)",
         "citation": {
-          "source": "26 U.S.C. § 24(d), (h)(5); Rev. Proc. 2024-40 § 2.05 / Rev. Proc. 2025-32 § 4.05",
-          "section": "§ 24(d)(1); § 24(h)(5)",
-          "url": "https://www.law.cornell.edu/uscode/text/26/24",
-          "excerpt": "The credit is refundable up to $1,700 per qualifying child (2025 and 2026, as adjusted), limited to 15 percent of so much of earned income as exceeds $2,500, and to the portion of the credit not used against tax. [The § 24(d)(1)(B)(ii) alternative for taxpayers with 3+ children (social security taxes minus EIC) is NOT modeled — it can only increase the refund at very low earned income; disclosed. Earned income approximated as wages.]"
+          "source": "32 V.S.A. § 5825a(a); 2025 Schedule IN-119 Part II line 1 and its instructions p. 2",
+          "section": "32 V.S.A. § 5825a(a); Schedule IN-119 Part II line 1",
+          "url": "https://legislature.vermont.gov/statutes/section/32/151/05825a",
+          "excerpt": "STATUTE (§ 5825a(a), verbatim): 'A taxpayer of this State, including each spouse filing a joint return, who makes a contribution to a Vermont Higher Education Investment Plan account ... shall be eligible for a nonrefundable credit against the tax imposed under section 5822 of this title of 10 percent of the first $2,500.00 per beneficiary, contributed by the taxpayer during the taxable year to a Vermont Higher Education Investment Plan account'. INSTRUCTIONS (Schedule IN-119, verbatim): 'For jointly filed returns, the tax credit equals 10% of the first $5,000 of contributions per beneficiary.' FORM (verbatim): '1. Vermont Higher Education Investment Plan (VHEIP) ... 2025 Contribution eligible for credit ... TIMES (X) .10'. ENCODING: contributions capped at $2,500 ($5,000 joint) times the number of beneficiaries, then 10% — the per-beneficiary cap is applied in aggregate because the form takes one contribution total; a caller with unequal contributions across beneficiaries must pass the already-capped eligible total. Nonrefundable, into Form IN-111 line 18 through Schedule IN-119 Part II line 9. Rollovers and the 10% recapture of non-qualified distributions (§ 5825a(b)) are out of scope."
         },
-        "effective": "[2025-01-01, open)",
+        "effective": "[2025-01-01, 2027-01-01)",
         "byFilingStatus": {},
         "parameters": {
-          "refundableCapPerChild": "$1,700.00",
-          "earnedIncomeFloor": "$2,500.00"
+          "perBeneficiary": "$2,500.00",
+          "perBeneficiaryJoint": "$5,000.00"
         }
       }
     ],
-    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+    "versions": {
+      "engine": "0.1.0",
+      "composer": "0.6.0",
+      "corpus": "0.39.0",
+      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+    }
   }
 }

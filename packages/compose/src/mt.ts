@@ -15,6 +15,7 @@
  * qualified business income deduction is expressly excluded.
  */
 import { c, rd, max0, min2, fmtD, type Cents } from "./money.js";
+import { markUnpublished } from "./incomplete.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 const D = (x: unknown): Cents => rd(c(x));
@@ -42,8 +43,7 @@ export function composeMT(input: StateReturnInput, evalStateTax: StateTaxEvaluat
     } catch (err) {
       if (!isNoApplicableRule(err)) throw err;
       missing.add(target);
-      notes.push(`MT ${label}: ${target} has no applicable rule as of this date — this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) — line left blank; re-run once the booklet is out`);
-      return null;
+      return markUnpublished(notes, { form: "MT Form 2", line: label, target, note: `MT ${label}: ${target} has no applicable rule as of this date — this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) — line left blank; re-run once the booklet is out`, action: "re-run once the Department's November 1 indexed amounts are encoded; until then this line set is not a complete return" });
     }
   };
 

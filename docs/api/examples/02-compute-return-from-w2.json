@@ -41,6 +41,8 @@
   "decodedResult": {
     "ok": true,
     "asOf": "2025-12-31",
+    "complete": true,
+    "incomplete": [],
     "documentNotes": [
       "taxpayer age at year end: 35 (from 1990-05-14)",
       "W-2 #1: box 17 state income tax $2400.00 is DOCUMENTED — include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous"
@@ -737,6 +739,14 @@
         "rationale": "Assumed no Marketplace coverage absent contrary input"
       }
     ],
-    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+    "artifactHash": "sha256:be14deea1aa87dfd7ec22f3899e8c4f5d0a056e6e33d2c2c139ecb6aba1f4d39",
+    "proofScope": "the proof artifact covers the us.federal.net_tax derivation (lines 9-24); other lines are separate cited targets evaluated on the same rounded facts — request each with calculate_tax + includeProof for its own tree",
+    "versions": {
+      "engine": "0.1.0",
+      "composer": "0.6.0",
+      "corpus": "0.39.0",
+      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+    }
   }
 }

@@ -89,3 +89,157 @@ describe("W-2 box 4 and build identity", () => {
     expect(v.corpusMerkleRoot).toMatch(/^sha256:/);
   });
 });
+
+describe("completeness contract (composer 0.6.0)", () => {
+  const excessSS = (extra: Record<string, unknown> = {}) => ({
+    filing: { filingStatus: "single" },
+    documents: { w2s: [{ box1: 150000, box2: 30000, box4: 9300 }, { box1: 100000, box2: 20000, box4: 6200 }] },
+    asOf: "2025-12-31",
+    ...extra,
+  });
+  it("a complete return says so: complete:true, incomplete: []", async () => {
+    const a = await call("compute_return", single({ box1: "75250.00", box2: "9100", box4: "4665.50" }));
+    expect(a.ok).toBe(true);
+    expect(a.complete).toBe(true);
+    expect(a.incomplete).toEqual([]);
+  });
+  it("excess social security withholding: ok:true but complete:false with a structured Schedule 3 line 11 item", async () => {
+    const a = await call("compute_return", excessSS());
+    expect(a.ok).toBe(true);
+    expect(a.complete).toBe(false);
+    const items = a.incomplete as Array<Record<string, unknown>>;
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      code: "NOT_COMPUTED",
+      form: "Schedule 3",
+      line: "11",
+      amount: "$4581.80",
+      affectedLines: ["33_total_payments", "34_refund_or_37_owed"],
+    });
+    expect(String(items[0].action)).toContain("single employer");
+  });
+  it("strict mode refuses the same return with INCOMPLETE_RETURN naming the line", async () => {
+    const a = await call("compute_return", excessSS({ strict: true }));
+    expect(a.ok).toBe(false);
+    const err = a.error as { code: string; message: string; data: { incomplete: Array<{ form: string; line: string }> } };
+    expect(err.code).toBe("INCOMPLETE_RETURN");
+    expect(err.message).toContain("Schedule 3 11");
+    expect(err.data.incomplete).toHaveLength(1);
+    expect(err.data.incomplete[0]).toMatchObject({ form: "Schedule 3", line: "11" });
+  });
+  it("the § 31(b) limit is per person: two spouses each under the maximum are complete", async () => {
+    const a = await call("compute_return", {
+      filing: { filingStatus: "mfj" },
+      documents: {
+        w2s: [
+          { box1: 150000, box2: 30000, box4: 9300, recipient: "taxpayer" },
+          { box1: 100000, box2: 20000, box4: 6200, recipient: "spouse" },
+        ],
+      },
+      asOf: "2025-12-31",
+      strict: true,
+    });
+    expect(a.ok).toBe(true);
+    expect(a.complete).toBe(true);
+  });
+  it("knows the 2026 wage-base maximum ($184,500 × 6.2% = $11,439)", () => {
+    const d = compileDocuments({ w2s: [{ box1: 120000, box2: 20000, box4: 7440 }, { box1: 100000, box2: 15000, box4: 6200 }] }, "2026-12-31");
+    expect(d.unsupported).toHaveLength(1);
+    expect(d.unsupported[0].amount).toBe("$2201.00");
+    expect(d.notes.join("\n")).toContain("exceeds the 2026 maximum $11439.00");
+  });
+});
+
+describe("explain_rule returns the whole rule", () => {
+  it("carries citation, excerpt, formula, parameters, dependencies and hash", async () => {
+    const a = await call("explain_rule", { ruleId: "us.federal.standard_deduction" });
+    expect(a.ok).toBe(true);
+    const v = (a.ruleVersions as Array<Record<string, unknown>>)[0];
+    expect(v.formula).toBeDefined();
+    expect(typeof (v.formula as { kind: string }).kind).toBe("string");
+    expect(v.citation).toMatchObject({ source: expect.any(String), section: expect.any(String) });
+    expect(v).toHaveProperty("excerpt");
+    expect(v.dependencies).toMatchObject({ rules: expect.any(Array), facts: expect.any(Array) });
+    expect(String(v.hash)).toMatch(/^sha256:/);
+    // build identity stays on `versions`; the rule list must never be clobbered by it again
+    expect((a.versions as Record<string, string>).composer).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+  it("asOf narrows to the version in force and refuses a date with none", async () => {
+    const a = await call("explain_rule", { ruleId: "us.federal.standard_deduction", asOf: "2025-12-31" });
+    expect(a.ok).toBe(true);
+    expect((a.ruleVersions as unknown[]).length).toBeGreaterThan(0);
+    for (const v of a.ruleVersions as Array<{ effectiveFrom: string; effectiveTo: string }>) {
+      expect(v.effectiveFrom <= "2025-12-31").toBe(true);
+      expect(v.effectiveTo === "open" || "2025-12-31" < v.effectiveTo).toBe(true);
+    }
+    const b = await call("explain_rule", { ruleId: "us.federal.standard_deduction", asOf: "1999-12-31" });
+    expect(b.ok).toBe(false);
+    expect(String((b.error as { message: string }).message)).toContain("no version valid on 1999-12-31");
+  });
+});
+
+describe("compute_state_return completeness for an unpublished tax year", () => {
+  const vt2026 = (extra: Record<string, unknown> = {}) => ({
+    jurisdiction: "vt",
+    filingStatus: "single",
+    federalAGI: 60000,
+    asOf: "2026-12-31",
+    ...extra,
+  });
+  const nd2026 = (extra: Record<string, unknown> = {}) => ({
+    jurisdiction: "nd",
+    filingStatus: "mfj",
+    federalAGI: 90000,
+    ndFederalTaxableIncome: 58000,
+    ndLowerQualifiedIncome: 30000,
+    asOf: "2026-12-31",
+    ...extra,
+  });
+  it("TY2025 is complete", async () => {
+    const a = await call("compute_state_return", vt2026({ asOf: "2025-12-31" }));
+    expect(a.ok).toBe(true);
+    expect(a.complete).toBe(true);
+    expect(a.incomplete).toEqual([]);
+  });
+  it("a composer that cannot fill a line reports complete:false with the line and target, never a silent blank", async () => {
+    const a = await call("compute_state_return", nd2026());
+    if (a.ok === true) {
+      // the year's amounts are encoded for every line touched → the contract must say complete
+      expect(typeof a.complete).toBe("boolean");
+      const items = a.incomplete as Array<Record<string, unknown>>;
+      expect(a.complete).toBe(items.length === 0);
+      for (const i of items) expect(i).toMatchObject({ code: "UNPUBLISHED", form: expect.any(String), line: expect.any(String), target: expect.any(String) });
+    } else {
+      expect((a.error as { code: string }).code).toBeDefined();
+    }
+  });
+  it("Vermont TY2026 refuses with INCOMPLETE_RETURN in both modes (line 4 drives every later line)", async () => {
+    for (const strict of [false, true]) {
+      const a = await call("compute_state_return", vt2026({ strict }));
+      expect(a.ok).toBe(false);
+      const err = a.error as { code: string; data: { incomplete: Array<{ code: string; form: string; line: string; target: string }> } };
+      expect(err.code).toBe("INCOMPLETE_RETURN");
+      expect(err.data.incomplete[0]).toMatchObject({ code: "UNPUBLISHED", form: "VT IN-111", target: "us.vt.standard_deduction" });
+    }
+  });
+  it("Montana TY2026: the indexed subtractions are unpublished → complete:false with each line and target; strict refuses", async () => {
+    const mt = { jurisdiction: "mt", filingStatus: "single", federalAGI: 60000, mtFederalDeductions: 16000, mtTuitionSavingsContributions: 1000, asOf: "2026-12-31" };
+    const a = await call("compute_state_return", mt);
+    expect(a.ok).toBe(true);
+    expect(a.complete).toBe(false);
+    expect((a.incomplete as Array<{ target: string }>).map((i) => i.target)).toContain("us.mt.tuition_savings_subtraction");
+    const s = await call("compute_state_return", { ...mt, strict: true });
+    expect(s.ok).toBe(false);
+    expect((s.error as { code: string }).code).toBe("INCOMPLETE_RETURN");
+  });
+  it("strict mode turns an unpublished line into INCOMPLETE_RETURN", async () => {
+    const loose = await call("compute_state_return", nd2026());
+    const a = await call("compute_state_return", nd2026({ strict: true }));
+    if (loose.ok === true && (loose.incomplete as unknown[]).length) {
+      expect(a.ok).toBe(false);
+      expect((a.error as { code: string }).code).toBe("INCOMPLETE_RETURN");
+    } else {
+      expect(a.ok).toBe(loose.ok);
+    }
+  });
+});

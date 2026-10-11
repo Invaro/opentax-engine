@@ -5,7 +5,7 @@
     "version": "corpus 0.39.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
     "x-corpus-merkle-root": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "x-generated": "2026-09-09T21:30:06.179Z"
+    "x-generated": "2026-10-11T01:50:15.466Z"
   },
   "servers": [
     {
@@ -5188,7 +5188,7 @@
                                     },
                                     "box4": {
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
-                                      "description": "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"
+                                      "description": "social security tax withheld — recorded and summed per person; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed: when it is owed the response reports complete:false with the item under `incomplete`, and strict mode refuses with INCOMPLETE_RETURN"
                                     },
                                     "box5": {
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
@@ -5531,7 +5531,7 @@
                           },
                           "strict": {
                             "type": "boolean",
-                            "description": "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes."
+                            "description": "strict mode for completed returns: refuse instead of finishing a return on an assumption. A transcribed document that omits a box the return depends on (e.g. W-2 box 2) refuses with NEEDS_FACTS naming the box; a return that depends on an item this build does not compute (e.g. the Schedule 3 line 11 excess social security credit) refuses with INCOMPLETE_RETURN listing each item under error.data.incomplete. Default false — the $0 assumption goes to documentNotes and the uncomputed items come back as `incomplete` with complete:false."
                           },
                           "target": {
                             "type": "string",
@@ -10462,6 +10462,10 @@
                           "asOf": {
                             "type": "string",
                             "description": "year-end date, e.g. 2025-12-31 — REQUIRED"
+                          },
+                          "strict": {
+                            "type": "boolean",
+                            "description": "refuse with INCOMPLETE_RETURN (error.data.incomplete lists each affected printed line) when any line's target has no rule valid on asOf — a tax year whose amounts are not yet published. Default false — the response then carries complete:false and the same list under `incomplete`, and the affected lines hold a $0 placeholder."
                           },
                           "filingJoint": {
                             "type": "boolean"
@@ -15551,7 +15555,7 @@
                                     },
                                     "box4": {
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
-                                      "description": "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"
+                                      "description": "social security tax withheld — recorded and summed per person; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed: when it is owed the response reports complete:false with the item under `incomplete`, and strict mode refuses with INCOMPLETE_RETURN"
                                     },
                                     "box5": {
                                       "$ref": "#/properties/documents/properties/w2s/items/properties/box2",
@@ -15894,7 +15898,7 @@
                           },
                           "strict": {
                             "type": "boolean",
-                            "description": "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes."
+                            "description": "strict mode for completed returns: refuse instead of finishing a return on an assumption. A transcribed document that omits a box the return depends on (e.g. W-2 box 2) refuses with NEEDS_FACTS naming the box; a return that depends on an item this build does not compute (e.g. the Schedule 3 line 11 excess social security credit) refuses with INCOMPLETE_RETURN listing each item under error.data.incomplete. Default false — the $0 assumption goes to documentNotes and the uncomputed items come back as `incomplete` with complete:false."
                           },
                           "target": {
                             "type": "string",
@@ -16087,7 +16091,7 @@
       "post": {
         "operationId": "explain_rule",
         "summary": "explain_rule",
-        "description": "Get a tax rule's statutory citation, verbatim excerpt, validity window, parameters, and dependencies. Use to quote the actual law behind an answer.",
+        "description": "Get a tax rule in full: statutory citation with its verbatim excerpt, validity window, parameters, the formula and applicability guard (the rule IR — rules are data), the rules and facts it depends on, and its content hash. Use to quote and explain the actual law behind an answer. Pass asOf to see only the version in force on that date.",
         "tags": [
           "tools"
         ],
@@ -16135,7 +16139,11 @@
                         "properties": {
                           "ruleId": {
                             "type": "string",
-                            "description": "e.g. \"us.federal.standard_deduction\" — list via calculate_tax proof or corpus"
+                            "description": "e.g. \"us.federal.standard_deduction\" — list via calculate_tax proof, search_tax_rules, or the corpus"
+                          },
+                          "asOf": {
+                            "type": "string",
+                            "description": "ISO date; when given, only the version valid on that date is returned (omit for every version)"
                           }
                         },
                         "required": [

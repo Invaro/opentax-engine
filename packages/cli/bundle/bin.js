@@ -42910,6 +42910,40 @@ var coerce = {
 };
 var NEVER = INVALID;
 
+// ../compose/dist/incomplete.js
+var SINK = /* @__PURE__ */ new WeakMap();
+function incompleteItems(notes) {
+  let items = SINK.get(notes);
+  if (!items) {
+    items = [];
+    SINK.set(notes, items);
+  }
+  return items;
+}
+function markUnpublished(notes, p) {
+  notes.push(p.note);
+  incompleteItems(notes).push({
+    code: "UNPUBLISHED",
+    form: p.form,
+    line: p.line,
+    item: p.line,
+    target: p.target,
+    reason: `${p.target} has no applicable rule as of this date \u2014 this tax year's amount is not yet published or encoded`,
+    action: p.action ?? "re-run once the year's forms publish; until then this line set is not a complete return",
+    rendered: p.rendered ?? "$0.00 placeholder"
+  });
+  return null;
+}
+var IncompleteReturnRefusal = class extends Error {
+  code = "INCOMPLETE_RETURN";
+  incomplete;
+  constructor(message, incomplete) {
+    super(message);
+    this.name = "IncompleteReturnRefusal";
+    this.incomplete = incomplete;
+  }
+};
+
 // ../compose/dist/money.js
 var c = (d3) => BigInt(Math.round((d3 ?? 0) * 100));
 var rd25 = (x) => {
@@ -45873,8 +45907,7 @@ function composeNM(input, evalStateTax, notes) {
     } catch (err) {
       if (!isNoApplicableRule(err))
         throw err;
-      notes.push(`NM ${label}: the inflation-adjusted table for this tax year has not been published by TRD (${target} has no applicable rule as of this date) \u2014 line left blank; re-run when the PIT-RC instructions are out`);
-      return null;
+      return markUnpublished(notes, { form: "NM PIT-1 / PIT-RC", line: label, target, note: `NM ${label}: the inflation-adjusted table for this tax year has not been published by TRD (${target} has no applicable rule as of this date) \u2014 line left blank; re-run when the PIT-RC instructions are out`, action: "re-run when TRD publishes the PIT-RC instructions; until then this line set is not a complete return" });
     }
   };
   const l5 = dependentFiler ? 0 : 1 + (mfj ? 1 : 0) + deps;
@@ -47081,8 +47114,7 @@ function composeRI(input, evalStateTax, notes) {
       if (!isNoApplicableRule2(err))
         throw err;
       unpublished = true;
-      notes.push(`RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date \u2014 they publish in the ~November advisory) \u2014 line left blank; re-run once the advisory is out`);
-      return null;
+      return markUnpublished(notes, { form: "RI-1040", line: label, target, note: `RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date \u2014 they publish in the ~November advisory) \u2014 line left blank; re-run once the advisory is out`, action: "re-run once the Division's November advisory is encoded; until then this line set is not a complete return" });
     }
   };
   const l1 = D7(input.federalAGI);
@@ -47323,8 +47355,7 @@ function composeMT(input, evalStateTax, notes) {
       if (!isNoApplicableRule3(err))
         throw err;
       missing.add(target);
-      notes.push(`MT ${label}: ${target} has no applicable rule as of this date \u2014 this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) \u2014 line left blank; re-run once the booklet is out`);
-      return null;
+      return markUnpublished(notes, { form: "MT Form 2", line: label, target, note: `MT ${label}: ${target} has no applicable rule as of this date \u2014 this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) \u2014 line left blank; re-run once the booklet is out`, action: "re-run once the Department's November 1 indexed amounts are encoded; until then this line set is not a complete return" });
     }
   };
   const l1 = D8(input.federalAGI);
@@ -47497,8 +47528,7 @@ function composeDE(input, evalStateTax, notes) {
       if (!isNoApplicableRule4(err))
         throw err;
       missing.add(target);
-      sink.push(`DE ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms are published`);
-      return null;
+      return markUnpublished(sink, { form: "DE PIT-RES", line: label, target, note: `DE ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms are published` });
     }
   };
   const tryEval = tryEvalTo(notes);
@@ -47757,8 +47787,7 @@ function composeND(input, evalStateTax, notes) {
     } catch (err) {
       if (!isNoApplicableRule5(err))
         throw err;
-      notes.push(`ND ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish`);
-      return null;
+      return markUnpublished(notes, { form: "ND-1", line: label, target, note: `ND ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish` });
     }
   };
   const asOf = input.asOf;
@@ -47936,8 +47965,7 @@ function composeVT(input, evalStateTax, notes) {
     } catch (err) {
       if (!isNoApplicableRule6(err))
         throw err;
-      notes.push(`VT ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish`);
-      return null;
+      return markUnpublished(notes, { form: "VT IN-111", line: label, target, note: `VT ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish` });
     }
   };
   const agiFacts = { vtFederalAgi: l1 };
@@ -47982,8 +48010,9 @@ function composeVT(input, evalStateTax, notes) {
   const boxes = Math.max(0, input.ageOrBlindBoxes ?? 0);
   const l4 = tryEval("us.vt.standard_deduction", 0n, { vtAdditionalDeductionBoxes: boxes }, "line 4 (standard deduction)");
   const boxCap = mfj || qss || fs === "mfs" ? 4 : 2;
-  if (l4 === null)
-    throw new Error("The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) \u2014 Form IN-111 line 4 cannot be composed. The 2026 Form IN-111 publishes around December 2026; re-run then");
+  if (l4 === null) {
+    throw new IncompleteReturnRefusal("The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) \u2014 Form IN-111 line 4 cannot be composed, and every line after it depends on it. The 2026 Form IN-111 publishes around December 2026; re-run then", incompleteItems(notes).map((i) => ({ ...i, rendered: "not composed \u2014 the whole return refuses", action: "re-run once the 2026 Form IN-111 publishes (around December 2026); no line set is returned until then" })));
+  }
   if (boxes > 0)
     notes.push(`VT line 4: standard deduction ${fmtD(l4)} \u2014 ${fmtD(l4 - 125000n * BigInt(Math.min(boxes, boxCap)))} for the filing status plus $1,250 for each of ${Math.min(boxes, boxCap)} federal age-65/blind box(es) (the chart allows at most two for single and head of household, four for the joint / qualifying widow(er) row and for separate)`);
   const dependentFiler = input.claimedAsDependent === true;
@@ -50039,6 +50068,10 @@ function makeStateTaxEvaluator(runTarget, input) {
 }
 function composeStateReturn(input, evalStateTax) {
   const notes = [];
+  const lines = composeLines(input, evalStateTax, notes);
+  return { lines, notes, incomplete: incompleteItems(notes) };
+}
+function composeLines(input, evalStateTax, notes) {
   const fs = input.filingStatus;
   if (fs) {
     input.filingJoint = fs === "mfj";
@@ -50050,66 +50083,66 @@ function composeStateReturn(input, evalStateTax) {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me/hi/vt state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
-    return { lines: composeIL(input, evalStateTax, notes), notes };
+    return composeIL(input, evalStateTax, notes);
   if (j === "va")
-    return { lines: composeVA(input, evalStateTax, notes), notes };
+    return composeVA(input, evalStateTax, notes);
   if (j === "ca")
-    return { lines: composeCA(input, evalStateTax, notes), notes };
+    return composeCA(input, evalStateTax, notes);
   if (j === "pa")
-    return { lines: composePA(input, evalStateTax, notes), notes };
+    return composePA(input, evalStateTax, notes);
   if (j === "nj")
-    return { lines: composeNJ(input, evalStateTax, notes), notes };
+    return composeNJ(input, evalStateTax, notes);
   if (j === "oh")
-    return { lines: composeOH(input, evalStateTax, notes), notes };
+    return composeOH(input, evalStateTax, notes);
   if (j === "nc")
-    return { lines: composeNC(input, evalStateTax, notes), notes };
+    return composeNC(input, evalStateTax, notes);
   if (j === "ga")
-    return { lines: composeGA(input, evalStateTax, notes), notes };
+    return composeGA(input, evalStateTax, notes);
   if (j === "md")
-    return { lines: composeMD(input, evalStateTax, notes), notes };
+    return composeMD(input, evalStateTax, notes);
   if (j === "mo")
-    return { lines: composeMO(input, evalStateTax, notes), notes };
+    return composeMO(input, evalStateTax, notes);
   if (j === "wi")
-    return { lines: composeWI(input, evalStateTax, notes), notes };
+    return composeWI(input, evalStateTax, notes);
   if (j === "mn")
-    return { lines: composeMN(input, evalStateTax, notes), notes };
+    return composeMN(input, evalStateTax, notes);
   if (j === "sc")
-    return { lines: composeSC(input, evalStateTax, notes), notes };
+    return composeSC(input, evalStateTax, notes);
   if (j === "al")
-    return { lines: composeAL(input, evalStateTax, notes), notes };
+    return composeAL(input, evalStateTax, notes);
   if (j === "or")
-    return { lines: composeOR(input, evalStateTax, notes), notes };
+    return composeOR(input, evalStateTax, notes);
   if (j === "ok")
-    return { lines: composeOK(input, evalStateTax, notes), notes };
+    return composeOK(input, evalStateTax, notes);
   if (j === "ct")
-    return { lines: composeCT(input, evalStateTax, notes), notes };
+    return composeCT(input, evalStateTax, notes);
   if (j === "ks")
-    return { lines: composeKS(input, evalStateTax, notes), notes };
+    return composeKS(input, evalStateTax, notes);
   if (j === "ar")
-    return { lines: composeAR(input, evalStateTax, notes), notes };
+    return composeAR(input, evalStateTax, notes);
   if (j === "nm")
-    return { lines: composeNM(input, evalStateTax, notes), notes };
+    return composeNM(input, evalStateTax, notes);
   if (j === "ne")
-    return { lines: composeNE(input, evalStateTax, notes), notes };
+    return composeNE(input, evalStateTax, notes);
   if (j === "id")
-    return { lines: composeID(input, evalStateTax, notes), notes };
+    return composeID(input, evalStateTax, notes);
   if (j === "wv")
-    return { lines: composeWV(input, evalStateTax, notes), notes };
+    return composeWV(input, evalStateTax, notes);
   if (j === "me")
-    return { lines: composeME(input, evalStateTax, notes), notes };
+    return composeME(input, evalStateTax, notes);
   if (j === "hi")
-    return { lines: composeHI(input, evalStateTax, notes), notes };
+    return composeHI(input, evalStateTax, notes);
   if (j === "ri")
-    return { lines: composeRI(input, evalStateTax, notes), notes };
+    return composeRI(input, evalStateTax, notes);
   if (j === "mt")
-    return { lines: composeMT(input, evalStateTax, notes), notes };
+    return composeMT(input, evalStateTax, notes);
   if (j === "de")
-    return { lines: composeDE(input, evalStateTax, notes), notes };
+    return composeDE(input, evalStateTax, notes);
   if (j === "nd")
-    return { lines: composeND(input, evalStateTax, notes), notes };
+    return composeND(input, evalStateTax, notes);
   if (j === "vt")
-    return { lines: composeVT(input, evalStateTax, notes), notes };
-  return { lines: composeNY(input, evalStateTax, notes), notes };
+    return composeVT(input, evalStateTax, notes);
+  return composeNY(input, evalStateTax, notes);
 }
 
 // dist/commands/state.js

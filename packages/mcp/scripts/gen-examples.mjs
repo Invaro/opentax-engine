@@ -28,7 +28,7 @@ const CASES = [
   ["07-verify-fact", "verify_fact", { query: "standard deduction married filing jointly 2025", claimedAmount: 30000 }],
   ["08-refusal-needs-facts", "calculate_tax", { income: { wages: 50000 }, asOf: "2025-12-31" }],
   ["09-refusal-no-applicable-rule-vt-2026", "compute_state_return", { jurisdiction: "vt", asOf: "2026-12-31", filingStatus: "single", federalAGI: 60000 }],
-  ["10-explain-rule", "explain_rule", { ruleId: "us.vt.income_tax" }],
+  ["10-explain-rule", "explain_rule", { ruleId: "us.federal.standard_deduction", asOf: "2025-12-31" }],
 ];
 const index = [];
 let id = 1;

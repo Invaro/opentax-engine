@@ -22434,8 +22434,23 @@ function coerceFacts(corpus2, plain) {
   return out;
 }
 
+// dist/completeness.js
+var IncompleteReturnError = class extends OpenTaxError {
+  incomplete;
+  constructor(incomplete, message) {
+    super("INCOMPLETE_RETURN", message ?? `strict mode: the return depends on ${incomplete.length} item(s) this build does not compute: ${incomplete.map((i) => `${i.form} ${i.line}`).join("; ")}`);
+    this.incomplete = incomplete;
+  }
+  data() {
+    return {
+      incomplete: this.incomplete,
+      hint: "every item names the printed form and line, the reason, and what to do; the non-strict call returns the same list under `incomplete` with complete:false"
+    };
+  }
+};
+
 // dist/version.js
-var COMPOSER_VERSION = "0.5.0";
+var COMPOSER_VERSION = "0.6.0";
 
 // ../solve/dist/sweep.js
 function evaluateAt(corpus2, baseFacts, options, atCents) {
@@ -22757,6 +22772,41 @@ function factCheck(corpus2, query, claimedCents, asOf, filingStatus) {
     alternatives: hits.slice(1)
   };
 }
+
+// ../compose/dist/incomplete.js
+var SINK = /* @__PURE__ */ new WeakMap();
+function incompleteItems(notes) {
+  let items = SINK.get(notes);
+  if (!items) {
+    items = [];
+    SINK.set(notes, items);
+  }
+  return items;
+}
+function markUnpublished(notes, p) {
+  notes.push(p.note);
+  incompleteItems(notes).push({
+    code: "UNPUBLISHED",
+    form: p.form,
+    line: p.line,
+    item: p.line,
+    target: p.target,
+    reason: `${p.target} has no applicable rule as of this date \u2014 this tax year's amount is not yet published or encoded`,
+    action: p.action ?? "re-run once the year's forms publish; until then this line set is not a complete return",
+    rendered: p.rendered ?? "$0.00 placeholder"
+  });
+  return null;
+}
+var IncompleteReturnRefusal = class extends Error {
+  code = "INCOMPLETE_RETURN";
+  incomplete;
+  constructor(message, incomplete) {
+    super(message);
+    this.name = "IncompleteReturnRefusal";
+    this.incomplete = incomplete;
+  }
+};
+var isIncompleteReturnRefusal = (err) => err instanceof Error && err.code === "INCOMPLETE_RETURN" && Array.isArray(err.incomplete);
 
 // ../compose/dist/money.js
 var c = (d3) => BigInt(Math.round((d3 ?? 0) * 100));
@@ -25721,8 +25771,7 @@ function composeNM(input, evalStateTax, notes) {
     } catch (err) {
       if (!isNoApplicableRule(err))
         throw err;
-      notes.push(`NM ${label}: the inflation-adjusted table for this tax year has not been published by TRD (${target} has no applicable rule as of this date) \u2014 line left blank; re-run when the PIT-RC instructions are out`);
-      return null;
+      return markUnpublished(notes, { form: "NM PIT-1 / PIT-RC", line: label, target, note: `NM ${label}: the inflation-adjusted table for this tax year has not been published by TRD (${target} has no applicable rule as of this date) \u2014 line left blank; re-run when the PIT-RC instructions are out`, action: "re-run when TRD publishes the PIT-RC instructions; until then this line set is not a complete return" });
     }
   };
   const l5 = dependentFiler ? 0 : 1 + (mfj ? 1 : 0) + deps;
@@ -26929,8 +26978,7 @@ function composeRI(input, evalStateTax, notes) {
       if (!isNoApplicableRule2(err))
         throw err;
       unpublished = true;
-      notes.push(`RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date \u2014 they publish in the ~November advisory) \u2014 line left blank; re-run once the advisory is out`);
-      return null;
+      return markUnpublished(notes, { form: "RI-1040", line: label, target, note: `RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date \u2014 they publish in the ~November advisory) \u2014 line left blank; re-run once the advisory is out`, action: "re-run once the Division's November advisory is encoded; until then this line set is not a complete return" });
     }
   };
   const l1 = D7(input.federalAGI);
@@ -27171,8 +27219,7 @@ function composeMT(input, evalStateTax, notes) {
       if (!isNoApplicableRule3(err))
         throw err;
       missing.add(target);
-      notes.push(`MT ${label}: ${target} has no applicable rule as of this date \u2014 this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) \u2014 line left blank; re-run once the booklet is out`);
-      return null;
+      return markUnpublished(notes, { form: "MT Form 2", line: label, target, note: `MT ${label}: ${target} has no applicable rule as of this date \u2014 this tax year's amount is not encoded (the indexed subtractions are set by the Department each November 1) \u2014 line left blank; re-run once the booklet is out`, action: "re-run once the Department's November 1 indexed amounts are encoded; until then this line set is not a complete return" });
     }
   };
   const l1 = D8(input.federalAGI);
@@ -27345,8 +27392,7 @@ function composeDE(input, evalStateTax, notes) {
       if (!isNoApplicableRule4(err))
         throw err;
       missing.add(target);
-      sink.push(`DE ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms are published`);
-      return null;
+      return markUnpublished(sink, { form: "DE PIT-RES", line: label, target, note: `DE ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms are published` });
     }
   };
   const tryEval = tryEvalTo(notes);
@@ -27605,8 +27651,7 @@ function composeND(input, evalStateTax, notes) {
     } catch (err) {
       if (!isNoApplicableRule5(err))
         throw err;
-      notes.push(`ND ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish`);
-      return null;
+      return markUnpublished(notes, { form: "ND-1", line: label, target, note: `ND ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish` });
     }
   };
   const asOf = input.asOf;
@@ -27784,8 +27829,7 @@ function composeVT(input, evalStateTax, notes) {
     } catch (err) {
       if (!isNoApplicableRule6(err))
         throw err;
-      notes.push(`VT ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish`);
-      return null;
+      return markUnpublished(notes, { form: "VT IN-111", line: label, target, note: `VT ${label}: ${target} has no applicable rule as of this date \u2014 line left blank; re-run once the year's forms publish` });
     }
   };
   const agiFacts = { vtFederalAgi: l1 };
@@ -27830,8 +27874,9 @@ function composeVT(input, evalStateTax, notes) {
   const boxes = Math.max(0, input.ageOrBlindBoxes ?? 0);
   const l4 = tryEval("us.vt.standard_deduction", 0n, { vtAdditionalDeductionBoxes: boxes }, "line 4 (standard deduction)");
   const boxCap = mfj || qss || fs === "mfs" ? 4 : 2;
-  if (l4 === null)
-    throw new Error("The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) \u2014 Form IN-111 line 4 cannot be composed. The 2026 Form IN-111 publishes around December 2026; re-run then");
+  if (l4 === null) {
+    throw new IncompleteReturnRefusal("The Vermont standard deduction for this tax year is not published (us.vt.standard_deduction has no applicable rule as of this date) \u2014 Form IN-111 line 4 cannot be composed, and every line after it depends on it. The 2026 Form IN-111 publishes around December 2026; re-run then", incompleteItems(notes).map((i) => ({ ...i, rendered: "not composed \u2014 the whole return refuses", action: "re-run once the 2026 Form IN-111 publishes (around December 2026); no line set is returned until then" })));
+  }
   if (boxes > 0)
     notes.push(`VT line 4: standard deduction ${fmtD(l4)} \u2014 ${fmtD(l4 - 125000n * BigInt(Math.min(boxes, boxCap)))} for the filing status plus $1,250 for each of ${Math.min(boxes, boxCap)} federal age-65/blind box(es) (the chart allows at most two for single and head of household, four for the joint / qualifying widow(er) row and for separate)`);
   const dependentFiler = input.claimedAsDependent === true;
@@ -29887,6 +29932,10 @@ function makeStateTaxEvaluator(runTarget, input) {
 }
 function composeStateReturn(input, evalStateTax) {
   const notes = [];
+  const lines = composeLines(input, evalStateTax, notes);
+  return { lines, notes, incomplete: incompleteItems(notes) };
+}
+function composeLines(input, evalStateTax, notes) {
   const fs = input.filingStatus;
   if (fs) {
     input.filingJoint = fs === "mfj";
@@ -29898,66 +29947,66 @@ function composeStateReturn(input, evalStateTax) {
     throw new Error("federalAGI is required for il/va/ca/ny/oh/nc/ga/md/mo/wi/mn/or/ok/ct/ks/nm/ne/id/wv/me/hi/vt state returns \u2014 run compute_return first and pass Form 1040 line 11 verbatim");
   }
   if (j === "il")
-    return { lines: composeIL(input, evalStateTax, notes), notes };
+    return composeIL(input, evalStateTax, notes);
   if (j === "va")
-    return { lines: composeVA(input, evalStateTax, notes), notes };
+    return composeVA(input, evalStateTax, notes);
   if (j === "ca")
-    return { lines: composeCA(input, evalStateTax, notes), notes };
+    return composeCA(input, evalStateTax, notes);
   if (j === "pa")
-    return { lines: composePA(input, evalStateTax, notes), notes };
+    return composePA(input, evalStateTax, notes);
   if (j === "nj")
-    return { lines: composeNJ(input, evalStateTax, notes), notes };
+    return composeNJ(input, evalStateTax, notes);
   if (j === "oh")
-    return { lines: composeOH(input, evalStateTax, notes), notes };
+    return composeOH(input, evalStateTax, notes);
   if (j === "nc")
-    return { lines: composeNC(input, evalStateTax, notes), notes };
+    return composeNC(input, evalStateTax, notes);
   if (j === "ga")
-    return { lines: composeGA(input, evalStateTax, notes), notes };
+    return composeGA(input, evalStateTax, notes);
   if (j === "md")
-    return { lines: composeMD(input, evalStateTax, notes), notes };
+    return composeMD(input, evalStateTax, notes);
   if (j === "mo")
-    return { lines: composeMO(input, evalStateTax, notes), notes };
+    return composeMO(input, evalStateTax, notes);
   if (j === "wi")
-    return { lines: composeWI(input, evalStateTax, notes), notes };
+    return composeWI(input, evalStateTax, notes);
   if (j === "mn")
-    return { lines: composeMN(input, evalStateTax, notes), notes };
+    return composeMN(input, evalStateTax, notes);
   if (j === "sc")
-    return { lines: composeSC(input, evalStateTax, notes), notes };
+    return composeSC(input, evalStateTax, notes);
   if (j === "al")
-    return { lines: composeAL(input, evalStateTax, notes), notes };
+    return composeAL(input, evalStateTax, notes);
   if (j === "or")
-    return { lines: composeOR(input, evalStateTax, notes), notes };
+    return composeOR(input, evalStateTax, notes);
   if (j === "ok")
-    return { lines: composeOK(input, evalStateTax, notes), notes };
+    return composeOK(input, evalStateTax, notes);
   if (j === "ct")
-    return { lines: composeCT(input, evalStateTax, notes), notes };
+    return composeCT(input, evalStateTax, notes);
   if (j === "ks")
-    return { lines: composeKS(input, evalStateTax, notes), notes };
+    return composeKS(input, evalStateTax, notes);
   if (j === "ar")
-    return { lines: composeAR(input, evalStateTax, notes), notes };
+    return composeAR(input, evalStateTax, notes);
   if (j === "nm")
-    return { lines: composeNM(input, evalStateTax, notes), notes };
+    return composeNM(input, evalStateTax, notes);
   if (j === "ne")
-    return { lines: composeNE(input, evalStateTax, notes), notes };
+    return composeNE(input, evalStateTax, notes);
   if (j === "id")
-    return { lines: composeID(input, evalStateTax, notes), notes };
+    return composeID(input, evalStateTax, notes);
   if (j === "wv")
-    return { lines: composeWV(input, evalStateTax, notes), notes };
+    return composeWV(input, evalStateTax, notes);
   if (j === "me")
-    return { lines: composeME(input, evalStateTax, notes), notes };
+    return composeME(input, evalStateTax, notes);
   if (j === "hi")
-    return { lines: composeHI(input, evalStateTax, notes), notes };
+    return composeHI(input, evalStateTax, notes);
   if (j === "ri")
-    return { lines: composeRI(input, evalStateTax, notes), notes };
+    return composeRI(input, evalStateTax, notes);
   if (j === "mt")
-    return { lines: composeMT(input, evalStateTax, notes), notes };
+    return composeMT(input, evalStateTax, notes);
   if (j === "de")
-    return { lines: composeDE(input, evalStateTax, notes), notes };
+    return composeDE(input, evalStateTax, notes);
   if (j === "nd")
-    return { lines: composeND(input, evalStateTax, notes), notes };
+    return composeND(input, evalStateTax, notes);
   if (j === "vt")
-    return { lines: composeVT(input, evalStateTax, notes), notes };
-  return { lines: composeNY(input, evalStateTax, notes), notes };
+    return composeVT(input, evalStateTax, notes);
+  return composeNY(input, evalStateTax, notes);
 }
 
 // ../corpus-us-federal/dist/occupations.js
@@ -56835,7 +56884,7 @@ var documentsShape = external_exports.object({
     box1: usd2.describe("wages, tips, other compensation"),
     box2: usd2.optional().describe("federal income tax withheld"),
     box3: usd2.optional().describe("social security wages"),
-    box4: usd2.optional().describe("social security tax withheld \u2014 recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum"),
+    box4: usd2.optional().describe("social security tax withheld \u2014 recorded and summed per person; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed: when it is owed the response reports complete:false with the item under `incomplete`, and strict mode refuses with INCOMPLETE_RETURN"),
     box5: usd2.optional().describe("Medicare wages and tips"),
     box6: usd2.optional().describe("Medicare tax withheld \u2014 Part IV excess over 1.45% of box 5 is added to withholding automatically"),
     box17: usd2.optional().describe("state income tax withheld \u2014 surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing"),
@@ -56927,6 +56976,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
   const bools = {};
   const notes = [];
   const missing = [];
+  const unsupported = [];
   const add20 = (id, c2) => {
     sums[id] = (sums[id] ?? 0n) + c2;
   };
@@ -56999,11 +57049,41 @@ function compileDocuments(docs, asOf, ctx = {}) {
       notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars4(toCents(w.box17))} is DOCUMENTED \u2014 include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
     }
   }
-  const SS_TAX_MAX = { 2025: 1091820n };
+  const SS_TAX_MAX = { 2025: 1091820n, 2026: 1143900n };
   if (ssTaxWithheld > 0n) {
     const max2 = SS_TAX_MAX[taxYear];
-    if (multiW2 && max2 !== void 0 && ssTaxWithheld > max2) {
-      notes.push(`W-2 box 4 total $${dollars4(ssTaxWithheld)} across ${w2s.length} employers exceeds the ${taxYear} maximum $${dollars4(max2)} by $${dollars4(ssTaxWithheld - max2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; claim it on the return yourself`);
+    const byPerson = /* @__PURE__ */ new Map();
+    for (const w of w2s) {
+      if (w.box4 === void 0)
+        continue;
+      const who = w.recipient ?? "taxpayer";
+      const p = byPerson.get(who) ?? { n: 0, withheld: 0n };
+      p.n += 1;
+      p.withheld += toCents(w.box4);
+      byPerson.set(who, p);
+    }
+    let excessTotal = 0n;
+    for (const [who, p] of byPerson) {
+      if (p.n < 2 || max2 === void 0 || p.withheld <= max2)
+        continue;
+      const excess = p.withheld - max2;
+      excessTotal += excess;
+      notes.push(`W-2 box 4 total $${dollars4(p.withheld)} across ${p.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars4(max2)} by $${dollars4(excess)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
+    }
+    if (excessTotal > 0n) {
+      unsupported.push({
+        code: "NOT_COMPUTED",
+        form: "Schedule 3",
+        line: "11",
+        item: "credit for excess social security tax withheld (\xA7 31(b))",
+        amount: `$${dollars4(excessTotal)}`,
+        reason: "no corpus rule computes the \xA7 31(b) excess-withholding credit; the line set excludes it",
+        action: "enter the excess on Schedule 3 line 11 (it flows to Form 1040 lines 31 and 33) unless a single employer withheld more than the maximum, in which case that employer must refund it; lines 33 and 34/37 here are understated by this amount",
+        affectedLines: ["33_total_payments", "34_refund_or_37_owed"],
+        rendered: "excluded from lines 33 and 34/37"
+      });
+    } else if (max2 === void 0 && multiW2) {
+      notes.push(`W-2 box 4 social security tax withheld $${dollars4(ssTaxWithheld)} recorded across several employers \u2014 the ${taxYear} wage-base maximum is not encoded, so the Schedule 3 line 11 excess test could not run`);
     } else {
       notes.push(`W-2 box 4 social security tax withheld $${dollars4(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
     }
@@ -57170,7 +57250,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
     facts2[id] = dollars4(c2);
   for (const [id, n] of Object.entries(ints))
     facts2[id] = n;
-  return { facts: facts2, notes, w2Box1Cents, missing };
+  return { facts: facts2, notes, w2Box1Cents, missing, unsupported };
 }
 
 // dist/schema.js
@@ -57967,7 +58047,7 @@ var GROUP_DESCRIPTIONS = {
   payments_estimates: "withholding, prior-year safe harbor, annualized installments"
 };
 var OTHER_EARNED_INCOME = external_exports.union([external_exports.number(), external_exports.string()]).optional().describe("Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 \u2014 taxable dependent care benefits (Form 2441 Part III, line 26 \u2192 line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.");
-var strictParam = external_exports.boolean().optional().describe("strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false \u2014 the $0 assumption is disclosed in documentNotes.");
+var strictParam = external_exports.boolean().optional().describe("strict mode for completed returns: refuse instead of finishing a return on an assumption. A transcribed document that omits a box the return depends on (e.g. W-2 box 2) refuses with NEEDS_FACTS naming the box; a return that depends on an item this build does not compute (e.g. the Schedule 3 line 11 excess social security credit) refuses with INCOMPLETE_RETURN listing each item under error.data.incomplete. Default false \u2014 the $0 assumption goes to documentNotes and the uncomputed items come back as `incomplete` with complete:false.");
 var includeProofParam = external_exports.boolean().optional().describe("include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false \u2014 the hashes alone are returned.");
 var individualNestedShape = (() => {
   const shape = {};
@@ -58068,6 +58148,7 @@ function buildFactsValidated(factsArg, defaultTarget) {
   const input = factsArg && typeof factsArg === "object" && !Array.isArray(factsArg) ? { ...factsArg } : {};
   let documentNotes = [];
   let documentMissing = [];
+  let documentUnsupported = [];
   let w2Box1Cents;
   const docsRaw = input.documents;
   delete input.documents;
@@ -58092,6 +58173,7 @@ function buildFactsValidated(factsArg, defaultTarget) {
     });
     documentNotes = compiled.notes;
     documentMissing = compiled.missing;
+    documentUnsupported = compiled.unsupported;
     w2Box1Cents = compiled.w2Box1Cents;
     if (strict && documentMissing.length) {
       throw new NeedsFactsError(documentMissing.map((path) => ({
@@ -58131,6 +58213,7 @@ function buildFactsValidated(factsArg, defaultTarget) {
     ...buildFacts(parsed.data, defaultTarget),
     documentNotes,
     documentMissing,
+    documentUnsupported,
     ...w2Box1Cents !== void 0 ? { w2Box1Cents } : {}
   };
 }
@@ -58145,10 +58228,15 @@ function versions() {
   };
 }
 function ok(payload) {
+  if (payload && typeof payload === "object" && "versions" in payload) {
+    throw new Error("internal: tool payload must not define `versions` (reserved for build identity)");
+  }
   const body = payload && typeof payload === "object" ? { ...payload, versions: versions() } : payload;
   return { content: [{ type: "text", text: JSON.stringify(body, null, 2) }] };
 }
 function fail(err) {
+  if (isIncompleteReturnRefusal(err))
+    err = new IncompleteReturnError(err.incomplete, err.message);
   const payload = err instanceof OpenTaxError ? { ok: false, error: err.toJSON() } : { ok: false, error: { code: "ERROR", message: String(err?.message ?? err) } };
   return {
     content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
@@ -58161,6 +58249,22 @@ var fmt2 = (cents) => {
   const dollars5 = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${sign}$${dollars5}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
+function ruleDependencies(rule) {
+  const rules = /* @__PURE__ */ new Set();
+  const facts2 = /* @__PURE__ */ new Set();
+  const roots = [rule.formula];
+  if (rule.applicability)
+    roots.push(rule.applicability);
+  for (const root of roots) {
+    walkExpr(root, (e) => {
+      if (e.kind === "rule")
+        rules.add(e.ruleId);
+      if (e.kind === "fact")
+        facts2.add(e.factId);
+    });
+  }
+  return { rules: [...rules].sort(), facts: [...facts2].sort() };
+}
 function createServer() {
   const server2 = new McpServer({ name: "opentax", version: COMPOSER_VERSION });
   server2.registerTool("calculate_tax", {
@@ -58261,7 +58365,14 @@ function createServer() {
   });
   server2.registerTool("compute_state_return", {
     description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME / HI N-11, RI-1040, MT Form 2, DE PIT-RES, ND-1, VT IN-111) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. DE filing status 4 (married filing combined separate) is TWO returns on one form: pass filingStatus 'mfs' with deCombinedSeparate plus the deSpouse* column-A inputs, and each column gets its own $3,250 deduction and its own bracket climb. MT starts from FEDERAL TAXABLE INCOME and has no standard deduction, personal exemption or Social Security subtraction of its own, so mtFederalDeductions (federal Form 1040 lines 12e and 13b) is REQUIRED and the composer refuses without it; long-term capital gains are taxed separately at 3%/4.1% on the page 2 worksheet. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold. For HI, pass federalAGI (line 7) plus hiPensionExclusion (employer-funded pensions are exempt), taxableSocialSecurity (100% subtracted), hiReservePay, dependents and hiTaxpayerAge65/hiSpouseAge65 (each 65+ oval is one more $1,144 exemption; hiDisabledPersons for the $7,000 in-lieu exemption), the Worksheets A-1 to A-6 amounts for an itemizer (no SALT cap, but hiStateLocalIncomeTaxes needs federal AGI under $100,000 / $150,000 / $200,000; the \xA7 68 limitation applies over $166,800), hiNetCapitalGain + hiNetLongTermCapitalGain for the 7.25% alternative tax, hiPresentOverNineMonths (REQUIRED attestation for the food/excise and renters credits) with hiRentPaid, hiChildCareExpenses + hiEarnedIncome (+ hiSpouseEarnedIncome) for the Schedule X credit, federalEITC (40%, refundable), hiOtherStateTaxEligible + hiOutOfStateIncome for the other-state credit, and stateWithholding; the standard deduction is $4,400 / $8,800 / $6,424 for 2025 (dependent filers: greater of $500 or hiEarnedIncome); a federal QSS uses Schedule II. For ND, the base is FEDERAL TAXABLE INCOME (Form 1040 line 15) \u2014 pass ndFederalTaxableIncome, which is REQUIRED and which the composer refuses without; it may be NEGATIVE (the booklet directs the filer to enter the negative number on line 1b even though Form 1040 line 15 shows 0), and federalAGI is line 1a only, feeding NOTHING. There is no North Dakota standard deduction and no personal exemption. The first bracket is ZERO PERCENT (0.00% / 1.95% / 2.50%), so a great many returns owe nothing at all; below $100,000 the $50 Tax Table is MANDATORY under section 57-38-30.3(10) and prices the row MIDPOINT, which the composer applies for TY2025 (set ndUseRateSchedule only to see the schedule's figure). Pass taxableSocialSecurity (excluded IN FULL, no cap or age test), ndMilitaryPay and ndMilitaryRetirement (both excluded in full), ndRailroadRetirementBenefits (line 8 \u2014 a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 by gross benefits), ndNetLongTermCapitalGain with ndCapitalGainAlreadyExcluded for the 40% exclusion and ndQualifiedDividends for the parallel 40%, ndCollegeSaveContributions ($5,000, doubled ONLY on a joint return), and ndLowerQualifiedIncome for the marriage penalty credit (joint returns only; the composer runs the whole worksheet, including the preprinted $15,750). QSS uses the joint COLUMN of the table and the joint rate schedule but is NOT a joint return \u2014 its College SAVE cap stays $5,000 and it gets no marriage penalty credit. Every North Dakota credit is NONREFUNDABLE. Schedule ND-1NR (part-year and nonresident) and Schedule ND-1FA farm income averaging are not composed. For VT, pass federalAGI (line 1) and the Schedule IN-112 pieces: taxableSocialSecurity with vtRetirementElection ('social_security' OR 'contributory_system' with vtContributorySystemIncome \u2014 the filer may elect only ONE, excluded in full at federal AGI up to $55,000 / $70,000 joint and phased out to $65,000 / $80,000), vtMilitaryRetirementIncome (a SEPARATE exclusion, full to $125,000 and phased out to $175,000, claimable in addition), vtNetAdjustedCapitalGain + vtEligibleLongTermGain + vtFederalTaxableIncome for the Schedule IN-153 exclusion (the greater of $5,000 and 40% of over-three-year gain, capped at 40% of federal taxable income), vtUsObligationInterest, vtFederalMedicalExpenses (only the excess over the Vermont deduction plus exemptions is subtracted), ageOrBlindBoxes ($1,250 each on line 4), dependents (line 5c), vtCharitableContributions (5%, max $1,000, itemizing not required), vtOtherStateIncome + vtOtherStateTaxPaid (Schedule IN-117), and the refundable Schedule IN-112 Part II inputs \u2014 federalEITC with vtEitcQualifyingChildren (38% with children, 100% WITHOUT), vtChildrenSixOrUnder ($1,000 each, phased out $20 per $1,000 of AGI over $125,000), vtFederalChildCareCredit (72%), vtVeteranDischargeRecord ($250 to $30,000 of AGI). Vermont has NO itemized deduction; below $75,000 the Tax Table is mandatory and the composer applies it; above $150,000 of federal AGI the tax is at least 3% of AGI less U.S. obligation interest. A federal QSS takes the joint deduction and column but no spouse exemption. The Renter Credit (RCC-146) and Property Tax Credit (HS-122) are separate claims, not composed; TY2026 refuses at line 4 until the 2026 standard deduction publishes.",
-    inputSchema: external_exports.object({ ...stateReturnShape, asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"), filingJoint: external_exports.boolean().optional(), filingHoh: external_exports.boolean().optional(), filingHohOrQss: external_exports.boolean().optional() }).strict()
+    inputSchema: external_exports.object({
+      ...stateReturnShape,
+      asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"),
+      strict: external_exports.boolean().optional().describe("refuse with INCOMPLETE_RETURN (error.data.incomplete lists each affected printed line) when any line's target has no rule valid on asOf \u2014 a tax year whose amounts are not yet published. Default false \u2014 the response then carries complete:false and the same list under `incomplete`, and the affected lines hold a $0 placeholder."),
+      filingJoint: external_exports.boolean().optional(),
+      filingHoh: external_exports.boolean().optional(),
+      filingHohOrQss: external_exports.boolean().optional()
+    }).strict()
   }, async (args) => {
     try {
       const asOf = args.asOf;
@@ -58271,8 +58382,19 @@ function createServer() {
         const { value } = evaluate(corpus, facts2, { asOf, target });
         return value.type === "money" ? value.cents : 0n;
       }, args);
-      const { lines, notes } = composeStateReturn(args, evalStateTax);
-      return ok({ ok: true, asOf, jurisdiction: args.jurisdiction, lines, ...notes.length ? { notes } : {} });
+      const { strict, ...composerArgs } = args;
+      const { lines, notes, incomplete } = composeStateReturn(composerArgs, evalStateTax);
+      if (strict === true && incomplete.length)
+        throw new IncompleteReturnError(incomplete);
+      return ok({
+        ok: true,
+        asOf,
+        jurisdiction: args.jurisdiction,
+        complete: incomplete.length === 0,
+        incomplete,
+        lines,
+        ...notes.length ? { notes } : {}
+      });
     } catch (err) {
       return fail(err);
     }
@@ -58284,6 +58406,9 @@ function createServer() {
     try {
       const built = buildFactsValidated(args);
       const { asOf, documentNotes } = built;
+      const incomplete = built.documentUnsupported;
+      if (args.strict === true && incomplete.length)
+        throw new IncompleteReturnError(incomplete);
       const rd26 = (c2) => {
         const neg = c2 < 0n;
         const abs = neg ? -c2 : c2;
@@ -58339,6 +58464,8 @@ function createServer() {
       return ok({
         ok: true,
         asOf,
+        complete: incomplete.length === 0,
+        incomplete,
         ...documentNotes.length ? { documentNotes } : {},
         lines: {
           // Form 1040 line 1a is W-2 box 1 ONLY; anything else folded into the
@@ -58424,28 +58551,43 @@ function createServer() {
     });
   });
   server2.registerTool("explain_rule", {
-    description: "Get a tax rule's statutory citation, verbatim excerpt, validity window, parameters, and dependencies. Use to quote the actual law behind an answer.",
+    description: "Get a tax rule in full: statutory citation with its verbatim excerpt, validity window, parameters, the formula and applicability guard (the rule IR \u2014 rules are data), the rules and facts it depends on, and its content hash. Use to quote and explain the actual law behind an answer. Pass asOf to see only the version in force on that date.",
     inputSchema: external_exports.object({
-      ruleId: external_exports.string().describe('e.g. "us.federal.standard_deduction" \u2014 list via calculate_tax proof or corpus')
+      ruleId: external_exports.string().describe('e.g. "us.federal.standard_deduction" \u2014 list via calculate_tax proof, search_tax_rules, or the corpus'),
+      asOf: external_exports.string().optional().describe("ISO date; when given, only the version valid on that date is returned (omit for every version)")
     }).strict()
-  }, async ({ ruleId }) => {
+  }, async ({ ruleId, asOf }) => {
     const versions2 = corpus.byId.get(ruleId);
     if (!versions2) {
       const near = [...corpus.byId.keys()].filter((id) => id.includes(ruleId));
       return fail(new Error(`unknown rule "${ruleId}"${near.length ? ` \u2014 did you mean: ${near.slice(0, 5).join(", ")}` : ""}`));
     }
+    const shown = asOf ? versions2.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo)) : versions2;
+    if (!shown.length) {
+      return fail(new Error(`rule "${ruleId}" has no version valid on ${asOf} \u2014 known windows: ${versions2.map((r) => `v${r.version} [${r.effectiveFrom}, ${r.effectiveTo ?? "open"})`).join(", ")}`));
+    }
     return ok({
       ok: true,
-      versions: versions2.map((r) => ({
+      ruleId,
+      ...asOf ? { asOf } : {},
+      ruleVersions: shown.map((r) => ({
         id: r.id,
         version: r.version,
+        jurisdiction: r.jurisdiction,
         title: r.title,
         citation: r.citation,
+        excerpt: r.citation.excerpt ?? null,
         effectiveFrom: r.effectiveFrom,
         effectiveTo: r.effectiveTo ?? "open",
-        parameters: r.parameters,
+        output: r.output,
+        parameters: r.parameters ?? {},
+        ...r.applicability ? { applicability: r.applicability } : {},
+        formula: r.formula,
+        ...r.overrides ? { overrides: r.overrides } : {},
+        dependencies: ruleDependencies(r),
         hash: corpus.ruleHashes.get(`${r.id}@${r.version}`)
-      }))
+      })),
+      note: "ruleVersions lists every version of the rule (one per validity window; `versions` is the build identity). formula and applicability are the rule IR (PROOF-FORMAT v2 expressions): kind 'rule' nodes reference other rules, kind 'fact' nodes read inputs, kind 'param' nodes read this rule's parameters. The hash covers id, version, citation, dates, parameters and formula."
     });
   });
   server2.registerTool("find_tax_cliffs", {

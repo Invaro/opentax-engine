@@ -25,6 +25,7 @@
  */
 
 import { z } from "zod";
+import type { IncompleteItem } from "@invaro/opentax-compose";
 import { coerceFacts, NeedsFactsError } from "@invaro/opentax-core";
 import type { TypedValueJSON } from "@invaro/opentax-core";
 import { DEFAULT_TARGET, getCorpus, matchOccupation } from "@invaro/opentax-corpus-us-federal";
@@ -886,7 +887,7 @@ const strictParam = z
   .boolean()
   .optional()
   .describe(
-    "strict mode for completed returns: if any transcribed document omits a box the return depends on (e.g. W-2 box 2 federal withholding), refuse with NEEDS_FACTS naming the box instead of treating it as $0. Default false — the $0 assumption is disclosed in documentNotes.",
+    "strict mode for completed returns: refuse instead of finishing a return on an assumption. A transcribed document that omits a box the return depends on (e.g. W-2 box 2) refuses with NEEDS_FACTS naming the box; a return that depends on an item this build does not compute (e.g. the Schedule 3 line 11 excess social security credit) refuses with INCOMPLETE_RETURN listing each item under error.data.incomplete. Default false — the $0 assumption goes to documentNotes and the uncomputed items come back as `incomplete` with complete:false.",
   );
 
 /** Opt-in: attach the full PROOF-FORMAT v2 artifact to the response. */
@@ -1044,13 +1045,14 @@ export function buildFacts(
 export function buildFactsValidated(
   factsArg: unknown,
   defaultTarget?: string,
-): ReturnType<typeof buildFacts> & { documentNotes: string[]; documentMissing: string[]; w2Box1Cents?: bigint } {
+): ReturnType<typeof buildFacts> & { documentNotes: string[]; documentMissing: string[]; documentUnsupported: IncompleteItem[]; w2Box1Cents?: bigint } {
   const input =
     factsArg && typeof factsArg === "object" && !Array.isArray(factsArg)
       ? { ...(factsArg as Record<string, unknown>) }
       : {};
   let documentNotes: string[] = [];
   let documentMissing: string[] = [];
+  let documentUnsupported: IncompleteItem[] = [];
   let w2Box1Cents: bigint | undefined;
   const docsRaw = input.documents;
   delete input.documents;
@@ -1079,6 +1081,7 @@ export function buildFactsValidated(
     });
     documentNotes = compiled.notes;
     documentMissing = compiled.missing;
+    documentUnsupported = compiled.unsupported;
     w2Box1Cents = compiled.w2Box1Cents;
     if (strict && documentMissing.length) {
       throw new NeedsFactsError(
@@ -1126,7 +1129,7 @@ export function buildFactsValidated(
   }
   return {
     ...buildFacts(parsed.data as Record<string, unknown>, defaultTarget),
-    documentNotes, documentMissing,
+    documentNotes, documentMissing, documentUnsupported,
     ...(w2Box1Cents !== undefined ? { w2Box1Cents } : {}),
   };
 }
