@@ -15,6 +15,7 @@
  * federal itemized deductions, and has no age-65 or blindness addition.
  */
 import { c, rd, max0, min2, fmtD, type Cents } from "./money.js";
+import { markUnpublished } from "./incomplete.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 const D = (x: unknown): Cents => rd(c(x));
@@ -39,8 +40,7 @@ export function composeRI(input: StateReturnInput, evalStateTax: StateTaxEvaluat
     } catch (err) {
       if (!isNoApplicableRule(err)) throw err;
       unpublished = true;
-      notes.push(`RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date — they publish in the ~November advisory) — line left blank; re-run once the advisory is out`);
-      return null;
+      return markUnpublished(notes, { form: "RI-1040", line: label, target, note: `RI ${label}: the Division has not published this tax year's inflation-adjusted amounts (${target} has no applicable rule as of this date — they publish in the ~November advisory) — line left blank; re-run once the advisory is out`, action: "re-run once the Division's November advisory is encoded; until then this line set is not a complete return" });
     }
   };
 

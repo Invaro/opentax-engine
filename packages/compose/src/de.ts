@@ -23,6 +23,7 @@
  * securities, bank accounts and real estate.
  */
 import { c, rd, max0, min2, fmtD, type Cents } from "./money.js";
+import { markUnpublished } from "./incomplete.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 const D = (x: unknown): Cents => rd(c(x));
@@ -70,8 +71,7 @@ export function composeDE(input: StateReturnInput, evalStateTax: StateTaxEvaluat
     } catch (err) {
       if (!isNoApplicableRule(err)) throw err;
       missing.add(target);
-      sink.push(`DE ${label}: ${target} has no applicable rule as of this date — line left blank; re-run once the year's forms are published`);
-      return null;
+      return markUnpublished(sink, { form: "DE PIT-RES", line: label, target, note: `DE ${label}: ${target} has no applicable rule as of this date — line left blank; re-run once the year's forms are published` });
     }
   };
   const tryEval = tryEvalTo(notes);

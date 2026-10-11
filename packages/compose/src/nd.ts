@@ -13,6 +13,7 @@
  * line 25 floors at zero and there is no refundable credit line on the form.
  */
 import { c, rd, max0, min2, fmtD, type Cents } from "./money.js";
+import { markUnpublished } from "./incomplete.js";
 import type { StateReturnInput, StateTaxEvaluator } from "./types.js";
 
 const D = (x: unknown): Cents => rd(c(x));
@@ -34,8 +35,7 @@ export function composeND(input: StateReturnInput, evalStateTax: StateTaxEvaluat
       return rd(evalStateTax(target, base, extra));
     } catch (err) {
       if (!isNoApplicableRule(err)) throw err;
-      notes.push(`ND ${label}: ${target} has no applicable rule as of this date — line left blank; re-run once the year's forms publish`);
-      return null;
+      return markUnpublished(notes, { form: "ND-1", line: label, target, note: `ND ${label}: ${target} has no applicable rule as of this date — line left blank; re-run once the year's forms publish` });
     }
   };
 

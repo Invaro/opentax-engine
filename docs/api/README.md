@@ -59,8 +59,8 @@ or, on refusal:
 | tool | what it does |
 |---|---|
 | `calculate_tax` | Individual federal computation of any target (default net tax); `includeProof: true` adds the full proof artifact. Grouped inputs: `filing`, `income`, `tips_overtime`, `retirement`, `self_employment`, `adjustments`, `itemized`, `credits`, `healthcare_ptc`, `kiddie_tax`, `investor_amt`, `rentals_passive`, `state`, `household_employer`. |
-| `compute_return` | The Form 1040 bottom-line line set from transcribed documents (W-2, 1099-R, SSA-1099, 1099-NEC/K/INT/DIV, dependents' birth dates), with Part IV withholding and § 6654 penalty. |
-| `compute_state_return` | The printed line set of a state's full-year-resident return (31 states — see the [coverage matrix](../coverage/coverage-matrix.md)). `jurisdiction` + `asOf` required; `federalAGI` required for AGI states. |
+| `compute_return` | The Form 1040 bottom-line line set from transcribed documents (W-2, 1099-R, SSA-1099, 1099-NEC/K/INT/DIV, dependents' birth dates), with Part IV withholding and § 6654 penalty. Carries the completeness contract: `complete: true\|false` and `incomplete[]` (see below). |
+| `compute_state_return` | The printed line set of a state's full-year-resident return (31 states — see the [coverage matrix](../coverage/coverage-matrix.md)). `jurisdiction` + `asOf` required; `federalAGI` required for AGI states. Same completeness contract as `compute_return`. |
 | `calculate_business_tax` | Federal business-entity computation: check-the-box classification, Form 1120 taxable income and tax (§§ 179, 168(k), 174A, 163(j), DRD, NOL, 250, GBC, FTC, BEAT), S-corp entity-level taxes, corporate estimates, AET/PHC, § 4501. Calculation only — no 1120 line set. |
 | `calculate_fiduciary_tax` | Form 1041 § 1(e) rate schedule and § 642(b) exemption on post-distribution taxable income. Retained capital gains refuse. |
 | `determine_dependent` | § 152 qualifying child / qualifying relative determination, proof on request (multiple-support agreements, divorced-parent release). |
@@ -68,11 +68,22 @@ or, on refusal:
 | `verify_fact` | Fact-check a claimed parameter ("CTC is $2,000/child") against the corpus. |
 | `lookup_tax_parameter` | Search the corpus's dollar amounts, rates and thresholds with citations. |
 | `search_tax_rules` | "Does the corpus encode this?" — rule discovery by keyword, with windows and citations. |
-| `explain_rule` | A rule's formula, parameters, validity window and verbatim law text. |
+| `explain_rule` | A rule in full under `ruleVersions`: citation and verbatim excerpt, validity window, parameters, formula and applicability (the rule IR), the rules and facts it depends on, and its hash. `asOf` narrows to the version in force. |
 | `list_input_facts` | Every input fact: id, type, default, description. |
 | `find_tax_cliffs` | Sweep one input across a range and report every discontinuity in the target. |
 | `compare_filing_statuses` | The same facts under every eligible filing status. |
 | `is_tipped_occupation` | Whether a job is on the Treasury § 224 tipped-occupation list. |
+
+## Completeness
+
+A composed return is finished or it says exactly what is not. Both composers return:
+
+| field | meaning |
+|---|---|
+| `complete` | `true` when every line the return depends on was computed by this build |
+| `incomplete` | `[]`, or one item per line that was not: `{ code, form, line, item, reason, action, target?, amount?, affectedLines?, rendered? }` |
+
+`code` is `NOT_COMPUTED` (no rule for the item exists — e.g. the Schedule 3 line 11 excess social security credit, reported with its `amount` and the Form 1040 lines it is missing from) or `UNPUBLISHED` (the target exists but has no version valid on `asOf` — a tax year whose amounts the agency has not published; the line holds a `$0.00 placeholder` and `target` names the rule). Pass `strict: true` and the same situation is a refusal instead: `ok: false`, `error.code: "INCOMPLETE_RETURN"`, `error.data.incomplete` the same list. Route on `complete` or on the code — never on `notes` or `documentNotes`, which are prose for the reader.
 
 ## Versioning
 
@@ -86,7 +97,7 @@ The endpoint is stateless: the facts in a request are computed in memory and the
 
 | HTTP | JSON-RPC | meaning |
 |---|---|---|
-| 200 with `ok: false` | — | the engine refused: `NEEDS_FACTS` (missing inputs listed), `NO_APPLICABLE_RULE` (no rule valid on `asOf`), `UNHANDLED_ENUM_CASE`, or an input validation message |
+| 200 with `ok: false` | — | the engine refused: `NEEDS_FACTS` (missing inputs listed), `INCOMPLETE_RETURN` (strict mode; `error.data.incomplete` lists each printed line this build does not compute), `NO_APPLICABLE_RULE` (no rule valid on `asOf`), `UNHANDLED_ENUM_CASE`, or an input validation message |
 | 401 | -32001 | unknown API key |
 | 429 | -32002 | rate budget exceeded |
 | 200 with `result.isError` | — | a composer refused (message says which input or which year) |

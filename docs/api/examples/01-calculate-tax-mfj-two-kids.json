@@ -735,6 +735,12 @@
     ],
     "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
     "artifactHash": "sha256:b11327a7fcaf6f8bbae452480cdc281218d48b48cbcfc98e4384bb17b7c0a5e3",
-    "note": "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice."
+    "note": "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice.",
+    "versions": {
+      "engine": "0.1.0",
+      "composer": "0.6.0",
+      "corpus": "0.39.0",
+      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+    }
   }
 }

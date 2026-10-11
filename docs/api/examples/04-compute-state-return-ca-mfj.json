@@ -31,6 +31,8 @@
     "ok": true,
     "asOf": "2025-12-31",
     "jurisdiction": "ca",
+    "complete": true,
+    "incomplete": [],
     "lines": {
       "13_federal_agi": "$150,000",
       "17_ca_agi": "$150,000",
@@ -49,6 +51,12 @@
       "97_overpaid": "$926",
       "111_amount_owed": "$0",
       "115_refund": "$926"
+    },
+    "versions": {
+      "engine": "0.1.0",
+      "composer": "0.6.0",
+      "corpus": "0.39.0",
+      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
     }
   }
 }

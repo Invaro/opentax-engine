@@ -12,6 +12,7 @@
  */
 
 import { z } from "zod";
+import type { IncompleteItem } from "@invaro/opentax-compose";
 
 const usd = z.union([z.number(), z.string()]).describe('dollars, e.g. 50000 or "1234.56"');
 const dob = z
@@ -35,7 +36,7 @@ export const documentsShape = z
             box4: usd
               .optional()
               .describe(
-                "social security tax withheld — recorded and summed; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed, a note flags it when the total exceeds the year's maximum",
+                "social security tax withheld — recorded and summed per person; the Schedule 3 line 11 excess-withholding credit (several employers over the wage-base maximum) is NOT computed: when it is owed the response reports complete:false with the item under `incomplete`, and strict mode refuses with INCOMPLETE_RETURN",
               ),
             box5: usd.optional().describe("Medicare wages and tips"),
             box6: usd.optional().describe("Medicare tax withheld — Part IV excess over 1.45% of box 5 is added to withholding automatically"),
@@ -218,6 +219,11 @@ export interface CompiledDocs {
   /** Document boxes that were not transcribed and were therefore treated as $0
    * (e.g. `documents.w2s[0].box2`). A strict caller refuses on any entry. */
   missing: string[];
+  /** Return items the documents call for that this build does not compute (the
+   * completeness contract): each names the printed form and line, the reason,
+   * and the action. Strict callers refuse on any entry (INCOMPLETE_RETURN);
+   * non-strict callers get them back as `incomplete` with complete:false. */
+  unsupported: IncompleteItem[];
   /** Sum of W-2 box 1 in cents — Form 1040 line 1a is W-2 box 1 ONLY; any other
    * amount folded into the wages fact (e.g. pre-retirement disability, Pub. 525)
    * is line 1h other earned income. */
@@ -235,6 +241,7 @@ export function compileDocuments(
   const bools: Record<string, boolean> = {};
   const notes: string[] = [];
   const missing: string[] = [];
+  const unsupported: IncompleteItem[] = [];
   const add = (id: string, c: bigint) => {
     sums[id] = (sums[id] ?? 0n) + c;
   };
@@ -329,14 +336,45 @@ export function compileDocuments(
 
   // W-2 box 4: social security tax withheld. Not a federal-income-tax payment; the only return
   // effect is the Schedule 3 line 11 credit for excess withholding across SEVERAL employers
-  // (§ 31(b)), which has no corpus rule yet — disclose rather than compute.
-  const SS_TAX_MAX: Record<number, bigint> = { 2025: 1091820n }; // 6.2% × $176,100
+  // (§ 31(b)), which has no corpus rule yet. The limit is PER PERSON — a joint return figures
+  // each spouse separately (Form 1040 instructions, Schedule 3 line 11) — so untagged W-2s are
+  // all the taxpayer's. Disclosed in the completeness contract (`unsupported`), not only in a note.
+  const SS_TAX_MAX: Record<number, bigint> = { 2025: 1091820n, 2026: 1143900n }; // 6.2% × $176,100 / $184,500
   if (ssTaxWithheld > 0n) {
     const max = SS_TAX_MAX[taxYear];
-    if (multiW2 && max !== undefined && ssTaxWithheld > max) {
+    const byPerson = new Map<string, { n: number; withheld: bigint }>();
+    for (const w of w2s) {
+      if (w.box4 === undefined) continue;
+      const who = w.recipient ?? "taxpayer";
+      const p = byPerson.get(who) ?? { n: 0, withheld: 0n };
+      p.n += 1;
+      p.withheld += toCents(w.box4);
+      byPerson.set(who, p);
+    }
+    let excessTotal = 0n;
+    for (const [who, p] of byPerson) {
+      if (p.n < 2 || max === undefined || p.withheld <= max) continue;
+      const excess = p.withheld - max;
+      excessTotal += excess;
       notes.push(
-        `W-2 box 4 total $${dollars(ssTaxWithheld)} across ${w2s.length} employers exceeds the ${taxYear} maximum $${dollars(max)} by $${dollars(ssTaxWithheld - max)} — the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; claim it on the return yourself`,
+        `W-2 box 4 total $${dollars(p.withheld)} across ${p.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars(max)} by $${dollars(excess)} — the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`,
       );
+    }
+    if (excessTotal > 0n) {
+      unsupported.push({
+        code: "NOT_COMPUTED",
+        form: "Schedule 3",
+        line: "11",
+        item: "credit for excess social security tax withheld (§ 31(b))",
+        amount: `$${dollars(excessTotal)}`,
+        reason: "no corpus rule computes the § 31(b) excess-withholding credit; the line set excludes it",
+        action:
+          "enter the excess on Schedule 3 line 11 (it flows to Form 1040 lines 31 and 33) unless a single employer withheld more than the maximum, in which case that employer must refund it; lines 33 and 34/37 here are understated by this amount",
+        affectedLines: ["33_total_payments", "34_refund_or_37_owed"],
+        rendered: "excluded from lines 33 and 34/37",
+      });
+    } else if (max === undefined && multiW2) {
+      notes.push(`W-2 box 4 social security tax withheld $${dollars(ssTaxWithheld)} recorded across several employers — the ${taxYear} wage-base maximum is not encoded, so the Schedule 3 line 11 excess test could not run`);
     } else {
       notes.push(`W-2 box 4 social security tax withheld $${dollars(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
     }
@@ -507,5 +545,5 @@ export function compileDocuments(
   const facts: Record<string, unknown> = { ...bools };
   for (const [id, c] of Object.entries(sums)) facts[id] = dollars(c);
   for (const [id, n] of Object.entries(ints)) facts[id] = n;
-  return { facts, notes, w2Box1Cents, missing };
+  return { facts, notes, w2Box1Cents, missing, unsupported };
 }
