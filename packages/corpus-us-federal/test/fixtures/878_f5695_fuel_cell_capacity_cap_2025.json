@@ -1,0 +1,19 @@
+{
+  "description": "Form 5695 fuel cell, TY2025 single 60,000: costs 20,000 -> line 9 30% = 6,000; capacity 1 kW = 2 half-kilowatts -> line 10 = 2 x $500 = $1,000 (section 25D(b)(1): $500 per half kilowatt); line 11 = min(6,000, 1,000) = 1,000; line 13 = 1,000; line 14 = 5,075; credit 1,000. Net tax 5,075 - 1,000 = $4,075.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "fuelCellPropertyCosts": 20000,
+    "fuelCellHalfKilowatts": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "407500",
+    "intermediates": {
+      "us.federal.energy.clean.line9": "600000",
+      "us.federal.energy.clean.line10": "100000",
+      "us.federal.energy.clean.line11": "100000",
+      "us.federal.energy.clean_energy_credit": "100000"
+    }
+  }
+}

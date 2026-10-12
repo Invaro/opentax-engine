@@ -1,0 +1,35 @@
+{
+  "description": "Form 5695 Part II, TY2025 single 60,000, every category: insulation 5,000 -> 1,500 capped $1,200 (18b); most expensive door 1,000 -> 300 capped $250 (19c); other doors 1,500 -> 450 (19g); 19h = 700 capped $500; windows 3,000 -> 900 capped $600 (20d); central AC 4,000 -> 1,200 capped $600 (22d); panelboard 1,000 -> 300 (25e); audit 600 -> 180 capped $150 (26c); line 27 = 1,200+500+600+600+300+150 = 3,350; line 28 = min(3,350, 1,200) = 1,200 (section 25C(b)(1)); heat pump 8,000 -> 2,400 capped $2,000 (29h, section 25C(b)(5)); line 30 = 3,200; line 31 = 5,075; line 32 = 3,200 -> Schedule 3 line 5b. Net tax 5,075 - 3,200 = $1,875.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "insulationAirSealingCosts": 5000,
+    "exteriorDoorMostExpensiveCost": 1000,
+    "exteriorDoorOtherCosts": 1500,
+    "windowsSkylightsCosts": 3000,
+    "centralAirConditionerCosts": 4000,
+    "homeEnergyAuditCosts": 600,
+    "electricalPanelCosts": 1000,
+    "heatPumpBiomassCosts": 8000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "187500",
+    "intermediates": {
+      "us.federal.energy.improvement.line18b": "120000",
+      "us.federal.energy.improvement.line19c": "25000",
+      "us.federal.energy.improvement.line19g": "45000",
+      "us.federal.energy.improvement.line19h": "50000",
+      "us.federal.energy.improvement.line20d": "60000",
+      "us.federal.energy.improvement.line22d": "60000",
+      "us.federal.energy.improvement.line25e": "30000",
+      "us.federal.energy.improvement.line26c": "15000",
+      "us.federal.energy.improvement.line27": "335000",
+      "us.federal.energy.improvement.line28": "120000",
+      "us.federal.energy.improvement.line29h": "200000",
+      "us.federal.energy.improvement.line30": "320000",
+      "us.federal.energy.improvement.line31": "507500",
+      "us.federal.energy.home_improvement_credit": "320000"
+    }
+  }
+}

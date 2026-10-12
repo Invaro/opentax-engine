@@ -1,0 +1,12 @@
+{
+  "description": "A negative Form 5695 cost is refused as invalid input (min 0), never silently clamped.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "solarElectricCosts": -5
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "error": "FACT_INVALID"
+  }
+}

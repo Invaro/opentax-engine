@@ -1,0 +1,17 @@
+{
+  "description": "Section 25C terminated for property placed in service after December 31, 2025 (OBBBA section 70505; section 25C(i)). TY2026 single 60,000, heat pump 8,000: rate 0%, line 29h 0, line 32 0. Tax on TI 43,900 (2026 standard deduction 16,100; row 43,900-43,950, midpoint 43,925: 1,240 + 12% x 31,525 = 5,023). Net tax $5,023 \u2014 no credit, by law.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "heatPumpBiomassCosts": 8000
+  },
+  "asOf": "2026-12-31",
+  "expect": {
+    "valueCents": "502300",
+    "intermediates": {
+      "us.federal.energy.improvement.rate": "0",
+      "us.federal.energy.improvement.line29h": "0",
+      "us.federal.energy.home_improvement_credit": "0"
+    }
+  }
+}

@@ -85,6 +85,108 @@ function ruleDependencies(rule: Rule): { rules: string[]; facts: string[] } {
   return { rules: [...rules].sort(), facts: [...facts].sort() };
 }
 
+/**
+ * Form 5695 printed line set — every line is its own cited corpus target, so
+ * the composer only reads and rounds. Emitted when any Form 5695 input is
+ * present (costs, fuel cell capacity, or a prior-year carryforward).
+ */
+const FORM_5695_FACTS = [
+  "solarElectricCosts", "solarWaterHeatingCosts", "smallWindEnergyCosts", "geothermalHeatPumpCosts", "batteryStorageCosts",
+  "fuelCellPropertyCosts", "fuelCellHalfKilowatts", "residentialCleanEnergyCarryforward",
+  "insulationAirSealingCosts", "exteriorDoorMostExpensiveCost", "exteriorDoorOtherCosts", "windowsSkylightsCosts",
+  "centralAirConditionerCosts", "gasOilWaterHeaterCosts", "gasOilFurnaceBoilerCosts", "electricalPanelCosts",
+  "homeEnergyAuditCosts", "heatPumpBiomassCosts",
+];
+function composeForm5695(
+  facts: Record<string, { type: string; value: string | boolean }>,
+  asOf: string,
+  get: (target: string) => bigint,
+): Record<string, string> | null {
+  const present = FORM_5695_FACTS.some((id) => {
+    const f = facts[id];
+    return f !== undefined && f.type !== "bool" && BigInt(String(f.value)) !== 0n;
+  });
+  if (!present) return null;
+  const rd = (c: bigint): bigint => {
+    const neg = c < 0n;
+    const abs = neg ? -c : c;
+    const r = ((abs + 50n) / 100n) * 100n;
+    return neg ? -r : r;
+  };
+  const d = (c: bigint) => fmt(rd(c));
+  const money = (id: string): bigint => {
+    const f = facts[id];
+    return f && f.type === "money" ? BigInt(String(f.value)) : 0n;
+  };
+  const E = (s: string) => get(`us.federal.energy.${s}`);
+  const year = asOf.slice(0, 4);
+  if (year !== "2025") {
+    // both credits are terminated after 2025: only the carryforward path exists; the
+    // 2025 cost lines would misdescribe a later year's form, so costs are listed as such
+    const costs: Record<string, string> = {};
+    for (const id of FORM_5695_FACTS) {
+      if (id === "fuelCellHalfKilowatts" || id === "residentialCleanEnergyCarryforward") continue;
+      const c = money(id);
+      if (c !== 0n) costs[id] = d(c);
+    }
+    return {
+      "12_carryforward_from_prior_year": d(E("clean.line12")),
+      "13_total": d(E("clean.line13")),
+      "14_limitation": d(E("clean.line14")),
+      "15_residential_clean_energy_credit": d(E("clean_energy_credit")),
+      "16_carryforward_to_next_year": d(E("clean.carryforward")),
+      "32_energy_efficient_home_improvement_credit": d(E("home_improvement_credit")),
+      ...(Object.keys(costs).length ? { costs_not_creditable: JSON.stringify(costs) } : {}),
+      note: `tax year ${year}: both credits are terminated for expenditures made / property placed in service after December 31, 2025 (OBBBA §§ 70505–70506) — only line 12, the carryforward from the 2025 Form 5695 line 16, can produce a credit; the line numbers follow the 2025 form pending the ${year} form`,
+    };
+  }
+  return {
+    "1_solar_electric": d(money("solarElectricCosts")),
+    "2_solar_water_heating": d(money("solarWaterHeatingCosts")),
+    "3_small_wind": d(money("smallWindEnergyCosts")),
+    "4_geothermal_heat_pump": d(money("geothermalHeatPumpCosts")),
+    "5b_battery_storage": d(money("batteryStorageCosts")),
+    "6a_total": d(E("clean.line6a")),
+    "6b_30_percent": d(E("clean.line6b")),
+    "8_fuel_cell_costs": d(money("fuelCellPropertyCosts")),
+    "9_30_percent": d(E("clean.line9")),
+    "10_kilowatt_capacity_x_1000": d(E("clean.line10")),
+    "11_smaller_of_9_or_10": d(E("clean.line11")),
+    "12_carryforward_from_prior_year": d(E("clean.line12")),
+    "13_total": d(E("clean.line13")),
+    "14_limitation": d(E("clean.line14")),
+    "15_residential_clean_energy_credit": d(E("clean_energy_credit")),
+    "16_carryforward_to_next_year": d(E("clean.carryforward")),
+    "18a_insulation_air_sealing": d(money("insulationAirSealingCosts")),
+    "18b_30_percent_max_1200": d(E("improvement.line18b")),
+    "19a_most_expensive_door": d(money("exteriorDoorMostExpensiveCost")),
+    "19c_30_percent_max_250": d(E("improvement.line19c")),
+    "19f_other_doors": d(money("exteriorDoorOtherCosts")),
+    "19g_30_percent": d(E("improvement.line19g")),
+    "19h_doors_max_500": d(E("improvement.line19h")),
+    "20c_windows_skylights": d(money("windowsSkylightsCosts")),
+    "20d_30_percent_max_600": d(E("improvement.line20d")),
+    "22c_central_air_conditioners": d(money("centralAirConditionerCosts")),
+    "22d_30_percent_max_600": d(E("improvement.line22d")),
+    "23c_gas_oil_water_heaters": d(money("gasOilWaterHeaterCosts")),
+    "23d_30_percent_max_600": d(E("improvement.line23d")),
+    "24c_gas_oil_furnaces_boilers": d(money("gasOilFurnaceBoilerCosts")),
+    "24d_30_percent_max_600": d(E("improvement.line24d")),
+    "25c_enabling_property": d(money("electricalPanelCosts")),
+    "25e_30_percent_max_600": d(E("improvement.line25e")),
+    "26b_home_energy_audit": d(money("homeEnergyAuditCosts")),
+    "26c_30_percent_max_150": d(E("improvement.line26c")),
+    "27_total": d(E("improvement.line27")),
+    "28_smaller_of_27_or_1200": d(E("improvement.line28")),
+    "29g_heat_pumps_biomass": d(money("heatPumpBiomassCosts")),
+    "29h_30_percent_max_2000": d(E("improvement.line29h")),
+    "30_total": d(E("improvement.line30")),
+    "31_limitation": d(E("improvement.line31")),
+    "32_energy_efficient_home_improvement_credit": d(E("home_improvement_credit")),
+    note: "2025 Form 5695 (created 3/20/25), whole-dollar rounded; line 15 → Schedule 3 line 5a, line 32 → Schedule 3 line 5b; QMIDs, addresses and the yes/no gates are transcribed by you (attested by the inputs)",
+  };
+}
+
 // ---------------------------------------------------------------------------
 
 /** Build a fully-registered opentax MCP server (one per transport/session). */
@@ -279,7 +381,7 @@ server.registerTool(
   "compute_return",
   {
     description:
-      "Compute the COMPLETE Form 1040 bottom-line set in one call — the 17 lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine. Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
     inputSchema: z.object(individualNestedShape).strict(),
   },
   async (args: Record<string, unknown>) => {
@@ -334,6 +436,18 @@ server.registerTool(
       const actc = get("us.federal.actc");
       const aotcRef = get("us.federal.education.aotc_refundable");
       const refundable = get("us.federal.refundable_credits");
+      // Schedule 3 line 8 → Form 1040 line 20: every modeled nonrefundable credit other than line 19
+      const sched3 = {
+        "2_cdcc": get("us.federal.cdcc"),
+        "3_education": get("us.federal.education.nonrefundable"),
+        "4_savers": get("us.federal.savers_credit"),
+        "5a_residential_clean_energy": get("us.federal.energy.clean_energy_credit"),
+        "5b_energy_efficient_home_improvement": get("us.federal.energy.home_improvement_credit"),
+        "6c_adoption": get("us.federal.adoption.nonrefundable"),
+        "6d_schedule_r": get("us.federal.schedule_r_credit"),
+      };
+      const line20 = Object.values(sched3).reduce((t, c) => t + c, 0n);
+      const form5695 = composeForm5695(facts, asOf, get);
       const wagesFact = facts.wages;
       const wages = wagesFact && wagesFact.type === "money" ? BigInt(wagesFact.value) : 0n;
       const withheldFact = facts.federalTaxWithheld;
@@ -369,6 +483,7 @@ server.registerTool(
           "16_tax": d(tax16),
           "17_amt": d(amt),
           "19_ctc_odc": d(ctc),
+          "20_other_nonrefundable_credits": d(line20),
           "22_tax_after_credits": d(after),
           "23_other_taxes": d(other),
           "24_total_tax": fmt(total24),
@@ -382,7 +497,9 @@ server.registerTool(
           "33_total_payments": fmt(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt(balance)}` : `owed ${fmt(-balance)}`,
         },
-        note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Report these numbers as-is.",
+        schedule3: Object.fromEntries(Object.entries(sched3).map(([k, v]) => [k, d(v)])),
+        ...(form5695 ? { forms: { "5695": form5695 } } : {}),
+        note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Line 20 is the sum of the modeled Schedule 3 nonrefundable credits (schedule3); when any Form 5695 input is given, forms['5695'] carries that form's printed lines. Report these numbers as-is.",
         assumptions: proof.assumptions,
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,

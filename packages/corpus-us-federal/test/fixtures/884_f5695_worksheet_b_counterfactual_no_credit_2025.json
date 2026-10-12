@@ -1,0 +1,17 @@
+{
+  "description": "Counterfactual for the Worksheet B scenario, TY2025 MFJ 70,000, 2 children, no Form 5695: CTC limited to the full tax 4,146; ACTC = min(4,400 - 4,146 = 254, 3,400) = 254; net = -254. (With the 3,000 solar credit the refund rises by exactly 3,000: the credit displaces nonrefundable CTC into the ACTC.)",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 70000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-25400",
+    "intermediates": {
+      "us.federal.ctc": "414600",
+      "us.federal.actc": "25400",
+      "us.federal.energy.clean_energy_credit": "0"
+    }
+  }
+}

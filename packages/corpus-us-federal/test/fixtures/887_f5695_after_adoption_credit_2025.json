@@ -1,0 +1,18 @@
+{
+  "description": "Form 5695 line 14 worksheet subtracts the adoption credit (Schedule 3 line 6c), TY2025 single 60,000, adoption expenses 20,000 (nonrefundable adoption credit limited to the full tax 5,075; refundable 5,000), solar 10,000 (line 13 = 3,000): line 14 = 5,075 - 5,075 = 0 -> line 15 = 0; the whole 3,000 carries forward (line 16). Net = 0 - 5,000 refundable adoption = -$5,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "qualifiedAdoptionExpenses": 20000,
+    "solarElectricCosts": 10000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-500000",
+    "intermediates": {
+      "us.federal.adoption.nonrefundable": "507500",
+      "us.federal.energy.clean.line14": "0",
+      "us.federal.energy.clean_energy_credit": "0"
+    }
+  }
+}

@@ -30,9 +30,12 @@
  *   its own target, prior years not tracked). MFS: denied (§ 23(f)(1),
  *   rules similar to § 21(e)(2)).
  *
- * Ordering (§ 26(a); the forms' credit-limit worksheets): CDCC →
- * education → saver's → adoption(nonrefundable) → CTC, each limited to
- * the tax remaining after the ones before it.
+ * Ordering (§ 26(a); the 2025 forms' credit-limit worksheets): CDCC →
+ * education → saver's → Schedule R → Form 5695 Part II → CTC/ODC →
+ * adoption(nonrefundable) → Form 5695 Part I, each limited to the tax
+ * remaining after the ones before it; when Schedule 8812 Credit Limit
+ * Worksheet B applies, the adoption and Part I credits yield only to the
+ * non-refundable floor of the CTC and then reduce the CTC's own limit.
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
@@ -567,16 +570,16 @@ export const creditBlockRules: Rule[] = [
   adoptionRefundableRule(2, "2026-01-01", "2027-01-01", "512000", "$5,120", "Rev. Proc. 2025-32 § 3.04(3)"),
   {
     id: "us.federal.adoption.nonrefundable",
-    version: 1,
+    version: 2, // v1 sat ahead of Schedule R and the CTC; the 2025 Form 8839 Credit Limit Worksheet puts it after them (and after Form 5695 line 32)
     jurisdiction: J,
     title:
-      "Nonrefundable adoption credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's)",
+      "Nonrefundable adoption credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's + Schedule R + Form 5695 Part II + CTC/ODC)",
     citation: {
-      source: "26 U.S.C. § 23(a), (b)(4); § 26(a); Form 8839",
+      source: "26 U.S.C. § 23(a), (b)(4); § 26(a); 2025 Instructions for Form 8839, Credit Limit Worksheet—Line 17",
       section: "§ 23(b)(4); § 26(a)",
-      url: "https://www.law.cornell.edu/uscode/text/26/23",
+      url: "https://www.irs.gov/instructions/i8839",
       excerpt:
-        "The credit allowed net of its § 23(a)(4) refundable portion, limited to the tax remaining after the credits the Form 8839 worksheet subtracts first — here the §§ 21, 25A, and 25B credits.",
+        "The credit allowed net of its § 23(a)(4) refundable portion, limited to the tax remaining after the credits the Form 8839 worksheet subtracts first. Credit Limit Worksheet—Line 17: line 2, Form 1040 line 18; line 3, 'the total of any amounts from Form 1040 or Form 1040-SR, line 19*; Schedule 3 (Form 1040), lines 1 through 4, 5b, 6d, 6f, 6g, 6l, and 6m'; line 4, line 2 minus line 3; line 5, the smaller of line 1 or line 4. '* If you are directed to complete Form 8839 by Credit Limit Worksheet B in the Instructions for Schedule 8812 (Form 1040), include the amount from line 14 of Credit Limit Worksheet B instead of the amount from Form 1040, 1040-SR, or 1040-NR, line 19.' [Modeled: §§ 21, 25A, 25B, 22 (Schedule R), 25C (line 5b) and the CTC/ODC — line 19, or Worksheet B line 14 when that worksheet applies; the foreign tax, clean vehicle, mortgage interest and Form 8978 items are not modeled.]",
     },
     ...FROM,
     output: { type: "money" },
@@ -602,6 +605,9 @@ export const creditBlockRules: Rule[] = [
                 ruleRef("us.federal.cdcc"),
                 ruleRef("us.federal.education.nonrefundable"),
                 ruleRef("us.federal.savers_credit"),
+                ruleRef("us.federal.schedule_r_credit"),
+                ruleRef("us.federal.energy.home_improvement_credit"),
+                ruleRef("us.federal.energy.clean.ctc_for_limit"), // line 19, or Worksheet B line 14
               ],
             },
           },

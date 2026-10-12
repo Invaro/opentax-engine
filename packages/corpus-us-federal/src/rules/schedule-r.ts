@@ -138,9 +138,9 @@ export const scheduleRRules: Rule[] = [
   },
   {
     id: "us.federal.schedule_r_credit",
-    version: 1,
+    version: 2, // v1 subtracted the adoption credit first; the 2025 Form 8839 worksheet subtracts Schedule 3 line 6d (this credit) before the adoption credit, not after
     jurisdiction: J,
-    title: "Schedule R credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's + adoption)",
+    title: "Schedule R credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's)",
     citation: CITATION,
     effectiveFrom: "2025-01-01",
     output: { type: "money" },
@@ -165,7 +165,6 @@ export const scheduleRRules: Rule[] = [
                 ruleRef("us.federal.cdcc"),
                 ruleRef("us.federal.education.nonrefundable"),
                 ruleRef("us.federal.savers_credit"),
-                ruleRef("us.federal.adoption.nonrefundable"),
               ],
             },
           },
