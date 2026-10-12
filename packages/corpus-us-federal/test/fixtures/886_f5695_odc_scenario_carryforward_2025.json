@@ -1,0 +1,14 @@
+{
+  "description": "Form 5695 line 16 for the ODC scenario: 6,000 - 4,575 = $1,425 carried to 2026.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "otherDependents": 1,
+    "solarElectricCosts": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.energy.clean.carryforward",
+  "expect": {
+    "valueCents": "142500"
+  }
+}

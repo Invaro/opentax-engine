@@ -1,0 +1,20 @@
+{
+  "description": "Section 25D terminated for expenditures made after December 31, 2025 (OBBBA section 70506; section 25D(h); FS-2025-05 Q7: an expenditure is made when installation is completed). TY2026 single 60,000, solar 20,000 installed in 2026 -> line 6b 0; carryforward from the 2025 Form 5695 line 16 of 925 -> line 12 925; line 13 = 925; line 14 = 5,023; line 15 = 925. Net tax 5,023 - 925 = $4,098.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "solarElectricCosts": 20000,
+    "residentialCleanEnergyCarryforward": 925
+  },
+  "asOf": "2026-12-31",
+  "expect": {
+    "valueCents": "409800",
+    "intermediates": {
+      "us.federal.energy.clean.rate": "0",
+      "us.federal.energy.clean.line6b": "0",
+      "us.federal.energy.clean.line12": "92500",
+      "us.federal.energy.clean.line13": "92500",
+      "us.federal.energy.clean_energy_credit": "92500"
+    }
+  }
+}

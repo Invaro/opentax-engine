@@ -1,0 +1,17 @@
+{
+  "description": "Form 5695 line 16 for the previous scenario: line 13 6,000 minus line 15 5,075 = $925 carried to 2026 (section 25D(c); 2025 Form 5695 line 16 'Credit carryforward to 2026').",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "solarElectricCosts": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.energy.clean.carryforward",
+  "expect": {
+    "valueCents": "92500",
+    "intermediates": {
+      "us.federal.energy.clean.line13": "600000",
+      "us.federal.energy.clean_energy_credit": "507500"
+    }
+  }
+}

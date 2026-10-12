@@ -1,6 +1,6 @@
-# Coverage matrix — corpus 0.39.0
+# Coverage matrix — corpus 0.40.0
 
-Generated 2026-09-09T12:45:33.840Z from the rule corpus (Merkle root `sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911`). Machine-readable: [coverage-matrix.json](coverage-matrix.json). Regenerate with `node packages/corpus-us-federal/scripts/coverage-matrix.mjs`.
+Generated 2026-10-12T20:15:36.753Z from the rule corpus (Merkle root `sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c`). Machine-readable: [coverage-matrix.json](coverage-matrix.json). Regenerate with `node packages/corpus-us-federal/scripts/coverage-matrix.mjs`.
 
 ## What the API returns
 
@@ -13,7 +13,7 @@ Generated 2026-09-09T12:45:33.840Z from the rule corpus (Merkle root `sha256:5f3
 | rendered forms / PDF | no |
 | federal or state MeF XML | no |
 
-## Federal individual (Form 1040) — 115 rule ids
+## Federal individual (Form 1040) — 146 rule ids
 
 | rule | form / schedule | TY2025 | TY2026 | note |
 |---|---|---|---|---|
@@ -78,6 +78,37 @@ Generated 2026-09-09T12:45:33.840Z from the rule corpus (Merkle root `sha256:5f3
 | `us.federal.adoption.refundable` | Form 8839 | ✓ | ✓ |  |
 | `us.federal.adoption.nonrefundable` | Form 8839 | ✓ | ✓ |  |
 | `us.federal.adoption.carryforward` | Form 8839 | ✓ | ✓ |  |
+| `us.federal.energy.clean.rate` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.rate` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line6a` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line6b` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line9` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line10` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line11` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line12` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line13` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.actc.maximum` | Schedule 8812 | ✓ | ✓ |  |
+| `us.federal.energy.clean.worksheet_b_applies` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.ctc_for_limit` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.line14` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean_energy_credit` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.clean.carryforward` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line18b` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line19c` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line19g` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line19h` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line20d` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line22d` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line23d` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line24d` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line25e` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line26c` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line27` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line28` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line29h` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line30` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.improvement.line31` | Form 5695 | ✓ | ✓ |  |
+| `us.federal.energy.home_improvement_credit` | Form 5695 | ✓ | ✓ |  |
 | `us.federal.ptc` | Form 8962 | ✓ | ✓ |  |
 | `us.federal.ptc.net` | Form 8962 | ✓ | ✓ |  |
 | `us.federal.ptc.excess_aptc_repayment` | Form 8962 | ✓ | ✓ |  |

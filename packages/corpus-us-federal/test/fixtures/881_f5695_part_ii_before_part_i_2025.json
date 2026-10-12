@@ -1,0 +1,20 @@
+{
+  "description": "Form 5695 ordering, TY2025 single 60,000: Part II (heat pump 8,000 -> 2,000; insulation 5,000 -> 1,200; line 32 = 3,200) is subtracted in the Part I line 14 worksheet ('+ Energy efficient home improvement credit, Form 5695, line 32'): line 14 = 5,075 - 3,200 = 1,875; solar 20,000 -> line 13 6,000; line 15 = 1,875. Tax after credits 0; net $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "heatPumpBiomassCosts": 8000,
+    "insulationAirSealingCosts": 5000,
+    "solarElectricCosts": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.energy.home_improvement_credit": "320000",
+      "us.federal.energy.clean.line14": "187500",
+      "us.federal.energy.clean_energy_credit": "187500",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

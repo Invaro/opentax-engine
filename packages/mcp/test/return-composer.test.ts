@@ -243,3 +243,54 @@ describe("compute_state_return completeness for an unpublished tax year", () => 
     }
   });
 });
+
+describe("compute_return: Form 5695 line set and Form 1040 line 20", () => {
+  it("no energy inputs: line 20 is $0, schedule3 present, no forms block", async () => {
+    const a = await call("compute_return", single({ box1: "60000", box2: "5000" }));
+    expect(lines(a)["20_other_nonrefundable_credits"]).toBe("$0.00");
+    expect(a.schedule3).toBeDefined();
+    expect(a.forms).toBeUndefined();
+  });
+  it("solar 20,000 on a single 60,000 return: Part I lines, line 20 = 5,075, carryforward 925, tax after credits 0", async () => {
+    const a = await call("compute_return", single({ box1: "60000", box2: "5000" }, { energy_credits: { solarElectricCosts: 20000 } }));
+    expect(a.ok).toBe(true);
+    const f = (a.forms as { "5695": Record<string, string> })["5695"];
+    expect(f["6a_total"]).toBe("$20,000.00");
+    expect(f["6b_30_percent"]).toBe("$6,000.00");
+    expect(f["13_total"]).toBe("$6,000.00");
+    expect(f["14_limitation"]).toBe("$5,075.00");
+    expect(f["15_residential_clean_energy_credit"]).toBe("$5,075.00");
+    expect(f["16_carryforward_to_next_year"]).toBe("$925.00");
+    expect(f["32_energy_efficient_home_improvement_credit"]).toBe("$0.00");
+    expect((a.schedule3 as Record<string, string>)["5a_residential_clean_energy"]).toBe("$5,075.00");
+    expect(lines(a)["20_other_nonrefundable_credits"]).toBe("$5,075.00");
+    expect(lines(a)["22_tax_after_credits"]).toBe("$0.00");
+    expect(lines(a)["34_refund_or_37_owed"]).toBe("refund $5,000.00");
+  });
+  it("Part II every cap: line 27 3,350 → 28 1,200; 29h 2,000; 32 = 3,200; line 22 reconciles 18 − 19 − 20", async () => {
+    const a = await call("compute_return", single({ box1: "60000", box2: "5000" }, { energy_credits: { insulationAirSealingCosts: 5000, exteriorDoorMostExpensiveCost: 1000, exteriorDoorOtherCosts: 1500, windowsSkylightsCosts: 3000, centralAirConditionerCosts: 4000, homeEnergyAuditCosts: 600, electricalPanelCosts: 1000, heatPumpBiomassCosts: 8000 } }));
+    const f = (a.forms as { "5695": Record<string, string> })["5695"];
+    expect(f["27_total"]).toBe("$3,350.00");
+    expect(f["28_smaller_of_27_or_1200"]).toBe("$1,200.00");
+    expect(f["29h_30_percent_max_2000"]).toBe("$2,000.00");
+    expect(f["32_energy_efficient_home_improvement_credit"]).toBe("$3,200.00");
+    expect(lines(a)["16_tax"]).toBe("$5,075.00");
+    expect(lines(a)["20_other_nonrefundable_credits"]).toBe("$3,200.00");
+    expect(lines(a)["22_tax_after_credits"]).toBe("$1,875.00");
+  });
+  it("TY2026: Part II is $0 by termination; the 2025 carryforward still credits", async () => {
+    const a = await call("compute_return", { filing: { filingStatus: "single" }, documents: { w2s: [{ box1: "60000", box2: "5000" }] }, energy_credits: { heatPumpBiomassCosts: 8000, residentialCleanEnergyCarryforward: 925 }, asOf: "2026-12-31" });
+    const f = (a.forms as { "5695": Record<string, string> })["5695"];
+    expect(f["32_energy_efficient_home_improvement_credit"]).toBe("$0.00");
+    expect(f["15_residential_clean_energy_credit"]).toBe("$925.00");
+    expect(String(f.note)).toContain("terminated");
+    expect(f["6b_30_percent"]).toBeUndefined(); // no 2025 cost lines on a 2026 form
+    expect(String(f.costs_not_creditable)).toContain("heatPumpBiomassCosts");
+    expect(lines(a)["20_other_nonrefundable_credits"]).toBe("$925.00");
+  });
+  it("strict mode and the completeness contract are unaffected by Form 5695 inputs", async () => {
+    const a = await call("compute_return", single({ box1: "60000", box2: "5000" }, { energy_credits: { solarElectricCosts: 1000 }, strict: true }));
+    expect(a.ok).toBe(true);
+    expect(a.complete).toBe(true);
+  });
+});

@@ -51,6 +51,7 @@ const FORM_MAP = [
   [/^us\.federal\.cdcc/, "Form 2441"],
   [/^us\.federal\.savers/, "Form 8880"],
   [/^us\.federal\.adoption/, "Form 8839"],
+  [/^us\.federal\.energy/, "Form 5695"],
   [/^us\.federal\.schedule_r/, "Schedule R"],
   [/^us\.federal\.ptc/, "Form 8962"],
   [/^us\.federal\.feie/, "Form 2555"],

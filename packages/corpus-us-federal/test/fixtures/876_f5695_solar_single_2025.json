@@ -1,0 +1,20 @@
+{
+  "description": "Form 5695 Part I, TY2025 single, wages 60,000, solar electric 20,000: line 6a 20,000 -> 6b 30% = 6,000; line 13 = 6,000. Limit worksheet: Form 1040 line 18 = tax on TI 44,250 (table row 44,250-44,300, midpoint 44,275: 1,192.50 + 12% x 32,350 = 5,074.50 -> $5,075) minus no other credits = 5,075 (line 14). Line 15 = min(6,000, 5,075) = 5,075 -> Schedule 3 line 5a. Tax after credits 0; net tax $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "solarElectricCosts": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.energy.clean.line6a": "2000000",
+      "us.federal.energy.clean.line6b": "600000",
+      "us.federal.energy.clean.line13": "600000",
+      "us.federal.energy.clean.line14": "507500",
+      "us.federal.energy.clean_energy_credit": "507500",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "description": "TY2026 single wages 20,000 with a 6,000 carryforward from 2025: TI 3,900 -> tax $393 (midpoint 3,925 x 10% = 392.50 -> 393); line 13 = 6,000; line 14 = 393; line 15 = 393; line 16 = 5,607 carried again (section 25D(c) carries any excess to the succeeding year).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 20000,
+    "residentialCleanEnergyCarryforward": 6000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.energy.clean.carryforward",
+  "expect": {
+    "valueCents": "560700",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "39300",
+      "us.federal.energy.clean_energy_credit": "39300"
+    }
+  }
+}

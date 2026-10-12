@@ -72,9 +72,9 @@
     "note": "ruleVersions lists every version of the rule (one per validity window; `versions` is the build identity). formula and applicability are the rule IR (PROOF-FORMAT v2 expressions): kind 'rule' nodes reference other rules, kind 'fact' nodes read inputs, kind 'param' nodes read this rule's parameters. The hash covers id, version, citation, dates, parameters and formula.",
     "versions": {
       "engine": "0.1.0",
-      "composer": "0.6.0",
-      "corpus": "0.39.0",
-      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+      "composer": "0.7.0",
+      "corpus": "0.40.0",
+      "corpusMerkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c"
     }
   }
 }

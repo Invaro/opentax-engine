@@ -1,0 +1,20 @@
+{
+  "description": "Form 5695 line 14 worksheet without Worksheet B (no qualifying children \u2014 Schedule 8812 line 4 is zero), TY2025 single 60,000, one other dependent (ODC 500), solar 20,000: Form 1040 line 19 = 500 is subtracted as such; line 14 = 5,075 - 500 = 4,575; line 15 = min(6,000, 4,575) = 4,575; the CTC/ODC limit does not subtract line 5a (Worksheet A line 4 is -0-). Tax after credits 5,075 - 500 - 4,575 = 0; net $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "otherDependents": 1,
+    "solarElectricCosts": 20000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.ctc": "50000",
+      "us.federal.energy.clean.ctc_for_limit": "50000",
+      "us.federal.energy.clean.line14": "457500",
+      "us.federal.energy.clean_energy_credit": "457500",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}
