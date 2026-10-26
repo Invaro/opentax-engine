@@ -74743,7 +74743,7 @@ var tipsOvertimeRules = [
 // ../corpus-us-federal/dist/index.js
 var corpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.39.0",
+  version: "0.40.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,

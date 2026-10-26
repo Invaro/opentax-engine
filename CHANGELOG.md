@@ -2,7 +2,7 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
-## Next release · Turn off defaults
+## Oct 27, 2026 · Turn off defaults
 
 When you leave an input out, OpenTax fills it in with a documented default and lists it under `assumptions`. A married couple with two children and a salary rests on 77 of them. You can now turn that off, so every number comes only from facts you gave.
 
@@ -16,7 +16,7 @@ An unanswered question can hide the questions that depend on it, so a second cal
 
 Defaults stay on unless you ask, so existing calls work exactly as before.
 
-## Next release · Add your own rules
+## Oct 27, 2026 · Add your own rules
 
 You can now add rules of your own to OpenTax with `extendCorpus`, for things like passive losses tracked by activity or an NOL carryforward. They run alongside the federal rules and show up in the proof like any other rule.
 
@@ -36,23 +36,11 @@ To replace one of the federal rules, pin the version you built against. If a lat
 
 Your rules and the federal rules share one fingerprint, and `verifyProof` checks a proof against it as usual. The [README](README.md) has an example.
 
-## Next release · See what changed in each release
+## Oct 27, 2026 · See what changed in each release
 
 Every release now comes with notes listing each rule that was added, removed or changed, and what changed in it: the formula, the dates it applies, the legal citation, or an amount. When an amount changes, the notes show the old and new value in dollars. You'll find them in each release's [git tag](https://github.com/Invaro/opentax-engine/tags).
 
-## Next release · Accounts and the Firm plan
-
-You can now sign in to opentax.invaro.ai with your email. Your account holds your API key and your usage, and if your firm subscribes, your plan and your team.
-
-### The Firm plan
-
-The Firm plan is for firms that use OpenTax in their practice. The engineers who build OpenTax answer your questions within 24 hours, and within 4 business hours from January through April. Features your practice needs get a date in writing and ship within two weeks. You also get early access to new features. It's $9 a seat a month, or $5 a seat once you have six. See [pricing](https://opentax.invaro.ai/pricing).
-
-### Your team
-
-Owners invite staff by email from their account page and add seats from billing. Each invite works once and expires after a week.
-
-## Next release · Connect your agent with one sign-in
+## Oct 27, 2026 · Connect your agent with one sign-in
 
 There's now a second MCP address, `https://opentax.invaro.ai/mcp/account`. Add it to Claude, ChatGPT, Cursor or Claude Code and the app asks you to sign in to OpenTax once, in your browser, with your email. After that, OpenTax knows which account and plan each call comes from. There's no key to copy.
 
@@ -66,7 +54,7 @@ Your account page lists every app you've connected, when you connected it and wh
 
 The open address, `https://opentax.invaro.ai/mcp`, works exactly as before, with no account.
 
-## Next release · A new license for new releases
+## Oct 27, 2026 · A new license for new releases
 
 Releases from October 26, 2026 are under the Business Source License 1.1. It covers using OpenTax inside your organization, client work included. If you'd like to build it into something people outside your organization use, like a client portal, an API or an app you sell, write to founders@invaro.ai about an embedding license.
 
