@@ -5,7 +5,7 @@
     "version": "corpus 0.39.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
     "x-corpus-merkle-root": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "x-generated": "2026-10-26T15:41:49.574Z"
+    "x-generated": "2026-10-26T18:39:42.304Z"
   },
   "servers": [
     {
@@ -5571,8 +5571,8 @@
                             "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -6055,8 +6055,8 @@
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -6159,8 +6159,8 @@
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -6318,8 +6318,8 @@
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -10506,8 +10506,8 @@
                           "jurisdiction",
                           "asOf"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -15963,8 +15963,8 @@
                             "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16052,8 +16052,8 @@
                           "facts",
                           "claimedAmount"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16119,8 +16119,8 @@
                       "arguments": {
                         "type": "object",
                         "properties": {},
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16200,8 +16200,8 @@
                         "required": [
                           "ruleId"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16294,8 +16294,8 @@
                           "fromDollars",
                           "toDollars"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16370,8 +16370,8 @@
                         "required": [
                           "facts"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16450,8 +16450,8 @@
                         "required": [
                           "query"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16535,8 +16535,8 @@
                         "required": [
                           "query"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16633,8 +16633,8 @@
                           "query",
                           "claimedAmount"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16709,8 +16709,8 @@
                         "required": [
                           "job"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }

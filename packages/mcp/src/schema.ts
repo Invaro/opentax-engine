@@ -984,7 +984,7 @@ export const FACT_SHAPE: Record<string, z.ZodTypeAny> = (() => {
 const STRICT_FLAT = z.object(FACT_SHAPE).strict();
 
 export const factsObjectParam = z
-  .record(z.unknown())
+  .record(z.string(), z.unknown())
   .describe(
     "facts for the computation: either flat corpus fact ids (see list_input_facts) or the same group objects calculate_tax accepts (filing, income, retirement, …), plus optional target and asOf. Business/fiduciary/dependent facts are accepted flat. Unknown keys are rejected by name — nothing is ever silently dropped.",
   );
