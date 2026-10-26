@@ -3,9 +3,12 @@
  * live server's tools/list so the schemas are the server's own validators.
  */
 import { listTools } from "@/lib/engine";
-import { CORS } from "@/lib/v1/shared";
 
 export const runtime = "nodejs";
+// the document only changes when we deploy: build it once and serve it from the CDN,
+// so no request ever waits on a server starting up. (An OPTIONS handler here
+// would make the route dynamic; next.config.mjs sends its CORS headers instead.)
+export const dynamic = "force-static";
 
 export async function GET(): Promise<Response> {
   const tools = await listTools();
@@ -77,10 +80,6 @@ export async function GET(): Promise<Response> {
     paths,
   };
   return new Response(JSON.stringify(doc, null, 2), {
-    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400", ...CORS },
+    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400" },
   });
-}
-
-export function OPTIONS(): Response {
-  return new Response(null, { status: 204, headers: CORS });
 }

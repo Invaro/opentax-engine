@@ -683,6 +683,23 @@ export default function Page() {
             {/* per-client connect steps */}
             <ConnectTabs />
 
+            {/* firms: the signed-in connector comes with the Firm plan */}
+            <div className="flex flex-col gap-4 border-x border-b border-border bg-card p-5 md:flex-row md:items-center md:justify-between md:p-6">
+              <div className="min-w-0">
+                <div className="text-sm mb-1.5">Using OpenTax at a firm?</div>
+                <p className="text-xs text-muted-foreground leading-relaxed max-w-[460px]">
+                  With the Firm plan, everyone on your team connects their agent with their own email, and the engineers who
+                  build OpenTax answer your questions within 24 hours. $9 a seat a month, $5 from six seats.
+                </p>
+              </div>
+              <Link
+                href="/pricing"
+                className="inline-flex h-9 shrink-0 items-center self-start bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:self-auto"
+              >
+                See the Firm plan
+              </Link>
+            </div>
+
             {/* npm + registry row */}
             <div className="grid md:grid-cols-2 border-l border-border">
               <div className="border-b border-r border-border p-5 md:p-6 min-w-0">

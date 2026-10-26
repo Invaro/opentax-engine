@@ -36,11 +36,21 @@ const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
 ];
 
+const v1Cors = [
+  { key: "Access-Control-Allow-Origin", value: "*" },
+  { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+  { key: "Access-Control-Allow-Headers", value: "Content-Type, Accept, Authorization, X-OpenTax-Return-Id" },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // the two static /v1 documents: CORS for GET and for Next's own OPTIONS reply
+      ...["/v1/openapi.json", "/v1/tools"].map((source) => ({ source, headers: v1Cors })),
+    ];
   },
 };
 
