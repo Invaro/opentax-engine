@@ -81,6 +81,14 @@ export function stepUnits(
  * "1234.56", "-12.50". Non-integer JS numbers are rejected — write them as
  * strings so no float ever touches the math.
  */
+/**
+ * Largest amount the engine accepts: 15 digits of whole dollars (under
+ * $1 quadrillion). Bigger inputs have no tax meaning and turn bigint
+ * arithmetic and formatting into a denial-of-service lever.
+ */
+export const MAX_DOLLAR_DIGITS = 15;
+const MAX_CENTS_LITERAL = /^-?\d{1,18}$/;
+
 export function parseDollars(input: string | number): Cents {
   if (typeof input === "number") {
     if (!Number.isSafeInteger(input)) {
@@ -90,8 +98,9 @@ export function parseDollars(input: string | number): Cents {
     }
     return BigInt(input) * 100n;
   }
+  if (input.length > 64) throw new TypeError("money amount is too long");
   const s = input.trim().replace(/^\$/, "").replace(/,/g, "");
-  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
+  const m = /^(-?)(\d{1,15})(?:\.(\d{1,2}))?$/.exec(s);
   if (!m) {
     throw new TypeError(
       `invalid money amount ${JSON.stringify(input)} — use dollars like 50000, "$50,000", or "1234.56"`,
@@ -104,7 +113,7 @@ export function parseDollars(input: string | number): Cents {
 
 /** Parse a decimal string of integer cents ("396150") into bigint cents. */
 export function parseCents(s: string): Cents {
-  if (!/^-?\d+$/.test(s)) {
+  if (!MAX_CENTS_LITERAL.test(s)) {
     throw new TypeError(`invalid cents literal: ${JSON.stringify(s)}`);
   }
   return BigInt(s);
@@ -112,7 +121,7 @@ export function parseCents(s: string): Cents {
 
 /** Parse a decimal string integer ("13") into bigint. */
 export function parseInt_(s: string): bigint {
-  if (!/^-?\d+$/.test(s)) {
+  if (!MAX_CENTS_LITERAL.test(s)) {
     throw new TypeError(`invalid integer literal: ${JSON.stringify(s)}`);
   }
   return BigInt(s);

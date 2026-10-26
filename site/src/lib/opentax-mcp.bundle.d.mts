@@ -1,5 +1,10 @@
 /** Hand-written surface types for the self-contained MCP bundle. */
-export declare function createServer(): {
+export declare function createServer(account?: {
+  email: string;
+  plan: "firm" | "free";
+  firm: string | null;
+  role: "owner" | "member" | null;
+}): {
   connect(transport: unknown): Promise<void>;
   close(): Promise<void>;
 };

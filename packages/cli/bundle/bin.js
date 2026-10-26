@@ -3497,8 +3497,8 @@ function valueFromJSON(tv) {
       if (typeof tv.value !== "string") {
         throw new TypeError("money value must be a string of cents");
       }
-      if (!/^-?\d+$/.test(tv.value)) {
-        throw new TypeError(`invalid money value: ${JSON.stringify(tv.value)}`);
+      if (!/^-?\d{1,18}$/.test(tv.value)) {
+        throw new TypeError(`invalid money value: ${JSON.stringify(tv.value.slice(0, 40))}`);
       }
       return { type: "money", cents: BigInt(tv.value) };
     }
@@ -3506,8 +3506,8 @@ function valueFromJSON(tv) {
       if (typeof tv.value !== "string") {
         throw new TypeError("int value must be a decimal string");
       }
-      if (!/^-?\d+$/.test(tv.value)) {
-        throw new TypeError(`invalid int value: ${JSON.stringify(tv.value)}`);
+      if (!/^-?\d{1,18}$/.test(tv.value)) {
+        throw new TypeError(`invalid int value: ${JSON.stringify(tv.value.slice(0, 40))}`);
       }
       return { type: "int", value: BigInt(tv.value) };
     }
@@ -3575,6 +3575,7 @@ function stepUnits(value, unit, mode) {
     throw new RangeError("stepUnits requires a positive unit");
   return divRound(value, unit, mode);
 }
+var MAX_CENTS_LITERAL = /^-?\d{1,18}$/;
 function parseDollars(input) {
   if (typeof input === "number") {
     if (!Number.isSafeInteger(input)) {
@@ -3582,8 +3583,10 @@ function parseDollars(input) {
     }
     return BigInt(input) * 100n;
   }
+  if (input.length > 64)
+    throw new TypeError("money amount is too long");
   const s = input.trim().replace(/^\$/, "").replace(/,/g, "");
-  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
+  const m = /^(-?)(\d{1,15})(?:\.(\d{1,2}))?$/.exec(s);
   if (!m) {
     throw new TypeError(`invalid money amount ${JSON.stringify(input)} \u2014 use dollars like 50000, "$50,000", or "1234.56"`);
   }
@@ -3592,13 +3595,13 @@ function parseDollars(input) {
   return sign === "-" ? -cents2 : cents2;
 }
 function parseCents(s) {
-  if (!/^-?\d+$/.test(s)) {
+  if (!MAX_CENTS_LITERAL.test(s)) {
     throw new TypeError(`invalid cents literal: ${JSON.stringify(s)}`);
   }
   return BigInt(s);
 }
 function parseInt_(s) {
-  if (!/^-?\d+$/.test(s)) {
+  if (!MAX_CENTS_LITERAL.test(s)) {
     throw new TypeError(`invalid integer literal: ${JSON.stringify(s)}`);
   }
   return BigInt(s);
@@ -3912,6 +3915,7 @@ function loadCorpus(input) {
   const byId = /* @__PURE__ */ new Map();
   const factById = /* @__PURE__ */ new Map();
   const overriders = /* @__PURE__ */ new Map();
+  const contributors = /* @__PURE__ */ new Map();
   for (const fact44 of input.facts) {
     if (factById.has(fact44.id))
       issues.push(`duplicate fact id "${fact44.id}"`);
@@ -3920,6 +3924,8 @@ function loadCorpus(input) {
       issues.push(`enum fact "${fact44.id}" must declare enumValues`);
     }
   }
+  const knownRuleIds = byIdRefChecker(input);
+  const contributorIds = new Set(input.rules.filter((r) => r.contributesTo !== void 0).map((r) => r.id));
   const seenVersions = /* @__PURE__ */ new Set();
   for (const rule of input.rules) {
     const key = `${rule.id}@${rule.version}`;
@@ -3950,7 +3956,27 @@ function loadCorpus(input) {
         issues.push(`rule "${key}": an override must declare an applicability guard`);
       }
     }
-    validateExpressions(rule, byIdRefChecker(input), factById, issues);
+    if (rule.contributesTo !== void 0) {
+      const list2 = contributors.get(rule.contributesTo) ?? [];
+      list2.push(rule);
+      contributors.set(rule.contributesTo, list2);
+      if (rule.output.type !== "money")
+        issues.push(`rule "${key}": a contribution must output money`);
+      if (rule.applicability)
+        issues.push(`rule "${key}": a contribution cannot declare an applicability guard`);
+      if (rule.overrides)
+        issues.push(`rule "${key}": a rule cannot both override and contribute`);
+      if (rule.contributesTo === rule.id)
+        issues.push(`rule "${key}" contributes to itself`);
+    }
+    validateExpressions(rule, knownRuleIds, contributorIds, factById, issues);
+  }
+  for (const [targetId] of contributors) {
+    const targets = byId.get(targetId);
+    if (!targets)
+      issues.push(`contribution target "${targetId}" does not exist`);
+    else if (targets[0].output.type !== "money")
+      issues.push(`contribution target "${targetId}" is not a money rule`);
   }
   for (const [id, versions] of byId) {
     const sorted = [...versions].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
@@ -3997,13 +4023,14 @@ function loadCorpus(input) {
     ruleHashes,
     byId,
     factById,
-    overriders
+    overriders,
+    contributors
   };
 }
 function byIdRefChecker(input) {
   return new Set(input.rules.map((r) => r.id));
 }
-function validateExpressions(rule, knownRuleIds, factById, issues) {
+function validateExpressions(rule, knownRuleIds, contributorIds, factById, issues) {
   const key = `${rule.id}@${rule.version}`;
   const exprs = [rule.formula];
   if (rule.applicability)
@@ -4023,6 +4050,11 @@ function validateExpressions(rule, knownRuleIds, factById, issues) {
         case "rule":
           if (!knownRuleIds.has(e.ruleId)) {
             issues.push(`rule "${key}" references unknown rule "${e.ruleId}"`);
+          }
+          for (const id of e.excluding ?? []) {
+            if (!contributorIds.has(id)) {
+              issues.push(`rule "${key}" excludes "${id}", which is not a contributing rule`);
+            }
           }
           break;
         case "fact":
@@ -4074,6 +4106,11 @@ function selectVersion(corpus, ruleId, asOf) {
   }
   return match;
 }
+function selectContributors(corpus, ruleId, asOf) {
+  const list = corpus.contributors.get(ruleId) ?? [];
+  const ids = new Set(list.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo)).map((r) => r.id));
+  return [...ids].sort();
+}
 function selectOverriders(corpus, ruleId, asOf) {
   const list = corpus.overriders.get(ruleId) ?? [];
   return list.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo)).sort((a, b) => b.overrides.priority - a.overrides.priority);
@@ -4094,6 +4131,11 @@ var POISON = /* @__PURE__ */ Symbol("missing-facts");
 function evaluate(corpus, facts2, options) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(options.asOf)) {
     throw new FactValidationError(`invalid asOf date "${options.asOf}"`);
+  }
+  for (const factId of options.allowDefaults ?? []) {
+    if (!corpus.factById.has(factId)) {
+      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`);
+    }
   }
   const resolved = /* @__PURE__ */ new Map();
   for (const [factId, tv] of Object.entries(facts2)) {
@@ -4125,12 +4167,16 @@ function evaluate(corpus, facts2, options) {
     asOf: options.asOf,
     memo: /* @__PURE__ */ new Map(),
     visiting: [],
+    excluded: /* @__PURE__ */ new Set(),
+    passes: /* @__PURE__ */ new Map(),
     assumptions: [],
     stubs: /* @__PURE__ */ new Map(),
     assumedFactIds: /* @__PURE__ */ new Set(),
     missing: /* @__PURE__ */ new Map(),
-    factNodes: /* @__PURE__ */ new Map()
+    factNodes: /* @__PURE__ */ new Map(),
+    defaultsAllowed: options.refuseDefaults ? new Set(options.allowDefaults ?? []) : null
   };
+  ctx.passes.set("", ctx);
   const { value, node } = evalRule(options.target, ctx);
   if (value === POISON || node === null) {
     throw new NeedsFactsError([...ctx.missing.values()]);
@@ -4166,10 +4212,11 @@ function evalRule(ruleId, ctx) {
     }
     return hit;
   }
-  if (ctx.visiting.includes(ruleId)) {
-    throw new CycleError([...ctx.visiting, ruleId]);
+  const key = `${passKey(ctx.excluded)}|${ruleId}`;
+  if (ctx.visiting.includes(key)) {
+    throw new CycleError([...ctx.visiting, key].map(readableVisit));
   }
-  ctx.visiting.push(ruleId);
+  ctx.visiting.push(key);
   try {
     const base = selectVersion(ctx.corpus, ruleId, ctx.asOf);
     const overs = selectOverriders(ctx.corpus, ruleId, ctx.asOf);
@@ -4223,6 +4270,23 @@ function evalRule(ruleId, ctx) {
     if (winner) {
       value = evalExpr(winner.formula, winner, ctx, children);
     }
+    const contributions = [];
+    let contributed = 0n;
+    for (const id of selectContributors(ctx.corpus, ruleId, ctx.asOf)) {
+      if (ctx.excluded.has(id))
+        continue;
+      const c2 = evalRule(id, ctx);
+      if (c2.value === POISON || c2.node === null) {
+        poisoned = true;
+        continue;
+      }
+      if (!children.includes(c2.node))
+        children.push(c2.node);
+      contributions.push({ ruleId: id, value: valueToJSON(c2.value) });
+      contributed += c2.value.cents;
+    }
+    if (poisoned)
+      value = POISON;
     if (value === POISON || winner === null) {
       const entry2 = { value: POISON, node: null };
       ctx.memo.set(ruleId, entry2);
@@ -4231,10 +4295,13 @@ function evalRule(ruleId, ctx) {
     if (value.type !== winner.output.type) {
       throw new EngineError(`rule "${winner.id}" declares output ${winner.output.type} but produced ${value.type}`);
     }
+    if (contributions.length > 0 && value.type === "money") {
+      value = { type: "money", cents: value.cents + contributed };
+    }
     const inputs = {};
     for (const child of children) {
-      const key = child.kind === "rule" ? child.ruleId : child.factId;
-      inputs[key] = child.value;
+      const key2 = child.kind === "rule" ? child.ruleId : child.factId;
+      inputs[key2] = child.value;
     }
     const node = {
       kind: "rule",
@@ -4245,6 +4312,8 @@ function evalRule(ruleId, ctx) {
       citation: winner.citation,
       ...winner.id !== ruleId ? { resolvedFrom: ruleId } : {},
       ...overs.length > 0 ? { candidatesConsidered: candidates } : {},
+      ...contributions.length > 0 ? { contributions } : {},
+      ...ctx.excluded.size > 0 ? { excluding: [...ctx.excluded].sort() } : {},
       inputs,
       value: valueToJSON(value),
       children
@@ -4255,6 +4324,22 @@ function evalRule(ruleId, ctx) {
   } finally {
     ctx.visiting.pop();
   }
+}
+var passKey = (excluded) => [...excluded].sort().join(",");
+function readableVisit(key) {
+  const bar = key.indexOf("|");
+  const excluded = key.slice(0, bar);
+  return excluded ? `${key.slice(bar + 1)} (excluding ${excluded.replace(/,/g, ", ")})` : key.slice(bar + 1);
+}
+function passExcluding(ctx, ids) {
+  const excluded = /* @__PURE__ */ new Set([...ctx.excluded, ...ids]);
+  const k = passKey(excluded);
+  let pass = ctx.passes.get(k);
+  if (!pass) {
+    pass = { ...ctx, excluded, memo: /* @__PURE__ */ new Map(), stubs: /* @__PURE__ */ new Map() };
+    ctx.passes.set(k, pass);
+  }
+  return pass;
 }
 function candidateEntry(rule, applicable) {
   return {
@@ -4277,7 +4362,8 @@ function evalExpr(expr, rule, ctx, children) {
     case "fact":
       return resolveFact(expr.factId, ctx, children);
     case "rule": {
-      const { value, node } = evalRule(expr.ruleId, ctx);
+      const pass = expr.excluding?.length ? passExcluding(ctx, expr.excluding) : ctx;
+      const { value, node } = evalRule(expr.ruleId, pass);
       if (node && !children.includes(node))
         children.push(node);
       return value;
@@ -4483,7 +4569,7 @@ function resolveFact(factId, ctx, children) {
     const given = ctx.facts.get(factId);
     if (given !== void 0) {
       node = { kind: "fact", factId, value: valueToJSON(given) };
-    } else if (spec.default !== void 0) {
+    } else if (spec.default !== void 0 && (ctx.defaultsAllowed === null || ctx.defaultsAllowed.has(factId))) {
       const value = valueFromJSON({ type: spec.type, value: spec.default.value });
       if (!ctx.assumedFactIds.has(factId)) {
         ctx.assumedFactIds.add(factId);
@@ -4501,7 +4587,10 @@ function resolveFact(factId, ctx, children) {
         factId,
         type: spec.type,
         enumValues: spec.enumValues,
-        description: spec.description
+        description: spec.description,
+        // refused default: say what it would have been, so the caller can
+        // accept it (allowDefaults) instead of hunting for the value
+        ...spec.default !== void 0 ? { default: spec.default } : {}
       });
       return POISON;
     }
@@ -4585,7 +4674,7 @@ function coerceFacts(corpus, plain) {
       }
       case "int": {
         let s;
-        if (typeof raw === "string" && /^-?\d+$/.test(raw))
+        if (typeof raw === "string" && /^-?\d{1,15}$/.test(raw))
           s = raw;
         else if (typeof raw === "number" && Number.isSafeInteger(raw)) {
           s = String(raw);
@@ -37564,7 +37653,12 @@ function runCheck(flags) {
     const expected = parseDollars(flags.expect);
     const tolerance = parseDollars(flags.tolerance ?? "1");
     const facts2 = coerceFacts(corpus, plain);
-    const { value, proof } = evaluate(corpus, facts2, { asOf, target });
+    const { value, proof } = evaluate(corpus, facts2, {
+      asOf,
+      target,
+      refuseDefaults: flags.refuseDefaults === true,
+      allowDefaults: flags.allowDefault
+    });
     if (value.type !== "money") {
       return emitError(new Error(`check requires a money-valued target, got ${value.type}`), flags.json);
     }
@@ -37866,7 +37960,12 @@ function runEval(flags) {
     Object.assign(plain, factsFromOptions(flags));
     const target = flags.target ?? (plain.federalTaxWithheld !== void 0 ? "us.federal.balance_due" : DEFAULT_TARGET);
     const facts2 = coerceFacts(corpus, plain);
-    const { value, proof } = evaluate(corpus, facts2, { asOf, target });
+    const { value, proof } = evaluate(corpus, facts2, {
+      asOf,
+      target,
+      refuseDefaults: flags.refuseDefaults === true,
+      allowDefaults: flags.allowDefault
+    });
     if (flags.proof) {
       writeFileSync2(flags.proof, JSON.stringify(proof, null, 2) + "\n");
     }
@@ -38087,22 +38186,42 @@ function marginal(corpus, baseFacts, options) {
 }
 
 // ../solve/dist/cliffs.js
+var BudgetExhausted = class extends Error {
+};
 function findCliffs(corpus, baseFacts, options) {
   const step = options.stepCents ?? 100000n;
   if (step <= 0n)
     throw new RangeError("stepCents must be positive");
-  const at = (x) => evaluateAt(corpus, baseFacts, options, x);
+  if (options.toCents < options.fromCents)
+    throw new RangeError("toCents must not be below fromCents");
+  const limits = options.limits;
+  if (limits && (options.toCents - options.fromCents) / step > limits.maxScanPoints) {
+    throw new RangeError(`scan would take more than ${limits.maxScanPoints} steps; use a larger step or a narrower range`);
+  }
+  let evaluations = 0;
   const cliffs = [];
-  let prevX = options.fromCents;
-  let prevV = at(prevX);
-  for (let x = options.fromCents + step; x <= options.toCents; x += step) {
-    const v = at(x);
-    let dv = v - prevV;
-    if ((dv < 0n ? -dv : dv) > x - prevX) {
-      collectCliffs(at, prevX, prevV, x, v, cliffs);
+  const at = (x) => {
+    if (limits && (++evaluations > limits.maxEvaluations || cliffs.length >= limits.maxCliffs))
+      throw new BudgetExhausted();
+    return evaluateAt(corpus, baseFacts, options, x);
+  };
+  let truncated = false;
+  try {
+    let prevX = options.fromCents;
+    let prevV = at(prevX);
+    for (let x = options.fromCents + step; x <= options.toCents; x += step) {
+      const v = at(x);
+      const dv = v - prevV;
+      if ((dv < 0n ? -dv : dv) > x - prevX) {
+        collectCliffs(at, prevX, prevV, x, v, cliffs, limits?.maxCliffs ?? Infinity);
+      }
+      prevX = x;
+      prevV = v;
     }
-    prevX = x;
-    prevV = v;
+  } catch (err) {
+    if (!(err instanceof BudgetExhausted))
+      throw err;
+    truncated = true;
   }
   cliffs.sort((a, b) => a.atCents < b.atCents ? -1 : a.atCents > b.atCents ? 1 : 0);
   return {
@@ -38112,11 +38231,14 @@ function findCliffs(corpus, baseFacts, options) {
       fromCents: options.fromCents,
       toCents: options.toCents,
       stepCents: step
-    }
+    },
+    ...truncated ? { truncated } : {}
   };
 }
-function collectCliffs(at, lo, loV, hi, hiV, out) {
+function collectCliffs(at, lo, loV, hi, hiV, out, maxCliffs) {
   if (hi - lo <= 1n) {
+    if (out.length >= maxCliffs)
+      throw new BudgetExhausted();
     out.push({ atCents: lo, jumpCents: hiV - loV });
     return;
   }
@@ -38125,10 +38247,10 @@ function collectCliffs(at, lo, loV, hi, hiV, out) {
   const leftJump = midV - loV;
   const rightJump = hiV - midV;
   if ((leftJump < 0n ? -leftJump : leftJump) > mid - lo) {
-    collectCliffs(at, lo, loV, mid, midV, out);
+    collectCliffs(at, lo, loV, mid, midV, out, maxCliffs);
   }
   if ((rightJump < 0n ? -rightJump : rightJump) > hi - mid) {
-    collectCliffs(at, mid, midV, hi, hiV, out);
+    collectCliffs(at, mid, midV, hi, hiV, out, maxCliffs);
   }
 }
 
@@ -38256,7 +38378,7 @@ var JURISDICTION_NAMES = {
   "us.ri": "rhode island ri ri-1040 providence warwick cranston property tax relief credit 1040h social security modification pension modification"
 };
 function lookupParameters(corpus, query, asOf) {
-  const tokens = tokenize(query);
+  const tokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (tokens.length === 0)
     return [];
   const hits = [];
@@ -38318,7 +38440,7 @@ function makeSnippet(excerpt, tokens) {
   return `${start > 0 ? "\u2026" : ""}${cut}${start + SNIPPET_LEN < excerpt.length ? "\u2026" : ""}`;
 }
 function searchRules(corpus, query, asOf, limit = 8) {
-  const allTokens = tokenize(query);
+  const allTokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (allTokens.length === 0)
     return [];
   const haystacks = corpus.rules.map((rule) => {
@@ -38336,9 +38458,10 @@ function searchRules(corpus, query, asOf, limit = 8) {
   const matchers = new Map(allTokens.map((t) => [t, new RegExp(`\\b${t}`)]));
   const has = (hay, t) => matchers.get(t).test(hay);
   const df = (t) => haystacks.filter((h) => has(h.id, t) || has(h.title, t) || has(h.meta, t) || has(h.weak, t)).length;
-  const rare = allTokens.filter((t) => df(t) <= haystacks.length * 0.35);
+  const dfCache = new Map(allTokens.map((t) => [t, df(t)]));
+  const rare = allTokens.filter((t) => dfCache.get(t) <= haystacks.length * 0.35);
   const tokens = rare.length > 0 ? rare : allTokens;
-  const boost = new Map(tokens.map((t) => [t, df(t) <= haystacks.length * 0.05 ? 2 : 1]));
+  const boost = new Map(tokens.map((t) => [t, dfCache.get(t) <= haystacks.length * 0.05 ? 2 : 1]));
   const minScore = tokens.length >= 2 ? 2 : 1;
   const hits = [];
   for (const { rule, id, title, meta, weak } of haystacks) {
@@ -50313,12 +50436,12 @@ Every command accepts --json (single JSON object on stdout, ok: true|false).
 Exit codes: 0 ok \xB7 2 needs more facts (retry with them) \xB7 3 not covered by the corpus (don't retry) \xB7 1 other error.`).version("0.1.0");
 var evalCmd = program2.command("eval").description("compute a tax answer and print its proof tree").option("--facts <file>", "JSON facts file (inline flags below override it)");
 registerFactFlags(evalCmd);
-evalCmd.option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to derive (default: income tax after credits)").option("--proof <file>", "write the proof artifact JSON to this file").option("--brief", "plain-English summary only (skip the proof tree)").option("--assumptions", "list every default the engine relied on (folded by default)").option("--json", "print the proof artifact JSON instead of the tree").action((flags) => {
+evalCmd.option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to derive (default: income tax after credits)").option("--proof <file>", "write the proof artifact JSON to this file").option("--brief", "plain-English summary only (skip the proof tree)").option("--assumptions", "list every default the engine relied on (folded by default)").option("--json", "print the proof artifact JSON instead of the tree").option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included").option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept").action((flags) => {
   process.exitCode = runEval(flags);
 });
 var checkCmd = program2.command("check").description("verify a claimed tax amount (e.g. an AI agent's answer) against the law \u2014 exit 0 verified, 1 refuted").option("--facts <file>", "JSON facts file (inline flags below override it)");
 registerFactFlags(checkCmd);
-checkCmd.requiredOption("--expect <dollars>", "the claimed amount to verify (negative = refund)").option("--tolerance <dollars>", "allowed absolute difference", "1").option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to check (default: net tax; balance due if --withheld)").option("--proof <file>", "write the proof artifact JSON to this file").option("--json", "machine-readable verdict").action((flags) => {
+checkCmd.requiredOption("--expect <dollars>", "the claimed amount to verify (negative = refund)").option("--tolerance <dollars>", "allowed absolute difference", "1").option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to check (default: net tax; balance due if --withheld)").option("--proof <file>", "write the proof artifact JSON to this file").option("--json", "machine-readable verdict").option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included").option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept").action((flags) => {
   process.exitCode = runCheck(flags);
 });
 program2.command("facts").description("list every input fact the corpus understands").option("--json", "machine-readable output").action((flags) => {

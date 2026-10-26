@@ -3102,16 +3102,20 @@ var require_data = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/fast-uri@4.1.1/node_modules/fast-uri/lib/utils.js
+// ../../node_modules/.pnpm/fast-uri@4.2.3/node_modules/fast-uri/lib/utils.js
 var require_utils = __commonJS({
-  "../../node_modules/.pnpm/fast-uri@4.1.1/node_modules/fast-uri/lib/utils.js"(exports, module) {
+  "../../node_modules/.pnpm/fast-uri@4.2.3/node_modules/fast-uri/lib/utils.js"(exports, module) {
     "use strict";
     var isUUID = RegExp.prototype.test.bind(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu);
     var isIPv4 = RegExp.prototype.test.bind(/^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/u);
+    var isPort = RegExp.prototype.test.bind(/^\d*$/u);
     var isHexPair = RegExp.prototype.test.bind(/^[\da-f]{2}$/iu);
     var isUnreserved = RegExp.prototype.test.bind(/^[\da-z\-._~]$/iu);
-    var isPathCharacter = RegExp.prototype.test.bind(/^[\da-z\-._~!$&'()*+,;=:@/]$/iu);
-    var isQueryFragmentCharacter = RegExp.prototype.test.bind(/^[\da-z\-._~!$&'()*+,;=:@/?]$/iu);
+    var isPathCharacter = RegExp.prototype.test.bind(/^[A-Za-z0-9\-._~!$&'()*+,;=:@/]$/u);
+    var isQueryFragmentCharacter = RegExp.prototype.test.bind(/^[A-Za-z0-9\-._~!$&'()*+,;=:@/?]$/u);
+    var isUserinfoCharacter = RegExp.prototype.test.bind(/^[A-Za-z0-9\-._~!$&'()*+,;=:]$/u);
+    var isRegNameCharacter = RegExp.prototype.test.bind(/^[A-Za-z0-9\-._~!$&'()*+,;=]$/u);
+    var isLiteralRegName = RegExp.prototype.test.bind(/^[A-Za-z0-9\-._~!$&'()*+,;=]*$/u);
     function stringArrayToHexStripped(input) {
       let acc = "";
       let code = 0;
@@ -3136,91 +3140,110 @@ var require_utils = __commonJS({
       }
       return acc;
     }
+    var isHextet = RegExp.prototype.test.bind(/^[\dA-Fa-f]{1,4}$/);
+    var isIPvFuture = RegExp.prototype.test.bind(/^[vV][\dA-Fa-f]+\.[A-Za-z\d\-._~!$&'()*+,;=:]+$/);
+    var isZoneCharacter = RegExp.prototype.test.bind(/^[A-Za-z\d\-._~]$/);
     var nonSimpleDomain = RegExp.prototype.test.bind(/[^!"$&'()*+,\-.;=_`a-z{}~]/u);
-    function consumeIsZone(buffer) {
-      buffer.length = 0;
+    var nonSimpleDomainChars = RegExp.prototype.test.bind(/[^\d!"$&'()*+,\-.;=_`a-z{}~]/u);
+    var numericLastLabel = RegExp.prototype.test.bind(/(?:^|\.)\d+$/u);
+    function nonSimpleMailtoDomain(domain) {
+      return nonSimpleDomainChars(domain) || numericLastLabel(domain);
+    }
+    function isZoneIdentifier(zone) {
+      if (zone.length === 0) return false;
+      for (let i = 0; i < zone.length; i++) {
+        if (isZoneCharacter(zone[i])) continue;
+        if (zone[i] === "%" && i + 2 < zone.length && isHexPair(zone.slice(i + 1, i + 3))) {
+          i += 2;
+          continue;
+        }
+        return false;
+      }
       return true;
     }
-    function consumeHextets(buffer, address, output) {
-      if (buffer.length) {
-        const hex = stringArrayToHexStripped(buffer);
-        if (hex !== "") {
-          address.push(hex);
+    function compressIPv6ZeroRun(hextets) {
+      let bestStart = -1;
+      let bestLength = 0;
+      let runStart = -1;
+      let runLength = 0;
+      for (let i = 0; i < hextets.length; i++) {
+        if (hextets[i] === "0") {
+          if (runStart === -1) runStart = i;
+          runLength++;
+          if (runLength > bestLength) {
+            bestLength = runLength;
+            bestStart = runStart;
+          }
         } else {
-          output.error = true;
-          return false;
+          runStart = -1;
+          runLength = 0;
         }
-        buffer.length = 0;
       }
-      return true;
+      if (bestLength < 2) return hextets.join(":");
+      const head = hextets.slice(0, bestStart).join(":");
+      const tail = hextets.slice(bestStart + bestLength).join(":");
+      return head + "::" + tail;
     }
-    function getIPV6(input) {
-      let tokenCount = 0;
-      const output = { error: false, address: "", zone: "" };
-      const address = [];
-      const buffer = [];
-      let endipv6Encountered = false;
-      let endIpv6 = false;
-      let consume = consumeHextets;
-      for (let i = 0; i < input.length; i++) {
-        const cursor = input[i];
-        if (cursor === "[" || cursor === "]") {
-          continue;
-        }
-        if (cursor === ":") {
-          if (endipv6Encountered === true) {
-            endIpv6 = true;
-          }
-          if (!consume(buffer, address, output)) {
-            break;
-          }
-          if (++tokenCount > 7) {
-            output.error = true;
-            break;
-          }
-          if (i > 0 && input[i - 1] === ":") {
-            endipv6Encountered = true;
-          }
-          address.push(":");
-          continue;
-        } else if (cursor === "%") {
-          if (!consume(buffer, address, output)) {
-            break;
-          }
-          consume = consumeIsZone;
-        } else {
-          buffer.push(cursor);
-          continue;
-        }
+    function normalizeIPv6Address(input) {
+      const compression = input.indexOf("::");
+      if (compression !== -1 && input.indexOf("::", compression + 1) !== -1) return void 0;
+      const left = compression === -1 ? input.split(":") : input.slice(0, compression).split(":");
+      const right = compression === -1 ? [] : input.slice(compression + 2).split(":");
+      if (compression !== -1) {
+        if (left.length === 1 && left[0] === "") left.length = 0;
+        if (right.length === 1 && right[0] === "") right.length = 0;
       }
-      if (buffer.length) {
-        if (consume === consumeIsZone) {
-          output.zone = buffer.join("");
-        } else if (endIpv6) {
-          address.push(buffer.join(""));
-        } else {
-          address.push(stringArrayToHexStripped(buffer));
+      const parts = left.concat(right);
+      let hextetCount = 0;
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        if (part === "") return void 0;
+        if (part.indexOf(".") !== -1) {
+          if (i !== parts.length - 1 || compression !== -1 && right.length === 0 || !isIPv4(part)) return void 0;
+          hextetCount += 2;
+          continue;
         }
+        if (!isHextet(part)) return void 0;
+        parts[i] = parseInt(part, 16).toString(16);
+        hextetCount++;
       }
-      output.address = address.join("");
-      return output;
+      if (compression === -1) {
+        if (hextetCount !== 8) return void 0;
+        return compressIPv6ZeroRun(parts);
+      }
+      if (hextetCount >= 8) return void 0;
+      const expanded = parts.slice(0, left.length);
+      for (let i = hextetCount; i < 8; i++) expanded.push("0");
+      for (let i = left.length; i < parts.length; i++) expanded.push(parts[i]);
+      return compressIPv6ZeroRun(expanded);
     }
     function normalizeIPv6(host) {
-      if (findToken(host, ":") < 2) {
-        return { host, isIPV6: false };
+      const bracketed = host[0] === "[" && host[host.length - 1] === "]";
+      const hasBracket = host[0] === "[" || host[host.length - 1] === "]";
+      if (hasBracket && !bracketed) return { host, isIPV6: false, error: true };
+      let input = bracketed ? host.slice(1, -1) : host;
+      if (bracketed && isIPvFuture(input)) {
+        input = input.toLowerCase();
+        return { host: `[${input}]`, escapedHost: input, isIPV6: false, isIPVFuture: true };
       }
-      const ipv62 = getIPV6(host);
-      if (!ipv62.error) {
-        let newHost = ipv62.address;
-        let escapedHost = ipv62.address;
-        if (ipv62.zone) {
-          newHost += "%" + ipv62.zone;
-          escapedHost += "%25" + ipv62.zone;
-        }
-        return { host: newHost, isIPV6: true, escapedHost };
-      } else {
-        return { host, isIPV6: false };
+      if (findToken(input, ":") < 2) {
+        return { host, isIPV6: false, error: bracketed };
       }
+      let zoneIdentifier = "";
+      const zoneSeparator = input.indexOf("%");
+      if (zoneSeparator !== -1) {
+        const separatorLength = input.slice(zoneSeparator, zoneSeparator + 3).toLowerCase() === "%25" ? 3 : 1;
+        zoneIdentifier = input.slice(zoneSeparator + separatorLength);
+        if (!isZoneIdentifier(zoneIdentifier)) return { host, isIPV6: false, error: true };
+        input = input.slice(0, zoneSeparator);
+      }
+      const address = normalizeIPv6Address(input);
+      if (address === void 0) return { host, isIPV6: false, error: true };
+      return {
+        host: address + (zoneIdentifier ? "%" + zoneIdentifier : ""),
+        escapedHost: address + (zoneIdentifier ? "%25" + zoneIdentifier : ""),
+        isIPV6: true
+      };
     }
     function findToken(str, token) {
       let ind = 0;
@@ -3304,13 +3327,46 @@ var require_utils = __commonJS({
       }
       return output.join("");
     }
-    var HOST_DELIMS = { "@": "%40", "/": "%2F", "?": "%3F", "#": "%23", ":": "%3A" };
-    var HOST_DELIM_RE = /[@/?#:]/g;
-    var HOST_DELIM_NO_COLON_RE = /[@/?#]/g;
-    function reescapeHostDelimiters(host, isIP) {
-      const re = isIP ? HOST_DELIM_NO_COLON_RE : HOST_DELIM_RE;
-      re.lastIndex = 0;
-      return host.replace(re, (ch) => HOST_DELIMS[ch]);
+    function removeDotSegmentsRelative(path) {
+      if (path === "" || path[0] === "/") {
+        return removeDotSegments(path);
+      }
+      const segments = path.split("/");
+      const last = segments.length - 1;
+      const output = [];
+      let trailingDirectory = false;
+      for (let i = 0; i <= last; i++) {
+        const segment = segments[i];
+        if (segment === "." || segment === "..") {
+          if (segment === "..") {
+            if (output.length !== 0 && output[output.length - 1] !== "..") {
+              output.pop();
+            } else {
+              output.push("..");
+            }
+          }
+          trailingDirectory = i === last;
+        } else {
+          output.push(segment);
+        }
+      }
+      if (trailingDirectory && output[output.length - 1] !== "..") {
+        output.push("");
+      }
+      if (output.length === 0 || output[0] === "" || output[0].includes(":")) {
+        output.unshift(".");
+      }
+      return output.join("/");
+    }
+    var IP_HOST_DELIMS = { "@": "%40", "/": "%2F", "?": "%3F", "#": "%23" };
+    var IP_HOST_DELIM_RE = /[@/?#]/g;
+    function encodeHost(host, isIP, allowNonAscii = false) {
+      if (!isIP) {
+        if (isLiteralRegName(host)) return host;
+        return encodeComponent(host, isRegNameCharacter, allowNonAscii);
+      }
+      IP_HOST_DELIM_RE.lastIndex = 0;
+      return host.replace(IP_HOST_DELIM_RE, (ch) => IP_HOST_DELIMS[ch]);
     }
     function normalizePercentEncoding(input, decodeUnreserved = false) {
       if (input.indexOf("%") === -1) {
@@ -3396,6 +3452,45 @@ var require_utils = __commonJS({
       }
       return output;
     }
+    function serializePathEncoding(input, pathNoScheme = false) {
+      let output = "";
+      let firstSegment = pathNoScheme && input[0] !== "/";
+      for (let i = 0; i < input.length; i++) {
+        const ch = input[i];
+        if (ch === "%" && i + 2 < input.length) {
+          const hex = input.slice(i + 1, i + 3);
+          if (isHexPair(hex)) {
+            output += "%" + hex.toUpperCase();
+            i += 2;
+            continue;
+          }
+        }
+        if (ch === "/") {
+          firstSegment = false;
+        }
+        if (isPathCharacter(ch) && (ch !== ":" || !firstSegment)) {
+          output += ch;
+        } else {
+          const code = input.charCodeAt(i);
+          if (code < 128) {
+            output += BYTE_HEX[code];
+          } else if (code < 55296 || code > 57343) {
+            output += percentEncodeNonAscii(code);
+          } else if (code <= 56319 && i + 1 < input.length) {
+            const low = input.charCodeAt(i + 1);
+            if (low >= 56320 && low <= 57343) {
+              output += percentEncodeNonAscii(65536 + (code - 55296 << 10) + (low - 56320));
+              i++;
+            } else {
+              output += percentEncodeNonAscii(65533);
+            }
+          } else {
+            output += percentEncodeNonAscii(65533);
+          }
+        }
+      }
+      return output;
+    }
     function normalizeQueryFragmentEncoding(input) {
       let output = "";
       for (let i = 0; i < input.length; i++) {
@@ -3437,6 +3532,50 @@ var require_utils = __commonJS({
       }
       return output;
     }
+    function encodeComponent(input, isAllowed, allowNonAscii = false) {
+      let output = "";
+      for (let i = 0; i < input.length; i++) {
+        const ch = input[i];
+        if (ch === "%" && i + 2 < input.length) {
+          const hex = input.slice(i + 1, i + 3);
+          if (isHexPair(hex)) {
+            output += "%" + hex.toUpperCase();
+            i += 2;
+            continue;
+          }
+        }
+        if (isAllowed(ch)) {
+          output += ch;
+        } else {
+          const code = input.charCodeAt(i);
+          if (code < 128) {
+            output += BYTE_HEX[code];
+          } else if (code < 55296 || code > 57343) {
+            output += allowNonAscii ? ch : percentEncodeNonAscii(code);
+          } else if (code <= 56319 && i + 1 < input.length) {
+            const low = input.charCodeAt(i + 1);
+            if (low >= 56320 && low <= 57343) {
+              output += allowNonAscii ? ch + input[i + 1] : percentEncodeNonAscii(65536 + (code - 55296 << 10) + (low - 56320));
+              i++;
+            } else {
+              output += allowNonAscii ? "\uFFFD" : percentEncodeNonAscii(65533);
+            }
+          } else {
+            output += allowNonAscii ? "\uFFFD" : percentEncodeNonAscii(65533);
+          }
+        }
+      }
+      return output;
+    }
+    function encodeUserinfo(input) {
+      return encodeComponent(input, isUserinfoCharacter);
+    }
+    function encodeQuery(input) {
+      return encodeComponent(input, isQueryFragmentCharacter);
+    }
+    function encodeFragment(input) {
+      return encodeComponent(input, isQueryFragmentCharacter);
+    }
     function escapePreservingEscapes(input) {
       let output = "";
       for (let i = 0; i < input.length; i++) {
@@ -3468,39 +3607,74 @@ var require_utils = __commonJS({
       }
       return output;
     }
-    function recomposeAuthority(component) {
+    function recomposeZonedIPv6Host(component) {
+      const zone = component.ipv6Zone;
+      if (zone === void 0) return void 0;
+      const host = component.host;
+      const separator = host.indexOf("%");
+      if (separator === -1) return void 0;
+      const address = host.slice(0, separator);
+      const escaped = address + "%25" + zone;
+      const derived = normalizeIPv6("[" + escaped + "]");
+      if (derived.isIPV6 === true && derived.host === host) {
+        return "[" + escaped + "]";
+      }
+      return void 0;
+    }
+    function recomposeAuthority(component, allowNonAscii = false) {
       const uriTokens = [];
       if (component.userinfo !== void 0) {
-        uriTokens.push(component.userinfo);
+        uriTokens.push(encodeUserinfo(component.userinfo));
         uriTokens.push("@");
       }
       if (component.host !== void 0) {
-        let host = unescape(component.host);
+        let host = component.host;
         if (!isIPv4(host)) {
-          const ipV6res = normalizeIPv6(host);
-          if (ipV6res.isIPV6 === true) {
-            host = `[${ipV6res.escapedHost}]`;
+          const zonedHost = recomposeZonedIPv6Host(component);
+          if (zonedHost !== void 0) {
+            host = zonedHost;
           } else {
-            host = reescapeHostDelimiters(host, false);
+            let ipV6res = normalizeIPv6(host);
+            if (ipV6res.isIPV6 !== true && ipV6res.isIPVFuture !== true) {
+              host = normalizePercentEncoding(host, true);
+              ipV6res = normalizeIPv6(host);
+            }
+            if (ipV6res.isIPV6 === true || ipV6res.isIPVFuture === true) {
+              host = `[${ipV6res.escapedHost}]`;
+            } else {
+              host = encodeHost(host, false, allowNonAscii);
+            }
           }
         }
         uriTokens.push(host);
       }
       if (typeof component.port === "number" || typeof component.port === "string") {
+        const port = String(component.port);
+        if (!isPort(port)) {
+          throw new TypeError("URI port is malformed.");
+        }
         uriTokens.push(":");
-        uriTokens.push(String(component.port));
+        uriTokens.push(port);
       }
       return uriTokens.length ? uriTokens.join("") : void 0;
     }
     module.exports = {
+      BYTE_HEX,
+      percentEncodeNonAscii,
       nonSimpleDomain,
+      nonSimpleMailtoDomain,
       recomposeAuthority,
-      reescapeHostDelimiters,
+      encodeHost,
       normalizePercentEncoding,
       normalizePathEncoding,
+      serializePathEncoding,
       normalizeQueryFragmentEncoding,
+      encodeUserinfo,
+      encodeQuery,
+      encodeFragment,
       escapePreservingEscapes,
       removeDotSegments,
+      removeDotSegmentsRelative,
       isIPv4,
       isUUID,
       normalizeIPv6,
@@ -3509,12 +3683,12 @@ var require_utils = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/fast-uri@4.1.1/node_modules/fast-uri/lib/schemes.js
+// ../../node_modules/.pnpm/fast-uri@4.2.3/node_modules/fast-uri/lib/schemes.js
 var require_schemes = __commonJS({
-  "../../node_modules/.pnpm/fast-uri@4.1.1/node_modules/fast-uri/lib/schemes.js"(exports, module) {
+  "../../node_modules/.pnpm/fast-uri@4.2.3/node_modules/fast-uri/lib/schemes.js"(exports, module) {
     "use strict";
-    var { isUUID } = require_utils();
-    var URN_REG = /([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-.:;=@]|%[\da-f]{2})+)/iu;
+    var { isUUID, BYTE_HEX, percentEncodeNonAscii, nonSimpleMailtoDomain } = require_utils();
+    var URN_REG = /^([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-./:;=@]|%[\da-f]{2})+)$/iu;
     var supportedSchemeNames = (
       /** @type {const} */
       [
@@ -3523,7 +3697,8 @@ var require_schemes = __commonJS({
         "ws",
         "wss",
         "urn",
-        "urn:uuid"
+        "urn:uuid",
+        "mailto"
       ]
     );
     function isValidSchemeName(name) {
@@ -3575,9 +3750,10 @@ var require_schemes = __commonJS({
         wsComponent.secure = void 0;
       }
       if (wsComponent.resourceName) {
-        const [path, query] = wsComponent.resourceName.split("?");
+        const queryIndex = wsComponent.resourceName.indexOf("?");
+        const path = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
         wsComponent.path = path && path !== "/" ? path : void 0;
-        wsComponent.query = query;
+        wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
       wsComponent.fragment = void 0;
@@ -3589,7 +3765,7 @@ var require_schemes = __commonJS({
         return urnComponent;
       }
       const matches = urnComponent.path.match(URN_REG);
-      if (matches) {
+      if (matches && matches[0] === urnComponent.path) {
         const scheme = options.scheme || urnComponent.scheme || "urn";
         urnComponent.nid = matches[1].toLowerCase();
         urnComponent.nss = matches[2];
@@ -3677,7 +3853,10 @@ var require_schemes = __commonJS({
         scheme: "urn",
         parse: urnParse,
         serialize: urnSerialize,
-        skipNormalize: true
+        skipNormalize: true,
+        // The NSS is opaque to generic URI path processing. In particular, RFC 2141
+        // and RFC 8141 do not treat slash-delimited dot segments as equivalent.
+        absolutePath: true
       }
     );
     var urnuuid = (
@@ -3689,6 +3868,252 @@ var require_schemes = __commonJS({
         skipNormalize: true
       }
     );
+    var LOCAL_PART_ALLOWED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$'()*+=";
+    var HFNAME_ALLOWED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$'()*+,;:@";
+    var DTEXT_ALLOWED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$'()*+;:";
+    function allowSet(chars, allowNonAscii = false) {
+      const table2 = new Uint8Array(128);
+      for (let i = 0; i < chars.length; i++) {
+        table2[chars.charCodeAt(i)] = 1;
+      }
+      const escaped = chars.replace(/[\\\]^-]/gu, "\\$&");
+      const cls = allowNonAscii ? `[${escaped}]|[^\\0-\\x7F\\uD800-\\uDFFF]` : `[${escaped}]`;
+      return { all: new RegExp(`^(?:${cls})*$`, "u"), table: table2, allowNonAscii };
+    }
+    var LOCAL_PART = allowSet(LOCAL_PART_ALLOWED);
+    var HFNAME = allowSet(HFNAME_ALLOWED);
+    var DTEXT = allowSet(DTEXT_ALLOWED);
+    var DTEXT_IRI = allowSet(DTEXT_ALLOWED, true);
+    var HEX_PAIR = /^[\da-f]{2}$/iu;
+    var MAILTO_DOMAIN_LITERAL = /^\[[\x21-\x5A\x5E-\x7E]*\]$/u;
+    var MAILTO_DOMAIN_ERROR = "URI mailto has an invalid recipient domain.";
+    var MAILTO_AUTHORITY_ERROR = "URI mailto must not have an authority component.";
+    var HAS_SURROGATE = /[\uD800-\uDFFF]/u;
+    function decodeHex(str) {
+      if (typeof str !== "string" || str.indexOf("%") === -1) {
+        return str;
+      }
+      try {
+        return decodeURIComponent(str);
+      } catch {
+        return str;
+      }
+    }
+    function replaceLoneSurrogates(input) {
+      let result = "";
+      for (let i = 0; i < input.length; i++) {
+        const code = input.charCodeAt(i);
+        if (code >= 55296 && code <= 56319 && i + 1 < input.length) {
+          const low = input.charCodeAt(i + 1);
+          if (low >= 56320 && low <= 57343) {
+            result += input[i] + input[i + 1];
+            i++;
+            continue;
+          }
+        }
+        result += code >= 55296 && code <= 57343 ? "\uFFFD" : input[i];
+      }
+      return result;
+    }
+    function encodeWithAllow(input, set) {
+      if (set.all.test(input)) {
+        return input;
+      }
+      const table2 = set.table;
+      let result = "";
+      for (let i = 0; i < input.length; i++) {
+        const code = input.charCodeAt(i);
+        if (code < 128) {
+          if (table2[code] === 1) {
+            result += input[i];
+          } else if (code === 37 && i + 2 < input.length && HEX_PAIR.test(input.slice(i + 1, i + 3))) {
+            result += "%" + input.slice(i + 1, i + 3).toUpperCase();
+            i += 2;
+          } else {
+            result += BYTE_HEX[code];
+          }
+          continue;
+        }
+        if (code < 55296 || code > 57343) {
+          result += set.allowNonAscii ? input[i] : percentEncodeNonAscii(code);
+          continue;
+        }
+        if (code <= 56319 && i + 1 < input.length) {
+          const low = input.charCodeAt(i + 1);
+          if (low >= 56320 && low <= 57343) {
+            result += set.allowNonAscii ? input[i] + input[i + 1] : percentEncodeNonAscii(65536 + (code - 55296 << 10) + (low - 56320));
+            i++;
+            continue;
+          }
+        }
+        result += set.allowNonAscii ? "\uFFFD" : percentEncodeNonAscii(65533);
+      }
+      return result;
+    }
+    function mailtoNormalizeDomain(domain, options, component) {
+      const normalizedDomain = String(domain).toLowerCase();
+      if (MAILTO_DOMAIN_LITERAL.test(normalizedDomain)) {
+        return normalizedDomain;
+      }
+      if (normalizedDomain !== "" && !nonSimpleMailtoDomain(normalizedDomain)) {
+        return normalizedDomain;
+      }
+      try {
+        const parsedDomain = new URL("http://" + normalizedDomain);
+        if (parsedDomain.username || parsedDomain.password || parsedDomain.port || parsedDomain.pathname !== "/" || parsedDomain.search || parsedDomain.hash || !parsedDomain.hostname) {
+          throw new Error(MAILTO_DOMAIN_ERROR);
+        }
+        return options && options.unicodeSupport ? normalizedDomain : parsedDomain.hostname;
+      } catch {
+        if (component) {
+          component.error = component.error || MAILTO_DOMAIN_ERROR;
+        }
+        return normalizedDomain;
+      }
+    }
+    function mailtoEncodeDomain(domain, options) {
+      const set = options && options.unicodeSupport ? DTEXT_IRI : DTEXT;
+      if (domain.length > 1 && domain[0] === "[" && domain[domain.length - 1] === "]") {
+        return "[" + encodeWithAllow(domain.slice(1, -1), set) + "]";
+      }
+      return encodeWithAllow(domain, set);
+    }
+    function mailtoParse(component, options) {
+      const mailtoComponent = component;
+      let rawPath = mailtoComponent.path;
+      let rawQuery = mailtoComponent.query;
+      if (rawPath && HAS_SURROGATE.test(rawPath)) rawPath = replaceLoneSurrogates(rawPath);
+      if (rawQuery && HAS_SURROGATE.test(rawQuery)) rawQuery = replaceLoneSurrogates(rawQuery);
+      const to = rawPath ? rawPath.indexOf(",") === -1 ? [rawPath] : rawPath.split(",") : [];
+      mailtoComponent.path = void 0;
+      if (rawQuery) {
+        let headers = null;
+        let start = 0;
+        while (start <= rawQuery.length) {
+          let end = rawQuery.indexOf("&", start);
+          if (end === -1) end = rawQuery.length;
+          const token = rawQuery.slice(start, end);
+          start = end + 1;
+          const eqIdx = token.indexOf("=");
+          if (eqIdx !== token.lastIndexOf("=")) {
+            mailtoComponent.error = mailtoComponent.error || "URI mailto has malformed header fields.";
+            continue;
+          }
+          const name = decodeHex(eqIdx === -1 ? token : token.slice(0, eqIdx));
+          const normalizedName = name.toLowerCase();
+          const value = eqIdx === -1 ? "" : token.slice(eqIdx + 1);
+          if (normalizedName === "to") {
+            const addrs = value.split(",");
+            for (let j = 0; j < addrs.length; j++) to.push(addrs[j]);
+            continue;
+          }
+          if (normalizedName === "subject") {
+            mailtoComponent.subject = decodeHex(value);
+            continue;
+          }
+          if (normalizedName === "body") {
+            mailtoComponent.body = decodeHex(value);
+            continue;
+          }
+          if (headers === null) headers = /** @type {Record<string,string>} */
+          /* @__PURE__ */ Object.create(null);
+          headers[name] = decodeHex(value);
+        }
+        if (headers !== null) mailtoComponent.headers = headers;
+      }
+      mailtoComponent.query = void 0;
+      if (to.length > 0 && (mailtoComponent.userinfo !== void 0 || mailtoComponent.host !== void 0 || mailtoComponent.port !== void 0)) {
+        mailtoComponent.userinfo = void 0;
+        mailtoComponent.host = void 0;
+        mailtoComponent.port = void 0;
+        mailtoComponent.error = mailtoComponent.error || MAILTO_AUTHORITY_ERROR;
+      }
+      for (let i = 0; i < to.length; i++) {
+        const rawAddr = to[i];
+        const atIdx = rawAddr.lastIndexOf("@");
+        if (atIdx < 0) {
+          mailtoComponent.error = mailtoComponent.error || MAILTO_DOMAIN_ERROR;
+          to[i] = decodeHex(rawAddr);
+          continue;
+        }
+        const local = decodeHex(rawAddr.slice(0, atIdx));
+        const domain = mailtoNormalizeDomain(decodeHex(rawAddr.slice(atIdx + 1)), options, mailtoComponent);
+        to[i] = local + "@" + domain;
+      }
+      if (to.length) mailtoComponent.to = to;
+      return mailtoComponent;
+    }
+    function mailtoEncodeHeaderName(name) {
+      return encodeWithAllow(name.replace(/%/gu, "%25"), HFNAME);
+    }
+    function mailtoSerialize(component, options) {
+      const mailtoComponent = component;
+      const to = Array.isArray(mailtoComponent.to) ? mailtoComponent.to.slice() : [];
+      const sourceHeaders = mailtoComponent.headers && typeof mailtoComponent.headers === "object" ? Object.assign(/* @__PURE__ */ Object.create(null), mailtoComponent.headers) : /* @__PURE__ */ Object.create(null);
+      const headers = /* @__PURE__ */ Object.create(null);
+      for (const name in sourceHeaders) {
+        const normalizedName = name.toLowerCase();
+        if (normalizedName === "to") {
+          const addrs = String(sourceHeaders[name]).split(",");
+          for (let i = 0; i < addrs.length; i++) to.push(addrs[i]);
+        } else if (normalizedName === "subject" || normalizedName === "body") {
+          headers[normalizedName] = sourceHeaders[name];
+        } else {
+          headers[name] = sourceHeaders[name];
+        }
+      }
+      if (mailtoComponent.subject !== void 0) headers.subject = mailtoComponent.subject;
+      if (mailtoComponent.body !== void 0) headers.body = mailtoComponent.body;
+      mailtoComponent.headers = headers;
+      if (to.length) {
+        mailtoComponent.userinfo = void 0;
+        mailtoComponent.host = void 0;
+        mailtoComponent.port = void 0;
+        for (let i = 0; i < to.length; i++) {
+          const addr = String(to[i]);
+          const atIdx = addr.lastIndexOf("@");
+          const rawLocal = atIdx >= 0 ? addr.slice(0, atIdx) : addr;
+          const rawDomain = atIdx >= 0 ? addr.slice(atIdx + 1) : "";
+          const local = encodeWithAllow(rawLocal, LOCAL_PART);
+          const decodedDomain = decodeHex(rawDomain);
+          const normalizedDomain = mailtoNormalizeDomain(decodedDomain, options);
+          to[i] = local + "@" + mailtoEncodeDomain(normalizedDomain, options);
+        }
+        mailtoComponent.path = to.join(",");
+        options.skipEscape = true;
+      } else {
+        mailtoComponent.path = void 0;
+      }
+      let query = "";
+      let count = 0;
+      for (const name in headers) {
+        if (count++ !== 0) query += "&";
+        query += mailtoEncodeHeaderName(name) + "=" + encodeWithAllow(String(headers[name]), HFNAME);
+      }
+      if (count !== 0) {
+        mailtoComponent.query = query;
+      } else {
+        mailtoComponent.headers = void 0;
+      }
+      return mailtoComponent;
+    }
+    var mailto = (
+      /** @type {SchemeHandler} */
+      {
+        scheme: "mailto",
+        parse: mailtoParse,
+        serialize: mailtoSerialize,
+        domainHost: false,
+        unicodeSupport: true,
+        // `mailtoParse` re-derives every component from the raw path/query via
+        // `decodeHex`, which subsumes the generic normalizers, so running them first
+        // is wasted work (~28% of parsing a URI with header fields).
+        skipNormalize: true,
+        // A recipient list has no dot segments to remove, and `removeDotSegments`
+        // would rewrite a "./"-prefixed local part.
+        absolutePath: true
+      }
+    );
     var SCHEMES = (
       /** @type {Record<SchemeName, SchemeHandler>} */
       {
@@ -3697,7 +4122,8 @@ var require_schemes = __commonJS({
         ws,
         wss,
         urn,
-        "urn:uuid": urnuuid
+        "urn:uuid": urnuuid,
+        mailto
       }
     );
     Object.setPrototypeOf(SCHEMES, null);
@@ -3719,12 +4145,23 @@ var require_schemes = __commonJS({
   }
 });
 
-// ../../node_modules/.pnpm/fast-uri@4.1.1/node_modules/fast-uri/index.js
+// ../../node_modules/.pnpm/fast-uri@4.2.3/node_modules/fast-uri/index.js
 var require_fast_uri = __commonJS({
-  "../../node_modules/.pnpm/fast-uri@4.1.1/node_modules/fast-uri/index.js"(exports, module) {
+  "../../node_modules/.pnpm/fast-uri@4.2.3/node_modules/fast-uri/index.js"(exports, module) {
     "use strict";
-    var { normalizeIPv6, removeDotSegments, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, normalizeQueryFragmentEncoding, escapePreservingEscapes, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
+    var { normalizeIPv6, removeDotSegments, removeDotSegmentsRelative, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, encodeHost, isIPv4, nonSimpleDomain } = require_utils();
     var { SCHEMES, getSchemeHandler } = require_schemes();
+    var VALID_SCHEME = /^[A-Za-z][A-Za-z0-9+.-]*$/u;
+    var MALFORMED_SCHEME_ERROR = "URI scheme is malformed.";
+    var MALFORMED_HOST_ERROR = "URI host is malformed.";
+    var FORBIDDEN_DOMAIN_HOST_CHARACTER = /[\0-\x20"#/:<>?@[\\\]^`{|}\x7F]/u;
+    function validateScheme(scheme) {
+      const stringScheme = String(scheme);
+      if (!VALID_SCHEME.test(stringScheme)) {
+        throw new TypeError(MALFORMED_SCHEME_ERROR);
+      }
+      return stringScheme;
+    }
     function normalize(uri, options) {
       if (typeof uri === "string") {
         uri = /** @type {T} */
@@ -3737,9 +4174,53 @@ var require_fast_uri = __commonJS({
     }
     function resolve(baseURI, relativeURI, options) {
       const schemelessOptions = options ? Object.assign({ scheme: "null" }, options) : { scheme: "null" };
-      const resolved = resolveComponent(parse3(baseURI, schemelessOptions), parse3(relativeURI, schemelessOptions), schemelessOptions, true);
+      const {
+        parsed: baseParsed,
+        malformedAuthorityOrPort: baseMalformed,
+        malformedReferenceEdge: baseMalformedReferenceEdge,
+        malformedPercentEncoding: baseMalformedPercentEncoding,
+        malformedSchemeSpecific: baseMalformedSchemeSpecific,
+        malformedHost: baseMalformedHost,
+        malformedScheme: baseMalformedScheme
+      } = parseWithStatus(baseURI, schemelessOptions);
+      const {
+        parsed: relativeParsed,
+        malformedAuthorityOrPort: relativeMalformed,
+        malformedReferenceEdge: relativeMalformedReferenceEdge,
+        malformedPercentEncoding: relativeMalformedPercentEncoding,
+        malformedSchemeSpecific: relativeMalformedSchemeSpecific,
+        malformedHost: relativeMalformedHost,
+        malformedScheme: relativeMalformedScheme
+      } = parseWithStatus(relativeURI, schemelessOptions);
+      if (baseMalformed || relativeMalformed || baseMalformedReferenceEdge || relativeMalformedReferenceEdge || baseMalformedPercentEncoding || relativeMalformedPercentEncoding || baseMalformedSchemeSpecific || relativeMalformedSchemeSpecific || baseMalformedHost || relativeMalformedHost || baseMalformedScheme || relativeMalformedScheme) {
+        throw new Error(baseParsed.error || relativeParsed.error || "URI is malformed.");
+      }
+      const resolved = resolveComponent(baseParsed, relativeParsed, schemelessOptions, true);
+      const resolvedSchemeHandler = getSchemeHandler(options && options.scheme || resolved.scheme);
+      const resolvedHost = resolved.host;
+      if ((resolved.scheme === "http" || resolved.scheme === "https") && !resolvedHost) {
+        throw new Error("HTTP URIs must have a host.");
+      }
+      const resolvedHostIsIP = resolvedHost !== void 0 && resolvedHost !== "" && (isIPv4(resolvedHost) || normalizeIPv6(resolvedHost).isIPV6);
+      if (hasForbiddenDomainHost(resolved, options || {}, resolvedSchemeHandler, resolvedHostIsIP)) {
+        throw new Error(MALFORMED_HOST_ERROR);
+      }
+      canonicalizeHost(resolved, options || {}, resolvedSchemeHandler, resolvedHostIsIP);
+      const encodedASCIIHost = resolvedHost && resolvedHost.indexOf("%") !== -1 && !/\P{ASCII}/u.test(resolvedHost);
+      if (resolved.error && !encodedASCIIHost) {
+        throw new Error(resolved.error);
+      }
       schemelessOptions.skipEscape = true;
+      if (resolvedSchemeHandler && resolvedSchemeHandler.absolutePath) {
+        schemelessOptions.absolutePath = true;
+      }
       return serialize2(resolved, schemelessOptions);
+    }
+    function copyHost(target, source) {
+      target.host = source.host;
+      if (source.ipv6Zone !== void 0) {
+        target.ipv6Zone = source.ipv6Zone;
+      }
     }
     function resolveComponent(base, relative, options, skipNormalization) {
       const target = {};
@@ -3751,14 +4232,15 @@ var require_fast_uri = __commonJS({
       if (!options.tolerant && relative.scheme) {
         target.scheme = relative.scheme;
         target.userinfo = relative.userinfo;
-        target.host = relative.host;
+        copyHost(target, relative);
         target.port = relative.port;
-        target.path = removeDotSegments(relative.path || "");
+        const relativeSchemeHandler = getSchemeHandler(relative.scheme);
+        target.path = relativeSchemeHandler && relativeSchemeHandler.absolutePath ? relative.path || "" : removeDotSegments(relative.path || "");
         target.query = relative.query;
       } else {
         if (relative.userinfo !== void 0 || relative.host !== void 0 || relative.port !== void 0) {
           target.userinfo = relative.userinfo;
-          target.host = relative.host;
+          copyHost(target, relative);
           target.port = relative.port;
           target.path = removeDotSegments(relative.path || "");
           target.query = relative.query;
@@ -3774,19 +4256,20 @@ var require_fast_uri = __commonJS({
             if (relative.path[0] === "/") {
               target.path = removeDotSegments(relative.path);
             } else {
-              if ((base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0) && !base.path) {
+              const baseHasAuthority = base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0;
+              if (baseHasAuthority && !base.path) {
                 target.path = "/" + relative.path;
               } else if (!base.path) {
                 target.path = relative.path;
               } else {
                 target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative.path;
               }
-              target.path = removeDotSegments(target.path);
+              target.path = base.scheme === void 0 && !baseHasAuthority && target.path[0] !== "/" ? removeDotSegmentsRelative(target.path) : removeDotSegments(target.path);
             }
             target.query = relative.query;
           }
           target.userinfo = base.userinfo;
-          target.host = base.host;
+          copyHost(target, base);
           target.port = base.port;
         }
         target.scheme = base.scheme;
@@ -3797,11 +4280,12 @@ var require_fast_uri = __commonJS({
     function equal(uriA, uriB, options) {
       const normalizedA = normalizeComparableURI(uriA, options);
       const normalizedB = normalizeComparableURI(uriB, options);
-      return normalizedA !== void 0 && normalizedB !== void 0 && normalizedA.toLowerCase() === normalizedB.toLowerCase();
+      return normalizedA !== void 0 && normalizedB !== void 0 && normalizedA === normalizedB;
     }
     function serialize2(cmpts, opts) {
       const component = {
         host: cmpts.host,
+        ipv6Zone: cmpts.ipv6Zone,
         scheme: cmpts.scheme,
         userinfo: cmpts.userinfo,
         port: cmpts.port,
@@ -3814,26 +4298,35 @@ var require_fast_uri = __commonJS({
         reference: cmpts.reference,
         resourceName: cmpts.resourceName,
         secure: cmpts.secure,
+        to: cmpts.to,
+        subject: cmpts.subject,
+        body: cmpts.body,
+        headers: cmpts.headers,
         error: ""
       };
       const options = Object.assign({}, opts);
       const uriTokens = [];
+      if (component.scheme) {
+        component.scheme = validateScheme(component.scheme);
+      }
       const schemeHandler = getSchemeHandler(options.scheme || component.scheme);
       if (schemeHandler && schemeHandler.serialize) schemeHandler.serialize(component, options);
+      const hasAuthority = component.userinfo !== void 0 || component.host !== void 0 || component.port !== void 0;
+      const schemelessReference = (component.scheme === void 0 || options.reference === "suffix") && !hasAuthority;
+      const pathNoScheme = !options.skipEscape && schemelessReference;
       if (component.path !== void 0) {
         if (!options.skipEscape) {
-          component.path = escapePreservingEscapes(component.path);
-          if (component.scheme !== void 0) {
-            component.path = component.path.split("%3A").join(":");
-          }
+          component.path = serializePathEncoding(component.path, pathNoScheme);
         } else {
           component.path = normalizePercentEncoding(component.path);
         }
       }
       if (options.reference !== "suffix" && component.scheme) {
+        component.scheme = validateScheme(component.scheme);
         uriTokens.push(component.scheme, ":");
       }
-      const authority = recomposeAuthority(component);
+      const allowNonAsciiHost = options.unicodeSupport === true || Boolean(schemeHandler && schemeHandler.unicodeSupport);
+      const authority = recomposeAuthority(component, allowNonAsciiHost);
       if (authority !== void 0) {
         if (options.reference !== "suffix") {
           uriTokens.push("//");
@@ -3846,7 +4339,10 @@ var require_fast_uri = __commonJS({
       if (component.path !== void 0) {
         let s = component.path;
         if (!options.absolutePath && (!schemeHandler || !schemeHandler.absolutePath)) {
-          s = removeDotSegments(s);
+          s = schemelessReference && s[0] !== "/" ? removeDotSegmentsRelative(s) : removeDotSegments(s);
+        }
+        if (schemelessReference) {
+          s = serializePathEncoding(s, true);
         }
         if (authority === void 0 && s[0] === "/" && s[1] === "/") {
           s = "/%2F" + s.slice(2);
@@ -3854,15 +4350,16 @@ var require_fast_uri = __commonJS({
         uriTokens.push(s);
       }
       if (component.query !== void 0) {
-        uriTokens.push("?", component.query);
+        uriTokens.push("?", encodeQuery(component.query));
       }
       if (component.fragment !== void 0) {
-        uriTokens.push("#", component.fragment);
+        uriTokens.push("#", encodeFragment(component.fragment));
       }
       return uriTokens.join("");
     }
     var URI_PARSE = /^(?:([^#/:?]+):)?(?:\/\/((?:([^#/?@]*)@)?(\[[^#/?\]]+\]|[^#/:?]*)(?::(\d*))?))?([^#?]*)(?:\?([^#]*))?(?:#((?:.|[\n\r])*))?/u;
     var AUTHORITY_PREFIX = /^(?:[^#/:?]+:)?\/\/([^/?#]*)/;
+    var AUTHORITY_INTRODUCER_REGION = /^(?:[^#/:?]+:)?([/\\\t\n\r]*)/;
     function getParseError(parsed, matches) {
       if (matches[2] !== void 0 && parsed.path && parsed.path[0] !== "/") {
         return 'URI path must start with "/" when authority is present.';
@@ -3871,6 +4368,54 @@ var require_fast_uri = __commonJS({
         return "URI port is malformed.";
       }
       return void 0;
+    }
+    function hasMalformedPercentEncoding(component) {
+      if (component === void 0) return false;
+      let percent = component.indexOf("%");
+      while (percent !== -1) {
+        if (percent + 2 >= component.length || !/^[\da-f]{2}$/iu.test(component.slice(percent + 1, percent + 3))) {
+          return true;
+        }
+        percent = component.indexOf("%", percent + 3);
+      }
+      return false;
+    }
+    function isIPLiteral(host) {
+      return host[0] === "[" && host[host.length - 1] === "]";
+    }
+    function hasMalformedComponentPercentEncoding(matches) {
+      const host = matches[4];
+      return hasMalformedPercentEncoding(matches[3]) || host !== void 0 && !isIPLiteral(host) && hasMalformedPercentEncoding(host) || hasMalformedPercentEncoding(matches[6]) || hasMalformedPercentEncoding(matches[7]) || hasMalformedPercentEncoding(matches[8]);
+    }
+    function canonicalizeHost(parsed, options, schemeHandler, isIP) {
+      const bracketedIPLiteral = parsed.host && parsed.host[0] === "[" && parsed.host[parsed.host.length - 1] === "]";
+      if (hasForbiddenDomainHost(parsed, options, schemeHandler, isIP)) {
+        parsed.error = parsed.error || MALFORMED_HOST_ERROR;
+        return true;
+      }
+      if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport) && parsed.host && !isIPLiteral(parsed.host) && (options.domainHost || schemeHandler && schemeHandler.domainHost) && isIP === false && !bracketedIPLiteral && nonSimpleDomain(parsed.host)) {
+        let url;
+        try {
+          url = new URL("http://" + parsed.host);
+        } catch (e) {
+          parsed.error = parsed.error || "Host's domain name can not be converted to ASCII: " + e;
+          return true;
+        }
+        if (!isHostOnlyURL(url)) {
+          parsed.error = parsed.error || MALFORMED_HOST_ERROR;
+          return true;
+        }
+        parsed.host = url.hostname;
+      }
+      return false;
+    }
+    function hasForbiddenDomainHost(parsed, options, schemeHandler, isIP) {
+      return Boolean(
+        parsed.host && isIP === false && !isIPLiteral(parsed.host) && (options.domainHost || schemeHandler && schemeHandler.domainHost) && FORBIDDEN_DOMAIN_HOST_CHARACTER.test(parsed.host)
+      );
+    }
+    function isHostOnlyURL(url) {
+      return url.username === "" && url.password === "" && url.port === "" && url.pathname === "/" && url.search === "" && url.hash === "" && url.hostname !== "";
     }
     function parseWithStatus(uri, opts) {
       const options = Object.assign({}, opts);
@@ -3884,6 +4429,12 @@ var require_fast_uri = __commonJS({
         fragment: void 0
       };
       let malformedAuthorityOrPort = false;
+      const malformedReferenceEdge = uri.length !== 0 && (uri.charCodeAt(0) <= 32 || uri.charCodeAt(uri.length - 1) <= 32);
+      let malformedPercentEncoding = false;
+      let malformedSchemeSpecific = false;
+      let malformedHost = false;
+      let malformedIPLiteral = false;
+      let malformedScheme = false;
       let isIP = false;
       if (options.reference === "suffix") {
         if (options.scheme) {
@@ -3897,15 +4448,44 @@ var require_fast_uri = __commonJS({
         parsed.error = "URI authority must not contain a literal backslash.";
         malformedAuthorityOrPort = true;
       }
+      const introducerMatch = uri.match(AUTHORITY_INTRODUCER_REGION);
+      if (introducerMatch !== null) {
+        const region = introducerMatch[1];
+        const normalizedRegion = region.replace(/[\t\n\r]/g, "");
+        if (normalizedRegion.length >= 2) {
+          if (normalizedRegion.slice(0, 2) !== "//") {
+            parsed.error = parsed.error || "URI authority must not contain a literal backslash.";
+            malformedAuthorityOrPort = true;
+          } else if (region.length !== normalizedRegion.length) {
+            parsed.error = parsed.error || "URI authority introducer must not contain whitespace.";
+            malformedAuthorityOrPort = true;
+          }
+        }
+      }
+      if (malformedReferenceEdge) {
+        parsed.error = parsed.error || "URI must not contain leading or trailing C0 controls or spaces.";
+      }
       const matches = uri.match(URI_PARSE);
       if (matches) {
-        parsed.scheme = matches[1] === void 0 ? void 0 : matches[1].toLowerCase();
+        parsed.scheme = matches[1];
         parsed.userinfo = matches[3];
         parsed.host = matches[4];
         parsed.port = parseInt(matches[5], 10);
         parsed.path = matches[6] || "";
         parsed.query = matches[7];
         parsed.fragment = matches[8];
+        if (parsed.scheme !== void 0) {
+          if (VALID_SCHEME.test(parsed.scheme)) {
+            parsed.scheme = parsed.scheme.toLowerCase();
+          } else {
+            parsed.error = parsed.error || MALFORMED_SCHEME_ERROR;
+            malformedScheme = true;
+          }
+        }
+        malformedPercentEncoding = hasMalformedComponentPercentEncoding(matches);
+        if (malformedPercentEncoding) {
+          parsed.error = parsed.error || "URI contains malformed percent-encoding.";
+        }
         if (isNaN(parsed.port)) {
           parsed.port = matches[5];
         }
@@ -3917,9 +4497,19 @@ var require_fast_uri = __commonJS({
         if (parsed.host) {
           const ipv4result = isIPv4(parsed.host);
           if (ipv4result === false) {
+            const bracketedIPLiteral = isIPLiteral(parsed.host);
+            const hasIPLiteralBracket = parsed.host.indexOf("[") !== -1 || parsed.host.indexOf("]") !== -1;
             const ipv6result = normalizeIPv6(parsed.host);
-            parsed.host = ipv6result.host.toLowerCase();
-            isIP = ipv6result.isIPV6;
+            isIP = ipv6result.isIPV6 || ipv6result.isIPVFuture === true;
+            malformedIPLiteral = hasIPLiteralBracket && (!bracketedIPLiteral || ipv6result.error === true);
+            parsed.host = isIP ? ipv6result.host : ipv6result.host.toLowerCase();
+            if (isIP && ipv6result.isIPV6 === true && parsed.host.indexOf("%") !== -1) {
+              parsed.ipv6Zone = parsed.host.slice(parsed.host.indexOf("%") + 1);
+            }
+            if (malformedIPLiteral) {
+              parsed.error = parsed.error || MALFORMED_HOST_ERROR;
+              malformedAuthorityOrPort = true;
+            }
           } else {
             isIP = true;
           }
@@ -3937,24 +4527,23 @@ var require_fast_uri = __commonJS({
           parsed.error = parsed.error || "URI is not a " + options.reference + " reference.";
         }
         const schemeHandler = getSchemeHandler(options.scheme || parsed.scheme);
-        if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport)) {
-          if (parsed.host && (options.domainHost || schemeHandler && schemeHandler.domainHost) && isIP === false && nonSimpleDomain(parsed.host)) {
-            try {
-              parsed.host = new URL("http://" + parsed.host).hostname;
-            } catch (e) {
-              parsed.error = parsed.error || "Host's domain name can not be converted to ASCII: " + e;
-            }
+        if (!malformedIPLiteral) {
+          malformedHost = canonicalizeHost(parsed, options, schemeHandler, isIP);
+        }
+        if (parsed.host !== void 0 && !malformedIPLiteral) {
+          let host = parsed.host;
+          if (uri.indexOf("%") !== -1 && !isIP) {
+            host = normalizePercentEncoding(host, true);
+            host = normalizePercentEncoding(host.toLowerCase());
+          }
+          if (options.scheme !== "null") {
+            const allowNonAsciiHost = options.unicodeSupport === true || Boolean(schemeHandler && schemeHandler.unicodeSupport);
+            parsed.host = encodeHost(host, isIP, allowNonAsciiHost);
+          } else {
+            parsed.host = host;
           }
         }
         if (!schemeHandler || schemeHandler && !schemeHandler.skipNormalize) {
-          if (uri.indexOf("%") !== -1) {
-            if (parsed.scheme !== void 0) {
-              parsed.scheme = unescape(parsed.scheme);
-            }
-            if (parsed.host !== void 0) {
-              parsed.host = reescapeHostDelimiters(unescape(parsed.host), isIP);
-            }
-          }
           if (parsed.path) {
             parsed.path = normalizePathEncoding(parsed.path);
           }
@@ -3967,11 +4556,14 @@ var require_fast_uri = __commonJS({
         }
         if (schemeHandler && schemeHandler.parse) {
           schemeHandler.parse(parsed, options);
+          if (schemeHandler === SCHEMES.urn && parsed.nid === void 0) {
+            malformedSchemeSpecific = true;
+          }
         }
       } else {
         parsed.error = parsed.error || "URI can not be parsed.";
       }
-      return { parsed, malformedAuthorityOrPort };
+      return { parsed, malformedAuthorityOrPort, malformedReferenceEdge, malformedPercentEncoding, malformedSchemeSpecific, malformedHost, malformedScheme };
     }
     function parse3(uri, opts) {
       return parseWithStatus(uri, opts).parsed;
@@ -3980,20 +4572,29 @@ var require_fast_uri = __commonJS({
       return normalizeStringWithStatus(uri, opts).normalized;
     }
     function normalizeStringWithStatus(uri, opts) {
-      const { parsed, malformedAuthorityOrPort } = parseWithStatus(uri, opts);
+      const { parsed, malformedAuthorityOrPort, malformedReferenceEdge, malformedPercentEncoding, malformedSchemeSpecific, malformedHost, malformedScheme } = parseWithStatus(uri, opts);
       return {
-        normalized: malformedAuthorityOrPort ? uri : serialize2(parsed, opts),
-        malformedAuthorityOrPort
+        normalized: malformedAuthorityOrPort || malformedReferenceEdge || malformedPercentEncoding || malformedSchemeSpecific || malformedHost || malformedScheme ? uri : serialize2(parsed, opts),
+        malformedAuthorityOrPort,
+        malformedReferenceEdge,
+        malformedPercentEncoding,
+        malformedSchemeSpecific,
+        malformedHost,
+        malformedScheme
       };
     }
     function normalizeComparableURI(uri, opts) {
-      if (typeof uri === "string") {
-        const { normalized, malformedAuthorityOrPort } = normalizeStringWithStatus(uri, opts);
-        return malformedAuthorityOrPort ? void 0 : normalized;
+      if (typeof uri !== "string" && typeof uri !== "object") {
+        return void 0;
       }
-      if (typeof uri === "object") {
-        return serialize2(uri, opts);
+      let value;
+      try {
+        value = typeof uri === "string" ? uri : serialize2(uri, opts);
+      } catch {
+        return void 0;
       }
+      const { normalized, malformedAuthorityOrPort, malformedReferenceEdge, malformedPercentEncoding, malformedSchemeSpecific, malformedHost, malformedScheme } = normalizeStringWithStatus(value, opts);
+      return malformedAuthorityOrPort || malformedReferenceEdge || malformedPercentEncoding || malformedSchemeSpecific || malformedHost || malformedScheme ? void 0 : normalized;
     }
     var fastUri = {
       SCHEMES,
@@ -6984,6 +7585,110 @@ var require_dist = __commonJS({
     module.exports = exports = formatsPlugin;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = formatsPlugin;
+  }
+});
+
+// ../../node_modules/.pnpm/content-type@1.0.5/node_modules/content-type/index.js
+var require_content_type = __commonJS({
+  "../../node_modules/.pnpm/content-type@1.0.5/node_modules/content-type/index.js"(exports) {
+    "use strict";
+    var PARAM_REGEXP = /; *([!#$%&'*+.^_`|~0-9A-Za-z-]+) *= *("(?:[\u000b\u0020\u0021\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u000b\u0020-\u00ff])*"|[!#$%&'*+.^_`|~0-9A-Za-z-]+) */g;
+    var TEXT_REGEXP = /^[\u000b\u0020-\u007e\u0080-\u00ff]+$/;
+    var TOKEN_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
+    var QESC_REGEXP = /\\([\u000b\u0020-\u00ff])/g;
+    var QUOTE_REGEXP = /([\\"])/g;
+    var TYPE_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
+    exports.format = format;
+    exports.parse = parse3;
+    function format(obj) {
+      if (!obj || typeof obj !== "object") {
+        throw new TypeError("argument obj is required");
+      }
+      var parameters = obj.parameters;
+      var type = obj.type;
+      if (!type || !TYPE_REGEXP.test(type)) {
+        throw new TypeError("invalid type");
+      }
+      var string3 = type;
+      if (parameters && typeof parameters === "object") {
+        var param26;
+        var params = Object.keys(parameters).sort();
+        for (var i = 0; i < params.length; i++) {
+          param26 = params[i];
+          if (!TOKEN_REGEXP.test(param26)) {
+            throw new TypeError("invalid parameter name");
+          }
+          string3 += "; " + param26 + "=" + qstring(parameters[param26]);
+        }
+      }
+      return string3;
+    }
+    function parse3(string3) {
+      if (!string3) {
+        throw new TypeError("argument string is required");
+      }
+      var header = typeof string3 === "object" ? getcontenttype(string3) : string3;
+      if (typeof header !== "string") {
+        throw new TypeError("argument string is required to be a string");
+      }
+      var index = header.indexOf(";");
+      var type = index !== -1 ? header.slice(0, index).trim() : header.trim();
+      if (!TYPE_REGEXP.test(type)) {
+        throw new TypeError("invalid media type");
+      }
+      var obj = new ContentType(type.toLowerCase());
+      if (index !== -1) {
+        var key;
+        var match;
+        var value;
+        PARAM_REGEXP.lastIndex = index;
+        while (match = PARAM_REGEXP.exec(header)) {
+          if (match.index !== index) {
+            throw new TypeError("invalid parameter format");
+          }
+          index += match[0].length;
+          key = match[1].toLowerCase();
+          value = match[2];
+          if (value.charCodeAt(0) === 34) {
+            value = value.slice(1, -1);
+            if (value.indexOf("\\") !== -1) {
+              value = value.replace(QESC_REGEXP, "$1");
+            }
+          }
+          obj.parameters[key] = value;
+        }
+        if (index !== header.length) {
+          throw new TypeError("invalid parameter format");
+        }
+      }
+      return obj;
+    }
+    function getcontenttype(obj) {
+      var header;
+      if (typeof obj.getHeader === "function") {
+        header = obj.getHeader("content-type");
+      } else if (typeof obj.headers === "object") {
+        header = obj.headers && obj.headers["content-type"];
+      }
+      if (typeof header !== "string") {
+        throw new TypeError("content-type header is missing from object");
+      }
+      return header;
+    }
+    function qstring(val) {
+      var str = String(val);
+      if (TOKEN_REGEXP.test(str)) {
+        return str;
+      }
+      if (str.length > 0 && !TEXT_REGEXP.test(str)) {
+        throw new TypeError("invalid parameter value");
+      }
+      return '"' + str.replace(QUOTE_REGEXP, "\\$1") + '"';
+    }
+    function ContentType(type) {
+      this.parameters = /* @__PURE__ */ Object.create(null);
+      this.type = type;
+    }
   }
 });
 
@@ -14877,7 +15582,7 @@ function object(shape, params) {
   return new ZodMiniObject(def);
 }
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s) {
   const schema = s;
   return !!schema._zod;
@@ -14961,16 +15666,32 @@ function normalizeObjectSchema(schema) {
   }
   return void 0;
 }
+function getDotPath(path) {
+  if (path.length === 0) {
+    return "object root";
+  }
+  return path.reduce((acc, seg, index) => {
+    if (index === 0) {
+      return String(seg);
+    }
+    if (typeof seg === "number") {
+      return `${acc}[${seg}]`;
+    }
+    return `${acc}.${seg}`;
+  }, "");
+}
 function getParseErrorMessage(error2) {
   if (error2 && typeof error2 === "object") {
+    if ("issues" in error2 && Array.isArray(error2.issues) && error2.issues.length > 0) {
+      return error2.issues.map((i) => {
+        if (!i.path?.length) {
+          return i.message;
+        }
+        return `${i.message} at ${getDotPath(i.path)}`;
+      }).join("\n");
+    }
     if ("message" in error2 && typeof error2.message === "string") {
       return error2.message;
-    }
-    if ("issues" in error2 && Array.isArray(error2.issues) && error2.issues.length > 0) {
-      const firstIssue = error2.issues[0];
-      if (firstIssue && typeof firstIssue === "object" && "message" in firstIssue) {
-        return String(firstIssue.message);
-      }
     }
     try {
       return JSON.stringify(error2);
@@ -15716,7 +16437,7 @@ function preprocess(fn, schema) {
 // ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/classic/external.js
 config(en_default2());
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var DEFAULT_NEGOTIATED_PROTOCOL_VERSION = "2025-03-26";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05", "2024-10-07"];
@@ -17249,7 +17970,7 @@ var UrlElicitationRequiredError = class extends McpError {
   }
 };
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
 function isTerminal(status) {
   return status === "completed" || status === "failed" || status === "cancelled";
 }
@@ -18538,7 +19259,7 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
 function mapMiniTarget(t) {
   if (!t)
     return "draft-7";
@@ -18580,7 +19301,7 @@ function parseWithCompat(schema, data) {
   return result.data;
 }
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
 var DEFAULT_REQUEST_TIMEOUT_MSEC = 6e4;
 var Protocol = class {
   constructor(_options) {
@@ -18621,6 +19342,9 @@ var Protocol = class {
       this.setRequestHandler(GetTaskPayloadRequestSchema, async (request, extra) => {
         const handleTaskResult = async () => {
           const taskId = request.params.taskId;
+          if (!await this._taskStore.getTask(taskId, extra.sessionId)) {
+            throw new McpError(ErrorCode.InvalidParams, `Task not found: ${taskId}`);
+          }
           if (this._taskMessageQueue) {
             let queuedMessage;
             while (queuedMessage = await this._taskMessageQueue.dequeue(taskId, extra.sessionId)) {
@@ -18651,12 +19375,12 @@ var Protocol = class {
             throw new McpError(ErrorCode.InvalidParams, `Task not found: ${taskId}`);
           }
           if (!isTerminal(task.status)) {
-            await this._waitForTaskUpdate(taskId, extra.signal);
+            await this._waitForTaskUpdate(taskId, extra.signal, extra.sessionId);
             return await handleTaskResult();
           }
           if (isTerminal(task.status)) {
             const result = await this._taskStore.getTaskResult(taskId, extra.sessionId);
-            this._clearTaskQueue(taskId);
+            this._clearTaskQueue(taskId, extra.sessionId);
             return {
               ...result,
               _meta: {
@@ -18693,7 +19417,7 @@ var Protocol = class {
             throw new McpError(ErrorCode.InvalidParams, `Cannot cancel task in terminal status: ${task.status}`);
           }
           await this._taskStore.updateTaskStatus(request.params.taskId, "cancelled", "Client cancelled task execution.", extra.sessionId);
-          this._clearTaskQueue(request.params.taskId);
+          this._clearTaskQueue(request.params.taskId, extra.sessionId);
           const cancelledTask = await this._taskStore.getTask(request.params.taskId, extra.sessionId);
           if (!cancelledTask) {
             throw new McpError(ErrorCode.InvalidParams, `Task not found after cancellation: ${request.params.taskId}`);
@@ -18821,6 +19545,19 @@ var Protocol = class {
     const handler = this._requestHandlers.get(request.method) ?? this.fallbackRequestHandler;
     const capturedTransport = this._transport;
     const relatedTaskId = request.params?._meta?.[RELATED_TASK_META_KEY]?.taskId;
+    const sessionId = capturedTransport?.sessionId;
+    const store = this._taskStore;
+    let relatedTaskFound = true;
+    let relatedTaskLookup;
+    if (relatedTaskId && store && this._taskMessageQueue && sessionId !== void 0) {
+      relatedTaskFound = false;
+      relatedTaskLookup = (async () => {
+        if (!await store.getTask(relatedTaskId, sessionId)) {
+          throw new McpError(ErrorCode.InvalidParams, `Task not found: ${relatedTaskId}`);
+        }
+        relatedTaskFound = true;
+      })();
+    }
     if (handler === void 0) {
       const errorResponse = {
         jsonrpc: "2.0",
@@ -18830,7 +19567,10 @@ var Protocol = class {
           message: "Method not found"
         }
       };
-      if (relatedTaskId && this._taskMessageQueue) {
+      if (relatedTaskId && relatedTaskLookup) {
+        const queuedError = { type: "error", message: errorResponse, timestamp: Date.now() };
+        relatedTaskLookup.then(() => this._enqueueTaskMessage(relatedTaskId, queuedError, sessionId), () => capturedTransport?.send(errorResponse)).catch((error2) => this._onerror(new Error(`Failed to send an error response: ${error2}`)));
+      } else if (relatedTaskId && this._taskMessageQueue) {
         this._enqueueTaskMessage(relatedTaskId, {
           type: "error",
           message: errorResponse,
@@ -18881,7 +19621,10 @@ var Protocol = class {
       closeSSEStream: extra?.closeSSEStream,
       closeStandaloneSSEStream: extra?.closeStandaloneSSEStream
     };
-    Promise.resolve().then(() => {
+    (relatedTaskLookup ?? Promise.resolve()).then(() => {
+      if (relatedTaskLookup && abortController.signal.aborted) {
+        throw new McpError(ErrorCode.ConnectionClosed, "Request was cancelled");
+      }
       if (taskCreationParams) {
         this.assertTaskHandlerCapability(request.method);
       }
@@ -18916,7 +19659,7 @@ var Protocol = class {
           ...error2["data"] !== void 0 && { data: error2["data"] }
         }
       };
-      if (relatedTaskId && this._taskMessageQueue) {
+      if (relatedTaskId && this._taskMessageQueue && relatedTaskFound) {
         await this._enqueueTaskMessage(relatedTaskId, {
           type: "error",
           message: errorResponse,
@@ -19396,7 +20139,7 @@ var Protocol = class {
       throw new Error("Cannot enqueue task message: taskStore and taskMessageQueue are not configured");
     }
     const maxQueueSize = this._options?.maxTaskQueueSize;
-    await this._taskMessageQueue.enqueue(taskId, message, sessionId, maxQueueSize);
+    await this._taskMessageQueue.enqueue(taskId, message, sessionId ?? this._transport?.sessionId, maxQueueSize);
   }
   /**
    * Clears the message queue for a task and rejects any pending request resolvers.
@@ -19425,12 +20168,13 @@ var Protocol = class {
    * Uses polling to check for updates at the task's configured poll interval.
    * @param taskId The task ID to wait for
    * @param signal Abort signal to cancel the wait
+   * @param sessionId Session of the request that waits, passed to the task store
    * @returns Promise that resolves when an update occurs or rejects if aborted
    */
-  async _waitForTaskUpdate(taskId, signal) {
+  async _waitForTaskUpdate(taskId, signal, sessionId) {
     let interval = this._options?.defaultTaskPollInterval ?? 1e3;
     try {
-      const task = await this._taskStore?.getTask(taskId);
+      const task = await this._taskStore?.getTask(taskId, sessionId);
       if (task?.pollInterval) {
         interval = task.pollInterval;
       }
@@ -19534,7 +20278,7 @@ function mergeCapabilities(base, additional) {
   return result;
 }
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_formats = __toESM(require_dist(), 1);
 function createDefaultAjvInstance() {
@@ -19602,7 +20346,7 @@ var AjvJsonSchemaValidator = class {
   }
 };
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
 var ExperimentalServerTasks = class {
   constructor(_server) {
     this._server = _server;
@@ -19815,7 +20559,7 @@ var ExperimentalServerTasks = class {
   }
 };
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
 function assertToolsCallTaskCapability(requests, method, entityName) {
   if (!requests) {
     throw new Error(`${entityName} does not support task creation (required for ${method})`);
@@ -19850,7 +20594,7 @@ function assertClientRequestTaskCapability(requests, method, entityName) {
   }
 }
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
 var Server = class extends Protocol {
   /**
    * Initializes this server with the given name and version information.
@@ -19916,16 +20660,7 @@ var Server = class extends Protocol {
     if (!methodSchema) {
       throw new Error("Schema is missing a method literal");
     }
-    let methodValue;
-    if (isZ4Schema(methodSchema)) {
-      const v4Schema = methodSchema;
-      const v4Def = v4Schema._zod?.def;
-      methodValue = v4Def?.value ?? v4Schema.value;
-    } else {
-      const v3Schema = methodSchema;
-      const legacyDef = v3Schema._def;
-      methodValue = legacyDef?.value ?? v3Schema.value;
-    }
+    const methodValue = getLiteralValue(methodSchema);
     if (typeof methodValue !== "string") {
       throw new Error("Schema method literal must be a string");
     }
@@ -20230,7 +20965,7 @@ var Server = class extends Protocol {
   }
 };
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
@@ -20244,7 +20979,7 @@ var McpZodTypeKind;
   McpZodTypeKind2["Completable"] = "McpCompletable";
 })(McpZodTypeKind || (McpZodTypeKind = {}));
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
 var TOOL_NAME_REGEX = /^[A-Za-z0-9._-]{1,128}$/;
 function validateToolName(name) {
   const warnings = [];
@@ -20302,7 +21037,7 @@ function validateAndWarnToolName(name) {
   return result.isValid;
 }
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
 var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
@@ -20317,7 +21052,43 @@ var ExperimentalMcpServerTasks = class {
   }
 };
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+function toolInputElementCount(value, max2) {
+  let count = 0;
+  const stack = [value];
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (node === null || typeof node !== "object")
+      continue;
+    if (Array.isArray(node)) {
+      for (const child of node) {
+        if (++count > max2)
+          return count;
+        if (child !== null && typeof child === "object")
+          stack.push(child);
+      }
+    } else {
+      for (const key in node) {
+        if (!Object.prototype.hasOwnProperty.call(node, key))
+          continue;
+        if (++count > max2)
+          return count;
+        const child = node[key];
+        if (child !== null && typeof child === "object")
+          stack.push(child);
+      }
+    }
+  }
+  return count;
+}
+function resolveMaxToolInputElements(value) {
+  if (value === void 0 || value === Infinity)
+    return void 0;
+  if (typeof value !== "number" || Number.isNaN(value) || value < 1) {
+    throw new RangeError(`maxToolInputElements must be a number of at least 1, or Infinity, got ${String(value)}`);
+  }
+  return value;
+}
 var McpServer = class {
   constructor(serverInfo, options) {
     this._registeredResources = {};
@@ -20329,6 +21100,16 @@ var McpServer = class {
     this._resourceHandlersInitialized = false;
     this._promptHandlersInitialized = false;
     this.server = new Server(serverInfo, options);
+    this._maxToolInputElements = resolveMaxToolInputElements(options?.maxToolInputElements);
+    if (options?.capabilities?.tools) {
+      this.setToolRequestHandlers();
+    }
+    if (options?.capabilities?.resources) {
+      this.setResourceRequestHandlers();
+    }
+    if (options?.capabilities?.prompts) {
+      this.setPromptRequestHandlers();
+    }
   }
   /**
    * Access experimental features.
@@ -20459,12 +21240,15 @@ var McpServer = class {
    * Validates tool input arguments against the tool's input schema.
    */
   async validateToolInput(tool, args, toolName) {
+    if (this._maxToolInputElements !== void 0 && toolInputElementCount(args, this._maxToolInputElements) > this._maxToolInputElements) {
+      throw new McpError(ErrorCode.InvalidParams, `Invalid arguments for tool ${toolName}: arguments contain more than the maximum of ${this._maxToolInputElements} elements`);
+    }
     if (!tool.inputSchema) {
       return void 0;
     }
     const inputObj = normalizeObjectSchema(tool.inputSchema);
     const schemaToParse = inputObj ?? tool.inputSchema;
-    const parseResult = await safeParseAsync2(schemaToParse, args);
+    const parseResult = await safeParseAsync2(schemaToParse, args ?? {});
     if (!parseResult.success) {
       const error2 = "error" in parseResult ? parseResult.error : "Unknown error";
       const errorMessage = getParseErrorMessage(error2);
@@ -20702,7 +21486,7 @@ var McpServer = class {
       }
       if (prompt.argsSchema) {
         const argsObj = normalizeObjectSchema(prompt.argsSchema);
-        const parseResult = await safeParseAsync2(argsObj, request.params.arguments);
+        const parseResult = await safeParseAsync2(argsObj, request.params.arguments ?? {});
         if (!parseResult.success) {
           const error2 = "error" in parseResult ? parseResult.error : "Unknown error";
           const errorMessage = getParseErrorMessage(error2);
@@ -21180,8 +21964,8 @@ function valueFromJSON(tv) {
       if (typeof tv.value !== "string") {
         throw new TypeError("money value must be a string of cents");
       }
-      if (!/^-?\d+$/.test(tv.value)) {
-        throw new TypeError(`invalid money value: ${JSON.stringify(tv.value)}`);
+      if (!/^-?\d{1,18}$/.test(tv.value)) {
+        throw new TypeError(`invalid money value: ${JSON.stringify(tv.value.slice(0, 40))}`);
       }
       return { type: "money", cents: BigInt(tv.value) };
     }
@@ -21189,8 +21973,8 @@ function valueFromJSON(tv) {
       if (typeof tv.value !== "string") {
         throw new TypeError("int value must be a decimal string");
       }
-      if (!/^-?\d+$/.test(tv.value)) {
-        throw new TypeError(`invalid int value: ${JSON.stringify(tv.value)}`);
+      if (!/^-?\d{1,18}$/.test(tv.value)) {
+        throw new TypeError(`invalid int value: ${JSON.stringify(tv.value.slice(0, 40))}`);
       }
       return { type: "int", value: BigInt(tv.value) };
     }
@@ -21258,6 +22042,7 @@ function stepUnits(value, unit, mode) {
     throw new RangeError("stepUnits requires a positive unit");
   return divRound(value, unit, mode);
 }
+var MAX_CENTS_LITERAL = /^-?\d{1,18}$/;
 function parseDollars(input) {
   if (typeof input === "number") {
     if (!Number.isSafeInteger(input)) {
@@ -21265,8 +22050,10 @@ function parseDollars(input) {
     }
     return BigInt(input) * 100n;
   }
+  if (input.length > 64)
+    throw new TypeError("money amount is too long");
   const s = input.trim().replace(/^\$/, "").replace(/,/g, "");
-  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
+  const m = /^(-?)(\d{1,15})(?:\.(\d{1,2}))?$/.exec(s);
   if (!m) {
     throw new TypeError(`invalid money amount ${JSON.stringify(input)} \u2014 use dollars like 50000, "$50,000", or "1234.56"`);
   }
@@ -21275,13 +22062,13 @@ function parseDollars(input) {
   return sign === "-" ? -cents : cents;
 }
 function parseCents(s) {
-  if (!/^-?\d+$/.test(s)) {
+  if (!MAX_CENTS_LITERAL.test(s)) {
     throw new TypeError(`invalid cents literal: ${JSON.stringify(s)}`);
   }
   return BigInt(s);
 }
 function parseInt_(s) {
-  if (!/^-?\d+$/.test(s)) {
+  if (!MAX_CENTS_LITERAL.test(s)) {
     throw new TypeError(`invalid integer literal: ${JSON.stringify(s)}`);
   }
   return BigInt(s);
@@ -21595,6 +22382,7 @@ function loadCorpus(input) {
   const byId = /* @__PURE__ */ new Map();
   const factById2 = /* @__PURE__ */ new Map();
   const overriders = /* @__PURE__ */ new Map();
+  const contributors = /* @__PURE__ */ new Map();
   for (const fact44 of input.facts) {
     if (factById2.has(fact44.id))
       issues.push(`duplicate fact id "${fact44.id}"`);
@@ -21603,6 +22391,8 @@ function loadCorpus(input) {
       issues.push(`enum fact "${fact44.id}" must declare enumValues`);
     }
   }
+  const knownRuleIds = byIdRefChecker(input);
+  const contributorIds = new Set(input.rules.filter((r) => r.contributesTo !== void 0).map((r) => r.id));
   const seenVersions = /* @__PURE__ */ new Set();
   for (const rule of input.rules) {
     const key = `${rule.id}@${rule.version}`;
@@ -21633,7 +22423,27 @@ function loadCorpus(input) {
         issues.push(`rule "${key}": an override must declare an applicability guard`);
       }
     }
-    validateExpressions(rule, byIdRefChecker(input), factById2, issues);
+    if (rule.contributesTo !== void 0) {
+      const list2 = contributors.get(rule.contributesTo) ?? [];
+      list2.push(rule);
+      contributors.set(rule.contributesTo, list2);
+      if (rule.output.type !== "money")
+        issues.push(`rule "${key}": a contribution must output money`);
+      if (rule.applicability)
+        issues.push(`rule "${key}": a contribution cannot declare an applicability guard`);
+      if (rule.overrides)
+        issues.push(`rule "${key}": a rule cannot both override and contribute`);
+      if (rule.contributesTo === rule.id)
+        issues.push(`rule "${key}" contributes to itself`);
+    }
+    validateExpressions(rule, knownRuleIds, contributorIds, factById2, issues);
+  }
+  for (const [targetId] of contributors) {
+    const targets = byId.get(targetId);
+    if (!targets)
+      issues.push(`contribution target "${targetId}" does not exist`);
+    else if (targets[0].output.type !== "money")
+      issues.push(`contribution target "${targetId}" is not a money rule`);
   }
   for (const [id, versions2] of byId) {
     const sorted = [...versions2].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
@@ -21680,13 +22490,14 @@ function loadCorpus(input) {
     ruleHashes,
     byId,
     factById: factById2,
-    overriders
+    overriders,
+    contributors
   };
 }
 function byIdRefChecker(input) {
   return new Set(input.rules.map((r) => r.id));
 }
-function validateExpressions(rule, knownRuleIds, factById2, issues) {
+function validateExpressions(rule, knownRuleIds, contributorIds, factById2, issues) {
   const key = `${rule.id}@${rule.version}`;
   const exprs = [rule.formula];
   if (rule.applicability)
@@ -21706,6 +22517,11 @@ function validateExpressions(rule, knownRuleIds, factById2, issues) {
         case "rule":
           if (!knownRuleIds.has(e.ruleId)) {
             issues.push(`rule "${key}" references unknown rule "${e.ruleId}"`);
+          }
+          for (const id of e.excluding ?? []) {
+            if (!contributorIds.has(id)) {
+              issues.push(`rule "${key}" excludes "${id}", which is not a contributing rule`);
+            }
           }
           break;
         case "fact":
@@ -21757,6 +22573,11 @@ function selectVersion(corpus2, ruleId, asOf) {
   }
   return match;
 }
+function selectContributors(corpus2, ruleId, asOf) {
+  const list = corpus2.contributors.get(ruleId) ?? [];
+  const ids = new Set(list.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo)).map((r) => r.id));
+  return [...ids].sort();
+}
 function selectOverriders(corpus2, ruleId, asOf) {
   const list = corpus2.overriders.get(ruleId) ?? [];
   return list.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo)).sort((a, b) => b.overrides.priority - a.overrides.priority);
@@ -21777,6 +22598,11 @@ var POISON = /* @__PURE__ */ Symbol("missing-facts");
 function evaluate(corpus2, facts2, options) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(options.asOf)) {
     throw new FactValidationError(`invalid asOf date "${options.asOf}"`);
+  }
+  for (const factId of options.allowDefaults ?? []) {
+    if (!corpus2.factById.has(factId)) {
+      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`);
+    }
   }
   const resolved = /* @__PURE__ */ new Map();
   for (const [factId, tv] of Object.entries(facts2)) {
@@ -21808,12 +22634,16 @@ function evaluate(corpus2, facts2, options) {
     asOf: options.asOf,
     memo: /* @__PURE__ */ new Map(),
     visiting: [],
+    excluded: /* @__PURE__ */ new Set(),
+    passes: /* @__PURE__ */ new Map(),
     assumptions: [],
     stubs: /* @__PURE__ */ new Map(),
     assumedFactIds: /* @__PURE__ */ new Set(),
     missing: /* @__PURE__ */ new Map(),
-    factNodes: /* @__PURE__ */ new Map()
+    factNodes: /* @__PURE__ */ new Map(),
+    defaultsAllowed: options.refuseDefaults ? new Set(options.allowDefaults ?? []) : null
   };
+  ctx.passes.set("", ctx);
   const { value, node } = evalRule(options.target, ctx);
   if (value === POISON || node === null) {
     throw new NeedsFactsError([...ctx.missing.values()]);
@@ -21849,10 +22679,11 @@ function evalRule(ruleId, ctx) {
     }
     return hit;
   }
-  if (ctx.visiting.includes(ruleId)) {
-    throw new CycleError([...ctx.visiting, ruleId]);
+  const key = `${passKey(ctx.excluded)}|${ruleId}`;
+  if (ctx.visiting.includes(key)) {
+    throw new CycleError([...ctx.visiting, key].map(readableVisit));
   }
-  ctx.visiting.push(ruleId);
+  ctx.visiting.push(key);
   try {
     const base = selectVersion(ctx.corpus, ruleId, ctx.asOf);
     const overs = selectOverriders(ctx.corpus, ruleId, ctx.asOf);
@@ -21906,6 +22737,23 @@ function evalRule(ruleId, ctx) {
     if (winner) {
       value = evalExpr(winner.formula, winner, ctx, children);
     }
+    const contributions = [];
+    let contributed = 0n;
+    for (const id of selectContributors(ctx.corpus, ruleId, ctx.asOf)) {
+      if (ctx.excluded.has(id))
+        continue;
+      const c2 = evalRule(id, ctx);
+      if (c2.value === POISON || c2.node === null) {
+        poisoned = true;
+        continue;
+      }
+      if (!children.includes(c2.node))
+        children.push(c2.node);
+      contributions.push({ ruleId: id, value: valueToJSON(c2.value) });
+      contributed += c2.value.cents;
+    }
+    if (poisoned)
+      value = POISON;
     if (value === POISON || winner === null) {
       const entry2 = { value: POISON, node: null };
       ctx.memo.set(ruleId, entry2);
@@ -21914,10 +22762,13 @@ function evalRule(ruleId, ctx) {
     if (value.type !== winner.output.type) {
       throw new EngineError(`rule "${winner.id}" declares output ${winner.output.type} but produced ${value.type}`);
     }
+    if (contributions.length > 0 && value.type === "money") {
+      value = { type: "money", cents: value.cents + contributed };
+    }
     const inputs = {};
     for (const child of children) {
-      const key = child.kind === "rule" ? child.ruleId : child.factId;
-      inputs[key] = child.value;
+      const key2 = child.kind === "rule" ? child.ruleId : child.factId;
+      inputs[key2] = child.value;
     }
     const node = {
       kind: "rule",
@@ -21928,6 +22779,8 @@ function evalRule(ruleId, ctx) {
       citation: winner.citation,
       ...winner.id !== ruleId ? { resolvedFrom: ruleId } : {},
       ...overs.length > 0 ? { candidatesConsidered: candidates } : {},
+      ...contributions.length > 0 ? { contributions } : {},
+      ...ctx.excluded.size > 0 ? { excluding: [...ctx.excluded].sort() } : {},
       inputs,
       value: valueToJSON(value),
       children
@@ -21938,6 +22791,22 @@ function evalRule(ruleId, ctx) {
   } finally {
     ctx.visiting.pop();
   }
+}
+var passKey = (excluded) => [...excluded].sort().join(",");
+function readableVisit(key) {
+  const bar = key.indexOf("|");
+  const excluded = key.slice(0, bar);
+  return excluded ? `${key.slice(bar + 1)} (excluding ${excluded.replace(/,/g, ", ")})` : key.slice(bar + 1);
+}
+function passExcluding(ctx, ids) {
+  const excluded = /* @__PURE__ */ new Set([...ctx.excluded, ...ids]);
+  const k = passKey(excluded);
+  let pass = ctx.passes.get(k);
+  if (!pass) {
+    pass = { ...ctx, excluded, memo: /* @__PURE__ */ new Map(), stubs: /* @__PURE__ */ new Map() };
+    ctx.passes.set(k, pass);
+  }
+  return pass;
 }
 function candidateEntry(rule, applicable) {
   return {
@@ -21960,7 +22829,8 @@ function evalExpr(expr, rule, ctx, children) {
     case "fact":
       return resolveFact(expr.factId, ctx, children);
     case "rule": {
-      const { value, node } = evalRule(expr.ruleId, ctx);
+      const pass = expr.excluding?.length ? passExcluding(ctx, expr.excluding) : ctx;
+      const { value, node } = evalRule(expr.ruleId, pass);
       if (node && !children.includes(node))
         children.push(node);
       return value;
@@ -22166,7 +23036,7 @@ function resolveFact(factId, ctx, children) {
     const given = ctx.facts.get(factId);
     if (given !== void 0) {
       node = { kind: "fact", factId, value: valueToJSON(given) };
-    } else if (spec.default !== void 0) {
+    } else if (spec.default !== void 0 && (ctx.defaultsAllowed === null || ctx.defaultsAllowed.has(factId))) {
       const value = valueFromJSON({ type: spec.type, value: spec.default.value });
       if (!ctx.assumedFactIds.has(factId)) {
         ctx.assumedFactIds.add(factId);
@@ -22184,7 +23054,10 @@ function resolveFact(factId, ctx, children) {
         factId,
         type: spec.type,
         enumValues: spec.enumValues,
-        description: spec.description
+        description: spec.description,
+        // refused default: say what it would have been, so the caller can
+        // accept it (allowDefaults) instead of hunting for the value
+        ...spec.default !== void 0 ? { default: spec.default } : {}
       });
       return POISON;
     }
@@ -22268,7 +23141,7 @@ function coerceFacts(corpus2, plain) {
       }
       case "int": {
         let s;
-        if (typeof raw === "string" && /^-?\d+$/.test(raw))
+        if (typeof raw === "string" && /^-?\d{1,15}$/.test(raw))
           s = raw;
         else if (typeof raw === "number" && Number.isSafeInteger(raw)) {
           s = String(raw);
@@ -22330,22 +23203,43 @@ function evaluateAt(corpus2, baseFacts, options, atCents) {
 }
 
 // ../solve/dist/cliffs.js
+var HOSTED_CLIFF_LIMITS = { maxScanPoints: 2000n, maxEvaluations: 4e3, maxCliffs: 200 };
+var BudgetExhausted = class extends Error {
+};
 function findCliffs(corpus2, baseFacts, options) {
   const step = options.stepCents ?? 100000n;
   if (step <= 0n)
     throw new RangeError("stepCents must be positive");
-  const at = (x) => evaluateAt(corpus2, baseFacts, options, x);
+  if (options.toCents < options.fromCents)
+    throw new RangeError("toCents must not be below fromCents");
+  const limits = options.limits;
+  if (limits && (options.toCents - options.fromCents) / step > limits.maxScanPoints) {
+    throw new RangeError(`scan would take more than ${limits.maxScanPoints} steps; use a larger step or a narrower range`);
+  }
+  let evaluations = 0;
   const cliffs = [];
-  let prevX = options.fromCents;
-  let prevV = at(prevX);
-  for (let x = options.fromCents + step; x <= options.toCents; x += step) {
-    const v = at(x);
-    let dv = v - prevV;
-    if ((dv < 0n ? -dv : dv) > x - prevX) {
-      collectCliffs(at, prevX, prevV, x, v, cliffs);
+  const at = (x) => {
+    if (limits && (++evaluations > limits.maxEvaluations || cliffs.length >= limits.maxCliffs))
+      throw new BudgetExhausted();
+    return evaluateAt(corpus2, baseFacts, options, x);
+  };
+  let truncated = false;
+  try {
+    let prevX = options.fromCents;
+    let prevV = at(prevX);
+    for (let x = options.fromCents + step; x <= options.toCents; x += step) {
+      const v = at(x);
+      const dv = v - prevV;
+      if ((dv < 0n ? -dv : dv) > x - prevX) {
+        collectCliffs(at, prevX, prevV, x, v, cliffs, limits?.maxCliffs ?? Infinity);
+      }
+      prevX = x;
+      prevV = v;
     }
-    prevX = x;
-    prevV = v;
+  } catch (err) {
+    if (!(err instanceof BudgetExhausted))
+      throw err;
+    truncated = true;
   }
   cliffs.sort((a, b) => a.atCents < b.atCents ? -1 : a.atCents > b.atCents ? 1 : 0);
   return {
@@ -22355,11 +23249,14 @@ function findCliffs(corpus2, baseFacts, options) {
       fromCents: options.fromCents,
       toCents: options.toCents,
       stepCents: step
-    }
+    },
+    ...truncated ? { truncated } : {}
   };
 }
-function collectCliffs(at, lo, loV, hi, hiV, out) {
+function collectCliffs(at, lo, loV, hi, hiV, out, maxCliffs) {
   if (hi - lo <= 1n) {
+    if (out.length >= maxCliffs)
+      throw new BudgetExhausted();
     out.push({ atCents: lo, jumpCents: hiV - loV });
     return;
   }
@@ -22368,10 +23265,10 @@ function collectCliffs(at, lo, loV, hi, hiV, out) {
   const leftJump = midV - loV;
   const rightJump = hiV - midV;
   if ((leftJump < 0n ? -leftJump : leftJump) > mid - lo) {
-    collectCliffs(at, lo, loV, mid, midV, out);
+    collectCliffs(at, lo, loV, mid, midV, out, maxCliffs);
   }
   if ((rightJump < 0n ? -rightJump : rightJump) > hi - mid) {
-    collectCliffs(at, mid, midV, hi, hiV, out);
+    collectCliffs(at, mid, midV, hi, hiV, out, maxCliffs);
   }
 }
 
@@ -22449,7 +23346,7 @@ var JURISDICTION_NAMES = {
   "us.ri": "rhode island ri ri-1040 providence warwick cranston property tax relief credit 1040h social security modification pension modification"
 };
 function lookupParameters(corpus2, query, asOf) {
-  const tokens = tokenize(query);
+  const tokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (tokens.length === 0)
     return [];
   const hits = [];
@@ -22511,7 +23408,7 @@ function makeSnippet(excerpt, tokens) {
   return `${start > 0 ? "\u2026" : ""}${cut}${start + SNIPPET_LEN < excerpt.length ? "\u2026" : ""}`;
 }
 function searchRules(corpus2, query, asOf, limit = 8) {
-  const allTokens = tokenize(query);
+  const allTokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (allTokens.length === 0)
     return [];
   const haystacks = corpus2.rules.map((rule) => {
@@ -22529,9 +23426,10 @@ function searchRules(corpus2, query, asOf, limit = 8) {
   const matchers = new Map(allTokens.map((t) => [t, new RegExp(`\\b${t}`)]));
   const has = (hay, t) => matchers.get(t).test(hay);
   const df = (t) => haystacks.filter((h) => has(h.id, t) || has(h.title, t) || has(h.meta, t) || has(h.weak, t)).length;
-  const rare = allTokens.filter((t) => df(t) <= haystacks.length * 0.35);
+  const dfCache = new Map(allTokens.map((t) => [t, df(t)]));
+  const rare = allTokens.filter((t) => dfCache.get(t) <= haystacks.length * 0.35);
   const tokens = rare.length > 0 ? rare : allTokens;
-  const boost = new Map(tokens.map((t) => [t, df(t) <= haystacks.length * 0.05 ? 2 : 1]));
+  const boost = new Map(tokens.map((t) => [t, dfCache.get(t) <= haystacks.length * 0.05 ? 2 : 1]));
   const minScore = tokens.length >= 2 ? 2 : 1;
   const hits = [];
   for (const { rule, id, title, meta, weak } of haystacks) {
@@ -56736,6 +57634,7 @@ function getCorpus() {
 var DEFAULT_TARGET = "us.federal.net_tax";
 
 // dist/documents.js
+var MAX_DOCS_PER_LIST = 100;
 var usd2 = external_exports.union([external_exports.number(), external_exports.string()]).describe('dollars, e.g. 50000 or "1234.56"');
 var dob = external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("date of birth, YYYY-MM-DD");
 var documentsShape = external_exports.object({
@@ -56750,55 +57649,55 @@ var documentsShape = external_exports.object({
     box6: usd2.optional().describe("Medicare tax withheld \u2014 Part IV excess over 1.45% of box 5 is added to withholding automatically"),
     box17: usd2.optional().describe("state income tax withheld \u2014 surfaced as a SALT note; enter in itemized.stateAndLocalTaxesPaid yourself if itemizing"),
     recipient: external_exports.enum(["taxpayer", "spouse"]).optional().describe("whose W-2 this is (box e) \u2014 REQUIRED on a joint return with self-employment income, because Schedule SE line 8a coordinates the wage base with the SE earner's OWN box 3 only")
-  }).strict()).optional().describe("one entry per W-2, boxes transcribed verbatim"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per W-2, boxes transcribed verbatim"),
   selfEmploymentEarner: external_exports.enum(["taxpayer", "spouse"]).optional().describe("who earned the self-employment income (Schedule C / 1099-NEC / 1099-K) \u2014 defaults to the taxpayer; on a joint return this selects whose W-2 box 3 feeds Schedule SE line 8a"),
   f1099rs: external_exports.array(external_exports.object({
     box1: usd2.describe("gross distribution"),
     box2a: usd2.describe("taxable amount (0 if fully rolled over / converted basis applied via ira8606)"),
     box4: usd2.optional().describe("federal income tax withheld"),
-    box7: external_exports.string().describe('distribution code(s), e.g. "1", "7", "4", "G", "3", "C"'),
+    box7: external_exports.string().max(8).describe('distribution code(s), e.g. "1", "7", "4", "G", "3", "C"'),
     iraSepSimple: external_exports.boolean().optional().describe("the IRA/SEP/SIMPLE checkbox"),
     recipient: external_exports.enum(["taxpayer", "spouse"]).optional().describe("whose distribution (for the age-based penalty test); default taxpayer"),
     rolledOver: external_exports.boolean().optional().describe("interview-confirmed full rollover (e.g. 'distributions less rollovers = 0') \u2014 excluded from taxable income regardless of box 2a. NOT for a code-G direct rollover to a ROTH: the payer reports the converted amount in box 2a and it IS taxable"),
     disabilityBeforeRetirementAge: external_exports.boolean().optional().describe("code-3 disability received before minimum retirement age \u2014 reported as WAGES (Pub. 525) and counted as \xA7 22 disability income")
-  }).strict()).optional().describe("one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"),
   ssa1099s: external_exports.array(external_exports.object({
     box5: usd2.describe("net benefits (box 5) \u2014 includible amount computed by the \xA7 86 0/50/85% formula, not judged here"),
     box6: usd2.optional().describe("voluntary federal income tax withheld")
-  }).strict()).optional().describe("one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"),
   f1099necs: external_exports.array(external_exports.object({
     box1: usd2.describe("nonemployee compensation (gross)"),
     box4: usd2.optional().describe("federal income tax withheld")
-  }).strict()).optional().describe("one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"),
   f1099ks: external_exports.array(external_exports.object({
     box1a: usd2.describe("gross amount of payment card / third-party network transactions"),
     box4: usd2.optional().describe("federal income tax withheld")
-  }).strict()).optional().describe("one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"),
   scheduleCExpensesTotal: usd2.optional().describe("TOTAL Schedule C expenses to net against the 1099-NEC/1099-K gross receipts (one business; the taxpayer's own expense total, transcribed not judged)"),
   f1099ints: external_exports.array(external_exports.object({
     box1: usd2.optional().describe("interest income"),
     box3: usd2.optional().describe("U.S. Treasury/savings-bond interest \u2014 federally taxable (state-exempt; noted)"),
     box4: usd2.optional().describe("federal income tax withheld"),
     box8: usd2.optional().describe("tax-exempt interest (municipal) \u2014 feeds \xA7 86 provisional income, not taxable income")
-  }).strict()).optional().describe("one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"),
   f1099divs: external_exports.array(external_exports.object({
     box1a: usd2.describe("total ordinary dividends (INCLUDES box 1b)"),
     box1b: usd2.optional().describe("qualified dividends (subset of 1a)"),
     box2a: usd2.optional().describe("total capital gain distributions \u2014 long-term by statute (\xA7 852(b)(3)(B)), summed into the LT bucket"),
     box4: usd2.optional().describe("federal income tax withheld")
-  }).strict()).optional().describe("one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"),
   f1099bs: external_exports.array(external_exports.object({
     proceeds: usd2.describe("box 1d proceeds"),
     basis: usd2.describe("box 1e cost or other basis"),
     term: external_exports.enum(["short", "long"]).describe("holding period per the form's Part I/II section"),
     washSaleLossDisallowed: usd2.optional().describe("box 1g \u2014 disallowed loss added back to this lot's result"),
     box4: usd2.optional().describe("federal income tax withheld")
-  }).strict()).optional().describe("one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's \xA7 1222 Schedule D netting rules do the cross-bucket math"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's \xA7 1222 Schedule D netting rules do the cross-bucket math"),
   f1099gs: external_exports.array(external_exports.object({
     box1: usd2.optional().describe("unemployment compensation"),
     box2: usd2.optional().describe("state/local income tax refund \u2014 NOT auto-included (taxable only if it produced a benefit when itemizing the prior year, \xA7 111); surfaced as a note"),
     box4: usd2.optional().describe("federal income tax withheld")
-  }).strict()).optional().describe("one entry per 1099-G; box 1 sums into unemploymentCompensation"),
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per 1099-G; box 1 sums into unemploymentCompensation"),
   dependents: external_exports.array(external_exports.object({
     dateOfBirth: dob,
     relationship: external_exports.enum(["child_or_descendant", "sibling_or_descendant", "parent_or_other_relative"]).optional().describe("\xA7 152(c)(2) lineage: children/grandchildren and siblings/nieces/nephews can be QUALIFYING CHILDREN; a parent or other relative can only be a qualifying RELATIVE (ODC, never CTC/EIC-child). TRANSCRIBE the document's own label: son/daughter/grandchild/foster/sibling/niece \u2192 child_or_descendant or sibling_or_descendant; an explicit 'other' relationship on a source form \u2192 parent_or_other_relative (never default it back to child lineage). The child_or_descendant default is ONLY for documents that state a child relationship or say nothing at all."),
@@ -56806,13 +57705,13 @@ var documentsShape = external_exports.object({
     isFullTimeStudent: external_exports.boolean().optional(),
     hasRequiredSSN: external_exports.boolean().optional().describe("default true"),
     monthsLivedWithTaxpayer: external_exports.number().int().min(0).max(12).optional().describe("default 12")
-  }).strict()).optional().describe("one entry per dependent, RAW facts \u2014 CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels")
+  }).strict()).max(MAX_DOCS_PER_LIST).optional().describe("one entry per dependent, RAW facts \u2014 CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels")
 }).strict().describe("RAW document transcription (preferred over hand-mapped facts): W-2 boxes, 1099-R boxes/codes, SSA-1099 boxes, dependents' birth dates. SSA-1099s are first-class: box 5 sums into socialSecurityBenefits and box 6 into withholding, so the \xA7 86 taxable-benefits worksheet runs on the transcribed total instead of a hand-mapped guess. The tool derives wages/withholding (incl. Form 8959 Part IV), box-3/5 wage coordination, dependent classifications, age facts, and early-distribution penalties deterministically \u2014 and errors if the same value is also passed as a hand-mapped fact.");
 var toCents = (v) => {
-  const s = typeof v === "number" ? v.toFixed(2) : String(v).replace(/[$,]/g, "");
-  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
+  const s = typeof v === "number" ? v.toFixed(2) : String(v).slice(0, 64).replace(/[$,]/g, "");
+  const m = /^(-?)(\d{1,15})(?:\.(\d{1,2}))?$/.exec(s);
   if (!m)
-    throw new Error(`not a dollar amount: ${JSON.stringify(v)}`);
+    throw new Error(`not a dollar amount: ${JSON.stringify(String(v).slice(0, 40))}`);
   const cents = BigInt(m[2]) * 100n + BigInt((m[3] ?? "0").padEnd(2, "0"));
   return m[1] === "-" ? -cents : cents;
 };
@@ -57131,7 +58030,7 @@ function zodForFact(f) {
     case "enum":
       return external_exports.enum(f.enumValues).describe(f.description);
     default:
-      return external_exports.string().describe(f.description);
+      return external_exports.string().max(200).describe(f.description);
   }
 }
 var targetParam = (defaultLabel, determinations) => external_exports.string().optional().describe(`rule to derive (default: ${defaultLabel}).${determinations ? ` ${determinations}` : ""}`);
@@ -57909,6 +58808,8 @@ var GROUP_DESCRIPTIONS = {
 };
 var OTHER_EARNED_INCOME = external_exports.union([external_exports.number(), external_exports.string()]).optional().describe("Form 1040 lines 1b-1h earned income NOT on a W-2 box 1 \u2014 taxable dependent care benefits (Form 2441 Part III, line 26 \u2192 line 1e), household employee wages without a W-2 (1b), unreported tips (1c), Medicaid waiver payments elected in (1d), nonqualified deferred compensation (1g). Added to wages (earned income); reported on line 1h. Allowed together with a documents block.");
 var strictParam = external_exports.boolean().optional().describe("strict mode for completed returns: refuse instead of finishing a return on an assumption. A transcribed document that omits a box the return depends on (e.g. W-2 box 2) refuses with NEEDS_FACTS naming the box; a return that depends on an item this build does not compute (e.g. the Schedule 3 line 11 excess social security credit) refuses with INCOMPLETE_RETURN listing each item under error.data.incomplete. Default false \u2014 the $0 assumption goes to documentNotes and the uncomputed items come back as `incomplete` with complete:false.");
+var refuseDefaultsParam = external_exports.boolean().optional().describe("refuse defaults: every fact the answer needs must be given explicitly. A fact left out refuses with NEEDS_FACTS even when it has a documented default; each entry in error.data.missing carries that `default` so you can pass the value or accept it via allowDefaults. A missing enum can hide the facts behind it, so a second call may list more. Default false: defaults apply and are listed under assumptions.");
+var allowDefaultsParam = external_exports.array(external_exports.string().max(80)).max(300).optional().describe("with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)");
 var includeProofParam = external_exports.boolean().optional().describe("include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false \u2014 the hashes alone are returned.");
 var individualNestedShape = (() => {
   const shape = {};
@@ -57920,6 +58821,8 @@ var individualNestedShape = (() => {
   shape.target = targetParam("net tax; balance due when payments_estimates.federalTaxWithheld is given", "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met");
   shape.asOf = asOfParam;
   shape.includeProof = includeProofParam;
+  shape.refuseDefaults = refuseDefaultsParam;
+  shape.allowDefaults = allowDefaultsParam;
   return shape;
 })();
 var businessShape = (() => {
@@ -58016,6 +58919,12 @@ function buildFactsValidated(factsArg, defaultTarget) {
   delete input.includeProof;
   const strict = input.strict === true;
   delete input.strict;
+  const defaults = {
+    ...input.refuseDefaults === true ? { refuseDefaults: true } : {},
+    ...Array.isArray(input.allowDefaults) ? { allowDefaults: input.allowDefaults.map(String) } : {}
+  };
+  delete input.refuseDefaults;
+  delete input.allowDefaults;
   const flat = flattenFactsArg(input);
   if (docsRaw !== void 0) {
     const parsedDocs = documentsShape.safeParse(docsRaw);
@@ -58075,7 +58984,8 @@ function buildFactsValidated(factsArg, defaultTarget) {
     documentNotes,
     documentMissing,
     documentUnsupported,
-    ...w2Box1Cents !== void 0 ? { w2Box1Cents } : {}
+    ...w2Box1Cents !== void 0 ? { w2Box1Cents } : {},
+    defaults
   };
 }
 
@@ -58106,8 +59016,12 @@ function fail(err) {
 }
 var fmt2 = (cents) => {
   const sign = cents < 0n ? "-" : "";
-  let abs = cents < 0n ? -cents : cents;
-  const dollars5 = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const abs = cents < 0n ? -cents : cents;
+  const digits = (abs / 100n).toString();
+  const head = digits.length % 3 || 3;
+  let dollars5 = digits.slice(0, head);
+  for (let i = head; i < digits.length; i += 3)
+    dollars5 += "," + digits.slice(i, i + 3);
   return `${sign}$${dollars5}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
 function ruleDependencies(rule) {
@@ -58126,15 +59040,34 @@ function ruleDependencies(rule) {
   }
   return { rules: [...rules].sort(), facts: [...facts2].sort() };
 }
-function createServer() {
-  const server = new McpServer({ name: "opentax", version: COMPOSER_VERSION });
+function describeAccount(a) {
+  return a.plan === "firm" ? `Connected to OpenTax as ${a.email}, on ${a.firm ?? "a firm"}'s Firm plan.` : `Connected to OpenTax as ${a.email}, a free account (not on a Firm plan).`;
+}
+function createServer(options = {}) {
+  const server = new McpServer({ name: "opentax", version: COMPOSER_VERSION }, options.account ? { instructions: `${describeAccount(options.account)} Never compute or estimate tax yourself: call the OpenTax tools, report their assumptions, and cite their citations.` } : void 0);
+  if (options.account) {
+    const account = options.account;
+    server.registerTool("my_account", {
+      description: "Which OpenTax account this connector is signed in to, and whether it's on a Firm plan. Call it to confirm the connection after setup, or when the person asks which account or plan they're using.",
+      inputSchema: external_exports.object({}).strict()
+    }, async () => ok({
+      ok: true,
+      email: account.email,
+      plan: account.plan === "firm" ? "Firm plan" : "free",
+      firm: account.firm,
+      role: account.role,
+      summary: describeAccount(account),
+      manage: "https://opentax.invaro.ai/account",
+      support: "support@invaro.ai"
+    }));
+  }
   server.registerTool("calculate_tax", {
     description: "Compute US federal INDIVIDUAL income tax (or balance due if withholding is given) from a content-addressed corpus of cited rules. NEVER estimate tax yourself \u2014 call this, and report ONLY numbers returned by oracle calls made with the real facts (never hand-check or approximate a line the oracle can compute: your recalled parameters may be stale). Negative result = refund. Returns the answer, every assumption made, and hashes that let anyone re-verify the full derivation offline. Facts are grouped (filing, income, retirement, credits, \u2026) \u2014 fill the groups that apply; unknown keys are rejected, and the engine names any missing fact the target needs. When source documents CONFLICT on a value, do not silently pick one: compute both branches, disclose the conflict and your choice; an interview/confirmation answer (rollover, conversion, taxable-amount screens) usually reflects taxpayer intent better than a payer form's box code \u2014 prefer it and disclose. That heuristic covers FACTS only: LEGAL classifications (qualifying child vs other dependent, filing status, SSTB) follow the statute's tests, not intake checkbox labels \u2014 a generic 'claim dependent credit' flag does not convert a qualifying child into an ODC dependent. TRANSCRIBE documented amounts as given even when they look anomalous (e.g. state withholding in a no-income-tax state): disclose the anomaly, never delete or 'correct' a documented number from outside knowledge. If you believe an oracle result is wrong, report the ORACLE's number and note your dissent \u2014 never substitute your own: the corpus is primary-source-verified and your recollection is not. Business entities \u2192 calculate_business_tax; estates/trusts \u2192 calculate_fiduciary_tax; \xA7 152 dependency \u2192 determine_dependent.",
     inputSchema: external_exports.object(individualNestedShape).strict()
   }, async (args) => {
     try {
-      const { facts: facts2, asOf, target, documentNotes } = buildFactsValidated(args);
-      const { value, proof } = evaluate(corpus, facts2, { asOf, target });
+      const { facts: facts2, asOf, target, documentNotes, defaults } = buildFactsValidated(args);
+      const { value, proof } = evaluate(corpus, facts2, { asOf, target, ...defaults });
       const cents = value.type === "money" ? value.cents : 0n;
       return ok({
         ok: true,
@@ -58228,7 +59161,7 @@ function createServer() {
     description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME / HI N-11, RI-1040, MT Form 2, DE PIT-RES, ND-1, VT IN-111) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. DE filing status 4 (married filing combined separate) is TWO returns on one form: pass filingStatus 'mfs' with deCombinedSeparate plus the deSpouse* column-A inputs, and each column gets its own $3,250 deduction and its own bracket climb. MT starts from FEDERAL TAXABLE INCOME and has no standard deduction, personal exemption or Social Security subtraction of its own, so mtFederalDeductions (federal Form 1040 lines 12e and 13b) is REQUIRED and the composer refuses without it; long-term capital gains are taxed separately at 3%/4.1% on the page 2 worksheet. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold. For HI, pass federalAGI (line 7) plus hiPensionExclusion (employer-funded pensions are exempt), taxableSocialSecurity (100% subtracted), hiReservePay, dependents and hiTaxpayerAge65/hiSpouseAge65 (each 65+ oval is one more $1,144 exemption; hiDisabledPersons for the $7,000 in-lieu exemption), the Worksheets A-1 to A-6 amounts for an itemizer (no SALT cap, but hiStateLocalIncomeTaxes needs federal AGI under $100,000 / $150,000 / $200,000; the \xA7 68 limitation applies over $166,800), hiNetCapitalGain + hiNetLongTermCapitalGain for the 7.25% alternative tax, hiPresentOverNineMonths (REQUIRED attestation for the food/excise and renters credits) with hiRentPaid, hiChildCareExpenses + hiEarnedIncome (+ hiSpouseEarnedIncome) for the Schedule X credit, federalEITC (40%, refundable), hiOtherStateTaxEligible + hiOutOfStateIncome for the other-state credit, and stateWithholding; the standard deduction is $4,400 / $8,800 / $6,424 for 2025 (dependent filers: greater of $500 or hiEarnedIncome); a federal QSS uses Schedule II. For ND, the base is FEDERAL TAXABLE INCOME (Form 1040 line 15) \u2014 pass ndFederalTaxableIncome, which is REQUIRED and which the composer refuses without; it may be NEGATIVE (the booklet directs the filer to enter the negative number on line 1b even though Form 1040 line 15 shows 0), and federalAGI is line 1a only, feeding NOTHING. There is no North Dakota standard deduction and no personal exemption. The first bracket is ZERO PERCENT (0.00% / 1.95% / 2.50%), so a great many returns owe nothing at all; below $100,000 the $50 Tax Table is MANDATORY under section 57-38-30.3(10) and prices the row MIDPOINT, which the composer applies for TY2025 (set ndUseRateSchedule only to see the schedule's figure). Pass taxableSocialSecurity (excluded IN FULL, no cap or age test), ndMilitaryPay and ndMilitaryRetirement (both excluded in full), ndRailroadRetirementBenefits (line 8 \u2014 a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 by gross benefits), ndNetLongTermCapitalGain with ndCapitalGainAlreadyExcluded for the 40% exclusion and ndQualifiedDividends for the parallel 40%, ndCollegeSaveContributions ($5,000, doubled ONLY on a joint return), and ndLowerQualifiedIncome for the marriage penalty credit (joint returns only; the composer runs the whole worksheet, including the preprinted $15,750). QSS uses the joint COLUMN of the table and the joint rate schedule but is NOT a joint return \u2014 its College SAVE cap stays $5,000 and it gets no marriage penalty credit. Every North Dakota credit is NONREFUNDABLE. Schedule ND-1NR (part-year and nonresident) and Schedule ND-1FA farm income averaging are not composed. For VT, pass federalAGI (line 1) and the Schedule IN-112 pieces: taxableSocialSecurity with vtRetirementElection ('social_security' OR 'contributory_system' with vtContributorySystemIncome \u2014 the filer may elect only ONE, excluded in full at federal AGI up to $55,000 / $70,000 joint and phased out to $65,000 / $80,000), vtMilitaryRetirementIncome (a SEPARATE exclusion, full to $125,000 and phased out to $175,000, claimable in addition), vtNetAdjustedCapitalGain + vtEligibleLongTermGain + vtFederalTaxableIncome for the Schedule IN-153 exclusion (the greater of $5,000 and 40% of over-three-year gain, capped at 40% of federal taxable income), vtUsObligationInterest, vtFederalMedicalExpenses (only the excess over the Vermont deduction plus exemptions is subtracted), ageOrBlindBoxes ($1,250 each on line 4), dependents (line 5c), vtCharitableContributions (5%, max $1,000, itemizing not required), vtOtherStateIncome + vtOtherStateTaxPaid (Schedule IN-117), and the refundable Schedule IN-112 Part II inputs \u2014 federalEITC with vtEitcQualifyingChildren (38% with children, 100% WITHOUT), vtChildrenSixOrUnder ($1,000 each, phased out $20 per $1,000 of AGI over $125,000), vtFederalChildCareCredit (72%), vtVeteranDischargeRecord ($250 to $30,000 of AGI). Vermont has NO itemized deduction; below $75,000 the Tax Table is mandatory and the composer applies it; above $150,000 of federal AGI the tax is at least 3% of AGI less U.S. obligation interest. A federal QSS takes the joint deduction and column but no spouse exemption. The Renter Credit (RCC-146) and Property Tax Credit (HS-122) are separate claims, not composed; TY2026 refuses at line 4 until the 2026 standard deduction publishes.",
     inputSchema: external_exports.object({
       ...stateReturnShape,
-      asOf: external_exports.string().describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"),
+      asOf: external_exports.string().max(10).describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"),
       strict: external_exports.boolean().optional().describe("refuse with INCOMPLETE_RETURN (error.data.incomplete lists each affected printed line) when any line's target has no rule valid on asOf \u2014 a tax year whose amounts are not yet published. Default false \u2014 the response then carries complete:false and the same list under `incomplete`, and the affected lines hold a $0 placeholder."),
       filingJoint: external_exports.boolean().optional(),
       filingHoh: external_exports.boolean().optional(),
@@ -58292,8 +59225,9 @@ function createServer() {
       if (roundedInputs > 0) {
         documentNotes.push(`whole-dollar rounding: ${roundedInputs} money input(s) rounded to the nearest dollar (50 cents up) after summing documents, before computation \u2014 Form 1040 instructions, Rounding Off to Whole Dollars`);
       }
+      const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax", ...built.defaults });
       const get = (target) => {
-        const { value } = evaluate(corpus, facts2, { asOf, target });
+        const { value } = evaluate(corpus, facts2, { asOf, target, ...built.defaults });
         return value.type === "money" ? value.cents : 0n;
       };
       const gross = get("us.federal.gross_income");
@@ -58320,7 +59254,6 @@ function createServer() {
       const total24 = rd26(after) + rd26(other);
       const payments = rd26(withheld) + rd26(refundable) + rd26(extension) + rd26(estimated);
       const balance = payments - total24;
-      const { proof } = evaluate(corpus, facts2, { asOf, target: "us.federal.net_tax" });
       const d3 = (c2) => fmt2(rd26(c2));
       return ok({
         ok: true,
@@ -58414,8 +59347,8 @@ function createServer() {
   server.registerTool("explain_rule", {
     description: "Get a tax rule in full: statutory citation with its verbatim excerpt, validity window, parameters, the formula and applicability guard (the rule IR \u2014 rules are data), the rules and facts it depends on, and its content hash. Use to quote and explain the actual law behind an answer. Pass asOf to see only the version in force on that date.",
     inputSchema: external_exports.object({
-      ruleId: external_exports.string().describe('e.g. "us.federal.standard_deduction" \u2014 list via calculate_tax proof, search_tax_rules, or the corpus'),
-      asOf: external_exports.string().optional().describe("ISO date; when given, only the version valid on that date is returned (omit for every version)")
+      ruleId: external_exports.string().max(120).describe('e.g. "us.federal.standard_deduction" \u2014 list via calculate_tax proof, search_tax_rules, or the corpus'),
+      asOf: external_exports.string().max(10).optional().describe("ISO date; when given, only the version valid on that date is returned (omit for every version)")
     }).strict()
   }, async ({ ruleId, asOf }) => {
     const versions2 = corpus.byId.get(ruleId);
@@ -58455,10 +59388,10 @@ function createServer() {
     description: "Find exact dollar amounts where one more cent of an input costs MORE than a cent of tax (marginal rate over 100%) \u2014 e.g. the EITC investment-income kill switch, CTC phase-out steps. Every probe is a real evaluation.",
     inputSchema: external_exports.object({
       facts: factsObjectParam,
-      vary: external_exports.string().describe('money fact to vary, e.g. "wages" or "taxableInterest"'),
+      vary: external_exports.string().max(80).describe('money fact to vary, e.g. "wages" or "taxableInterest"'),
       fromDollars: external_exports.number(),
       toDollars: external_exports.number(),
-      stepDollars: external_exports.number().optional().describe("coarse scan step, default 1000")
+      stepDollars: external_exports.number().optional().describe(options.hosted ? "coarse scan step, default 1000; at most 2,000 steps across the range" : "coarse scan step, default 1000")
     }).strict()
   }, async (args) => {
     try {
@@ -58469,7 +59402,8 @@ function createServer() {
         toCents: BigInt(Math.round(args.toDollars * 100)),
         stepCents: args.stepDollars ? BigInt(Math.round(args.stepDollars * 100)) : void 0,
         asOf,
-        target
+        target,
+        ...options.hosted ? { limits: HOSTED_CLIFF_LIMITS } : {}
       });
       return ok({
         ok: true,
@@ -58477,6 +59411,7 @@ function createServer() {
           at: fmt2(c2.atCents),
           oneMoreCentCosts: fmt2(c2.jumpCents)
         })),
+        ...result.truncated ? { truncated: true, note: "stopped early: the scan hit its evaluation or cliff budget; narrow the range or raise the step" } : {},
         corpusMerkleRoot: result.corpusMerkleRoot
       });
     } catch (err) {
@@ -58506,7 +59441,7 @@ function createServer() {
   server.registerTool("lookup_tax_parameter", {
     description: "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Use this to fact-check ANY tax number before stating it \u2014 your training data likely predates the OBBBA.",
     inputSchema: external_exports.object({
-      query: external_exports.string().describe("plain-English search, e.g. 'standard deduction'"),
+      query: external_exports.string().max(2e3).describe("plain-English search, e.g. 'standard deduction'"),
       asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
     }).strict()
   }, async ({ query, asOf }) => {
@@ -58530,7 +59465,7 @@ function createServer() {
   server.registerTool("search_tax_rules", {
     description: "Full-text search over the encoded tax-law corpus ('kiddie tax', 'NIIT threshold', 'california renters credit'). Returns matching rules: id, title, statutory citation, effective window, and a verbatim excerpt of the law text. A hit means the engine computes this; zero hits means it is outside the corpus \u2014 say so rather than guessing. Follow up with explain_rule for a hit's full formula, or lookup_tax_parameter for its dollar amounts.",
     inputSchema: external_exports.object({
-      query: external_exports.string().describe("plain-English search, e.g. 'kiddie tax'"),
+      query: external_exports.string().max(2e3).describe("plain-English search, e.g. 'kiddie tax'"),
       asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
       limit: external_exports.number().int().min(1).max(20).optional()
     }).strict()
@@ -58556,7 +59491,7 @@ function createServer() {
   server.registerTool("verify_fact", {
     description: "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Never states a verdict it cannot ground.",
     inputSchema: external_exports.object({
-      query: external_exports.string().describe("what the amount is, e.g. 'standard deduction'"),
+      query: external_exports.string().max(2e3).describe("what the amount is, e.g. 'standard deduction'"),
       claimedAmount: money40,
       filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional(),
       asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
@@ -58611,7 +59546,7 @@ function createServer() {
   });
   server.registerTool("is_tipped_occupation", {
     description: "Determine whether a job is on the Treasury Tipped Occupation list (Treas. Reg. \xA7 1.224-1, final Apr 2026) for the \xA7 224 'no tax on tips' deduction. Fuzzy-matches the job name; returns the official listing (name, TTC code, category) or a definitive 'not listed'.",
-    inputSchema: external_exports.object({ job: external_exports.string().describe('e.g. "bartender", "software engineer", "DJ"') }).strict()
+    inputSchema: external_exports.object({ job: external_exports.string().max(500).describe('e.g. "bartender", "software engineer", "DJ"') }).strict()
   }, async ({ job }) => {
     const match = matchOccupation(job);
     if ("slug" in match && match.slug !== "other") {
@@ -58645,17 +59580,98 @@ function createServer() {
   return server;
 }
 
-// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.29.0_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/mediaType.js
+var import_content_type = __toESM(require_content_type(), 1);
+function mediaTypeEssence(header) {
+  if (!header) {
+    return void 0;
+  }
+  try {
+    return import_content_type.default.parse(header).type;
+  } catch {
+    const essence = (header.split(";", 1)[0] ?? "").trim().toLowerCase();
+    if (essence === "" || header.slice(essence.length).includes(",")) {
+      return void 0;
+    }
+    return essence;
+  }
+}
+function isJsonContentType(header) {
+  if (header === "application/json") {
+    return true;
+  }
+  return mediaTypeEssence(header) === "application/json";
+}
+
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/requestBody.js
+var DEFAULT_MAX_REQUEST_BODY_SIZE = 4 * 1024 * 1024;
+var MAX_BATCH_SIZE = 100;
+function requestBodyTooLargeMessage(maxBytes) {
+  return `Payload Too Large: Request body must not exceed ${maxBytes} bytes`;
+}
+function resolveMaxRequestBodySize(value) {
+  if (value === void 0) {
+    return DEFAULT_MAX_REQUEST_BODY_SIZE;
+  }
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    throw new RangeError(`maxRequestBodySize must be a positive number of bytes, got ${String(value)}`);
+  }
+  return value;
+}
+async function readRequestBody(request, maxBytes = DEFAULT_MAX_REQUEST_BODY_SIZE) {
+  if (Number(request.headers.get("content-length")) > maxBytes) {
+    return { tooLarge: true };
+  }
+  if (request.body === null) {
+    return { tooLarge: false, text: "" };
+  }
+  const reader = request.body.getReader();
+  const decoder = new TextDecoder();
+  let received = 0;
+  let text = "";
+  try {
+    for (; ; ) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      received += value.byteLength;
+      if (received > maxBytes) {
+        return { tooLarge: true };
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return { tooLarge: false, text: text + decoder.decode() };
+}
+
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/sseKeepAlive.js
+var DEFAULT_SSE_KEEP_ALIVE_MS = 15e3;
+var MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
+function armSseKeepAlive(intervalMs, onTick) {
+  if (!Number.isFinite(intervalMs) || intervalMs < 1) {
+    return void 0;
+  }
+  const timer = setInterval(onTick, Math.min(intervalMs, MAX_TIMER_DELAY_MS));
+  timer.unref?.();
+  return timer;
+}
+
+// ../../node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_zod@3.25.76/node_modules/@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js
 var WebStandardStreamableHTTPServerTransport = class {
   constructor(options = {}) {
     this._started = false;
     this._hasHandledRequest = false;
     this._streamMapping = /* @__PURE__ */ new Map();
     this._requestToStreamMapping = /* @__PURE__ */ new Map();
+    this._resumableStreams = /* @__PURE__ */ new Set();
     this._requestResponseMap = /* @__PURE__ */ new Map();
     this._initialized = false;
     this._enableJsonResponse = false;
     this._standaloneSseStreamId = "_GET_stream";
+    this._closed = false;
     this.sessionIdGenerator = options.sessionIdGenerator;
     this._enableJsonResponse = options.enableJsonResponse ?? false;
     this._eventStore = options.eventStore;
@@ -58665,6 +59681,28 @@ var WebStandardStreamableHTTPServerTransport = class {
     this._allowedOrigins = options.allowedOrigins;
     this._enableDnsRebindingProtection = options.enableDnsRebindingProtection ?? false;
     this._retryInterval = options.retryInterval;
+    this._keepAliveMs = options.keepAliveMs ?? DEFAULT_SSE_KEEP_ALIVE_MS;
+    this._maxRequestBodySize = resolveMaxRequestBodySize(options.maxRequestBodySize);
+  }
+  /**
+   * Arms a keep-alive interval for an SSE stream that periodically writes an SSE
+   * comment frame so intermediaries and idle timeouts don't kill the connection.
+   * The returned timer is owned by the stream it was armed for: the stream's
+   * cancel/cleanup callbacks must clear it. The interval clears itself if a
+   * write fails (stream already closed/cancelled).
+   */
+  startKeepAlive(controller, encoder) {
+    if (this._closed)
+      return void 0;
+    const timer = armSseKeepAlive(this._keepAliveMs, () => {
+      try {
+        controller.enqueue(encoder.encode(": keepalive\n\n"));
+      } catch {
+        if (timer !== void 0)
+          clearInterval(timer);
+      }
+    });
+    return timer;
   }
   /**
    * Starts the transport. This is required by the Transport interface but is a no-op
@@ -58727,6 +59765,9 @@ var WebStandardStreamableHTTPServerTransport = class {
    * Returns a Response object (Web Standard)
    */
   async handleRequest(req, options) {
+    if (this._closed) {
+      return this.createJsonErrorResponse(404, -32001, "Session not found");
+    }
     if (!this.sessionIdGenerator && this._hasHandledRequest) {
       throw new Error("Stateless transport cannot be reused across requests. Create a new transport per request.");
     }
@@ -58771,6 +59812,7 @@ data:
 `;
     }
     controller.enqueue(encoder.encode(primingEvent));
+    this._resumableStreams.add(streamId);
   }
   /**
    * Handles GET requests for SSE stream
@@ -58801,18 +59843,25 @@ data:
     }
     const encoder = new TextEncoder();
     let streamController;
+    let keepAliveTimer = void 0;
     const readable = new ReadableStream({
       start: (controller) => {
         streamController = controller;
       },
       cancel: () => {
-        this._streamMapping.delete(this._standaloneSseStreamId);
+        if (keepAliveTimer !== void 0) {
+          clearInterval(keepAliveTimer);
+        }
+        if (this._streamMapping.get(this._standaloneSseStreamId)?.controller === streamController) {
+          this._streamMapping.delete(this._standaloneSseStreamId);
+        }
       }
     });
     const headers = {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive"
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no"
     };
     if (this.sessionId !== void 0) {
       headers["mcp-session-id"] = this.sessionId;
@@ -58821,6 +59870,9 @@ data:
       controller: streamController,
       encoder,
       cleanup: () => {
+        if (keepAliveTimer !== void 0) {
+          clearInterval(keepAliveTimer);
+        }
         this._streamMapping.delete(this._standaloneSseStreamId);
         try {
           streamController.close();
@@ -58828,6 +59880,7 @@ data:
         }
       }
     });
+    keepAliveTimer = this.startKeepAlive(streamController, encoder);
     return new Response(readable, { headers });
   }
   /**
@@ -58855,21 +59908,33 @@ data:
       const headers = {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache, no-transform",
-        Connection: "keep-alive"
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no"
       };
       if (this.sessionId !== void 0) {
         headers["mcp-session-id"] = this.sessionId;
       }
       const encoder = new TextEncoder();
       let streamController;
+      let keepAliveTimer = void 0;
+      let replayedStreamId = void 0;
+      let cancelled = false;
       const readable = new ReadableStream({
         start: (controller) => {
           streamController = controller;
         },
         cancel: () => {
+          cancelled = true;
+          if (keepAliveTimer !== void 0) {
+            clearInterval(keepAliveTimer);
+          }
+          if (replayedStreamId !== void 0 && this._streamMapping.get(replayedStreamId)?.controller === streamController) {
+            this._streamMapping.delete(replayedStreamId);
+          }
         }
       });
-      const replayedStreamId = await this._eventStore.replayEventsAfter(lastEventId, {
+      const replayedEventIds = /* @__PURE__ */ new Set();
+      replayedStreamId = await this._eventStore.replayEventsAfter(lastEventId, {
         send: async (eventId, message) => {
           const success = this.writeSSEEvent(streamController, encoder, message, eventId);
           if (!success) {
@@ -58878,13 +59943,27 @@ data:
               streamController.close();
             } catch {
             }
+          } else {
+            replayedEventIds.add(eventId);
           }
         }
       });
+      if (this._closed || cancelled) {
+        try {
+          streamController.close();
+        } catch {
+        }
+        return this.createJsonErrorResponse(404, -32001, "Session not found");
+      }
+      this._streamMapping.get(replayedStreamId)?.cleanup();
       this._streamMapping.set(replayedStreamId, {
         controller: streamController,
         encoder,
+        replayedEventIds,
         cleanup: () => {
+          if (keepAliveTimer !== void 0) {
+            clearInterval(keepAliveTimer);
+          }
           this._streamMapping.delete(replayedStreamId);
           try {
             streamController.close();
@@ -58892,6 +59971,8 @@ data:
           }
         }
       });
+      this._resumableStreams.add(replayedStreamId);
+      keepAliveTimer = this.startKeepAlive(streamController, encoder);
       return new Response(readable, { headers });
     } catch (error2) {
       this.onerror?.(error2);
@@ -58950,7 +60031,7 @@ data:
         return this.createJsonErrorResponse(406, -32e3, "Not Acceptable: Client must accept both application/json and text/event-stream");
       }
       const ct = req.headers.get("content-type");
-      if (!ct || !ct.includes("application/json")) {
+      if (!isJsonContentType(ct)) {
         this.onerror?.(new Error("Unsupported Media Type: Content-Type must be application/json"));
         return this.createJsonErrorResponse(415, -32e3, "Unsupported Media Type: Content-Type must be application/json");
       }
@@ -58963,11 +60044,21 @@ data:
         rawMessage = options.parsedBody;
       } else {
         try {
-          rawMessage = await req.json();
+          const body = await readRequestBody(req, this._maxRequestBodySize);
+          if (body.tooLarge) {
+            const message = requestBodyTooLargeMessage(this._maxRequestBodySize);
+            this.onerror?.(new Error(message));
+            return this.createJsonErrorResponse(413, -32e3, message);
+          }
+          rawMessage = JSON.parse(body.text);
         } catch {
           this.onerror?.(new Error("Parse error: Invalid JSON"));
           return this.createJsonErrorResponse(400, -32700, "Parse error: Invalid JSON");
         }
+      }
+      if (Array.isArray(rawMessage) && rawMessage.length > MAX_BATCH_SIZE) {
+        this.onerror?.(new Error(`Invalid Request: Batch must not exceed ${MAX_BATCH_SIZE} messages`));
+        return this.createJsonErrorResponse(400, -32600, `Invalid Request: Batch must not exceed ${MAX_BATCH_SIZE} messages`);
       }
       let messages;
       try {
@@ -58979,6 +60070,9 @@ data:
       } catch {
         this.onerror?.(new Error("Parse error: Invalid JSON-RPC message"));
         return this.createJsonErrorResponse(400, -32700, "Parse error: Invalid JSON-RPC message");
+      }
+      if (this._closed) {
+        return this.createJsonErrorResponse(404, -32001, "Session not found");
       }
       const isInitializationRequest = messages.some(isInitializeRequest);
       if (isInitializationRequest) {
@@ -59005,6 +60099,9 @@ data:
         if (protocolError) {
           return protocolError;
         }
+      }
+      if (this._closed) {
+        return this.createJsonErrorResponse(404, -32001, "Session not found");
       }
       const hasRequests = messages.some(isJSONRPCRequest);
       if (!hasRequests) {
@@ -59036,18 +60133,25 @@ data:
       }
       const encoder = new TextEncoder();
       let streamController;
+      let keepAliveTimer = void 0;
       const readable = new ReadableStream({
         start: (controller) => {
           streamController = controller;
         },
         cancel: () => {
-          this._streamMapping.delete(streamId);
+          if (keepAliveTimer !== void 0) {
+            clearInterval(keepAliveTimer);
+          }
+          if (this._streamMapping.get(streamId)?.controller === streamController) {
+            this._streamMapping.delete(streamId);
+          }
         }
       });
       const headers = {
         "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive"
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no"
       };
       if (this.sessionId !== void 0) {
         headers["mcp-session-id"] = this.sessionId;
@@ -59058,6 +60162,9 @@ data:
             controller: streamController,
             encoder,
             cleanup: () => {
+              if (keepAliveTimer !== void 0) {
+                clearInterval(keepAliveTimer);
+              }
               this._streamMapping.delete(streamId);
               try {
                 streamController.close();
@@ -59068,19 +60175,33 @@ data:
           this._requestToStreamMapping.set(message.id, streamId);
         }
       }
-      await this.writePrimingEvent(streamController, encoder, streamId, clientProtocolVersion);
-      for (const message of messages) {
-        let closeSSEStream;
-        let closeStandaloneSSEStream;
-        if (isJSONRPCRequest(message) && this._eventStore && clientProtocolVersion >= "2025-11-25") {
-          closeSSEStream = () => {
-            this.closeSSEStream(message.id);
-          };
-          closeStandaloneSSEStream = () => {
-            this.closeStandaloneSSEStream();
-          };
+      try {
+        await this.writePrimingEvent(streamController, encoder, streamId, clientProtocolVersion);
+        for (const message of messages) {
+          let closeSSEStream;
+          let closeStandaloneSSEStream;
+          if (isJSONRPCRequest(message) && this._eventStore && clientProtocolVersion >= "2025-11-25") {
+            closeSSEStream = () => {
+              this.closeSSEStream(message.id);
+            };
+            closeStandaloneSSEStream = () => {
+              this.closeStandaloneSSEStream();
+            };
+          }
+          this.onmessage?.(message, { authInfo: options?.authInfo, requestInfo, closeSSEStream, closeStandaloneSSEStream });
         }
-        this.onmessage?.(message, { authInfo: options?.authInfo, requestInfo, closeSSEStream, closeStandaloneSSEStream });
+      } catch (error2) {
+        this._streamMapping.get(streamId)?.cleanup();
+        this._resumableStreams.delete(streamId);
+        for (const message of messages) {
+          if (isJSONRPCRequest(message)) {
+            this._requestToStreamMapping.delete(message.id);
+          }
+        }
+        throw error2;
+      }
+      if (this._streamMapping.get(streamId)?.controller === streamController) {
+        keepAliveTimer = this.startKeepAlive(streamController, encoder);
       }
       return new Response(readable, { status: 200, headers });
     } catch (error2) {
@@ -59100,9 +60221,12 @@ data:
     if (protocolError) {
       return protocolError;
     }
-    await Promise.resolve(this._onsessionclosed?.(this.sessionId));
-    await this.close();
-    return new Response(null, { status: 200 });
+    try {
+      await Promise.resolve(this._onsessionclosed?.(this.sessionId));
+      return new Response(null, { status: 200 });
+    } finally {
+      await this.close();
+    }
   }
   /**
    * Validates session ID for non-initialization requests.
@@ -59149,11 +60273,16 @@ data:
     return void 0;
   }
   async close() {
+    if (this._closed) {
+      return;
+    }
+    this._closed = true;
     this._streamMapping.forEach(({ cleanup }) => {
       cleanup();
     });
     this._streamMapping.clear();
     this._requestResponseMap.clear();
+    this._resumableStreams.clear();
     this.onclose?.();
   }
   /**
@@ -59197,7 +60326,7 @@ data:
       if (standaloneSse === void 0) {
         return;
       }
-      if (standaloneSse.controller && standaloneSse.encoder) {
+      if (standaloneSse.controller && standaloneSse.encoder && (eventId === void 0 || !standaloneSse.replayedEventIds?.has(eventId))) {
         this.writeSSEEvent(standaloneSse.controller, standaloneSse.encoder, message, eventId);
       }
       return;
@@ -59206,13 +60335,19 @@ data:
     if (!streamId) {
       throw new Error(`No connection established for request ID: ${String(requestId)}`);
     }
-    const stream = this._streamMapping.get(streamId);
-    if (!this._enableJsonResponse && stream?.controller && stream?.encoder) {
+    let stream = this._streamMapping.get(streamId);
+    if (!this._enableJsonResponse) {
       let eventId;
       if (this._eventStore) {
         eventId = await this._eventStore.storeEvent(streamId, message);
+        stream = this._streamMapping.get(streamId);
       }
-      this.writeSSEEvent(stream.controller, stream.encoder, message, eventId);
+      if (stream?.controller && stream?.encoder && (eventId === void 0 || !stream.replayedEventIds?.has(eventId))) {
+        const written = this.writeSSEEvent(stream.controller, stream.encoder, message, eventId);
+        if (written && eventId !== void 0) {
+          this._resumableStreams.add(streamId);
+        }
+      }
     }
     if (isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message)) {
       this._requestResponseMap.set(requestId, message);
@@ -59220,6 +60355,25 @@ data:
       const allResponsesReady = relatedIds.every((id) => this._requestResponseMap.has(id));
       if (allResponsesReady) {
         if (!stream) {
+          if (this._closed) {
+            for (const id of relatedIds) {
+              this._requestResponseMap.delete(id);
+              this._requestToStreamMapping.delete(id);
+            }
+            return;
+          }
+          if (!this._enableJsonResponse && this._eventStore && this._resumableStreams.has(streamId)) {
+            for (const id of relatedIds) {
+              this._requestResponseMap.delete(id);
+              this._requestToStreamMapping.delete(id);
+            }
+            this._resumableStreams.delete(streamId);
+            return;
+          }
+          for (const id of relatedIds) {
+            this._requestResponseMap.delete(id);
+            this._requestToStreamMapping.delete(id);
+          }
           throw new Error(`No connection established for request ID: ${String(requestId)}`);
         }
         if (this._enableJsonResponse && stream.resolveJson) {
@@ -59242,11 +60396,24 @@ data:
           this._requestResponseMap.delete(id);
           this._requestToStreamMapping.delete(id);
         }
+        this._resumableStreams.delete(streamId);
       }
     }
   }
 };
+
+// dist/hosted-bundle.js
+var createServer2 = (account) => createServer({ hosted: true, account });
 export {
   WebStandardStreamableHTTPServerTransport,
-  createServer
+  createServer2 as createServer
 };
+/*! Bundled license information:
+
+content-type/index.js:
+  (*!
+   * content-type
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+*/

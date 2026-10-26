@@ -51,6 +51,7 @@ jobs:
         run: |
           if ! git diff --exit-code -- \
             packages/corpus-us-federal/corpus.lock.json \
+            packages/corpus-us-federal/rule-index.json \
             packages/cli/bundle \
             packages/mcp/bundle \
             site/src/lib/opentax-mcp.bundle.mjs; then

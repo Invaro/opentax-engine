@@ -20,6 +20,20 @@ export interface CliffOptions {
   stepCents?: bigint;
   asOf: string;
   target: string;
+  /**
+   * Work limits for servers answering untrusted callers (HOSTED_CLIFF_LIMITS).
+   * Unset: no limits, the scan runs to the end.
+   */
+  limits?: CliffLimits;
+}
+
+export interface CliffLimits {
+  /** Refuse a scan with more coarse points than this. */
+  maxScanPoints: bigint;
+  /** Stop (truncated) after this many evaluations, coarse scan plus bisection. */
+  maxEvaluations: number;
+  /** Stop (truncated) after this many cliffs. */
+  maxCliffs: number;
 }
 
 export interface Cliff {
@@ -33,7 +47,18 @@ export interface CliffResult {
   cliffs: Cliff[];
   corpusMerkleRoot: string;
   scanned: { fromCents: bigint; toCents: bigint; stepCents: bigint };
+  /** True when the evaluation or cliff budget ran out before the whole range was examined. */
+  truncated?: boolean;
 }
+
+/**
+ * The limits the hosted API applies. A $0-$1M range at the default $1,000
+ * step is 1,000 points. The evaluation cap matters for a formula whose slope
+ * exceeds 1 everywhere, which would otherwise bisect down to every cent.
+ */
+export const HOSTED_CLIFF_LIMITS: CliffLimits = { maxScanPoints: 2000n, maxEvaluations: 4000, maxCliffs: 200 };
+
+class BudgetExhausted extends Error {}
 
 export function findCliffs(
   corpus: LoadedCorpus,
@@ -42,23 +67,38 @@ export function findCliffs(
 ): CliffResult {
   const step = options.stepCents ?? 100000n; // $1,000
   if (step <= 0n) throw new RangeError("stepCents must be positive");
+  if (options.toCents < options.fromCents) throw new RangeError("toCents must not be below fromCents");
+  const limits = options.limits;
+  // each coarse point is a full evaluation; an unbounded scan pins the CPU
+  if (limits && (options.toCents - options.fromCents) / step > limits.maxScanPoints) {
+    throw new RangeError(`scan would take more than ${limits.maxScanPoints} steps; use a larger step or a narrower range`);
+  }
 
-  const at = (x: bigint) => evaluateAt(corpus, baseFacts, options, x);
-
+  let evaluations = 0;
   const cliffs: Cliff[] = [];
-  let prevX = options.fromCents;
-  let prevV = at(prevX);
+  const at = (x: bigint) => {
+    if (limits && (++evaluations > limits.maxEvaluations || cliffs.length >= limits.maxCliffs)) throw new BudgetExhausted();
+    return evaluateAt(corpus, baseFacts, options, x);
+  };
 
-  for (let x = options.fromCents + step; x <= options.toCents; x += step) {
-    const v = at(x);
-    // an interval hides a cliff iff the value moved MORE than the input did
-    let dv = v - prevV;
-    if ((dv < 0n ? -dv : dv) > x - prevX) {
-      // binary search every cliff inside (prevX, x]; there may be several
-      collectCliffs(at, prevX, prevV, x, v, cliffs);
+  let truncated = false;
+  try {
+    let prevX = options.fromCents;
+    let prevV = at(prevX);
+    for (let x = options.fromCents + step; x <= options.toCents; x += step) {
+      const v = at(x);
+      // an interval hides a cliff iff the value moved MORE than the input did
+      const dv = v - prevV;
+      if ((dv < 0n ? -dv : dv) > x - prevX) {
+        // binary search every cliff inside (prevX, x]; there may be several
+        collectCliffs(at, prevX, prevV, x, v, cliffs, limits?.maxCliffs ?? Infinity);
+      }
+      prevX = x;
+      prevV = v;
     }
-    prevX = x;
-    prevV = v;
+  } catch (err) {
+    if (!(err instanceof BudgetExhausted)) throw err;
+    truncated = true;
   }
 
   cliffs.sort((a, b) => (a.atCents < b.atCents ? -1 : a.atCents > b.atCents ? 1 : 0));
@@ -70,6 +110,7 @@ export function findCliffs(
       toCents: options.toCents,
       stepCents: step,
     },
+    ...(truncated ? { truncated } : {}),
   };
 }
 
@@ -81,8 +122,10 @@ function collectCliffs(
   hi: bigint,
   hiV: bigint,
   out: Cliff[],
+  maxCliffs: number,
 ): void {
   if (hi - lo <= 1n) {
+    if (out.length >= maxCliffs) throw new BudgetExhausted();
     out.push({ atCents: lo, jumpCents: hiV - loV });
     return;
   }
@@ -91,9 +134,9 @@ function collectCliffs(
   const leftJump = midV - loV;
   const rightJump = hiV - midV;
   if ((leftJump < 0n ? -leftJump : leftJump) > mid - lo) {
-    collectCliffs(at, lo, loV, mid, midV, out);
+    collectCliffs(at, lo, loV, mid, midV, out, maxCliffs);
   }
   if ((rightJump < 0n ? -rightJump : rightJump) > hi - mid) {
-    collectCliffs(at, mid, midV, hi, hiV, out);
+    collectCliffs(at, mid, midV, hi, hiV, out, maxCliffs);
   }
 }

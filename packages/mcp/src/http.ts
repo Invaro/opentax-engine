@@ -4,6 +4,12 @@
  * connector URL (spec 2025-03-26 Streamable HTTP transport, stateless mode).
  *
  * Run:   opentax-mcp-http            (PORT env, default 3411)
+ *
+ * It holds no data and no secrets, so by default it serves anyone who can
+ * reach it, from any browser origin, as it always has. To lock it down:
+ *   HOST=127.0.0.1                 listen on this machine only, and refuse a
+ *                                  Host header that isn't a local name (DNS rebinding)
+ *   OPENTAX_CORS_ORIGIN=<origin>   allow only that browser origin (default *)
  * Then:  add https://<host>/mcp as a custom connector (Claude.ai, ChatGPT,
  *        Cursor, `claude mcp add --transport http opentax <url>`).
  *
@@ -18,6 +24,10 @@ import { createServer } from "./server.js";
 
 const PORT = Number(process.env.PORT ?? 3411);
 const PATH = process.env.MCP_PATH ?? "/mcp";
+const HOST = process.env.HOST; // unset: every interface, as before
+const LOOPBACK = HOST === "127.0.0.1" || HOST === "::1" || HOST === "localhost";
+const CORS_ORIGIN = process.env.OPENTAX_CORS_ORIGIN || "*";
+const LOCAL_HOSTS = new Set([`127.0.0.1:${PORT}`, `localhost:${PORT}`, `[::1]:${PORT}`]);
 
 /** Real MCP requests are a few KB; anything near this is a memory-exhaustion attempt. */
 const MAX_BODY_BYTES = 1_000_000;
@@ -62,13 +72,25 @@ function readBody(req: IncomingMessage): Promise<unknown> {
 }
 
 function cors(res: ServerResponse): void {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", CORS_ORIGIN);
+  if (CORS_ORIGIN !== "*") res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, Mcp-Session-Id, MCP-Protocol-Version, Last-Event-ID");
   res.setHeader("Access-Control-Expose-Headers", "Mcp-Session-Id");
 }
 
 const httpServer = createHttpServer(async (req, res) => {
+  // on loopback, a Host that isn't ours means a DNS-rebinding page is talking to us
+  if (LOOPBACK && !LOCAL_HOSTS.has(String(req.headers.host ?? "").toLowerCase())) {
+    res.writeHead(403, { "Content-Type": "application/json" }).end('{"error":"forbidden host"}');
+    return;
+  }
+  // with OPENTAX_CORS_ORIGIN set, a browser page from any other origin is refused
+  const origin = req.headers.origin;
+  if (CORS_ORIGIN !== "*" && origin && origin !== CORS_ORIGIN) {
+    res.writeHead(403, { "Content-Type": "application/json" }).end('{"error":"forbidden origin"}');
+    return;
+  }
   cors(res);
   const url = (req.url ?? "/").split("?")[0];
   if (req.method === "OPTIONS") {
@@ -120,6 +142,6 @@ const httpServer = createHttpServer(async (req, res) => {
   }
 });
 
-httpServer.listen(PORT, () => {
-  console.error(`opentax MCP (Streamable HTTP, stateless) listening on :${PORT}${PATH}`);
+httpServer.listen(PORT, HOST, () => {
+  console.error(`opentax MCP (Streamable HTTP, stateless) listening on ${HOST ?? "all interfaces"}:${PORT}${PATH}`);
 });

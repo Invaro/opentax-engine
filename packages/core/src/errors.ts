@@ -45,6 +45,8 @@ export interface MissingFact {
   type: ValueType;
   enumValues?: string[];
   description: string;
+  /** Present when the fact has a default that refuseDefaults declined to apply. */
+  default?: { value: unknown; rationale: string };
 }
 
 /** Evaluation reached facts that were neither provided nor defaulted. */

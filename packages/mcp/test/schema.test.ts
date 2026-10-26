@@ -96,6 +96,27 @@ describe("strict validation (no silent stripping anywhere)", () => {
   });
 });
 
+describe("refuseDefaults on calculate_tax", () => {
+  const args = { filing: { filingStatus: "single" }, income: { wages: 50000 }, asOf: "2025-12-31" };
+
+  it("is accepted by the schema and passed to the engine, not treated as a fact", () => {
+    const parsed = z.object(individualNestedShape).strict().safeParse({ ...args, refuseDefaults: true, allowDefaults: ["isBlind"] });
+    expect(parsed.success).toBe(true);
+    const built = buildFactsValidated({ ...args, refuseDefaults: true, allowDefaults: ["isBlind"] });
+    expect(built.defaults).toEqual({ refuseDefaults: true, allowDefaults: ["isBlind"] });
+    expect(built.facts).not.toHaveProperty("refuseDefaults");
+    expect(() => evaluate(corpus, built.facts, { asOf: built.asOf, target: built.target, ...built.defaults })).toThrow(
+      /missing fact/,
+    );
+  });
+
+  it("is off unless asked for", () => {
+    const built = buildFactsValidated(args);
+    expect(built.defaults).toEqual({});
+    expect(() => evaluate(corpus, built.facts, { asOf: built.asOf, target: built.target, ...built.defaults })).not.toThrow();
+  });
+});
+
 describe("grouped and flat inputs build identical engine facts", () => {
   const flat = {
     filingStatus: "mfj",

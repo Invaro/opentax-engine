@@ -5,7 +5,7 @@
     "version": "corpus 0.39.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
     "x-corpus-merkle-root": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "x-generated": "2026-10-11T01:50:15.466Z"
+    "x-generated": "2026-10-26T15:41:49.574Z"
   },
   "servers": [
     {
@@ -5216,6 +5216,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per W-2, boxes transcribed verbatim"
                               },
                               "selfEmploymentEarner": {
@@ -5251,6 +5252,7 @@
                                     },
                                     "box7": {
                                       "type": "string",
+                                      "maxLength": 8,
                                       "description": "distribution code(s), e.g. \"1\", \"7\", \"4\", \"G\", \"3\", \"C\""
                                     },
                                     "iraSepSimple": {
@@ -5281,6 +5283,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"
                               },
                               "ssa1099s": {
@@ -5305,6 +5308,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"
                               },
                               "f1099necs": {
@@ -5329,6 +5333,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"
                               },
                               "f1099ks": {
@@ -5353,6 +5358,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"
                               },
                               "scheduleCExpensesTotal": {
@@ -5383,6 +5389,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"
                               },
                               "f1099divs": {
@@ -5415,6 +5422,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"
                               },
                               "f1099bs": {
@@ -5460,6 +5468,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's § 1222 Schedule D netting rules do the cross-bucket math"
                               },
                               "f1099gs": {
@@ -5482,6 +5491,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-G; box 1 sums into unemploymentCompensation"
                               },
                               "dependents": {
@@ -5523,6 +5533,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per dependent, RAW facts — CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels"
                               }
                             },
@@ -5545,6 +5556,19 @@
                           "includeProof": {
                             "type": "boolean",
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
+                          },
+                          "refuseDefaults": {
+                            "type": "boolean",
+                            "description": "refuse defaults: every fact the answer needs must be given explicitly. A fact left out refuses with NEEDS_FACTS even when it has a documented default; each entry in error.data.missing carries that `default` so you can pass the value or accept it via allowDefaults. A missing enum can hide the facts behind it, so a second call may list more. Default false: defaults apply and are listed under assumptions."
+                          },
+                          "allowDefaults": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 80
+                            },
+                            "maxItems": 300,
+                            "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
                           }
                         },
                         "additionalProperties": false,
@@ -10461,6 +10485,7 @@
                           },
                           "asOf": {
                             "type": "string",
+                            "maxLength": 10,
                             "description": "year-end date, e.g. 2025-12-31 — REQUIRED"
                           },
                           "strict": {
@@ -15583,6 +15608,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per W-2, boxes transcribed verbatim"
                               },
                               "selfEmploymentEarner": {
@@ -15618,6 +15644,7 @@
                                     },
                                     "box7": {
                                       "type": "string",
+                                      "maxLength": 8,
                                       "description": "distribution code(s), e.g. \"1\", \"7\", \"4\", \"G\", \"3\", \"C\""
                                     },
                                     "iraSepSimple": {
@@ -15648,6 +15675,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"
                               },
                               "ssa1099s": {
@@ -15672,6 +15700,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"
                               },
                               "f1099necs": {
@@ -15696,6 +15725,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"
                               },
                               "f1099ks": {
@@ -15720,6 +15750,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"
                               },
                               "scheduleCExpensesTotal": {
@@ -15750,6 +15781,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"
                               },
                               "f1099divs": {
@@ -15782,6 +15814,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"
                               },
                               "f1099bs": {
@@ -15827,6 +15860,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's § 1222 Schedule D netting rules do the cross-bucket math"
                               },
                               "f1099gs": {
@@ -15849,6 +15883,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-G; box 1 sums into unemploymentCompensation"
                               },
                               "dependents": {
@@ -15890,6 +15925,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per dependent, RAW facts — CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels"
                               }
                             },
@@ -15912,6 +15948,19 @@
                           "includeProof": {
                             "type": "boolean",
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
+                          },
+                          "refuseDefaults": {
+                            "type": "boolean",
+                            "description": "refuse defaults: every fact the answer needs must be given explicitly. A fact left out refuses with NEEDS_FACTS even when it has a documented default; each entry in error.data.missing carries that `default` so you can pass the value or accept it via allowDefaults. A missing enum can hide the facts behind it, so a second call may list more. Default false: defaults apply and are listed under assumptions."
+                          },
+                          "allowDefaults": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 80
+                            },
+                            "maxItems": 300,
+                            "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
                           }
                         },
                         "additionalProperties": false,
@@ -16139,10 +16188,12 @@
                         "properties": {
                           "ruleId": {
                             "type": "string",
+                            "maxLength": 120,
                             "description": "e.g. \"us.federal.standard_deduction\" — list via calculate_tax proof, search_tax_rules, or the corpus"
                           },
                           "asOf": {
                             "type": "string",
+                            "maxLength": 10,
                             "description": "ISO date; when given, only the version valid on that date is returned (omit for every version)"
                           }
                         },
@@ -16223,6 +16274,7 @@
                           },
                           "vary": {
                             "type": "string",
+                            "maxLength": 80,
                             "description": "money fact to vary, e.g. \"wages\" or \"taxableInterest\""
                           },
                           "fromDollars": {
@@ -16387,6 +16439,7 @@
                         "properties": {
                           "query": {
                             "type": "string",
+                            "maxLength": 2000,
                             "description": "plain-English search, e.g. 'standard deduction'"
                           },
                           "asOf": {
@@ -16466,6 +16519,7 @@
                         "properties": {
                           "query": {
                             "type": "string",
+                            "maxLength": 2000,
                             "description": "plain-English search, e.g. 'kiddie tax'"
                           },
                           "asOf": {
@@ -16550,6 +16604,7 @@
                         "properties": {
                           "query": {
                             "type": "string",
+                            "maxLength": 2000,
                             "description": "what the amount is, e.g. 'standard deduction'"
                           },
                           "claimedAmount": {
@@ -16647,6 +16702,7 @@
                         "properties": {
                           "job": {
                             "type": "string",
+                            "maxLength": 500,
                             "description": "e.g. \"bartender\", \"software engineer\", \"DJ\""
                           }
                         },

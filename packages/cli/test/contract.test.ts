@@ -67,6 +67,26 @@ describe.skipIf(!existsSync(cli))("CLI agent contract (--json)", () => {
     expect(out.error.hint).toContain("--status");
   });
 
+  it("--refuse-defaults: defaulted facts are NEEDS_FACTS with their default; --allow-default accepts them", () => {
+    const base = ["eval", "--status", "single", "--wages", "50000", "--as-of", "2025-12-31", "--json"];
+    const refused = run([...base, "--refuse-defaults"]);
+    expect(refused.code).toBe(2);
+    const missing = JSON.parse(refused.stdout).error.data.missing as Array<{ factId: string; default?: unknown }>;
+    expect(missing.length).toBeGreaterThan(10);
+    expect(missing.every((m) => m.default !== undefined)).toBe(true);
+    // accepting what was listed may surface facts a missing enum hid; accept those too
+    let allow = missing.map((m) => m.factId);
+    let out = JSON.parse(run([...base, "--refuse-defaults", "--allow-default", ...allow]).stdout);
+    if (!out.ok) {
+      allow = [...allow, ...out.error.data.missing.map((m: { factId: string }) => m.factId)];
+      out = JSON.parse(run([...base, "--refuse-defaults", "--allow-default", ...allow]).stdout);
+    }
+    const normal = JSON.parse(run(base).stdout);
+    expect(out.ok).toBe(true);
+    expect(out.value).toEqual(normal.value);
+    expect(out.assumptions.length).toBe(normal.assumptions.length);
+  });
+
   it("uncovered case: exit 3, structured code", () => {
     // all five filing statuses are covered now — an out-of-window date is
     // the remaining (permanent) way to hit NOT_COVERED

@@ -22,6 +22,8 @@ export interface LoadedCorpus {
   factById: Map<string, FactSpec>;
   /** target rule id -> rules that override it */
   overriders: Map<string, Rule[]>;
+  /** target rule id -> rules whose values are added to it */
+  contributors: Map<string, Rule[]>;
 }
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -32,6 +34,7 @@ export function loadCorpus(input: CorpusInput): LoadedCorpus {
   const byId = new Map<string, Rule[]>();
   const factById = new Map<string, FactSpec>();
   const overriders = new Map<string, Rule[]>();
+  const contributors = new Map<string, Rule[]>();
 
   for (const fact of input.facts) {
     if (factById.has(fact.id)) issues.push(`duplicate fact id "${fact.id}"`);
@@ -41,6 +44,8 @@ export function loadCorpus(input: CorpusInput): LoadedCorpus {
     }
   }
 
+  const knownRuleIds = byIdRefChecker(input);
+  const contributorIds = new Set(input.rules.filter((r) => r.contributesTo !== undefined).map((r) => r.id));
   const seenVersions = new Set<string>();
   for (const rule of input.rules) {
     const key = `${rule.id}@${rule.version}`;
@@ -78,7 +83,23 @@ export function loadCorpus(input: CorpusInput): LoadedCorpus {
       }
     }
 
-    validateExpressions(rule, byIdRefChecker(input), factById, issues);
+    if (rule.contributesTo !== undefined) {
+      const list = contributors.get(rule.contributesTo) ?? [];
+      list.push(rule);
+      contributors.set(rule.contributesTo, list);
+      if (rule.output.type !== "money") issues.push(`rule "${key}": a contribution must output money`);
+      if (rule.applicability) issues.push(`rule "${key}": a contribution cannot declare an applicability guard`);
+      if (rule.overrides) issues.push(`rule "${key}": a rule cannot both override and contribute`);
+      if (rule.contributesTo === rule.id) issues.push(`rule "${key}" contributes to itself`);
+    }
+
+    validateExpressions(rule, knownRuleIds, contributorIds, factById, issues);
+  }
+
+  for (const [targetId] of contributors) {
+    const targets = byId.get(targetId);
+    if (!targets) issues.push(`contribution target "${targetId}" does not exist`);
+    else if (targets[0].output.type !== "money") issues.push(`contribution target "${targetId}" is not a money rule`);
   }
 
   // Overlapping validity windows for the same rule id are rejected —
@@ -142,6 +163,7 @@ export function loadCorpus(input: CorpusInput): LoadedCorpus {
     byId,
     factById,
     overriders,
+    contributors,
   };
 }
 
@@ -152,6 +174,7 @@ function byIdRefChecker(input: CorpusInput): Set<string> {
 function validateExpressions(
   rule: Rule,
   knownRuleIds: Set<string>,
+  contributorIds: Set<string>,
   factById: Map<string, FactSpec>,
   issues: string[],
 ): void {
@@ -173,6 +196,11 @@ function validateExpressions(
         case "rule":
           if (!knownRuleIds.has(e.ruleId)) {
             issues.push(`rule "${key}" references unknown rule "${e.ruleId}"`);
+          }
+          for (const id of e.excluding ?? []) {
+            if (!contributorIds.has(id)) {
+              issues.push(`rule "${key}" excludes "${id}", which is not a contributing rule`);
+            }
           }
           break;
         case "fact":
@@ -244,6 +272,21 @@ export function selectVersion(
     );
   }
   return match;
+}
+
+/** Ids of the rules contributing to `ruleId` with a version valid on the date, in id order. */
+export function selectContributors(
+  corpus: LoadedCorpus,
+  ruleId: string,
+  asOf: string,
+): string[] {
+  const list = corpus.contributors.get(ruleId) ?? [];
+  const ids = new Set(
+    list
+      .filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === undefined || asOf < r.effectiveTo))
+      .map((r) => r.id),
+  );
+  return [...ids].sort();
 }
 
 /** Overriders of `ruleId` valid as of the date, highest priority first. */

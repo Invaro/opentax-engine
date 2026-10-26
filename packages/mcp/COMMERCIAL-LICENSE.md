@@ -1,38 +1,69 @@
-# Commercial licensing
+# Licensing
 
-OpenTax is dual-licensed.
+OpenTax is source-available under the Business Source License 1.1
+(see [LICENSE](LICENSE)), with commercial licenses from Invaro Inc.
 
-## Open source: AGPL-3.0
+## Free use
 
-The engine is free software under the GNU Affero General Public License v3
-(see [LICENSE](LICENSE)). You can use, study, modify, and redistribute it,
-including running it as a network service, provided that any product or
-service you build with it makes its own complete corresponding source code
-available under the AGPL as well.
+You can read, copy, modify and run the code for evaluation, development and
+testing. You can also use it in production, free, including commercially:
 
-That condition is the point. If you are building an open product, you owe
-nothing and are very welcome here.
+- an individual using it for their own purposes;
+- a company or firm using it internally, through its own employees and
+  contractors, including for work it does for its clients, as long as no one
+  outside the company has access to OpenTax or to software that uses it;
+- non-commercial teaching and research, and non-profits or government
+  agencies offering free tax help to the public.
 
-## Commercial: everyone else
+## Products for other people need a commercial license
 
-If you want to embed OpenTax in a closed-source product, offer it as part of
-a proprietary service, or otherwise use it without the AGPL's share-alike
-obligations, you need a commercial license from Invaro Inc.
+You need a commercial license to make OpenTax, or anything that uses it,
+available to anyone outside your company, paid or free. That includes:
 
-Commercial licenses come with:
+- a product, app, client portal, API, hosted service or AI agent tool that
+  uses OpenTax;
+- selling, reselling, sublicensing, white-labeling or embedding OpenTax in
+  another product.
 
-- exemption from the AGPL source-sharing requirements
-- the hosted engine with SLA options
-- priority corpus updates as tax law changes
-- support and integration help
+This is the **embedding license**: a custom annual agreement. Book a call at
+https://cal.com/invaro/15min or write to founders@invaro.ai.
 
-Contact: https://cal.com/invaro/15min or via https://invaro.ai
+## The Firm plan
 
-## Which license applies to which version
+For firms using OpenTax in their practice:
 
-- Versions released through `0.2.1` (and the corresponding git history) were
-  published under Apache-2.0 and remain so.
-- All later versions are AGPL-3.0-only, with commercial licenses available.
+- support from the engineers who build OpenTax, with a reply within 24
+  hours, and within 4 business hours from January through April;
+- features your firm needs, with a written date within two business days
+  and shipped within two weeks;
+- early access to new features;
+- team management.
 
-"OpenTax" and the Invaro mark are trademarks of Invaro Inc. The license
-covers the code; it does not grant trademark rights.
+$9 per seat per month, or $5 per seat for 6 or more seats. Yearly billing
+gets one month free. Terms: https://opentax.invaro.ai/license. Sign up at
+https://opentax.invaro.ai/pricing.
+
+## Each version becomes AGPL after three years
+
+Three years after a version is first released, that version converts to the
+GNU AGPL-3.0. Tax law changes every year, so current rules always come under
+the Business Source License.
+
+## Earlier versions
+
+- Versions through `0.2.1` were released under Apache-2.0 and stay that way.
+- Versions released after `0.2.1` and before October 26, 2026 were released
+  under AGPL-3.0-only and stay that way.
+- Versions released on or after October 26, 2026 are under the Business
+  Source License 1.1.
+
+## Contributions
+
+Outside contributions are accepted under the contributor agreement in
+[CONTRIBUTING.md](CONTRIBUTING.md), which lets Invaro offer the code under
+both licenses.
+
+## Trademark
+
+"OpenTax" and the Invaro name and logo are trademarks of Invaro Inc. Neither
+license grants any right to use them.

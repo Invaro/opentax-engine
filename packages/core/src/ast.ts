@@ -36,7 +36,13 @@ export type Expr =
   | { kind: "enum"; value: string }
   // references
   | { kind: "fact"; factId: string }
-  | { kind: "rule"; ruleId: string }
+  /**
+   * A rule's value. With `excluding`, the value computed as if those
+   * contributing rules (Rule.contributesTo) did not exist: the statute's
+   * "computed without regard to" (e.g. the § 172 80% limit on taxable
+   * income without the NOL deduction itself).
+   */
+  | { kind: "rule"; ruleId: string; excluding?: string[] }
   | { kind: "param"; name: string }
   // arithmetic (exact; money or int, never mixed)
   | { kind: "add"; args: Expr[] }
@@ -162,8 +168,9 @@ export function valueFromJSON(tv: TypedValueJSON): Value {
       if (typeof tv.value !== "string") {
         throw new TypeError("money value must be a string of cents");
       }
-      if (!/^-?\d+$/.test(tv.value)) {
-        throw new TypeError(`invalid money value: ${JSON.stringify(tv.value)}`);
+      // 18 digits of cents: the 15-digit dollar cap, never an unbounded bigint
+      if (!/^-?\d{1,18}$/.test(tv.value)) {
+        throw new TypeError(`invalid money value: ${JSON.stringify(tv.value.slice(0, 40))}`);
       }
       return { type: "money", cents: BigInt(tv.value) };
     }
@@ -171,8 +178,8 @@ export function valueFromJSON(tv: TypedValueJSON): Value {
       if (typeof tv.value !== "string") {
         throw new TypeError("int value must be a decimal string");
       }
-      if (!/^-?\d+$/.test(tv.value)) {
-        throw new TypeError(`invalid int value: ${JSON.stringify(tv.value)}`);
+      if (!/^-?\d{1,18}$/.test(tv.value)) {
+        throw new TypeError(`invalid int value: ${JSON.stringify(tv.value.slice(0, 40))}`);
       }
       return { type: "int", value: BigInt(tv.value) };
     }

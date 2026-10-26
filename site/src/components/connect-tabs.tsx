@@ -31,7 +31,7 @@ const TABS: Tab[] = [
     steps: [
       {
         title: "Copy the connector URL",
-        desc: "One hosted URL. Nothing to install, no auth, free to try.",
+        desc: "We host it, so there's nothing to install. You can try it without an account.",
         code: MCP_URL,
       },
       {

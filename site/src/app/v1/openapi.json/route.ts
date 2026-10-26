@@ -77,7 +77,7 @@ export async function GET(): Promise<Response> {
     paths,
   };
   return new Response(JSON.stringify(doc, null, 2), {
-    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=300", ...CORS },
+    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400", ...CORS },
   });
 }
 

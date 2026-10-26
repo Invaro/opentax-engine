@@ -2,7 +2,7 @@
   "name": "@invaro/opentax",
   "version": "0.6.0",
   "description": "The verifiable US tax oracle: MCP server for AI agents + full CLI in one self-contained package \u2014 every answer cited to statute and machine-checkable",
-  "license": "AGPL-3.0-only",
+  "license": "BUSL-1.1",
   "type": "module",
   "bin": {
     "opentax": "./bundle/main.js",
@@ -20,7 +20,9 @@
     "build": "tsc -p tsconfig.json && esbuild dist/main.js dist/index.js dist/http.js --bundle --platform=node --format=esm --outdir=bundle --banner:js=\"import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\" --log-level=warning",
     "build:hosted": "esbuild dist/hosted-bundle.js --bundle --platform=node --format=esm --outfile=../../site/src/lib/opentax-mcp.bundle.mjs --log-level=warning"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
+  },
   "devDependencies": {
     "@types/node": "^26.1.0",
     "typescript": "^5.8.3",

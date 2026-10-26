@@ -2,7 +2,7 @@
 
 **Verifiable US tax computation in your terminal** — every answer derived from cited, content-hashed tax rules, with a machine-checkable proof tree.
 
-🌐 **[opentax.invaro.ai](https://opentax.invaro.ai)** · [GitHub](https://github.com/Invaro/opentax-engine) · AGPL-3.0 + commercial dual license
+🌐 **[opentax.invaro.ai](https://opentax.invaro.ai)** · [GitHub](https://github.com/Invaro/opentax-engine) · Business Source License 1.1 · commercial license for products
 
 ```bash
 npx -y @invaro/opentax eval --status mfj --wages 120000 --kids 2

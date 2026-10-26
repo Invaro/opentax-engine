@@ -7,6 +7,8 @@
 
 ## Checklist
 
+- [ ] I agree to the contributor agreement in CONTRIBUTING.md (required to merge)
+
 - [ ] `pnpm build && pnpm test` green locally
 - [ ] Every new/changed rule cites its primary source — statute / Rev. Proc. / form instruction, with a verbatim excerpt and URL
 - [ ] Dollar amounts come from the primary source text and are hand-derived in the fixture description — never from memory, a blog post, or any test suite's expected output

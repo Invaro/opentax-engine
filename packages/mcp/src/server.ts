@@ -15,7 +15,7 @@ import { ENGINE, evaluate, OpenTaxError, parseDollars, walkExpr } from "@invaro/
 import type { Expr, Rule } from "@invaro/opentax-core";
 import { IncompleteReturnError } from "./completeness.js";
 import { COMPOSER_VERSION } from "./version.js";
-import { compareAcross, factCheck, findCliffs, lookupParameters, searchRules } from "@invaro/opentax-solve";
+import { compareAcross, factCheck, findCliffs, HOSTED_CLIFF_LIMITS, lookupParameters, searchRules } from "@invaro/opentax-solve";
 import { composeStateReturn, isIncompleteReturnRefusal, makeStateTaxEvaluator, stateReturnShape } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
 import {
@@ -63,10 +63,12 @@ function fail(err: unknown) {
 
 const fmt = (cents: bigint) => {
   const sign = cents < 0n ? "-" : "";
-  let abs = cents < 0n ? -cents : cents;
-  const dollars = (abs / 100n)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const abs = cents < 0n ? -cents : cents;
+  // linear grouping (the lookahead regex this replaces was quadratic in the digit count)
+  const digits = (abs / 100n).toString();
+  const head = digits.length % 3 || 3;
+  let dollars = digits.slice(0, head);
+  for (let i = head; i < digits.length; i += 3) dollars += "," + digits.slice(i, i + 3);
   return `${sign}$${dollars}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
 
@@ -87,9 +89,55 @@ function ruleDependencies(rule: Rule): { rules: string[]; facts: string[] } {
 
 // ---------------------------------------------------------------------------
 
-/** Build a fully-registered opentax MCP server (one per transport/session). */
-export function createServer(): McpServer {
-const server = new McpServer({ name: "opentax", version: COMPOSER_VERSION });
+/** The OpenTax account a signed-in hosted connector belongs to. */
+export type ConnectedAccount = {
+  email: string;
+  plan: "firm" | "free";
+  firm: string | null;
+  role: "owner" | "member" | null;
+};
+
+function describeAccount(a: ConnectedAccount): string {
+  return a.plan === "firm"
+    ? `Connected to OpenTax as ${a.email}, on ${a.firm ?? "a firm"}'s Firm plan.`
+    : `Connected to OpenTax as ${a.email}, a free account (not on a Firm plan).`;
+}
+
+/**
+ * Build a fully-registered opentax MCP server (one per transport/session).
+ * `hosted` applies the work limits a public server needs (see
+ * HOSTED_CLIFF_LIMITS); a server you run for yourself has none. `account` is
+ * set on the hosted signed-in connector: the server then says who it's
+ * working for, and offers my_account.
+ */
+export function createServer(options: { hosted?: boolean; account?: ConnectedAccount } = {}): McpServer {
+const server = new McpServer(
+  { name: "opentax", version: COMPOSER_VERSION },
+  options.account ? { instructions: `${describeAccount(options.account)} Never compute or estimate tax yourself: call the OpenTax tools, report their assumptions, and cite their citations.` } : undefined,
+);
+
+if (options.account) {
+  const account = options.account;
+  server.registerTool(
+    "my_account",
+    {
+      description:
+        "Which OpenTax account this connector is signed in to, and whether it's on a Firm plan. Call it to confirm the connection after setup, or when the person asks which account or plan they're using.",
+      inputSchema: z.object({}).strict(),
+    },
+    async () =>
+      ok({
+        ok: true,
+        email: account.email,
+        plan: account.plan === "firm" ? "Firm plan" : "free",
+        firm: account.firm,
+        role: account.role,
+        summary: describeAccount(account),
+        manage: "https://opentax.invaro.ai/account",
+        support: "support@invaro.ai",
+      }),
+  );
+}
 
 server.registerTool(
   "calculate_tax",
@@ -100,8 +148,8 @@ server.registerTool(
   },
   async (args: Record<string, unknown>) => {
     try {
-      const { facts, asOf, target, documentNotes } = buildFactsValidated(args);
-      const { value, proof } = evaluate(corpus, facts, { asOf, target });
+      const { facts, asOf, target, documentNotes, defaults } = buildFactsValidated(args);
+      const { value, proof } = evaluate(corpus, facts, { asOf, target, ...defaults });
       const cents = value.type === "money" ? value.cents : 0n;
       return ok({
         ok: true,
@@ -236,7 +284,7 @@ server.registerTool(
     inputSchema: z
       .object({
         ...stateReturnShape,
-        asOf: z.string().describe("year-end date, e.g. 2025-12-31 — REQUIRED"),
+        asOf: z.string().max(10).describe("year-end date, e.g. 2025-12-31 — REQUIRED"),
         strict: z
           .boolean()
           .optional()
@@ -317,8 +365,11 @@ server.registerTool(
           `whole-dollar rounding: ${roundedInputs} money input(s) rounded to the nearest dollar (50 cents up) after summing documents, before computation — Form 1040 instructions, Rounding Off to Whole Dollars`,
         );
       }
+      // net tax first: it reaches every line below, so with refuseDefaults the
+      // NEEDS_FACTS it throws lists the whole return's missing facts, not one line's
+      const { proof } = evaluate(corpus, facts, { asOf, target: "us.federal.net_tax", ...built.defaults });
       const get = (target: string): bigint => {
-        const { value } = evaluate(corpus, facts, { asOf, target });
+        const { value } = evaluate(corpus, facts, { asOf, target, ...built.defaults });
         return value.type === "money" ? value.cents : 0n;
       };
       const gross = get("us.federal.gross_income");
@@ -345,7 +396,6 @@ server.registerTool(
       const total24 = rd(after) + rd(other);
       const payments = rd(withheld) + rd(refundable) + rd(extension) + rd(estimated);
       const balance = payments - total24;
-      const { proof } = evaluate(corpus, facts, { asOf, target: "us.federal.net_tax" });
       const d = (c: bigint) => fmt(rd(c));
       return ok({
         ok: true,
@@ -466,9 +516,11 @@ server.registerTool(
       .object({
         ruleId: z
           .string()
+          .max(120)
           .describe('e.g. "us.federal.standard_deduction" — list via calculate_tax proof, search_tax_rules, or the corpus'),
         asOf: z
           .string()
+          .max(10)
           .optional()
           .describe("ISO date; when given, only the version valid on that date is returned (omit for every version)"),
       })
@@ -526,10 +578,17 @@ server.registerTool(
     inputSchema: z
       .object({
         facts: factsObjectParam,
-        vary: z.string().describe('money fact to vary, e.g. "wages" or "taxableInterest"'),
+        vary: z.string().max(80).describe('money fact to vary, e.g. "wages" or "taxableInterest"'),
         fromDollars: z.number(),
         toDollars: z.number(),
-        stepDollars: z.number().optional().describe("coarse scan step, default 1000"),
+        stepDollars: z
+          .number()
+          .optional()
+          .describe(
+            options.hosted
+              ? "coarse scan step, default 1000; at most 2,000 steps across the range"
+              : "coarse scan step, default 1000",
+          ),
       })
       .strict(),
   },
@@ -545,6 +604,7 @@ server.registerTool(
           : undefined,
         asOf,
         target,
+        ...(options.hosted ? { limits: HOSTED_CLIFF_LIMITS } : {}),
       });
       return ok({
         ok: true,
@@ -552,6 +612,9 @@ server.registerTool(
           at: fmt(c.atCents),
           oneMoreCentCosts: fmt(c.jumpCents),
         })),
+        ...(result.truncated
+          ? { truncated: true, note: "stopped early: the scan hit its evaluation or cliff budget; narrow the range or raise the step" }
+          : {}),
         corpusMerkleRoot: result.corpusMerkleRoot,
       });
     } catch (err) {
@@ -597,7 +660,7 @@ server.registerTool(
       "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Use this to fact-check ANY tax number before stating it — your training data likely predates the OBBBA.",
     inputSchema: z
       .object({
-        query: z.string().describe("plain-English search, e.g. 'standard deduction'"),
+        query: z.string().max(2000).describe("plain-English search, e.g. 'standard deduction'"),
         asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
       })
       .strict(),
@@ -633,7 +696,7 @@ server.registerTool(
       "Full-text search over the encoded tax-law corpus ('kiddie tax', 'NIIT threshold', 'california renters credit'). Returns matching rules: id, title, statutory citation, effective window, and a verbatim excerpt of the law text. A hit means the engine computes this; zero hits means it is outside the corpus — say so rather than guessing. Follow up with explain_rule for a hit's full formula, or lookup_tax_parameter for its dollar amounts.",
     inputSchema: z
       .object({
-        query: z.string().describe("plain-English search, e.g. 'kiddie tax'"),
+        query: z.string().max(2000).describe("plain-English search, e.g. 'kiddie tax'"),
         asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
         limit: z.number().int().min(1).max(20).optional(),
       })
@@ -667,7 +730,7 @@ server.registerTool(
       "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Never states a verdict it cannot ground.",
     inputSchema: z
       .object({
-        query: z.string().describe("what the amount is, e.g. 'standard deduction'"),
+        query: z.string().max(2000).describe("what the amount is, e.g. 'standard deduction'"),
         claimedAmount: money,
         filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional(),
         asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -739,7 +802,7 @@ server.registerTool(
     description:
       "Determine whether a job is on the Treasury Tipped Occupation list (Treas. Reg. § 1.224-1, final Apr 2026) for the § 224 'no tax on tips' deduction. Fuzzy-matches the job name; returns the official listing (name, TTC code, category) or a definitive 'not listed'.",
     inputSchema: z
-      .object({ job: z.string().describe('e.g. "bartender", "software engineer", "DJ"') })
+      .object({ job: z.string().max(500).describe('e.g. "bartender", "software engineer", "DJ"') })
       .strict(),
   },
   async ({ job }) => {

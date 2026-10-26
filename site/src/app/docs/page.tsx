@@ -14,12 +14,10 @@ export default function DocsOverview() {
   return (
     <>
       <div className="kicker">hosted api · corpus {CORPUS_VERSION}</div>
-      <h1>
-        One request, <em className="not-italic text-muted-foreground">one cited answer.</em>
-      </h1>
+      <h1>API docs</h1>
       <p className="lede">
-        The engine runs as a stateless HTTP service. Send the facts, get back the number, every assumption it
-        made, the statute behind each rule, and on request the proof tree you can verify offline. Nothing you send is stored.
+        Send OpenTax the facts of a return and you get back the number, every assumption it made, and the law
+        behind each step. Ask for the full proof and you can check the answer offline. Nothing you send is stored.
       </p>
 
       <div className="border border-border grid sm:grid-cols-3 text-xs">
@@ -39,12 +37,15 @@ export default function DocsOverview() {
       <h2 id="quickstart">Three steps</h2>
       <h3>1. Get a key</h3>
       <p>
-        Sign in at <Link href="/console">the console</Link> with your email. A six-digit code arrives, you enter
-        it, and your key is on the screen. The evaluation plan is free and has no expiry.
+        Sign in at <Link href="/console">the console</Link> with an eight-digit code we email you, then create a key.
+        It is shown once, so copy it; we only keep a fingerprint. The free plan covers personal use and a company&apos;s internal use.
+        Products used by people outside your company need an <Link href="/pricing">embedding license</Link>; see
+        the <Link href="/terms">API terms</Link>.
       </p>
       <p>
         Calls without a key work too, at the anonymous rate budget (600 requests an hour). A key raises that to
-        6,000 and attributes usage to your account so you can see it.
+        6,000 and attributes usage to your account so you can see it. Two calls count for more than one: a{" "}
+        <C>find_tax_cliffs</C> scan counts as 20, and a call with <C>includeProof</C> as 2.
       </p>
 
       <h3>2. Make the first call</h3>
@@ -102,6 +103,12 @@ export default function DocsOverview() {
           for every tool is on its page and in the OpenAPI document.
         </li>
         <li>
+          <strong>Defaults can be refused.</strong> By default a fact you leave out takes its documented default
+          and shows up in <C>assumptions</C>. Pass <C>refuseDefaults: true</C> on <C>calculate_tax</C> or{" "}
+          <C>compute_return</C> and every fact must be given instead; <C>allowDefaults</C> lists the ones you
+          accept.
+        </li>
+        <li>
           <strong>Facts are grouped</strong> on the individual tools: <C>filing</C>, <C>income</C>, <C>credits</C>,
           <C>itemized</C>, <C>retirement</C> and so on. Fill the groups that apply.
         </li>
@@ -130,8 +137,11 @@ export default function DocsOverview() {
           <tbody>
             <tr>
               <td>NEEDS_FACTS</td>
-              <td>a required input is missing; <C>error.data.missing</C> lists each fact id, type and description</td>
-              <td>collect those facts and call again</td>
+              <td>
+                a required input is missing; <C>error.data.missing</C> lists each fact id, type and description, and
+                the <C>default</C> it would have used when you refused defaults
+              </td>
+              <td>collect those facts and call again; with refused defaults, a second call can list a few more</td>
             </tr>
             <tr>
               <td>NO_APPLICABLE_RULE</td>
@@ -193,7 +203,9 @@ export default function DocsOverview() {
         Every response carries <C>corpusMerkleRoot</C>, the content hash of the rule corpus that produced it. Rules
         are never edited in place. A change in the law adds a new version with its own validity window, so an old
         proof still verifies against the old corpus. A breaking change to a tool&apos;s inputs ships as a new tool
-        name, never as a silently changed schema. The current corpus is <C>{CORPUS_VERSION}</C>.
+        name, never as a silently changed schema. The current corpus is <C>{CORPUS_VERSION}</C>. Every release
+        lists what changed in the <Link href="/changelog">changelog</Link>, and its rule-by-rule notes give each
+        changed parameter&apos;s old and new value.
       </p>
 
       <h2 id="tools">The {TOOLS.length} tools</h2>

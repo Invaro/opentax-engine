@@ -82,8 +82,8 @@ export async function OpenSourceProof() {
       d: "stars on GitHub",
     },
     { n: stats ? exact(stats.forks) : "n/a", d: "forks" },
-    { n: "AGPL-3.0", d: "plus a commercial license" },
-    { n: "29", d: "states, every line cited" },
+    { n: "BUSL-1.1", d: "source license; products for others need a commercial one" },
+    { n: "31", d: "states with full returns" },
   ];
 
   return (
@@ -91,7 +91,7 @@ export async function OpenSourceProof() {
       <div className="relative p-8 md:p-12">
         <div className="flex flex-col items-center text-center">
           <span className="text-[10px] uppercase tracking-wider text-muted-foreground mb-5">
-            built in the open
+            source on github
           </span>
           <h2 className="font-serif text-3xl md:text-[44px] leading-tight tracking-tight mb-4">
             {stats ? (
@@ -109,9 +109,8 @@ export async function OpenSourceProof() {
             )}
           </h2>
           <p className="text-sm md:text-base text-muted-foreground max-w-[560px]">
-            Every rule, every citation, every test case is in the repository, including the
-            benchmark harness that produced the 96%. Read it, fork it, run it against your own
-            returns, and tell us where we&apos;re wrong.
+            Every rule, citation and test is in the repository, along with the code that ran the
+            benchmark. Run it on your own returns, and tell us where we&apos;re wrong.
           </p>
         </div>
 

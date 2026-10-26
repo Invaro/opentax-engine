@@ -212,6 +212,45 @@ describe("missing facts and assumptions", () => {
     ]);
   });
 
+  it("refuseDefaults reports a defaulted fact as missing, with its default", () => {
+    const corpus = loadCorpus(mkCorpus());
+    try {
+      evaluate(corpus, {}, { asOf: "2025-06-30", target: "test.total", refuseDefaults: true });
+      expect.unreachable();
+    } catch (err) {
+      expect(err).toBeInstanceOf(NeedsFactsError);
+      const missing = (err as NeedsFactsError).missing;
+      expect(missing.map((m) => m.factId)).toEqual(["surchargeCents"]);
+      expect(missing[0].default).toEqual({ value: "0", rationale: "No surcharge unless stated" });
+    }
+  });
+
+  it("refuseDefaults keeps the defaults in allowDefaults, and an explicit value needs no default", () => {
+    const corpus = loadCorpus(mkCorpus());
+    const allowed = evaluate(corpus, {}, {
+      asOf: "2025-06-30",
+      target: "test.total",
+      refuseDefaults: true,
+      allowDefaults: ["surchargeCents"],
+    });
+    expect(allowed.value).toEqual({ type: "money", cents: 10000n });
+    expect(allowed.proof.assumptions.map((a) => a.factId)).toEqual(["surchargeCents"]);
+    const given = evaluate(corpus, { surchargeCents: { type: "money", value: "0" } }, {
+      asOf: "2025-06-30",
+      target: "test.total",
+      refuseDefaults: true,
+    });
+    expect(given.value).toEqual({ type: "money", cents: 10000n });
+    expect(given.proof.assumptions).toEqual([]);
+  });
+
+  it("allowDefaults rejects an unknown fact id", () => {
+    const corpus = loadCorpus(mkCorpus());
+    expect(() =>
+      evaluate(corpus, {}, { asOf: "2025-06-30", target: "test.total", refuseDefaults: true, allowDefaults: ["nope"] }),
+    ).toThrow(/unknown fact "nope"/);
+  });
+
   it("collects ALL missing facts in one pass", () => {
     const input = mkCorpus();
     input.facts = input.facts.map((f) =>

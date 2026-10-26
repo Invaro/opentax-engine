@@ -14,6 +14,12 @@
 import { z } from "zod";
 import type { IncompleteItem } from "@invaro/opentax-compose";
 
+/** No return has hundreds of W-2s; the cap keeps one request from producing megabytes of validation output. */
+const MAX_DOCS_PER_LIST = 100;
+
+// No .max() on the string branch: it would turn the published schema from
+// type ["number","string"] into anyOf/$ref, which some tool clients reject.
+// Length is enforced where the value is parsed (parseDollars caps it).
 const usd = z.union([z.number(), z.string()]).describe('dollars, e.g. 50000 or "1234.56"');
 const dob = z
   .string()
@@ -48,6 +54,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per W-2, boxes transcribed verbatim"),
     selfEmploymentEarner: z
@@ -61,7 +68,7 @@ export const documentsShape = z
             box1: usd.describe("gross distribution"),
             box2a: usd.describe("taxable amount (0 if fully rolled over / converted basis applied via ira8606)"),
             box4: usd.optional().describe("federal income tax withheld"),
-            box7: z.string().describe('distribution code(s), e.g. "1", "7", "4", "G", "3", "C"'),
+            box7: z.string().max(8).describe('distribution code(s), e.g. "1", "7", "4", "G", "3", "C"'),
             iraSepSimple: z.boolean().optional().describe("the IRA/SEP/SIMPLE checkbox"),
             recipient: z.enum(["taxpayer", "spouse"]).optional().describe("whose distribution (for the age-based penalty test); default taxpayer"),
             rolledOver: z.boolean().optional().describe("interview-confirmed full rollover (e.g. 'distributions less rollovers = 0') — excluded from taxable income regardless of box 2a. NOT for a code-G direct rollover to a ROTH: the payer reports the converted amount in box 2a and it IS taxable"),
@@ -69,6 +76,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"),
     ssa1099s: z
@@ -80,6 +88,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"),
     f1099necs: z
@@ -91,6 +100,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"),
     f1099ks: z
@@ -102,6 +112,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"),
     scheduleCExpensesTotal: usd
@@ -118,6 +129,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"),
     f1099divs: z
@@ -131,6 +143,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"),
     f1099bs: z
@@ -145,6 +158,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's § 1222 Schedule D netting rules do the cross-bucket math"),
     f1099gs: z
@@ -157,6 +171,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per 1099-G; box 1 sums into unemploymentCompensation"),
     dependents: z
@@ -177,6 +192,7 @@ export const documentsShape = z
           })
           .strict(),
       )
+      .max(MAX_DOCS_PER_LIST)
       .optional()
       .describe("one entry per dependent, RAW facts — CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels"),
   })
@@ -188,9 +204,9 @@ export const documentsShape = z
 type Docs = z.infer<typeof documentsShape>;
 
 const toCents = (v: number | string): bigint => {
-  const s = typeof v === "number" ? v.toFixed(2) : String(v).replace(/[$,]/g, "");
-  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
-  if (!m) throw new Error(`not a dollar amount: ${JSON.stringify(v)}`);
+  const s = typeof v === "number" ? v.toFixed(2) : String(v).slice(0, 64).replace(/[$,]/g, "");
+  const m = /^(-?)(\d{1,15})(?:\.(\d{1,2}))?$/.exec(s);
+  if (!m) throw new Error(`not a dollar amount: ${JSON.stringify(String(v).slice(0, 40))}`);
   const cents = BigInt(m[2]) * 100n + BigInt((m[3] ?? "0").padEnd(2, "0"));
   return m[1] === "-" ? -cents : cents;
 };

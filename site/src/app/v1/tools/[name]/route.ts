@@ -10,6 +10,7 @@
  *   401  unknown API key · 413 body too large · 429 rate budget exceeded
  */
 import { callTool, listTools } from "@/lib/engine";
+import { callCost, rateLimit } from "@/lib/rate-limit";
 import { apiError, CORS, gate, json, logRest } from "@/lib/v1/shared";
 
 export const runtime = "nodejs";
@@ -27,6 +28,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ name: string }
     return apiError(404, "UNKNOWN_TOOL", `no tool named ${JSON.stringify(name)}`, { tools: tools.map((t) => t.name) });
   }
 
+  // refuse oversized bodies before reading them, when the client declares a length
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY) {
+    return apiError(413, "BODY_TOO_LARGE", "request body over 512 KB");
+  }
   const raw = await req.text();
   if (raw.length > MAX_BODY) return apiError(413, "BODY_TOO_LARGE", "request body over 512 KB");
   let args: unknown = {};
@@ -41,6 +46,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ name: string }
     return apiError(400, "BAD_JSON", "request body must be a JSON object of tool arguments");
   }
 
+  // the gate charged one unit; expensive calls (cliff scans, full proofs) pay the rest here
+  const extra = callCost(name, args) - 1;
+  if (extra > 0 && !rateLimit(g.budgetKey, g.budget, 3600 * 1000, extra)) {
+    return apiError(429, "RATE_LIMITED", "rate budget exceeded");
+  }
   logRest(req, name, g.account);
   const out = await callTool(name, args);
   switch (out.kind) {

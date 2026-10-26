@@ -74,6 +74,8 @@ evalCmd
   .option("--brief", "plain-English summary only (skip the proof tree)")
   .option("--assumptions", "list every default the engine relied on (folded by default)")
   .option("--json", "print the proof artifact JSON instead of the tree")
+  .option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included")
+  .option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept")
   .action((flags) => {
     process.exitCode = runEval(flags);
   });
@@ -92,6 +94,8 @@ checkCmd
   .option("--target <ruleId>", "rule to check (default: net tax; balance due if --withheld)")
   .option("--proof <file>", "write the proof artifact JSON to this file")
   .option("--json", "machine-readable verdict")
+  .option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included")
+  .option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept")
   .action((flags) => {
     process.exitCode = runCheck(flags);
   });

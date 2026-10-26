@@ -2,7 +2,7 @@
   "name": "@invaro/opentax-core",
   "version": "0.1.0",
   "description": "Domain-general verifiable rules engine: typed rule IR, exact arithmetic, derivation proofs, content-addressed corpora",
-  "license": "AGPL-3.0-only",
+  "license": "BUSL-1.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -16,7 +16,7 @@ export async function GET(): Promise<Response> {
       inputs: Object.keys(t.inputSchema?.properties ?? {}),
       docs: `https://opentax.invaro.ai/docs/tools/${t.name}`,
     })),
-  });
+  }, 200, { "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400" });
 }
 
 export function OPTIONS(): Response {

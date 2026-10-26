@@ -86,11 +86,11 @@ Good fixtures pin **boundaries**: the dollar where a phase-out starts, the exact
 
 ```bash
 pnpm test                                       # your fixture fails until the rule is right
-pnpm -F @invaro/opentax-corpus-us-federal gen:lock     # corpus hashes changed — regenerate the lock
+pnpm -F @invaro/opentax-corpus-us-federal gen:lock     # corpus hashes changed — regenerate the lock and rule-index.json
 pnpm test                                       # everything green
 ```
 
-The lock-file diff in your PR shows reviewers exactly which rules changed by content hash. A PR that touches rule semantics without a lock diff is impossible; a lock diff without a fixture is a review red flag.
+The lock-file diff in your PR shows reviewers exactly which rules changed by content hash, and the `rule-index.json` diff shows what changed in each (formula, parameter values in dollars, validity window). A PR that touches rule semantics without a lock diff is impossible; a lock diff without a fixture is a review red flag.
 
 ## PR checklist
 
@@ -98,7 +98,8 @@ The lock-file diff in your PR shows reviewers exactly which rules changed by con
 - [ ] New facts have descriptions; defaults only where statutorily sensible, with a rationale
 - [ ] Golden fixture(s) with hand-computed exact cents, boundaries pinned
 - [ ] Uncovered branches fail loud (no `else` that guesses)
-- [ ] `corpus.lock.json` regenerated; `pnpm build && pnpm test` green
+- [ ] `corpus.lock.json` and `rule-index.json` regenerated; `pnpm build && pnpm test` green
+- [ ] A user-visible change has a post (or a paragraph in one) headed "Next release" in `CHANGELOG.md`, written for the person using it: what they can do now, how to turn it on, what to watch for
 - [ ] Simplifications visible in the rule `title` (e.g. "simplified: MAGI approximated as AGI") — the proof must never claim more than the corpus covers
 
 ## PR titles
@@ -125,12 +126,38 @@ Examples: `feat(corpus): encode § 25B saver's credit` · `fix(compose): VA line
 ## What CI checks on every PR
 
 - **build & test** on Node 22 and 24 — `pnpm build && pnpm test`: the full suite, golden fixtures, and the corpus-lock drift test
-- **generated artifacts in sync** — CI regenerates `corpus.lock.json` and the distributed bundles and fails if the committed copies differ (run `pnpm -F @invaro/opentax-corpus-us-federal gen:lock` and `pnpm -F @invaro/opentax build:hosted` after source changes)
+- **generated artifacts in sync** — CI regenerates `corpus.lock.json`, `rule-index.json` and the distributed bundles and fails if the committed copies differ (run `pnpm -F @invaro/opentax-corpus-us-federal gen:lock` and `pnpm -F @invaro/opentax build:hosted` after source changes)
 - **site build** — the Next.js site compiles
 - **pr title** — matches the `type(scope): description` format above
 
 All checks must pass before merge.
 
+## Cutting a release
+
+1. Bump the corpus `version` in `packages/corpus-us-federal/src/index.ts`, run `gen:lock`, and commit.
+2. In `CHANGELOG.md`, replace "Next release" in each post heading with the release date, e.g. `## Nov 6, 2026 · Turn off defaults`. Run `node site/scripts/gen-docs-data.mjs` so opentax.invaro.ai/changelog shows it.
+3. `pnpm -F @invaro/opentax-corpus-us-federal changes --tag` writes the rule-by-rule notes since the last tag into an annotated tag `v<version>`; `--write` also saves them under `packages/corpus-us-federal/changes/`.
+4. Push the tag: `git push origin v<version>`.
+5. If the release touches the site, walk [docs/USER-JOURNEYS.md](docs/USER-JOURNEYS.md) on its preview deployment first.
+
 ## Engine contributions
 
 Core changes need: a failing test first, no new runtime dependencies, and no floats within a mile of money. The canonical-JSON/hashing layer is consensus-critical — changes there invalidate every existing proof and need a `schemaVersion` bump and a very good reason.
+
+## Contributor agreement
+
+OpenTax is offered under the Business Source License and under commercial
+licenses, so Invaro needs the right to license every contribution both ways.
+By opening a pull request you agree that:
+
+1. You wrote the contribution, or have the right to submit it, and it does
+   not include code you are not allowed to share.
+2. You keep the copyright in your contribution, and you grant Invaro Inc. a
+   perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to
+   use, copy, modify, distribute and sublicense it, and to license it under
+   any terms, including the Business Source License and commercial licenses.
+3. If your employer has rights in your work, you have their permission to
+   contribute it.
+
+The pull request template has a checkbox for this. We cannot merge a pull
+request without it.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { coerceFacts } from "@invaro/opentax-core";
 import { DEFAULT_TARGET, getCorpus } from "@invaro/opentax-corpus-us-federal";
-import { compareAcross, findCliffs, invert, marginal, searchRules, sweep } from "@invaro/opentax-solve";
+import { compareAcross, findCliffs, HOSTED_CLIFF_LIMITS, invert, marginal, searchRules, sweep } from "@invaro/opentax-solve";
 
 const corpus = getCorpus();
 const ASOF = "2025-12-31";
@@ -41,6 +41,39 @@ describe("marginal", () => {
 });
 
 describe("findCliffs", () => {
+  it("refuses scans too large to finish, before evaluating anything", () => {
+    const base = coerceFacts(corpus, { filingStatus: "single" });
+    const huge = { ...opts, vary: "wages", fromCents: 0n, toCents: 100_000_000_000_000n, stepCents: 1n };
+    const started = Date.now();
+    expect(() => findCliffs(corpus, base, { ...huge, limits: HOSTED_CLIFF_LIMITS })).toThrow(RangeError);
+    expect(Date.now() - started).toBeLessThan(100);
+    expect(() => findCliffs(corpus, base, { ...opts, vary: "wages", fromCents: 500n, toCents: 100n })).toThrow(RangeError);
+  });
+
+  it("stops at its evaluation budget when every cent is a cliff, instead of bisecting forever", () => {
+    // the S-corp passive-income tax has a slope far above 1, so naive bisection probes every cent
+    const base = coerceFacts(corpus, {
+      sCorpHasAccumulatedEandP: true,
+      sCorpGrossReceipts: 4000000,
+      sCorpNetPassiveIncome: "1000000000000",
+      sCorpTaxableIncomeAsC: "100000000000000",
+      sCorpRecognizedBuiltInGain: 0,
+    });
+    const started = Date.now();
+    const result = findCliffs(corpus, base, {
+      ...opts,
+      target: "us.federal.corp.s_corp_entity_taxes",
+      vary: "sCorpPassiveInvestmentIncome",
+      fromCents: 100000100n,
+      toCents: 102000100n,
+      stepCents: 500n * 100n,
+      limits: HOSTED_CLIFF_LIMITS,
+    });
+    expect(result.truncated).toBe(true);
+    expect(result.cliffs.length).toBeLessThanOrEqual(200);
+    expect(Date.now() - started).toBeLessThan(20_000);
+  });
+
   it("finds the EITC investment-income kill switch at exactly $11,950", () => {
     const base = coerceFacts(corpus, {
       filingStatus: "hoh",

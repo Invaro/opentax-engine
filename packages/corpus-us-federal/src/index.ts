@@ -126,6 +126,8 @@ export function getCorpus(): LoadedCorpus {
 export const DEFAULT_TARGET = "us.federal.net_tax";
 
 export { facts } from "./facts.js";
+export { EXTENSION_POINTS, extendCorpus } from "./extend.js";
+export type { CorpusExtension, ExtensionPoint } from "./extend.js";
 export { STALE_AT_HORIZON, STALE_HORIZON, CORE_RULE_SUFFIXES } from "./staleness.js";
 export type { StaleEntry, StaleTier } from "./staleness.js";
 export {

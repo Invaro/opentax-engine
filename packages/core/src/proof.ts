@@ -41,6 +41,16 @@ export interface DerivationNode {
   candidatesConsidered?: CandidateConsidered[];
   /** Direct dependencies by id -> resolved value. */
   inputs?: Record<string, TypedValueJSON>;
+  /**
+   * Rules whose values were added to this rule's own result (see
+   * Rule.contributesTo); `value` is the formula's result plus all of these.
+   */
+  contributions?: Array<{ ruleId: string; value: TypedValueJSON }>;
+  /**
+   * Present on every rule node computed for an `excluding` reference: the
+   * contributing rules that were left out of this derivation.
+   */
+  excluding?: string[];
   // fact / assumption nodes
   factId?: string;
   value: TypedValueJSON;

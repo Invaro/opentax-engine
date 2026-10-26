@@ -2,7 +2,7 @@
   "name": "@invaro/opentax-compose",
   "version": "0.1.0",
   "description": "Printed-form line composers for state returns (IL-1040, VA 760, CA 540, NY IT-201): deterministic whole-dollar composition over injected corpus tax evaluators",
-  "license": "AGPL-3.0-only",
+  "license": "BUSL-1.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

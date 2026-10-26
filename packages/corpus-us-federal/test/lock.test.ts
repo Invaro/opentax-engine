@@ -8,6 +8,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { getCorpus } from "@invaro/opentax-corpus-us-federal";
+// @ts-expect-error plain .mjs script without type declarations
+import { buildRuleIndex } from "../scripts/rule-index.mjs";
 
 describe("corpus.lock.json", () => {
   const lockPath = path.join(import.meta.dirname, "..", "corpus.lock.json");
@@ -24,5 +26,10 @@ describe("corpus.lock.json", () => {
 
   it("rule count matches", () => {
     expect(corpus.rules.length).toBe(lock.ruleCount);
+  });
+
+  it("rule-index.json (the source of change notes) matches the corpus", () => {
+    const index = JSON.parse(readFileSync(path.join(import.meta.dirname, "..", "rule-index.json"), "utf8"));
+    expect(index).toEqual(buildRuleIndex(corpus));
   });
 });

@@ -58,6 +58,10 @@ a claimed number, `explain_rule` for the formula and verbatim law text.
 Rule for the model: never compute or estimate tax in your head — call the tool,
 report its assumptions to the user, cite its citations.
 
+Hosted: `https://opentax.invaro.ai/mcp` (open, no account) or
+`https://opentax.invaro.ai/mcp/account` (OAuth sign-in; adds `my_account`, which
+reports the signed-in email and plan).
+
 ## Solver commands (same envelope, same exit codes)
 
 ```bash
@@ -85,6 +89,7 @@ opentax lookup standard deduction --expect 32200 --filing-status mfj --json
 - All four OBBBA Schedule 1-A deductions are inputs: `--tips`, `--overtime`, `--car-loan`, plus `--charity` (§ 170(p), 2026+; correctly $0 if asked about 2025).
 - Schedule A is modeled and the standard-vs-itemized election is automatic (a `max` — no flag needed): `--salt`, `--mortgage-interest` + `--mortgage-balance`, `--medical`, and `--charity` doubles as the itemizer's cash charitable input. The SALT cap is year-aware ($40,000 TY2025 / $40,400 TY2026, 30% phase-down over $500k/$505k MAGI, $10,000 floor, MFS halves).
 - **`assumptions` matter.** They are documented defaults the engine used (e.g. `taxableInterest = 0`). If your user's situation differs, pass the real fact and re-run.
+- **`--refuse-defaults`** (MCP: `refuseDefaults: true`) turns every default off: any fact not given exits 2 with `error.data.missing`, and each entry carries the `default` it would have used. Accept the ones you agree with via `--allow-default <id...>` (MCP: `allowDefaults`). A missing enum can hide the facts behind it, so a second call may list a few more.
 - **The engine never guesses.** A refusal (exit 2/3) is a correct answer, not an error to work around. Do not fabricate a number when you get one.
 - **Citations are in the proof.** Every node of `proof.root` has `citation.source/section/url` and a content `ruleHash` — quote them when explaining an answer.
 - `opentax corpus list --json` → every rule (id, title, citation, validity window, hash). `opentax explain <ruleId> --json` → one rule in full, including its formula and dependencies.

@@ -33,6 +33,9 @@ import { compileDocuments, documentsShape } from "./documents.js";
 
 export const corpus = getCorpus();
 
+// No .max() on the string branch: it would turn the published schema from
+// type ["number","string"] into anyOf/$ref, which some tool clients reject.
+// Length is enforced where the value is parsed (parseDollars caps it).
 export const money = z
   .union([z.number(), z.string()])
   .describe('dollars, e.g. 50000 or "1234.56"');
@@ -59,7 +62,7 @@ function zodForFact(f: FactDef): z.ZodTypeAny {
     case "enum":
       return z.enum(f.enumValues as [string, ...string[]]).describe(f.description);
     default:
-      return z.string().describe(f.description);
+      return z.string().max(200).describe(f.description);
   }
 }
 
@@ -890,6 +893,20 @@ const strictParam = z
     "strict mode for completed returns: refuse instead of finishing a return on an assumption. A transcribed document that omits a box the return depends on (e.g. W-2 box 2) refuses with NEEDS_FACTS naming the box; a return that depends on an item this build does not compute (e.g. the Schedule 3 line 11 excess social security credit) refuses with INCOMPLETE_RETURN listing each item under error.data.incomplete. Default false — the $0 assumption goes to documentNotes and the uncomputed items come back as `incomplete` with complete:false.",
   );
 
+/** Opt-in: no answer may rest on a default the caller didn't accept. */
+const refuseDefaultsParam = z
+  .boolean()
+  .optional()
+  .describe(
+    "refuse defaults: every fact the answer needs must be given explicitly. A fact left out refuses with NEEDS_FACTS even when it has a documented default; each entry in error.data.missing carries that `default` so you can pass the value or accept it via allowDefaults. A missing enum can hide the facts behind it, so a second call may list more. Default false: defaults apply and are listed under assumptions.",
+  );
+
+const allowDefaultsParam = z
+  .array(z.string().max(80))
+  .max(300)
+  .optional()
+  .describe("with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)");
+
 /** Opt-in: attach the full PROOF-FORMAT v2 artifact to the response. */
 const includeProofParam = z
   .boolean()
@@ -915,6 +932,8 @@ export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
   );
   shape.asOf = asOfParam;
   shape.includeProof = includeProofParam;
+  shape.refuseDefaults = refuseDefaultsParam;
+  shape.allowDefaults = allowDefaultsParam;
   return shape;
 })();
 
@@ -1045,7 +1064,13 @@ export function buildFacts(
 export function buildFactsValidated(
   factsArg: unknown,
   defaultTarget?: string,
-): ReturnType<typeof buildFacts> & { documentNotes: string[]; documentMissing: string[]; documentUnsupported: IncompleteItem[]; w2Box1Cents?: bigint } {
+): ReturnType<typeof buildFacts> & {
+  documentNotes: string[];
+  documentMissing: string[];
+  documentUnsupported: IncompleteItem[];
+  w2Box1Cents?: bigint;
+  defaults: { refuseDefaults?: boolean; allowDefaults?: string[] };
+} {
   const input =
     factsArg && typeof factsArg === "object" && !Array.isArray(factsArg)
       ? { ...(factsArg as Record<string, unknown>) }
@@ -1059,6 +1084,13 @@ export function buildFactsValidated(
   delete input.includeProof; // response option, not a fact
   const strict = input.strict === true;
   delete input.strict;
+  // evaluation options, not facts
+  const defaults = {
+    ...(input.refuseDefaults === true ? { refuseDefaults: true } : {}),
+    ...(Array.isArray(input.allowDefaults) ? { allowDefaults: (input.allowDefaults as unknown[]).map(String) } : {}),
+  };
+  delete input.refuseDefaults;
+  delete input.allowDefaults;
   const flat = flattenFactsArg(input);
   if (docsRaw !== undefined) {
     const parsedDocs = documentsShape.safeParse(docsRaw);
@@ -1131,5 +1163,6 @@ export function buildFactsValidated(
     ...buildFacts(parsed.data as Record<string, unknown>, defaultTarget),
     documentNotes, documentMissing, documentUnsupported,
     ...(w2Box1Cents !== undefined ? { w2Box1Cents } : {}),
+    defaults,
   };
 }

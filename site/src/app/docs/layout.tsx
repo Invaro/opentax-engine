@@ -28,6 +28,7 @@ const GROUPS: NavGroup[] = [
       { label: "Coverage matrix", href: "/docs/coverage" },
       { label: "What it returns", href: "/docs/returns" },
       { label: "Validation", href: "/docs/validation" },
+      { label: "Changelog", href: "/changelog" },
     ],
   },
 ];

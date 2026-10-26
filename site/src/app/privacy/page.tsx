@@ -55,14 +55,26 @@ export default function PrivacyPage() {
           </p>
         </Section>
 
-        <Section label="00b" title="The API console">
+        <Section label="00b" title="Your account">
           <p>
-            If you sign in at <Link href="/console" className="underline underline-offset-2 hover:text-foreground">/console</Link>,
-            we send a one-time code to the address you enter and, on success, keep three things: that address,
-            the API key we issue you (so the console can show it again), and a usage record per keyed call
-            holding the tool name, a hash of the return id you optionally send, and a timestamp. Never the
-            arguments of a call, so never a taxpayer&apos;s facts. The session is a signed cookie that expires
-            after thirty days. Rotating the key deletes the old one; emailing us deletes the account.
+            You sign in with a one-time code we email you. We keep your address, a fingerprint of your API key (the
+            key itself is shown to you once and never stored), the people on your team and any pending invites, and a
+            usage record per keyed call holding your account address, the tool name, the calling client&apos;s name, a
+            hash of the return id you optionally send, and a timestamp. Never the arguments of a call, so never a
+            taxpayer&apos;s facts. The session is a signed cookie that expires after fourteen days, and &quot;sign out
+            everywhere&quot; ends every session at once. Emailing us deletes the account.
+          </p>
+        </Section>
+
+        <Section label="00c" title="Firm plan purchases">
+          <p>
+            Stripe processes the payment; card details never reach us. On our side we keep the buyer&apos;s email,
+            the firm name entered at checkout, the plan id, the seat count, the billing period and status, and
+            the Stripe customer and subscription ids, so the console can show the plan and its releases. We keep
+            them for as long as the plan exists and for the period tax and accounting law requires after that.
+          </p>
+          <p>
+            The library itself sends us nothing: no telemetry, no license check, no usage counts.
           </p>
         </Section>
 
@@ -98,10 +110,11 @@ export default function PrivacyPage() {
 
         <Section label="03" title="CLI and MCP telemetry">
           <p>
-            The published CLI and MCP server send one anonymous usage ping: an event name
-            (&quot;cli&quot;, &quot;mcp-stdio&quot;, or &quot;mcp-http&quot;), the package version, the operating
-            system name, and the Node major version. Nothing else: no arguments, no tax data, no
-            identifiers, no IP retention. The first run prints a notice saying exactly this.
+            The published CLI sends one anonymous usage ping per run: an event name, the package version, the
+            operating system name, and the Node major version. Nothing else: no arguments, no tax data, no
+            identifiers, no IP retention. The first run only prints a notice saying exactly this and sends nothing.
+            The MCP server run by AI apps sends nothing unless you turn it on with{" "}
+            <code className="font-mono text-xs">OPENTAX_TELEMETRY=1</code>, because those apps hide the notice.
           </p>
           <p>
             Opt out with <code className="font-mono text-xs">OPENTAX_TELEMETRY=0</code> or{" "}
@@ -119,9 +132,9 @@ export default function PrivacyPage() {
             memory for rate limiting and are not written to our storage.
           </p>
           <p>
-            Don&apos;t want to trust that? The engine is AGPL, so run{" "}
-            <code className="font-mono text-xs">npx -y @invaro/opentax</code> locally or self-host the
-            HTTP server, and nothing touches our infrastructure at all.
+            Don&apos;t want to trust that? The source is public, so run{" "}
+            <code className="font-mono text-xs">OPENTAX_TELEMETRY=0 npx -y @invaro/opentax</code> locally or
+            self-host the HTTP server, and nothing touches our infrastructure at all.
           </p>
         </Section>
 
