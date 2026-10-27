@@ -1,0 +1,19 @@
+{
+  "description": "TY2025: the long-term part of fixture 880's carryover is the whole $29,000 (worksheet line 13).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 150000,
+    "shortTermCapitalLoss": 2000,
+    "longTermCapitalLoss": 10000,
+    "priorYearLongTermCapitalLossCarryover": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.capital_loss_carryover.long_term",
+  "expect": {
+    "valueCents": "2900000",
+    "intermediates": {
+      "us.federal.schedule_d.net_long_term": "-3000000",
+      "us.federal.capital_loss_carryover.loss_used": "300000"
+    }
+  }
+}

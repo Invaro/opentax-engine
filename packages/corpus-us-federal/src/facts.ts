@@ -446,6 +446,28 @@ export const facts: FactSpec[] = [
     },
   },
   {
+    id: "priorYearShortTermCapitalLossCarryover",
+    type: "money",
+    min: "0",
+    description:
+      "Short-term capital loss carried over from the prior year (§ 1212(b)(1)(A); Schedule D line 6, from line 8 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter shortTermCapitalGains/shortTermCapitalLoss WITHOUT it: the engine nets it into the short-term bucket (Schedule D line 7) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no short-term capital loss carryover from the prior year absent contrary input",
+    },
+  },
+  {
+    id: "priorYearLongTermCapitalLossCarryover",
+    type: "money",
+    min: "0",
+    description:
+      "Long-term capital loss carried over from the prior year (§ 1212(b)(1)(B); Schedule D line 14, from line 13 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter longTermCapitalGains/longTermCapitalLoss WITHOUT it: the engine nets it into the long-term bucket (Schedule D line 15) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no long-term capital loss carryover from the prior year absent contrary input",
+    },
+  },
+  {
     id: "qualifiedDividends",
     type: "money",
     min: "0",

@@ -1,0 +1,19 @@
+{
+  "description": "TY2025 Capital Loss Carryover Worksheet: MFJ, net ST loss $2,000, net LT loss $10,000, prior-year LT carryover $20,000 (Schedule D line 14). Line 15 = $(30,000), line 16 = $(32,000), $3,000 allowed. Worksheet: line 4 $3,000 absorbs the $2,000 ST loss (line 8 = $0), the $1,000 remainder reduces the LT loss (line 13 = $29,000).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 150000,
+    "shortTermCapitalLoss": 2000,
+    "longTermCapitalLoss": 10000,
+    "priorYearLongTermCapitalLossCarryover": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.capital_loss_carryover",
+  "expect": {
+    "valueCents": "2900000",
+    "intermediates": {
+      "us.federal.capital_loss_ordinary_offset": "300000",
+      "us.federal.capital_loss_carryover.adjusted_taxable_income": "11850000"
+    }
+  }
+}

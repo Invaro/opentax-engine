@@ -391,6 +391,22 @@ export const FACT_FLAGS: FactFlag[] = [
     boolean: false,
   },
   {
+    factId: "priorYearShortTermCapitalLossCarryover",
+    option: "--st-loss-carryover <dollars>",
+    key: "stLossCarryover",
+    group: "Income:",
+    help: "short-term capital loss carryover from last year (Schedule D line 6, positive); netted into the short-term bucket",
+    boolean: false,
+  },
+  {
+    factId: "priorYearLongTermCapitalLossCarryover",
+    option: "--lt-loss-carryover <dollars>",
+    key: "ltLossCarryover",
+    group: "Income:",
+    help: "long-term capital loss carryover from last year (Schedule D line 14, positive); netted into the long-term bucket",
+    boolean: false,
+  },
+  {
     factId: "pensionGrossPayments",
     option: "--pension-gross <dollars>",
     key: "pensionGross",

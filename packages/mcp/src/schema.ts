@@ -144,6 +144,8 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "netCapitalLoss",
     "shortTermCapitalLoss",
     "longTermCapitalLoss",
+    "priorYearShortTermCapitalLossCarryover",
+    "priorYearLongTermCapitalLossCarryover",
     "rentalDepreciableBasis",
     "rentalPlacedInServiceMonth",
     "rentalIncomeBeforeDepreciation",
