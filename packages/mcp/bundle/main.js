@@ -56279,12 +56279,27 @@ function composeNY(input2, evalStateTax, notes) {
   const l33 = l24 - l32;
   const l34 = isJoint6(input2) ? STD_DEDUCTION_JOINT : isHoh8(input2) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE2;
   const l37 = max023(l33 - l34 - BigInt(input2.dependents ?? 0) * DEPENDENT_EXEMPTION);
-  const l39 = rd25(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
+  const overRecapture = l33 > NYAGI_WORKSHEET_THRESHOLD;
+  const l39 = rd25(evalStateTax("us.ny.income_tax", l37, overRecapture ? { useFormulaMethod: true } : {}));
+  if (overRecapture) {
+    notes.push(`NY line 39: New York AGI ${fmtD(l33)} is over $107,650, so the tax computation worksheets apply; line 39 shows the rate-schedule tax without them`);
+    incompleteItems(notes).push({
+      code: "NOT_COMPUTED",
+      form: "NY IT-201",
+      line: "39",
+      item: "New York State tax for New York AGI over $107,650 (tax computation worksheets)",
+      reason: "the IT-201-I tax computation worksheets for New York AGI over $107,650 are not encoded",
+      action: "compute line 39 with the worksheet for your filing status and income in the IT-201 instructions",
+      target: "us.ny.income_tax",
+      affectedLines: ["39_nys_tax", "44_nys_tax_after_credits", "62_total_tax", "77_overpaid", "78_refund"],
+      rendered: "rate-schedule tax without the worksheet adjustment"
+    });
+  }
   const l43 = rd25(c(input2.nyHouseholdCredit));
   const l44 = max023(l39 - l43);
   let nycNet = 0n;
   if (input2.nycTaxableIncome !== void 0 && c(input2.nycTaxableIncome) > 0n) {
-    const nycTax = rd25(evalStateTax("us.ny.nyc_income_tax", rd25(c(input2.nycTaxableIncome)), { useFormulaMethod: true }));
+    const nycTax = rd25(evalStateTax("us.ny.nyc_income_tax", rd25(c(input2.nycTaxableIncome))));
     nycNet = max023(nycTax - rd25(c(input2.nycHouseholdCredit)));
   }
   const yonkers = rd25(c(input2.yonkersSurcharge));
@@ -56320,16 +56335,18 @@ function composeNY(input2, evalStateTax, notes) {
     "78_refund": fmtD(l77)
   };
 }
-var STD_DEDUCTION_JOINT, STD_DEDUCTION_HOH, STD_DEDUCTION_SINGLE2, DEPENDENT_EXEMPTION;
+var STD_DEDUCTION_JOINT, STD_DEDUCTION_HOH, STD_DEDUCTION_SINGLE2, DEPENDENT_EXEMPTION, NYAGI_WORKSHEET_THRESHOLD;
 var init_ny = __esm({
   "../compose/dist/ny.js"() {
     "use strict";
     init_money2();
     init_types2();
+    init_incomplete();
     STD_DEDUCTION_JOINT = 1605000n;
     STD_DEDUCTION_HOH = 1120000n;
     STD_DEDUCTION_SINGLE2 = 800000n;
     DEPENDENT_EXEMPTION = 100000n;
+    NYAGI_WORKSHEET_THRESHOLD = 10765000n;
   }
 });
 
