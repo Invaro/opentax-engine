@@ -1,0 +1,18 @@
+{
+  "description": "TY2025: single, $100,000 interest and $700,000 long-term gain. Line 5 = $84,250 takes the Tax Table row 84,250-84,300 single ($13,455), so regular tax is $130,997.50 and Form 6251, which compares against regular tax, gives AMT $926.25.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxableInterest": 100000,
+    "longTermCapitalGains": 700000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "92625",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "13099750",
+      "us.federal.ordinary_taxable_income": "8425000"
+    }
+  }
+}

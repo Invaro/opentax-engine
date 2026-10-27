@@ -1,7 +1,7 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.40.0",
-  "merkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+  "merkleRoot": "sha256:328918a73873d346226c0e32c3e7655b6c4da109d7a10052acbc50c3730d1db8",
   "ruleCount": 549,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
@@ -177,8 +177,8 @@
     "us.federal.income_tax_before_credits.kiddie@1": "sha256:64007324eac61c56612b984992534657963c34870e86fcfe54695c7e5ca02270",
     "us.federal.income_tax_before_credits.tax_table@1": "sha256:2310856396c28d6121077ec79b8f87b502ac044c847ef95b9daf8f9e3759e0e7",
     "us.federal.income_tax_before_credits.tax_table@2": "sha256:474006f42f94e0eff2438c94023c6df001df04ef235fb27b00c126d586fdce86",
-    "us.federal.income_tax_before_credits@3": "sha256:89a260efbebee1c962af5ab8f54753cdd1501c1b35cea5b68f3cfd300d22b827",
-    "us.federal.income_tax_before_credits@4": "sha256:203340e0e2afd5fd8b593fe353e7c7892eaac08a6efd7c7956725fd31c368429",
+    "us.federal.income_tax_before_credits@3": "sha256:b21206714d67a08f479ade81ec367c4f0069adac8804fc6a3419d04e7092a742",
+    "us.federal.income_tax_before_credits@4": "sha256:f91d0fa3f3e793b9045a185ce0241a18185de16e8c533437e7b3d5db7ff14cae",
     "us.federal.ira_deduction@2": "sha256:e95f192160b22660f67f2222e96087a94d655e5805747c90543e3d330ce90a17",
     "us.federal.ira_deduction@3": "sha256:687694961285ed524a7878f8e4867e9ef2a6fc27c761ced6369c13b341f3ed28",
     "us.federal.ira8606.basis_carryforward@1": "sha256:a3dc31321655edeeea1a24602a30720910cfc59ed9b0e989f32930fd83bea716",

@@ -54115,10 +54115,29 @@ function statusTax(sy) {
   return {
     kind: "add",
     args: [
-      { kind: "brackets", base: ordinary, table: sy.brackets },
+      ordinaryPartTax(sy),
       { kind: "mulRate", base: gain15, rate: { num: "15", den: "100" }, round: "half-up" },
       { kind: "mulRate", base: gain20, rate: { num: "20", den: "100" }, round: "half-up" }
     ]
+  };
+}
+function ordinaryPartTax(sy) {
+  return {
+    kind: "if",
+    cond: {
+      kind: "and",
+      args: [
+        { kind: "cmp", op: "lt", left: ordinary, right: money2("10000000") },
+        // < $100,000
+        { kind: "not", arg: fact2("useFormulaMethod") }
+      ]
+    },
+    then: {
+      kind: "roundToDollar",
+      value: { kind: "brackets", base: bandMidpoint(ordinary), table: sy.brackets },
+      mode: "half-up"
+    },
+    else: { kind: "brackets", base: ordinary, table: sy.brackets }
   };
 }
 function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, citation) {
@@ -54317,13 +54336,13 @@ var incomeTaxRules = [
     source: "26 U.S.C. \xA7 1(h), (j); Rev. Proc. 2024-40",
     section: "\xA7 1(j)(2), (j)(5); Rev. Proc. 2024-40 \xA7\xA7 2.01, 2.03",
     url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf",
-    excerpt: "2025 ordinary rate tables (10\u201337%); maximum zero rate amounts $48,350/$96,700/$64,750/$48,350 and maximum 15% rate amounts $533,400/$600,050/$566,700/$300,000 by filing status."
+    excerpt: "2025 ordinary rate tables (10\u201337%); maximum zero rate amounts $48,350/$96,700/$64,750/$48,350 and maximum 15% rate amounts $533,400/$600,050/$566,700/$300,000 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet."
   }),
   incomeTaxRule(4, "2026-01-01", "2027-01-01", TY2026, "2026", {
     source: "26 U.S.C. \xA7 1(h), (j); Rev. Proc. 2025-32",
     section: "\xA7 1(j)(2), (j)(5); Rev. Proc. 2025-32 \xA7\xA7 4.01, 4.03",
     url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
-    excerpt: "2026 ordinary rate tables (10\u201337%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status."
+    excerpt: "2026 ordinary rate tables (10\u201337%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet."
   }),
   taxTableRule(1, "2025-01-01", "2026-01-01", TY2025, "2025", "Sampled entries verified against the printed 2025 Publication 1040 table."),
   taxTableRule(2, "2026-01-01", "2027-01-01", TY2026, "2026", "The official 2026 table publishes with the 2026 filing season; entries here are computed by the same published method over the 2026 brackets.")
