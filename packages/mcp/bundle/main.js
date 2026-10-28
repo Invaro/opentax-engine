@@ -63391,7 +63391,7 @@ var COMPOSER_VERSION;
 var init_version = __esm({
   "dist/version.js"() {
     "use strict";
-    COMPOSER_VERSION = "0.7.0";
+    COMPOSER_VERSION = "0.8.0";
   }
 });
 

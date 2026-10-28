@@ -28951,7 +28951,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 // dist/version.js
-var COMPOSER_VERSION = "0.7.0";
+var COMPOSER_VERSION = "0.8.0";
 
 // dist/phone-home.js
 var ENDPOINT = "https://opentax.invaro.ai/api/t";

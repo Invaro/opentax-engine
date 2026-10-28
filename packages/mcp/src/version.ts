@@ -3,4 +3,4 @@
  * (the corpus has its own version and Merkle root; the engine has ENGINE.version).
  * Reported as `versions.composer` on every response so integrators can pin builds.
  */
-export const COMPOSER_VERSION = "0.7.0";
+export const COMPOSER_VERSION = "0.8.0";
