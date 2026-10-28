@@ -4,8 +4,8 @@
     "title": "OpenTax hosted API",
     "version": "corpus 0.40.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:aef3d795e317f7075a3e86b2a0ddf94e1c61594f8af21e8526ef87262fb5a3c4",
-    "x-generated": "2026-10-27T20:03:55.429Z"
+    "x-corpus-merkle-root": "sha256:c29535ee1efd0f8c25fa76902bd4d3648fa69de883d97ef1d0891db16b74e85c",
+    "x-generated": "2026-10-28T09:08:44.681Z"
   },
   "servers": [
     {

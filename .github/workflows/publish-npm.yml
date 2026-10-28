@@ -1,0 +1,76 @@
+name: Publish to npm
+
+# Publishes @invaro/opentax whenever main carries a version of it that npm
+# doesn't have yet. Bump packages/mcp/package.json (and COMPOSER_VERSION in
+# packages/mcp/src/version.ts) and push; this does the rest.
+#
+# No npm token: npm trusts this workflow file directly (trusted publishing,
+# configured on npmjs.com under the package's settings), and every version
+# it publishes carries a provenance statement linking it to this commit.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/publish-npm.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-npm
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Is this version on npm yet?
+        id: check
+        run: |
+          version=$(node -p "require('./packages/mcp/package.json').version")
+          composer=$(sed -n 's/.*COMPOSER_VERSION = "\(.*\)".*/\1/p' packages/mcp/src/version.ts)
+          if [ "$version" != "$composer" ]; then
+            echo "::error::packages/mcp/package.json is $version but COMPOSER_VERSION is $composer. Bump both together."
+            exit 1
+          fi
+          if npm view "@invaro/opentax@$version" version >/dev/null 2>&1; then
+            echo "@invaro/opentax@$version is already on npm; nothing to publish."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Publishing @invaro/opentax@$version."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: pnpm/action-setup@v4
+        if: steps.check.outputs.publish == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.publish == 'true'
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Build and test
+        if: steps.check.outputs.publish == 'true'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm test
+
+      # pnpm pack swaps workspace:* for real versions; npm publishes the
+      # tarball because trusted publishing needs npm 11.5.1 or later.
+      - name: Publish
+        if: steps.check.outputs.publish == 'true'
+        working-directory: packages/mcp
+        run: |
+          npm install -g npm@11
+          pnpm pack --pack-destination "$RUNNER_TEMP"
+          npm publish "$RUNNER_TEMP/invaro-opentax-${{ steps.check.outputs.version }}.tgz" --access public

@@ -1,0 +1,14 @@
+{
+  "description": "TY2025: useFormulaMethod keeps the exact § 1 brackets on the ordinary part ($78,510 -> $8,944.20) for analysis; filed returns use the Tax Table.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 110010,
+    "longTermCapitalGains": 30000,
+    "useFormulaMethod": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "1071570"
+  }
+}

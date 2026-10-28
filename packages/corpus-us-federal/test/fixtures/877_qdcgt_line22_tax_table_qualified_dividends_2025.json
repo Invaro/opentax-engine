@@ -1,0 +1,18 @@
+{
+  "description": "TY2025 QDCGT worksheet line 22 with qualified dividends and long-term gains: line 5 = $78,500 takes the Tax Table row 78,500-78,550 MFJ ($8,946) although taxable income is $138,500.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 60000,
+    "taxableInterest": 50000,
+    "qualifiedDividends": 40000,
+    "longTermCapitalGains": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "1521600",
+    "intermediates": {
+      "us.federal.ordinary_taxable_income": "7850000"
+    }
+  }
+}

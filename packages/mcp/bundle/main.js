@@ -33005,10 +33005,29 @@ function statusTax(sy) {
   return {
     kind: "add",
     args: [
-      { kind: "brackets", base: ordinary, table: sy.brackets },
+      ordinaryPartTax(sy),
       { kind: "mulRate", base: gain15, rate: { num: "15", den: "100" }, round: "half-up" },
       { kind: "mulRate", base: gain20, rate: { num: "20", den: "100" }, round: "half-up" }
     ]
+  };
+}
+function ordinaryPartTax(sy) {
+  return {
+    kind: "if",
+    cond: {
+      kind: "and",
+      args: [
+        { kind: "cmp", op: "lt", left: ordinary, right: money2("10000000") },
+        // < $100,000
+        { kind: "not", arg: fact2("useFormulaMethod") }
+      ]
+    },
+    then: {
+      kind: "roundToDollar",
+      value: { kind: "brackets", base: bandMidpoint(ordinary), table: sy.brackets },
+      mode: "half-up"
+    },
+    else: { kind: "brackets", base: ordinary, table: sy.brackets }
   };
 }
 function incomeTaxRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, citation) {
@@ -33244,13 +33263,13 @@ var init_income_tax = __esm({
         source: "26 U.S.C. \xA7 1(h), (j); Rev. Proc. 2024-40",
         section: "\xA7 1(j)(2), (j)(5); Rev. Proc. 2024-40 \xA7\xA7 2.01, 2.03",
         url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf",
-        excerpt: "2025 ordinary rate tables (10\u201337%); maximum zero rate amounts $48,350/$96,700/$64,750/$48,350 and maximum 15% rate amounts $533,400/$600,050/$566,700/$300,000 by filing status."
+        excerpt: "2025 ordinary rate tables (10\u201337%); maximum zero rate amounts $48,350/$96,700/$64,750/$48,350 and maximum 15% rate amounts $533,400/$600,050/$566,700/$300,000 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet."
       }),
       incomeTaxRule(4, "2026-01-01", "2027-01-01", TY2026, "2026", {
         source: "26 U.S.C. \xA7 1(h), (j); Rev. Proc. 2025-32",
         section: "\xA7 1(j)(2), (j)(5); Rev. Proc. 2025-32 \xA7\xA7 4.01, 4.03",
         url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
-        excerpt: "2026 ordinary rate tables (10\u201337%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status."
+        excerpt: "2026 ordinary rate tables (10\u201337%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet."
       }),
       taxTableRule(1, "2025-01-01", "2026-01-01", TY2025, "2025", "Sampled entries verified against the printed 2025 Publication 1040 table."),
       taxTableRule(2, "2026-01-01", "2027-01-01", TY2026, "2026", "The official 2026 table publishes with the 2026 filing season; entries here are computed by the same published method over the 2026 brackets.")
@@ -56427,12 +56446,27 @@ function composeNY(input2, evalStateTax, notes) {
   const l33 = l24 - l32;
   const l34 = isJoint6(input2) ? STD_DEDUCTION_JOINT : isHoh8(input2) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE2;
   const l37 = max024(l33 - l34 - BigInt(input2.dependents ?? 0) * DEPENDENT_EXEMPTION);
-  const l39 = rd25(evalStateTax("us.ny.income_tax", l37, { useFormulaMethod: true }));
+  const overRecapture = l33 > NYAGI_WORKSHEET_THRESHOLD;
+  const l39 = rd25(evalStateTax("us.ny.income_tax", l37, overRecapture ? { useFormulaMethod: true } : {}));
+  if (overRecapture) {
+    notes.push(`NY line 39: New York AGI ${fmtD(l33)} is over $107,650, so the tax computation worksheets apply; line 39 shows the rate-schedule tax without them`);
+    incompleteItems(notes).push({
+      code: "NOT_COMPUTED",
+      form: "NY IT-201",
+      line: "39",
+      item: "New York State tax for New York AGI over $107,650 (tax computation worksheets)",
+      reason: "the IT-201-I tax computation worksheets for New York AGI over $107,650 are not encoded",
+      action: "compute line 39 with the worksheet for your filing status and income in the IT-201 instructions",
+      target: "us.ny.income_tax",
+      affectedLines: ["39_nys_tax", "44_nys_tax_after_credits", "62_total_tax", "77_overpaid", "78_refund"],
+      rendered: "rate-schedule tax without the worksheet adjustment"
+    });
+  }
   const l43 = rd25(c(input2.nyHouseholdCredit));
   const l44 = max024(l39 - l43);
   let nycNet = 0n;
   if (input2.nycTaxableIncome !== void 0 && c(input2.nycTaxableIncome) > 0n) {
-    const nycTax = rd25(evalStateTax("us.ny.nyc_income_tax", rd25(c(input2.nycTaxableIncome)), { useFormulaMethod: true }));
+    const nycTax = rd25(evalStateTax("us.ny.nyc_income_tax", rd25(c(input2.nycTaxableIncome))));
     nycNet = max024(nycTax - rd25(c(input2.nycHouseholdCredit)));
   }
   const yonkers = rd25(c(input2.yonkersSurcharge));
@@ -56468,16 +56502,18 @@ function composeNY(input2, evalStateTax, notes) {
     "78_refund": fmtD(l77)
   };
 }
-var STD_DEDUCTION_JOINT, STD_DEDUCTION_HOH, STD_DEDUCTION_SINGLE2, DEPENDENT_EXEMPTION;
+var STD_DEDUCTION_JOINT, STD_DEDUCTION_HOH, STD_DEDUCTION_SINGLE2, DEPENDENT_EXEMPTION, NYAGI_WORKSHEET_THRESHOLD;
 var init_ny = __esm({
   "../compose/dist/ny.js"() {
     "use strict";
     init_money2();
     init_types2();
+    init_incomplete();
     STD_DEDUCTION_JOINT = 1605000n;
     STD_DEDUCTION_HOH = 1120000n;
     STD_DEDUCTION_SINGLE2 = 800000n;
     DEPENDENT_EXEMPTION = 100000n;
+    NYAGI_WORKSHEET_THRESHOLD = 10765000n;
   }
 });
 

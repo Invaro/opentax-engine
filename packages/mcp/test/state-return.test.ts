@@ -20,18 +20,16 @@ const stubEval: StateTaxEvaluator = (target, cents, extra) => {
     return round(t);
   }
   if (target === "us.ny.income_tax") {
-    if (extra?.useFormulaMethod !== true) throw new Error("NY tax must be evaluated with useFormulaMethod=true");
-    // single schedule, raw evaluation
-    const t = d <= 8500 ? d * 0.04
-      : d <= 11700 ? 340 + (d - 8500) * 0.045
-      : d <= 13900 ? 484 + (d - 11700) * 0.0525
-      : 600 + (d - 13900) * 0.055;
-    return round(t);
+    // single schedule; below $65,000 the NYS Tax Table ($50 rows at the
+    // midpoint, $0 under $13) unless useFormulaMethod asks for the raw value
+    const sched = (x: number): number => x <= 8500 ? x * 0.04
+      : x <= 11700 ? 340 + (x - 8500) * 0.045
+      : x <= 13900 ? 484 + (x - 11700) * 0.0525
+      : 600 + (x - 13900) * 0.055;
+    if (extra?.useFormulaMethod === true || d >= 65000) return round(sched(d));
+    return d < 13 ? 0n : round(sched(Math.floor(d / 50) * 50 + 25));
   }
-  if (target === "us.ny.nyc_income_tax") {
-    if (extra?.useFormulaMethod !== true) throw new Error("NYC tax must be evaluated with useFormulaMethod=true");
-    return round(d * 0.03078);
-  }
+  if (target === "us.ny.nyc_income_tax") return round(d * 0.03078);
   if (target === "us.ca.income_tax") return round(d * 0.02);
   if (target === "us.ca.amt") {
     // 7% of (caAmti − MFJ exemption w/ phaseout) minus regular tax — ca-005 shape
@@ -209,7 +207,7 @@ describe("composeCA — 2025 Form 540", () => {
 });
 
 describe("composeNY — 2025 IT-201", () => {
-  it("subtracts taxable social security automatically and taxes via the raw schedule", () => {
+  it("subtracts taxable social security automatically", () => {
     const { lines } = composeStateReturn(
       {
         jurisdiction: "ny", filingStatus: "single", federalAGI: 33359, wages: 27859,
@@ -220,13 +218,38 @@ describe("composeNY — 2025 IT-201", () => {
     expect(dollars(lines, "32_subtractions")).toBe("$412"); // 22 + 390 (line 27)
   });
 
-  it("ny-007-style: raw-schedule tax rounds 4% x 1,949 to $78 (not the table's $77)", () => {
-    const { lines } = composeStateReturn(
+  it("line 39 uses the NYS Tax Table below $65,000: 1,949 taxable is the $1,900-$1,950 row, $77", () => {
+    const { lines, incomplete } = composeStateReturn(
       { jurisdiction: "ny", filingStatus: "single", federalAGI: 9949, subtractions: 0 },
       stubEval,
     );
-    // 9,949 − 8,000 std = 1,949 taxable; stub uses the raw schedule
-    expect(dollars(lines, "39_nys_tax")).toBe("$78");
+    // 9,949 − 8,000 std = 1,949 taxable; 4% × 1,925 = 77 (the raw schedule would give $78)
+    expect(dollars(lines, "39_nys_tax")).toBe("$77");
+    expect(incomplete).toEqual([]);
+  });
+
+  it("line 39 uses the rate schedule from $65,000 of taxable income", () => {
+    const { lines } = composeStateReturn(
+      { jurisdiction: "ny", filingStatus: "single", federalAGI: 73010, subtractions: 0 },
+      stubEval,
+    );
+    // 65,010 taxable: 600 + 5.5% × 51,110 = 3,411.05
+    expect(dollars(lines, "39_nys_tax")).toBe("$3,411");
+  });
+
+  it("New York AGI over $107,650 reports line 39 incomplete (tax computation worksheets)", () => {
+    const { lines, incomplete } = composeStateReturn(
+      { jurisdiction: "ny", filingStatus: "single", federalAGI: 110000, subtractions: 50000 },
+      stubEval,
+    );
+    // NYAGI 60,000 after subtractions: under the threshold, table applies, complete
+    expect(incomplete).toEqual([]);
+    const high = composeStateReturn(
+      { jurisdiction: "ny", filingStatus: "single", federalAGI: 110000, subtractions: 0 },
+      stubEval,
+    );
+    expect(high.incomplete.map((i) => [i.code, i.form, i.line])).toEqual([["NOT_COMPUTED", "NY IT-201", "39"]]);
+    expect(lines["39_nys_tax"]).toBeDefined();
   });
 });
 
