@@ -6,6 +6,10 @@ New in OpenTax, newest first. Each release's git tag also lists every rule that 
 
 Line 22 of the Qualified Dividends and Capital Gain Tax Worksheet takes the tax on the ordinary part of your income from the Tax Table when that part is under $100,000, even when taxable income is $100,000 or more. OpenTax now does the same for 2025 and 2026, which can change the tax by a few dollars. `useFormulaMethod` still gives the exact brackets.
 
+## Next release · New York tax table on the IT-201
+
+`compute_state_return` now takes IT-201 line 39 from the New York State Tax Table when taxable income is under $65,000, as the instructions require, instead of the rate schedule. When New York AGI is over $107,650, the return lists line 39 as incomplete, because the tax computation worksheets for that range aren't encoded yet.
+
 ## Oct 27, 2026 · Turn off defaults
 
 When you leave an input out, OpenTax fills it in with a documented default and lists it under `assumptions`. A married couple with two children and a salary rests on 77 of them. You can now turn that off, so every number comes only from facts you gave.
