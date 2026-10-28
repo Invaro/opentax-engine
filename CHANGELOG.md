@@ -2,6 +2,14 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · Capital loss carryovers, short-term and long-term
+
+Two new inputs take last year's capital loss carryover: `priorYearShortTermCapitalLossCarryover` (Schedule D line 6) and `priorYearLongTermCapitalLossCarryover` (line 14). Each one nets into its own bucket before short-term and long-term are combined, the way Schedule D does it.
+
+The carryover to next year now comes out in two parts, `us.federal.capital_loss_carryover.short_term` and `us.federal.capital_loss_carryover.long_term`, following the Capital Loss Carryover Worksheet. Enter them next year as the two new inputs. `us.federal.capital_loss_carryover` is still the total.
+
+When taxable income is below zero, part of the $3,000 loss allowance doesn't count as used (§ 1212(b)(2)), so more of the loss carries forward. The carryover now reflects that.
+
 ## Next release · The Tax Table on capital gains returns
 
 Line 22 of the Qualified Dividends and Capital Gain Tax Worksheet takes the tax on the ordinary part of your income from the Tax Table when that part is under $100,000, even when taxable income is $100,000 or more. OpenTax now does the same for 2025 and 2026, which can change the tax by a few dollars. `useFormulaMethod` still gives the exact brackets.

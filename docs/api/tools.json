@@ -1,6 +1,6 @@
 {
   "corpusVersion": "0.40.0",
-  "merkleRoot": "sha256:328918a73873d346226c0e32c3e7655b6c4da109d7a10052acbc50c3730d1db8",
+  "merkleRoot": "sha256:c29535ee1efd0f8c25fa76902bd4d3648fa69de883d97ef1d0891db16b74e85c",
   "tools": [
     {
       "name": "calculate_tax",
@@ -153,6 +153,20 @@
                   "string"
                 ],
                 "description": "Net long-term capital LOSS for the year (Schedule D line 15 when negative, entered positive). The LT bucket's single NET result — mutually exclusive with longTermCapitalGains and with netCapitalLoss. Combine with shortTermCapitalGains for mixed years: the engine performs the § 1222 cross-netting (a net LT loss reduces the ordinary-rate net ST gain per § 1222(9); any overall loss is capped by § 1211(b)). In dollars."
+              },
+              "priorYearShortTermCapitalLossCarryover": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Short-term capital loss carried over from the prior year (§ 1212(b)(1)(A); Schedule D line 6, from line 8 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter shortTermCapitalGains/shortTermCapitalLoss WITHOUT it: the engine nets it into the short-term bucket (Schedule D line 7) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
+              },
+              "priorYearLongTermCapitalLossCarryover": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Long-term capital loss carried over from the prior year (§ 1212(b)(1)(B); Schedule D line 14, from line 13 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter longTermCapitalGains/longTermCapitalLoss WITHOUT it: the engine nets it into the long-term bucket (Schedule D line 15) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
               },
               "rentalDepreciableBasis": {
                 "type": [
@@ -10275,6 +10289,20 @@
                   "string"
                 ],
                 "description": "Net long-term capital LOSS for the year (Schedule D line 15 when negative, entered positive). The LT bucket's single NET result — mutually exclusive with longTermCapitalGains and with netCapitalLoss. Combine with shortTermCapitalGains for mixed years: the engine performs the § 1222 cross-netting (a net LT loss reduces the ordinary-rate net ST gain per § 1222(9); any overall loss is capped by § 1211(b)). In dollars."
+              },
+              "priorYearShortTermCapitalLossCarryover": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Short-term capital loss carried over from the prior year (§ 1212(b)(1)(A); Schedule D line 6, from line 8 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter shortTermCapitalGains/shortTermCapitalLoss WITHOUT it: the engine nets it into the short-term bucket (Schedule D line 7) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
+              },
+              "priorYearLongTermCapitalLossCarryover": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Long-term capital loss carried over from the prior year (§ 1212(b)(1)(B); Schedule D line 14, from line 13 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter longTermCapitalGains/longTermCapitalLoss WITHOUT it: the engine nets it into the long-term bucket (Schedule D line 15) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
               },
               "rentalDepreciableBasis": {
                 "type": [

@@ -1,0 +1,14 @@
+{
+  "description": "TY2025 § 1212(b)(2) with character: fixture 884's long-term carryover is the whole $6,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 10000,
+    "shortTermCapitalLoss": 4000,
+    "longTermCapitalLoss": 6000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.capital_loss_carryover.long_term",
+  "expect": {
+    "valueCents": "600000"
+  }
+}
