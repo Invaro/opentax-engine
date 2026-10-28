@@ -103,6 +103,15 @@
         "rationale": "Assumed no net long-term capital loss absent contrary input"
       },
       {
+        "factId": "priorYearLongTermCapitalLossCarryover",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no long-term capital loss carryover from the prior year absent contrary input"
+      },
+      {
         "factId": "shortTermCapitalLoss",
         "value": {
           "type": "money",
@@ -110,6 +119,15 @@
         },
         "source": "default",
         "rationale": "Assumed no net short-term capital loss absent contrary input"
+      },
+      {
+        "factId": "priorYearShortTermCapitalLossCarryover",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no short-term capital loss carryover from the prior year absent contrary input"
       },
       {
         "factId": "qualifiedDividends",
@@ -643,6 +661,168 @@
         "rationale": "Assumed not retired on total disability absent contrary input"
       },
       {
+        "factId": "insulationAirSealingCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no insulation or air sealing costs absent contrary input"
+      },
+      {
+        "factId": "exteriorDoorMostExpensiveCost",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no exterior door costs absent contrary input"
+      },
+      {
+        "factId": "exteriorDoorOtherCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no other exterior door costs absent contrary input"
+      },
+      {
+        "factId": "windowsSkylightsCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no window or skylight costs absent contrary input"
+      },
+      {
+        "factId": "centralAirConditionerCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no central air conditioner costs absent contrary input"
+      },
+      {
+        "factId": "gasOilWaterHeaterCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no gas, propane or oil water heater costs absent contrary input"
+      },
+      {
+        "factId": "gasOilFurnaceBoilerCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no gas, propane or oil furnace or boiler costs absent contrary input"
+      },
+      {
+        "factId": "electricalPanelCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no electrical panel costs absent contrary input"
+      },
+      {
+        "factId": "homeEnergyAuditCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no home energy audit costs absent contrary input"
+      },
+      {
+        "factId": "heatPumpBiomassCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no heat pump or biomass costs absent contrary input"
+      },
+      {
+        "factId": "solarElectricCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no solar electric property costs absent contrary input"
+      },
+      {
+        "factId": "solarWaterHeatingCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no solar water heating costs absent contrary input"
+      },
+      {
+        "factId": "smallWindEnergyCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no small wind energy costs absent contrary input"
+      },
+      {
+        "factId": "geothermalHeatPumpCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no geothermal heat pump costs absent contrary input"
+      },
+      {
+        "factId": "batteryStorageCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no battery storage costs absent contrary input"
+      },
+      {
+        "factId": "fuelCellPropertyCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no fuel cell property costs absent contrary input"
+      },
+      {
+        "factId": "fuelCellHalfKilowatts",
+        "value": {
+          "type": "int",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no fuel cell capacity absent contrary input"
+      },
+      {
+        "factId": "residentialCleanEnergyCarryforward",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no prior-year residential clean energy credit carryforward absent contrary input"
+      },
+      {
         "factId": "otherDependents",
         "value": {
           "type": "int",
@@ -733,14 +913,14 @@
         "rationale": "Assumed no Marketplace coverage absent contrary input"
       }
     ],
-    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "artifactHash": "sha256:b11327a7fcaf6f8bbae452480cdc281218d48b48cbcfc98e4384bb17b7c0a5e3",
+    "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+    "artifactHash": "sha256:41687fbfaddbfcb21c4637c121802592956b1ae40376abca64603068293c314b",
     "note": "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice.",
     "versions": {
       "engine": "0.1.0",
-      "composer": "0.6.0",
-      "corpus": "0.39.0",
-      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+      "composer": "0.7.0",
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }

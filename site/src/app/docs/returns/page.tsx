@@ -32,6 +32,15 @@ export default function ReturnsPage() {
         arithmetic, not a printed line set.
       </p>
       <p>
+        <strong>Form 5695</strong> (residential energy credits) is a complete printed line set since corpus 0.40.0:
+        every line of Part I (§ 25D) and Part II (§ 25C) is its own cited target, and <C>compute_return</C> returns
+        them under <C>forms[&quot;5695&quot;]</C> whenever an <C>energy_credits</C> input is given, with line 15 and
+        line 32 flowing to Schedule 3 lines 5a and 5b and the Form 1040 line 20 total. The credit-limit worksheets
+        are modeled in the 2025 forms&apos; order, including Schedule 8812 Credit Limit Worksheet B (a Part I or
+        adoption credit with a qualifying child pushes nonrefundable CTC into the ACTC). Both credits are terminated
+        after 2025 by the OBBBA: TY2026 inputs earn $0, and only the 2025 carryforward (line 12) still credits.
+      </p>
+      <p>
         <strong>State:</strong> <C>compute_state_return</C> emits the printed line set of the full-year-resident
         return for 31 states: every line the form&apos;s totals consume plus the schedule and worksheet lines those
         totals depend on. Vermont&apos;s IN-112 and IN-119, Delaware&apos;s two-column status 4, Montana&apos;s
@@ -90,7 +99,7 @@ export default function ReturnsPage() {
               <td>Not covered</td>
               <td>No rule in the corpus; the engine refuses rather than approximates.</td>
               <td>
-                <strong>Form 5695</strong> (residential energy credits); Schedule 3 line 11 excess social security withholding;
+                Schedule 3 line 11 excess social security withholding (reported as an <C>incomplete</C> item, not computed);
                 Form 1065 and Schedule K-1 preparation; Form 990; part-year and nonresident state returns; PDF and MeF output.
                 Any of these can be scheduled as a priced deliverable.
               </td>

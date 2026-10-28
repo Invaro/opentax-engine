@@ -1,7 +1,7 @@
 {
-  "generated": "2026-09-09T12:45:33.840Z",
-  "corpusVersion": "0.39.0",
-  "merkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+  "generated": "2026-10-12T20:15:36.753Z",
+  "corpusVersion": "0.40.0",
+  "merkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c",
   "horizon": "2026-12-31",
   "taxYears": [
     "2025",
@@ -479,7 +479,7 @@
       },
       {
         "id": "us.federal.income_tax_after_credits",
-        "title": "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + CTC/ODC)",
+        "title": "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + Form 5695 + CTC/ODC)",
         "form": "Form 1040 lines 22-37 / Schedule 2 / Schedule 3",
         "computable": true,
         "ty2025": true,
@@ -542,7 +542,7 @@
       },
       {
         "id": "us.federal.adoption.nonrefundable",
-        "title": "Nonrefundable adoption credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's)",
+        "title": "Nonrefundable adoption credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's + Schedule R + Form 5695 Part II + CTC/ODC)",
         "form": "Form 8839",
         "computable": true,
         "ty2025": true,
@@ -553,6 +553,285 @@
         "id": "us.federal.adoption.carryforward",
         "title": "Adoption credit carryforward generated (§ 23(c), nonrefundable portion only)",
         "form": "Form 8839",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.rate",
+        "title": "Residential clean energy credit — terminated for expenditures made after December 31, 2025 (OBBBA § 70506)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.rate",
+        "title": "Energy efficient home improvement credit — terminated for property placed in service after December 31, 2025 (OBBBA § 70505)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line6a",
+        "title": "Form 5695 line 6a — qualified clean energy property costs (lines 1 through 5b)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line6b",
+        "title": "Form 5695 line 6b — 30% of line 6a",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line9",
+        "title": "Form 5695 line 9 — 30% of qualified fuel cell property costs (line 8)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line10",
+        "title": "Form 5695 line 10 — fuel cell kilowatt capacity × $1,000 (the § 25D(b)(1) $500-per-half-kilowatt cap)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line11",
+        "title": "Form 5695 line 11 — fuel cell credit: the smaller of line 9 or line 10",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line12",
+        "title": "Form 5695 line 12 — residential clean energy credit carryforward from the prior year",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line13",
+        "title": "Form 5695 line 13 — tentative residential clean energy credit (lines 6b + 11 + 12)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.actc.maximum",
+        "title": "Maximum additional child tax credit (Schedule 8812 Credit Limit Worksheet B, line 13)",
+        "form": "Schedule 8812",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.worksheet_b_applies",
+        "title": "Schedule 8812 Credit Limit Worksheet B applies (Part I or adoption credit claimed, a qualifying child, no Form 2555)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.ctc_for_limit",
+        "title": "Child tax credit amount subtracted in the Form 5695 line 14 and Form 8839 line 17 worksheets (Form 1040 line 19, or Schedule 8812 Worksheet B line 14)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.line14",
+        "title": "Form 5695 line 14 — limitation based on tax liability (Residential Clean Energy Credit Limit Worksheet)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean_energy_credit",
+        "title": "Residential clean energy credit — Form 5695 line 15 → Schedule 3 line 5a",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.clean.carryforward",
+        "title": "Form 5695 line 16 — residential clean energy credit carryforward to the next year",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line18b",
+        "title": "Form 5695 line 18b — insulation and air sealing: 30% of line 18a, not more than $1,200",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line19c",
+        "title": "Form 5695 line 19c — most expensive exterior door: 30% of line 19a, not more than $250",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line19g",
+        "title": "Form 5695 line 19g — 30% of all other qualifying exterior doors (line 19f)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line19h",
+        "title": "Form 5695 line 19h — exterior doors: lines 19c + 19g, not more than $500",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line20d",
+        "title": "Form 5695 line 20d — exterior windows and skylights: 30% of line 20c, not more than $600",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line22d",
+        "title": "Form 5695 line 22d — central air conditioners: 30% of line 22c, not more than $600",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line23d",
+        "title": "Form 5695 line 23d — natural gas, propane or oil water heaters: 30% of line 23c, not more than $600",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line24d",
+        "title": "Form 5695 line 24d — natural gas, propane or oil furnaces and hot water boilers: 30% of line 24c, not more than $600",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line25e",
+        "title": "Form 5695 line 25e — panelboards, subpanelboards, branch circuits or feeders (enabling property): 30% of line 25c, not more than $600",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line26c",
+        "title": "Form 5695 line 26c — home energy audits: 30% of line 26b, not more than $150",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line27",
+        "title": "Form 5695 line 27 — lines 18b, 19h, 20d, 22d, 23d, 24d, 25e and 26c",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line28",
+        "title": "Form 5695 line 28 — the smaller of line 27 or $1,200 (the § 25C(b)(1) annual limit)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line29h",
+        "title": "Form 5695 line 29h — heat pumps, heat pump water heaters, biomass stoves and boilers: 30% of line 29g, not more than $2,000",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line30",
+        "title": "Form 5695 line 30 — tentative energy efficient home improvement credit (lines 28 + 29h)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.improvement.line31",
+        "title": "Form 5695 line 31 — limitation based on tax liability (Energy Efficient Home Improvement Credit Limit Worksheet)",
+        "form": "Form 5695",
+        "computable": true,
+        "ty2025": true,
+        "ty2026": true,
+        "simplified": false
+      },
+      {
+        "id": "us.federal.energy.home_improvement_credit",
+        "title": "Energy efficient home improvement credit — Form 5695 line 32 → Schedule 3 line 5b",
+        "form": "Form 5695",
         "computable": true,
         "ty2025": true,
         "ty2026": true,
@@ -812,7 +1091,7 @@
       },
       {
         "id": "us.federal.schedule_r_credit",
-        "title": "Schedule R credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's + adoption)",
+        "title": "Schedule R credit, limited to remaining tax (§ 26(a) after CDCC + education + saver's)",
         "form": "Schedule R",
         "computable": true,
         "ty2025": true,

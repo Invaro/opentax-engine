@@ -25,7 +25,7 @@
   "decodedResult": {
     "ok": true,
     "query": "child tax credit per child 2025",
-    "asOf": "2026-10-11",
+    "asOf": "2026-10-28",
     "hits": [
       {
         "ruleId": "us.de.child_care_credit",
@@ -121,12 +121,12 @@
         }
       }
     ],
-    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+    "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
     "versions": {
       "engine": "0.1.0",
-      "composer": "0.6.0",
-      "corpus": "0.39.0",
-      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+      "composer": "0.7.0",
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }

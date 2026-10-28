@@ -1,0 +1,18 @@
+{
+  "description": "Form 5695 fuel cell, TY2025 single 60,000: costs 20,000 -> line 9 6,000; capacity 5 kW = 10 half-kilowatts -> line 10 = $5,000; line 11 = min(6,000, 5,000) = 5,000 (the instructions' Ava/Bruce example capacity). Credit 5,000 against tax 5,075 -> net tax $75.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "fuelCellPropertyCosts": 20000,
+    "fuelCellHalfKilowatts": 10
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "7500",
+    "intermediates": {
+      "us.federal.energy.clean.line10": "500000",
+      "us.federal.energy.clean.line11": "500000",
+      "us.federal.energy.clean_energy_credit": "500000"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "Form 5695 line 31 worksheet subtracts the retirement savings contributions credit (Schedule 3 line 4), TY2025 single wages 30,000, saver's contributions 2,000 (AGI 30,000 is in the 10% tier for 'all other' statuses: 25,500 < AGI <= 39,500 -> 200). TI 14,250 -> tax $1,475 (row 14,250-14,300, midpoint 14,275: 1,192.50 + 12% x 2,350 = 1,474.50 -> 1,475). Heat pump 8,000 -> line 30 2,000; line 31 = 1,475 - 200 = 1,275; line 32 = 1,275. Tax after credits 1,475 - 200 - 1,275 = 0; net $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "saversContributions": 2000,
+    "heatPumpBiomassCosts": 8000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "147500",
+      "us.federal.savers_credit": "20000",
+      "us.federal.energy.improvement.line31": "127500",
+      "us.federal.energy.home_improvement_credit": "127500",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

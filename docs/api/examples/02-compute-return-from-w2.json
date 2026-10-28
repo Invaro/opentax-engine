@@ -58,6 +58,7 @@
       "16_tax": "$6,415.00",
       "17_amt": "$0.00",
       "19_ctc_odc": "$0.00",
+      "20_other_nonrefundable_credits": "$0.00",
       "22_tax_after_credits": "$6,415.00",
       "23_other_taxes": "$0.00",
       "24_total_tax": "$6,415.00",
@@ -70,7 +71,16 @@
       "33_total_payments": "$7,200.00",
       "34_refund_or_37_owed": "refund $785.00"
     },
-    "note": "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Report these numbers as-is.",
+    "schedule3": {
+      "2_cdcc": "$0.00",
+      "3_education": "$0.00",
+      "4_savers": "$0.00",
+      "5a_residential_clean_energy": "$0.00",
+      "5b_energy_efficient_home_improvement": "$0.00",
+      "6c_adoption": "$0.00",
+      "6d_schedule_r": "$0.00"
+    },
+    "note": "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Line 20 is the sum of the modeled Schedule 3 nonrefundable credits (schedule3); when any Form 5695 input is given, forms['5695'] carries that form's printed lines. Report these numbers as-is.",
     "assumptions": [
       {
         "factId": "isSubjectToKiddieTax",
@@ -136,6 +146,15 @@
         "rationale": "Assumed no net long-term capital loss absent contrary input"
       },
       {
+        "factId": "priorYearLongTermCapitalLossCarryover",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no long-term capital loss carryover from the prior year absent contrary input"
+      },
+      {
         "factId": "shortTermCapitalLoss",
         "value": {
           "type": "money",
@@ -143,6 +162,15 @@
         },
         "source": "default",
         "rationale": "Assumed no net short-term capital loss absent contrary input"
+      },
+      {
+        "factId": "priorYearShortTermCapitalLossCarryover",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no short-term capital loss carryover from the prior year absent contrary input"
       },
       {
         "factId": "qualifiedDividends",
@@ -649,6 +677,168 @@
         "rationale": "Assumed not retired on total disability absent contrary input"
       },
       {
+        "factId": "insulationAirSealingCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no insulation or air sealing costs absent contrary input"
+      },
+      {
+        "factId": "exteriorDoorMostExpensiveCost",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no exterior door costs absent contrary input"
+      },
+      {
+        "factId": "exteriorDoorOtherCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no other exterior door costs absent contrary input"
+      },
+      {
+        "factId": "windowsSkylightsCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no window or skylight costs absent contrary input"
+      },
+      {
+        "factId": "centralAirConditionerCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no central air conditioner costs absent contrary input"
+      },
+      {
+        "factId": "gasOilWaterHeaterCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no gas, propane or oil water heater costs absent contrary input"
+      },
+      {
+        "factId": "gasOilFurnaceBoilerCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no gas, propane or oil furnace or boiler costs absent contrary input"
+      },
+      {
+        "factId": "electricalPanelCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no electrical panel costs absent contrary input"
+      },
+      {
+        "factId": "homeEnergyAuditCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no home energy audit costs absent contrary input"
+      },
+      {
+        "factId": "heatPumpBiomassCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no heat pump or biomass costs absent contrary input"
+      },
+      {
+        "factId": "solarElectricCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no solar electric property costs absent contrary input"
+      },
+      {
+        "factId": "solarWaterHeatingCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no solar water heating costs absent contrary input"
+      },
+      {
+        "factId": "smallWindEnergyCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no small wind energy costs absent contrary input"
+      },
+      {
+        "factId": "geothermalHeatPumpCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no geothermal heat pump costs absent contrary input"
+      },
+      {
+        "factId": "batteryStorageCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no battery storage costs absent contrary input"
+      },
+      {
+        "factId": "fuelCellPropertyCosts",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no fuel cell property costs absent contrary input"
+      },
+      {
+        "factId": "fuelCellHalfKilowatts",
+        "value": {
+          "type": "int",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no fuel cell capacity absent contrary input"
+      },
+      {
+        "factId": "residentialCleanEnergyCarryforward",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no prior-year residential clean energy credit carryforward absent contrary input"
+      },
+      {
         "factId": "qualifyingChildren",
         "value": {
           "type": "int",
@@ -739,14 +929,14 @@
         "rationale": "Assumed no Marketplace coverage absent contrary input"
       }
     ],
-    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
-    "artifactHash": "sha256:be14deea1aa87dfd7ec22f3899e8c4f5d0a056e6e33d2c2c139ecb6aba1f4d39",
+    "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+    "artifactHash": "sha256:a45693241cf8489231af1e787289719ecd713954034ba61c0f59ebe8f9a88cda",
     "proofScope": "the proof artifact covers the us.federal.net_tax derivation (lines 9-24); other lines are separate cited targets evaluated on the same rounded facts — request each with calculate_tax + includeProof for its own tree",
     "versions": {
       "engine": "0.1.0",
-      "composer": "0.6.0",
-      "corpus": "0.39.0",
-      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+      "composer": "0.7.0",
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }

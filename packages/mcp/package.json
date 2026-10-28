@@ -1,6 +1,6 @@
 {
   "name": "@invaro/opentax",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "The verifiable US tax oracle: MCP server for AI agents + full CLI in one self-contained package \u2014 every answer cited to statute and machine-checkable",
   "license": "BUSL-1.1",
   "type": "module",

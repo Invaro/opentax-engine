@@ -146,15 +146,15 @@ export const ctcRules: Rule[] = [
   },
   {
     id: "us.federal.ctc",
-    version: 6, // v5 predated the Schedule R credit ahead of it in the ordering
+    version: 7, // v6 predated the Form 5695 credits and ordered the adoption credit ahead of the CTC (the 2025 worksheets put it after, via Worksheet B)
     jurisdiction: J,
     title: "Child tax credit + ODC (nonrefundable portion, after other Schedule 3 credits)",
     citation: {
-      source: "26 U.S.C. § 24; § 26(a); Schedule 8812 Credit Limit Worksheet",
+      source: "26 U.S.C. § 24; § 26(a); 2025 Schedule 8812 Credit Limit Worksheets A and B",
       section: "§ 24(a)–(b); § 26(a)",
-      url: "https://www.law.cornell.edu/uscode/text/26/24",
+      url: "https://www.irs.gov/instructions/i1040s8",
       excerpt:
-        "credit… limited to tax liability under § 26(a) reduced by the other nonrefundable credits (the Schedule 8812 Credit Limit Worksheet subtracts Schedule 3 credits — here the § 21 dependent-care, § 25A education, § 25B saver's, § 23 adoption, and § 22 Schedule R credits — before limiting the CTC); the refundable additional child tax credit (§ 24(d)) is computed separately.",
+        "Credit Limit Worksheet A: line 1, Form 1040 line 18; line 2, Schedule 3 lines 1, 2, 3, 4, 5b, 6d, 6f, 6l and 6m; line 3, line 1 minus line 2; line 4, the amount from Credit Limit Worksheet B (otherwise -0-); line 5, 'Subtract line 4 from line 3. Enter here and on Schedule 8812, line 13.' Worksheet B line 15 (→ Worksheet A line 4): 'the total of the amounts from Schedule 3, line 5a; Schedule 3, line 6c; Schedule 3, line 6g; and Schedule 3, line 6h.' [Modeled in Worksheet A line 2: the § 21 dependent-care, § 25A education, § 25B saver's, § 22 Schedule R and § 25C energy efficient home improvement (line 5b) credits; in Worksheet B line 15: the § 25D residential clean energy credit (line 5a) and the nonrefundable § 23 adoption credit (line 6c), when that worksheet applies; the refundable additional child tax credit (§ 24(d)) is computed separately.]",
     },
     ...FROM,
     output: { type: "money" },
@@ -179,8 +179,21 @@ export const ctcRules: Rule[] = [
                 ruleRef("us.federal.cdcc"),
                 ruleRef("us.federal.education.nonrefundable"),
                 ruleRef("us.federal.savers_credit"),
-                ruleRef("us.federal.adoption.nonrefundable"),
                 ruleRef("us.federal.schedule_r_credit"),
+                ruleRef("us.federal.energy.home_improvement_credit"), // Schedule 3 line 5b (Worksheet A line 2)
+                {
+                  // Schedule 3 lines 5a and 6c join only through Credit Limit Worksheet B (line 15 → Worksheet A line 4)
+                  kind: "if",
+                  cond: ruleRef("us.federal.energy.clean.worksheet_b_applies"),
+                  then: {
+                    kind: "add",
+                    args: [
+                      ruleRef("us.federal.energy.clean_energy_credit"),
+                      ruleRef("us.federal.adoption.nonrefundable"),
+                    ],
+                  },
+                  else: money("0"),
+                },
               ],
             },
           },
@@ -264,16 +277,16 @@ export const ctcRules: Rule[] = [
   },
   {
     id: "us.federal.income_tax_after_credits",
-    version: 5, // v4 predated the Schedule R credit
+    version: 6, // v5 predated the Form 5695 residential energy credits
     jurisdiction: J,
     title:
-      "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + CTC/ODC)",
+      "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + Form 5695 + CTC/ODC)",
     citation: {
       source: "26 U.S.C. § 26(a)",
       section: "§ 26(a)",
       url: "https://www.law.cornell.edu/uscode/text/26/26",
       excerpt:
-        "The aggregate amount of credits allowed by this subpart… shall not exceed the taxpayer's regular tax liability for the taxable year… [modeled nonrefundable credits, in the forms' worksheet order: § 21 dependent care, § 25A education, § 25B saver's, § 23 adoption (nonrefundable portion), § 24 child tax credit + credit for other dependents].",
+        "The aggregate amount of credits allowed by this subpart… shall not exceed the taxpayer's regular tax liability for the taxable year… [modeled nonrefundable credits, in the 2025 forms' worksheet order: § 21 dependent care, § 25A education, § 25B saver's, § 22 Schedule R, § 25C energy efficient home improvement (Schedule 3 line 5b), § 24 child tax credit + credit for other dependents, § 23 adoption (nonrefundable portion), § 25D residential clean energy (Schedule 3 line 5a)].",
     },
     ...FROM,
     output: { type: "money" },
@@ -296,7 +309,9 @@ export const ctcRules: Rule[] = [
             ruleRef("us.federal.savers_credit"),
             ruleRef("us.federal.adoption.nonrefundable"),
             ruleRef("us.federal.schedule_r_credit"),
+            ruleRef("us.federal.energy.home_improvement_credit"),
             ruleRef("us.federal.ctc"),
+            ruleRef("us.federal.energy.clean_energy_credit"),
           ],
         },
       },

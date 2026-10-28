@@ -1,0 +1,24 @@
+{
+  "description": "Schedule 8812 Credit Limit Worksheet B, TY2025 MFJ wages 70,000, 2 qualifying children, solar 10,000 (line 13 = 3,000; no EITC above $64,430). Tax on TI 38,500 (row 38,500-38,550, midpoint 38,525: 2,385 + 12% x 14,675 = 4,146). CTC after phase-out 4,400 (8812 line 12). Worksheet B: line 2 = 2 x 1,700 = 3,400; line 5 = 15% x (70,000 - 2,500) = 10,125; line 13 = min(3,400, 10,125) = 3,400; line 14 = 4,400 - 3,400 = 1,000. Form 5695 line 14 worksheet uses Worksheet B line 14 instead of Form 1040 line 19: 4,146 - 1,000 = 3,146 -> line 15 = min(3,000, 3,146) = 3,000. Worksheet B line 15 = 3,000 -> Worksheet A line 4: CTC limit = 4,146 - 3,000 = 1,146 -> nonrefundable CTC 1,146; ACTC = min(4,400 - 1,146 = 3,254, 3,400) = 3,254. Tax after credits 4,146 - 1,146 - 3,000 = 0; net = -3,254 (refund).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 70000,
+    "qualifyingChildren": 2,
+    "solarElectricCosts": 10000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-325400",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "414600",
+      "us.federal.ctc.after_phaseout": "440000",
+      "us.federal.actc.maximum": "340000",
+      "us.federal.energy.clean.ctc_for_limit": "100000",
+      "us.federal.energy.clean.line14": "314600",
+      "us.federal.energy.clean_energy_credit": "300000",
+      "us.federal.ctc": "114600",
+      "us.federal.actc": "325400",
+      "us.federal.income_tax_after_credits": "0"
+    }
+  }
+}

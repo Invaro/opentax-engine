@@ -1,0 +1,15 @@
+{
+  "description": "Form 5695 line 16 for the previous scenario: 6,000 - 1,875 = $4,125 carried to 2026; section 25C has no carryforward, so the Part II credit is used first and in full.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "heatPumpBiomassCosts": 8000,
+    "insulationAirSealingCosts": 5000,
+    "solarElectricCosts": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.energy.clean.carryforward",
+  "expect": {
+    "valueCents": "412500"
+  }
+}

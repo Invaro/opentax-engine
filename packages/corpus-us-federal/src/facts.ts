@@ -328,6 +328,151 @@ export const facts: FactSpec[] = [
       rationale: "Assumed spouse not a full-time student absent contrary input",
     },
   },
+  // --- Form 5695, residential energy credits (§§ 25D, 25C — TY2025 is the last year; OBBBA §§ 70505–70506) ---
+  {
+    id: "solarElectricCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 1: qualified solar electric property costs (§ 25D(d)(2)) for a home in the United States, including allocable onsite preparation, assembly, installation, piping and wiring labor; net of any nontaxable utility subsidy and of any business-use allocation (less than 80% nonbusiness use). Installation must be COMPLETED in the tax year (§ 25D(e)(8)(A)). In dollars.",
+    default: { value: "0", rationale: "Assumed no solar electric property costs absent contrary input" },
+  },
+  {
+    id: "solarWaterHeatingCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 2: qualified solar water heating property costs (§ 25D(d)(1)) — at least half the energy from the sun, SRCC-certified (attested); same labor and netting rules as line 1. In dollars.",
+    default: { value: "0", rationale: "Assumed no solar water heating costs absent contrary input" },
+  },
+  {
+    id: "smallWindEnergyCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 3: qualified small wind energy property costs (§ 25D(d)(4)); same labor and netting rules as line 1. In dollars.",
+    default: { value: "0", rationale: "Assumed no small wind energy costs absent contrary input" },
+  },
+  {
+    id: "geothermalHeatPumpCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 4: qualified geothermal heat pump property costs (§ 25D(d)(5)) — Energy Star requirements in effect at purchase (attested); same labor and netting rules as line 1. In dollars.",
+    default: { value: "0", rationale: "Assumed no geothermal heat pump costs absent contrary input" },
+  },
+  {
+    id: "batteryStorageCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 5b: qualified battery storage technology costs (§ 25D(d)(6)) — capacity of at least 3 kilowatt hours (line 5a, attested: enter 0 if under 3 kWh); same labor and netting rules as line 1. In dollars.",
+    default: { value: "0", rationale: "Assumed no battery storage costs absent contrary input" },
+  },
+  {
+    id: "fuelCellPropertyCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 8: qualified fuel cell property costs (§ 25D(d)(3)) installed on or in connection with the taxpayer's MAIN home in the United States (line 7a, attested); nameplate capacity of at least 0.5 kW and electricity-only generation efficiency over 30%. Joint occupants (other than spouses) enter their allocable share under the $1,667-per-half-kilowatt rule in the instructions. In dollars.",
+    default: { value: "0", rationale: "Assumed no fuel cell property costs absent contrary input" },
+  },
+  {
+    id: "fuelCellHalfKilowatts",
+    type: "int",
+    min: "0",
+    description:
+      "Form 5695 line 10: nameplate capacity of the fuel cell property on line 8 in whole HALF-kilowatt increments (2 per kW, rounded down; 0 if under 0.5 kW) — the § 25D(b)(1) cap is $500 per half kilowatt.",
+    default: { value: "0", rationale: "Assumed no fuel cell capacity absent contrary input" },
+  },
+  {
+    id: "residentialCleanEnergyCarryforward",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 12: residential clean energy credit carryforward from the prior year's Form 5695 line 16 (§ 25D(c)). For TY2026 this is the 2025 Form 5695 line 16 — the only § 25D amount claimable after the credit's termination. In dollars.",
+    default: { value: "0", rationale: "Assumed no prior-year residential clean energy credit carryforward absent contrary input" },
+  },
+  {
+    id: "insulationAirSealingCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 18a: cost of insulation material or system (including air sealing) specifically and primarily designed to reduce heat loss or gain of the main home, meeting the IECC criteria (§ 25C(c)(2)(A)); EXCLUDES onsite preparation, assembly or installation labor. Main home in the United States, original use, 5-year expected life, not related to construction of the home (lines 17a–17e, attested). Net of subsidized energy financing and nontaxable utility subsidies. In dollars.",
+    default: { value: "0", rationale: "Assumed no insulation or air sealing costs absent contrary input" },
+  },
+  {
+    id: "exteriorDoorMostExpensiveCost",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 19a: cost of the most expensive qualifying exterior door (Energy Star requirements; QMID reported — attested); excludes installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no exterior door costs absent contrary input" },
+  },
+  {
+    id: "exteriorDoorOtherCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 19f: cost of all other qualifying exterior doors (lines 19d + 19e); excludes installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no other exterior door costs absent contrary input" },
+  },
+  {
+    id: "windowsSkylightsCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 20c: cost of all qualifying exterior windows and skylights (Energy Star certification; QMID reported — attested; lines 20a + 20b); excludes installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no window or skylight costs absent contrary input" },
+  },
+  {
+    id: "centralAirConditionerCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 22c: cost of qualifying central air conditioners (highest CEE efficiency tier in effect at the start of the year placed in service; QMID — attested; lines 22a + 22b), INCLUDING onsite preparation, assembly and installation labor. Home in the United States, originally placed in service by the taxpayer (lines 21a–21b, attested). In dollars.",
+    default: { value: "0", rationale: "Assumed no central air conditioner costs absent contrary input" },
+  },
+  {
+    id: "gasOilWaterHeaterCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 23c: cost of qualifying natural gas, propane or oil water heaters (highest CEE tier; QMID — attested; lines 23a + 23b), including installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no gas, propane or oil water heater costs absent contrary input" },
+  },
+  {
+    id: "gasOilFurnaceBoilerCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 24c: cost of qualifying natural gas, propane or oil furnaces and hot water boilers (highest CEE tier; oil units rated for 20% eligible fuel blends per the 2021 Energy Star criteria; QMID — attested; lines 24a + 24b), including installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no gas, propane or oil furnace or boiler costs absent contrary input" },
+  },
+  {
+    id: "electricalPanelCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 25c: cost of improvements to or replacement of panelboards, subpanelboards, branch circuits or feeders (enabling property, § 25C(d)(2)(D)) — National Electric Code, at least 200 amps, installed with enabled qualifying property in the same year (line 25a, attested; QMID — attested), including installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no electrical panel costs absent contrary input" },
+  },
+  {
+    id: "homeEnergyAuditCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 26b: cost of home energy audits of the main home — inspection and written report by or under a Qualified Home Energy Auditor certified by a Qualified Certification Program (line 26a, attested; § 25C(e)). In dollars.",
+    default: { value: "0", rationale: "Assumed no home energy audit costs absent contrary input" },
+  },
+  {
+    id: "heatPumpBiomassCosts",
+    type: "money",
+    min: "0",
+    description:
+      "Form 5695 line 29g: cost of qualifying electric or natural gas heat pumps and heat pump water heaters (highest CEE tier) and biomass stoves and boilers (thermal efficiency of at least 75%, higher heating value) — QMID reported (attested); lines 29a through 29f, including installation labor. In dollars.",
+    default: { value: "0", rationale: "Assumed no heat pump or biomass costs absent contrary input" },
+  },
   {
     id: "qualifiedAdoptionExpenses",
     type: "money",

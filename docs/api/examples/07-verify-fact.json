@@ -76,13 +76,13 @@
       "url": "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/2026-05/ind_tax_rate_sched_2026_rev.pdf",
       "excerpt": "MRS 2026 RATES (verbatim): 'Standard Deduction: Single - $15,700; Married Filing Jointly - $31,400; Head of Household - $23,550; Married Filing Separately - $15,700. Additional Amount for Age or Blindness: $1,650 if married (whether filing jointly or separately) or a qualified surviving spouse. The additional amount is $3,300 if one spouse is 65 or over and blind, $3,300* if both spouses are 65 or over, $6,600* if both spouses are 65 or over and blind, etc. *If married filing separately, these amounts apply only if you can claim an exemption for your spouse. $2,050 if unmarried (single or head of household). The additional amount is $4,100 if the individual is both 65 or over and blind.' 2026 FORM 1040ES-ME (verbatim): 'Standard Deduction for 2026: Single $15,700; Head of Household $23,550; Married Filing Separately $15,700; Married Filing Jointly or Qualifying Surviving Spouse $31,400. Additional Standard Deduction for Age and/or Blindness: Married (whether filing jointly or separately) or a qualified widow(er): the additional standard deduction is $1,650 if one spouse is age 65 or over OR blind; $3,300 if one spouse is 65 or over AND blind; $3,300 if both spouses are 65 or over OR blind; $6,600 if both spouses are 65 or over AND blind, etc.' STATUTE (§ 5124-C(1-C) as enacted by c. 650, Pt. K, § 14, verbatim): 'For tax years beginning on or after January 1, 2026 and before January 1, 2027 … basic standard deduction is: (1) For single individuals and married persons filing separate returns, $15,700; (2) … heads of households, the amount allowed under subparagraph (1) multiplied by 1.5; and (3) … married joint returns or surviving spouses, the amount … multiplied by 2' plus the § 63(c)(3) additional amounts; (1-D) makes 2027 and later 'equal to the federal standard deduction'. A filer claimable as a dependent gets the same chart amount (no § 63(c)(5) limitation is incorporated)."
     },
-    "asOf": "2026-10-11",
-    "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911",
+    "asOf": "2026-10-28",
+    "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
     "versions": {
       "engine": "0.1.0",
-      "composer": "0.6.0",
-      "corpus": "0.39.0",
-      "corpusMerkleRoot": "sha256:5f34e0bc2fe5d80f540b75151cc8793bca4bda4555485dfb0d313927938f1911"
+      "composer": "0.7.0",
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }
