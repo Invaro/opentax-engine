@@ -27893,7 +27893,7 @@ var init_facts = __esm({
         id: "scheduleENetIncome",
         type: "money",
         min: "0",
-        description: "Net Schedule E rental/royalty income AFTER \xA7 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (\xA7 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values \u2014 QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as \xA7 1411 investment income by this corpus (nonpassive/self-rental character attested \u2014 passive rental income that IS investment income would be missed by the NIIT rule: disclosed limitation). In dollars.",
+        description: "Net Schedule E rental/royalty income AFTER \xA7 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (\xA7 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values \u2014 QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as \xA7 1411 investment income by this corpus (nonpassive/self-rental character attested \u2014 passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars.",
         default: {
           value: "0",
           rationale: "Assumed no non-QBI Schedule E income absent contrary input"
@@ -28000,6 +28000,15 @@ var init_facts = __esm({
         default: {
           value: "0",
           rationale: "Assumed no rental activity reported through the depreciation path absent contrary input"
+        }
+      },
+      {
+        id: "rentalNotInvestmentIncome",
+        type: "bool",
+        description: "The rental entered through rentalIncomeBeforeDepreciation is NOT \xA7 1411 net investment income because it is derived in the ordinary course of a \xA7 162 trade or business (Form 8960 line 4b): a real estate professional's nonpassive rental (\xA7 469(c)(7)) that rises to a trade or business \u2014 participating more than 500 hours in the rental activity, or in 5 of the last 10 years, qualifies under the safe harbor \u2014 or a rental properly grouped with a trade or business in which the taxpayer materially participates (Reg. \xA7 1.469-4(d)(1)). Leave false for an ordinary passive rental: its net income is investment income (Form 8960 line 4a).",
+        default: {
+          value: false,
+          rationale: "A rental is passive unless the taxpayer shows otherwise (\xA7 469(c)(2)); passive rental income is net investment income (\xA7 1411(c)(1)(A)(i), (c)(2)(A))"
         }
       },
       {
@@ -38510,15 +38519,15 @@ var init_investment_taxes = __esm({
     investmentTaxRules = [
       {
         id: "us.federal.niit",
-        version: 6,
-        // v5 read the raw gain facts; § 1411 net investment income now takes the schedule_d netted results (losses reduce gains before NIIT)
+        version: 7,
+        // v6 left net rental income out of net investment income; § 1411(c)(1)(A)(i) rents now count (Form 8960 line 4a) unless rentalNotInvestmentIncome
         jurisdiction: "us.federal",
-        title: "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) \u2212 allocable deductions; MAGI \u2248 AGI)",
+        title: "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) + net rental income \u2212 allocable deductions; MAGI \u2248 AGI)",
         citation: {
           source: "26 U.S.C. \xA7 1411",
           section: "\xA7 1411(a)(1), (b), (c)(1)",
           url: "https://www.law.cornell.edu/uscode/text/26/1411",
-          excerpt: "\u2026a tax equal to 3.8 percent of the lesser of (A) net investment income\u2026 or (B) the excess (if any) of modified adjusted gross income\u2026 over the threshold amount [$250,000 joint return or surviving spouse; $125,000 married filing separately; $200,000 otherwise \u2014 not indexed]. Net investment income is the excess of the gross investment income items 'over (B) the deductions allowed by this subtitle which are properly allocable to such gross income or net gain' (\xA7 1411(c)(1), verbatim) \u2014 investment interest expense, allocable state tax, and other Form 8960 line 9\u201310 amounts enter through niitInvestmentExpenses."
+          excerpt: "\u2026a tax equal to 3.8 percent of the lesser of (A) net investment income\u2026 or (B) the excess (if any) of modified adjusted gross income\u2026 over the threshold amount [$250,000 joint return or surviving spouse; $125,000 married filing separately; $200,000 otherwise \u2014 not indexed]. Net investment income is the excess of the gross investment income items 'over (B) the deductions allowed by this subtitle which are properly allocable to such gross income or net gain' (\xA7 1411(c)(1), verbatim) \u2014 investment interest expense, allocable state tax, and other Form 8960 line 9\u201310 amounts enter through niitInvestmentExpenses. Gross income from rents is investment income (\xA7 1411(c)(1)(A)(i)) unless derived in the ordinary course of a trade or business that is not passive (\xA7 1411(c)(2)(A)): Form 8960 line 4a takes the rental net, and line 4b removes a real estate professional's nonpassive rental trade or business (rentalNotInvestmentIncome). Scope, disclosed: the rental enters through us.federal.rental.net_income, which is never a loss; scheduleENetIncome is nonpassive by its definition and stays out."
         },
         ...FROM11,
         output: { type: "money" },
@@ -38539,7 +38548,20 @@ var init_investment_taxes = __esm({
                         ruleRef21("us.federal.schedule_d.preferential_lt_gain"),
                         fact26("qualifiedDividends"),
                         ruleRef21("us.federal.schedule_d.ordinary_st_gain"),
-                        fact26("ordinaryDividends")
+                        fact26("ordinaryDividends"),
+                        // Form 8960 line 4a rental net; line 4b takes back a nonpassive rental
+                        // trade or business (asked only when there is rental income)
+                        {
+                          kind: "if",
+                          cond: { kind: "cmp", op: "eq", left: ruleRef21("us.federal.rental.net_income"), right: money23("0") },
+                          then: money23("0"),
+                          else: {
+                            kind: "if",
+                            cond: fact26("rentalNotInvestmentIncome"),
+                            then: money23("0"),
+                            else: ruleRef21("us.federal.rental.net_income")
+                          }
+                        }
                       ]
                     },
                     right: fact26("niitInvestmentExpenses")
@@ -79853,6 +79875,7 @@ var init_schema = __esm({
         "rentalDepreciableBasis",
         "rentalPlacedInServiceMonth",
         "rentalIncomeBeforeDepreciation",
+        "rentalNotInvestmentIncome",
         "unemploymentCompensation",
         "otherOrdinaryIncome",
         "socialSecurityWages",
@@ -84179,6 +84202,14 @@ var FACT_FLAGS = [
     group: "Income:",
     help: "month placed in service THIS year (Pub 946 Table A-6 first-year row); omit for property in service all year (3.636%)",
     boolean: false
+  },
+  {
+    factId: "rentalNotInvestmentIncome",
+    option: "--rental-not-investment-income",
+    key: "rentalNotInvestmentIncome",
+    group: "Income:",
+    help: "the rental is a real estate professional's \xA7 162 trade or business (or grouped with one), so it stays out of \xA7 1411 NIIT",
+    boolean: true
   },
   {
     factId: "selfEmploymentNetProfit",

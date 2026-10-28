@@ -1,6 +1,6 @@
 {
   "corpusVersion": "0.41.0",
-  "merkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+  "merkleRoot": "sha256:a39decffafbfcf584dc83f0c13f21c3620758d0d7402ac32438462af34de55a0",
   "tools": [
     {
       "name": "calculate_tax",
@@ -192,6 +192,10 @@
                   "string"
                 ],
                 "description": "Schedule E rental result BEFORE depreciation: rents received minus cash operating expenses (management, repairs, insurance, taxes, mortgage interest…). The engine subtracts the computed § 168 depreciation to reach net rental income. Use scheduleENetIncome instead when you already have the after-depreciation net; the two inputs add (separate properties). In dollars."
+              },
+              "rentalNotInvestmentIncome": {
+                "type": "boolean",
+                "description": "The rental entered through rentalIncomeBeforeDepreciation is NOT § 1411 net investment income because it is derived in the ordinary course of a § 162 trade or business (Form 8960 line 4b): a real estate professional's nonpassive rental (§ 469(c)(7)) that rises to a trade or business — participating more than 500 hours in the rental activity, or in 5 of the last 10 years, qualifies under the safe harbor — or a rental properly grouped with a trade or business in which the taxpayer materially participates (Reg. § 1.469-4(d)(1)). Leave false for an ordinary passive rental: its net income is investment income (Form 8960 line 4a)."
               },
               "unemploymentCompensation": {
                 "type": [
@@ -1104,7 +1108,7 @@
                   "number",
                   "string"
                 ],
-                "description": "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income would be missed by the NIIT rule: disclosed limitation). In dollars."
+                "description": "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars."
               },
               "passiveActivityIncome": {
                 "type": [
@@ -10466,6 +10470,10 @@
                 ],
                 "description": "Schedule E rental result BEFORE depreciation: rents received minus cash operating expenses (management, repairs, insurance, taxes, mortgage interest…). The engine subtracts the computed § 168 depreciation to reach net rental income. Use scheduleENetIncome instead when you already have the after-depreciation net; the two inputs add (separate properties). In dollars."
               },
+              "rentalNotInvestmentIncome": {
+                "type": "boolean",
+                "description": "The rental entered through rentalIncomeBeforeDepreciation is NOT § 1411 net investment income because it is derived in the ordinary course of a § 162 trade or business (Form 8960 line 4b): a real estate professional's nonpassive rental (§ 469(c)(7)) that rises to a trade or business — participating more than 500 hours in the rental activity, or in 5 of the last 10 years, qualifies under the safe harbor — or a rental properly grouped with a trade or business in which the taxpayer materially participates (Reg. § 1.469-4(d)(1)). Leave false for an ordinary passive rental: its net income is investment income (Form 8960 line 4a)."
+              },
               "unemploymentCompensation": {
                 "type": [
                   "number",
@@ -11377,7 +11385,7 @@
                   "number",
                   "string"
                 ],
-                "description": "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income would be missed by the NIIT rule: disclosed limitation). In dollars."
+                "description": "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars."
               },
               "passiveActivityIncome": {
                 "type": [

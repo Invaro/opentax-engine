@@ -149,6 +149,7 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "rentalDepreciableBasis",
     "rentalPlacedInServiceMonth",
     "rentalIncomeBeforeDepreciation",
+    "rentalNotInvestmentIncome",
     "unemploymentCompensation",
     "otherOrdinaryIncome",
     "socialSecurityWages",

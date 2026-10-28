@@ -487,6 +487,14 @@ export const FACT_FLAGS: FactFlag[] = [
     boolean: false,
   },
   {
+    factId: "rentalNotInvestmentIncome",
+    option: "--rental-not-investment-income",
+    key: "rentalNotInvestmentIncome",
+    group: "Income:",
+    help: "the rental is a real estate professional's § 162 trade or business (or grouped with one), so it stays out of § 1411 NIIT",
+    boolean: true,
+  },
+  {
     factId: "selfEmploymentNetProfit",
     option: "--se-profit <dollars>",
     key: "seProfit",

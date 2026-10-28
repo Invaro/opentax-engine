@@ -49,16 +49,16 @@ const amThreshold: Expr = {
 export const investmentTaxRules: Rule[] = [
   {
     id: "us.federal.niit",
-    version: 6, // v5 read the raw gain facts; § 1411 net investment income now takes the schedule_d netted results (losses reduce gains before NIIT)
+    version: 7, // v6 left net rental income out of net investment income; § 1411(c)(1)(A)(i) rents now count (Form 8960 line 4a) unless rentalNotInvestmentIncome
     jurisdiction: "us.federal",
     title:
-      "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) − allocable deductions; MAGI ≈ AGI)",
+      "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) + net rental income − allocable deductions; MAGI ≈ AGI)",
     citation: {
       source: "26 U.S.C. § 1411",
       section: "§ 1411(a)(1), (b), (c)(1)",
       url: "https://www.law.cornell.edu/uscode/text/26/1411",
       excerpt:
-        "…a tax equal to 3.8 percent of the lesser of (A) net investment income… or (B) the excess (if any) of modified adjusted gross income… over the threshold amount [$250,000 joint return or surviving spouse; $125,000 married filing separately; $200,000 otherwise — not indexed]. Net investment income is the excess of the gross investment income items 'over (B) the deductions allowed by this subtitle which are properly allocable to such gross income or net gain' (§ 1411(c)(1), verbatim) — investment interest expense, allocable state tax, and other Form 8960 line 9–10 amounts enter through niitInvestmentExpenses.",
+        "…a tax equal to 3.8 percent of the lesser of (A) net investment income… or (B) the excess (if any) of modified adjusted gross income… over the threshold amount [$250,000 joint return or surviving spouse; $125,000 married filing separately; $200,000 otherwise — not indexed]. Net investment income is the excess of the gross investment income items 'over (B) the deductions allowed by this subtitle which are properly allocable to such gross income or net gain' (§ 1411(c)(1), verbatim) — investment interest expense, allocable state tax, and other Form 8960 line 9–10 amounts enter through niitInvestmentExpenses. Gross income from rents is investment income (§ 1411(c)(1)(A)(i)) unless derived in the ordinary course of a trade or business that is not passive (§ 1411(c)(2)(A)): Form 8960 line 4a takes the rental net, and line 4b removes a real estate professional's nonpassive rental trade or business (rentalNotInvestmentIncome). Scope, disclosed: the rental enters through us.federal.rental.net_income, which is never a loss; scheduleENetIncome is nonpassive by its definition and stays out.",
     },
     ...FROM,
     output: { type: "money" },
@@ -80,6 +80,19 @@ export const investmentTaxRules: Rule[] = [
                     fact("qualifiedDividends"),
                     ruleRef("us.federal.schedule_d.ordinary_st_gain"),
                     fact("ordinaryDividends"),
+                    // Form 8960 line 4a rental net; line 4b takes back a nonpassive rental
+                    // trade or business (asked only when there is rental income)
+                    {
+                      kind: "if",
+                      cond: { kind: "cmp", op: "eq", left: ruleRef("us.federal.rental.net_income"), right: money("0") },
+                      then: money("0"),
+                      else: {
+                        kind: "if",
+                        cond: fact("rentalNotInvestmentIncome"),
+                        then: money("0"),
+                        else: ruleRef("us.federal.rental.net_income"),
+                      },
+                    },
                   ],
                 },
                 right: fact("niitInvestmentExpenses"),

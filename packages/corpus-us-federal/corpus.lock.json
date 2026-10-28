@@ -1,7 +1,7 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.41.0",
-  "merkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+  "merkleRoot": "sha256:a39decffafbfcf584dc83f0c13f21c3620758d0d7402ac32438462af34de55a0",
   "ruleCount": 588,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
@@ -229,7 +229,7 @@
     "us.federal.medical_expense_deduction@1": "sha256:ecb2693adaea9587ad01c4fefd8ded2319bdbf4f0b93ba2504024a24194a6069",
     "us.federal.mortgage_interest_deduction@1": "sha256:7ea37bcdf3ed9272f1bcf6512252bca2400c342d60aa9ebc1dbc0a33b4c77e65",
     "us.federal.net_tax@2": "sha256:64058ff57f8945d1136d8d68f87ed7268f9e58c103f9f90521d0fd953f3cfd03",
-    "us.federal.niit@6": "sha256:2f935d07f04104ae3cc489d4076dd45f245c53f2979a0fe1e35239a9e9577a10",
+    "us.federal.niit@7": "sha256:3ce9f735723e4e050eef4abf87bd2d9a6f539811b8cc87d045a6e82a4f0edb89",
     "us.federal.ordinary_taxable_income@3": "sha256:39f9597e8d6eb91946a19365e098793ab26263db70fb1fc4ee460bafd3849238",
     "us.federal.other_taxes@4": "sha256:4bd194ea36a579fa6dd591ef5dee8a644c5db3ee81bb6016e0bab97535c2e38a",
     "us.federal.overtime_deduction@1": "sha256:6e873ce38f088ceae47d4fea148576b721518cbefa86cec98f6da13b58311290",

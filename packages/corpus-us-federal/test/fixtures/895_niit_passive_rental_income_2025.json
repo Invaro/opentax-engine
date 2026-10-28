@@ -1,0 +1,17 @@
+{
+  "description": "Form 8960 line 4a: a passive rental's $50,000 net income is net investment income (§ 1411(c)(1)(A)(i)). Single, wages $250,000: MAGI $300,000 exceeds the $200,000 threshold by $100,000, so NIIT = 3.8% × the smaller $50,000 = $1,900.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "rentalIncomeBeforeDepreciation": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "190000",
+    "intermediates": {
+      "us.federal.rental.net_income": "5000000",
+      "us.federal.agi": "30000000"
+    }
+  }
+}

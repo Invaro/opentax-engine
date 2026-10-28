@@ -2,6 +2,10 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · Net rental income in the net investment income tax
+
+The 3.8% net investment income tax now counts net rental income, as Form 8960 line 4a does. Before, a passive rental's income raised AGI but never reached net investment income. A real estate professional whose rental is a trade or business, or a rental grouped with a business you materially participate in, stays out: set `rentalNotInvestmentIncome` (`--rental-not-investment-income`). The question is only asked when there is rental income.
+
 ## Oct 28, 2026 · Form 5695 residential energy credits
 
 `compute_return` now fills in Form 5695 when you give it `energy_credits` inputs: the residential clean energy credit (§ 25D, solar, battery storage, geothermal, fuel cells) and the energy efficient home improvement credit (§ 25C, insulation, doors, windows, heat pumps, energy audits), each line capped as the printed form caps it. Both credits ended after 2025, so 2026 inputs earn $0, but a 2025 clean energy carryforward still applies in 2026. The return now includes Form 1040 line 20 and Schedule 3, and the nonrefundable credits apply in the order the 2025 worksheets give.
