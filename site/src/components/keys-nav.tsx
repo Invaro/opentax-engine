@@ -5,11 +5,10 @@ import Link from "next/link";
 
 const ITEMS = [
   { key: "B", label: "Benchmark", href: "#benchmark" },
-  { key: "F", label: "Features", href: "#features" },
   { key: "U", label: "Use cases", href: "#usecases" },
-  { key: "I", label: "Install", href: "#install" },
-  { key: "S", label: "Source", href: "#source" },
   { key: "D", label: "Docs", href: "/docs" },
+  { key: "P", label: "Pricing", href: "/pricing" },
+  { key: "C", label: "Changelog", href: "/changelog" },
 ] as const;
 
 export function KeysNav() {

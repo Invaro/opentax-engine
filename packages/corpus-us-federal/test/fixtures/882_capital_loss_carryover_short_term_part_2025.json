@@ -1,0 +1,15 @@
+{
+  "description": "TY2025: the short-term part of fixture 880's carryover is $0 (worksheet line 8: $2,000 ST loss less the $3,000 line 4).",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 150000,
+    "shortTermCapitalLoss": 2000,
+    "longTermCapitalLoss": 10000,
+    "priorYearLongTermCapitalLossCarryover": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.capital_loss_carryover.short_term",
+  "expect": {
+    "valueCents": "0"
+  }
+}

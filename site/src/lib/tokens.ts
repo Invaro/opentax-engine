@@ -43,3 +43,20 @@ export function verifyToken(
   if (Date.now() - ts > maxAgeMs) return null;
   return { payload, ts };
 }
+
+/**
+ * HMAC of a value under the site secret, for things that must not be
+ * brute-forceable offline (an eight-digit code has only a hundred million values).
+ */
+export function keyedHash(purpose: string, value: string): string {
+  return createHmac("sha256", secret()).update(`${purpose}|${value}`).digest("hex");
+}
+
+export function safeEqualHex(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(a, "hex"), Buffer.from(b, "hex"));
+  } catch {
+    return false;
+  }
+}

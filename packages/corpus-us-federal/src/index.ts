@@ -61,7 +61,7 @@ import { tipsOvertimeRules } from "./rules/tips-overtime.js";
 
 export const corpusInput: CorpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.40.0",
+  version: "0.41.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -128,6 +128,8 @@ export function getCorpus(): LoadedCorpus {
 export const DEFAULT_TARGET = "us.federal.net_tax";
 
 export { facts } from "./facts.js";
+export { EXTENSION_POINTS, extendCorpus } from "./extend.js";
+export type { CorpusExtension, ExtensionPoint } from "./extend.js";
 export { STALE_AT_HORIZON, STALE_HORIZON, CORE_RULE_SUFFIXES } from "./staleness.js";
 export type { StaleEntry, StaleTier } from "./staleness.js";
 export {

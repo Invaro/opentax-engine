@@ -2,10 +2,10 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OpenTax hosted API",
-    "version": "corpus 0.40.0 · engine proof schema 2",
+    "version": "corpus 0.41.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c",
-    "x-generated": "2026-10-12T20:23:45.686Z"
+    "x-corpus-merkle-root": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+    "x-generated": "2026-10-28T09:11:48.594Z"
   },
   "servers": [
     {
@@ -326,6 +326,20 @@
                                   "string"
                                 ],
                                 "description": "Net long-term capital LOSS for the year (Schedule D line 15 when negative, entered positive). The LT bucket's single NET result — mutually exclusive with longTermCapitalGains and with netCapitalLoss. Combine with shortTermCapitalGains for mixed years: the engine performs the § 1222 cross-netting (a net LT loss reduces the ordinary-rate net ST gain per § 1222(9); any overall loss is capped by § 1211(b)). In dollars."
+                              },
+                              "priorYearShortTermCapitalLossCarryover": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Short-term capital loss carried over from the prior year (§ 1212(b)(1)(A); Schedule D line 6, from line 8 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter shortTermCapitalGains/shortTermCapitalLoss WITHOUT it: the engine nets it into the short-term bucket (Schedule D line 7) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
+                              },
+                              "priorYearLongTermCapitalLossCarryover": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Long-term capital loss carried over from the prior year (§ 1212(b)(1)(B); Schedule D line 14, from line 13 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter longTermCapitalGains/longTermCapitalLoss WITHOUT it: the engine nets it into the long-term bucket (Schedule D line 15) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
                               },
                               "rentalDepreciableBasis": {
                                 "type": [
@@ -5353,6 +5367,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per W-2, boxes transcribed verbatim"
                               },
                               "selfEmploymentEarner": {
@@ -5388,6 +5403,7 @@
                                     },
                                     "box7": {
                                       "type": "string",
+                                      "maxLength": 8,
                                       "description": "distribution code(s), e.g. \"1\", \"7\", \"4\", \"G\", \"3\", \"C\""
                                     },
                                     "iraSepSimple": {
@@ -5418,6 +5434,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"
                               },
                               "ssa1099s": {
@@ -5442,6 +5459,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"
                               },
                               "f1099necs": {
@@ -5466,6 +5484,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"
                               },
                               "f1099ks": {
@@ -5490,6 +5509,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"
                               },
                               "scheduleCExpensesTotal": {
@@ -5520,6 +5540,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"
                               },
                               "f1099divs": {
@@ -5552,6 +5573,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"
                               },
                               "f1099bs": {
@@ -5597,6 +5619,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's § 1222 Schedule D netting rules do the cross-bucket math"
                               },
                               "f1099gs": {
@@ -5619,6 +5642,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-G; box 1 sums into unemploymentCompensation"
                               },
                               "dependents": {
@@ -5660,6 +5684,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per dependent, RAW facts — CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels"
                               }
                             },
@@ -5682,10 +5707,23 @@
                           "includeProof": {
                             "type": "boolean",
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
+                          },
+                          "refuseDefaults": {
+                            "type": "boolean",
+                            "description": "refuse defaults: every fact the answer needs must be given explicitly. A fact left out refuses with NEEDS_FACTS even when it has a documented default; each entry in error.data.missing carries that `default` so you can pass the value or accept it via allowDefaults. A missing enum can hide the facts behind it, so a second call may list more. Default false: defaults apply and are listed under assumptions."
+                          },
+                          "allowDefaults": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 80
+                            },
+                            "maxItems": 300,
+                            "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -6168,8 +6206,8 @@
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -6272,8 +6310,8 @@
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -6431,8 +6469,8 @@
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -10598,6 +10636,7 @@
                           },
                           "asOf": {
                             "type": "string",
+                            "maxLength": 10,
                             "description": "year-end date, e.g. 2025-12-31 — REQUIRED"
                           },
                           "strict": {
@@ -10618,8 +10657,8 @@
                           "jurisdiction",
                           "asOf"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -10830,6 +10869,20 @@
                                   "string"
                                 ],
                                 "description": "Net long-term capital LOSS for the year (Schedule D line 15 when negative, entered positive). The LT bucket's single NET result — mutually exclusive with longTermCapitalGains and with netCapitalLoss. Combine with shortTermCapitalGains for mixed years: the engine performs the § 1222 cross-netting (a net LT loss reduces the ordinary-rate net ST gain per § 1222(9); any overall loss is capped by § 1211(b)). In dollars."
+                              },
+                              "priorYearShortTermCapitalLossCarryover": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Short-term capital loss carried over from the prior year (§ 1212(b)(1)(A); Schedule D line 6, from line 8 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter shortTermCapitalGains/shortTermCapitalLoss WITHOUT it: the engine nets it into the short-term bucket (Schedule D line 7) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
+                              },
+                              "priorYearLongTermCapitalLossCarryover": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Long-term capital loss carried over from the prior year (§ 1212(b)(1)(B); Schedule D line 14, from line 13 of the prior year's Capital Loss Carryover Worksheet), entered positive. Enter longTermCapitalGains/longTermCapitalLoss WITHOUT it: the engine nets it into the long-term bucket (Schedule D line 15) before the § 1222 cross-netting. Cannot be combined with netCapitalLoss. In dollars."
                               },
                               "rentalDepreciableBasis": {
                                 "type": [
@@ -15857,6 +15910,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per W-2, boxes transcribed verbatim"
                               },
                               "selfEmploymentEarner": {
@@ -15892,6 +15946,7 @@
                                     },
                                     "box7": {
                                       "type": "string",
+                                      "maxLength": 8,
                                       "description": "distribution code(s), e.g. \"1\", \"7\", \"4\", \"G\", \"3\", \"C\""
                                     },
                                     "iraSepSimple": {
@@ -15922,6 +15977,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-R; routing, penalty, and rollover handling are computed, not judged"
                               },
                               "ssa1099s": {
@@ -15946,6 +16002,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per SSA-1099 (or RRB-1099 tier-1 equivalent); box 5 sums into socialSecurityBenefits, box 6 into withholding"
                               },
                               "f1099necs": {
@@ -15970,6 +16027,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-NEC; box 1 sums into Schedule C gross receipts and nets against scheduleCExpensesTotal"
                               },
                               "f1099ks": {
@@ -15994,6 +16052,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-K (business receipts); box 1a sums into Schedule C gross receipts alongside 1099-NECs"
                               },
                               "scheduleCExpensesTotal": {
@@ -16024,6 +16083,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-INT; boxes 1+3 sum into taxableInterest, box 8 into taxExemptInterest"
                               },
                               "f1099divs": {
@@ -16056,6 +16116,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-DIV; the compiler performs the 1a-minus-1b split the fact model expects and errors if 1b exceeds 1a"
                               },
                               "f1099bs": {
@@ -16101,6 +16162,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-B lot or summary line; per-bucket ST/LT results are netted here and the engine's § 1222 Schedule D netting rules do the cross-bucket math"
                               },
                               "f1099gs": {
@@ -16123,6 +16185,7 @@
                                   },
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per 1099-G; box 1 sums into unemploymentCompensation"
                               },
                               "dependents": {
@@ -16164,6 +16227,7 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "maxItems": 100,
                                 "description": "one entry per dependent, RAW facts — CTC vs ODC vs EIC-child vs CDCC classification is computed from the statute's age tests, never from intake checkbox labels"
                               }
                             },
@@ -16186,10 +16250,23 @@
                           "includeProof": {
                             "type": "boolean",
                             "description": "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned."
+                          },
+                          "refuseDefaults": {
+                            "type": "boolean",
+                            "description": "refuse defaults: every fact the answer needs must be given explicitly. A fact left out refuses with NEEDS_FACTS even when it has a documented default; each entry in error.data.missing carries that `default` so you can pass the value or accept it via allowDefaults. A missing enum can hide the facts behind it, so a second call may list more. Default false: defaults apply and are listed under assumptions."
+                          },
+                          "allowDefaults": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 80
+                            },
+                            "maxItems": 300,
+                            "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
                           }
                         },
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16277,8 +16354,8 @@
                           "facts",
                           "claimedAmount"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16344,8 +16421,8 @@
                       "arguments": {
                         "type": "object",
                         "properties": {},
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16413,18 +16490,20 @@
                         "properties": {
                           "ruleId": {
                             "type": "string",
+                            "maxLength": 120,
                             "description": "e.g. \"us.federal.standard_deduction\" — list via calculate_tax proof, search_tax_rules, or the corpus"
                           },
                           "asOf": {
                             "type": "string",
+                            "maxLength": 10,
                             "description": "ISO date; when given, only the version valid on that date is returned (omit for every version)"
                           }
                         },
                         "required": [
                           "ruleId"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16497,6 +16576,7 @@
                           },
                           "vary": {
                             "type": "string",
+                            "maxLength": 80,
                             "description": "money fact to vary, e.g. \"wages\" or \"taxableInterest\""
                           },
                           "fromDollars": {
@@ -16516,8 +16596,8 @@
                           "fromDollars",
                           "toDollars"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16592,8 +16672,8 @@
                         "required": [
                           "facts"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16661,6 +16741,7 @@
                         "properties": {
                           "query": {
                             "type": "string",
+                            "maxLength": 2000,
                             "description": "plain-English search, e.g. 'standard deduction'"
                           },
                           "asOf": {
@@ -16671,8 +16752,8 @@
                         "required": [
                           "query"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16740,6 +16821,7 @@
                         "properties": {
                           "query": {
                             "type": "string",
+                            "maxLength": 2000,
                             "description": "plain-English search, e.g. 'kiddie tax'"
                           },
                           "asOf": {
@@ -16755,8 +16837,8 @@
                         "required": [
                           "query"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16824,6 +16906,7 @@
                         "properties": {
                           "query": {
                             "type": "string",
+                            "maxLength": 2000,
                             "description": "what the amount is, e.g. 'standard deduction'"
                           },
                           "claimedAmount": {
@@ -16852,8 +16935,8 @@
                           "query",
                           "claimedAmount"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }
@@ -16921,14 +17004,15 @@
                         "properties": {
                           "job": {
                             "type": "string",
+                            "maxLength": 500,
                             "description": "e.g. \"bartender\", \"software engineer\", \"DJ\""
                           }
                         },
                         "required": [
                           "job"
                         ],
-                        "additionalProperties": false,
-                        "$schema": "http://json-schema.org/draft-07/schema#"
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
                       }
                     }
                   }

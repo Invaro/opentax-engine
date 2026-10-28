@@ -55,8 +55,8 @@
     "versions": {
       "engine": "0.1.0",
       "composer": "0.7.0",
-      "corpus": "0.40.0",
-      "corpusMerkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c"
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }

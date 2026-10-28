@@ -14,6 +14,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/docs/coverage`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${base}/docs/returns`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${base}/docs/validation`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${base}/changelog`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${base}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/license`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
+    { url: `${base}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 }

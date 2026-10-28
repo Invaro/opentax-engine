@@ -85,7 +85,7 @@ export function lookupParameters(
   query: string,
   asOf?: string,
 ): LookupHit[] {
-  const tokens = tokenize(query);
+  const tokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (tokens.length === 0) return [];
 
   const hits: LookupHit[] = [];
@@ -181,7 +181,9 @@ export function searchRules(
   asOf?: string,
   limit = 8,
 ): RuleSearchHit[] {
-  const allTokens = tokenize(query);
+  // each token scans every rule (twice, for document frequency), so dedupe and cap them:
+  // a 500 KB query of repeated words used to take a minute
+  const allTokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (allTokens.length === 0) return [];
 
   const haystacks = corpus.rules.map((rule) => {
@@ -211,9 +213,10 @@ export function searchRules(
   const df = (t: string): number =>
     haystacks.filter((h) => has(h.id, t) || has(h.title, t) || has(h.meta, t) || has(h.weak, t))
       .length;
-  const rare = allTokens.filter((t) => df(t) <= haystacks.length * 0.35);
+  const dfCache = new Map(allTokens.map((t) => [t, df(t)]));
+  const rare = allTokens.filter((t) => dfCache.get(t)! <= haystacks.length * 0.35);
   const tokens = rare.length > 0 ? rare : allTokens;
-  const boost = new Map(tokens.map((t) => [t, df(t) <= haystacks.length * 0.05 ? 2 : 1]));
+  const boost = new Map(tokens.map((t) => [t, dfCache.get(t)! <= haystacks.length * 0.05 ? 2 : 1]));
   // A multi-word query must earn more than a single stray excerpt match —
   // that is what keeps "no hits" meaning "outside the corpus".
   const minScore = tokens.length >= 2 ? 2 : 1;

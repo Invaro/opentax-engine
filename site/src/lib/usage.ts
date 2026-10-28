@@ -30,8 +30,17 @@ export function returnIdHash(req: Request): string {
   return id ? sha256(id).slice(0, 16) : "";
 }
 
-export async function writeUsage(record: UsageRecord, ip: string): Promise<void> {
-  console.log(JSON.stringify(record));
+export async function writeUsage(raw: UsageRecord, ip: string): Promise<void> {
+  // every string here can come from the caller; cap them before logs and storage
+  const record: UsageRecord = {
+    ...raw,
+    method: raw.method.slice(0, 40),
+    tool: raw.tool.slice(0, 60),
+    client: raw.client.slice(0, 60),
+    clientVersion: raw.clientVersion.slice(0, 30),
+  };
+  // runtime logs get a hash of the account, never the address itself
+  console.log(JSON.stringify({ ...record, account: record.account ? sha256(record.account).slice(0, 12) : "" }));
   const day = record.at.slice(0, 10);
   const ts = Date.now();
   const body = JSON.stringify(record);

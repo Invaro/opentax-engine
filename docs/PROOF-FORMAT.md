@@ -142,6 +142,9 @@ plus the root — and CI fails if the source drifts from the lock.
   "candidatesConsidered": [         // override audit trail, most-specific first
     { "ruleId": "…", "version": 1, "priority": 10, "applicable": true|false|"unknown" }, …
   ],
+  "contributions": [               // present iff other rules ADD to this one
+    { "ruleId": "…", "value": TypedValue }, …
+  ],
   "inputs": { "<dependencyId>": TypedValue, … },  // direct deps, resolved
 
   // kind == "fact" | "assumption":
@@ -171,6 +174,13 @@ Node semantics:
   candidate (including *A* itself) with each guard's outcome — `"unknown"`
   means the guard could not be evaluated. The proof therefore shows not
   just what fired but why the alternatives did or didn't.
+- **Contributions**: a rule may declare `contributesTo: A` (money rules only,
+  no guard). Its value is added to *A*'s result after *A*'s formula (or
+  winning override) is evaluated. *A*'s node lists each contributing rule
+  and its value under `contributions`, in rule-id order, and includes each
+  contributor's sub-derivation among its `children`. The node's `value` is
+  the formula's result plus every contribution. This is how an extension
+  (`extendCorpus`) adds an item to a total without restating its formula.
 - `facts` in the artifact is the complete post-coercion fact set. Re-running
   the engine on `facts` + `asOf` + `target` must reproduce `root` and
   `assumptions` **byte-for-byte under canonical JSON**.
@@ -199,6 +209,12 @@ verifier must implement it exactly:
   threshold = the row's **lower bound** in cents (first row `"0"`). Tax =
   Σ over rows of `mulRate(span-in-that-row, rate, half-up)` — **each
   bracket term rounds half-up to the cent independently**, then sums.
+- `rule(ruleId)`: the rule's value. `rule(ruleId, excluding: [ids])`: its
+  value computed as if the contributing rules `ids` did not exist (and, in
+  a nested reference, without the ones already excluded). It is evaluated
+  in its own pass with its own memo; facts and assumptions are shared, and
+  every rule node from that pass carries `excluding`. A dependency cycle is
+  detected across passes, with the pass named in the cycle path.
 - `cmp(lt|le|gt|ge|eq|ne)`; `not`.
 - `and / or` short-circuit **by decision, not by position**: arguments
   evaluate in order and the first *deciding* value (`false` for `and`,

@@ -146,6 +146,15 @@
         "rationale": "Assumed no net long-term capital loss absent contrary input"
       },
       {
+        "factId": "priorYearLongTermCapitalLossCarryover",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no long-term capital loss carryover from the prior year absent contrary input"
+      },
+      {
         "factId": "shortTermCapitalLoss",
         "value": {
           "type": "money",
@@ -153,6 +162,15 @@
         },
         "source": "default",
         "rationale": "Assumed no net short-term capital loss absent contrary input"
+      },
+      {
+        "factId": "priorYearShortTermCapitalLossCarryover",
+        "value": {
+          "type": "money",
+          "value": "0"
+        },
+        "source": "default",
+        "rationale": "Assumed no short-term capital loss carryover from the prior year absent contrary input"
       },
       {
         "factId": "qualifiedDividends",
@@ -911,14 +929,14 @@
         "rationale": "Assumed no Marketplace coverage absent contrary input"
       }
     ],
-    "corpusMerkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c",
-    "artifactHash": "sha256:2f7f98fc577b4de0f4c83077f98dd7d2495d182d91be8adff732d4d94b60ceda",
+    "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+    "artifactHash": "sha256:a45693241cf8489231af1e787289719ecd713954034ba61c0f59ebe8f9a88cda",
     "proofScope": "the proof artifact covers the us.federal.net_tax derivation (lines 9-24); other lines are separate cited targets evaluated on the same rounded facts — request each with calculate_tax + includeProof for its own tree",
     "versions": {
       "engine": "0.1.0",
       "composer": "0.7.0",
-      "corpus": "0.40.0",
-      "corpusMerkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c"
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }

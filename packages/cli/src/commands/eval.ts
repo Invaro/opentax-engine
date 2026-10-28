@@ -16,6 +16,8 @@ export interface EvalFlags extends Record<string, unknown> {
   json?: boolean;
   brief?: boolean;
   assumptions?: boolean;
+  refuseDefaults?: boolean;
+  allowDefault?: string[];
   // plus the inline fact flags declared in flags.ts (status, wages, kids, …)
 }
 
@@ -46,7 +48,12 @@ export function runEval(flags: EvalFlags): number {
         : DEFAULT_TARGET);
 
     const facts = coerceFacts(corpus, plain);
-    const { value, proof } = evaluate(corpus, facts, { asOf, target });
+    const { value, proof } = evaluate(corpus, facts, {
+      asOf,
+      target,
+      refuseDefaults: flags.refuseDefaults === true,
+      allowDefaults: flags.allowDefault,
+    });
 
     if (flags.proof) {
       writeFileSync(flags.proof, JSON.stringify(proof, null, 2) + "\n");

@@ -2,7 +2,7 @@
 
 **The verifiable US tax oracle for AI agents** — a Model Context Protocol (MCP) server where every answer is computed from a content-addressed corpus of cited tax rules, ships its assumptions, and is independently re-verifiable. Never let a model guess at tax law again.
 
-🌐 **[opentax.invaro.ai](https://opentax.invaro.ai)** · [GitHub](https://github.com/Invaro/opentax-engine) · AGPL-3.0 + commercial dual license
+🌐 **[opentax.invaro.ai](https://opentax.invaro.ai)** · [GitHub](https://github.com/Invaro/opentax-engine) · Business Source License 1.1 · commercial license for products
 
 ## Why
 

@@ -25,9 +25,9 @@ const hedvigSerif = Hedvig_Letters_Serif({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://opentax.invaro.ai"),
-  title: "OpenTax by Invaro | Turn any AI into a precise tax preparer",
+  title: "OpenTax by Invaro | Exact US tax calculations for any agent",
   description:
-    "The deterministic, open-source tax engine for AI agents. Highest score ever recorded on TaxCalcBench: 96% exact returns, versus 6% for the same model alone. One MCP URL, any agent.",
+    "OpenTax does the tax math for AI models, with every line cited to the law. With it, Claude Sonnet gets 96% of TaxCalcBench returns exactly right, against 6% on its own.",
   authors: [{ name: "Invaro Inc." }],
   keywords: [
     "tax engine",
@@ -35,21 +35,20 @@ export const metadata: Metadata = {
     "AI tax agent",
     "TaxCalcBench",
     "deterministic tax computation",
-    "open source tax software",
   ],
   openGraph: {
-    title: "OpenTax: turn any AI into a precise tax preparer",
+    title: "OpenTax: exact US tax calculations for any agent",
     description:
-      "Deterministic, open-source, and the highest-scoring tax engine ever measured: 6% → 96% exact returns on TaxCalcBench with the same model.",
+      "With OpenTax, the same model goes from 6% to 96% of TaxCalcBench returns exactly right, every line cited to the law.",
     url: "https://opentax.invaro.ai",
     siteName: "OpenTax by Invaro",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenTax: turn any AI into a precise tax preparer",
+    title: "OpenTax: exact US tax calculations for any agent",
     description:
-      "6% → 96% exact tax returns with the same model. Deterministic, open-source, highest score ever recorded on TaxCalcBench.",
+      "With OpenTax, the same model goes from 6% to 96% of TaxCalcBench returns exactly right, every line cited to the law.",
   },
 };
 

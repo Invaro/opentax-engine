@@ -47,7 +47,7 @@ export { canonical } from "./canonical.js";
 export { hashOf, merkleRoot, ruleHash, sha256Hex } from "./hash.js";
 
 export type { LoadedCorpus } from "./corpus.js";
-export { loadCorpus, selectOverriders, selectVersion } from "./corpus.js";
+export { loadCorpus, selectContributors, selectOverriders, selectVersion } from "./corpus.js";
 
 export type {
   Assumption,

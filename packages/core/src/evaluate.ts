@@ -10,7 +10,7 @@
 
 import type { Expr, TypedValueJSON, Value } from "./ast.js";
 import { valueFromJSON, valueToJSON } from "./ast.js";
-import { selectOverriders, selectVersion } from "./corpus.js";
+import { selectContributors, selectOverriders, selectVersion } from "./corpus.js";
 import type { LoadedCorpus } from "./corpus.js";
 import {
   CycleError,
@@ -48,6 +48,15 @@ export interface EvaluateOptions {
   asOf: string;
   /** Rule id to derive. */
   target: string;
+  /**
+   * Refuse defaults: a fact with no explicit value is reported missing
+   * (NEEDS_FACTS) even when its spec has a default, so no answer rests on an
+   * assumption the caller didn't make. Facts listed in `allowDefaults` still
+   * take their defaults. Off by default.
+   */
+  refuseDefaults?: boolean;
+  /** With `refuseDefaults`, the fact ids whose defaults the caller accepts. */
+  allowDefaults?: readonly string[];
 }
 
 export interface EvaluateResult {
@@ -66,11 +75,18 @@ interface Ctx {
   factsJSON: Record<string, TypedValueJSON>;
   asOf: string;
   memo: Map<string, { value: EvalValue; node: DerivationNode | null }>;
+  /** rules being evaluated, across every exclusion pass, as "<excluded>|<ruleId>" */
   visiting: string[];
+  /** contributing rules left out of this pass (empty for the main one) */
+  excluded: ReadonlySet<string>;
+  /** one context per exclusion set, keyed by its sorted ids; shared by all */
+  passes: Map<string, Ctx>;
   assumptions: Assumption[];
   assumedFactIds: Set<string>;
   missing: Map<string, MissingFact>;
   factNodes: Map<string, DerivationNode>;
+  /** fact ids whose defaults may apply; null = every default applies */
+  defaultsAllowed: ReadonlySet<string> | null;
 }
 
 export function evaluate(
@@ -80,6 +96,11 @@ export function evaluate(
 ): EvaluateResult {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(options.asOf)) {
     throw new FactValidationError(`invalid asOf date "${options.asOf}"`);
+  }
+  for (const factId of options.allowDefaults ?? []) {
+    if (!corpus.factById.has(factId)) {
+      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`);
+    }
   }
 
   const resolved = new Map<string, Value>();
@@ -124,12 +145,16 @@ export function evaluate(
     asOf: options.asOf,
     memo: new Map(),
     visiting: [],
+    excluded: new Set(),
+    passes: new Map(),
     assumptions: [],
     stubs: new Map(),
     assumedFactIds: new Set(),
     missing: new Map(),
     factNodes: new Map(),
+    defaultsAllowed: options.refuseDefaults ? new Set(options.allowDefaults ?? []) : null,
   };
+  ctx.passes.set("", ctx);
 
   const { value, node } = evalRule(options.target, ctx);
   if (value === POISON || node === null) {
@@ -180,10 +205,11 @@ function evalRule(
     return hit;
   }
 
-  if (ctx.visiting.includes(ruleId)) {
-    throw new CycleError([...ctx.visiting, ruleId]);
+  const key = `${passKey(ctx.excluded)}|${ruleId}`;
+  if (ctx.visiting.includes(key)) {
+    throw new CycleError([...ctx.visiting, key].map(readableVisit));
   }
-  ctx.visiting.push(ruleId);
+  ctx.visiting.push(key);
   try {
     const base = selectVersion(ctx.corpus, ruleId, ctx.asOf);
     const overs = selectOverriders(ctx.corpus, ruleId, ctx.asOf);
@@ -242,6 +268,23 @@ function evalRule(
       value = evalExpr(winner.formula, winner, ctx, children);
     }
 
+    // contributions are evaluated even when the formula is missing facts, so
+    // NEEDS_FACTS lists theirs in the same pass
+    const contributions: Array<{ ruleId: string; value: TypedValueJSON }> = [];
+    let contributed = 0n;
+    for (const id of selectContributors(ctx.corpus, ruleId, ctx.asOf)) {
+      if (ctx.excluded.has(id)) continue;
+      const c = evalRule(id, ctx);
+      if (c.value === POISON || c.node === null) {
+        poisoned = true;
+        continue;
+      }
+      if (!children.includes(c.node)) children.push(c.node);
+      contributions.push({ ruleId: id, value: valueToJSON(c.value) });
+      contributed += (c.value as { cents: bigint }).cents;
+    }
+    if (poisoned) value = POISON;
+
     if (value === POISON || winner === null) {
       const entry = { value: POISON as EvalValue, node: null };
       ctx.memo.set(ruleId, entry);
@@ -252,6 +295,9 @@ function evalRule(
       throw new EngineError(
         `rule "${winner.id}" declares output ${winner.output.type} but produced ${value.type}`,
       );
+    }
+    if (contributions.length > 0 && value.type === "money") {
+      value = { type: "money", cents: value.cents + contributed };
     }
 
     const inputs: Record<string, TypedValueJSON> = {};
@@ -269,6 +315,8 @@ function evalRule(
       citation: winner.citation,
       ...(winner.id !== ruleId ? { resolvedFrom: ruleId } : {}),
       ...(overs.length > 0 ? { candidatesConsidered: candidates } : {}),
+      ...(contributions.length > 0 ? { contributions } : {}),
+      ...(ctx.excluded.size > 0 ? { excluding: [...ctx.excluded].sort() } : {}),
       inputs,
       value: valueToJSON(value),
       children,
@@ -279,6 +327,32 @@ function evalRule(
   } finally {
     ctx.visiting.pop();
   }
+}
+
+const passKey = (excluded: ReadonlySet<string>): string => [...excluded].sort().join(",");
+
+/** "<excluded>|<ruleId>" -> "ruleId" or "ruleId (excluding a, b)" for cycle messages */
+function readableVisit(key: string): string {
+  const bar = key.indexOf("|");
+  const excluded = key.slice(0, bar);
+  return excluded ? `${key.slice(bar + 1)} (excluding ${excluded.replace(/,/g, ", ")})` : key.slice(bar + 1);
+}
+
+/**
+ * The context for evaluating without some contributions. Exclusions nest
+ * (inside a pass without A, "excluding B" means without A and B). Facts,
+ * assumptions and missing facts are shared with the main pass; rule values
+ * are memoized per pass, since they differ.
+ */
+function passExcluding(ctx: Ctx, ids: string[]): Ctx {
+  const excluded = new Set([...ctx.excluded, ...ids]);
+  const k = passKey(excluded);
+  let pass = ctx.passes.get(k);
+  if (!pass) {
+    pass = { ...ctx, excluded, memo: new Map(), stubs: new Map() };
+    ctx.passes.set(k, pass);
+  }
+  return pass;
 }
 
 function candidateEntry(
@@ -317,7 +391,8 @@ function evalExpr(
       return resolveFact(expr.factId, ctx, children);
 
     case "rule": {
-      const { value, node } = evalRule(expr.ruleId, ctx);
+      const pass = expr.excluding?.length ? passExcluding(ctx, expr.excluding) : ctx;
+      const { value, node } = evalRule(expr.ruleId, pass);
       if (node && !children.includes(node)) children.push(node);
       return value;
     }
@@ -556,7 +631,10 @@ function resolveFact(
     const given = ctx.facts.get(factId);
     if (given !== undefined) {
       node = { kind: "fact", factId, value: valueToJSON(given) };
-    } else if (spec.default !== undefined) {
+    } else if (
+      spec.default !== undefined &&
+      (ctx.defaultsAllowed === null || ctx.defaultsAllowed.has(factId))
+    ) {
       const value = valueFromJSON({ type: spec.type, value: spec.default.value });
       if (!ctx.assumedFactIds.has(factId)) {
         ctx.assumedFactIds.add(factId);
@@ -575,6 +653,9 @@ function resolveFact(
         type: spec.type,
         enumValues: spec.enumValues,
         description: spec.description,
+        // refused default: say what it would have been, so the caller can
+        // accept it (allowDefaults) instead of hunting for the value
+        ...(spec.default !== undefined ? { default: spec.default } : {}),
       });
       return POISON;
     }
@@ -700,7 +781,7 @@ export function coerceFacts(
       }
       case "int": {
         let s: string;
-        if (typeof raw === "string" && /^-?\d+$/.test(raw)) s = raw;
+        if (typeof raw === "string" && /^-?\d{1,15}$/.test(raw)) s = raw;
         else if (typeof raw === "number" && Number.isSafeInteger(raw)) {
           s = String(raw);
         } else {

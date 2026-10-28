@@ -28,6 +28,8 @@ export interface CheckFlags extends Record<string, unknown> {
   target?: string;
   proof?: string;
   json?: boolean;
+  refuseDefaults?: boolean;
+  allowDefault?: string[];
 }
 
 export function runCheck(flags: CheckFlags): number {
@@ -56,7 +58,12 @@ export function runCheck(flags: CheckFlags): number {
     const expected = parseDollars(flags.expect);
     const tolerance = parseDollars(flags.tolerance ?? "1"); // agents round to dollars
     const facts = coerceFacts(corpus, plain);
-    const { value, proof } = evaluate(corpus, facts, { asOf, target });
+    const { value, proof } = evaluate(corpus, facts, {
+      asOf,
+      target,
+      refuseDefaults: flags.refuseDefaults === true,
+      allowDefaults: flags.allowDefault,
+    });
     if (value.type !== "money") {
       return emitError(
         new Error(`check requires a money-valued target, got ${value.type}`),

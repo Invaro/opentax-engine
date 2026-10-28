@@ -111,3 +111,18 @@ describe("roundToDollar / max0 / parseCents", () => {
     expect(() => parseCents("1e5")).toThrow();
   });
 });
+
+describe("input size limits", () => {
+  it("accepts amounts up to 15 digits of dollars", () => {
+    expect(parseDollars("999999999999999.99")).toBe(99999999999999999n);
+    expect(parseDollars("$123,456,789,012,345")).toBe(12345678901234500n);
+  });
+
+  it("refuses longer amounts quickly instead of building huge bigints", () => {
+    const started = Date.now();
+    expect(() => parseDollars("9".repeat(16))).toThrow(TypeError);
+    expect(() => parseDollars("9".repeat(500_000))).toThrow(TypeError);
+    expect(() => parseCents("9".repeat(19))).toThrow(TypeError);
+    expect(Date.now() - started).toBeLessThan(50);
+  });
+});

@@ -37,7 +37,11 @@ export async function rpc(body: unknown): Promise<JsonRpcResponse> {
         body: JSON.stringify(body),
       }),
     );
-    return (await res.json()) as JsonRpcResponse;
+    const text = await res.text();
+    if (text.length > 4 * 1024 * 1024) {
+      return { jsonrpc: "2.0", id: null, error: { code: -32603, message: "response too large; send a smaller request" } } as JsonRpcResponse;
+    }
+    return JSON.parse(text) as JsonRpcResponse;
   } finally {
     await server.close().catch(() => {});
   }

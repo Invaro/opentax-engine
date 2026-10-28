@@ -1,0 +1,14 @@
+{
+  "description": "TY2025: a prior-year carryover cannot be combined with the overall netCapitalLoss, which is already the year's whole Schedule D result.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "netCapitalLoss": 8000,
+    "priorYearLongTermCapitalLossCarryover": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.capital_loss_carryover",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

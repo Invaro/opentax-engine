@@ -4,7 +4,8 @@
  *
  * Computation (the Qualified Dividends and Capital Gain Tax Worksheet):
  *   ordinary part  = taxable income − preferential gains
- *   tax = ordinary brackets(ordinary part)
+ *   tax = tax on the ordinary part (line 22: Tax Table under $100,000,
+ *         § 1 brackets at or above)
  *       + 15% × gains landing between the 0% and 15% breakpoints
  *       + 20% × gains above the 15% breakpoint
  *   (gains stack ON TOP of ordinary income; the 0% bracket absorbs gains
@@ -15,8 +16,8 @@
  *   v4 TY2026 — Rev. Proc. 2025-32 §§ 4.01, 4.03
  * (v1/v2 were the ordinary-only formulas, superseded in git history.)
  *
- * Method note: exact formula; the IRS Tax Table ($50 ranges below $100k)
- * can differ by a few dollars on filed returns.
+ * Method note: the ordinary part follows worksheet line 22 (Tax Table under
+ * $100,000); useFormulaMethod switches it to the exact formula.
  */
 
 import type { BracketRow, Citation, Expr, Rule } from "@invaro/opentax-core";
@@ -112,10 +113,34 @@ function statusTax(sy: StatusYear): Expr {
   return {
     kind: "add",
     args: [
-      { kind: "brackets", base: ordinary, table: sy.brackets },
+      ordinaryPartTax(sy),
       { kind: "mulRate", base: gain15, rate: { num: "15", den: "100" }, round: "half-up" },
       { kind: "mulRate", base: gain20, rate: { num: "20", den: "100" }, round: "half-up" },
     ],
+  };
+}
+
+/**
+ * Tax on the ordinary part (QDCGT worksheet line 22): the Tax Table when the
+ * ordinary part is under $100,000, even when taxable income is $100,000 or
+ * more; the exact § 1 formula at or above, or under useFormulaMethod.
+ */
+function ordinaryPartTax(sy: StatusYear): Expr {
+  return {
+    kind: "if",
+    cond: {
+      kind: "and",
+      args: [
+        { kind: "cmp", op: "lt", left: ordinary, right: money("10000000") }, // < $100,000
+        { kind: "not", arg: fact("useFormulaMethod") },
+      ],
+    },
+    then: {
+      kind: "roundToDollar",
+      value: { kind: "brackets", base: bandMidpoint(ordinary), table: sy.brackets },
+      mode: "half-up",
+    },
+    else: { kind: "brackets", base: ordinary, table: sy.brackets },
   };
 }
 
@@ -347,14 +372,14 @@ export const incomeTaxRules: Rule[] = [
     section: "§ 1(j)(2), (j)(5); Rev. Proc. 2024-40 §§ 2.01, 2.03",
     url: "https://www.irs.gov/pub/irs-drop/rp-24-40.pdf",
     excerpt:
-      "2025 ordinary rate tables (10–37%); maximum zero rate amounts $48,350/$96,700/$64,750/$48,350 and maximum 15% rate amounts $533,400/$600,050/$566,700/$300,000 by filing status.",
+      "2025 ordinary rate tables (10–37%); maximum zero rate amounts $48,350/$96,700/$64,750/$48,350 and maximum 15% rate amounts $533,400/$600,050/$566,700/$300,000 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet.",
   }),
   incomeTaxRule(4, "2026-01-01", "2027-01-01", TY2026, "2026", {
     source: "26 U.S.C. § 1(h), (j); Rev. Proc. 2025-32",
     section: "§ 1(j)(2), (j)(5); Rev. Proc. 2025-32 §§ 4.01, 4.03",
     url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
     excerpt:
-      "2026 ordinary rate tables (10–37%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status.",
+      "2026 ordinary rate tables (10–37%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet.",
   }),
   taxTableRule(
     1, "2025-01-01", "2026-01-01", TY2025, "2025",

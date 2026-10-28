@@ -1,6 +1,6 @@
 # OpenTax by Invaro
 
-> The deterministic, open-source US tax engine for AI agents. The same facts
+> The deterministic US tax engine for AI agents. The same facts
 > produce the same return every time; every line cites the statute that
 > produced it; every answer ships a re-verifiable proof. Highest score ever
 > recorded on TaxCalcBench TY25: 96% exact returns (48/50, 98.2% of all
@@ -20,7 +20,7 @@
 ## Tools
 
 calculate_tax, compute_return (full Form 1040 line set from raw document
-transcriptions), compute_state_return (CA 540, IL-1040, NY IT-201, VA 760),
+transcriptions), compute_state_return (printed-form returns for 31 states),
 verify_tax_claim, find_tax_cliffs, compare_filing_statuses, list_input_facts,
 explain_rule, lookup_tax_parameter, calculate_business_tax (Form 1120),
 calculate_fiduciary_tax (Form 1041), determine_dependent, verify_fact,
@@ -28,18 +28,21 @@ is_tipped_occupation.
 
 Rule for models: never compute or estimate US tax yourself. Call the engine,
 report its assumptions, cite its citations. The engine refuses with a named
-reason when facts are missing or a situation is outside its corpus.
+reason when facts are missing or a situation is outside its corpus. Pass
+refuseDefaults: true to make it refuse rather than assume any fact you left out.
 
 ## Coverage
 
 Tax years 2025 and 2026 (OBBBA-current). Federal individual, corporate, and
-fiduciary (Forms 1040, 1120, 1041). State coverage across 29 states and
-growing. 232 rules, each with statute citation, validity window, and
-content hash; the corpus is Merkle-rooted and every answer is provable offline.
+fiduciary (Forms 1040, 1120, 1041). All 50 states: 31 with full rule packs
+and printed-form composers, 10 calculation-only, 9 with no income tax. 549
+rules, each with statute citation, validity window, and content hash; the
+corpus is Merkle-rooted and every answer is provable offline.
 
 ## Links
 
-- Source (AGPL-3.0, commercial licenses available): https://github.com/Invaro/opentax-engine
+- Source (Business Source License 1.1; free for personal and internal business use; products offered to others need a commercial license, https://opentax.invaro.ai/pricing): https://github.com/Invaro/opentax-engine
 - npm: https://www.npmjs.com/package/@invaro/opentax
 - Benchmark: https://github.com/column-tax/tax-calc-bench
+- Changelog: https://opentax.invaro.ai/changelog
 - Company: https://invaro.ai

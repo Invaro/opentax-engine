@@ -43,6 +43,14 @@ export interface Rule {
    * Higher priority wins; the base rule has implicit priority 0.
    */
   overrides?: { ruleId: string; priority: number };
+  /**
+   * Contribution: this rule's value is ADDED to `contributesTo`'s result,
+   * after that rule's own formula (or its winning override). An extension
+   * adds an item to a total this way without restating the total's formula.
+   * Money rules only, and no applicability guard: a contribution that does
+   * not apply is $0.
+   */
+  contributesTo?: string;
 }
 
 export interface FactSpec {

@@ -2,11 +2,15 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 /** Stateless signed confirmation tokens: base64url(email|ts) + "." + hmac. */
 
-/** Fail closed: an unset secret must never silently HMAC with a known key. */
-function secret(): string {
+/**
+ * Fail closed: an unset secret must never silently HMAC with a known key.
+ * The key is derived for this one purpose, so a waitlist token can never be
+ * mistaken for a session or sign-in token signed by lib/tokens.ts.
+ */
+function secret(): Buffer {
   const s = process.env.WAITLIST_SECRET;
   if (!s) throw new Error("WAITLIST_SECRET is not configured");
-  return s;
+  return createHmac("sha256", s).update("opentax:waitlist-confirmation").digest();
 }
 
 export function signToken(email: string, ts: number): string {

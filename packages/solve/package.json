@@ -2,7 +2,7 @@
   "name": "@invaro/opentax-solve",
   "version": "0.1.0",
   "description": "Reasoning layer over the opentax engine: what-if sweeps, marginal rates, cliff detection, inverse queries \u2014 every point proof-backed",
-  "license": "AGPL-3.0-only",
+  "license": "BUSL-1.1",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

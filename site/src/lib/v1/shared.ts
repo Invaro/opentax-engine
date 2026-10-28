@@ -10,7 +10,7 @@ export const CORS: Record<string, string> = {
 };
 
 export function json(body: unknown, status = 200, extra: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(body, null, 2), {
+  return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json; charset=utf-8", ...CORS, ...extra },
   });
@@ -21,13 +21,16 @@ export function apiError(status: number, code: string, message: string, extra: R
 }
 
 /** Auth + rate budget shared by every /v1 route. Returns a Response to send, or the resolved account. */
-export async function gate(req: Request): Promise<{ account?: Account } | Response> {
+export async function gate(
+  req: Request,
+  cost = 1,
+): Promise<{ account?: Account; budgetKey: string; budget: number } | Response> {
   const auth = await resolveApiKey(req);
   if (auth.status === "unknown") return apiError(401, "UNKNOWN_API_KEY", "unknown API key — sign in at https://opentax.invaro.ai/console to see yours");
   const budgetKey = auth.status === "ok" ? `mcp:key:${auth.keyId}` : `mcp:ip:${clientIp(req)}`;
   const budget = auth.status === "ok" ? 6000 : 600;
-  if (!rateLimit(budgetKey, budget, 3600 * 1000)) return apiError(429, "RATE_LIMITED", "rate budget exceeded");
-  return { account: auth.status === "ok" ? auth.account : undefined };
+  if (!rateLimit(budgetKey, budget, 3600 * 1000, cost)) return apiError(429, "RATE_LIMITED", "rate budget exceeded");
+  return { account: auth.status === "ok" ? auth.account : undefined, budgetKey, budget };
 }
 
 export function logRest(req: Request, tool: string, account?: Account): void {

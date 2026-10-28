@@ -104,14 +104,14 @@
         "rationale": "Assumed the 3% base-erosion test is not met absent contrary input (BEAT reaches only large multinationals with substantial related-party deductions)"
       }
     ],
-    "corpusMerkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c",
-    "artifactHash": "sha256:6c4fa263f4174f2edf157cfb5b4ad709598dfd3819032ce517842c2221241760",
+    "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960",
+    "artifactHash": "sha256:2732a37be8eda19b2dc895fc8040b5fd75262564dea242c36ec15361fa166672",
     "note": "Tell the user about any assumptions that may not match their situation. This is computation with citations, not tax advice.",
     "versions": {
       "engine": "0.1.0",
       "composer": "0.7.0",
-      "corpus": "0.40.0",
-      "corpusMerkleRoot": "sha256:39b04b404fb1fdf5613261dd64d4cece3ffb293ea6d3a1542f0e5e7c726b564c"
+      "corpus": "0.41.0",
+      "corpusMerkleRoot": "sha256:703e88a44dc7ef8a95875a57fb9d54777515c19deeabdf8892674e2921278960"
     }
   }
 }

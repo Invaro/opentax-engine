@@ -14,5 +14,5 @@
   "devDependencies": {
     "esbuild": "^0.28.1"
   },
-  "license": "AGPL-3.0-only"
+  "license": "BUSL-1.1"
 }

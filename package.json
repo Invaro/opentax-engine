@@ -2,8 +2,8 @@
   "name": "opentax-engine",
   "private": true,
   "version": "0.1.0",
-  "description": "Open-source verifiable US tax engine \u2014 every answer ships with a machine-checkable proof",
-  "license": "AGPL-3.0-only",
+  "description": "Verifiable US tax engine \u2014 every answer ships with a machine-checkable proof",
+  "license": "BUSL-1.1",
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",
@@ -16,7 +16,8 @@
     "@types/node": "^26.1.0",
     "esbuild": "0.28.1",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vite": "^7.3.7",
+    "vitest": "^4.1.12"
   },
   "packageManager": "pnpm@9.15.4",
   "engines": {
@@ -25,7 +26,8 @@
   "pnpm": {
     "overrides": {
       "fast-uri": ">=3.1.4",
-      "@hono/node-server": ">=2.0.5"
+      "@hono/node-server": ">=2.0.5",
+      "vite": ">=7.3.7 <8"
     }
   }
 }

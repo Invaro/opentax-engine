@@ -51,43 +51,43 @@ function ModelMark({ brand, active }: { brand: "claude" | "openai"; active?: boo
 const useCases = [
   {
     tag: "tax & accounting firms",
-    title: "Review every return with a second engine",
-    body: "Connect OpenTax to Claude and drop in the client file: W-2 and 1099 boxes compile deterministically into facts, the full 1040 line set recomputes to the cent, and every line your software disagrees with gets flagged, with the statute attached.",
+    title: "Check every return against a second calculation",
+    body: "Connect OpenTax to Claude and give it the client's W-2s, 1099s and the draft from your software. It recomputes every line of the 1040 and flags each one that doesn't match, with the law it's based on.",
     prompt:
       "Here's the Hendersons' W-2 and the draft 1040 from our software. Recompute every line and flag anything that doesn't match. Citation for each flag.",
   },
   {
     tag: "freelancer & S-corp clients",
-    title: "Quarterly estimates that survive lumpy income",
-    body: "Safe-harbor prongs (100% / 110% of prior year) and the § 6654 annualized-installment worksheets are encoded rules, not vibes. Windfall in Q3? The engine computes the installment that actually avoids the penalty.",
+    title: "Quarterly estimates when income comes in unevenly",
+    body: "The safe harbors (100% or 110% of last year's tax) and the annualized installment worksheet are both built in. If a client has a big third quarter, OpenTax works out the payment that avoids the penalty.",
     prompt:
       "Client draws a $60k salary and just booked a $180k Q3 licensing windfall. Compute the annualized Q3 estimate and show the safe-harbor comparison.",
   },
   {
     tag: "advisory engagements",
-    title: "Entity elections, modeled to the cent",
-    body: "S-corp election letters stop being hand-waves. Run sole-prop vs S-corp at a reasonable salary: SE tax versus payroll taxes, the QBI wage limit doing its thing, entity and personal pass in one call.",
+    title: "S-corp elections, worked out to the cent",
+    body: "Compare a sole proprietorship with an S-corp paying a reasonable salary: self-employment tax against payroll taxes, the QBI deduction under its wage limit, and the total federal difference, in one call.",
     prompt:
       "Sole prop, $220k net. Model an S-corp election at a $110k salary: SE vs payroll tax, QBI under the wage limit, total federal delta, cited.",
   },
   {
     tag: "financial planners",
-    title: "Find the cliffs before your client does",
-    body: "The solver sweeps any input across a range and reports every cliff and kink on the way: Social Security taxability ramps, the senior-deduction phase-out, the 2026 premium-credit cliff, EITC's investment-income kill switch.",
+    title: "Find the cliffs before your client hits one",
+    body: "Vary any input across a range, like an IRA withdrawal, and OpenTax reports every point where one more dollar costs more than a dollar of tax: Social Security becoming taxable, the senior deduction phasing out, the 2026 premium credit cliff, the EITC investment income limit.",
     prompt:
       "Sweep an IRA withdrawal from $0 to $80k for this 67-year-old couple. Chart the true marginal rate, flag every cliff, then find the sweet spot.",
   },
   {
     tag: "every client meeting in 2026",
-    title: "The OBBBA answer, ready before they ask",
-    body: "The corpus is dated law, so the same facts derive under 2025 or 2026 rules: tips and overtime deductions, the senior deduction, car-loan interest, charity for non-itemizers, the SALT phase-down. The “what changes for me” letter writes itself.",
+    title: "What the new law changes for each client",
+    body: "Every rule knows the dates it applies, so the same facts can run under 2025 law and 2026 law: the tips and overtime deductions, the senior deduction, car loan interest, charity for people who don't itemize, and the SALT phase-down.",
     prompt:
       "Run the Alvarez file under 2025 law, then 2026 law. Draft the client letter: what changes, by how much, and which OBBBA section did it.",
   },
   {
     tag: "review & audit trail",
-    title: "Numbers you can staple to the workpapers",
-    body: "Every computation ships a Merkle-rooted proof of the facts, rules, arithmetic, and citations, verifiable offline months later, byte for byte. And outside the corpus the engine refuses loudly instead of guessing: the failure mode that matters in this profession.",
+    title: "Numbers you can put in the workpapers",
+    body: "Every answer comes with a proof: the facts, each rule and its citation, and every step of arithmetic. Anyone can check it offline, months later. When a situation isn't covered, OpenTax says so instead of guessing.",
     prompt:
       "Recompute Schedule 8812 for the review file and attach the proof artifact. I want every step re-derivable at audit time.",
   },
@@ -131,28 +131,28 @@ const featureIcons: Record<string, React.ReactNode> = {
 const features = [
   {
     k: "01",
-    title: "Cited, verbatim",
-    body: "Every rule in the corpus carries its statute: 26 U.S.C. section, effective window, and a verbatim source excerpt. No number enters the engine on model recall.",
+    title: "Every rule cites the law",
+    body: "Each rule carries its code section, the dates it applies, and the exact text it comes from. No number comes from a model's memory.",
   },
   {
     k: "02",
-    title: "Provable",
-    body: "Every computation returns a Merkle-rooted proof: the facts, the rules, the arithmetic. Re-verify any answer offline, byte for byte.",
+    title: "Every answer has a proof",
+    body: "The proof records the facts, the rules and the arithmetic behind an answer. You can check it offline, without trusting us.",
   },
   {
     k: "03",
-    title: "Documents in, facts out",
-    body: "A deterministic compiler turns W-2 and 1099 boxes plus birth dates into engine facts. Ages, dependent classifications, penalties, excess withholding, all with zero judgment calls.",
+    title: "Works from the forms",
+    body: "Give it the boxes from W-2s and 1099s and the family's birth dates. It works out ages, who counts as a dependent, penalties and excess withholding from those.",
   },
   {
     k: "04",
-    title: "Refuses loudly",
-    body: "Anything outside the corpus refuses with a named reason instead of guessing. A wrong answer that looks right is the one failure mode we do not ship.",
+    title: "Says when it can't answer",
+    body: "When a situation isn't covered, OpenTax refuses and says why, instead of returning a number that looks right and isn't.",
   },
   {
     k: "05",
-    title: "Federal + state",
-    body: "Individual, corporate, and fiduciary: Forms 1040, 1120, and 1041, complete line sets in one call. State coverage across 29 states and growing, every line under the same citation discipline.",
+    title: "Federal and state",
+    body: "Forms 1040, 1120 and 1041, each line by line in one call. Full returns for 31 states, flat calculations for 10 more, and the nine states with no income tax.",
   },
 ];
 
@@ -269,12 +269,20 @@ export default function Page() {
           </div>
           <KeysNav />
           <div className="flex items-center gap-3">
-            <Link
-              href="/docs"
-              className="hidden sm:block text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Docs
+            <Link href="/pricing" className="sm:hidden text-xs text-muted-foreground hover:text-foreground transition-colors">
+              Pricing
             </Link>
+            <nav aria-label="Site" className="hidden sm:flex lg:hidden items-center gap-4 text-xs">
+              {[
+                ["Docs", "/docs"],
+                ["Pricing", "/pricing"],
+                ["Changelog", "/changelog"],
+              ].map(([label, href]) => (
+                <Link key={href} href={href} className="text-muted-foreground hover:text-foreground transition-colors">
+                  {label}
+                </Link>
+              ))}
+            </nav>
             <ThemeToggle />
             <GithubStars />
             <Link
@@ -294,7 +302,7 @@ export default function Page() {
             href="#benchmark"
             className="animate-fade-blur-in rounded-full border border-border flex space-x-2 items-center px-3.5 py-1.5 mb-8 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
           >
-            <span className="whitespace-nowrap">The deterministic tax engine for AI agents</span>
+            <span className="whitespace-nowrap">96% on TaxCalcBench, the highest score recorded</span>
             <Arrow />
           </Link>
 
@@ -302,22 +310,20 @@ export default function Page() {
             className="animate-fade-blur-in font-serif font-normal text-[40px] md:text-6xl xl:text-7xl leading-[1.1] tracking-tight mb-6"
             style={{ animationDelay: "80ms" }}
           >
-            Turn any AI into a
+            Exact US tax calculations
             <br />
-            <em className="not-italic text-muted-foreground">precise tax preparer</em>
+            <em className="not-italic text-muted-foreground">for any agent</em>
           </h1>
 
           <p
             className="animate-fade-blur-in text-sm md:text-base lg:text-lg leading-relaxed text-muted-foreground max-w-[640px] mb-10"
             style={{ animationDelay: "160ms" }}
           >
-            Language models are probabilistic. Tax law is not. OpenTax is a deterministic
-            computation engine: the same facts produce the same return, every time, with every
-            line traced to the statute that produced it. It is{" "}
-            <span className="text-foreground">the only open-source tax engine on the market</span>
-            , and{" "}
-            <span className="text-foreground">the highest-scoring engine ever measured</span>{" "}
-            against one.
+            AI models read tax documents well and do tax math badly. OpenTax does the math for
+            them: the same facts always give the same return, and every line points to the law
+            behind it. With OpenTax, Claude Sonnet gets{" "}
+            <span className="text-foreground">96% of TaxCalcBench returns exactly right</span>, the
+            highest score recorded.
           </p>
 
           <div
@@ -329,7 +335,7 @@ export default function Page() {
               href="#install"
               className="h-11 px-6 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center whitespace-nowrap"
             >
-              Install in 30 seconds
+              Install
             </Link>
           </div>
 
@@ -355,16 +361,16 @@ export default function Page() {
         <div className="max-w-[780px] mx-auto grid md:grid-cols-3 border-t border-l border-border">
           {[
             {
-              t: "Deterministic",
-              d: "Same facts, same return, every single time. Rules and exact arithmetic, not sampling. Nothing an LLM can drift on.",
+              t: "Same answer every time",
+              d: "The same facts always produce the same return. It's rules and exact arithmetic, not a model's best guess.",
             },
             {
-              t: "The only open-source one",
-              d: "There is no other open-source tax engine on the market. AGPL-3.0, every rule and every test in public.",
+              t: "Source on GitHub",
+              d: "Every rule and every test is public, so you can read exactly how any number was reached.",
             },
             {
-              t: "The HIGHEST-scoring one",
-              d: "96% exact returns on TaxCalcBench. No model, no engine, open or closed, has ever scored higher.",
+              t: "Highest benchmark score",
+              d: "96% of TaxCalcBench returns exactly right. No model or engine has scored higher.",
             },
           ].map((c) => (
             <div
@@ -396,9 +402,9 @@ export default function Page() {
         </div>
         <div className="container relative flex flex-col items-center text-center mb-12">
           <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
-            The model isn&apos;t the ceiling.
+            The same model goes
             <br />
-            <em className="not-italic text-muted-foreground">The engine is.</em>
+            <em className="not-italic text-muted-foreground">from 6% to 96%</em>
           </h2>
           <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[620px]">
             <Link
@@ -407,14 +413,10 @@ export default function Page() {
             >
               TaxCalcBench
             </Link>
-            , the industry benchmark for AI tax work, asks a model to prepare 50 complete US
-            tax returns. A return only counts if every line is exact. Claude Sonnet on its own
-            gets 6% of returns right.{" "}
-            <span className="text-foreground">
-              The same Sonnet, using OpenTax, gets 96%. The highest score ever recorded
-            </span>
-            , above every top model, with or without web search. The engine amplifies whatever
-            model you point at it.
+            {" "}asks a model to prepare 50 complete US tax returns, and a return only counts if
+            every line is exact. Claude Sonnet on its own gets 6% right.{" "}
+            <span className="text-foreground">The same Sonnet using OpenTax gets 96%</span>, more
+            than any model tested, with or without web search.
           </p>
         </div>
 
@@ -451,7 +453,7 @@ export default function Page() {
                   <span className="flex-1 border-t border-dashed border-border" />
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-2">
-                  one URL, two minutes, nothing else changes
+                  one URL, nothing else changes
                 </div>
               </div>
 
@@ -538,19 +540,18 @@ export default function Page() {
             {/* the other two */}
             <div className="border-l border-r border-b border-t border-border bg-background p-6 md:p-8">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-3">
-                and the two misses?
+                the two it missed
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                We traced both to reference returns whose worksheets are inconsistent with
-                their own inputs. No published model run has matched those two cases
-                either.{" "}
+                Both reference returns have worksheets that don&apos;t match their own inputs, and
+                no published model run gets them right either.{" "}
                 <Link
                   href="https://github.com/column-tax/tax-calc-bench/issues/96"
                   className="underline underline-offset-4 hover:text-foreground"
                 >
-                  We filed the bug upstream
+                  We reported it to the benchmark&apos;s maintainers
                 </Link>
-                . An engine precise enough to audit the exam it&apos;s taking.
+                .
               </p>
             </div>
 
@@ -593,12 +594,11 @@ export default function Page() {
       <section id="usecases" className="container mt-28 md:mt-44 scroll-mt-20">
         <div className="flex flex-col items-center text-center mb-10">
           <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
-            What your agent <em className="not-italic text-muted-foreground">does with it</em>
+            What firms <em className="not-italic text-muted-foreground">use it for</em>
           </h2>
           <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[620px]">
-            OpenTax is the computation layer under whatever AI you already use: Claude, ChatGPT,
-            Cursor, or your own agent. The model does the reading and the writing; the engine does
-            the math. In practice:
+            OpenTax works under the agent you already use, like Claude, ChatGPT, Cursor or your own
+            agent. The model reads the documents and writes the reply, and OpenTax does the math.
           </p>
         </div>
 
@@ -615,7 +615,7 @@ export default function Page() {
               <p className="text-sm text-muted-foreground leading-relaxed mb-5">{u.body}</p>
               <div className="mt-auto">
                 <div className="text-[10px] text-muted-foreground mb-1.5">
-                  → to your agent, verbatim
+                  what you&apos;d ask
                 </div>
                 <blockquote className="bg-accent border border-border px-4 py-3 font-mono text-[11px] leading-relaxed">
                   &ldquo;{u.prompt}&rdquo;
@@ -626,12 +626,11 @@ export default function Page() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground max-w-[720px] mx-auto leading-relaxed">
-          research is built in too: <code className="font-mono">search_tax_rules</code> finds the
-          encoded law by keyword, <code className="font-mono">lookup_tax_parameter</code> returns
-          the dollar amounts with citations, and <code className="font-mono">verify_fact</code>{" "}
-          answers verified / refuted, and zero hits means &ldquo;outside the corpus&rdquo;, never a
-          guess · same engine as a CLI (<code className="font-mono">opentax check --expect</code>{" "}
-          for CI) and a TypeScript library that runs entirely in a browser tab
+          It can look things up too. <code className="font-mono">search_tax_rules</code> finds a rule
+          by keyword, <code className="font-mono">lookup_tax_parameter</code> gives the dollar
+          amounts with citations, and <code className="font-mono">verify_fact</code> tells you whether
+          a figure is right. If nothing matches, the law isn&apos;t covered yet. The same engine runs
+          as a command line tool and as a TypeScript library in the browser.
         </p>
       </section>
 
@@ -642,8 +641,8 @@ export default function Page() {
             Works with <em className="not-italic text-muted-foreground">what you already use</em>
           </h2>
           <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[560px]">
-            If it speaks MCP, it can prepare a return: assistants, IDEs, agents, and automation
-            platforms.
+            Anything that supports MCP can use OpenTax: chat assistants, code editors, agents and
+            automation tools.
           </p>
         </div>
         <div className="mx-auto max-w-[1100px] space-y-3 px-4">
@@ -657,10 +656,11 @@ export default function Page() {
         <div className="container relative">
           <div className="flex flex-col items-center text-center mb-10">
             <h2 className="font-serif text-3xl md:text-5xl leading-tight tracking-tight mb-4">
-              One URL. <em className="not-italic text-muted-foreground">Any agent.</em>
+              Add OpenTax <em className="not-italic text-muted-foreground">to your agent</em>
             </h2>
             <p className="text-sm md:text-base leading-relaxed text-muted-foreground max-w-[560px]">
-              Hosted, stateless, free to try. Paste the connector into anything that speaks MCP.
+              Paste this URL into any app that supports MCP. We host it, and you can try it
+              without an account.
             </p>
           </div>
 
@@ -683,6 +683,23 @@ export default function Page() {
             {/* per-client connect steps */}
             <ConnectTabs />
 
+            {/* firms: the signed-in connector comes with the Firm plan */}
+            <div className="flex flex-col gap-4 border-x border-b border-border bg-card p-5 md:flex-row md:items-center md:justify-between md:p-6">
+              <div className="min-w-0">
+                <div className="text-sm mb-1.5">Using OpenTax at a firm?</div>
+                <p className="text-xs text-muted-foreground leading-relaxed max-w-[460px]">
+                  With the Firm plan, everyone on your team connects their agent with their own email, and the engineers who
+                  build OpenTax answer your questions within 24 hours. $9 a seat a month, $5 from six seats.
+                </p>
+              </div>
+              <Link
+                href="/pricing"
+                className="inline-flex h-9 shrink-0 items-center self-start bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:self-auto"
+              >
+                See the Firm plan
+              </Link>
+            </div>
+
             {/* npm + registry row */}
             <div className="grid md:grid-cols-2 border-l border-border">
               <div className="border-b border-r border-border p-5 md:p-6 min-w-0">
@@ -693,7 +710,7 @@ export default function Page() {
                   <span className="text-sm">Run it locally</span>
                 </div>
                 <div className="text-xs text-muted-foreground mb-3">
-                  one self-contained package: MCP server, CLI, and HTTP host in a single binary
+                  One package with the MCP server, the command line tool and an HTTP server.
                 </div>
                 <div className="flex items-stretch gap-1.5 mb-1.5 min-w-0">
                   <code className="flex-1 min-w-0 block font-mono text-[10px] md:text-[11px] bg-accent px-3 py-2 overflow-x-auto whitespace-nowrap">
@@ -713,10 +730,10 @@ export default function Page() {
                   <span className="text-muted-foreground">
                     <GitHubMark size={16} />
                   </span>
-                  <span className="text-sm">Open source, listed</span>
+                  <span className="text-sm">Source and listings</span>
                 </div>
                 <div className="text-xs text-muted-foreground mb-3">
-                  AGPL-3.0 + commercial · on the official MCP registry as io.github.Invaro/opentax
+                  Business Source License. Listed in the official MCP registry as io.github.Invaro/opentax.
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <Link
@@ -738,7 +755,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* open source */}
+      {/* public source */}
       <section id="source" className="container mt-28 md:mt-44 scroll-mt-20">
         <div className="max-w-[780px] mx-auto">
           <OpenSourceProof />
@@ -759,11 +776,11 @@ export default function Page() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/30 to-black/15" />
           <div className="relative flex flex-col items-center px-6 py-24 text-center md:py-36">
             <h2 className="mb-6 font-serif text-3xl leading-tight tracking-tight text-white md:text-6xl">
-              Give your model <em className="not-italic text-white/70">the engine</em>
+              Try it on <em className="not-italic text-white/70">a real return</em>
             </h2>
             <p className="mb-8 max-w-[560px] text-sm leading-relaxed text-white/80 md:text-base">
-              One MCP server. Grouped facts in, the full scored line set out: cited, rounded the
-              way the forms round, and provable.
+              Add the connector, give your agent a return you&apos;ve already filed, and compare every
+              line. Each one comes back cited and rounded the way the form rounds.
             </p>
             <div className="flex w-full flex-col items-stretch gap-3 px-6 sm:w-auto sm:flex-row sm:items-center sm:gap-4 sm:px-0">
               <Link
@@ -783,7 +800,7 @@ export default function Page() {
         </div>
         <div className="mt-10 flex flex-col items-center gap-2 text-center">
           <p className="text-[10px] text-muted-foreground">
-            or get new features and other things worth knowing in your inbox · double opt-in ·{" "}
+            Or get an email when we ship something new. We confirm your address first.{" "}
             <Link href="/privacy" className="underline underline-offset-4 hover:text-foreground">
               privacy
             </Link>
@@ -808,6 +825,11 @@ export default function Page() {
                   <li>
                     <Link href="/console" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                       api console
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      pricing
                     </Link>
                   </li>
                   <li>
@@ -865,6 +887,14 @@ export default function Page() {
                   </li>
                   <li>
                     <Link
+                      href="/changelog"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      changelog
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       href="/privacy"
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
@@ -875,13 +905,13 @@ export default function Page() {
               </div>
             </div>
             <div className="flex flex-col items-start lg:items-end gap-6">
-              <p className="text-xl">The model reads. The engine computes.</p>
+              <p className="text-xl">Exact US tax calculations for any agent.</p>
               <span className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="relative flex h-2 w-2 items-center justify-center">
                   <span className="absolute h-2 w-2 rounded-full bg-green-500 animate-[pulse-glow_2s_ease-in-out_infinite]" />
                   <span className="relative h-1.5 w-1.5 rounded-full bg-green-500" />
                 </span>
-                deterministic · every line cited
+                every line cited
               </span>
             </div>
           </div>
