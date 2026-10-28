@@ -1,0 +1,16 @@
+{
+  "description": "IRS Pub 560 (2025) Deduction Worksheet for Self-Employed, the publication's own example: net profit $200,000 (step 1), self-employment tax deduction $13,596 (step 2: SE tax $21,836 + $5,356 = $27,192, half), net earnings $186,404 (step 3).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.plan_compensation.schedule_c",
+  "expect": {
+    "valueCents": "18640400",
+    "intermediates": {
+      "us.federal.se_tax_half_deduction.taxpayer": "1359600"
+    }
+  }
+}

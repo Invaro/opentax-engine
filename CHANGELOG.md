@@ -2,6 +2,20 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · Retirement contribution maximums
+
+New targets give the most a self-employed person or an S-corporation owner can put into a solo 401(k) or a SEP, for 2025 and 2026:
+
+- Sole proprietors: `us.federal.retirement.solo_401k_max.schedule_c` and `us.federal.retirement.sep_max.schedule_c`. These follow the IRS Publication 560 Deduction Worksheet for Self-Employed step by step, from net profit less half the self-employment tax.
+- S-corporation owners: `us.federal.retirement.solo_401k_max.s_corp` and `us.federal.retirement.sep_max.s_corp`. These start from the owner's plan compensation, `ownerEmployeePlanCompensation`.
+
+Each solo 401(k) maximum is split into its employer, deferral and catch-up parts. The limits are applied per year:
+
+- The § 402(g) deferral limit, shared with other employers' plans through `otherElectiveDeferrals`.
+- Catch-up from age 50, and the higher limit at ages 60 to 63 (`isAge60Through63`).
+- The § 415(c) annual additions limit.
+- The § 401(a)(17) compensation cap.
+
 ## Next release · Self-employment tax for both spouses
 
 When both spouses on a joint return are self-employed, each now gets their own Schedule SE, as the instructions require. Enter the second spouse's profit in `spouseSelfEmploymentNetProfit` and their W-2 box 3 in `spouseSocialSecurityWages` (`--spouse-se-profit`, `--spouse-ss-wages`). Each Schedule SE has its own $400 floor and its own social security wage base, so a spouse whose W-2 already reaches the base owes only the Medicare part, while the other still owes both. The two amounts add on Schedule 2 line 4 and Schedule 1 line 15, and both profits count in gross income, earned income, QBI and Form 8959. Above the § 199A threshold, two spouses' businesses refuse until per-business QBI ships.

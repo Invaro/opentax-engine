@@ -1,6 +1,6 @@
 {
   "corpusVersion": "0.41.0",
-  "merkleRoot": "sha256:2b61ff3a20c5eb82f5cde5aabf5132005f1f4805feb6b4757d19a03fabc3b5f2",
+  "merkleRoot": "sha256:6b69b42b65101bca25fbdd164c1679a1b88a71f5917e969b876070d8d48745fe",
   "tools": [
     {
       "name": "calculate_tax",
@@ -564,6 +564,24 @@
               "isAge50OrOlder": {
                 "type": "boolean",
                 "description": "Taxpayer attained age 50 before the close of the taxable year (IRA catch-up, § 219(b)(5)(B))."
+              },
+              "isAge60Through63": {
+                "type": "boolean",
+                "description": "Taxpayer attains age 60, 61, 62 or 63 during the year — the higher § 414(v)(2)(E)(i) catch-up limit for 401(k)/403(b)/457 plans ($11,250 for 2025 and 2026 instead of $7,500/$8,000). Asked only when isAge50OrOlder. Used by the us.federal.retirement.* maximum targets."
+              },
+              "otherElectiveDeferrals": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Elective deferrals (pre-tax and Roth, including any catch-up) this person already made THIS YEAR to OTHER employers' 401(k), 403(b), SIMPLE or Thrift Savings plans — they share one § 402(g) limit and one catch-up limit per person, so they reduce the room left for the solo plan. Used by the us.federal.retirement.solo_401k_max.* targets. In dollars."
+              },
+              "ownerEmployeePlanCompensation": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "An S-corporation owner-employee's compensation from their own corporation for its retirement plan (§ 415(c)(3)): W-2 box 1 wages from that corporation PLUS the elective deferrals made to its plan (box 12 codes D and AA), so box 1 + deferrals. Not other employers' wages. Drives the us.federal.retirement.*.s_corp maximum targets only. In dollars."
               },
               "hsaContribution": {
                 "type": [
@@ -10855,6 +10873,24 @@
               "isAge50OrOlder": {
                 "type": "boolean",
                 "description": "Taxpayer attained age 50 before the close of the taxable year (IRA catch-up, § 219(b)(5)(B))."
+              },
+              "isAge60Through63": {
+                "type": "boolean",
+                "description": "Taxpayer attains age 60, 61, 62 or 63 during the year — the higher § 414(v)(2)(E)(i) catch-up limit for 401(k)/403(b)/457 plans ($11,250 for 2025 and 2026 instead of $7,500/$8,000). Asked only when isAge50OrOlder. Used by the us.federal.retirement.* maximum targets."
+              },
+              "otherElectiveDeferrals": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Elective deferrals (pre-tax and Roth, including any catch-up) this person already made THIS YEAR to OTHER employers' 401(k), 403(b), SIMPLE or Thrift Savings plans — they share one § 402(g) limit and one catch-up limit per person, so they reduce the room left for the solo plan. Used by the us.federal.retirement.solo_401k_max.* targets. In dollars."
+              },
+              "ownerEmployeePlanCompensation": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "An S-corporation owner-employee's compensation from their own corporation for its retirement plan (§ 415(c)(3)): W-2 box 1 wages from that corporation PLUS the elective deferrals made to its plan (box 12 codes D and AA), so box 1 + deferrals. Not other employers' wages. Drives the us.federal.retirement.*.s_corp maximum targets only. In dollars."
               },
               "hsaContribution": {
                 "type": [

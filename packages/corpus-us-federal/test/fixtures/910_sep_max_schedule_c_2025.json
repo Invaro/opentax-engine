@@ -1,0 +1,13 @@
+{
+  "description": "Maximum SEP for that sole proprietor: 20% of $186,404 = $37,280.80 (Rate Table for Self-Employed, 25% plan rate), under 25% × $350,000 = $87,500 and the $70,000 § 415(c) limit.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.sep_max.schedule_c",
+  "expect": {
+    "valueCents": "3728080"
+  }
+}

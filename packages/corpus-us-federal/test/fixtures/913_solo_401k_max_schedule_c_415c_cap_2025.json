@@ -1,0 +1,17 @@
+{
+  "description": "High earner, $400,000 net profit, age 52: step 3 $383,725; 20% is $76,745 but step 10 caps the employer part at $70,000 − $23,500 = $46,500. Maximum $46,500 + $23,500 + $7,500 catch-up = $77,500.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 400000,
+    "isAge50OrOlder": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.schedule_c",
+  "expect": {
+    "valueCents": "7750000",
+    "intermediates": {
+      "us.federal.retirement.solo_401k_max.schedule_c.employer": "4650000"
+    }
+  }
+}

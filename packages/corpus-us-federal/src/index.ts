@@ -35,6 +35,7 @@ import { ptcRules } from "./rules/ptc.js";
 import { residualRules } from "./rules/residual.js";
 import { employerRules } from "./rules/employer.js";
 import { estimatedTaxRules } from "./rules/estimated-tax.js";
+import { retirementLimitRules } from "./rules/retirement-limits.js";
 import { incomeRules } from "./rules/income.js";
 import { incomeTaxRules } from "./rules/income-tax.js";
 import { internationalAndRemainderRules } from "./rules/international.js";
@@ -107,6 +108,7 @@ export const corpusInput: CorpusInput = {
     ...investmentTaxRules,
     ...netTaxRules,
     ...estimatedTaxRules,
+    ...retirementLimitRules,
     ...annualizedInstallmentRules,
     ...dependentRules,
   ],
