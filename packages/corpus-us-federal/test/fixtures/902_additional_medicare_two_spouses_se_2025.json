@@ -1,0 +1,16 @@
+{
+  "description": "Form 8959 on a joint return combines both spouses: Medicare wages $200,000 use up $200,000 of the $250,000 threshold, and line 8 takes both Schedule SE line 6 amounts, $46,175 + $46,175 = $92,350. Part II: 0.9% × ($92,350 − $50,000) = $381.15, $381.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "socialSecurityWages": 176100,
+    "socialSecurityWagesProvided": true,
+    "selfEmploymentNetProfit": 50000,
+    "spouseSelfEmploymentNetProfit": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.additional_medicare_tax",
+  "expect": {
+    "valueCents": "38100"
+  }
+}

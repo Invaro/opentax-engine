@@ -1,0 +1,20 @@
+{
+  "description": "Why Schedule SE is per person: the first spouse's W-2 box 3 is $176,100, the full 2025 wage base, so their $50,000 profit (net earnings $46,175) owes only Medicare, $1,339. The second spouse has no W-2, so their own $50,000 owes OASDI $5,726 + Medicare $1,339 = $7,065. Total $8,404; one combined Schedule SE would have zeroed the second spouse's OASDI.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "socialSecurityWages": 176100,
+    "socialSecurityWagesProvided": true,
+    "selfEmploymentNetProfit": 50000,
+    "spouseSelfEmploymentNetProfit": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "840400",
+    "intermediates": {
+      "us.federal.se_tax.taxpayer": "133900",
+      "us.federal.se_tax.spouse": "706500"
+    }
+  }
+}

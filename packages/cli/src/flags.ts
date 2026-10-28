@@ -503,6 +503,22 @@ export const FACT_FLAGS: FactFlag[] = [
     boolean: false,
   },
   {
+    factId: "spouseSelfEmploymentNetProfit",
+    option: "--spouse-se-profit <dollars>",
+    key: "spouseSeProfit",
+    group: "Income:",
+    help: "joint return: the other spouse's own self-employment net profit (their own Schedule SE)",
+    boolean: false,
+  },
+  {
+    factId: "spouseSocialSecurityWages",
+    option: "--spouse-ss-wages <dollars>",
+    key: "spouseSsWages",
+    group: "Income:",
+    help: "W-2 box 3 social security wages of the spouse in --spouse-se-profit (their Schedule SE line 8a)",
+    boolean: false,
+  },
+  {
     factId: "scheduleCNetLoss",
     option: "--schedule-c-loss <dollars>",
     key: "scheduleCLoss",

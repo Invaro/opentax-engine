@@ -1,0 +1,21 @@
+{
+  "description": "AGI with two Schedule SEs: wages $200,000 + profits $100,000 − the half-SE deductions $670 + $3,533 = $4,203 (each Schedule SE line 13 rounded) = $295,797.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "socialSecurityWages": 176100,
+    "socialSecurityWagesProvided": true,
+    "selfEmploymentNetProfit": 50000,
+    "spouseSelfEmploymentNetProfit": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "29579700",
+    "intermediates": {
+      "us.federal.se_tax_half_deduction.taxpayer": "67000",
+      "us.federal.se_tax_half_deduction.spouse": "353300",
+      "us.federal.se_net_profit": "10000000"
+    }
+  }
+}

@@ -65,7 +65,7 @@ const qbi: Expr = {
           kind: "max0",
           arg: {
             kind: "sub",
-            left: fact("selfEmploymentNetProfit"),
+            left: ruleRef("us.federal.se_net_profit"),
             right: {
               kind: "add",
               args: [
@@ -86,7 +86,7 @@ const qbi: Expr = {
 const hasBusinessIncome: Expr = {
   kind: "or",
   args: [
-    { kind: "cmp", op: "gt", left: fact("selfEmploymentNetProfit"), right: zero },
+    { kind: "cmp", op: "gt", left: ruleRef("us.federal.se_net_profit"), right: zero },
     { kind: "cmp", op: "gt", left: fact("k1OrdinaryBusinessIncome"), right: zero },
   ],
 };
@@ -177,7 +177,18 @@ function qbiRule(
     kind: "if",
     cond: { kind: "cmp", op: "eq", left: excess, right: zero },
     then: tentative, // at or below the threshold: no SSTB question, no limits
-    else: { kind: "if", cond: fact("businessIsSSTB"), then: sstb, else: nonSstb },
+    else: {
+      // two spouses' Schedule C businesses: above the threshold each business has its
+      // own W-2/UBIA limit and SSTB status (Form 8995-A Part II, one column each)
+      kind: "if",
+      cond: { kind: "cmp", op: "gt", left: ruleRef("us.federal.se_net_profit.spouse"), right: zero },
+      then: {
+        kind: "unsupported",
+        reason:
+          "both spouses have self-employment income and taxable income is over the § 199A threshold: each business then needs its own W-2 wage/UBIA limit and SSTB test (Form 8995-A Part II), and per-business QBI is not modeled yet",
+      },
+      else: { kind: "if", cond: fact("businessIsSSTB"), then: sstb, else: nonSstb },
+    },
   };
 
   // overall § 199A(a)(2) limit: 20% of (taxable income − net capital gain),
@@ -214,7 +225,7 @@ function qbiRule(
       source: `26 U.S.C. § 199A; ${source}`,
       section: "§ 199A(a)–(d)",
       url: "https://www.law.cornell.edu/uscode/text/26/199A",
-      excerpt: `20 percent of qualified business income — QBI reduced by the attributable ½-SE-tax, SEP, and SE-health-insurance deductions (Reg. § 1.199A-3(b)(1)(vi)) — limited to 20 percent of taxable income (without this deduction) less net capital gain. Above the § 199A(e)(2) threshold the deduction is limited to the greater of 50 percent of the business's W-2 wages or 25 percent of W-2 wages plus 2.5 percent of UBIA, phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) band" : "OBBBA-widened $75,000 ($150,000 joint) band (§ 70105, taxable years after 2025)"}; a specified service trade or business scales its items by the applicable percentage and gets nothing past the band.${withMinimum ? " OBBBA § 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed — disclosed)." : ""} [Single trade or business — no aggregation, no REIT/PTP component; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages — disclosed.]`,
+      excerpt: `20 percent of qualified business income — QBI reduced by the attributable ½-SE-tax, SEP, and SE-health-insurance deductions (Reg. § 1.199A-3(b)(1)(vi)) — limited to 20 percent of taxable income (without this deduction) less net capital gain. Above the § 199A(e)(2) threshold the deduction is limited to the greater of 50 percent of the business's W-2 wages or 25 percent of W-2 wages plus 2.5 percent of UBIA, phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) band" : "OBBBA-widened $75,000 ($150,000 joint) band (§ 70105, taxable years after 2025)"}; a specified service trade or business scales its items by the applicable percentage and gets nothing past the band.${withMinimum ? " OBBBA § 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed — disclosed)." : ""} [Single trade or business above the threshold (two self-employed spouses' businesses compute below it and refuse above it) — no aggregation, no REIT/PTP component; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages — disclosed.]`,
     },
     effectiveFrom,
     effectiveTo,
@@ -240,7 +251,7 @@ function qbiRule(
 
 export const qbiRules: Rule[] = [
   qbiRule(
-    9, // v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
+    11, // v9 counted one self-employed person; v11 counts both spouses' profit below the threshold and refuses two businesses above it. v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
     "2025-01-01", "2026-01-01", "2025",
     {
       kind: "if",
@@ -253,7 +264,7 @@ export const qbiRules: Rule[] = [
     false,
   ),
   qbiRule(
-    10, // v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
+    12, // v10 counted one self-employed person; v12 counts both spouses' profit below the threshold and refuses two businesses above it. v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
     "2026-01-01", "2027-01-01", "2026",
     {
       kind: "match",

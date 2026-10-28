@@ -159,7 +159,7 @@ const actcMaximum: Rule = {
       kind: "mulRate",
       base: max0(
         sub(
-          add(fact("wages"), max0(sub(fact("selfEmploymentNetProfit"), ruleRef("us.federal.se_tax_half_deduction")))),
+          add(fact("wages"), max0(sub(ruleRef("us.federal.se_net_profit"), ruleRef("us.federal.se_tax_half_deduction")))),
           add(param("earnedIncomeFloor"), fact("scheduleCNetLoss")),
         ),
       ),

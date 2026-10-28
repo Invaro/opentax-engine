@@ -657,6 +657,29 @@ export const facts: FactSpec[] = [
     },
   },
   {
+    id: "spouseSelfEmploymentNetProfit",
+    type: "money",
+    min: "0",
+    description:
+      "JOINT RETURN ONLY: the OTHER spouse's own net profit from self-employment (their own Schedule C line 31) when both spouses are self-employed — the second Schedule SE. selfEmploymentNetProfit holds the first spouse's. Each spouse's Schedule SE has its own $400 floor and its own social security wage base, coordinated with that spouse's own W-2 box 3 (spouseSocialSecurityWages). Both profits count in gross income, earned income, QBI and Form 8959. Not modeled for this second spouse, disclosed: SEP or solo 401(k) contributions, self-employed health insurance and the simplified home office (sepContribution, selfEmployedHealthPremiums and homeOfficeSquareFeet are the first spouse's). Any other filing status refuses: on a separate or single return, enter the filer's own profit in selfEmploymentNetProfit. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed only one spouse has self-employment income absent contrary input",
+    },
+  },
+  {
+    id: "spouseSocialSecurityWages",
+    type: "money",
+    min: "0",
+    description:
+      "W-2 box 3 social security wages of the spouse in spouseSelfEmploymentNetProfit — line 8a of THAT spouse's Schedule SE, which caps their OASDI portion at the wage base minus these wages. Only that spouse's own W-2s, never the couple's sum. Asked only when spouseSelfEmploymentNetProfit is given. In dollars.",
+    default: {
+      value: "0",
+      rationale:
+        "Assumed the second self-employed spouse had no W-2 social security wages (the full OASDI base is available to their self-employment earnings)",
+    },
+  },
+  {
     id: "hasChildUnderSix",
     type: "bool",
     description:

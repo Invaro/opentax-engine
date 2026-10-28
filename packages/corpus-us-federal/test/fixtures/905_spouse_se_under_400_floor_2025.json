@@ -1,0 +1,13 @@
+{
+  "description": "The $400 floor is per Schedule SE (§ 1402(b)(2)): the second spouse's $300 profit (net earnings $277.05) owes no self-employment tax.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 50000,
+    "spouseSelfEmploymentNetProfit": 300
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax.spouse",
+  "expect": {
+    "valueCents": "0"
+  }
+}

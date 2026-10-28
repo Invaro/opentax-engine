@@ -1,0 +1,20 @@
+{
+  "description": "TY2026 ($184,500 wage base): first spouse's box 3 $184,500 leaves no OASDI room, Medicare $1,339 on $46,175; second spouse with no W-2 owes $5,726 + $1,339 = $7,065. Total $8,404.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 200000,
+    "socialSecurityWages": 184500,
+    "socialSecurityWagesProvided": true,
+    "selfEmploymentNetProfit": 50000,
+    "spouseSelfEmploymentNetProfit": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "840400",
+    "intermediates": {
+      "us.federal.se_tax.taxpayer": "133900",
+      "us.federal.se_tax.spouse": "706500"
+    }
+  }
+}

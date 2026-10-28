@@ -117,7 +117,7 @@ export const investmentTaxRules: Rule[] = [
   },
   {
     id: "us.federal.additional_medicare_tax",
-    version: 3, // v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
+    version: 4, // v3 had one self-employed person; Form 8959 line 8 combines both spouses' Schedule SE line 6 on a joint return. v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
     jurisdiction: "us.federal",
     title:
       "Additional Medicare Tax (0.9%; Form 8959 uses medicareWages box 5 when given, else box-1 wages)",
@@ -150,7 +150,7 @@ export const investmentTaxRules: Rule[] = [
         kind: "max0",
         arg: {
           kind: "sub",
-          left: ruleRef("us.federal.se_net_earnings"),
+          left: { kind: "add", args: [ruleRef("us.federal.se_net_earnings"), ruleRef("us.federal.se_net_earnings.spouse")] },
           right: { kind: "max0", arg: { kind: "sub", left: amThreshold, right: mw } },
         },
       });
@@ -158,7 +158,7 @@ export const investmentTaxRules: Rule[] = [
         kind: "max0",
         arg: {
           kind: "sub",
-          left: { kind: "add", args: [mw, ruleRef("us.federal.se_net_earnings")] },
+          left: { kind: "add", args: [mw, { kind: "add", args: [ruleRef("us.federal.se_net_earnings"), ruleRef("us.federal.se_net_earnings.spouse")] }] },
           right: amThreshold,
         },
       });

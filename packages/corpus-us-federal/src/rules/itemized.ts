@@ -409,7 +409,7 @@ export const itemizedRules: Rule[] = [
             {
               kind: "cmp",
               op: "gt",
-              left: fact("selfEmploymentNetProfit"),
+              left: ruleRef("us.federal.se_net_profit"),
               right: zero,
             },
             { kind: "cmp", op: "gt", left: reductionBase, right: zero },

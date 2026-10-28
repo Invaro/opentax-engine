@@ -1,0 +1,13 @@
+{
+  "description": "A second spouse's self-employment profit belongs only on a joint return; on a single return it refuses instead of being added to the filer's income.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "spouseSelfEmploymentNetProfit": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}
