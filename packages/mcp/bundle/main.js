@@ -55270,7 +55270,7 @@ var init_dist2 = __esm({
     init_occupations();
     corpusInput = {
       name: "@invaro/opentax-corpus-us-federal",
-      version: "0.41.0",
+      version: "0.42.0",
       rules: [
         ...corporateRules,
         ...corporate1120Rules,
@@ -63385,7 +63385,7 @@ var COMPOSER_VERSION;
 var init_version = __esm({
   "dist/version.js"() {
     "use strict";
-    COMPOSER_VERSION = "0.8.1";
+    COMPOSER_VERSION = "0.8.2";
   }
 });
 

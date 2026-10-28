@@ -2,7 +2,7 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
-## Next release · Retirement contribution maximums
+## Oct 28, 2026 · Retirement contribution maximums
 
 New targets give the most a self-employed person or an S-corporation owner can put into a solo 401(k) or a SEP, for 2025 and 2026:
 
@@ -16,11 +16,11 @@ Each solo 401(k) maximum is split into its employer, deferral and catch-up parts
 - The § 415(c) annual additions limit.
 - The § 401(a)(17) compensation cap.
 
-## Next release · Self-employment tax for both spouses
+## Oct 28, 2026 · Self-employment tax for both spouses
 
 When both spouses on a joint return are self-employed, each now gets their own Schedule SE, as the instructions require. Enter the second spouse's profit in `spouseSelfEmploymentNetProfit` and their W-2 box 3 in `spouseSocialSecurityWages` (`--spouse-se-profit`, `--spouse-ss-wages`). Both are asked only on a joint return. Each Schedule SE has its own $400 floor and its own social security wage base, so a spouse whose W-2 already reaches the base owes only the Medicare part, while the other still owes both. The two amounts add on Schedule 2 line 4 and Schedule 1 line 15, and both profits count in gross income, earned income, QBI and Form 8959. Above the § 199A threshold, two spouses' businesses refuse until per-business QBI ships.
 
-## Next release · Net rental income in the net investment income tax
+## Oct 28, 2026 · Net rental income in the net investment income tax
 
 The 3.8% net investment income tax now counts net rental income, as Form 8960 line 4a does. Before, a passive rental's income raised AGI but never reached net investment income. A real estate professional whose rental is a trade or business, or a rental grouped with a business you materially participate in, stays out: set `rentalNotInvestmentIncome` (`--rental-not-investment-income`). The question is only asked when there is rental income.
 
