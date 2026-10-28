@@ -174,7 +174,7 @@ function halfDeductionRule(person: Person): Rule {
 export const selfEmploymentRules: Rule[] = [
   {
     id: "us.federal.se_net_profit.spouse",
-    version: 1,
+    version: 2, // v1 read the spouse's profit on every return, so single filers were asked about a spouse; v2 reads it only on a joint return
     jurisdiction: "us.federal",
     title: "Second self-employed spouse's net profit (joint returns only)",
     citation: {
@@ -182,24 +182,16 @@ export const selfEmploymentRules: Rule[] = [
       section: "§ 1402(a); § 6017",
       url: "https://www.law.cornell.edu/uscode/text/26/1402",
       excerpt:
-        "Schedule SE instructions: 'If you and your spouse both had self-employment income, each of you must file a separate Schedule SE.' [Only a joint return carries the other spouse's income; on any other status that spouse files their own return, so a spouse profit here refuses.]",
+        "Schedule SE instructions: 'If you and your spouse both had self-employment income, each of you must file a separate Schedule SE.' [Only a joint return carries the other spouse's income; on any other status that spouse files their own return, so the input is not read.]",
     },
     effectiveFrom: "2025-01-01",
     output: { type: "money" },
     formula: {
+      // asked only on a joint return: no other return has a second spouse's Schedule SE
       kind: "if",
-      cond: { kind: "cmp", op: "eq", left: fact("spouseSelfEmploymentNetProfit"), right: zero },
-      then: zero,
-      else: {
-        kind: "if",
-        cond: { kind: "cmp", op: "eq", left: fact("filingStatus"), right: { kind: "enum", value: "mfj" } },
-        then: fact("spouseSelfEmploymentNetProfit"),
-        else: {
-          kind: "unsupported",
-          reason:
-            "spouseSelfEmploymentNetProfit is for a joint return only — on any other filing status each spouse files their own return: enter the filer's own profit in selfEmploymentNetProfit",
-        },
-      },
+      cond: { kind: "cmp", op: "eq", left: fact("filingStatus"), right: { kind: "enum", value: "mfj" } },
+      then: fact("spouseSelfEmploymentNetProfit"),
+      else: zero,
     },
   },
   {
