@@ -1,0 +1,13 @@
+{
+  "description": "TY2026: the § 1411 thresholds are not indexed, so the 2025 case repeats — single, wages $250,000, passive rental net $50,000: NIIT $1,900.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "rentalIncomeBeforeDepreciation": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "190000"
+  }
+}

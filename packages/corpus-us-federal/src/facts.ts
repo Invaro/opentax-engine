@@ -993,7 +993,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income would be missed by the NIIT rule: disclosed limitation). In dollars.",
+      "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no non-QBI Schedule E income absent contrary input",
@@ -1110,6 +1110,17 @@ export const facts: FactSpec[] = [
     default: {
       value: "0",
       rationale: "Assumed no rental activity reported through the depreciation path absent contrary input",
+    },
+  },
+  {
+    id: "rentalNotInvestmentIncome",
+    type: "bool",
+    description:
+      "The rental entered through rentalIncomeBeforeDepreciation is NOT § 1411 net investment income because it is derived in the ordinary course of a § 162 trade or business (Form 8960 line 4b): a real estate professional's nonpassive rental (§ 469(c)(7)) that rises to a trade or business — participating more than 500 hours in the rental activity, or in 5 of the last 10 years, qualifies under the safe harbor — or a rental properly grouped with a trade or business in which the taxpayer materially participates (Reg. § 1.469-4(d)(1)). Leave false for an ordinary passive rental: its net income is investment income (Form 8960 line 4a).",
+    default: {
+      value: false,
+      rationale:
+        "A rental is passive unless the taxpayer shows otherwise (§ 469(c)(2)); passive rental income is net investment income (§ 1411(c)(1)(A)(i), (c)(2)(A))",
     },
   },
   {

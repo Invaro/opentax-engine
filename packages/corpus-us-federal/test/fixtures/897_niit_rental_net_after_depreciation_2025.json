@@ -1,0 +1,19 @@
+{
+  "description": "NIIT takes the rental net AFTER § 168 depreciation: $275,000 building placed in service in January, 3.485% = $9,583.75, so the rental net is $40,000 − $9,583.75 = $30,416.25. Single, wages $230,000: MAGI $260,416.25, excess $60,416.25; NIIT = 3.8% × $30,416.25 = $1,155.82, $1,156 on Form 8960 line 17.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 230000,
+    "rentalIncomeBeforeDepreciation": 40000,
+    "rentalDepreciableBasis": 275000,
+    "rentalPlacedInServiceMonth": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "115600",
+    "intermediates": {
+      "us.federal.rental.depreciation": "958375",
+      "us.federal.rental.net_income": "3041625"
+    }
+  }
+}

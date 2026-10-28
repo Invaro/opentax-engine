@@ -1,0 +1,17 @@
+{
+  "description": "Form 8960 line 4b: the same $50,000 rental, but it is a real estate professional's nonpassive rental trade or business (rentalNotInvestmentIncome), so it is not net investment income and NIIT is $0 though MAGI is over the threshold.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "rentalIncomeBeforeDepreciation": 50000,
+    "rentalNotInvestmentIncome": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.agi": "30000000"
+    }
+  }
+}
