@@ -2,11 +2,11 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
-## Next release · Form 5695 residential energy credits
+## Oct 28, 2026 · Form 5695 residential energy credits
 
 `compute_return` now fills in Form 5695 when you give it `energy_credits` inputs: the residential clean energy credit (§ 25D, solar, battery storage, geothermal, fuel cells) and the energy efficient home improvement credit (§ 25C, insulation, doors, windows, heat pumps, energy audits), each line capped as the printed form caps it. Both credits ended after 2025, so 2026 inputs earn $0, but a 2025 clean energy carryforward still applies in 2026. The return now includes Form 1040 line 20 and Schedule 3, and the nonrefundable credits apply in the order the 2025 worksheets give.
 
-## Next release · Capital loss carryovers, short-term and long-term
+## Oct 28, 2026 · Capital loss carryovers, short-term and long-term
 
 Two new inputs take last year's capital loss carryover: `priorYearShortTermCapitalLossCarryover` (Schedule D line 6) and `priorYearLongTermCapitalLossCarryover` (line 14). Each one nets into its own bucket before short-term and long-term are combined, the way Schedule D does it.
 
@@ -14,11 +14,11 @@ The carryover to next year now comes out in two parts, `us.federal.capital_loss_
 
 When taxable income is below zero, part of the $3,000 loss allowance doesn't count as used (§ 1212(b)(2)), so more of the loss carries forward. The carryover now reflects that.
 
-## Next release · The Tax Table on capital gains returns
+## Oct 28, 2026 · The Tax Table on capital gains returns
 
 Line 22 of the Qualified Dividends and Capital Gain Tax Worksheet takes the tax on the ordinary part of your income from the Tax Table when that part is under $100,000, even when taxable income is $100,000 or more. OpenTax now does the same for 2025 and 2026, which can change the tax by a few dollars. `useFormulaMethod` still gives the exact brackets.
 
-## Next release · New York tax table on the IT-201
+## Oct 28, 2026 · New York tax table on the IT-201
 
 `compute_state_return` now takes IT-201 line 39 from the New York State Tax Table when taxable income is under $65,000, as the instructions require, instead of the rate schedule. When New York AGI is over $107,650, the return lists line 39 as incomplete, because the tax computation worksheets for that range aren't encoded yet.
 
