@@ -1,7 +1,7 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.41.0",
-  "merkleRoot": "sha256:6b69b42b65101bca25fbdd164c1679a1b88a71f5917e969b876070d8d48745fe",
+  "merkleRoot": "sha256:f04744ba58486246189e8bd058a987c61d2f26e9fd7e822c1471878fa7a8ec07",
   "ruleCount": 617,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
@@ -283,7 +283,7 @@
     "us.federal.schedule_r.tentative@1": "sha256:50401a2aeb63df5a8b520f61c748dc93180ae33f47da4ee4d42fcecdc136a371",
     "us.federal.se_net_earnings.spouse@1": "sha256:1d5e884c7e249dba8a54eae46460df03ddbaf0a1b849b9f3ed968e92287055f9",
     "us.federal.se_net_earnings@1": "sha256:8d4b535f4f3d8cf77d7c2e3aeb9787aa306c0269fe4d24f209db5ef1d5c842ae",
-    "us.federal.se_net_profit.spouse@1": "sha256:8a92dae9b30ca0687ba0d27301d49960d05429c5527eaea74b343e8564a1349b",
+    "us.federal.se_net_profit.spouse@2": "sha256:0f8bbbd6a1377520cb6d080720a650003159fe759155b64bb222cc748a826427",
     "us.federal.se_net_profit@1": "sha256:0b91facc8289afdc0a2584f1a0662a9d78aa4ec477bb0000922d05435c0d5149",
     "us.federal.se_tax_half_deduction.spouse@1": "sha256:49111aac9d5cc8dc31fec44bfb2ec6f7cdb1ab4f8115957ee0b22569808ec518",
     "us.federal.se_tax_half_deduction.taxpayer@1": "sha256:764f864b3c1f465fcf79fa2f544d0c0ce89f2fc4f38bd4895de6640851526496",

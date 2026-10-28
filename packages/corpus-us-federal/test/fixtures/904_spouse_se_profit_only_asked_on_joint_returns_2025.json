@@ -1,0 +1,17 @@
+{
+  "description": "A single filer has no second spouse's Schedule SE, so the spouse's profit is never read or assumed: self-employment tax on the filer's own $40,000 profit (net earnings $36,940: $4,581 + $1,071 = $5,652), with no spouse assumption.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 40000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "565200",
+    "notAssumedFacts": [
+      "spouseSelfEmploymentNetProfit",
+      "spouseSocialSecurityWages"
+    ]
+  }
+}

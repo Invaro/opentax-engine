@@ -38391,7 +38391,7 @@ var IncompleteReturnError = class extends OpenTaxError {
 };
 
 // dist/version.js
-var COMPOSER_VERSION = "0.8.0";
+var COMPOSER_VERSION = "0.8.1";
 
 // ../solve/dist/sweep.js
 function evaluateAt(corpus2, baseFacts, options, atCents) {
@@ -46755,7 +46755,7 @@ var facts = [
     id: "spouseSelfEmploymentNetProfit",
     type: "money",
     min: "0",
-    description: "JOINT RETURN ONLY: the OTHER spouse's own net profit from self-employment (their own Schedule C line 31) when both spouses are self-employed \u2014 the second Schedule SE. selfEmploymentNetProfit holds the first spouse's. Each spouse's Schedule SE has its own $400 floor and its own social security wage base, coordinated with that spouse's own W-2 box 3 (spouseSocialSecurityWages). Both profits count in gross income, earned income, QBI and Form 8959. Not modeled for this second spouse, disclosed: SEP or solo 401(k) contributions, self-employed health insurance and the simplified home office (sepContribution, selfEmployedHealthPremiums and homeOfficeSquareFeet are the first spouse's). Any other filing status refuses: on a separate or single return, enter the filer's own profit in selfEmploymentNetProfit. In dollars.",
+    description: "JOINT RETURN ONLY: the OTHER spouse's own net profit from self-employment (their own Schedule C line 31) when both spouses are self-employed \u2014 the second Schedule SE. selfEmploymentNetProfit holds the first spouse's. Each spouse's Schedule SE has its own $400 floor and its own social security wage base, coordinated with that spouse's own W-2 box 3 (spouseSocialSecurityWages). Both profits count in gross income, earned income, QBI and Form 8959. Not modeled for this second spouse, disclosed: SEP or solo 401(k) contributions, self-employed health insurance and the simplified home office (sepContribution, selfEmployedHealthPremiums and homeOfficeSquareFeet are the first spouse's). Read only on a joint return \u2014 every other filing status ignores it and never asks for it: on a separate or single return, enter the filer's own profit in selfEmploymentNetProfit. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed only one spouse has self-employment income absent contrary input"
@@ -72936,30 +72936,24 @@ function halfDeductionRule(person) {
 var selfEmploymentRules = [
   {
     id: "us.federal.se_net_profit.spouse",
-    version: 1,
+    version: 2,
+    // v1 read the spouse's profit on every return, so single filers were asked about a spouse; v2 reads it only on a joint return
     jurisdiction: "us.federal",
     title: "Second self-employed spouse's net profit (joint returns only)",
     citation: {
       source: "26 U.S.C. \xA7 1402(a); Schedule SE (Form 1040) instructions",
       section: "\xA7 1402(a); \xA7 6017",
       url: "https://www.law.cornell.edu/uscode/text/26/1402",
-      excerpt: "Schedule SE instructions: 'If you and your spouse both had self-employment income, each of you must file a separate Schedule SE.' [Only a joint return carries the other spouse's income; on any other status that spouse files their own return, so a spouse profit here refuses.]"
+      excerpt: "Schedule SE instructions: 'If you and your spouse both had self-employment income, each of you must file a separate Schedule SE.' [Only a joint return carries the other spouse's income; on any other status that spouse files their own return, so the input is not read.]"
     },
     effectiveFrom: "2025-01-01",
     output: { type: "money" },
     formula: {
+      // asked only on a joint return: no other return has a second spouse's Schedule SE
       kind: "if",
-      cond: { kind: "cmp", op: "eq", left: fact40("spouseSelfEmploymentNetProfit"), right: zero27 },
-      then: zero27,
-      else: {
-        kind: "if",
-        cond: { kind: "cmp", op: "eq", left: fact40("filingStatus"), right: { kind: "enum", value: "mfj" } },
-        then: fact40("spouseSelfEmploymentNetProfit"),
-        else: {
-          kind: "unsupported",
-          reason: "spouseSelfEmploymentNetProfit is for a joint return only \u2014 on any other filing status each spouse files their own return: enter the filer's own profit in selfEmploymentNetProfit"
-        }
-      }
+      cond: { kind: "cmp", op: "eq", left: fact40("filingStatus"), right: { kind: "enum", value: "mfj" } },
+      then: fact40("spouseSelfEmploymentNetProfit"),
+      else: zero27
     }
   },
   {

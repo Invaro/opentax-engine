@@ -1,7 +1,7 @@
 {
 "name": "@invaro/opentax-corpus-us-federal",
 "version": "0.41.0",
-"merkleRoot": "sha256:6b69b42b65101bca25fbdd164c1679a1b88a71f5917e969b876070d8d48745fe",
+"merkleRoot": "sha256:f04744ba58486246189e8bd058a987c61d2f26e9fd7e822c1471878fa7a8ec07",
 "rules": {
   "us.ak.income_tax@1": {"title":"Alaska — no individual income tax (TY2025)","effectiveFrom":"2025-01-01","citation":"Alaska law (no individual income tax) n/a","parts":{"formula":"8dbd9404f92b062a","applicability":null,"citation":"f127d60637d495fd","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
   "us.al.dependent_exemption@1": {"title":"Alabama dependent exemption — $1,000 / $500 / $300 per dependent by Alabama AGI ($0-$50,000 / $50,001-$100,000 / over $100,000) (Form 40 line 14)","effectiveFrom":"2025-01-01","effectiveTo":"2027-01-01","citation":"Ala. Code § 40-18-19(a)(9); 2025 Form 40 booklet, Line 14 dependent chart p. 8 Form 40 line 14; Part III","parameters":{"tier1":"$1,000","tier2":"$500","tier3":"$300"},"parts":{"formula":"5e2080c4883100f9","applicability":null,"citation":"28943deba71a370c","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":"217391bd5e81e865"}},
@@ -282,7 +282,7 @@
   "us.federal.schedule_r.tentative@1": {"title":"Credit for the elderly or the disabled — tentative (§ 22, Schedule R)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 22; Schedule R (Form 1040) § 22(a)-(e)","parts":{"formula":"7769d3857f2b507e","applicability":null,"citation":"7e5f468010f37780","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
   "us.federal.se_net_earnings.spouse@1": {"title":"Second self-employed spouse's net earnings from self-employment (92.35% of their net profit)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 1402(a)(12) § 1402(a)(12)","parts":{"formula":"4312318434b471d3","applicability":null,"citation":"6ed2908cd29604b8","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
   "us.federal.se_net_earnings@1": {"title":"Net earnings from self-employment (92.35% of net profit)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 1402(a)(12) § 1402(a)(12)","parts":{"formula":"3f925641edc29fe8","applicability":null,"citation":"360c69dd2b80c213","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
-  "us.federal.se_net_profit.spouse@1": {"title":"Second self-employed spouse's net profit (joint returns only)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 1402(a); Schedule SE (Form 1040) instructions § 1402(a); § 6017","parts":{"formula":"ac1878209fdf1186","applicability":null,"citation":"9a5457c38c60c886","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
+  "us.federal.se_net_profit.spouse@2": {"title":"Second self-employed spouse's net profit (joint returns only)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 1402(a); Schedule SE (Form 1040) instructions § 1402(a); § 6017","parts":{"formula":"df76dde5a5311477","applicability":null,"citation":"a916789210e297ec","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
   "us.federal.se_net_profit@1": {"title":"Net profit from self-employment, both spouses (selfEmploymentNetProfit + the second spouse's)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. §§ 61(a)(2), 1402(a) § 61(a)(2)","parts":{"formula":"c5fcd178fb905e28","applicability":null,"citation":"294795540f41e10c","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
   "us.federal.se_tax_half_deduction.spouse@1": {"title":"Deduction for one-half of self-employment tax, one Schedule SE (second self-employed spouse)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 164(f); Schedule SE (Form 1040) line 13 § 164(f)(1)","parts":{"formula":"41781d48f96fba4d","applicability":null,"citation":"4ce349ac2f8a5b78","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
   "us.federal.se_tax_half_deduction.taxpayer@1": {"title":"Deduction for one-half of self-employment tax, one Schedule SE (first spouse or single filer)","effectiveFrom":"2025-01-01","citation":"26 U.S.C. § 164(f); Schedule SE (Form 1040) line 13 § 164(f)(1)","parts":{"formula":"ff80e0e929ba49a8","applicability":null,"citation":"4ce349ac2f8a5b78","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},
@@ -1316,7 +1316,7 @@
   "spouseIsBlind": {"type":"bool","default":false,"hash":"0c6d6950380d9131"},
   "spouseIsFullTimeStudent": {"type":"bool","default":false,"hash":"4394aa32797018e5"},
   "spouseItemizes": {"type":"bool","hash":"9ae42305ce0959d0"},
-  "spouseSelfEmploymentNetProfit": {"type":"money","default":"0","hash":"7108c283ca0559d5"},
+  "spouseSelfEmploymentNetProfit": {"type":"money","default":"0","hash":"58d7400bfd740083"},
   "spouseSocialSecurityWages": {"type":"money","default":"0","hash":"ff8268681c1fb7a8"},
   "stateAndLocalTaxesPaid": {"type":"money","default":"0","hash":"ae9c296b2a325634"},
   "stateTaxableIncome": {"type":"money","default":"0","hash":"a3d5071e656a5d48"},
