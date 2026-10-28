@@ -1,0 +1,16 @@
+{
+  "description": "Low profit: $20,000 net profit, step 3 $18,587. Deferrals take all of it (step 9 capped at step 3), step 12 is $0, so the employer part is $0 and the maximum is $18,587, 100% of net earnings.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.schedule_c",
+  "expect": {
+    "valueCents": "1858700",
+    "intermediates": {
+      "us.federal.retirement.solo_401k_max.schedule_c.employer": "0"
+    }
+  }
+}

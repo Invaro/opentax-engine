@@ -1,0 +1,18 @@
+{
+  "description": "The same $100,000 sole proprietor turning 61: the § 414(v)(2)(E)(i) catch-up is $11,250 (step 18, under step 16's $50,848), so the maximum is $18,587 + $23,500 + $11,250 = $53,337.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 100000,
+    "isAge50OrOlder": true,
+    "isAge60Through63": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.schedule_c",
+  "expect": {
+    "valueCents": "5333700",
+    "intermediates": {
+      "us.federal.retirement.solo_401k_max.schedule_c.catch_up": "1125000"
+    }
+  }
+}

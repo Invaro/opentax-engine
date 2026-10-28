@@ -1,0 +1,12 @@
+{
+  "description": "TY2026 (Notice 2025-67): $100,000 compensation, age 52 — deferral $24,500 + employer $25,000 + catch-up $8,000 = $57,500.",
+  "facts": {
+    "ownerEmployeePlanCompensation": 100000,
+    "isAge50OrOlder": true
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.retirement.solo_401k_max.s_corp",
+  "expect": {
+    "valueCents": "5750000"
+  }
+}

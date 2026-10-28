@@ -1,0 +1,14 @@
+{
+  "description": "The S-corporation maximum needs the owner's plan compensation; it never defaults.",
+  "facts": {
+    "filingStatus": "single"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.s_corp",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "ownerEmployeePlanCompensation"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "description": "S-corporation owner-employee with $100,000 of plan compensation: SEP maximum 25% = $25,000 (§ 404(h)(1)(C)).",
+  "facts": {
+    "ownerEmployeePlanCompensation": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.sep_max.s_corp",
+  "expect": {
+    "valueCents": "2500000"
+  }
+}

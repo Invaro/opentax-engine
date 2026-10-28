@@ -1,0 +1,17 @@
+{
+  "description": "S-corporation owner-employee, $200,000 compensation, turning 61: 25% is $50,000 but § 415(c) leaves $70,000 − $23,500 = $46,500; catch-up $11,250 sits outside § 415(c). Maximum $81,250.",
+  "facts": {
+    "ownerEmployeePlanCompensation": 200000,
+    "isAge50OrOlder": true,
+    "isAge60Through63": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.s_corp",
+  "expect": {
+    "valueCents": "8125000",
+    "intermediates": {
+      "us.federal.retirement.solo_401k_max.s_corp.employer": "4650000",
+      "us.federal.retirement.solo_401k_max.s_corp.catch_up": "1125000"
+    }
+  }
+}

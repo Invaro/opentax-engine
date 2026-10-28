@@ -1,0 +1,16 @@
+{
+  "description": "Low compensation, $30,000, age 52: deferral $23,500; employer 25% is $7,500 but deferrals plus employer may not exceed 100% of compensation, leaving $6,500; catch-up is limited to compensation less other deferrals, $6,500 (§ 414(v)(2)(A)). Maximum $36,500.",
+  "facts": {
+    "ownerEmployeePlanCompensation": 30000,
+    "isAge50OrOlder": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.s_corp",
+  "expect": {
+    "valueCents": "3650000",
+    "intermediates": {
+      "us.federal.retirement.solo_401k_max.s_corp.employer": "650000",
+      "us.federal.retirement.solo_401k_max.s_corp.catch_up": "650000"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "S-corporation owner-employee, $100,000 compensation, under 50: deferral $23,500 + employer 25% = $25,000 (under $70,000 − $23,500 and 100% of compensation) = $48,500.",
+  "facts": {
+    "ownerEmployeePlanCompensation": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.retirement.solo_401k_max.s_corp",
+  "expect": {
+    "valueCents": "4850000",
+    "intermediates": {
+      "us.federal.retirement.solo_401k_max.s_corp.employer": "2500000"
+    }
+  }
+}
