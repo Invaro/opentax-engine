@@ -272,7 +272,7 @@ export const caRules: Rule[] = [
                 kind: "max0",
                 arg: {
                   kind: "sub",
-                  left: fact("selfEmploymentNetProfit"),
+                  left: { kind: "rule", ruleId: "us.federal.se_net_profit" },
                   right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" },
                 },
               },
@@ -465,7 +465,7 @@ export const caRules: Rule[] = [
                 kind: "max0",
                 arg: {
                   kind: "sub",
-                  left: fact("selfEmploymentNetProfit"),
+                  left: { kind: "rule", ruleId: "us.federal.se_net_profit" },
                   right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" },
                 },
               },

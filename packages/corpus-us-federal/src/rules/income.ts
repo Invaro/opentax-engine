@@ -20,7 +20,7 @@ const FROM = { effectiveFrom: "2025-01-01" }; // structural rules: open-ended
 export const incomeRules: Rule[] = [
   {
     id: "us.federal.gross_income",
-    version: 15, // v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
+    version: 16, // v15 had one self-employed person; v16 adds the second self-employed spouse's profit (us.federal.se_net_profit). v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
     jurisdiction: J,
     title:
       "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income − allowed capital loss − § 911 exclusion)",
@@ -44,7 +44,7 @@ export const incomeRules: Rule[] = [
           fact("qualifiedDividends"),
           ruleRef("us.federal.schedule_d.ordinary_st_gain"),
           fact("ordinaryDividends"),
-          fact("selfEmploymentNetProfit"),
+          ruleRef("us.federal.se_net_profit"),
           fact("k1OrdinaryBusinessIncome"),
           fact("taxableIraDistributions"),
           fact("taxablePensionsAndAnnuities"),

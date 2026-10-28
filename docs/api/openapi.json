@@ -4,8 +4,8 @@
     "title": "OpenTax hosted API",
     "version": "corpus 0.41.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:a39decffafbfcf584dc83f0c13f21c3620758d0d7402ac32438462af34de55a0",
-    "x-generated": "2026-10-28T10:18:22.728Z"
+    "x-corpus-merkle-root": "sha256:2b61ff3a20c5eb82f5cde5aabf5132005f1f4805feb6b4757d19a03fabc3b5f2",
+    "x-generated": "2026-10-28T10:25:24.097Z"
   },
   "servers": [
     {
@@ -608,6 +608,20 @@
                                   "string"
                                 ],
                                 "description": "Net profit from self-employment (Schedule C line 31: gross receipts minus ACTUAL Schedule C expenses). Do NOT subtract intake fields like 'W-2 Wages Paid' that exist for the § 199A wage limit — those belong in qbiW2Wages, not here. A loss year goes in scheduleCNetLoss instead (leave this at 0). GROSS-RECEIPTS COMPOSITION: the intake's own gross-receipts field PLUS every 1099-NEC and 1099-K nested under (or issued to) the business PLUS any 1099-MISC box 3 'other income' issued to a filer who operates a Schedule C business (a payer's MISC box-3 payment to an active sole proprietor is business income, not Schedule 1 line 8z) — 1099-MISC box 1 rents belong on Schedule E, never here. A 1099 whose recipient TIN matches NEITHER spouse is not this return's income: exclude it and disclose. PLACEHOLDER/TEMPLATE DOCUMENTS: a 1099 whose payer block is an unfilled template — no payer name, address line 'City, AK 99999' or a similar all-9s placeholder — is an inactive template document, not income: exclude every box on it (income AND withholding) and disclose; a 1099 from a NAMED payer at a real-looking address is live data even when the structured intake has no matching entry. In dollars."
+                              },
+                              "spouseSelfEmploymentNetProfit": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "JOINT RETURN ONLY: the OTHER spouse's own net profit from self-employment (their own Schedule C line 31) when both spouses are self-employed — the second Schedule SE. selfEmploymentNetProfit holds the first spouse's. Each spouse's Schedule SE has its own $400 floor and its own social security wage base, coordinated with that spouse's own W-2 box 3 (spouseSocialSecurityWages). Both profits count in gross income, earned income, QBI and Form 8959. Not modeled for this second spouse, disclosed: SEP or solo 401(k) contributions, self-employed health insurance and the simplified home office (sepContribution, selfEmployedHealthPremiums and homeOfficeSquareFeet are the first spouse's). Any other filing status refuses: on a separate or single return, enter the filer's own profit in selfEmploymentNetProfit. In dollars."
+                              },
+                              "spouseSocialSecurityWages": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "W-2 box 3 social security wages of the spouse in spouseSelfEmploymentNetProfit — line 8a of THAT spouse's Schedule SE, which caps their OASDI portion at the wage base minus these wages. Only that spouse's own W-2s, never the couple's sum. Asked only when spouseSelfEmploymentNetProfit is given. In dollars."
                               },
                               "scheduleCNetLoss": {
                                 "type": [
@@ -11155,6 +11169,20 @@
                                   "string"
                                 ],
                                 "description": "Net profit from self-employment (Schedule C line 31: gross receipts minus ACTUAL Schedule C expenses). Do NOT subtract intake fields like 'W-2 Wages Paid' that exist for the § 199A wage limit — those belong in qbiW2Wages, not here. A loss year goes in scheduleCNetLoss instead (leave this at 0). GROSS-RECEIPTS COMPOSITION: the intake's own gross-receipts field PLUS every 1099-NEC and 1099-K nested under (or issued to) the business PLUS any 1099-MISC box 3 'other income' issued to a filer who operates a Schedule C business (a payer's MISC box-3 payment to an active sole proprietor is business income, not Schedule 1 line 8z) — 1099-MISC box 1 rents belong on Schedule E, never here. A 1099 whose recipient TIN matches NEITHER spouse is not this return's income: exclude it and disclose. PLACEHOLDER/TEMPLATE DOCUMENTS: a 1099 whose payer block is an unfilled template — no payer name, address line 'City, AK 99999' or a similar all-9s placeholder — is an inactive template document, not income: exclude every box on it (income AND withholding) and disclose; a 1099 from a NAMED payer at a real-looking address is live data even when the structured intake has no matching entry. In dollars."
+                              },
+                              "spouseSelfEmploymentNetProfit": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "JOINT RETURN ONLY: the OTHER spouse's own net profit from self-employment (their own Schedule C line 31) when both spouses are self-employed — the second Schedule SE. selfEmploymentNetProfit holds the first spouse's. Each spouse's Schedule SE has its own $400 floor and its own social security wage base, coordinated with that spouse's own W-2 box 3 (spouseSocialSecurityWages). Both profits count in gross income, earned income, QBI and Form 8959. Not modeled for this second spouse, disclosed: SEP or solo 401(k) contributions, self-employed health insurance and the simplified home office (sepContribution, selfEmployedHealthPremiums and homeOfficeSquareFeet are the first spouse's). Any other filing status refuses: on a separate or single return, enter the filer's own profit in selfEmploymentNetProfit. In dollars."
+                              },
+                              "spouseSocialSecurityWages": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "W-2 box 3 social security wages of the spouse in spouseSelfEmploymentNetProfit — line 8a of THAT spouse's Schedule SE, which caps their OASDI portion at the wage base minus these wages. Only that spouse's own W-2s, never the couple's sum. Asked only when spouseSelfEmploymentNetProfit is given. In dollars."
                               },
                               "scheduleCNetLoss": {
                                 "type": [

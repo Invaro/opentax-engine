@@ -47,6 +47,7 @@ const OUT_OF_SCOPE: Expr = {
   kind: "or",
   args: [
     gt0(fact("taxableInterest")),
+    gt0(fact("spouseSelfEmploymentNetProfit")), // a second Schedule SE: Part II is figured per spouse
     gt0(fact("longTermCapitalGains")),
     gt0(fact("netCapitalLoss")),
     gt0(fact("shortTermCapitalLoss")),

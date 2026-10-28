@@ -1,0 +1,14 @@
+{
+  "description": "Above the § 199A threshold each business needs its own W-2 wage/UBIA limit (Form 8995-A Part II): with two spouses' Schedule C businesses the deduction refuses rather than pool them.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 300000,
+    "selfEmploymentNetProfit": 100000,
+    "spouseSelfEmploymentNetProfit": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

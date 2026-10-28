@@ -39063,8 +39063,8 @@ function ilNonrefundableCredits(input2, taxDue, notes) {
   const teacher = (() => {
     const cap1 = (x) => x > 50000n ? 50000n : x;
     const own2 = cap1(rd(c(input2.ilTeacherExpenses)));
-    const spouse = isJoint(input2) ? cap1(rd(c(input2.ilSpouseTeacherExpenses))) : 0n;
-    return own2 + spouse;
+    const spouse2 = isJoint(input2) ? cap1(rd(c(input2.ilSpouseTeacherExpenses))) : 0n;
+    return own2 + spouse2;
   })();
   const available = propertyTax + k12 + teacher + rd(c(input2.nonrefundableCredits));
   const allowed = available > taxDue ? taxDue : available;
@@ -44378,11 +44378,11 @@ function composeSC(input2, evalStateTax, notes) {
     return { p, mil, q };
   };
   const you = person(rd(c(input2.scRetirementIncomeYou)), rd(c(input2.scMilitaryRetirementYou)), input2.scIs65You === true, "taxpayer");
-  const spouse = joint ? person(rd(c(input2.scRetirementIncomeSpouse)), rd(c(input2.scMilitaryRetirementSpouse)), input2.scIs65Spouse === true, "spouse") : { p: 0n, mil: 0n, q: 0n };
-  const lineP = you.p + you.mil + spouse.p + spouse.mil;
-  const lineQ = you.q + spouse.q;
-  if (you.p + spouse.p > 0n)
-    notes.push(`SC line p retirement deduction ${fmtD(you.p + spouse.p)} (per person: qualified retirement income capped $3,000 under 65 / $10,000 at 65+)`);
+  const spouse2 = joint ? person(rd(c(input2.scRetirementIncomeSpouse)), rd(c(input2.scMilitaryRetirementSpouse)), input2.scIs65Spouse === true, "spouse") : { p: 0n, mil: 0n, q: 0n };
+  const lineP = you.p + you.mil + spouse2.p + spouse2.mil;
+  const lineQ = you.q + spouse2.q;
+  if (you.p + spouse2.p > 0n)
+    notes.push(`SC line p retirement deduction ${fmtD(you.p + spouse2.p)} (per person: qualified retirement income capped $3,000 under 65 / $10,000 at 65+)`);
   if (lineQ > 0n)
     notes.push(`SC line q age-65 deduction ${fmtD(lineQ)} ($15,000 per 65+ person, REDUCED by that person's retirement + military retirement deductions; usable against any SC income)`);
   if (negFti > 0n)
@@ -46749,6 +46749,26 @@ var facts = [
     default: {
       value: "0",
       rationale: "Assumed no self-employment income absent contrary input"
+    }
+  },
+  {
+    id: "spouseSelfEmploymentNetProfit",
+    type: "money",
+    min: "0",
+    description: "JOINT RETURN ONLY: the OTHER spouse's own net profit from self-employment (their own Schedule C line 31) when both spouses are self-employed \u2014 the second Schedule SE. selfEmploymentNetProfit holds the first spouse's. Each spouse's Schedule SE has its own $400 floor and its own social security wage base, coordinated with that spouse's own W-2 box 3 (spouseSocialSecurityWages). Both profits count in gross income, earned income, QBI and Form 8959. Not modeled for this second spouse, disclosed: SEP or solo 401(k) contributions, self-employed health insurance and the simplified home office (sepContribution, selfEmployedHealthPremiums and homeOfficeSquareFeet are the first spouse's). Any other filing status refuses: on a separate or single return, enter the filer's own profit in selfEmploymentNetProfit. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed only one spouse has self-employment income absent contrary input"
+    }
+  },
+  {
+    id: "spouseSocialSecurityWages",
+    type: "money",
+    min: "0",
+    description: "W-2 box 3 social security wages of the spouse in spouseSelfEmploymentNetProfit \u2014 line 8a of THAT spouse's Schedule SE, which caps their OASDI portion at the wage base minus these wages. Only that spouse's own W-2s, never the couple's sum. Asked only when spouseSelfEmploymentNetProfit is given. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed the second self-employed spouse had no W-2 social security wages (the full OASDI base is available to their self-employment earnings)"
     }
   },
   {
@@ -52168,7 +52188,7 @@ function sepRule(version2, effectiveFrom, effectiveTo, limitCents, source, yearL
               arg: {
                 kind: "sub",
                 left: fact("selfEmploymentNetProfit"),
-                right: ruleRef("us.federal.se_tax_half_deduction")
+                right: ruleRef("us.federal.se_tax_half_deduction.taxpayer")
               }
             },
             rate: { num: "20", den: "100" },
@@ -52220,7 +52240,7 @@ var adjustmentRules = [
               right: {
                 kind: "add",
                 args: [
-                  ruleRef("us.federal.se_tax_half_deduction"),
+                  ruleRef("us.federal.se_tax_half_deduction.taxpayer"),
                   ruleRef("us.federal.sep_deduction")
                 ]
               }
@@ -52789,6 +52809,8 @@ var OUT_OF_SCOPE = {
   kind: "or",
   args: [
     gt0(fact4("taxableInterest")),
+    gt0(fact4("spouseSelfEmploymentNetProfit")),
+    // a second Schedule SE: Part II is figured per spouse
     gt0(fact4("longTermCapitalGains")),
     gt0(fact4("netCapitalLoss")),
     gt0(fact4("shortTermCapitalLoss")),
@@ -54429,7 +54451,7 @@ var earnedIncome = {
       kind: "max0",
       arg: {
         kind: "sub",
-        left: fact13("selfEmploymentNetProfit"),
+        left: ruleRef11("us.federal.se_net_profit"),
         right: ruleRef11("us.federal.se_tax_half_deduction")
       }
     }
@@ -55142,7 +55164,7 @@ var ctcRules = [
                     kind: "max0",
                     arg: {
                       kind: "sub",
-                      left: fact14("selfEmploymentNetProfit"),
+                      left: ruleRef12("us.federal.se_net_profit"),
                       right: ruleRef12("us.federal.se_tax_half_deduction")
                     }
                   }
@@ -55690,7 +55712,7 @@ var earned = {
           kind: "max0",
           arg: {
             kind: "sub",
-            left: fact17("selfEmploymentNetProfit"),
+            left: ruleRef14("us.federal.se_net_profit"),
             right: ruleRef14("us.federal.se_tax_half_deduction")
           }
         }
@@ -56886,8 +56908,8 @@ var FROM10 = { effectiveFrom: "2025-01-01" };
 var incomeRules = [
   {
     id: "us.federal.gross_income",
-    version: 15,
-    // v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
+    version: 16,
+    // v15 had one self-employed person; v16 adds the second self-employed spouse's profit (us.federal.se_net_profit). v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
     jurisdiction: J16,
     title: "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income \u2212 allowed capital loss \u2212 \xA7 911 exclusion)",
     citation: {
@@ -56909,7 +56931,7 @@ var incomeRules = [
           fact24("qualifiedDividends"),
           ruleRef19("us.federal.schedule_d.ordinary_st_gain"),
           fact24("ordinaryDividends"),
-          fact24("selfEmploymentNetProfit"),
+          ruleRef19("us.federal.se_net_profit"),
           fact24("k1OrdinaryBusinessIncome"),
           fact24("taxableIraDistributions"),
           fact24("taxablePensionsAndAnnuities"),
@@ -57587,8 +57609,8 @@ var investmentTaxRules = [
   },
   {
     id: "us.federal.additional_medicare_tax",
-    version: 3,
-    // v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
+    version: 4,
+    // v3 had one self-employed person; Form 8959 line 8 combines both spouses' Schedule SE line 6 on a joint return. v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
     jurisdiction: "us.federal",
     title: "Additional Medicare Tax (0.9%; Form 8959 uses medicareWages box 5 when given, else box-1 wages)",
     citation: {
@@ -57617,7 +57639,7 @@ var investmentTaxRules = [
         kind: "max0",
         arg: {
           kind: "sub",
-          left: ruleRef21("us.federal.se_net_earnings"),
+          left: { kind: "add", args: [ruleRef21("us.federal.se_net_earnings"), ruleRef21("us.federal.se_net_earnings.spouse")] },
           right: { kind: "max0", arg: { kind: "sub", left: amThreshold, right: mw } }
         }
       });
@@ -57625,7 +57647,7 @@ var investmentTaxRules = [
         kind: "max0",
         arg: {
           kind: "sub",
-          left: { kind: "add", args: [mw, ruleRef21("us.federal.se_net_earnings")] },
+          left: { kind: "add", args: [mw, { kind: "add", args: [ruleRef21("us.federal.se_net_earnings"), ruleRef21("us.federal.se_net_earnings.spouse")] }] },
           right: amThreshold
         }
       });
@@ -57717,7 +57739,7 @@ var compensation = {
       kind: "max0",
       arg: {
         kind: "sub",
-        left: fact27("selfEmploymentNetProfit"),
+        left: ruleRef22("us.federal.se_net_profit"),
         right: ruleRef22("us.federal.se_tax_half_deduction")
       }
     }
@@ -58325,7 +58347,7 @@ var itemizedRules = [
             {
               kind: "cmp",
               op: "gt",
-              left: fact29("selfEmploymentNetProfit"),
+              left: ruleRef23("us.federal.se_net_profit"),
               right: zero17
             },
             { kind: "cmp", op: "gt", left: reductionBase, right: zero17 }
@@ -59063,7 +59085,7 @@ var actcMaximum = {
   },
   formula: min({ kind: "mulInt", base: param17("refundableCapPerChild"), count: fact34("qualifyingChildren") }, {
     kind: "mulRate",
-    base: max04(sub2(add2(fact34("wages"), max04(sub2(fact34("selfEmploymentNetProfit"), ruleRef29("us.federal.se_tax_half_deduction")))), add2(param17("earnedIncomeFloor"), fact34("scheduleCNetLoss")))),
+    base: max04(sub2(add2(fact34("wages"), max04(sub2(ruleRef29("us.federal.se_net_profit"), ruleRef29("us.federal.se_tax_half_deduction")))), add2(param17("earnedIncomeFloor"), fact34("scheduleCNetLoss")))),
     rate: { num: "15", den: "100" },
     round: "half-up"
   })
@@ -60363,7 +60385,7 @@ var caRules = [
                 kind: "max0",
                 arg: {
                   kind: "sub",
-                  left: fact37("selfEmploymentNetProfit"),
+                  left: { kind: "rule", ruleId: "us.federal.se_net_profit" },
                   right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" }
                 }
               }
@@ -60549,7 +60571,7 @@ var caRules = [
                 kind: "max0",
                 arg: {
                   kind: "sub",
-                  left: fact37("selfEmploymentNetProfit"),
+                  left: { kind: "rule", ruleId: "us.federal.se_net_profit" },
                   right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" }
                 }
               }
@@ -72370,7 +72392,7 @@ var qbi = {
           kind: "max0",
           arg: {
             kind: "sub",
-            left: fact38("selfEmploymentNetProfit"),
+            left: ruleRef32("us.federal.se_net_profit"),
             right: {
               kind: "add",
               args: [
@@ -72390,7 +72412,7 @@ var qbi = {
 var hasBusinessIncome = {
   kind: "or",
   args: [
-    { kind: "cmp", op: "gt", left: fact38("selfEmploymentNetProfit"), right: zero25 },
+    { kind: "cmp", op: "gt", left: ruleRef32("us.federal.se_net_profit"), right: zero25 },
     { kind: "cmp", op: "gt", left: fact38("k1OrdinaryBusinessIncome"), right: zero25 }
   ]
 };
@@ -72456,7 +72478,17 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
     cond: { kind: "cmp", op: "eq", left: excess, right: zero25 },
     then: tentative,
     // at or below the threshold: no SSTB question, no limits
-    else: { kind: "if", cond: fact38("businessIsSSTB"), then: sstb, else: nonSstb }
+    else: {
+      // two spouses' Schedule C businesses: above the threshold each business has its
+      // own W-2/UBIA limit and SSTB status (Form 8995-A Part II, one column each)
+      kind: "if",
+      cond: { kind: "cmp", op: "gt", left: ruleRef32("us.federal.se_net_profit.spouse"), right: zero25 },
+      then: {
+        kind: "unsupported",
+        reason: "both spouses have self-employment income and taxable income is over the \xA7 199A threshold: each business then needs its own W-2 wage/UBIA limit and SSTB test (Form 8995-A Part II), and per-business QBI is not modeled yet"
+      },
+      else: { kind: "if", cond: fact38("businessIsSSTB"), then: sstb, else: nonSstb }
+    }
   };
   const overall = pctOf3("20", "100", {
     kind: "max0",
@@ -72486,7 +72518,7 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
       source: `26 U.S.C. \xA7 199A; ${source}`,
       section: "\xA7 199A(a)\u2013(d)",
       url: "https://www.law.cornell.edu/uscode/text/26/199A",
-      excerpt: `20 percent of qualified business income \u2014 QBI reduced by the attributable \xBD-SE-tax, SEP, and SE-health-insurance deductions (Reg. \xA7 1.199A-3(b)(1)(vi)) \u2014 limited to 20 percent of taxable income (without this deduction) less net capital gain. Above the \xA7 199A(e)(2) threshold the deduction is limited to the greater of 50 percent of the business's W-2 wages or 25 percent of W-2 wages plus 2.5 percent of UBIA, phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) band" : "OBBBA-widened $75,000 ($150,000 joint) band (\xA7 70105, taxable years after 2025)"}; a specified service trade or business scales its items by the applicable percentage and gets nothing past the band.${withMinimum ? " OBBBA \xA7 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed \u2014 disclosed)." : ""} [Single trade or business \u2014 no aggregation, no REIT/PTP component; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages \u2014 disclosed.]`
+      excerpt: `20 percent of qualified business income \u2014 QBI reduced by the attributable \xBD-SE-tax, SEP, and SE-health-insurance deductions (Reg. \xA7 1.199A-3(b)(1)(vi)) \u2014 limited to 20 percent of taxable income (without this deduction) less net capital gain. Above the \xA7 199A(e)(2) threshold the deduction is limited to the greater of 50 percent of the business's W-2 wages or 25 percent of W-2 wages plus 2.5 percent of UBIA, phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) band" : "OBBBA-widened $75,000 ($150,000 joint) band (\xA7 70105, taxable years after 2025)"}; a specified service trade or business scales its items by the applicable percentage and gets nothing past the band.${withMinimum ? " OBBBA \xA7 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed \u2014 disclosed)." : ""} [Single trade or business above the threshold (two self-employed spouses' businesses compute below it and refuse above it) \u2014 no aggregation, no REIT/PTP component; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages \u2014 disclosed.]`
     },
     effectiveFrom,
     effectiveTo,
@@ -72511,8 +72543,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
 }
 var qbiRules = [
   qbiRule(
-    9,
-    // v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
+    11,
+    // v9 counted one self-employed person; v11 counts both spouses' profit below the threshold and refuses two businesses above it. v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
     "2025-01-01",
     "2026-01-01",
     "2025",
@@ -72531,8 +72563,8 @@ var qbiRules = [
     false
   ),
   qbiRule(
-    10,
-    // v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
+    12,
+    // v10 counted one self-employed person; v12 counts both spouses' profit below the threshold and refuses two businesses above it. v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
     "2026-01-01",
     "2027-01-01",
     "2026",
@@ -72565,17 +72597,38 @@ var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
 var param23 = (name) => ({ kind: "param", name });
 var zero26 = money36("0");
 var seNetEarnings = ruleRef33("us.federal.se_net_earnings");
-function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabel) {
+var spouseSeNetEarnings = ruleRef33("us.federal.se_net_earnings.spouse");
+function seTaxRule(person, version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabel) {
+  const who = person.key === "taxpayer" ? "first spouse (or the single filer): selfEmploymentNetProfit; Schedule SE line 8a uses socialSecurityWages when given, else box-1 wages" : "second self-employed spouse on a joint return: spouseSelfEmploymentNetProfit; Schedule SE line 8a uses spouseSocialSecurityWages";
+  const wagesNote = person.key === "taxpayer" ? "reduced by W-2 social security wages (Schedule SE line 8a = box 3; approximated by box 1 when socialSecurityWages is not supplied)" : "reduced by THIS spouse's own W-2 social security wages (Schedule SE line 8a = their box 3, spouseSocialSecurityWages)";
+  const oasdi = {
+    kind: "mulRate",
+    base: {
+      kind: "min",
+      args: [
+        person.netEarnings,
+        { kind: "max0", arg: { kind: "sub", left: param23("wageBase"), right: person.wagesForBase } }
+      ]
+    },
+    rate: { num: "124", den: "1000" },
+    round: "half-up"
+  };
+  const medicare = {
+    kind: "mulRate",
+    base: person.netEarnings,
+    rate: { num: "29", den: "1000" },
+    round: "half-up"
+  };
   return {
-    id: "us.federal.se_tax",
+    id: `us.federal.se_tax.${person.key}`,
     version: version2,
     jurisdiction: "us.federal",
-    title: `Self-employment tax (TY${yearLabel}; Schedule SE line 8a uses socialSecurityWages when given, else box-1 wages)`,
+    title: `Self-employment tax, one Schedule SE (TY${yearLabel}; ${who})`,
     citation: {
       source: `26 U.S.C. \xA7 1401; \xA7 1402(b); SSA ${yearLabel} contribution and benefit base`,
       section: "\xA7 1401(a) 12.4% OASDI; \xA7 1401(b) 2.9% Medicare",
       url: "https://www.ssa.gov/oact/cola/cbb.html",
-      excerpt: `12.4 percent of self-employment income up to the contribution and benefit base (${yearLabel}: as announced by SSA) reduced by W-2 social security wages (Schedule SE line 8a = box 3; approximated by box 1 when socialSecurityWages is not supplied), plus 2.9 percent hospital insurance on all self-employment income. No tax if net earnings are under $400 (\xA7 1402(b)(2)). DEFAULT method matches the printed Schedule SE: line 10 'Multiply the smaller of line 9 or line 10 by 12.4%' and line 11 'Multiply line 6 by 2.9% (0.029)' are each rounded to whole dollars before line 12 'Self-employment tax. Add lines 10 and 11' \u2014 useFormulaMethod opts back to exact-cents arithmetic. The 0.9% Additional Medicare Tax (\xA7 1401(b)(2)) is computed separately.`
+      excerpt: `12.4 percent of self-employment income up to the contribution and benefit base (${yearLabel}: as announced by SSA) ${wagesNote}, plus 2.9 percent hospital insurance on all self-employment income. No tax if net earnings are under $400 (\xA7 1402(b)(2)). Schedule SE is figured per person: on a joint return where both spouses have self-employment income, each files their own (Schedule SE instructions, 'Who Must File'). DEFAULT method matches the printed Schedule SE: line 10 'Multiply the smaller of line 9 or line 10 by 12.4%' and line 11 'Multiply line 6 by 2.9% (0.029)' are each rounded to whole dollars before line 12 'Self-employment tax. Add lines 10 and 11' \u2014 useFormulaMethod opts back to exact-cents arithmetic. The 0.9% Additional Medicare Tax (\xA7 1401(b)(2)) is computed separately.`
     },
     effectiveFrom,
     effectiveTo,
@@ -72587,59 +72640,113 @@ function seTaxRule(version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabe
     },
     formula: {
       kind: "if",
-      cond: { kind: "cmp", op: "lt", left: seNetEarnings, right: param23("seFloor") },
+      cond: { kind: "cmp", op: "lt", left: person.netEarnings, right: param23("seFloor") },
       then: zero26,
       else: {
         kind: "if",
         cond: fact39("useFormulaMethod"),
-        then: { kind: "add", args: [oasdiComponent, medicareComponent] },
+        then: { kind: "add", args: [oasdi, medicare] },
         else: {
           // printed Schedule SE: lines 10 and 11 each entered in whole dollars
           kind: "add",
           args: [
-            { kind: "roundToDollar", value: oasdiComponent, mode: "half-up" },
-            { kind: "roundToDollar", value: medicareComponent, mode: "half-up" }
+            { kind: "roundToDollar", value: oasdi, mode: "half-up" },
+            { kind: "roundToDollar", value: medicare, mode: "half-up" }
           ]
         }
       }
     }
   };
 }
-var wagesForBase = {
-  kind: "if",
-  cond: {
-    kind: "or",
-    args: [fact39("socialSecurityWagesProvided"), { kind: "cmp", op: "gt", left: fact39("socialSecurityWages"), right: zero26 }]
-  },
-  then: fact39("socialSecurityWages"),
-  else: fact39("wages")
+var taxpayer = {
+  key: "taxpayer",
+  netEarnings: seNetEarnings,
+  wagesForBase: {
+    kind: "if",
+    cond: {
+      kind: "or",
+      args: [fact39("socialSecurityWagesProvided"), { kind: "cmp", op: "gt", left: fact39("socialSecurityWages"), right: zero26 }]
+    },
+    then: fact39("socialSecurityWages"),
+    else: fact39("wages")
+  }
 };
-var oasdiComponent = {
-  kind: "mulRate",
-  base: {
-    kind: "min",
-    args: [
-      seNetEarnings,
-      {
-        kind: "max0",
-        arg: {
-          kind: "sub",
-          left: param23("wageBase"),
-          right: wagesForBase
+var spouse = {
+  key: "spouse",
+  netEarnings: spouseSeNetEarnings,
+  wagesForBase: fact39("spouseSocialSecurityWages")
+};
+function halfDeductionRule(person) {
+  const tax = ruleRef33(`us.federal.se_tax.${person.key}`);
+  const half3 = { kind: "mulRate", base: tax, rate: { num: "50", den: "100" }, round: "half-up" };
+  return {
+    id: `us.federal.se_tax_half_deduction.${person.key}`,
+    version: 1,
+    jurisdiction: "us.federal",
+    title: `Deduction for one-half of self-employment tax, one Schedule SE (${person.key === "taxpayer" ? "first spouse or single filer" : "second self-employed spouse"})`,
+    citation: {
+      source: "26 U.S.C. \xA7 164(f); Schedule SE (Form 1040) line 13",
+      section: "\xA7 164(f)(1)",
+      url: "https://www.law.cornell.edu/uscode/text/26/164",
+      excerpt: "\u2026there shall be allowed as a deduction\u2026 an amount equal to one-half of the taxes imposed by section 1401 (other than the taxes imposed by section 1401(b)(2)) for such taxable year. [Schedule SE line 13: 'Multiply line 12 by 50% (0.50). Enter here and on Schedule 1 (Form 1040), line 15' \u2014 entered in whole dollars by DEFAULT; useFormulaMethod keeps exact cents.]"
+    },
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: fact39("useFormulaMethod"),
+      then: half3,
+      else: { kind: "roundToDollar", value: half3, mode: "half-up" }
+    }
+  };
+}
+var selfEmploymentRules = [
+  {
+    id: "us.federal.se_net_profit.spouse",
+    version: 1,
+    jurisdiction: "us.federal",
+    title: "Second self-employed spouse's net profit (joint returns only)",
+    citation: {
+      source: "26 U.S.C. \xA7 1402(a); Schedule SE (Form 1040) instructions",
+      section: "\xA7 1402(a); \xA7 6017",
+      url: "https://www.law.cornell.edu/uscode/text/26/1402",
+      excerpt: "Schedule SE instructions: 'If you and your spouse both had self-employment income, each of you must file a separate Schedule SE.' [Only a joint return carries the other spouse's income; on any other status that spouse files their own return, so a spouse profit here refuses.]"
+    },
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: { kind: "cmp", op: "eq", left: fact39("spouseSelfEmploymentNetProfit"), right: zero26 },
+      then: zero26,
+      else: {
+        kind: "if",
+        cond: { kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: "mfj" } },
+        then: fact39("spouseSelfEmploymentNetProfit"),
+        else: {
+          kind: "unsupported",
+          reason: "spouseSelfEmploymentNetProfit is for a joint return only \u2014 on any other filing status each spouse files their own return: enter the filer's own profit in selfEmploymentNetProfit"
         }
       }
-    ]
+    }
   },
-  rate: { num: "124", den: "1000" },
-  round: "half-up"
-};
-var medicareComponent = {
-  kind: "mulRate",
-  base: seNetEarnings,
-  rate: { num: "29", den: "1000" },
-  round: "half-up"
-};
-var selfEmploymentRules = [
+  {
+    id: "us.federal.se_net_profit",
+    version: 1,
+    jurisdiction: "us.federal",
+    title: "Net profit from self-employment, both spouses (selfEmploymentNetProfit + the second spouse's)",
+    citation: {
+      source: "26 U.S.C. \xA7\xA7 61(a)(2), 1402(a)",
+      section: "\xA7 61(a)(2)",
+      url: "https://www.law.cornell.edu/uscode/text/26/61",
+      excerpt: "gross income means all income from whatever source derived, including\u2026 gross income derived from business. [On a joint return both spouses' Schedule C profits are income of the return; each spouse's self-employment tax is still figured on their own Schedule SE.]"
+    },
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "add",
+      args: [fact39("selfEmploymentNetProfit"), ruleRef33("us.federal.se_net_profit.spouse")]
+    }
+  },
   {
     id: "us.federal.se_net_earnings",
     version: 1,
@@ -72661,45 +72768,75 @@ var selfEmploymentRules = [
       round: "half-up"
     }
   },
-  // v5/v6: box-3 socialSecurityWages coordination (v3/v4 added the printed
-  // Schedule SE per-line whole-dollar rounding)
-  seTaxRule(5, "2025-01-01", "2026-01-01", "17610000", "2025"),
-  // $176,100
-  seTaxRule(6, "2026-01-01", "2027-01-01", "18450000", "2026"),
-  // $184,500
   {
-    id: "us.federal.se_tax_half_deduction",
-    version: 2,
-    // v1 kept exact cents; v2 follows Schedule SE line 13 (whole dollars)
+    id: "us.federal.se_net_earnings.spouse",
+    version: 1,
     jurisdiction: "us.federal",
-    title: "Deduction for one-half of self-employment tax",
+    title: "Second self-employed spouse's net earnings from self-employment (92.35% of their net profit)",
     citation: {
-      source: "26 U.S.C. \xA7 164(f); Schedule SE (Form 1040) line 13",
-      section: "\xA7 164(f)(1)",
-      url: "https://www.law.cornell.edu/uscode/text/26/164",
-      excerpt: "\u2026there shall be allowed as a deduction\u2026 an amount equal to one-half of the taxes imposed by section 1401 (other than the taxes imposed by section 1401(b)(2)) for such taxable year. [Schedule SE line 13: 'Multiply line 12 by 50% (0.50). Enter here and on Schedule 1 (Form 1040), line 15' \u2014 entered in whole dollars by DEFAULT; useFormulaMethod keeps exact cents.]"
+      source: "26 U.S.C. \xA7 1402(a)(12)",
+      section: "\xA7 1402(a)(12)",
+      url: "https://www.law.cornell.edu/uscode/text/26/1402",
+      excerpt: "\u2026reduced by an amount equal to the product of such net earnings and one-half of the [15.3%] rate \u2014 i.e., net profit \xD7 92.35%, on the second spouse's own Schedule SE."
     },
     effectiveFrom: "2025-01-01",
     output: { type: "money" },
     formula: {
-      kind: "if",
-      cond: fact39("useFormulaMethod"),
-      then: {
-        kind: "mulRate",
-        base: ruleRef33("us.federal.se_tax"),
-        rate: { num: "50", den: "100" },
-        round: "half-up"
-      },
-      else: {
-        kind: "roundToDollar",
-        value: {
-          kind: "mulRate",
-          base: ruleRef33("us.federal.se_tax"),
-          rate: { num: "50", den: "100" },
-          round: "half-up"
-        },
-        mode: "half-up"
-      }
+      kind: "mulRate",
+      base: ruleRef33("us.federal.se_net_profit.spouse"),
+      rate: { num: "9235", den: "10000" },
+      round: "half-up"
+    }
+  },
+  // the first spouse's Schedule SE keeps the formula us.federal.se_tax v5/v6 had
+  // (box-3 socialSecurityWages coordination, printed per-line rounding)
+  seTaxRule(taxpayer, 1, "2025-01-01", "2026-01-01", "17610000", "2025"),
+  // $176,100
+  seTaxRule(taxpayer, 2, "2026-01-01", "2027-01-01", "18450000", "2026"),
+  // $184,500
+  seTaxRule(spouse, 1, "2025-01-01", "2026-01-01", "17610000", "2025"),
+  seTaxRule(spouse, 2, "2026-01-01", "2027-01-01", "18450000", "2026"),
+  {
+    id: "us.federal.se_tax",
+    version: 7,
+    // v5/v6 were one Schedule SE; v7 adds the second self-employed spouse's on a joint return
+    jurisdiction: "us.federal",
+    title: "Self-employment tax (Schedule 2 line 4): the first spouse's Schedule SE plus the second self-employed spouse's",
+    citation: {
+      source: "26 U.S.C. \xA7 1401; Schedule 2 (Form 1040) line 4",
+      section: "\xA7 1401",
+      url: "https://www.law.cornell.edu/uscode/text/26/1401",
+      excerpt: "Schedule 2 line 4: 'Self-employment tax. Attach Schedule SE.' [On a joint return where both spouses had self-employment income, each spouse's Schedule SE line 12 is added here.]"
+    },
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "add",
+      args: [ruleRef33("us.federal.se_tax.taxpayer"), ruleRef33("us.federal.se_tax.spouse")]
+    }
+  },
+  halfDeductionRule(taxpayer),
+  halfDeductionRule(spouse),
+  {
+    id: "us.federal.se_tax_half_deduction",
+    version: 3,
+    // v2 was one Schedule SE line 13; v3 adds the second self-employed spouse's
+    jurisdiction: "us.federal",
+    title: "Deduction for one-half of self-employment tax (Schedule 1 line 15: both spouses' Schedule SE line 13)",
+    citation: {
+      source: "26 U.S.C. \xA7 164(f); Schedule 1 (Form 1040) line 15",
+      section: "\xA7 164(f)(1)",
+      url: "https://www.law.cornell.edu/uscode/text/26/164",
+      excerpt: "\u2026there shall be allowed as a deduction\u2026 an amount equal to one-half of the taxes imposed by section 1401 (other than the taxes imposed by section 1401(b)(2)) for such taxable year. [Schedule 1 line 15 takes Schedule SE line 13; with two Schedule SEs on a joint return, the two line 13 amounts are added.]"
+    },
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "add",
+      args: [
+        ruleRef33("us.federal.se_tax_half_deduction.taxpayer"),
+        ruleRef33("us.federal.se_tax_half_deduction.spouse")
+      ]
     }
   }
 ];
@@ -72866,7 +73003,7 @@ var magiBase = {
         fact41("qualifiedDividends"),
         ruleRef35("us.federal.schedule_d.ordinary_st_gain"),
         fact41("ordinaryDividends"),
-        fact41("selfEmploymentNetProfit"),
+        ruleRef35("us.federal.se_net_profit"),
         fact41("k1OrdinaryBusinessIncome"),
         fact41("taxableIraDistributions"),
         fact41("taxablePensionsAndAnnuities"),
@@ -72916,8 +73053,8 @@ var byJoint = (joint, other) => ({
 var socialSecurityRules = [
   {
     id: "us.federal.taxable_social_security",
-    version: 9,
-    // v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
+    version: 10,
+    // v9 counted one self-employed person's profit; v10 counts both spouses' (us.federal.se_net_profit). v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
     jurisdiction: "us.federal",
     title: "Taxable Social Security benefits (\xA7 86: the 0/50/85% worksheet)",
     citation: {
@@ -73989,6 +74126,8 @@ var INDIVIDUAL_GROUPS = {
   ],
   self_employment: [
     "selfEmploymentNetProfit",
+    "spouseSelfEmploymentNetProfit",
+    "spouseSocialSecurityWages",
     "scheduleCNetLoss",
     "k1OrdinaryBusinessIncome",
     "qbiW2Wages",

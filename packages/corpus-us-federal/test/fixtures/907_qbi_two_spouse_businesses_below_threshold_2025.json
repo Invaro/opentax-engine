@@ -1,0 +1,14 @@
+{
+  "description": "Below the threshold two businesses' QBI simply adds: $160,000 of profit − $11,304 of half-SE deductions = $148,696 QBI, 20% = $29,739.20; the overall limit, 20% of taxable income before QBI ($148,696 AGI − $31,500 standard deduction = $117,196), is $23,439.20, the smaller.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "selfEmploymentNetProfit": 100000,
+    "spouseSelfEmploymentNetProfit": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "2343920"
+  }
+}

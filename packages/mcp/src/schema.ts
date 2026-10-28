@@ -189,6 +189,8 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
   ],
   self_employment: [
     "selfEmploymentNetProfit",
+    "spouseSelfEmploymentNetProfit",
+    "spouseSocialSecurityWages",
     "scheduleCNetLoss",
     "k1OrdinaryBusinessIncome",
     "qbiW2Wages",

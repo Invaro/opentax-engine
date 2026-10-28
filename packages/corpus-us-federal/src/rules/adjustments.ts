@@ -211,7 +211,7 @@ function sepRule(
               arg: {
                 kind: "sub",
                 left: fact("selfEmploymentNetProfit"),
-                right: ruleRef("us.federal.se_tax_half_deduction"),
+                right: ruleRef("us.federal.se_tax_half_deduction.taxpayer"),
               },
             },
             rate: { num: "20", den: "100" },
@@ -264,7 +264,7 @@ export const adjustmentRules: Rule[] = [
               right: {
                 kind: "add",
                 args: [
-                  ruleRef("us.federal.se_tax_half_deduction"),
+                  ruleRef("us.federal.se_tax_half_deduction.taxpayer"),
                   ruleRef("us.federal.sep_deduction"),
                 ],
               },

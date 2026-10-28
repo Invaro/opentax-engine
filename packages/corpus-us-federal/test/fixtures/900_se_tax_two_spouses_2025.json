@@ -1,0 +1,18 @@
+{
+  "description": "Both spouses self-employed on a joint return, no W-2s: each files their own Schedule SE. First spouse $100,000 profit: net earnings $92,350, OASDI $11,451 + Medicare $2,678 = $14,129. Second spouse $60,000: net earnings $55,410, OASDI $6,871 + Medicare $1,607 = $8,478. Schedule 2 line 4 = $22,607.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "selfEmploymentNetProfit": 100000,
+    "spouseSelfEmploymentNetProfit": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.se_tax",
+  "expect": {
+    "valueCents": "2260700",
+    "intermediates": {
+      "us.federal.se_tax.taxpayer": "1412900",
+      "us.federal.se_tax.spouse": "847800"
+    }
+  }
+}

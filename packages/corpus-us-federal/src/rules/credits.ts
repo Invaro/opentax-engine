@@ -74,7 +74,7 @@ const earnedIncome: Expr = {
       kind: "max0",
       arg: {
         kind: "sub",
-        left: fact("selfEmploymentNetProfit"),
+        left: ruleRef("us.federal.se_net_profit"),
         right: ruleRef("us.federal.se_tax_half_deduction"),
       },
     },
