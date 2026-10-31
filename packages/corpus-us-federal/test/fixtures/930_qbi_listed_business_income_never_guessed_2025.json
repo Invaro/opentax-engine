@@ -1,0 +1,18 @@
+{
+  "description": "Listing two businesses without their QBI asks for both amounts: a listed business's QBI has no default.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 100000,
+    "qbiAdditionalBusinesses": 2
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "qbiBusiness2Income",
+      "qbiBusiness3Income"
+    ]
+  }
+}

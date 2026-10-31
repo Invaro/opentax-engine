@@ -749,7 +749,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "W-2 wages PAID BY the qualified trade or business, allocable to QBI (§ 199A(b)(4)) — drives the above-threshold wage limit. Intake forms often label this 'W-2 Wages Paid' under the business section: it is a § 199A LIMIT input, NOT a Schedule C expense — never subtract it from selfEmploymentNetProfit. Defaults to $0, which can only understate the deduction (conservative). In dollars.",
+      "W-2 wages PAID BY the qualified trade or business, allocable to QBI (§ 199A(b)(4)) — drives the above-threshold wage limit. Intake forms often label this 'W-2 Wages Paid' under the business section: it is a § 199A LIMIT input, NOT a Schedule C expense — never subtract it from selfEmploymentNetProfit. With businesses listed separately (qbiAdditionalBusinesses) these are the main business's wages — the business holding whatever QBI is not listed. Defaults to $0, which can only understate the deduction (conservative). In dollars.",
     default: {
       value: "0",
       rationale:
@@ -761,7 +761,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Unadjusted basis immediately after acquisition of the business's qualified property (§ 199A(b)(6)) — the 2.5% prong of the wage limit. Defaults to $0 (conservative). In dollars.",
+      "Unadjusted basis immediately after acquisition of the business's qualified property (§ 199A(b)(6)) — the 2.5% prong of the wage limit. With businesses listed separately, the main business's UBIA. Defaults to $0 (conservative). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no qualified-property UBIA absent contrary input (conservative)",
@@ -771,9 +771,325 @@ export const facts: FactSpec[] = [
     id: "businessIsSSTB",
     type: "bool",
     description:
-      "The trade or business is a specified service trade or business (§ 199A(d)(2): health, law, accounting, consulting, financial services, athletics, performing arts, …) — above the threshold an SSTB's deduction phases to zero.",
+      "The trade or business is a specified service trade or business (§ 199A(d)(2): health, law, accounting, consulting, financial services, athletics, performing arts, …) — above the threshold an SSTB's deduction phases to zero. With businesses listed separately, this is the main business — the one holding whatever QBI is not listed.",
     // no default — only demanded above the § 199A threshold, where it
     // decides everything; the engine must never guess it
+  },
+  {
+    id: "qbiAggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of the main business (QBI not listed separately): businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "spouseQbiW2Wages",
+    type: "money",
+    min: "0",
+    description:
+      "JOINT RETURN: W-2 wages PAID BY the second spouse's own Schedule C business (§ 199A(b)(4)) — its above-threshold wage limit; that business is its own § 199A trade or business. Never subtract it from spouseSelfEmploymentNetProfit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed the second spouse's business paid no W-2 wages (conservative above the threshold)",
+    },
+  },
+  {
+    id: "spouseQbiUBIA",
+    type: "money",
+    min: "0",
+    description:
+      "JOINT RETURN: UBIA of the second spouse's own Schedule C business's qualified property (§ 199A(b)(6)) — the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in the second spouse's business (conservative)",
+    },
+  },
+  {
+    id: "spouseBusinessIsSSTB",
+    type: "bool",
+    description:
+      "JOINT RETURN: the second spouse's own Schedule C business is a specified service trade or business (§ 199A(d)(2)). Asked only above the § 199A threshold when that spouse has QBI.",
+    // no default — decides the deduction above the threshold; never guessed
+  },
+  {
+    id: "spouseQbiAggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of the second spouse's Schedule C business: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "qbiAdditionalBusinesses",
+    type: "int",
+    min: "0",
+    max: "5",
+    description:
+      "How many trades or businesses to list separately for § 199A (0–5), each in qbiBusiness2… through qbiBusiness6…: each listed business gets its own W-2 wage and UBIA limit, SSTB status and aggregation group (Form 8995-A Part II, one column each). A listed business STAYS in the return's totals — its profit is part of selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a QBI loss part of qbiLossOffset — and listing it only takes it out of the main business, which keeps whatever QBI is not listed (with qbiW2Wages, qbiUBIA and businessIsSSTB). The second spouse's Schedule C on a joint return is already its own business: do not list it. List each S corporation or partnership K-1 with its Statement A amounts.",
+    default: {
+      value: "0",
+      rationale: "Assumed one trade or business (plus the second spouse's Schedule C on a joint return)",
+    },
+  },
+  {
+    id: "qbiBusiness2Income",
+    type: "money",
+    description:
+      "Listed business 2 (when qbiAdditionalBusinesses ≥ 1): its qualified business income, or a QBI LOSS as a NEGATIVE number (§ 199A(c); Form 8995-A Schedule C line 1(a)) — for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the ½-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars.",
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness2W2Wages",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 2: W-2 wages paid by the business allocable to QBI (§ 199A(b)(4); K-1 Statement A) — its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 2 paid no W-2 wages (conservative above the threshold)",
+    },
+  },
+  {
+    id: "qbiBusiness2UBIA",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 2: UBIA of its qualified property (§ 199A(b)(6); K-1 Statement A) — the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 2 (conservative)",
+    },
+  },
+  {
+    id: "qbiBusiness2IsSSTB",
+    type: "bool",
+    description:
+      "Listed business 2 is a specified service trade or business (§ 199A(d)(2); K-1 Statement A). Asked only above the § 199A threshold.",
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness2AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of listed business 2: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "qbiBusiness3Income",
+    type: "money",
+    description:
+      "Listed business 3 (when qbiAdditionalBusinesses ≥ 2): its qualified business income, or a QBI LOSS as a NEGATIVE number (§ 199A(c); Form 8995-A Schedule C line 1(a)) — for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the ½-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars.",
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness3W2Wages",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 3: W-2 wages paid by the business allocable to QBI (§ 199A(b)(4); K-1 Statement A) — its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 3 paid no W-2 wages (conservative above the threshold)",
+    },
+  },
+  {
+    id: "qbiBusiness3UBIA",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 3: UBIA of its qualified property (§ 199A(b)(6); K-1 Statement A) — the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 3 (conservative)",
+    },
+  },
+  {
+    id: "qbiBusiness3IsSSTB",
+    type: "bool",
+    description:
+      "Listed business 3 is a specified service trade or business (§ 199A(d)(2); K-1 Statement A). Asked only above the § 199A threshold.",
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness3AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of listed business 3: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "qbiBusiness4Income",
+    type: "money",
+    description:
+      "Listed business 4 (when qbiAdditionalBusinesses ≥ 3): its qualified business income, or a QBI LOSS as a NEGATIVE number (§ 199A(c); Form 8995-A Schedule C line 1(a)) — for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the ½-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars.",
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness4W2Wages",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 4: W-2 wages paid by the business allocable to QBI (§ 199A(b)(4); K-1 Statement A) — its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 4 paid no W-2 wages (conservative above the threshold)",
+    },
+  },
+  {
+    id: "qbiBusiness4UBIA",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 4: UBIA of its qualified property (§ 199A(b)(6); K-1 Statement A) — the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 4 (conservative)",
+    },
+  },
+  {
+    id: "qbiBusiness4IsSSTB",
+    type: "bool",
+    description:
+      "Listed business 4 is a specified service trade or business (§ 199A(d)(2); K-1 Statement A). Asked only above the § 199A threshold.",
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness4AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of listed business 4: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "qbiBusiness5Income",
+    type: "money",
+    description:
+      "Listed business 5 (when qbiAdditionalBusinesses ≥ 4): its qualified business income, or a QBI LOSS as a NEGATIVE number (§ 199A(c); Form 8995-A Schedule C line 1(a)) — for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the ½-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars.",
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness5W2Wages",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 5: W-2 wages paid by the business allocable to QBI (§ 199A(b)(4); K-1 Statement A) — its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 5 paid no W-2 wages (conservative above the threshold)",
+    },
+  },
+  {
+    id: "qbiBusiness5UBIA",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 5: UBIA of its qualified property (§ 199A(b)(6); K-1 Statement A) — the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 5 (conservative)",
+    },
+  },
+  {
+    id: "qbiBusiness5IsSSTB",
+    type: "bool",
+    description:
+      "Listed business 5 is a specified service trade or business (§ 199A(d)(2); K-1 Statement A). Asked only above the § 199A threshold.",
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness5AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of listed business 5: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "qbiBusiness6Income",
+    type: "money",
+    description:
+      "Listed business 6 (when qbiAdditionalBusinesses ≥ 5): its qualified business income, or a QBI LOSS as a NEGATIVE number (§ 199A(c); Form 8995-A Schedule C line 1(a)) — for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the ½-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars.",
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness6W2Wages",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 6: W-2 wages paid by the business allocable to QBI (§ 199A(b)(4); K-1 Statement A) — its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 6 paid no W-2 wages (conservative above the threshold)",
+    },
+  },
+  {
+    id: "qbiBusiness6UBIA",
+    type: "money",
+    min: "0",
+    description:
+      "Listed business 6: UBIA of its qualified property (§ 199A(b)(6); K-1 Statement A) — the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 6 (conservative)",
+    },
+  },
+  {
+    id: "qbiBusiness6IsSSTB",
+    type: "bool",
+    description:
+      "Listed business 6 is a specified service trade or business (§ 199A(d)(2); K-1 Statement A). Asked only above the § 199A threshold.",
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness6AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description:
+      "§ 199A aggregation group (Reg. § 1.199A-4) of listed business 6: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. § 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the § 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another",
+    },
+  },
+  {
+    id: "qbiLossCarryforward",
+    type: "money",
+    min: "0",
+    description:
+      "Qualified business net LOSS carried forward from prior years, as a POSITIVE number (§ 199A(c)(2); last year's Form 8995 line 16 or Schedule C (Form 8995-A) line 6) — it reduces this year's QBI for the deduction only, never taxable income. Next year's amount is the target us.federal.qbi.loss_carryforward. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified business loss carryforward from prior years",
+    },
   },
   {
     id: "sepContribution",

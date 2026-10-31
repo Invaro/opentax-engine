@@ -2,6 +2,21 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · QBI per business, with aggregation
+
+The § 199A deduction now follows Form 8995-A with one column per business. Above the threshold, each business gets its own W-2 wage and UBIA limit and its own SSTB status, instead of one limit for everything.
+
+- List up to five businesses separately with `qbiAdditionalBusinesses` and `qbiBusiness2Income` through `qbiBusiness6Income`, each with its own `W2Wages`, `UBIA`, `IsSSTB` and `AggregationGroup`. A listed business stays in the return's income: its profit is part of `selfEmploymentNetProfit` or `k1OrdinaryBusinessIncome`, and its QBI loss part of `qbiLossOffset`. Listing it only separates it for § 199A. What isn't listed is the main business, which keeps `qbiW2Wages`, `qbiUBIA` and `businessIsSSTB`.
+- On a joint return, the second spouse's Schedule C is its own business, with `spouseQbiW2Wages`, `spouseQbiUBIA` and `spouseBusinessIsSSTB`. Two self-employed spouses above the threshold now get a deduction instead of a refusal.
+- Aggregation (Schedule B): businesses with the same group number add their QBI, W-2 wages and UBIA and are limited as one. An SSTB can't be aggregated, and the engine refuses if one is.
+- Loss netting (Schedule C): a business's QBI loss, and last year's carryforward (`qbiLossCarryforward`), is shared among the profitable businesses in proportion to their QBI. Next year's carryforward is `us.federal.qbi.loss_carryforward`.
+- Each step has its own target, such as `us.federal.qbi.business2.component` or `us.federal.qbi.main.adjusted_qbi`.
+
+- A business that breaks even still brings its W-2 wages and UBIA to its aggregation group.
+- The 2026 $400 minimum now needs $1,000 of QBI from qualified businesses. An SSTB past the phase-in range isn't one, so it no longer gets the $400, and one within the range counts at its applicable percentage.
+
+Apart from that minimum, nothing changes for a return with one business: every other existing amount is the same. Returns with business income now list two more assumptions, no businesses listed separately and no loss carryforward, so a caller that refuses defaults is asked for both.
+
 ## Oct 28, 2026 · Retirement contribution maximums
 
 New targets give the most a self-employed person or an S-corporation owner can put into a solo 401(k) or a SEP, for 2025 and 2026:

@@ -1,0 +1,18 @@
+{
+  "description": "TY2026: an SSTB past the phase-in range is not a qualified trade or business (§ 199A(d)(3)), so it has no active QBI for the § 199A(i) $1,000 test and gets no $400 minimum. Single, K-1 income $400,000, taxable income $383,900, past $201,750 + $75,000: deduction $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 400000,
+    "businessIsSSTB": true
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.qbi.active_total": "0",
+      "us.federal.qbi.main.qbi": "40000000"
+    }
+  }
+}

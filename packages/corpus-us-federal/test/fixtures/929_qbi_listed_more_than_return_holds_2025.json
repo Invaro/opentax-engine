@@ -1,0 +1,15 @@
+{
+  "description": "A listed business must already be in the return's totals: listing $150,000 of QBI when the return has only $100,000 of K-1 income refuses rather than invent a negative main business.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 100000,
+    "qbiAdditionalBusinesses": 1,
+    "qbiBusiness2Income": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}
