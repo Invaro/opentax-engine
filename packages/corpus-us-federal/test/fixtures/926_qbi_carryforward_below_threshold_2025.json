@@ -1,0 +1,17 @@
+{
+  "description": "Form 8995 at or below the threshold: $50,000 of K-1 QBI against a $70,000 prior-year QBI loss carryforward nets to −$20,000 (line 4), so the deduction is $0 and $20,000 carries to next year (line 16). The carryforward never touches taxable income.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 50000,
+    "qbiLossCarryforward": 70000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi.loss_carryforward",
+  "expect": {
+    "valueCents": "2000000",
+    "intermediates": {
+      "us.federal.qbi.total": "5000000"
+    }
+  }
+}

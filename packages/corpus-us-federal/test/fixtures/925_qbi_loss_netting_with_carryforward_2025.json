@@ -1,0 +1,35 @@
+{
+  "description": "Schedule C loss netting: single, wages $200,000, K-1 income $400,000, a $100,000 nonpassive rental loss (QBI loss in qbiLossOffset), and a $20,000 prior-year QBI loss carryforward. Listed: business 2 = $300,000 (W-2 wages $200,000), business 3 = the −$100,000 rental (its W-2 wages $50,000 do not count). Main = $400,000 − $300,000 − ($100,000 − $100,000) = $100,000 (W-2 wages $100,000). Taxable income before QBI: $200,000 + $400,000 − $100,000 − $15,750 = $484,250, past the range. Losses (line 3) $100,000 + $20,000 = $120,000; income (line 4) $400,000; netted $120,000, apportioned by QBI: main $30,000 → $70,000, business 2 $90,000 → $210,000. Components: main 20% = $14,000 (wage limit $50,000); business 2 $42,000 (wage limit $100,000). Total $56,000; overall limit 20% × $484,250 = $96,850. Nothing carries to next year.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 200000,
+    "k1OrdinaryBusinessIncome": 400000,
+    "nonpassiveScheduleELoss": 100000,
+    "qbiLossOffset": 100000,
+    "qbiLossCarryforward": 20000,
+    "businessIsSSTB": false,
+    "qbiW2Wages": 100000,
+    "qbiAdditionalBusinesses": 2,
+    "qbiBusiness2Income": 300000,
+    "qbiBusiness2W2Wages": 200000,
+    "qbiBusiness2IsSSTB": false,
+    "qbiBusiness3Income": -100000,
+    "qbiBusiness3W2Wages": 50000,
+    "qbiBusiness3IsSSTB": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "5600000",
+    "intermediates": {
+      "us.federal.taxable_income_before_qbi": "48425000",
+      "us.federal.qbi.loss_netting.losses": "12000000",
+      "us.federal.qbi.loss_netting.income": "40000000",
+      "us.federal.qbi.loss_netting.netted": "12000000",
+      "us.federal.qbi.main.adjusted_qbi": "7000000",
+      "us.federal.qbi.business2.adjusted_qbi": "21000000",
+      "us.federal.qbi.business3.adjusted_qbi": "0",
+      "us.federal.qbi.business3.component": "0"
+    }
+  }
+}

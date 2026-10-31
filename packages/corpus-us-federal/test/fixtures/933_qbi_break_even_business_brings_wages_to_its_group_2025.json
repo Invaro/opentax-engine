@@ -1,0 +1,24 @@
+{
+  "description": "A business that breaks even still brings its W-2 wages to an aggregation group (Schedule B line 3). Single, K-1 income $600,000, all in the main business; listed business 2 has $0 QBI and pays $400,000 of W-2 wages, and both are in group 1. The group: QBI $600,000, W-2 wages $400,000 → 20% = $120,000, wage limit $200,000 → $120,000. Taxable income $600,000 − $15,750 = $584,250 caps it at 20% = $116,850.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessIncome": 600000,
+    "businessIsSSTB": false,
+    "qbiAggregationGroup": 1,
+    "qbiAdditionalBusinesses": 1,
+    "qbiBusiness2Income": 0,
+    "qbiBusiness2W2Wages": 400000,
+    "qbiBusiness2IsSSTB": false,
+    "qbiBusiness2AggregationGroup": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "11685000",
+    "intermediates": {
+      "us.federal.qbi.main.aggregated_w2_wages": "40000000",
+      "us.federal.qbi.main.component": "12000000"
+    }
+  }
+}

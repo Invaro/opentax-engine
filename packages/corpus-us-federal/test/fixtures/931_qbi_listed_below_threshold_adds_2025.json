@@ -1,0 +1,30 @@
+{
+  "description": "At or below the threshold listed businesses simply add (Form 8995): K-1 income $100,000 with business 2 = $60,000 and business 3 = a −$10,000 rental loss (in qbiLossOffset and nonpassiveScheduleELoss). Total QBI $90,000, 20% = $18,000; taxable income $50,000 + $100,000 − $10,000 − $15,750 = $124,250, overall limit $24,850. No SSTB, W-2 wage or aggregation question is asked.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "k1OrdinaryBusinessIncome": 100000,
+    "qbiLossOffset": 10000,
+    "nonpassiveScheduleELoss": 10000,
+    "qbiAdditionalBusinesses": 2,
+    "qbiBusiness2Income": 60000,
+    "qbiBusiness3Income": -10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "1800000",
+    "intermediates": {
+      "us.federal.qbi.total": "9000000",
+      "us.federal.qbi.main.qbi": "4000000"
+    },
+    "assumedFacts": [
+      "qbiLossCarryforward"
+    ],
+    "notAssumedFacts": [
+      "qbiBusiness2W2Wages",
+      "qbiAggregationGroup",
+      "qbiBusiness2AggregationGroup"
+    ]
+  }
+}

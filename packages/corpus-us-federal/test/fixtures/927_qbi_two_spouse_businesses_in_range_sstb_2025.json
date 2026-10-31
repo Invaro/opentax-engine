@@ -1,0 +1,24 @@
+{
+  "description": "Two spouses' Schedule C businesses, each its own § 199A business (replaces the old refusal). MFJ, W-2 wages $300,000, each spouse $100,000 of profit. Half-SE: taxpayer $1,339 (Medicare only — their W-2 filled the wage base), spouse $7,065. QBI: main $98,661, spouse $92,935. Taxable income before QBI $491,596 − $31,500 = $460,096; excess over $394,600 = $65,496 of the $100,000 range. Main (not an SSTB, no W-2 wages): 20% = $19,732.20, less $19,732.20 × 65,496/100,000 = $12,923.80 → $6,808.40. Spouse (SSTB): applicable percentage 34.504% → QBI $32,066.29, 20% = $6,413.26, less $4,200.43 → $2,212.83. Total $9,021.23; overall limit $92,019.20.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 300000,
+    "selfEmploymentNetProfit": 100000,
+    "spouseSelfEmploymentNetProfit": 100000,
+    "businessIsSSTB": false,
+    "spouseBusinessIsSSTB": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "902123",
+    "intermediates": {
+      "us.federal.qbi.main.qbi": "9866100",
+      "us.federal.qbi.spouse.qbi": "9293500",
+      "us.federal.taxable_income_before_qbi": "46009600",
+      "us.federal.qbi.main.component": "680840",
+      "us.federal.qbi.spouse.sstb_qbi": "3206629",
+      "us.federal.qbi.spouse.component": "221283"
+    }
+  }
+}

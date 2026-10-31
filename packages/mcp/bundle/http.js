@@ -1139,10 +1139,10 @@ var require_codegen = __commonJS({
     }
     exports.not = not8;
     var andCode = mappend(exports.operators.AND);
-    function and11(...args) {
+    function and12(...args) {
       return args.reduce(andCode);
     }
-    exports.and = and11;
+    exports.and = and12;
     var orCode = mappend(exports.operators.OR);
     function or11(...args) {
       return args.reduce(orCode);
@@ -1579,12 +1579,12 @@ var require_applicability = __commonJS({
     }
     exports.schemaHasRulesForType = schemaHasRulesForType;
     function shouldUseGroup(schema, group) {
-      return group.rules.some((rule) => shouldUseRule(schema, rule));
+      return group.rules.some((rule2) => shouldUseRule(schema, rule2));
     }
     exports.shouldUseGroup = shouldUseGroup;
-    function shouldUseRule(schema, rule) {
+    function shouldUseRule(schema, rule2) {
       var _a3;
-      return schema[rule.keyword] !== void 0 || ((_a3 = rule.definition.implements) === null || _a3 === void 0 ? void 0 : _a3.some((kwd) => schema[kwd] !== void 0));
+      return schema[rule2.keyword] !== void 0 || ((_a3 = rule2.definition.implements) === null || _a3 === void 0 ? void 0 : _a3.some((kwd) => schema[kwd] !== void 0));
     }
     exports.shouldUseRule = shouldUseRule;
   }
@@ -2340,10 +2340,10 @@ var require_resolve = __commonJS({
       }
       return count;
     }
-    function getFullPath(resolver, id = "", normalize) {
+    function getFullPath(resolver, id2 = "", normalize) {
       if (normalize !== false)
-        id = normalizeId(id);
-      const p = resolver.parse(id);
+        id2 = normalizeId(id2);
+      const p = resolver.parse(id2);
       return _getFullPath(resolver, p);
     }
     exports.getFullPath = getFullPath;
@@ -2353,13 +2353,13 @@ var require_resolve = __commonJS({
     }
     exports._getFullPath = _getFullPath;
     var TRAILING_SLASH_HASH = /#\/?$/;
-    function normalizeId(id) {
-      return id ? id.replace(TRAILING_SLASH_HASH, "") : "";
+    function normalizeId(id2) {
+      return id2 ? id2.replace(TRAILING_SLASH_HASH, "") : "";
     }
     exports.normalizeId = normalizeId;
-    function resolveUrl(resolver, baseId, id) {
-      id = normalizeId(id);
-      return resolver.resolve(baseId, id);
+    function resolveUrl(resolver, baseId, id2) {
+      id2 = normalizeId(id2);
+      return resolver.resolve(baseId, id2);
     }
     exports.resolveUrl = resolveUrl;
     var ANCHOR = /^[a-z_][-a-z0-9._]*$/i;
@@ -2636,9 +2636,9 @@ var require_validate = __commonJS({
       if (useDefaults)
         (0, defaults_1.assignDefaults)(it, group.type);
       gen.block(() => {
-        for (const rule of group.rules) {
-          if ((0, applicability_1.shouldUseRule)(schema, rule)) {
-            keywordCode(it, rule.keyword, rule.definition, group.type);
+        for (const rule2 of group.rules) {
+          if ((0, applicability_1.shouldUseRule)(schema, rule2)) {
+            keywordCode(it, rule2.keyword, rule2.definition, group.type);
           }
         }
       });
@@ -2673,9 +2673,9 @@ var require_validate = __commonJS({
     function checkKeywordTypes(it, ts) {
       const rules = it.self.RULES.all;
       for (const keyword in rules) {
-        const rule = rules[keyword];
-        if (typeof rule == "object" && (0, applicability_1.shouldUseRule)(it.schema, rule)) {
-          const { type } = rule.definition;
+        const rule2 = rules[keyword];
+        if (typeof rule2 == "object" && (0, applicability_1.shouldUseRule)(it.schema, rule2)) {
+          const { type } = rule2.definition;
           if (type.length && !type.some((t) => hasApplicableType(ts, t))) {
             strictTypesError(it, `missing type "${type.join(",")}" for keyword "${keyword}"`);
           }
@@ -3129,8 +3129,8 @@ var require_compile = __commonJS({
       if (Object.keys(root.schema).length > 0 && refPath === baseId) {
         return getJsonPointer.call(this, p, root);
       }
-      const id = (0, resolve_1.normalizeId)(refPath);
-      const schOrRef = this.refs[id] || this.schemas[id];
+      const id2 = (0, resolve_1.normalizeId)(refPath);
+      const schOrRef = this.refs[id2] || this.schemas[id2];
       if (typeof schOrRef == "string") {
         const sch = resolveSchema.call(this, root, schOrRef);
         if (typeof (sch === null || sch === void 0 ? void 0 : sch.schema) !== "object")
@@ -3141,7 +3141,7 @@ var require_compile = __commonJS({
         return;
       if (!schOrRef.validate)
         compileSchema.call(this, schOrRef);
-      if (id === (0, resolve_1.normalizeId)(ref)) {
+      if (id2 === (0, resolve_1.normalizeId)(ref)) {
         const { schema } = schOrRef;
         const { schemaId } = this.opts;
         const schId = schema[schemaId];
@@ -3713,10 +3713,10 @@ var require_utils = __commonJS({
       }
       return output2;
     }
-    function recomposeZonedIPv6Host(component) {
-      const zone = component.ipv6Zone;
+    function recomposeZonedIPv6Host(component2) {
+      const zone = component2.ipv6Zone;
       if (zone === void 0) return void 0;
-      const host = component.host;
+      const host = component2.host;
       const separator = host.indexOf("%");
       if (separator === -1) return void 0;
       const address = host.slice(0, separator);
@@ -3727,16 +3727,16 @@ var require_utils = __commonJS({
       }
       return void 0;
     }
-    function recomposeAuthority(component, allowNonAscii = false) {
+    function recomposeAuthority(component2, allowNonAscii = false) {
       const uriTokens = [];
-      if (component.userinfo !== void 0) {
-        uriTokens.push(encodeUserinfo(component.userinfo));
+      if (component2.userinfo !== void 0) {
+        uriTokens.push(encodeUserinfo(component2.userinfo));
         uriTokens.push("@");
       }
-      if (component.host !== void 0) {
-        let host = component.host;
+      if (component2.host !== void 0) {
+        let host = component2.host;
         if (!isIPv4(host)) {
-          const zonedHost = recomposeZonedIPv6Host(component);
+          const zonedHost = recomposeZonedIPv6Host(component2);
           if (zonedHost !== void 0) {
             host = zonedHost;
           } else {
@@ -3754,8 +3754,8 @@ var require_utils = __commonJS({
         }
         uriTokens.push(host);
       }
-      if (typeof component.port === "number" || typeof component.port === "string") {
-        const port = String(component.port);
+      if (typeof component2.port === "number" || typeof component2.port === "string") {
+        const port = String(component2.port);
         if (!isPort(port)) {
           throw new TypeError("URI port is malformed.");
         }
@@ -3824,21 +3824,21 @@ var require_schemes = __commonJS({
         return false;
       }
     }
-    function httpParse(component) {
-      if (!component.host) {
-        component.error = component.error || "HTTP URIs must have a host.";
+    function httpParse(component2) {
+      if (!component2.host) {
+        component2.error = component2.error || "HTTP URIs must have a host.";
       }
-      return component;
+      return component2;
     }
-    function httpSerialize(component) {
-      const secure = String(component.scheme).toLowerCase() === "https";
-      if (component.port === (secure ? 443 : 80) || component.port === "") {
-        component.port = void 0;
+    function httpSerialize(component2) {
+      const secure = String(component2.scheme).toLowerCase() === "https";
+      if (component2.port === (secure ? 443 : 80) || component2.port === "") {
+        component2.port = void 0;
       }
-      if (!component.path) {
-        component.path = "/";
+      if (!component2.path) {
+        component2.path = "/";
       }
-      return component;
+      return component2;
     }
     function wsParse(wsComponent) {
       wsComponent.secure = wsIsSecure(wsComponent);
@@ -4056,7 +4056,7 @@ var require_schemes = __commonJS({
       }
       return result;
     }
-    function mailtoNormalizeDomain(domain2, options, component) {
+    function mailtoNormalizeDomain(domain2, options, component2) {
       const normalizedDomain = String(domain2).toLowerCase();
       if (MAILTO_DOMAIN_LITERAL.test(normalizedDomain)) {
         return normalizedDomain;
@@ -4071,8 +4071,8 @@ var require_schemes = __commonJS({
         }
         return options && options.unicodeSupport ? normalizedDomain : parsedDomain.hostname;
       } catch {
-        if (component) {
-          component.error = component.error || MAILTO_DOMAIN_ERROR;
+        if (component2) {
+          component2.error = component2.error || MAILTO_DOMAIN_ERROR;
         }
         return normalizedDomain;
       }
@@ -4084,8 +4084,8 @@ var require_schemes = __commonJS({
       }
       return encodeWithAllow(domain2, set2);
     }
-    function mailtoParse(component, options) {
-      const mailtoComponent = component;
+    function mailtoParse(component2, options) {
+      const mailtoComponent = component2;
       let rawPath = mailtoComponent.path;
       let rawQuery = mailtoComponent.query;
       if (rawPath && HAS_SURROGATE.test(rawPath)) rawPath = replaceLoneSurrogates(rawPath);
@@ -4152,8 +4152,8 @@ var require_schemes = __commonJS({
     function mailtoEncodeHeaderName(name) {
       return encodeWithAllow(name.replace(/%/gu, "%25"), HFNAME);
     }
-    function mailtoSerialize(component, options) {
-      const mailtoComponent = component;
+    function mailtoSerialize(component2, options) {
+      const mailtoComponent = component2;
       const to = Array.isArray(mailtoComponent.to) ? mailtoComponent.to.slice() : [];
       const sourceHeaders = mailtoComponent.headers && typeof mailtoComponent.headers === "object" ? Object.assign(/* @__PURE__ */ Object.create(null), mailtoComponent.headers) : /* @__PURE__ */ Object.create(null);
       const headers = /* @__PURE__ */ Object.create(null);
@@ -4389,7 +4389,7 @@ var require_fast_uri = __commonJS({
       return normalizedA !== void 0 && normalizedB !== void 0 && normalizedA === normalizedB;
     }
     function serialize2(cmpts, opts) {
-      const component = {
+      const component2 = {
         host: cmpts.host,
         ipv6Zone: cmpts.ipv6Zone,
         scheme: cmpts.scheme,
@@ -4412,38 +4412,38 @@ var require_fast_uri = __commonJS({
       };
       const options = Object.assign({}, opts);
       const uriTokens = [];
-      if (component.scheme) {
-        component.scheme = validateScheme(component.scheme);
+      if (component2.scheme) {
+        component2.scheme = validateScheme(component2.scheme);
       }
-      const schemeHandler = getSchemeHandler(options.scheme || component.scheme);
-      if (schemeHandler && schemeHandler.serialize) schemeHandler.serialize(component, options);
-      const hasAuthority = component.userinfo !== void 0 || component.host !== void 0 || component.port !== void 0;
-      const schemelessReference = (component.scheme === void 0 || options.reference === "suffix") && !hasAuthority;
+      const schemeHandler = getSchemeHandler(options.scheme || component2.scheme);
+      if (schemeHandler && schemeHandler.serialize) schemeHandler.serialize(component2, options);
+      const hasAuthority = component2.userinfo !== void 0 || component2.host !== void 0 || component2.port !== void 0;
+      const schemelessReference = (component2.scheme === void 0 || options.reference === "suffix") && !hasAuthority;
       const pathNoScheme = !options.skipEscape && schemelessReference;
-      if (component.path !== void 0) {
+      if (component2.path !== void 0) {
         if (!options.skipEscape) {
-          component.path = serializePathEncoding(component.path, pathNoScheme);
+          component2.path = serializePathEncoding(component2.path, pathNoScheme);
         } else {
-          component.path = normalizePercentEncoding(component.path);
+          component2.path = normalizePercentEncoding(component2.path);
         }
       }
-      if (options.reference !== "suffix" && component.scheme) {
-        component.scheme = validateScheme(component.scheme);
-        uriTokens.push(component.scheme, ":");
+      if (options.reference !== "suffix" && component2.scheme) {
+        component2.scheme = validateScheme(component2.scheme);
+        uriTokens.push(component2.scheme, ":");
       }
       const allowNonAsciiHost = options.unicodeSupport === true || Boolean(schemeHandler && schemeHandler.unicodeSupport);
-      const authority = recomposeAuthority(component, allowNonAsciiHost);
+      const authority = recomposeAuthority(component2, allowNonAsciiHost);
       if (authority !== void 0) {
         if (options.reference !== "suffix") {
           uriTokens.push("//");
         }
         uriTokens.push(authority);
-        if (component.path && component.path[0] !== "/") {
+        if (component2.path && component2.path[0] !== "/") {
           uriTokens.push("/");
         }
       }
-      if (component.path !== void 0) {
-        let s = component.path;
+      if (component2.path !== void 0) {
+        let s = component2.path;
         if (!options.absolutePath && (!schemeHandler || !schemeHandler.absolutePath)) {
           s = schemelessReference && s[0] !== "/" ? removeDotSegmentsRelative(s) : removeDotSegments(s);
         }
@@ -4455,11 +4455,11 @@ var require_fast_uri = __commonJS({
         }
         uriTokens.push(s);
       }
-      if (component.query !== void 0) {
-        uriTokens.push("?", encodeQuery(component.query));
+      if (component2.query !== void 0) {
+        uriTokens.push("?", encodeQuery(component2.query));
       }
-      if (component.fragment !== void 0) {
-        uriTokens.push("#", encodeFragment(component.fragment));
+      if (component2.fragment !== void 0) {
+        uriTokens.push("#", encodeFragment(component2.fragment));
       }
       return uriTokens.join("");
     }
@@ -4475,14 +4475,14 @@ var require_fast_uri = __commonJS({
       }
       return void 0;
     }
-    function hasMalformedPercentEncoding(component) {
-      if (component === void 0) return false;
-      let percent = component.indexOf("%");
+    function hasMalformedPercentEncoding(component2) {
+      if (component2 === void 0) return false;
+      let percent = component2.indexOf("%");
       while (percent !== -1) {
-        if (percent + 2 >= component.length || !/^[\da-f]{2}$/iu.test(component.slice(percent + 1, percent + 3))) {
+        if (percent + 2 >= component2.length || !/^[\da-f]{2}$/iu.test(component2.slice(percent + 1, percent + 3))) {
           return true;
         }
-        percent = component.indexOf("%", percent + 3);
+        percent = component2.indexOf("%", percent + 3);
       }
       return false;
     }
@@ -4958,15 +4958,15 @@ var require_core = __commonJS({
             this.addSchema(sch, void 0, _meta, _validateSchema);
           return this;
         }
-        let id;
+        let id2;
         if (typeof schema === "object") {
           const { schemaId } = this.opts;
-          id = schema[schemaId];
-          if (id !== void 0 && typeof id != "string") {
+          id2 = schema[schemaId];
+          if (id2 !== void 0 && typeof id2 != "string") {
             throw new Error(`schema ${schemaId} must be string`);
           }
         }
-        key = (0, resolve_1.normalizeId)(key || id);
+        key = (0, resolve_1.normalizeId)(key || id2);
         this._checkUnique(key);
         this.schemas[key] = this._addSchema(schema, _meta, key, _validateSchema, true);
         return this;
@@ -5045,11 +5045,11 @@ var require_core = __commonJS({
           case "object": {
             const cacheKey2 = schemaKeyRef;
             this._cache.delete(cacheKey2);
-            let id = schemaKeyRef[this.opts.schemaId];
-            if (id) {
-              id = (0, resolve_1.normalizeId)(id);
-              delete this.schemas[id];
-              delete this.refs[id];
+            let id2 = schemaKeyRef[this.opts.schemaId];
+            if (id2) {
+              id2 = (0, resolve_1.normalizeId)(id2);
+              delete this.schemas[id2];
+              delete this.refs[id2];
             }
             return this;
           }
@@ -5095,8 +5095,8 @@ var require_core = __commonJS({
         return this;
       }
       getKeyword(keyword) {
-        const rule = this.RULES.all[keyword];
-        return typeof rule == "object" ? rule.definition : !!rule;
+        const rule2 = this.RULES.all[keyword];
+        return typeof rule2 == "object" ? rule2.definition : !!rule2;
       }
       // Remove keyword
       removeKeyword(keyword) {
@@ -5104,7 +5104,7 @@ var require_core = __commonJS({
         delete RULES.keywords[keyword];
         delete RULES.all[keyword];
         for (const group of RULES.rules) {
-          const i = group.rules.findIndex((rule) => rule.keyword === keyword);
+          const i = group.rules.findIndex((rule2) => rule2.keyword === keyword);
           if (i >= 0)
             group.rules.splice(i, 1);
         }
@@ -5131,10 +5131,10 @@ var require_core = __commonJS({
           for (const seg of segments)
             keywords = keywords[seg];
           for (const key in rules) {
-            const rule = rules[key];
-            if (typeof rule != "object")
+            const rule2 = rules[key];
+            if (typeof rule2 != "object")
               continue;
-            const { $data } = rule.definition;
+            const { $data } = rule2.definition;
             const schema = keywords[key];
             if ($data && schema)
               keywords[key] = schemaOrData(schema);
@@ -5156,10 +5156,10 @@ var require_core = __commonJS({
         }
       }
       _addSchema(schema, meta3, baseId, validateSchema = this.opts.validateSchema, addSchema = this.opts.addUsedSchema) {
-        let id;
+        let id2;
         const { schemaId } = this.opts;
         if (typeof schema == "object") {
-          id = schema[schemaId];
+          id2 = schema[schemaId];
         } else {
           if (this.opts.jtd)
             throw new Error("schema must be object");
@@ -5169,7 +5169,7 @@ var require_core = __commonJS({
         let sch = this._cache.get(schema);
         if (sch !== void 0)
           return sch;
-        baseId = (0, resolve_1.normalizeId)(id || baseId);
+        baseId = (0, resolve_1.normalizeId)(id2 || baseId);
         const localRefs = resolve_1.getSchemaRefs.call(this, schema, baseId);
         sch = new compile_1.SchemaEnv({ schema, schemaId, meta: meta3, baseId, localRefs });
         this._cache.set(sch.schema, sch);
@@ -5182,9 +5182,9 @@ var require_core = __commonJS({
           this.validateSchema(schema, true);
         return sch;
       }
-      _checkUnique(id) {
-        if (this.schemas[id] || this.refs[id]) {
-          throw new Error(`schema with key or id "${id}" already exists`);
+      _checkUnique(id2) {
+        if (this.schemas[id2] || this.refs[id2]) {
+          throw new Error(`schema with key or id "${id2}" already exists`);
         }
       }
       _compileSchemaEnv(sch) {
@@ -5298,7 +5298,7 @@ var require_core = __commonJS({
       RULES.keywords[keyword] = true;
       if (!definition)
         return;
-      const rule = {
+      const rule2 = {
         keyword,
         definition: {
           ...definition,
@@ -5307,18 +5307,18 @@ var require_core = __commonJS({
         }
       };
       if (definition.before)
-        addBeforeRule.call(this, ruleGroup, rule, definition.before);
+        addBeforeRule.call(this, ruleGroup, rule2, definition.before);
       else
-        ruleGroup.rules.push(rule);
-      RULES.all[keyword] = rule;
+        ruleGroup.rules.push(rule2);
+      RULES.all[keyword] = rule2;
       (_a3 = definition.implements) === null || _a3 === void 0 ? void 0 : _a3.forEach((kwd) => this.addKeyword(kwd));
     }
-    function addBeforeRule(ruleGroup, rule, before) {
+    function addBeforeRule(ruleGroup, rule2, before) {
       const i = ruleGroup.rules.findIndex((_rule) => _rule.keyword === before);
       if (i >= 0) {
-        ruleGroup.rules.splice(i, 0, rule);
+        ruleGroup.rules.splice(i, 0, rule2);
       } else {
-        ruleGroup.rules.push(rule);
+        ruleGroup.rules.push(rule2);
         this.logger.warn(`rule ${before} is not defined`);
       }
     }
@@ -6156,8 +6156,8 @@ var require_contains = __commonJS({
     var codegen_1 = require_codegen();
     var util_1 = require_util();
     var error62 = {
-      message: ({ params: { min: min6, max: max2 } }) => max2 === void 0 ? (0, codegen_1.str)`must contain at least ${min6} valid item(s)` : (0, codegen_1.str)`must contain at least ${min6} and no more than ${max2} valid item(s)`,
-      params: ({ params: { min: min6, max: max2 } }) => max2 === void 0 ? (0, codegen_1._)`{minContains: ${min6}}` : (0, codegen_1._)`{minContains: ${min6}, maxContains: ${max2}}`
+      message: ({ params: { min: min7, max: max2 } }) => max2 === void 0 ? (0, codegen_1.str)`must contain at least ${min7} valid item(s)` : (0, codegen_1.str)`must contain at least ${min7} and no more than ${max2} valid item(s)`,
+      params: ({ params: { min: min7, max: max2 } }) => max2 === void 0 ? (0, codegen_1._)`{minContains: ${min7}}` : (0, codegen_1._)`{minContains: ${min7}, maxContains: ${max2}}`
     };
     var def = {
       keyword: "contains",
@@ -6168,28 +6168,28 @@ var require_contains = __commonJS({
       error: error62,
       code(cxt) {
         const { gen, schema, parentSchema, data, it } = cxt;
-        let min6;
+        let min7;
         let max2;
         const { minContains, maxContains } = parentSchema;
         if (it.opts.next) {
-          min6 = minContains === void 0 ? 1 : minContains;
+          min7 = minContains === void 0 ? 1 : minContains;
           max2 = maxContains;
         } else {
-          min6 = 1;
+          min7 = 1;
         }
         const len = gen.const("len", (0, codegen_1._)`${data}.length`);
-        cxt.setParams({ min: min6, max: max2 });
-        if (max2 === void 0 && min6 === 0) {
+        cxt.setParams({ min: min7, max: max2 });
+        if (max2 === void 0 && min7 === 0) {
           (0, util_1.checkStrictMode)(it, `"minContains" == 0 without "maxContains": "contains" keyword ignored`);
           return;
         }
-        if (max2 !== void 0 && min6 > max2) {
+        if (max2 !== void 0 && min7 > max2) {
           (0, util_1.checkStrictMode)(it, `"minContains" > "maxContains" is always invalid`);
           cxt.fail();
           return;
         }
         if ((0, util_1.alwaysValidSchema)(it, schema)) {
-          let cond = (0, codegen_1._)`${len} >= ${min6}`;
+          let cond = (0, codegen_1._)`${len} >= ${min7}`;
           if (max2 !== void 0)
             cond = (0, codegen_1._)`${cond} && ${len} <= ${max2}`;
           cxt.pass(cond);
@@ -6197,9 +6197,9 @@ var require_contains = __commonJS({
         }
         it.items = true;
         const valid = gen.name("valid");
-        if (max2 === void 0 && min6 === 1) {
+        if (max2 === void 0 && min7 === 1) {
           validateItems(valid, () => gen.if(valid, () => gen.break()));
-        } else if (min6 === 0) {
+        } else if (min7 === 0) {
           gen.let(valid, true);
           if (max2 !== void 0)
             gen.if((0, codegen_1._)`${data}.length > 0`, validateItemsWithCount);
@@ -6227,13 +6227,13 @@ var require_contains = __commonJS({
         function checkLimits(count) {
           gen.code((0, codegen_1._)`${count}++`);
           if (max2 === void 0) {
-            gen.if((0, codegen_1._)`${count} >= ${min6}`, () => gen.assign(valid, true).break());
+            gen.if((0, codegen_1._)`${count} >= ${min7}`, () => gen.assign(valid, true).break());
           } else {
             gen.if((0, codegen_1._)`${count} > ${max2}`, () => gen.assign(valid, false).break());
-            if (min6 === 1)
+            if (min7 === 1)
               gen.assign(valid, true);
             else
-              gen.if((0, codegen_1._)`${count} >= ${min6}`, () => gen.assign(valid, true));
+              gen.if((0, codegen_1._)`${count} >= ${min7}`, () => gen.assign(valid, true));
           }
         }
       }
@@ -7479,7 +7479,7 @@ var require_formats = __commonJS({
         if (!matches)
           return false;
         const hr = +matches[1];
-        const min6 = +matches[2];
+        const min7 = +matches[2];
         const sec = +matches[3];
         const tz = matches[4];
         const tzSign = matches[5] === "-" ? -1 : 1;
@@ -7487,9 +7487,9 @@ var require_formats = __commonJS({
         const tzM = +(matches[7] || 0);
         if (tzH > 23 || tzM > 59 || strictTimeZone && !tz)
           return false;
-        if (hr <= 23 && min6 <= 59 && sec < 60)
+        if (hr <= 23 && min7 <= 59 && sec < 60)
           return true;
-        const utcMin = min6 - tzM * tzSign;
+        const utcMin = min7 - tzM * tzSign;
         const utcHr = hr - tzH * tzSign - (utcMin < 0 ? 1 : 0);
         return (utcHr === 23 || utcHr === -1) && (utcMin === 59 || utcMin === -1) && sec < 61;
       };
@@ -10423,11 +10423,11 @@ function node(obj, key, make) {
 function flattenError(error62, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub27 of error62.issues) {
-    if (sub27.path.length > 0) {
-      node(fieldErrors, sub27.path[0], () => []).push(mapper(sub27));
+  for (const sub28 of error62.issues) {
+    if (sub28.path.length > 0) {
+      node(fieldErrors, sub28.path[0], () => []).push(mapper(sub28));
     } else {
-      formErrors.push(mapper(sub27));
+      formErrors.push(mapper(sub28));
     }
   }
   return { formErrors, fieldErrors };
@@ -12426,15 +12426,15 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     const syms = normalized.symbolKeys;
     const doc = new Doc(["payload", "ctx"], { shape, inst, memo: memo2, syms });
     const parseStr = (k) => `shape[${k}]._zod.run({ value: input[${k}], issues: [] }, ctx)`;
-    const prefixStr = (id, k) => `
-          let ${id}_ab = false;
-          for (let i = 0; i < ${id}.issues.length; i++) {
-            const iss = ${id}.issues[i];
+    const prefixStr = (id2, k) => `
+          let ${id2}_ab = false;
+          for (let i = 0; i < ${id2}.issues.length; i++) {
+            const iss = ${id2}.issues[i];
             iss.path = iss.path ? [${k}, ...iss.path] : [${k}];
             payload.issues.push(iss);
-            if (iss.continue !== true) ${id}_ab = true;
+            if (iss.continue !== true) ${id2}_ab = true;
           }
-          if (${id}_ab && ctx && ctx.abortEarly) {
+          if (${id2}_ab && ctx && ctx.abortEarly) {
             payload.value = newResult;
             return payload;
           }`;
@@ -12448,34 +12448,34 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
     for (const key of normalized.allKeys) {
       if (key === "__proto__")
         continue;
-      const id = ids[key];
+      const id2 = ids[key];
       const k = typeof key === "symbol" ? `syms[${syms.indexOf(key)}]` : esc(key);
       const isPresent = `${k} in input`;
       const schema = shape[key];
       const optin = schema?._zod?.optin;
       const isOptionalIn = optin !== void 0;
       const isOptionalOut = schema?._zod?.optout === "optional";
-      doc.write(`const ${id} = ${parseStr(k)};`);
+      doc.write(`const ${id2} = ${parseStr(k)};`);
       if (isOptionalIn && isOptionalOut) {
-        const assign = optin === "optional" ? `${id}_present` : `${id}.value !== undefined || ${id}_present`;
+        const assign = optin === "optional" ? `${id2}_present` : `${id2}.value !== undefined || ${id2}_present`;
         doc.write(`
-        const ${id}_present = ${isPresent};
-        if (!${id}.issues.length || ${id}_present) {
-          if (${id}.issues.length) {${prefixStr(id, k)}
+        const ${id2}_present = ${isPresent};
+        if (!${id2}.issues.length || ${id2}_present) {
+          if (${id2}.issues.length) {${prefixStr(id2, k)}
           }
 
           if (${assign}) {
-            newResult[${k}] = ${id}.value;
+            newResult[${k}] = ${id2}.value;
           }
         }
 
       `);
       } else if (!isOptionalIn) {
         doc.write(`
-        const ${id}_present = ${isPresent};
-        if (${id}.issues.length) {${prefixStr(id, k)}
+        const ${id2}_present = ${isPresent};
+        if (${id2}.issues.length) {${prefixStr(id2, k)}
         }
-        if (!${id}_present && !${id}.issues.length) {
+        if (!${id2}_present && !${id2}.issues.length) {
           payload.issues.push({
             code: "invalid_type",
             expected: "nonoptional",
@@ -12488,22 +12488,22 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
           }
         }
 
-        if (${id}_present) {
-          newResult[${k}] = ${id}.value;
+        if (${id2}_present) {
+          newResult[${k}] = ${id2}.value;
         }
 
       `);
       } else {
         doc.write(`
-        if (${id}.issues.length) {${prefixStr(id, k)}
+        if (${id2}.issues.length) {${prefixStr(id2, k)}
         }
       `);
         if (optin === "defaulted") {
-          doc.write(`newResult[${k}] = ${id}.value;`);
+          doc.write(`newResult[${k}] = ${id2}.value;`);
         } else {
           doc.write(`
-        if (${id}.value !== undefined || ${isPresent}) {
-          newResult[${k}] = ${id}.value;
+        if (${id2}.value !== undefined || ${isPresent}) {
+          newResult[${k}] = ${id2}.value;
         }
       `);
         }
@@ -12858,11 +12858,11 @@ function handleIntersectionResults(result, left, right) {
   }
   const bothKeys = [...unrecKeys].filter(([, f]) => f.l && f.r).map(([k]) => k);
   if (bothKeys.length) {
-    const aggregated = unrecIssue ? bothKeys.filter((k) => unrecIssue.keys.includes(k)) : [];
-    if (aggregated.length)
-      result.issues.push({ ...unrecIssue, keys: aggregated });
+    const aggregated2 = unrecIssue ? bothKeys.filter((k) => unrecIssue.keys.includes(k)) : [];
+    if (aggregated2.length)
+      result.issues.push({ ...unrecIssue, keys: aggregated2 });
     for (const k of bothKeys) {
-      if (!aggregated.includes(k) && keyIssues.has(k))
+      if (!aggregated2.includes(k) && keyIssues.has(k))
         result.issues.push(keyIssues.get(k));
     }
   }
@@ -21965,9 +21965,9 @@ function generateChecks(doc, ctx, schema, accessor) {
         generateNumberFormatCheck(doc, def, currentAccessor);
         break;
       case "min_length": {
-        const min6 = numericOperand(def.minimum, "min_length");
-        const len = codePointLengthVar(doc, ctx, currentAccessor, `${currentAccessor}.length >= ${min6} && ${currentAccessor}.length < ${def.minimum * 2}`);
-        doc.write(`if (${len} < ${min6}) return INVALID;`);
+        const min7 = numericOperand(def.minimum, "min_length");
+        const len = codePointLengthVar(doc, ctx, currentAccessor, `${currentAccessor}.length >= ${min7} && ${currentAccessor}.length < ${def.minimum * 2}`);
+        doc.write(`if (${len} < ${min7}) return INVALID;`);
         break;
       }
       case "max_length": {
@@ -24531,26 +24531,26 @@ function extractDefs(ctx, schema) {
     return;
   const idToSchema = /* @__PURE__ */ new Map();
   for (const entry of ctx.seen.entries()) {
-    const id = ctx.metadataRegistry.get(entry[0])?.id;
-    if (id) {
-      const existing = idToSchema.get(id);
+    const id2 = ctx.metadataRegistry.get(entry[0])?.id;
+    if (id2) {
+      const existing = idToSchema.get(id2);
       if (existing && existing !== entry[0]) {
-        throw new Error(`Duplicate schema id "${id}" detected during JSON Schema conversion. Two different schemas cannot share the same id when converted together.`);
+        throw new Error(`Duplicate schema id "${id2}" detected during JSON Schema conversion. Two different schemas cannot share the same id when converted together.`);
       }
-      idToSchema.set(id, entry[0]);
+      idToSchema.set(id2, entry[0]);
     }
   }
   const makeURI = (entry) => {
     const defsSegment = ctx.target === "draft-2020-12" ? "$defs" : "definitions";
     if (ctx.external) {
       const externalId = ctx.external.registry.get(entry[0])?.id;
-      const uriGenerator = ctx.external.uri ?? ((id2) => id2);
+      const uriGenerator = ctx.external.uri ?? ((id3) => id3);
       if (externalId) {
         return { ref: uriGenerator(externalId) };
       }
-      const id = entry[1].defId ?? entry[1].schema.id ?? `schema${ctx.counter++}`;
-      entry[1].defId = id;
-      return { defId: id, ref: `${uriGenerator("__shared")}#/${defsSegment}/${encodeJSONPointerSegment(id)}` };
+      const id2 = entry[1].defId ?? entry[1].schema.id ?? `schema${ctx.counter++}`;
+      entry[1].defId = id2;
+      return { defId: id2, ref: `${uriGenerator("__shared")}#/${defsSegment}/${encodeJSONPointerSegment(id2)}` };
     }
     const uriPrefix = `#`;
     const defUriPrefix = `${uriPrefix}/${defsSegment}/`;
@@ -24598,8 +24598,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
         continue;
       }
     }
-    const id = ctx.metadataRegistry.get(entry[0])?.id;
-    if (id) {
+    const id2 = ctx.metadataRegistry.get(entry[0])?.id;
+    if (id2) {
       extractToDef(entry);
       continue;
     }
@@ -24832,10 +24832,10 @@ function finalize(ctx, schema) {
   } else {
   }
   if (ctx.external?.uri) {
-    const id = ctx.external.registry.get(schema)?.id;
-    if (!id)
+    const id2 = ctx.external.registry.get(schema)?.id;
+    if (!id2)
       throw new Error("Schema is missing an `id` property");
-    result.$id = ctx.external.uri(id);
+    result.$id = ctx.external.uri(id2);
   }
   assignProps(result, root.defId ? root.schema : root.def ?? root.schema);
   const rootMetaId = ctx.metadataRegistry.get(schema)?.id;
@@ -25441,7 +25441,7 @@ function stringifyKeyNames(bySchema, json3, visited) {
   const values = json3.enum ?? (json3.const !== void 0 ? [json3.const] : void 0);
   if (!numericType && !values?.some((v) => typeof v === "number"))
     return json3;
-  const { minimum, maximum, exclusiveMinimum, exclusiveMaximum, multipleOf, format, id, ...rest } = json3;
+  const { minimum, maximum, exclusiveMinimum, exclusiveMaximum, multipleOf, format, id: id2, ...rest } = json3;
   if (rest.enum)
     rest.enum = rest.enum.map((v) => typeof v === "number" ? String(v) : v);
   else if (typeof rest.const === "number")
@@ -27802,12 +27802,12 @@ function containsRef(value) {
     return value.some(containsRef);
   if (typeof value.$ref === "string")
     return true;
-  return Object.entries(value).some(([key, sub27]) => {
+  return Object.entries(value).some(([key, sub28]) => {
     if (SCHEMA_KEYWORDS.has(key))
-      return containsRef(sub27);
-    if (!SCHEMA_MAP_KEYWORDS.has(key) || typeof sub27 !== "object" || sub27 === null)
+      return containsRef(sub28);
+    if (!SCHEMA_MAP_KEYWORDS.has(key) || typeof sub28 !== "object" || sub28 === null)
       return false;
-    return Object.values(sub27).some(containsRef);
+    return Object.values(sub28).some(containsRef);
   });
 }
 function plural(n) {
@@ -30750,28 +30750,28 @@ data:
     }
     if (isJSONRPCResultResponse(message) || isJSONRPCErrorResponse(message)) {
       this._requestResponseMap.set(requestId, message);
-      const relatedIds = Array.from(this._requestToStreamMapping.entries()).filter(([_, sid]) => sid === streamId).map(([id]) => id);
-      const allResponsesReady = relatedIds.every((id) => this._requestResponseMap.has(id));
+      const relatedIds = Array.from(this._requestToStreamMapping.entries()).filter(([_, sid]) => sid === streamId).map(([id2]) => id2);
+      const allResponsesReady = relatedIds.every((id2) => this._requestResponseMap.has(id2));
       if (allResponsesReady) {
         if (!stream) {
           if (this._closed) {
-            for (const id of relatedIds) {
-              this._requestResponseMap.delete(id);
-              this._requestToStreamMapping.delete(id);
+            for (const id2 of relatedIds) {
+              this._requestResponseMap.delete(id2);
+              this._requestToStreamMapping.delete(id2);
             }
             return;
           }
           if (!this._enableJsonResponse && this._eventStore && this._resumableStreams.has(streamId)) {
-            for (const id of relatedIds) {
-              this._requestResponseMap.delete(id);
-              this._requestToStreamMapping.delete(id);
+            for (const id2 of relatedIds) {
+              this._requestResponseMap.delete(id2);
+              this._requestToStreamMapping.delete(id2);
             }
             this._resumableStreams.delete(streamId);
             return;
           }
-          for (const id of relatedIds) {
-            this._requestResponseMap.delete(id);
-            this._requestToStreamMapping.delete(id);
+          for (const id2 of relatedIds) {
+            this._requestResponseMap.delete(id2);
+            this._requestToStreamMapping.delete(id2);
           }
           throw new Error(`No connection established for request ID: ${String(requestId)}`);
         }
@@ -30782,7 +30782,7 @@ data:
           if (this.sessionId !== void 0) {
             headers["mcp-session-id"] = this.sessionId;
           }
-          const responses = relatedIds.map((id) => this._requestResponseMap.get(id));
+          const responses = relatedIds.map((id2) => this._requestResponseMap.get(id2));
           if (responses.length === 1) {
             stream.resolveJson(new Response(JSON.stringify(responses[0]), { status: 200, headers }));
           } else {
@@ -30791,9 +30791,9 @@ data:
         } else {
           stream.cleanup();
         }
-        for (const id of relatedIds) {
-          this._requestResponseMap.delete(id);
-          this._requestToStreamMapping.delete(id);
+        for (const id2 of relatedIds) {
+          this._requestResponseMap.delete(id2);
+          this._requestToStreamMapping.delete(id2);
         }
         this._resumableStreams.delete(streamId);
       }
@@ -31063,8 +31063,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub27) => {
-      this.issues = [...this.issues, sub27];
+    this.addIssue = (sub28) => {
+      this.issues = [...this.issues, sub28];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -31146,13 +31146,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = /* @__PURE__ */ Object.create(null);
     const formErrors = [];
-    for (const sub27 of this.issues) {
-      if (sub27.path.length > 0) {
-        const firstEl = sub27.path[0];
+    for (const sub28 of this.issues) {
+      if (sub28.path.length > 0) {
+        const firstEl = sub28.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub27));
+        fieldErrors[firstEl].push(mapper(sub28));
       } else {
-        formErrors.push(mapper(sub27));
+        formErrors.push(mapper(sub28));
       }
     }
     return { formErrors, fieldErrors };
@@ -32334,14 +32334,14 @@ var ZodString2 = class _ZodString2 extends ZodType2 {
     return !!this._def.checks.find((ch) => ch.kind === "base64url");
   }
   get minLength() {
-    let min6 = null;
+    let min7 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min6 === null || ch.value > min6)
-          min6 = ch.value;
+        if (min7 === null || ch.value > min7)
+          min7 = ch.value;
       }
     }
-    return min6;
+    return min7;
   }
   get maxLength() {
     let max2 = null;
@@ -32555,14 +32555,14 @@ var ZodNumber2 = class _ZodNumber extends ZodType2 {
     });
   }
   get minValue() {
-    let min6 = null;
+    let min7 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min6 === null || ch.value > min6)
-          min6 = ch.value;
+        if (min7 === null || ch.value > min7)
+          min7 = ch.value;
       }
     }
-    return min6;
+    return min7;
   }
   get maxValue() {
     let max2 = null;
@@ -32579,19 +32579,19 @@ var ZodNumber2 = class _ZodNumber extends ZodType2 {
   }
   get isFinite() {
     let max2 = null;
-    let min6 = null;
+    let min7 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "finite" || ch.kind === "int" || ch.kind === "multipleOf") {
         return true;
       } else if (ch.kind === "min") {
-        if (min6 === null || ch.value > min6)
-          min6 = ch.value;
+        if (min7 === null || ch.value > min7)
+          min7 = ch.value;
       } else if (ch.kind === "max") {
         if (max2 === null || ch.value < max2)
           max2 = ch.value;
       }
     }
-    return Number.isFinite(min6) && Number.isFinite(max2);
+    return Number.isFinite(min7) && Number.isFinite(max2);
   }
 };
 ZodNumber2.create = (params) => {
@@ -32746,14 +32746,14 @@ var ZodBigInt2 = class _ZodBigInt extends ZodType2 {
     });
   }
   get minValue() {
-    let min6 = null;
+    let min7 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min6 === null || ch.value > min6)
-          min6 = ch.value;
+        if (min7 === null || ch.value > min7)
+          min7 = ch.value;
       }
     }
-    return min6;
+    return min7;
   }
   get maxValue() {
     let max2 = null;
@@ -32880,14 +32880,14 @@ var ZodDate2 = class _ZodDate extends ZodType2 {
     });
   }
   get minDate() {
-    let min6 = null;
+    let min7 = null;
     for (const ch of this._def.checks) {
       if (ch.kind === "min") {
-        if (min6 === null || ch.value > min6)
-          min6 = ch.value;
+        if (min7 === null || ch.value > min7)
+          min7 = ch.value;
       }
     }
-    return min6 != null ? new Date(min6) : null;
+    return min7 != null ? new Date(min7) : null;
   }
   get maxDate() {
     let max2 = null;
@@ -37488,7 +37488,7 @@ var ExperimentalServerTasks = class {
       if (hasPreviousToolUse) {
         const toolUseIds = new Set(previousContent.filter((c2) => c2.type === "tool_use").map((c2) => c2.id));
         const toolResultIds = new Set(lastContent.filter((c2) => c2.type === "tool_result").map((c2) => c2.toolUseId));
-        if (toolUseIds.size !== toolResultIds.size || ![...toolUseIds].every((id) => toolResultIds.has(id))) {
+        if (toolUseIds.size !== toolResultIds.size || ![...toolUseIds].every((id2) => toolResultIds.has(id2))) {
           throw new Error("ids of tool_result blocks and tool_use blocks from previous message do not match");
         }
       }
@@ -37913,7 +37913,7 @@ var Server = class extends Protocol {
       if (hasPreviousToolUse) {
         const toolUseIds = new Set(previousContent.filter((c2) => c2.type === "tool_use").map((c2) => c2.id));
         const toolResultIds = new Set(lastContent.filter((c2) => c2.type === "tool_result").map((c2) => c2.toolUseId));
-        if (toolUseIds.size !== toolResultIds.size || ![...toolUseIds].every((id) => toolResultIds.has(id))) {
+        if (toolUseIds.size !== toolResultIds.size || ![...toolUseIds].every((id2) => toolResultIds.has(id2))) {
           throw new Error("ids of tool_result blocks and tool_use blocks from previous message do not match");
         }
       }
@@ -39175,23 +39175,23 @@ function divRound(n, d3, mode) {
   const r = n % d3;
   if (r === 0n)
     return q;
-  const neg2 = n < 0n;
+  const neg3 = n < 0n;
   const twiceAbsRem = (r < 0n ? -r : r) * 2n;
   switch (mode) {
     case "floor":
-      return neg2 ? q - 1n : q;
+      return neg3 ? q - 1n : q;
     case "ceil":
-      return neg2 ? q : q + 1n;
+      return neg3 ? q : q + 1n;
     case "half-up":
       if (twiceAbsRem >= d3)
-        return neg2 ? q - 1n : q + 1n;
+        return neg3 ? q - 1n : q + 1n;
       return q;
     case "half-even":
       if (twiceAbsRem > d3)
-        return neg2 ? q - 1n : q + 1n;
+        return neg3 ? q - 1n : q + 1n;
       if (twiceAbsRem < d3)
         return q;
-      return q % 2n === 0n ? q : neg2 ? q - 1n : q + 1n;
+      return q % 2n === 0n ? q : neg3 ? q - 1n : q + 1n;
   }
 }
 function mulRate(cents, rate2, mode) {
@@ -39418,8 +39418,8 @@ function sha256Hex(input2) {
 function hashOf(value) {
   return `sha256:${sha256Hex(canonical(value))}`;
 }
-function ruleHash(rule) {
-  return hashOf(rule);
+function ruleHash(rule2) {
+  return hashOf(rule2);
 }
 function merkleRoot(rules, facts2 = []) {
   const ordered = [...rules].sort((a, b) => a.id.localeCompare(b.id) || a.version - b.version);
@@ -39551,60 +39551,60 @@ function loadCorpus(input2) {
   const factById2 = /* @__PURE__ */ new Map();
   const overriders = /* @__PURE__ */ new Map();
   const contributors2 = /* @__PURE__ */ new Map();
-  for (const fact46 of input2.facts) {
-    if (factById2.has(fact46.id))
-      issues.push(`duplicate fact id "${fact46.id}"`);
-    factById2.set(fact46.id, fact46);
-    if (fact46.type === "enum" && !fact46.enumValues?.length) {
-      issues.push(`enum fact "${fact46.id}" must declare enumValues`);
+  for (const fact47 of input2.facts) {
+    if (factById2.has(fact47.id))
+      issues.push(`duplicate fact id "${fact47.id}"`);
+    factById2.set(fact47.id, fact47);
+    if (fact47.type === "enum" && !fact47.enumValues?.length) {
+      issues.push(`enum fact "${fact47.id}" must declare enumValues`);
     }
   }
   const knownRuleIds = byIdRefChecker(input2);
   const contributorIds = new Set(input2.rules.filter((r) => r.contributesTo !== void 0).map((r) => r.id));
   const seenVersions = /* @__PURE__ */ new Set();
-  for (const rule of input2.rules) {
-    const key = `${rule.id}@${rule.version}`;
+  for (const rule2 of input2.rules) {
+    const key = `${rule2.id}@${rule2.version}`;
     if (seenVersions.has(key))
       issues.push(`duplicate rule version "${key}"`);
     seenVersions.add(key);
-    if (!ISO_DATE.test(rule.effectiveFrom)) {
-      issues.push(`rule "${key}": invalid effectiveFrom "${rule.effectiveFrom}"`);
+    if (!ISO_DATE.test(rule2.effectiveFrom)) {
+      issues.push(`rule "${key}": invalid effectiveFrom "${rule2.effectiveFrom}"`);
     }
-    if (rule.effectiveTo !== void 0) {
-      if (!ISO_DATE.test(rule.effectiveTo)) {
-        issues.push(`rule "${key}": invalid effectiveTo "${rule.effectiveTo}"`);
-      } else if (rule.effectiveTo <= rule.effectiveFrom) {
+    if (rule2.effectiveTo !== void 0) {
+      if (!ISO_DATE.test(rule2.effectiveTo)) {
+        issues.push(`rule "${key}": invalid effectiveTo "${rule2.effectiveTo}"`);
+      } else if (rule2.effectiveTo <= rule2.effectiveFrom) {
         issues.push(`rule "${key}": empty validity window`);
       }
     }
-    const list = byId.get(rule.id) ?? [];
-    list.push(rule);
-    byId.set(rule.id, list);
-    if (rule.overrides) {
-      const list2 = overriders.get(rule.overrides.ruleId) ?? [];
-      list2.push(rule);
-      overriders.set(rule.overrides.ruleId, list2);
-      if (rule.overrides.priority <= 0) {
+    const list = byId.get(rule2.id) ?? [];
+    list.push(rule2);
+    byId.set(rule2.id, list);
+    if (rule2.overrides) {
+      const list2 = overriders.get(rule2.overrides.ruleId) ?? [];
+      list2.push(rule2);
+      overriders.set(rule2.overrides.ruleId, list2);
+      if (rule2.overrides.priority <= 0) {
         issues.push(`rule "${key}": override priority must be > 0 (base rule has implicit priority 0)`);
       }
-      if (!rule.applicability) {
+      if (!rule2.applicability) {
         issues.push(`rule "${key}": an override must declare an applicability guard`);
       }
     }
-    if (rule.contributesTo !== void 0) {
-      const list2 = contributors2.get(rule.contributesTo) ?? [];
-      list2.push(rule);
-      contributors2.set(rule.contributesTo, list2);
-      if (rule.output.type !== "money")
+    if (rule2.contributesTo !== void 0) {
+      const list2 = contributors2.get(rule2.contributesTo) ?? [];
+      list2.push(rule2);
+      contributors2.set(rule2.contributesTo, list2);
+      if (rule2.output.type !== "money")
         issues.push(`rule "${key}": a contribution must output money`);
-      if (rule.applicability)
+      if (rule2.applicability)
         issues.push(`rule "${key}": a contribution cannot declare an applicability guard`);
-      if (rule.overrides)
+      if (rule2.overrides)
         issues.push(`rule "${key}": a rule cannot both override and contribute`);
-      if (rule.contributesTo === rule.id)
+      if (rule2.contributesTo === rule2.id)
         issues.push(`rule "${key}" contributes to itself`);
     }
-    validateExpressions(rule, knownRuleIds, contributorIds, factById2, issues);
+    validateExpressions(rule2, knownRuleIds, contributorIds, factById2, issues);
   }
   for (const [targetId] of contributors2) {
     const targets = byId.get(targetId);
@@ -39613,13 +39613,13 @@ function loadCorpus(input2) {
     else if (targets[0].output.type !== "money")
       issues.push(`contribution target "${targetId}" is not a money rule`);
   }
-  for (const [id, versions2] of byId) {
+  for (const [id2, versions2] of byId) {
     const sorted = [...versions2].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
     for (let i = 0; i + 1 < sorted.length; i++) {
       const cur = sorted[i];
       const next = sorted[i + 1];
       if (cur.effectiveTo === void 0 || next.effectiveFrom < cur.effectiveTo) {
-        issues.push(`rule "${id}": overlapping validity windows (v${cur.version} and v${next.version})`);
+        issues.push(`rule "${id2}": overlapping validity windows (v${cur.version} and v${next.version})`);
       }
     }
   }
@@ -39631,23 +39631,23 @@ function loadCorpus(input2) {
     }
     const targetType = targets[0].output.type;
     const prios = /* @__PURE__ */ new Map();
-    for (const rule of list) {
-      if (rule.output.type !== targetType) {
-        issues.push(`rule "${rule.id}" overrides "${targetId}" but output type ${rule.output.type} != ${targetType}`);
+    for (const rule2 of list) {
+      if (rule2.output.type !== targetType) {
+        issues.push(`rule "${rule2.id}" overrides "${targetId}" but output type ${rule2.output.type} != ${targetType}`);
       }
-      const p = rule.overrides.priority;
+      const p = rule2.overrides.priority;
       const existing = prios.get(p);
-      if (existing !== void 0 && existing !== rule.id) {
-        issues.push(`rules "${existing}" and "${rule.id}" both override "${targetId}" at priority ${p}`);
+      if (existing !== void 0 && existing !== rule2.id) {
+        issues.push(`rules "${existing}" and "${rule2.id}" both override "${targetId}" at priority ${p}`);
       }
-      prios.set(p, rule.id);
+      prios.set(p, rule2.id);
     }
   }
   if (issues.length > 0)
     throw new CorpusValidationError(issues);
   const ruleHashes = /* @__PURE__ */ new Map();
-  for (const rule of input2.rules) {
-    ruleHashes.set(`${rule.id}@${rule.version}`, ruleHash(rule));
+  for (const rule2 of input2.rules) {
+    ruleHashes.set(`${rule2.id}@${rule2.version}`, ruleHash(rule2));
   }
   return {
     name: input2.name,
@@ -39665,11 +39665,11 @@ function loadCorpus(input2) {
 function byIdRefChecker(input2) {
   return new Set(input2.rules.map((r) => r.id));
 }
-function validateExpressions(rule, knownRuleIds, contributorIds, factById2, issues) {
-  const key = `${rule.id}@${rule.version}`;
-  const exprs = [rule.formula];
-  if (rule.applicability)
-    exprs.push(rule.applicability);
+function validateExpressions(rule2, knownRuleIds, contributorIds, factById2, issues) {
+  const key = `${rule2.id}@${rule2.version}`;
+  const exprs = [rule2.formula];
+  if (rule2.applicability)
+    exprs.push(rule2.applicability);
   for (const root of exprs) {
     walkExpr(root, (e) => {
       switch (e.kind) {
@@ -39686,9 +39686,9 @@ function validateExpressions(rule, knownRuleIds, contributorIds, factById2, issu
           if (!knownRuleIds.has(e.ruleId)) {
             issues.push(`rule "${key}" references unknown rule "${e.ruleId}"`);
           }
-          for (const id of e.excluding ?? []) {
-            if (!contributorIds.has(id)) {
-              issues.push(`rule "${key}" excludes "${id}", which is not a contributing rule`);
+          for (const id2 of e.excluding ?? []) {
+            if (!contributorIds.has(id2)) {
+              issues.push(`rule "${key}" excludes "${id2}", which is not a contributing rule`);
             }
           }
           break;
@@ -39698,7 +39698,7 @@ function validateExpressions(rule, knownRuleIds, contributorIds, factById2, issu
           }
           break;
         case "param":
-          if (!rule.parameters || !(e.name in rule.parameters)) {
+          if (!rule2.parameters || !(e.name in rule2.parameters)) {
             issues.push(`rule "${key}" references unknown parameter "${e.name}"`);
           }
           break;
@@ -39907,17 +39907,17 @@ function evalRule(ruleId, ctx) {
     }
     const contributions = [];
     let contributed = 0n;
-    for (const id of selectContributors(ctx.corpus, ruleId, ctx.asOf)) {
-      if (ctx.excluded.has(id))
+    for (const id2 of selectContributors(ctx.corpus, ruleId, ctx.asOf)) {
+      if (ctx.excluded.has(id2))
         continue;
-      const c2 = evalRule(id, ctx);
+      const c2 = evalRule(id2, ctx);
       if (c2.value === POISON || c2.node === null) {
         poisoned = true;
         continue;
       }
       if (!children.includes(c2.node))
         children.push(c2.node);
-      contributions.push({ ruleId: id, value: valueToJSON(c2.value) });
+      contributions.push({ ruleId: id2, value: valueToJSON(c2.value) });
       contributed += c2.value.cents;
     }
     if (poisoned)
@@ -39976,15 +39976,15 @@ function passExcluding(ctx, ids) {
   }
   return pass;
 }
-function candidateEntry(rule, applicable) {
+function candidateEntry(rule2, applicable) {
   return {
-    ruleId: rule.id,
-    version: rule.version,
-    priority: rule.overrides?.priority ?? 0,
+    ruleId: rule2.id,
+    version: rule2.version,
+    priority: rule2.overrides?.priority ?? 0,
     applicable
   };
 }
-function evalExpr(expr, rule, ctx, children) {
+function evalExpr(expr, rule2, ctx, children) {
   switch (expr.kind) {
     case "money":
       return { type: "money", cents: parseCents(expr.cents) };
@@ -40004,29 +40004,29 @@ function evalExpr(expr, rule, ctx, children) {
       return value;
     }
     case "param": {
-      const param28 = rule.parameters?.[expr.name];
+      const param28 = rule2.parameters?.[expr.name];
       if (!param28) {
-        throw new EngineError(`rule "${rule.id}" has no parameter "${expr.name}"`);
+        throw new EngineError(`rule "${rule2.id}" has no parameter "${expr.name}"`);
       }
       return valueFromJSON({ type: param28.type, value: param28.value });
     }
     case "add": {
-      const vals = evalAll(expr.args, rule, ctx, children);
+      const vals = evalAll(expr.args, rule2, ctx, children);
       if (vals === POISON)
         return POISON;
-      return numericFold(vals, rule, "add", (acc, v) => acc + v);
+      return numericFold(vals, rule2, "add", (acc, v) => acc + v);
     }
     case "sub": {
-      const vals = evalAll([expr.left, expr.right], rule, ctx, children);
+      const vals = evalAll([expr.left, expr.right], rule2, ctx, children);
       if (vals === POISON)
         return POISON;
-      return numericFold(vals, rule, "sub", (acc, v) => acc - v);
+      return numericFold(vals, rule2, "sub", (acc, v) => acc - v);
     }
     case "mulRate": {
-      const base = evalExpr(expr.base, rule, ctx, children);
+      const base = evalExpr(expr.base, rule2, ctx, children);
       if (base === POISON)
         return POISON;
-      expectType(base, "money", rule, "mulRate.base");
+      expectType(base, "money", rule2, "mulRate.base");
       const rate2 = {
         num: parseInt_(expr.rate.num),
         den: parseInt_(expr.rate.den)
@@ -40037,12 +40037,12 @@ function evalExpr(expr, rule, ctx, children) {
       };
     }
     case "mulInt": {
-      const vals = evalAll([expr.base, expr.count], rule, ctx, children);
+      const vals = evalAll([expr.base, expr.count], rule2, ctx, children);
       if (vals === POISON)
         return POISON;
       const [base, count] = vals;
-      expectType(base, "money", rule, "mulInt.base");
-      expectType(count, "int", rule, "mulInt.count");
+      expectType(base, "money", rule2, "mulInt.base");
+      expectType(count, "int", rule2, "mulInt.count");
       return {
         type: "money",
         cents: base.cents * count.value
@@ -40050,79 +40050,79 @@ function evalExpr(expr, rule, ctx, children) {
     }
     case "min":
     case "max": {
-      const vals = evalAll(expr.args, rule, ctx, children);
+      const vals = evalAll(expr.args, rule2, ctx, children);
       if (vals === POISON)
         return POISON;
       const pick2 = expr.kind === "min" ? (a, b) => b < a ? b : a : (a, b) => b > a ? b : a;
-      return numericFold(vals, rule, expr.kind, pick2);
+      return numericFold(vals, rule2, expr.kind, pick2);
     }
     case "max0": {
-      const v = evalExpr(expr.arg, rule, ctx, children);
+      const v = evalExpr(expr.arg, rule2, ctx, children);
       if (v === POISON)
         return POISON;
-      expectType(v, "money", rule, "max0");
+      expectType(v, "money", rule2, "max0");
       return { type: "money", cents: max0(v.cents) };
     }
     case "clamp": {
-      const vals = evalAll([expr.value, expr.lo, expr.hi], rule, ctx, children);
+      const vals = evalAll([expr.value, expr.lo, expr.hi], rule2, ctx, children);
       if (vals === POISON)
         return POISON;
       const [v, lo, hi] = vals.map((x) => {
-        expectType(x, "money", rule, "clamp");
+        expectType(x, "money", rule2, "clamp");
         return x.cents;
       });
       const clamped = v < lo ? lo : v > hi ? hi : v;
       return { type: "money", cents: clamped };
     }
     case "roundToDollar": {
-      const v = evalExpr(expr.value, rule, ctx, children);
+      const v = evalExpr(expr.value, rule2, ctx, children);
       if (v === POISON)
         return POISON;
-      expectType(v, "money", rule, "roundToDollar");
+      expectType(v, "money", rule2, "roundToDollar");
       return {
         type: "money",
         cents: roundToDollar(v.cents, expr.mode)
       };
     }
     case "mulDiv": {
-      const vals = evalAll([expr.a, expr.b, expr.c], rule, ctx, children);
+      const vals = evalAll([expr.a, expr.b, expr.c], rule2, ctx, children);
       if (vals === POISON)
         return POISON;
       const [a, b, c2] = vals.map((x) => {
-        expectType(x, "money", rule, "mulDiv");
+        expectType(x, "money", rule2, "mulDiv");
         return x.cents;
       });
       if (c2 === 0n) {
-        throw new EngineError(`rule "${rule.id}": mulDiv division by zero`);
+        throw new EngineError(`rule "${rule2.id}": mulDiv division by zero`);
       }
       return { type: "money", cents: divRound(a * b, c2, expr.round) };
     }
     case "unsupported":
-      throw new NotModeledError(rule.id, expr.reason);
+      throw new NotModeledError(rule2.id, expr.reason);
     case "stepUnits": {
-      const v = evalExpr(expr.value, rule, ctx, children);
+      const v = evalExpr(expr.value, rule2, ctx, children);
       if (v === POISON)
         return POISON;
-      expectType(v, "money", rule, "stepUnits");
+      expectType(v, "money", rule2, "stepUnits");
       return {
         type: "int",
         value: stepUnits(v.cents, parseCents(expr.unitCents), expr.mode)
       };
     }
     case "cmp": {
-      const vals = evalAll([expr.left, expr.right], rule, ctx, children);
+      const vals = evalAll([expr.left, expr.right], rule2, ctx, children);
       if (vals === POISON)
         return POISON;
       const [l, r] = vals;
       if (l.type !== r.type) {
-        throw new EngineError(`rule "${rule.id}": cmp between ${l.type} and ${r.type}`);
+        throw new EngineError(`rule "${rule2.id}": cmp between ${l.type} and ${r.type}`);
       }
       if (expr.op === "eq" || expr.op === "ne") {
         const eq3 = canonicalScalar(l) === canonicalScalar(r);
         return { type: "bool", value: expr.op === "eq" ? eq3 : !eq3 };
       }
-      const ln = numericOf(l, rule, "cmp");
-      const rn = numericOf(r, rule, "cmp");
+      const ln = numericOf(l, rule2, "cmp");
+      const rn = numericOf(r, rule2, "cmp");
       const result = expr.op === "lt" ? ln < rn : expr.op === "le" ? ln <= rn : expr.op === "gt" ? ln > rn : ln >= rn;
       return { type: "bool", value: result };
     }
@@ -40131,12 +40131,12 @@ function evalExpr(expr, rule, ctx, children) {
       const decider = expr.kind === "and" ? false : true;
       let sawPoison = false;
       for (const arg of expr.args) {
-        const v = evalExpr(arg, rule, ctx, children);
+        const v = evalExpr(arg, rule2, ctx, children);
         if (v === POISON) {
           sawPoison = true;
           continue;
         }
-        expectType(v, "bool", rule, expr.kind);
+        expectType(v, "bool", rule2, expr.kind);
         if (v.value === decider) {
           return { type: "bool", value: decider };
         }
@@ -40146,24 +40146,24 @@ function evalExpr(expr, rule, ctx, children) {
       return { type: "bool", value: !decider };
     }
     case "not": {
-      const v = evalExpr(expr.arg, rule, ctx, children);
+      const v = evalExpr(expr.arg, rule2, ctx, children);
       if (v === POISON)
         return POISON;
-      expectType(v, "bool", rule, "not");
+      expectType(v, "bool", rule2, "not");
       return { type: "bool", value: !v.value };
     }
     case "if": {
-      const cond = evalExpr(expr.cond, rule, ctx, children);
+      const cond = evalExpr(expr.cond, rule2, ctx, children);
       if (cond === POISON)
         return POISON;
-      expectType(cond, "bool", rule, "if.cond");
-      return evalExpr(cond.value ? expr.then : expr.else, rule, ctx, children);
+      expectType(cond, "bool", rule2, "if.cond");
+      return evalExpr(cond.value ? expr.then : expr.else, rule2, ctx, children);
     }
     case "brackets": {
-      const base = evalExpr(expr.base, rule, ctx, children);
+      const base = evalExpr(expr.base, rule2, ctx, children);
       if (base === POISON)
         return POISON;
-      expectType(base, "money", rule, "brackets.base");
+      expectType(base, "money", rule2, "brackets.base");
       const amount = base.cents;
       let tax = 0n;
       for (let i = 0; i < expr.table.length; i++) {
@@ -40181,17 +40181,17 @@ function evalExpr(expr, rule, ctx, children) {
       return { type: "money", cents: tax };
     }
     case "match": {
-      const on = evalExpr(expr.on, rule, ctx, children);
+      const on = evalExpr(expr.on, rule2, ctx, children);
       if (on === POISON)
         return POISON;
-      expectType(on, "enum", rule, "match.on");
+      expectType(on, "enum", rule2, "match.on");
       const tag = on.value;
       const found = expr.cases.find((c2) => c2.when === tag);
       if (found)
-        return evalExpr(found.value, rule, ctx, children);
+        return evalExpr(found.value, rule2, ctx, children);
       if (expr.else)
-        return evalExpr(expr.else, rule, ctx, children);
-      throw new UnhandledEnumCaseError(rule.id, tag);
+        return evalExpr(expr.else, rule2, ctx, children);
+      throw new UnhandledEnumCaseError(rule2.id, tag);
     }
   }
 }
@@ -40235,11 +40235,11 @@ function resolveFact(factId, ctx, children) {
     children.push(node2);
   return ctx.facts.get(factId);
 }
-function evalAll(exprs, rule, ctx, children) {
+function evalAll(exprs, rule2, ctx, children) {
   const out = [];
   let poisoned = false;
   for (const e of exprs) {
-    const v = evalExpr(e, rule, ctx, children);
+    const v = evalExpr(e, rule2, ctx, children);
     if (v === POISON)
       poisoned = true;
     else
@@ -40247,28 +40247,28 @@ function evalAll(exprs, rule, ctx, children) {
   }
   return poisoned ? POISON : out;
 }
-function numericFold(vals, rule, op, fold) {
+function numericFold(vals, rule2, op, fold) {
   if (vals.length === 0)
-    throw new EngineError(`rule "${rule.id}": empty ${op}`);
+    throw new EngineError(`rule "${rule2.id}": empty ${op}`);
   const type = vals[0].type;
   if (type !== "money" && type !== "int") {
-    throw new EngineError(`rule "${rule.id}": ${op} over ${type}`);
+    throw new EngineError(`rule "${rule2.id}": ${op} over ${type}`);
   }
-  let acc = numericOf(vals[0], rule, op);
+  let acc = numericOf(vals[0], rule2, op);
   for (const v of vals.slice(1)) {
     if (v.type !== type) {
-      throw new EngineError(`rule "${rule.id}": ${op} mixes ${type} and ${v.type}`);
+      throw new EngineError(`rule "${rule2.id}": ${op} mixes ${type} and ${v.type}`);
     }
-    acc = fold(acc, numericOf(v, rule, op));
+    acc = fold(acc, numericOf(v, rule2, op));
   }
   return type === "money" ? { type: "money", cents: acc } : { type: "int", value: acc };
 }
-function numericOf(v, rule, op) {
+function numericOf(v, rule2, op) {
   if (v.type === "money")
     return v.cents;
   if (v.type === "int")
     return v.value;
-  throw new EngineError(`rule "${rule.id}": ${op} expects money|int, got ${v.type}`);
+  throw new EngineError(`rule "${rule2.id}": ${op} expects money|int, got ${v.type}`);
 }
 function canonicalScalar(v) {
   switch (v.type) {
@@ -40282,9 +40282,9 @@ function canonicalScalar(v) {
       return `e:${v.value}`;
   }
 }
-function expectType(v, type, rule, where) {
+function expectType(v, type, rule2, where) {
   if (v.type !== type) {
-    throw new EngineError(`rule "${rule.id}": ${where} expects ${type}, got ${v.type}`);
+    throw new EngineError(`rule "${rule2.id}": ${where} expects ${type}, got ${v.type}`);
   }
 }
 function coerceFacts(corpus2, plain) {
@@ -40352,7 +40352,7 @@ var IncompleteReturnError = class extends OpenTaxError {
 };
 
 // dist/version.js
-var COMPOSER_VERSION = "0.8.2";
+var COMPOSER_VERSION = "0.9.0";
 
 // ../solve/dist/sweep.js
 function evaluateAt(corpus2, baseFacts, options, atCents) {
@@ -40473,9 +40473,9 @@ function compareAcross(corpus2, baseFacts, options) {
 
 // ../solve/dist/lookup.js
 var tokenize = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(" ").filter((t) => t.length > 2);
-function extractByStatus(rule) {
+function extractByStatus(rule2) {
   const out = {};
-  walkExpr(rule.formula, (e) => {
+  walkExpr(rule2.formula, (e) => {
     if (e.kind === "match" && e.on.kind === "fact" && e.on.factId === "filingStatus") {
       for (const c2 of e.cases) {
         if (c2.value.kind === "money")
@@ -40518,13 +40518,13 @@ function lookupParameters(corpus2, query, asOf) {
   if (tokens.length === 0)
     return [];
   const hits = [];
-  for (const rule of corpus2.rules) {
-    if (asOf && !(rule.effectiveFrom <= asOf && (rule.effectiveTo === void 0 || asOf < rule.effectiveTo))) {
+  for (const rule2 of corpus2.rules) {
+    if (asOf && !(rule2.effectiveFrom <= asOf && (rule2.effectiveTo === void 0 || asOf < rule2.effectiveTo))) {
       continue;
     }
-    const paramWords = Object.keys(rule.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
-    const haystackStrong = `${rule.id} ${rule.title} ${paramWords} ${JURISDICTION_NAMES[rule.jurisdiction] ?? ""}`.toLowerCase();
-    const haystackWeak = `${rule.citation.source} ${rule.citation.section} ${rule.citation.excerpt}`.toLowerCase();
+    const paramWords = Object.keys(rule2.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
+    const haystackStrong = `${rule2.id} ${rule2.title} ${paramWords} ${JURISDICTION_NAMES[rule2.jurisdiction] ?? ""}`.toLowerCase();
+    const haystackWeak = `${rule2.citation.source} ${rule2.citation.section} ${rule2.citation.excerpt}`.toLowerCase();
     let score = 0;
     for (const t of tokens) {
       if (haystackStrong.includes(t))
@@ -40535,23 +40535,23 @@ function lookupParameters(corpus2, query, asOf) {
     if (score === 0)
       continue;
     const parameters = {};
-    for (const [name, p] of Object.entries(rule.parameters ?? {})) {
+    for (const [name, p] of Object.entries(rule2.parameters ?? {})) {
       if (p.type === "money")
         parameters[name] = String(p.value);
     }
-    const byFilingStatus = extractByStatus(rule);
+    const byFilingStatus = extractByStatus(rule2);
     if (Object.keys(parameters).length === 0 && Object.keys(byFilingStatus).length === 0) {
       score -= 1;
       if (score <= 0)
         continue;
     }
     hits.push({
-      ruleId: rule.id,
-      version: rule.version,
-      title: rule.title,
-      citation: rule.citation,
-      effectiveFrom: rule.effectiveFrom,
-      effectiveTo: rule.effectiveTo,
+      ruleId: rule2.id,
+      version: rule2.version,
+      title: rule2.title,
+      citation: rule2.citation,
+      effectiveFrom: rule2.effectiveFrom,
+      effectiveTo: rule2.effectiveTo,
       parameters,
       byFilingStatus,
       score
@@ -40579,16 +40579,16 @@ function searchRules(corpus2, query, asOf, limit = 8) {
   const allTokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
   if (allTokens.length === 0)
     return [];
-  const haystacks = corpus2.rules.map((rule) => {
-    const paramWords = Object.keys(rule.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
+  const haystacks = corpus2.rules.map((rule2) => {
+    const paramWords = Object.keys(rule2.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
     return {
-      rule,
+      rule: rule2,
       // "_" is a regex word character — split snake_case so \b-anchored
       // tokens ("tax") still reach id segments ("kiddie_tax").
-      id: rule.id.toLowerCase().replace(/[._]/g, " "),
-      title: rule.title.toLowerCase(),
-      meta: `${paramWords} ${JURISDICTION_NAMES[rule.jurisdiction] ?? ""}`.toLowerCase(),
-      weak: `${rule.citation.source} ${rule.citation.section} ${rule.citation.excerpt ?? ""}`.toLowerCase()
+      id: rule2.id.toLowerCase().replace(/[._]/g, " "),
+      title: rule2.title.toLowerCase(),
+      meta: `${paramWords} ${JURISDICTION_NAMES[rule2.jurisdiction] ?? ""}`.toLowerCase(),
+      weak: `${rule2.citation.source} ${rule2.citation.section} ${rule2.citation.excerpt ?? ""}`.toLowerCase()
     };
   });
   const matchers = new Map(allTokens.map((t) => [t, new RegExp(`\\b${t}`)]));
@@ -40600,8 +40600,8 @@ function searchRules(corpus2, query, asOf, limit = 8) {
   const boost = new Map(tokens.map((t) => [t, dfCache.get(t) <= haystacks.length * 0.05 ? 2 : 1]));
   const minScore = tokens.length >= 2 ? 2 : 1;
   const hits = [];
-  for (const { rule, id, title, meta: meta3, weak } of haystacks) {
-    if (asOf && !(rule.effectiveFrom <= asOf && (rule.effectiveTo === void 0 || asOf < rule.effectiveTo))) {
+  for (const { rule: rule2, id: id2, title, meta: meta3, weak } of haystacks) {
+    if (asOf && !(rule2.effectiveFrom <= asOf && (rule2.effectiveTo === void 0 || asOf < rule2.effectiveTo))) {
       continue;
     }
     let raw = 0;
@@ -40610,7 +40610,7 @@ function searchRules(corpus2, query, asOf, limit = 8) {
     let sawStrong = false;
     for (const t of tokens) {
       let s = 0;
-      if (has(id, t))
+      if (has(id2, t))
         s += 2;
       if (has(title, t))
         s += 2;
@@ -40630,15 +40630,15 @@ function searchRules(corpus2, query, asOf, limit = 8) {
     if (tokens.length >= 2 && !sawStrong)
       continue;
     hits.push({
-      ruleId: rule.id,
-      version: rule.version,
-      title: rule.title,
-      jurisdiction: rule.jurisdiction,
-      citation: rule.citation,
-      effectiveFrom: rule.effectiveFrom,
-      effectiveTo: rule.effectiveTo,
-      snippet: makeSnippet(rule.citation.excerpt ?? "", tokens),
-      hasParameters: Object.keys(rule.parameters ?? {}).length > 0,
+      ruleId: rule2.id,
+      version: rule2.version,
+      title: rule2.title,
+      jurisdiction: rule2.jurisdiction,
+      citation: rule2.citation,
+      effectiveFrom: rule2.effectiveFrom,
+      effectiveTo: rule2.effectiveTo,
+      snippet: makeSnippet(rule2.citation.excerpt ?? "", tokens),
+      hasParameters: Object.keys(rule2.parameters ?? {}).length > 0,
       score
     });
   }
@@ -40738,17 +40738,17 @@ var isIncompleteReturnRefusal = (err) => err instanceof Error && err.code === "I
 // ../compose/dist/money.js
 var c = (d3) => BigInt(Math.round((d3 ?? 0) * 100));
 var rd = (x) => {
-  const neg2 = x < 0n;
-  const a = neg2 ? -x : x;
+  const neg3 = x < 0n;
+  const a = neg3 ? -x : x;
   const r = (a + 50n) / 100n * 100n;
-  return neg2 ? -r : r;
+  return neg3 ? -r : r;
 };
 var max02 = (x) => x > 0n ? x : 0n;
 var min2 = (a, b) => a < b ? a : b;
 var fmtD = (x) => {
-  const neg2 = x < 0n;
-  const a = neg2 ? -x : x;
-  return `${neg2 ? "-" : ""}$${(a / 100n).toLocaleString()}`;
+  const neg3 = x < 0n;
+  const a = neg3 ? -x : x;
+  return `${neg3 ? "-" : ""}$${(a / 100n).toLocaleString()}`;
 };
 
 // ../compose/dist/types.js
@@ -41347,8 +41347,8 @@ function composeMO(input2, evalStateTax, notes) {
   const privRaw = min2(rd(c(input2.moPrivatePensionYou)), PRIVATE_PENSION_CAP) + min2(rd(c(input2.moPrivatePensionSpouse)), PRIVATE_PENSION_CAP);
   let secB = 0n;
   if (privRaw > 0n) {
-    const excess = max02(l6 - rd(c(input2.taxableSocialSecurity)) - privateLimit);
-    secB = max02(privRaw - excess);
+    const excess2 = max02(l6 - rd(c(input2.taxableSocialSecurity)) - privateLimit);
+    secB = max02(privRaw - excess2);
     notes.push(`MO-A Section B private pension exemption ${fmtD(secB)} ($6,000/spouse cap, reduced by the excess of MO AGI less taxable SS over ${fmtD(privateLimit)})`);
   }
   const l8 = secAY + secAS + secB + secC;
@@ -41389,7 +41389,7 @@ function composeMO(input2, evalStateTax, notes) {
   const l2124 = rd(c(input2.moOtherDeductions));
   const l25 = l8 + l13 + l14 + l15 + l16 + l17 + l18 + l19 + l2124;
   const l26 = l6 - l25;
-  const alloc = (pct12) => rd((l26 * pct12 + 50n) / 100n);
+  const alloc = (pct13) => rd((l26 * pct13 + 50n) / 100n);
   const l27Y = pctY === 100n ? rd(l26) : alloc(pctY);
   const l27S = pctS === 0n ? 0n : pctS === 100n ? rd(l26) : alloc(pctS);
   const l28Y = rd(c(input2.moEnterpriseZoneYou));
@@ -43455,10 +43455,10 @@ function composeAR(input2, evalStateTax, notes) {
       if (itemize) {
         method = "itemized";
         if (status4) {
-          const pct12 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
-          a27 = (itemized * pct12 + 50n) / 100n;
+          const pct13 = agiAll > 0n ? (a25 * 200n + agiAll) / (2n * agiAll) : 100n;
+          a27 = (itemized * pct13 + 50n) / 100n;
           b27 = itemized - a27;
-          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct12}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
+          n.push(`AR3 lines 31-35: itemized deductions ${fmtD(itemized)} prorated ${pct13}% to the primary (${fmtD(a27)}) and ${fmtD(b27)} to the spouse by AGI share (whole percent)`);
         } else
           a27 = itemized;
         if (fs === "mfs")
@@ -48794,7 +48794,7 @@ var facts = [
     id: "qbiW2Wages",
     type: "money",
     min: "0",
-    description: "W-2 wages PAID BY the qualified trade or business, allocable to QBI (\xA7 199A(b)(4)) \u2014 drives the above-threshold wage limit. Intake forms often label this 'W-2 Wages Paid' under the business section: it is a \xA7 199A LIMIT input, NOT a Schedule C expense \u2014 never subtract it from selfEmploymentNetProfit. Defaults to $0, which can only understate the deduction (conservative). In dollars.",
+    description: "W-2 wages PAID BY the qualified trade or business, allocable to QBI (\xA7 199A(b)(4)) \u2014 drives the above-threshold wage limit. Intake forms often label this 'W-2 Wages Paid' under the business section: it is a \xA7 199A LIMIT input, NOT a Schedule C expense \u2014 never subtract it from selfEmploymentNetProfit. With businesses listed separately (qbiAdditionalBusinesses) these are the main business's wages \u2014 the business holding whatever QBI is not listed. Defaults to $0, which can only understate the deduction (conservative). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed the business paid no W-2 wages absent contrary input (conservative above the threshold)"
@@ -48804,7 +48804,7 @@ var facts = [
     id: "qbiUBIA",
     type: "money",
     min: "0",
-    description: "Unadjusted basis immediately after acquisition of the business's qualified property (\xA7 199A(b)(6)) \u2014 the 2.5% prong of the wage limit. Defaults to $0 (conservative). In dollars.",
+    description: "Unadjusted basis immediately after acquisition of the business's qualified property (\xA7 199A(b)(6)) \u2014 the 2.5% prong of the wage limit. With businesses listed separately, the main business's UBIA. Defaults to $0 (conservative). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no qualified-property UBIA absent contrary input (conservative)"
@@ -48813,9 +48813,293 @@ var facts = [
   {
     id: "businessIsSSTB",
     type: "bool",
-    description: "The trade or business is a specified service trade or business (\xA7 199A(d)(2): health, law, accounting, consulting, financial services, athletics, performing arts, \u2026) \u2014 above the threshold an SSTB's deduction phases to zero."
+    description: "The trade or business is a specified service trade or business (\xA7 199A(d)(2): health, law, accounting, consulting, financial services, athletics, performing arts, \u2026) \u2014 above the threshold an SSTB's deduction phases to zero. With businesses listed separately, this is the main business \u2014 the one holding whatever QBI is not listed."
     // no default — only demanded above the § 199A threshold, where it
     // decides everything; the engine must never guess it
+  },
+  {
+    id: "qbiAggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of the main business (QBI not listed separately): businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "spouseQbiW2Wages",
+    type: "money",
+    min: "0",
+    description: "JOINT RETURN: W-2 wages PAID BY the second spouse's own Schedule C business (\xA7 199A(b)(4)) \u2014 its above-threshold wage limit; that business is its own \xA7 199A trade or business. Never subtract it from spouseSelfEmploymentNetProfit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed the second spouse's business paid no W-2 wages (conservative above the threshold)"
+    }
+  },
+  {
+    id: "spouseQbiUBIA",
+    type: "money",
+    min: "0",
+    description: "JOINT RETURN: UBIA of the second spouse's own Schedule C business's qualified property (\xA7 199A(b)(6)) \u2014 the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in the second spouse's business (conservative)"
+    }
+  },
+  {
+    id: "spouseBusinessIsSSTB",
+    type: "bool",
+    description: "JOINT RETURN: the second spouse's own Schedule C business is a specified service trade or business (\xA7 199A(d)(2)). Asked only above the \xA7 199A threshold when that spouse has QBI."
+    // no default — decides the deduction above the threshold; never guessed
+  },
+  {
+    id: "spouseQbiAggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of the second spouse's Schedule C business: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "qbiAdditionalBusinesses",
+    type: "int",
+    min: "0",
+    max: "5",
+    description: "How many trades or businesses to list separately for \xA7 199A (0\u20135), each in qbiBusiness2\u2026 through qbiBusiness6\u2026: each listed business gets its own W-2 wage and UBIA limit, SSTB status and aggregation group (Form 8995-A Part II, one column each). A listed business STAYS in the return's totals \u2014 its profit is part of selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a QBI loss part of qbiLossOffset \u2014 and listing it only takes it out of the main business, which keeps whatever QBI is not listed (with qbiW2Wages, qbiUBIA and businessIsSSTB). The second spouse's Schedule C on a joint return is already its own business: do not list it. List each S corporation or partnership K-1 with its Statement A amounts.",
+    default: {
+      value: "0",
+      rationale: "Assumed one trade or business (plus the second spouse's Schedule C on a joint return)"
+    }
+  },
+  {
+    id: "qbiBusiness2Income",
+    type: "money",
+    description: "Listed business 2 (when qbiAdditionalBusinesses \u2265 1): its qualified business income, or a QBI LOSS as a NEGATIVE number (\xA7 199A(c); Form 8995-A Schedule C line 1(a)) \u2014 for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the \xBD-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars."
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness2W2Wages",
+    type: "money",
+    min: "0",
+    description: "Listed business 2: W-2 wages paid by the business allocable to QBI (\xA7 199A(b)(4); K-1 Statement A) \u2014 its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 2 paid no W-2 wages (conservative above the threshold)"
+    }
+  },
+  {
+    id: "qbiBusiness2UBIA",
+    type: "money",
+    min: "0",
+    description: "Listed business 2: UBIA of its qualified property (\xA7 199A(b)(6); K-1 Statement A) \u2014 the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 2 (conservative)"
+    }
+  },
+  {
+    id: "qbiBusiness2IsSSTB",
+    type: "bool",
+    description: "Listed business 2 is a specified service trade or business (\xA7 199A(d)(2); K-1 Statement A). Asked only above the \xA7 199A threshold."
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness2AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of listed business 2: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "qbiBusiness3Income",
+    type: "money",
+    description: "Listed business 3 (when qbiAdditionalBusinesses \u2265 2): its qualified business income, or a QBI LOSS as a NEGATIVE number (\xA7 199A(c); Form 8995-A Schedule C line 1(a)) \u2014 for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the \xBD-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars."
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness3W2Wages",
+    type: "money",
+    min: "0",
+    description: "Listed business 3: W-2 wages paid by the business allocable to QBI (\xA7 199A(b)(4); K-1 Statement A) \u2014 its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 3 paid no W-2 wages (conservative above the threshold)"
+    }
+  },
+  {
+    id: "qbiBusiness3UBIA",
+    type: "money",
+    min: "0",
+    description: "Listed business 3: UBIA of its qualified property (\xA7 199A(b)(6); K-1 Statement A) \u2014 the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 3 (conservative)"
+    }
+  },
+  {
+    id: "qbiBusiness3IsSSTB",
+    type: "bool",
+    description: "Listed business 3 is a specified service trade or business (\xA7 199A(d)(2); K-1 Statement A). Asked only above the \xA7 199A threshold."
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness3AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of listed business 3: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "qbiBusiness4Income",
+    type: "money",
+    description: "Listed business 4 (when qbiAdditionalBusinesses \u2265 3): its qualified business income, or a QBI LOSS as a NEGATIVE number (\xA7 199A(c); Form 8995-A Schedule C line 1(a)) \u2014 for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the \xBD-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars."
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness4W2Wages",
+    type: "money",
+    min: "0",
+    description: "Listed business 4: W-2 wages paid by the business allocable to QBI (\xA7 199A(b)(4); K-1 Statement A) \u2014 its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 4 paid no W-2 wages (conservative above the threshold)"
+    }
+  },
+  {
+    id: "qbiBusiness4UBIA",
+    type: "money",
+    min: "0",
+    description: "Listed business 4: UBIA of its qualified property (\xA7 199A(b)(6); K-1 Statement A) \u2014 the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 4 (conservative)"
+    }
+  },
+  {
+    id: "qbiBusiness4IsSSTB",
+    type: "bool",
+    description: "Listed business 4 is a specified service trade or business (\xA7 199A(d)(2); K-1 Statement A). Asked only above the \xA7 199A threshold."
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness4AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of listed business 4: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "qbiBusiness5Income",
+    type: "money",
+    description: "Listed business 5 (when qbiAdditionalBusinesses \u2265 4): its qualified business income, or a QBI LOSS as a NEGATIVE number (\xA7 199A(c); Form 8995-A Schedule C line 1(a)) \u2014 for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the \xBD-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars."
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness5W2Wages",
+    type: "money",
+    min: "0",
+    description: "Listed business 5: W-2 wages paid by the business allocable to QBI (\xA7 199A(b)(4); K-1 Statement A) \u2014 its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 5 paid no W-2 wages (conservative above the threshold)"
+    }
+  },
+  {
+    id: "qbiBusiness5UBIA",
+    type: "money",
+    min: "0",
+    description: "Listed business 5: UBIA of its qualified property (\xA7 199A(b)(6); K-1 Statement A) \u2014 the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 5 (conservative)"
+    }
+  },
+  {
+    id: "qbiBusiness5IsSSTB",
+    type: "bool",
+    description: "Listed business 5 is a specified service trade or business (\xA7 199A(d)(2); K-1 Statement A). Asked only above the \xA7 199A threshold."
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness5AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of listed business 5: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "qbiBusiness6Income",
+    type: "money",
+    description: "Listed business 6 (when qbiAdditionalBusinesses \u2265 5): its qualified business income, or a QBI LOSS as a NEGATIVE number (\xA7 199A(c); Form 8995-A Schedule C line 1(a)) \u2014 for a K-1, Statement A's QBI; for a Schedule C, net profit less its share of the \xBD-SE, SEP and SE-health deductions. Its income or loss must already be in the return's totals (a profit within selfEmploymentNetProfit or k1OrdinaryBusinessIncome, a loss within qbiLossOffset). In dollars."
+    // no default — a listed business's QBI is never guessed
+  },
+  {
+    id: "qbiBusiness6W2Wages",
+    type: "money",
+    min: "0",
+    description: "Listed business 6: W-2 wages paid by the business allocable to QBI (\xA7 199A(b)(4); K-1 Statement A) \u2014 its above-threshold wage limit. Defaults to $0, which can only understate the deduction. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed listed business 6 paid no W-2 wages (conservative above the threshold)"
+    }
+  },
+  {
+    id: "qbiBusiness6UBIA",
+    type: "money",
+    min: "0",
+    description: "Listed business 6: UBIA of its qualified property (\xA7 199A(b)(6); K-1 Statement A) \u2014 the 2.5% prong of its wage limit. Defaults to $0 (conservative). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified-property UBIA in listed business 6 (conservative)"
+    }
+  },
+  {
+    id: "qbiBusiness6IsSSTB",
+    type: "bool",
+    description: "Listed business 6 is a specified service trade or business (\xA7 199A(d)(2); K-1 Statement A). Asked only above the \xA7 199A threshold."
+    // no default — never guessed
+  },
+  {
+    id: "qbiBusiness6AggregationGroup",
+    type: "int",
+    min: "0",
+    max: "9",
+    description: "\xA7 199A aggregation group (Reg. \xA7 1.199A-4) of listed business 6: businesses given the same number from 1 to 9 are one business for the W-2 wage and UBIA limits (Form 8995-A Schedule B), adding their QBI, W-2 wages and UBIA; 0 = not aggregated. Aggregation requires 50% common ownership for the majority of the year, the same tax year, and two of the three Reg. \xA7 1.199A-4(b)(1)(v) factors; once chosen it must be kept in later years. A specified service trade or business may not be aggregated (refused). Read only above the \xA7 199A threshold when the return has two or more businesses.",
+    default: {
+      value: "0",
+      rationale: "Assumed the business is not aggregated with another"
+    }
+  },
+  {
+    id: "qbiLossCarryforward",
+    type: "money",
+    min: "0",
+    description: "Qualified business net LOSS carried forward from prior years, as a POSITIVE number (\xA7 199A(c)(2); last year's Form 8995 line 16 or Schedule C (Form 8995-A) line 6) \u2014 it reduces this year's QBI for the deduction only, never taxable income. Next year's amount is the target us.federal.qbi.loss_carryforward. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no qualified business loss carryforward from prior years"
+    }
   },
   {
     id: "sepContribution",
@@ -54074,7 +54358,7 @@ function studentLoanRule(version2, effectiveFrom, effectiveTo, jointThresholdCen
     then: param("thresholdJoint"),
     else: param("threshold")
   };
-  const range = {
+  const range2 = {
     kind: "if",
     cond: isStatus("mfj"),
     then: param("rangeJoint"),
@@ -54128,10 +54412,10 @@ function studentLoanRule(version2, effectiveFrom, effectiveTo, jointThresholdCen
                 kind: "min",
                 args: [
                   { kind: "max0", arg: { kind: "sub", left: magi2, right: threshold2 } },
-                  range
+                  range2
                 ]
               },
-              c: range,
+              c: range2,
               round: "half-up"
             }
           }
@@ -54911,14 +55195,14 @@ function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, withQ
       { kind: "mulRate", base: tiBeforeQbi, rate: { num: "20", den: "100" }, round: "half-up" }
     ]
   };
-  const qbi2 = withQbiMinimum ? {
+  const qbi = withQbiMinimum ? {
     kind: "if",
     cond: { kind: "cmp", op: "ge", left: qbiBase, right: money4("100000") },
     then: { kind: "max", args: [qbiCore, money4("40000")] },
     // OBBBA $400 min
     else: qbiCore
   } : qbiCore;
-  const ti = { kind: "max0", arg: { kind: "sub", left: tiBeforeQbi, right: qbi2 } };
+  const ti = { kind: "max0", arg: { kind: "sub", left: tiBeforeQbi, right: qbi } };
   const line17 = {
     kind: "add",
     args: [ordinaryRateTaxExpr(ti, "filingStatus", year), seTax]
@@ -57455,7 +57739,7 @@ function phased(tentative) {
     then: param7("thresholdJoint"),
     else: param7("threshold")
   };
-  const range = {
+  const range2 = {
     kind: "if",
     cond: isStatus4("mfj"),
     then: param7("rangeJoint"),
@@ -57484,10 +57768,10 @@ function phased(tentative) {
                   right: threshold2
                 }
               },
-              range
+              range2
             ]
           },
-          c: range,
+          c: range2,
           round: "half-up"
         }
       }
@@ -58365,7 +58649,7 @@ function repayment2025() {
       else: capFor("162500", "325000")
     }
   };
-  const excess = {
+  const excess2 = {
     kind: "max0",
     arg: {
       kind: "sub",
@@ -58401,8 +58685,8 @@ function repayment2025() {
       then: {
         kind: "if",
         cond: { kind: "cmp", op: "lt", left: fplPercentCents, right: money19("40000") },
-        then: { kind: "min", args: [excess, cappedBand] },
-        else: excess
+        then: { kind: "min", args: [excess2, cappedBand] },
+        else: excess2
       },
       else: zero12
     }
@@ -59947,8 +60231,8 @@ function iraRule(version2, effectiveFrom, effectiveTo, yearLabel, p, source, amo
       { kind: "if", cond: fact28("isAge50OrOlder"), then: param15("catchUp"), else: zero16 }
     ]
   };
-  const phasedLimit = (threshold2, range) => {
-    const excess = {
+  const phasedLimit = (threshold2, range2) => {
+    const excess2 = {
       kind: "max0",
       arg: { kind: "sub", left: magi, right: threshold2 }
     };
@@ -59959,14 +60243,14 @@ function iraRule(version2, effectiveFrom, effectiveTo, yearLabel, p, source, amo
       // $10
       count: {
         kind: "stepUnits",
-        value: { kind: "mulDiv", a: limit, b: excess, c: range, round: "floor" },
+        value: { kind: "mulDiv", a: limit, b: excess2, c: range2, round: "floor" },
         unitCents: "1000",
         mode: "floor"
       }
     };
     return {
       kind: "if",
-      cond: { kind: "cmp", op: "ge", left: excess, right: range },
+      cond: { kind: "cmp", op: "ge", left: excess2, right: range2 },
       then: zero16,
       // fully phased: the $200 floor does not apply
       else: {
@@ -61225,8 +61509,8 @@ var F5695_2025 = "2025 Form 5695 (Cat. No. 13540P, created 3/20/25) and Instruct
 var URL_25D = "https://www.law.cornell.edu/uscode/text/26/25D";
 var URL_25C = "https://www.law.cornell.edu/uscode/text/26/25C";
 var URL_I5695 = "https://www.irs.gov/pub/irs-pdf/i5695.pdf";
-var line = (id, title, citation, formula, extra = {}) => ({
-  id: `${J26}.energy.${id}`,
+var line = (id2, title, citation, formula, extra = {}) => ({
+  id: `${J26}.energy.${id2}`,
   version: 1,
   jurisdiction: J26,
   title,
@@ -62776,8 +63060,8 @@ var caRules = [
       };
       const param28 = (name) => ({ kind: "param", name });
       const agi2 = ruleRef32("us.federal.agi");
-      const excess = { kind: "sub", left: earned2, right: param28("phaseOutStart") };
-      const line26Hundredths = { kind: "stepUnits", value: excess, unitCents: "100", mode: "floor" };
+      const excess2 = { kind: "sub", left: earned2, right: param28("phaseOutStart") };
+      const line26Hundredths = { kind: "stepUnits", value: excess2, unitCents: "100", mode: "floor" };
       const line27Cents = {
         kind: "mulInt",
         base: money35("1"),
@@ -63994,7 +64278,7 @@ var njRules = [
     },
     formula: (() => {
       const ti = max08(fact38("stateTaxableIncome"));
-      const pct12 = (num) => ({
+      const pct13 = (num) => ({
         kind: "mulRate",
         base: fact38("njFederalCdcc"),
         rate: { num, den: "100" },
@@ -64003,7 +64287,7 @@ var njRules = [
       const tier = (max2, num, next) => ({
         kind: "if",
         cond: le(ti, param19(max2)),
-        then: pct12(num),
+        then: pct13(num),
         else: next
       });
       return rd3(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money35("0")))))));
@@ -64475,7 +64759,7 @@ var ohRules = [
       // $75,000 → 10%; above → 5%
     },
     formula: (() => {
-      const pct12 = (num) => ({
+      const pct13 = (num) => ({
         kind: "mulRate",
         base: max09(fact38("ohTaxLessCredits")),
         rate: { num, den: "100" },
@@ -64484,16 +64768,16 @@ var ohRules = [
       const tiered = {
         kind: "if",
         cond: le2(magiLessExemptions, param20("tier1Max")),
-        then: pct12("20"),
+        then: pct13("20"),
         else: {
           kind: "if",
           cond: le2(magiLessExemptions, param20("tier2Max")),
-          then: pct12("15"),
+          then: pct13("15"),
           else: {
             kind: "if",
             cond: le2(magiLessExemptions, param20("tier3Max")),
-            then: pct12("10"),
-            else: pct12("5")
+            then: pct13("10"),
+            else: pct13("5")
           }
         }
       };
@@ -65729,8 +66013,8 @@ var moRules = [
     formula: (() => {
       const magi2 = fact38("moMagi");
       const total = { kind: "max0", arg: fact38("moFederalTaxTotal") };
-      const pct12 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
-      const uncapped = iff2(le5(magi2, money35("2500000")), pct12("35"), iff2(le5(magi2, money35("5000000")), pct12("25"), iff2(le5(magi2, money35("10000000")), pct12("15"), iff2(le5(magi2, money35("12500000")), pct12("5"), money35("0")))));
+      const pct13 = (num) => rd8({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
+      const uncapped = iff2(le5(magi2, money35("2500000")), pct13("35"), iff2(le5(magi2, money35("5000000")), pct13("25"), iff2(le5(magi2, money35("10000000")), pct13("15"), iff2(le5(magi2, money35("12500000")), pct13("5"), money35("0")))));
       const cap = iff2({ kind: "cmp", op: "eq", left: fact38("filingStatus"), right: { kind: "enum", value: "mfj" } }, money35("1000000"), money35("500000"));
       return { kind: "min", args: [uncapped, cap] };
     })()
@@ -66048,8 +66332,8 @@ var wiRules = [
     formula: (() => {
       const eic = { kind: "max0", arg: fact38("wiFederalEicForWi") };
       const kids = fact38("wiQualifyingChildren");
-      const pct12 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
-      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct12("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct12("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct12("4"), money35("0"))));
+      const pct13 = (num) => rd9({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff3({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct13("34"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct13("11"), iff3({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct13("4"), money35("0"))));
     })()
   },
   {
@@ -66387,12 +66671,12 @@ var mnRules = [
     formula: (() => {
       const total = mulInt3(money35("520000"), fact38("mnDependents"));
       const threshold2 = iff4({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money35("35855000"), iff4(isStatus12("hoh"), money35("29880000"), iff4(isStatus12("mfs"), money35("17927500"), money35("23905000"))));
-      const excess = { kind: "max0", arg: sub8(fact38("mnAgi"), threshold2) };
+      const excess2 = { kind: "max0", arg: sub8(fact38("mnAgi"), threshold2) };
       const cutoff = iff4(isStatus12("mfs"), money35("6125000"), money35("12250000"));
-      const stepsMfs = stepsCeil(excess, "125000");
-      const stepsOther = stepsCeil(excess, "250000");
+      const stepsMfs = stepsCeil(excess2, "125000");
+      const stepsOther = stepsCeil(excess2, "250000");
       const reduction = (steps) => mulInt3({ kind: "mulRate", base: total, rate: { num: "2", den: "100" }, round: "half-up" }, steps);
-      return iff4(fact38("isClaimedAsDependent"), money35("0"), iff4({ kind: "cmp", op: "gt", left: excess, right: cutoff }, money35("0"), rd10({
+      return iff4(fact38("isClaimedAsDependent"), money35("0"), iff4({ kind: "cmp", op: "gt", left: excess2, right: cutoff }, money35("0"), rd10({
         kind: "max0",
         arg: sub8(total, iff4(isStatus12("mfs"), reduction(stepsMfs), reduction(stepsOther)))
       })));
@@ -66431,8 +66715,8 @@ var mnRules = [
     formula: (() => {
       const ss2 = { kind: "max0", arg: fact38("mnTaxableSs") };
       const threshold2 = iff4({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money35("10832000"), iff4(isStatus12("mfs"), money35("5416000"), money35("8449000")));
-      const excess = { kind: "max0", arg: sub8(fact38("mnAgi"), threshold2) };
-      const steps = iff4(isStatus12("mfs"), stepsCeil(excess, "200000"), stepsCeil(excess, "400000"));
+      const excess2 = { kind: "max0", arg: sub8(fact38("mnAgi"), threshold2) };
+      const steps = iff4(isStatus12("mfs"), stepsCeil(excess2, "200000"), stepsCeil(excess2, "400000"));
       const cappedSteps = { kind: "min", args: [steps, { kind: "int", value: "10" }] };
       const reduction = mulInt3({ kind: "mulRate", base: ss2, rate: { num: "10", den: "100" }, round: "half-up" }, cappedSteps);
       return rd10({ kind: "max0", arg: sub8(ss2, reduction) });
@@ -66612,9 +66896,9 @@ var scRules = [
       // $110,000
     },
     formula: (() => {
-      const phased2 = (base, start, range) => {
-        const excess = { kind: "max0", arg: sub9(fact38("scAgi"), money35(start)) };
-        const reductionRaw = { kind: "mulDiv", a: money35(base), b: excess, c: money35(range), round: "floor" };
+      const phased2 = (base, start, range2) => {
+        const excess2 = { kind: "max0", arg: sub9(fact38("scAgi"), money35(start)) };
+        const reductionRaw = { kind: "mulDiv", a: money35(base), b: excess2, c: money35(range2), round: "floor" };
         const reduction10 = mulInt4(money35("1000"), { kind: "stepUnits", value: reductionRaw, unitCents: "1000", mode: "floor" });
         return { kind: "max0", arg: sub9(money35(base), reduction10) };
       };
@@ -66896,10 +67180,10 @@ var alRules = [
     formula: (() => {
       const agi2 = { kind: "max0", arg: fact38("alAgi") };
       const chart = (max2, step, floor, start, width) => {
-        const excess = sub10(agi2, money35(start));
+        const excess2 = sub10(agi2, money35(start));
         const steps = {
           kind: "add",
-          args: [{ kind: "stepUnits", value: excess, unitCents: width, mode: "floor" }, { kind: "int", value: "1" }]
+          args: [{ kind: "stepUnits", value: excess2, unitCents: width, mode: "floor" }, { kind: "int", value: "1" }]
         };
         const reduced = { kind: "max", args: [sub10(money35(max2), mulInt5(money35(step), steps)), money35(floor)] };
         return iff6(lt8(agi2, money35(start)), money35(max2), reduced);
@@ -67271,8 +67555,8 @@ var orRules = [
     formula: (() => {
       const qi = fact38("orKidsQualifyingIncome");
       const base = iff7({ kind: "cmp", op: "gt", left: fact38("orKidsUnder6"), right: { kind: "int", value: "5" } }, mulInt6(money35("105000"), { kind: "int", value: "5" }), mulInt6(money35("105000"), fact38("orKidsUnder6")));
-      const excess = { kind: "max0", arg: sub11(qi, money35("2655000")) };
-      const hundredths = { kind: "mulDiv", a: excess, b: money35("100"), c: money35("500000"), round: "half-up" };
+      const excess2 = { kind: "max0", arg: sub11(qi, money35("2655000")) };
+      const hundredths = { kind: "mulDiv", a: excess2, b: money35("100"), c: money35("500000"), round: "half-up" };
       const reduction = { kind: "mulDiv", a: base, b: hundredths, c: money35("100"), round: "half-up" };
       const credit = { kind: "max0", arg: sub11(base, reduction) };
       return iff7({ kind: "cmp", op: "ge", left: qi, right: money35("3155000") }, money35("0"), iff7(isStatus15("mfs"), money35("0"), rd13(credit)));
@@ -67357,8 +67641,8 @@ var times = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, ro
 var scaled = (cents) => times(money35(cents), "10000");
 var dollarsFromScaled = (n) => times({ kind: "mulDiv", a: n, b: money35("1"), c: money35("1000000"), round: "half-up" }, "100");
 var scaledSchedule = (base, rows) => add8(...rows.map((r, i) => {
-  const excess = sub12(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max012(excess);
+  const excess2 = sub12(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max012(excess2);
   return times(portion, r.rateNum);
 }));
 var SCHED_2025_S = [
@@ -67912,8 +68196,8 @@ var stepsOver = (agi2, startCents, unitCents, maxUnits) => {
 var times2 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled2 = (n, denCents) => times2({ kind: "mulDiv", a: n, b: money35("1"), c: money35(denCents), round: "half-up" }, "100");
 var scaledSchedule2 = (base, rows) => add9(...rows.map((r, i) => {
-  const excess = sub13(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max013(excess);
+  const excess2 = sub13(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max013(excess2);
   return times2(portion, r.rateNum);
 }));
 var bands = (agi2, rows, beyond, wrap) => {
@@ -68139,15 +68423,15 @@ var tcsFor = (agi2, s, method) => {
   const taxable3 = max013(sub13(agi2, exemptionFor(agi2, s)));
   const scaledTax = scaledSchedule2(taxable3, SCHED[s]);
   const cAndD = add9(addbackFor(agi2, s), recaptureFor(agi2, s));
-  const pct12 = creditPctFor(agi2, s);
+  const pct13 = creditPctFor(agi2, s);
   if (method === "schedule") {
     const line4 = dollarsFromScaled2(scaledTax, "1000000");
     const line72 = add9(line4, cAndD);
-    const line92 = rd15({ kind: "mulDiv", a: line72, b: mulInt8(money35("1"), pct12), c: money35("100"), round: "half-up" });
+    const line92 = rd15({ kind: "mulDiv", a: line72, b: mulInt8(money35("1"), pct13), c: money35("100"), round: "half-up" });
     return sub13(line72, line92);
   }
   const totalScaled = add9(scaledTax, times2(cAndD, "10000"));
-  const keep = sub13(int5("100"), pct12);
+  const keep = sub13(int5("100"), pct13);
   const scaledAfterCredit = mulInt8(totalScaled, keep);
   return dollarsFromScaled2(scaledAfterCredit, "100000000");
 };
@@ -68424,8 +68708,8 @@ var isKsHoh = { kind: "or", args: [isStatus18("hoh"), isStatus18("qss")] };
 var times3 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled3 = (n, denCents) => times3({ kind: "mulDiv", a: n, b: money35("1"), c: money35(denCents), round: "half-up" }, "100");
 var scaledSchedule3 = (base, rows) => add10(...rows.map((r, i) => {
-  const excess = sub14(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max014(excess);
+  const excess2 = sub14(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max014(excess2);
   return times3(portion, r.rateNum);
 }));
 var SCHED_MFJ2 = [
@@ -68897,8 +69181,8 @@ var isMfs3 = isStatus19("mfs");
 var times4 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled4 = (n, denCents) => times4({ kind: "mulDiv", a: n, b: money35("1"), c: money35(denCents), round: "half-up" }, "100");
 var scaledSchedule4 = (base, rows) => add11(...rows.map((r, i) => {
-  const excess = sub15(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max015(excess);
+  const excess2 = sub15(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max015(excess2);
   return times4(portion, r.rateNum);
 }));
 var dollars3 = (d3) => money35(String(d3) + "00");
@@ -69132,8 +69416,8 @@ var arRules = [
       const earned2 = max015(fact38("arEarnedIncome"));
       const l6 = iff11(isMfj2, minE(l3, earned2, max015(fact38("arSpouseEarnedIncome"))), minE(l3, earned2));
       const steps = stepUnits2(max015(sub15(fact38("arFederalAgi"), money35("1500000"))), "200000", "ceil");
-      const pct12 = maxE(sub15(money35("35"), mulInt10(money35("1"), steps)), money35("20"));
-      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct12, c: money35("100"), round: "half-up" });
+      const pct13 = maxE(sub15(money35("35"), mulInt10(money35("1"), steps)), money35("20"));
+      const l9 = rd17({ kind: "mulDiv", a: l6, b: pct13, c: money35("100"), round: "half-up" });
       return rd17({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
     })()
   },
@@ -69347,8 +69631,8 @@ var isMfs4 = isStatus20("mfs");
 var times5 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled5 = (n, denCents) => times5({ kind: "mulDiv", a: n, b: money35("1"), c: money35(denCents), round: "half-up" }, "100");
 var scaledSchedule5 = (base, rows) => add12(...rows.map((r, i) => {
-  const excess = sub16(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max016(excess);
+  const excess2 = sub16(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max016(excess2);
   return times5(portion, r.rateNum);
 }));
 var dollars4 = (d3) => money35(String(d3) + "00");
@@ -69863,8 +70147,8 @@ var times6 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, r
 var pct4 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled6 = (n, denCents) => times6({ kind: "mulDiv", a: n, b: money35("1"), c: money35(denCents), round: "half-up" }, "100");
 var scaledSchedule6 = (base, rows) => add13(...rows.map((r, i) => {
-  const excess = sub17(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max017(excess);
+  const excess2 = sub17(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max017(excess2);
   return times6(portion, r.rateNum);
 }));
 var calcSchedule = (base, rows) => {
@@ -70765,8 +71049,8 @@ var times7 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, r
 var pct6 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled8 = (n) => times7({ kind: "mulDiv", a: n, b: money35("1"), c: money35("1000000"), round: "half-up" }, "100");
 var scaledSchedule7 = (base, rows) => add15(...rows.map((r, i) => {
-  const excess = sub19(base, money35(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max019(excess);
+  const excess2 = sub19(base, money35(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money35("0"), hi: money35(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max019(excess2);
   return times7(portion, r.rateNum);
 }));
 var sched = (rates, mfs) => {
@@ -73014,7 +73298,7 @@ var FORMS4 = "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/";
 var INSTR_URL2 = FORMS4 + "Instructions/PIT-RES_Instructions_2025-01.pdf";
 var FORM_URL2 = FORMS4 + "PIT-RES_2025-01_PaperInteractiveIPM.pdf";
 var TABLE_URL = "https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf";
-var DELC = (sub27) => `https://delcode.delaware.gov/title30/c011/${sub27}/index.html`;
+var DELC = (sub28) => `https://delcode.delaware.gov/title30/c011/${sub28}/index.html`;
 var deRules = [
   {
     id: "us.de.income_tax",
@@ -73435,8 +73719,8 @@ var ndRules = [
     parameters: { maximumCredit: { value: "31200", type: "money" }, taxableIncomeFloor: { value: "8103600", type: "money" }, lowerIncomeFloor: { value: "4755000", type: "money" }, halfJointStandardDeduction: { value: "1575000", type: "money" } },
     formula: (() => {
       const eligible = and9(isStatus30("mfj"), gt13(fact38("ndTaxableIncome"), money35("8103600")), gt13(fact38("ndLowerQualifiedIncome"), money35("4755000")));
-      const excess = max025(sub25(max025(fact38("ndJointScheduleTax")), add21(max025(fact38("ndSingleScheduleTaxA")), max025(fact38("ndSingleScheduleTaxB")))));
-      return iff21(eligible, minE11(excess, money35("31200")), money35("0"));
+      const excess2 = max025(sub25(max025(fact38("ndJointScheduleTax")), add21(max025(fact38("ndSingleScheduleTaxA")), max025(fact38("ndSingleScheduleTaxB")))));
+      return iff21(eligible, minE11(excess2, money35("31200")), money35("0"));
     })()
   },
   {
@@ -74557,133 +74841,275 @@ var stateParameterRules = [
   ...otherStateRules
 ];
 
-// ../corpus-us-federal/dist/rules/qbi.js
+// ../corpus-us-federal/dist/rules/qbi-businesses.js
+var J29 = "us.federal";
 var fact39 = (factId) => ({ kind: "fact", factId });
 var money36 = (cents) => ({ kind: "money", cents });
+var int15 = (value) => ({ kind: "int", value });
 var ruleRef33 = (ruleId) => ({ kind: "rule", ruleId });
-var param23 = (name) => ({ kind: "param", name });
 var zero26 = money36("0");
-var isStatus32 = (status) => ({
-  kind: "cmp",
-  op: "eq",
-  left: fact39("filingStatus"),
-  right: { kind: "enum", value: status }
-});
+var add23 = (...args) => ({ kind: "add", args });
+var sub27 = (left, right) => ({ kind: "sub", left, right });
+var max027 = (arg) => ({ kind: "max0", arg });
+var min6 = (...args) => ({ kind: "min", args });
+var neg2 = (e) => sub27(zero26, e);
+var cmp16 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var iff23 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var and11 = (...args) => ({ kind: "and", args });
+var pct11 = (num, den, base) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
+var isStatus32 = (status) => cmp16("eq", fact39("filingStatus"), { kind: "enum", value: status });
+var CORNELL = "https://www.law.cornell.edu/uscode/text/26/199A";
+var REG_1 = "https://www.law.cornell.edu/cfr/text/26/1.199A-1";
+var REG_4 = "https://www.law.cornell.edu/cfr/text/26/1.199A-4";
+var QBI_LISTED = 5;
+var QBI_UNITS = [
+  { key: "main", label: "the main business (QBI not listed separately)", w2Fact: "qbiW2Wages", ubiaFact: "qbiUBIA", sstbFact: "businessIsSSTB", groupFact: "qbiAggregationGroup" },
+  { key: "spouse", label: "the second spouse's Schedule C business", w2Fact: "spouseQbiW2Wages", ubiaFact: "spouseQbiUBIA", sstbFact: "spouseBusinessIsSSTB", groupFact: "spouseQbiAggregationGroup" },
+  ...Array.from({ length: QBI_LISTED }, (_, i) => {
+    const n = i + 2;
+    return {
+      key: `business${n}`,
+      label: `listed business ${n}`,
+      w2Fact: `qbiBusiness${n}W2Wages`,
+      ubiaFact: `qbiBusiness${n}UBIA`,
+      sstbFact: `qbiBusiness${n}IsSSTB`,
+      groupFact: `qbiBusiness${n}AggregationGroup`
+    };
+  })
+];
+var LISTED = QBI_UNITS.slice(2);
+var id = (u, line2) => `${J29}.qbi.${u.key}.${line2}`;
+var qbiOf = (u) => ruleRef33(id(u, "qbi"));
+var presentOf = (u) => ruleRef33(id(u, "present"));
+var groupOf = (u) => ruleRef33(id(u, "aggregation_group"));
+var excess = ruleRef33(`${J29}.qbi.excess_over_threshold`);
+var range = ruleRef33(`${J29}.qbi.phase_in_range`);
+function rule(ruleId, title, section, url2, excerpt, type, formula, source = "26 U.S.C. \xA7 199A; Form 8995-A (2025) and Schedules A\u2013C") {
+  return {
+    id: ruleId,
+    version: 1,
+    jurisdiction: J29,
+    title,
+    citation: { source, section, url: url2, excerpt },
+    effectiveFrom: "2025-01-01",
+    output: { type },
+    formula
+  };
+}
+var scheduleCPool = add23(max027(sub27(fact39("selfEmploymentNetProfit"), add23(ruleRef33(`${J29}.se_tax_half_deduction.taxpayer`), ruleRef33(`${J29}.sep_deduction`), ruleRef33(`${J29}.sehi_deduction`)))), fact39("k1OrdinaryBusinessIncome"));
+var listedProfits = add23(...LISTED.map((u) => max027(qbiOf(u))));
+var listedLosses = add23(...LISTED.map((u) => max027(neg2(qbiOf(u)))));
+var rawQbiRules = [
+  rule(id(QBI_UNITS[0], "qbi"), "QBI of the main business: the return's Schedule C and K-1 QBI less qbiLossOffset, less every listed business", "\xA7 199A(c); Reg. \xA7 1.199A-3(b)(1)(vi)", "https://www.law.cornell.edu/cfr/text/26/1.199A-3", "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit \u2212 its \xBD-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome \u2212 qbiLossOffset, less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]", "money", iff23(cmp16("gt", listedProfits, scheduleCPool), {
+    kind: "unsupported",
+    reason: "the listed businesses' QBI (qbiBusiness2Income\u2013qbiBusiness6Income) is more than the return's Schedule C and K-1 QBI: a listed business must already be in the totals (selfEmploymentNetProfit or k1OrdinaryBusinessIncome)"
+  }, iff23(cmp16("gt", listedLosses, fact39("qbiLossOffset")), {
+    kind: "unsupported",
+    reason: "the listed businesses' QBI losses are more than qbiLossOffset: a listed loss business's QBI loss must already be in qbiLossOffset"
+  }, sub27(sub27(scheduleCPool, listedProfits), sub27(fact39("qbiLossOffset"), listedLosses))))),
+  rule(id(QBI_UNITS[1], "qbi"), "QBI of the second spouse's Schedule C business (net of their own \xBD-SE deduction)", "\xA7 199A(c); Reg. \xA7 1.199A-3(b)(1)(vi)", "https://www.law.cornell.edu/cfr/text/26/1.199A-3", "QBI includes the deductible part of self-employment tax attributable to the trade or business. [On a joint return the second spouse's Schedule C is its own trade or business: their net profit less their own \xBD-SE deduction. Their SEP, solo 401(k) and SE health insurance are not modeled (those inputs are the first spouse's).]", "money", max027(sub27(ruleRef33(`${J29}.se_net_profit.spouse`), ruleRef33(`${J29}.se_tax_half_deduction.spouse`)))),
+  ...LISTED.map((u, i) => rule(id(u, "qbi"), `QBI of ${u.label} (qbiBusiness${i + 2}Income, when qbiAdditionalBusinesses \u2265 ${i + 1})`, "\xA7 199A(c)(1)", CORNELL, "The term 'qualified business income' means, for any taxable year, the net amount of qualified items of income, gain, deduction, and loss with respect to any qualified trade or business of the taxpayer. [Entered per business, a loss as a negative number; read only when the return lists at least this many businesses.]", "money", iff23(cmp16("ge", fact39("qbiAdditionalBusinesses"), int15(String(i + 1))), fact39(`qbiBusiness${i + 2}Income`), zero26))),
+  rule(`${J29}.qbi.total`, "Total QBI of all businesses (Form 8995 line 2)", "\xA7 199A(c)", CORNELL, "Qualified business income... with respect to any qualified trade or business of the taxpayer. [The sum over every business, losses included; the prior-year carryforward is separate.]", "money", add23(...QBI_UNITS.map(qbiOf))),
+  ...QBI_UNITS.map((u, i) => rule(id(u, "present"), `Whether the return has ${u.label}`, "Reg. \xA7 1.199A-4(b)", REG_4, i === 0 ? "[The main business is present when it has QBI or a QBI loss, or above the threshold when it has W-2 wages or UBIA: a business that breaks even can still bring its W-2 wages and UBIA to an aggregation group.]" : i === 1 ? "[The second spouse's business is present when it has QBI.]" : `[A listed business is present whenever the return lists it (qbiAdditionalBusinesses \u2265 ${i - 1}), even at zero QBI: a business that breaks even can still bring its W-2 wages and UBIA to an aggregation group.]`, "bool", i === 0 ? {
+    kind: "or",
+    args: [
+      cmp16("ne", qbiOf(u), zero26),
+      and11(cmp16("gt", excess, zero26), { kind: "or", args: [cmp16("gt", fact39(u.w2Fact), zero26), cmp16("gt", fact39(u.ubiaFact), zero26)] })
+    ]
+  } : i === 1 ? cmp16("ne", qbiOf(u), zero26) : cmp16("ge", fact39("qbiAdditionalBusinesses"), int15(String(i - 1))))),
+  rule(`${J29}.qbi.business_count`, "Number of businesses on the return", "Reg. \xA7 1.199A-4(a)", REG_4, "[Counts the businesses present; aggregation is asked about only when there are two or more.]", "int", add23(...QBI_UNITS.map((u) => iff23(presentOf(u), int15("1"), int15("0")))))
+];
+var thresholdRules = [
+  {
+    id: `${J29}.qbi.threshold`,
+    version: 1,
+    jurisdiction: J29,
+    title: "\xA7 199A threshold amount (TY2025)",
+    citation: {
+      source: "26 U.S.C. \xA7 199A(e)(2); Rev. Proc. 2024-40 \xA7 2.27",
+      section: "\xA7 199A(e)(2)",
+      url: CORNELL,
+      excerpt: "Threshold amount: $394,600 married filing jointly, $197,300 for all others (including married filing separately)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    formula: iff23(isStatus32("mfj"), money36("39460000"), money36("19730000"))
+  },
+  {
+    id: `${J29}.qbi.threshold`,
+    version: 2,
+    jurisdiction: J29,
+    title: "\xA7 199A threshold amount (TY2026)",
+    citation: {
+      source: "26 U.S.C. \xA7 199A(e)(2); Rev. Proc. 2025-32 \xA7 4.26",
+      section: "\xA7 199A(e)(2)",
+      url: CORNELL,
+      excerpt: "Threshold amount: $403,500 married filing jointly, $201,775 married filing separately, $201,750 for all others."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "match",
+      on: fact39("filingStatus"),
+      cases: [
+        { when: "mfj", value: money36("40350000") },
+        { when: "mfs", value: money36("20177500") },
+        { when: "single", value: money36("20175000") },
+        { when: "hoh", value: money36("20175000") },
+        { when: "qss", value: money36("20175000") }
+      ]
+    }
+  },
+  {
+    id: `${J29}.qbi.phase_in_range`,
+    version: 1,
+    jurisdiction: J29,
+    title: "\xA7 199A phase-in range (TY2025: $50,000, $100,000 joint)",
+    citation: {
+      source: "26 U.S.C. \xA7 199A(b)(3)(B), (d)(3) as enacted by Pub. L. 115-97",
+      section: "\xA7 199A(b)(3)(B)(ii)(II)",
+      url: CORNELL,
+      excerpt: "Form 8995-A line 23: Phase-in range. Enter $50,000 ($100,000 if married filing jointly)."
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    formula: iff23(isStatus32("mfj"), money36("10000000"), money36("5000000"))
+  },
+  {
+    id: `${J29}.qbi.phase_in_range`,
+    version: 2,
+    jurisdiction: J29,
+    title: "\xA7 199A phase-in range (TY2026: $75,000, $150,000 joint \u2014 OBBBA \xA7 70105)",
+    citation: {
+      source: "26 U.S.C. \xA7 199A(b)(3)(B), (d)(3) as amended by OBBBA \xA7 70105",
+      section: "\xA7 199A(b)(3)(B)(ii)(II)",
+      url: CORNELL,
+      excerpt: "For taxable years beginning after December 31, 2025, the phase-in range is $75,000 ($150,000 for a joint return)."
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    formula: iff23(isStatus32("mfj"), money36("15000000"), money36("7500000"))
+  },
+  rule(`${J29}.qbi.excess_over_threshold`, "Taxable income before the QBI deduction over the \xA7 199A threshold (Form 8995-A line 22)", "\xA7 199A(b)(3)(B)", CORNELL, "Form 8995-A Part III line 22: subtract line 21 (threshold) from line 20 (taxable income before qualified business income deduction). [Zero at or below the threshold.]", "money", max027(sub27(ruleRef33(`${J29}.taxable_income_before_qbi`), ruleRef33(`${J29}.qbi.threshold`))))
+];
+function scheduleA(u, amount) {
+  return iff23(
+    { kind: "not", arg: presentOf(u) },
+    zero26,
+    // no business, no questions
+    iff23(
+      cmp16("eq", excess, zero26),
+      amount,
+      // at or below the threshold the SSTB rules do not apply
+      iff23(
+        and11(cmp16("eq", qbiOf(u), zero26), cmp16("eq", groupOf(u), int15("0"))),
+        zero26,
+        // breaks even and stands alone: nothing to limit, no SSTB question
+        iff23(fact39(u.sstbFact), iff23(cmp16("ge", excess, range), zero26, { kind: "mulDiv", a: amount, b: sub27(range, excess), c: range, round: "half-up" }), amount)
+      )
+    )
+  );
+}
+var scheduleALines = [
+  { line: "sstb_qbi", title: "QBI after the SSTB applicable percentage", amount: qbiOf, formLine: "Schedule A line 11" },
+  { line: "sstb_w2_wages", title: "W-2 wages after the SSTB applicable percentage", amount: (u) => fact39(u.w2Fact), formLine: "Schedule A line 12" },
+  { line: "sstb_ubia", title: "UBIA after the SSTB applicable percentage", amount: (u) => fact39(u.ubiaFact), formLine: "Schedule A line 13" }
+];
+var scheduleARules = QBI_UNITS.flatMap((u) => scheduleALines.map(({ line: line2, title, amount, formLine }) => rule(id(u, line2), `${title} \u2014 ${u.label} (${formLine})`, "\xA7 199A(d)(3)", CORNELL, `\xA7 199A(d)(3): a specified service trade or business is a qualified trade or business only for the applicable percentage (100% less the excess over the threshold as a percentage of the phase-in range) of its items, and not at all past the range. [${formLine}; a business that is not an SSTB, or a return at or below the threshold, keeps the full amount. Exact ratio where the form rounds the percentage.]`, "money", scheduleA(u, amount(u)))));
+var aggregationGroupRules = QBI_UNITS.map((u) => rule(id(u, "aggregation_group"), `Aggregation group of ${u.label} (0 = not aggregated)`, "Reg. \xA7 1.199A-4(b)(1)", REG_4, "An individual may aggregate trades or businesses if... (iii) none of the aggregated trades or businesses can be a specified service trade or business. [Asked only above the threshold, for a business on the return, when the return has two or more businesses; an SSTB in a group is refused.]", "int", iff23(and11(cmp16("gt", excess, zero26), presentOf(u), cmp16("ge", ruleRef33(`${J29}.qbi.business_count`), int15("2"))), iff23(cmp16("eq", fact39(u.groupFact), int15("0")), int15("0"), iff23(fact39(u.sstbFact), {
+  kind: "unsupported",
+  reason: `${u.label} is a specified service trade or business, which may not be aggregated (Reg. \xA7 1.199A-4(b)(1)(iii)): set ${u.groupFact} to 0`
+}, fact39(u.groupFact))), int15("0"))));
+function aggregated(u, idx, line2) {
+  const own2 = ruleRef33(id(u, line2));
+  const g = groupOf(u);
+  const earlierInGroup = QBI_UNITS.slice(0, idx).map((v) => cmp16("eq", groupOf(v), g));
+  const members2 = add23(...QBI_UNITS.map((v) => iff23(cmp16("eq", groupOf(v), g), ruleRef33(id(v, line2)), zero26)));
+  return iff23(cmp16("eq", g, int15("0")), own2, earlierInGroup.length === 0 ? members2 : iff23({ kind: "or", args: earlierInGroup }, zero26, members2));
+}
+var scheduleBLines = [
+  { from: "sstb_qbi", line: "aggregated_qbi", what: "QBI" },
+  { from: "sstb_w2_wages", line: "aggregated_w2_wages", what: "W-2 wages" },
+  { from: "sstb_ubia", line: "aggregated_ubia", what: "UBIA" }
+];
+var scheduleBRules = QBI_UNITS.flatMap((u, idx) => scheduleBLines.map(({ from, line: line2, what }) => rule(id(u, line2), `${what} of ${u.label} after aggregation (Schedule B line 4)`, "Reg. \xA7 1.199A-4(b)(1); Schedule B (Form 8995-A) line 4", REG_4, `Schedule B line 4: total the QBI, W-2 wages and UBIA of the aggregated trades or businesses. [The group's totals sit on its first member in the order main, spouse, business2\u2013business6; the other members carry zero. A business that is not aggregated keeps its own ${what}.]`, "money", aggregated(u, idx, from))));
+var aggQbi = (u) => ruleRef33(id(u, "aggregated_qbi"));
+var nettingIncome = ruleRef33(`${J29}.qbi.loss_netting.income`);
+var nettingNetted = ruleRef33(`${J29}.qbi.loss_netting.netted`);
+var scheduleCRules = [
+  rule(`${J29}.qbi.loss_netting.losses`, "Business losses with the prior-year carryforward (Schedule C line 3, as a positive amount)", "\xA7 199A(c)(2); Reg. \xA7 1.199A-1(d)(2)(iii)", REG_1, "Schedule C line 3: combine the negative amounts on line 1, column (a), and line 2 (qualified business net loss carryforward from prior years).", "money", add23(fact39("qbiLossCarryforward"), ...QBI_UNITS.map((u) => max027(neg2(aggQbi(u)))))),
+  rule(`${J29}.qbi.loss_netting.income`, "Business income (Schedule C line 4)", "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "Schedule C line 4: add the positive amounts on line 1, column (a), for all trades, businesses, or aggregations.", "money", add23(...QBI_UNITS.map((u) => max027(aggQbi(u))))),
+  rule(`${J29}.qbi.loss_netting.netted`, "Losses netted against other businesses' income (Schedule C line 5)", "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "Schedule C line 5: the smaller of the absolute value of line 3 or line 4.", "money", min6(ruleRef33(`${J29}.qbi.loss_netting.losses`), nettingIncome)),
+  ...QBI_UNITS.map((u) => rule(id(u, "adjusted_qbi"), `Adjusted QBI of ${u.label} after loss netting (Schedule C line 1(c))`, "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "If the net QBI from any trade or business is negative, it is apportioned among the trades or businesses with positive QBI in proportion to their relative amounts of QBI. [Schedule C line 1(c): this business's QBI less its share of line 5; zero for a business with no QBI or a loss.]", "money", iff23(cmp16("gt", aggQbi(u), zero26), sub27(aggQbi(u), { kind: "mulDiv", a: nettingNetted, b: aggQbi(u), c: nettingIncome, round: "half-up" }), zero26)))
+];
+function component(u) {
+  const adj = ruleRef33(id(u, "adjusted_qbi"));
+  const tentative = pct11("20", "100", adj);
+  const w2 = ruleRef33(id(u, "aggregated_w2_wages"));
+  const ubia = ruleRef33(id(u, "aggregated_ubia"));
+  const wageLimit = {
+    // line 10: greater of 50% of W-2 wages, or 25% of W-2 wages + 2.5% of UBIA
+    kind: "max",
+    args: [pct11("50", "100", w2), add23(pct11("25", "100", w2), pct11("25", "1000", ubia))]
+  };
+  return iff23(
+    cmp16("le", adj, zero26),
+    zero26,
+    // no QBI left: its W-2 wages and UBIA do not count (Schedule C instructions)
+    iff23(
+      cmp16("ge", excess, range),
+      min6(tentative, wageLimit),
+      // line 11
+      sub27(
+        // Part III: line 17 − (line 17 − line 18) × line 24, never below the wage limit
+        tentative,
+        { kind: "mulDiv", a: max027(sub27(tentative, wageLimit)), b: excess, c: range, round: "half-up" }
+      )
+    )
+  );
+}
+var partIIRules = QBI_UNITS.map((u) => rule(id(u, "component"), `QBI component of ${u.label} (Form 8995-A line 15)`, "\xA7 199A(b)(2), (b)(3)", CORNELL, "The combined qualified business income amount is the sum of the lesser of 20 percent of the taxpayer's QBI with respect to the qualified trade or business, or the greater of 50 percent of the W-2 wages, or 25 percent of the W-2 wages plus 2.5 percent of the UBIA of qualified property, with respect to the qualified trade or business. [Form 8995-A lines 3\u201313 for this business; within the phase-in range the excess of 20% of QBI over the wage limit is reduced by the excess-over-threshold fraction (Part III). Exact ratio where the form rounds the percentage.]", "money", component(u)));
+var totalRules = [
+  rule(`${J29}.qbi.active_total`, "QBI from qualified trades or businesses for the $1,000 test of the \xA7 199A(i) minimum deduction", "\xA7 199A(i)(2), (d)(3)", CORNELL, "\xA7 199A(i): a taxpayer whose aggregate QBI with respect to all active qualified trades or businesses is at least $1,000. Draft 2026 Form 8995 instructions, line 16: aggregate all active qualified business income taken into account for purposes of this form. [At or below the threshold, total QBI; above it, each business after Schedule A, so an SSTB past the phase-in range is not a qualified trade or business and one within it counts at its applicable percentage. The prior-year carryforward is its own line on the form and is not active QBI of this year. Material participation is assumed \u2014 disclosed.]", "money", iff23(cmp16("eq", excess, zero26), ruleRef33(`${J29}.qbi.total`), add23(...QBI_UNITS.map((u) => ruleRef33(id(u, "sstb_qbi")))))),
+  rule(`${J29}.qbi.total_component`, "Total QBI component (Form 8995 line 5 at or below the threshold; Form 8995-A line 16 above it)", "\xA7 199A(b)(1)\u2013(2)", CORNELL, "Form 8995: total QBI (line 2) combined with the prior-year carryforward (line 3), times 20% if more than zero. Form 8995-A line 16: add all amounts reported on line 15.", "money", iff23(cmp16("eq", excess, zero26), pct11("20", "100", max027(sub27(ruleRef33(`${J29}.qbi.total`), fact39("qbiLossCarryforward")))), add23(...QBI_UNITS.map((u) => ruleRef33(id(u, "component")))))),
+  rule(`${J29}.qbi.loss_carryforward`, "Qualified business net loss carried to next year, as a positive amount (Form 8995 line 16; Schedule C line 6)", "\xA7 199A(c)(2)", CORNELL, "If the net amount of qualified business income from all qualified trades or businesses during any taxable year is less than zero, such amount shall be treated as a loss from a qualified trade or business in the succeeding taxable year. [Form 8995 line 16 at or below the threshold; Schedule C (Form 8995-A) line 6 above it.]", "money", iff23(cmp16("eq", excess, zero26), max027(sub27(fact39("qbiLossCarryforward"), ruleRef33(`${J29}.qbi.total`))), sub27(ruleRef33(`${J29}.qbi.loss_netting.losses`), nettingNetted)))
+];
+var qbiBusinessRules = [
+  ...rawQbiRules,
+  ...thresholdRules,
+  ...scheduleARules,
+  ...aggregationGroupRules,
+  ...scheduleBRules,
+  ...scheduleCRules,
+  ...partIIRules,
+  ...totalRules
+];
+
+// ../corpus-us-federal/dist/rules/qbi.js
+var fact40 = (factId) => ({ kind: "fact", factId });
+var money37 = (cents) => ({ kind: "money", cents });
+var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
+var param23 = (name) => ({ kind: "param", name });
+var zero27 = money37("0");
 var pctOf3 = (num, den, base) => ({
   kind: "mulRate",
   base,
   rate: { num, den },
   round: "half-up"
 });
-var qbi = {
-  kind: "max0",
-  arg: {
-    kind: "sub",
-    left: {
-      kind: "add",
-      args: [
-        {
-          kind: "max0",
-          arg: {
-            kind: "sub",
-            left: ruleRef33("us.federal.se_net_profit"),
-            right: {
-              kind: "add",
-              args: [
-                ruleRef33("us.federal.se_tax_half_deduction"),
-                ruleRef33("us.federal.sep_deduction"),
-                ruleRef33("us.federal.sehi_deduction")
-              ]
-            }
-          }
-        },
-        fact39("k1OrdinaryBusinessIncome")
-      ]
-    },
-    right: fact39("qbiLossOffset")
-  }
-};
 var hasBusinessIncome = {
   kind: "or",
   args: [
-    { kind: "cmp", op: "gt", left: ruleRef33("us.federal.se_net_profit"), right: zero26 },
-    { kind: "cmp", op: "gt", left: fact39("k1OrdinaryBusinessIncome"), right: zero26 }
+    { kind: "cmp", op: "gt", left: ruleRef34("us.federal.se_net_profit"), right: zero27 },
+    { kind: "cmp", op: "gt", left: fact40("k1OrdinaryBusinessIncome"), right: zero27 }
   ]
 };
-var taxableBeforeQbi = ruleRef33("us.federal.taxable_income_before_qbi");
-var wageLimitOf = (w2, ubia) => ({
-  kind: "max",
-  args: [
-    pctOf3("50", "100", w2),
-    { kind: "add", args: [pctOf3("25", "100", w2), pctOf3("25", "1000", ubia)] }
-    // 2.5%
-  ]
-});
-function phasedReduction(tentative, wageLimit, excess, band) {
-  return {
-    kind: "sub",
-    left: tentative,
-    right: {
-      kind: "mulDiv",
-      a: { kind: "max0", arg: { kind: "sub", left: tentative, right: wageLimit } },
-      b: excess,
-      c: band,
-      round: "half-up"
-    }
-  };
-}
-function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, bandSingleCents, bandJointCents, source, withMinimum) {
-  const band = {
-    kind: "if",
-    cond: isStatus32("mfj"),
-    then: param23("bandJoint"),
-    else: param23("band")
-  };
-  const excess = {
-    kind: "max0",
-    arg: { kind: "sub", left: taxableBeforeQbi, right: threshold2 }
-  };
-  const excessCapped = { kind: "min", args: [excess, band] };
-  const tentative = pctOf3("20", "100", qbi);
-  const w2 = fact39("qbiW2Wages");
-  const ubia = fact39("qbiUBIA");
-  const nonSstb = {
-    kind: "if",
-    cond: { kind: "cmp", op: "ge", left: excess, right: band },
-    then: { kind: "min", args: [tentative, wageLimitOf(w2, ubia)] },
-    else: phasedReduction(tentative, wageLimitOf(w2, ubia), excessCapped, band)
-  };
-  const remaining = { kind: "max0", arg: { kind: "sub", left: band, right: excess } };
-  const scale = (e) => ({
-    kind: "mulDiv",
-    a: e,
-    b: remaining,
-    c: band,
-    round: "half-up"
-  });
-  const sstb = {
-    kind: "if",
-    cond: { kind: "cmp", op: "ge", left: excess, right: band },
-    then: zero26,
-    else: phasedReduction(pctOf3("20", "100", scale(qbi)), wageLimitOf(scale(w2), scale(ubia)), excessCapped, band)
-  };
-  const businessPart = {
-    kind: "if",
-    cond: { kind: "cmp", op: "eq", left: excess, right: zero26 },
-    then: tentative,
-    // at or below the threshold: no SSTB question, no limits
-    else: {
-      // two spouses' Schedule C businesses: above the threshold each business has its
-      // own W-2/UBIA limit and SSTB status (Form 8995-A Part II, one column each)
-      kind: "if",
-      cond: { kind: "cmp", op: "gt", left: ruleRef33("us.federal.se_net_profit.spouse"), right: zero26 },
-      then: {
-        kind: "unsupported",
-        reason: "both spouses have self-employment income and taxable income is over the \xA7 199A threshold: each business then needs its own W-2 wage/UBIA limit and SSTB test (Form 8995-A Part II), and per-business QBI is not modeled yet"
-      },
-      else: { kind: "if", cond: fact39("businessIsSSTB"), then: sstb, else: nonSstb }
-    }
-  };
+var taxableBeforeQbi = ruleRef34("us.federal.taxable_income_before_qbi");
+function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, source, withMinimum) {
   const overall = pctOf3("20", "100", {
     kind: "max0",
     arg: {
@@ -74691,15 +75117,15 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
       left: taxableBeforeQbi,
       right: {
         kind: "add",
-        args: [ruleRef33("us.federal.schedule_d.preferential_lt_gain"), fact39("qualifiedDividends")]
+        args: [ruleRef34("us.federal.schedule_d.preferential_lt_gain"), fact40("qualifiedDividends")]
       }
     }
   });
-  const limited = { kind: "min", args: [businessPart, overall] };
+  const limited = { kind: "min", args: [ruleRef34("us.federal.qbi.total_component"), overall] };
   const withFloor = withMinimum ? {
     // OBBBA § 70105: $400 minimum when QBI ≥ $1,000 (TY2026+)
     kind: "if",
-    cond: { kind: "cmp", op: "ge", left: qbi, right: param23("minQbiFloor") },
+    cond: { kind: "cmp", op: "ge", left: ruleRef34("us.federal.qbi.active_total"), right: param23("minQbiFloor") },
     then: { kind: "max", args: [limited, param23("minDeduction")] },
     else: limited
   } : limited;
@@ -74707,91 +75133,60 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, threshold2, ba
     id: "us.federal.qbi_deduction",
     version: version2,
     jurisdiction: "us.federal",
-    title: `Qualified business income deduction (TY${yearLabel}; full W-2/UBIA + SSTB mechanics)`,
+    title: `Qualified business income deduction (TY${yearLabel}; per business, with aggregation and loss netting)`,
     citation: {
       source: `26 U.S.C. \xA7 199A; ${source}`,
       section: "\xA7 199A(a)\u2013(d)",
       url: "https://www.law.cornell.edu/uscode/text/26/199A",
-      excerpt: `20 percent of qualified business income \u2014 QBI reduced by the attributable \xBD-SE-tax, SEP, and SE-health-insurance deductions (Reg. \xA7 1.199A-3(b)(1)(vi)) \u2014 limited to 20 percent of taxable income (without this deduction) less net capital gain. Above the \xA7 199A(e)(2) threshold the deduction is limited to the greater of 50 percent of the business's W-2 wages or 25 percent of W-2 wages plus 2.5 percent of UBIA, phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) band" : "OBBBA-widened $75,000 ($150,000 joint) band (\xA7 70105, taxable years after 2025)"}; a specified service trade or business scales its items by the applicable percentage and gets nothing past the band.${withMinimum ? " OBBBA \xA7 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed \u2014 disclosed)." : ""} [Single trade or business above the threshold (two self-employed spouses' businesses compute below it and refuse above it) \u2014 no aggregation, no REIT/PTP component; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages \u2014 disclosed.]`
+      excerpt: `The lesser of the combined qualified business income amount \u2014 20 percent of each business's QBI, limited above the \xA7 199A(e)(2) threshold by that business's W-2 wages and UBIA and phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) range" : "OBBBA-widened $75,000 ($150,000 joint) range (\xA7 70105, taxable years after 2025)"}, after the SSTB applicable percentage, aggregation and loss netting (us.federal.qbi.total_component) \u2014 or 20 percent of taxable income (without this deduction) less net capital gain.${withMinimum ? " OBBBA \xA7 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed \u2014 disclosed)." : ""} [No REIT/PTP component or cooperative patron reduction; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages \u2014 disclosed.]`
     },
     effectiveFrom,
     effectiveTo,
     output: { type: "money" },
-    parameters: {
-      band: { value: bandSingleCents, type: "money" },
-      bandJoint: { value: bandJointCents, type: "money" },
-      ...withMinimum ? {
-        minDeduction: { value: "40000", type: "money" },
-        // $400
-        minQbiFloor: { value: "100000", type: "money" }
-        // $1,000
-      } : {}
-    },
+    parameters: withMinimum ? {
+      minDeduction: { value: "40000", type: "money" },
+      // $400
+      minQbiFloor: { value: "100000", type: "money" }
+      // $1,000
+    } : {},
     formula: {
       kind: "if",
       cond: hasBusinessIncome,
       then: withFloor,
-      else: zero26
+      else: zero27
     }
   };
 }
 var qbiRules = [
   qbiRule(
-    11,
-    // v9 counted one self-employed person; v11 counts both spouses' profit below the threshold and refuses two businesses above it. v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit; v9 takes the schedule_d netted LT gain there
+    13,
+    // v11 computed one business above the threshold and refused two spouses' businesses; v13 sums each business's component (us.federal.qbi.total_component). v9 counted one self-employed person; v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit
     "2025-01-01",
     "2026-01-01",
     "2025",
-    {
-      kind: "if",
-      cond: isStatus32("mfj"),
-      then: money36("39460000"),
-      // $394,600
-      else: money36("19730000")
-      // $197,300 (incl. MFS)
-    },
-    "5000000",
-    "10000000",
-    // $50,000 / $100,000 band (TCJA)
     "Rev. Proc. 2024-40 \xA7 2.27",
     false
   ),
   qbiRule(
-    12,
-    // v10 counted one self-employed person; v12 counts both spouses' profit below the threshold and refuses two businesses above it. v8 counted qualifiedDividends in the overall limit; v10 takes the schedule_d netted LT gain there
+    14,
+    // v12 computed one business above the threshold and refused two spouses' businesses; v14 sums each business's component. v10 counted one self-employed person; v8 counted qualifiedDividends in the overall limit
     "2026-01-01",
     "2027-01-01",
     "2026",
-    {
-      kind: "match",
-      on: fact39("filingStatus"),
-      cases: [
-        { when: "mfj", value: money36("40350000") },
-        // $403,500
-        { when: "mfs", value: money36("20177500") },
-        // $201,775
-        { when: "single", value: money36("20175000") },
-        // $201,750
-        { when: "hoh", value: money36("20175000") },
-        { when: "qss", value: money36("20175000") }
-      ]
-    },
-    "7500000",
-    "15000000",
-    // $75,000 / $150,000 band (OBBBA § 70105)
-    "Rev. Proc. 2025-32 \xA7 4.26; OBBBA \xA7 70105 (band + $400 minimum)",
+    "Rev. Proc. 2025-32 \xA7 4.26; OBBBA \xA7 70105 (range + $400 minimum)",
     true
-  )
+  ),
+  ...qbiBusinessRules
 ];
 
 // ../corpus-us-federal/dist/rules/self-employment.js
-var fact40 = (factId) => ({ kind: "fact", factId });
-var money37 = (cents) => ({ kind: "money", cents });
-var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
+var fact41 = (factId) => ({ kind: "fact", factId });
+var money38 = (cents) => ({ kind: "money", cents });
+var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
 var param24 = (name) => ({ kind: "param", name });
-var zero27 = money37("0");
-var seNetEarnings = ruleRef34("us.federal.se_net_earnings");
-var spouseSeNetEarnings = ruleRef34("us.federal.se_net_earnings.spouse");
+var zero28 = money38("0");
+var seNetEarnings = ruleRef35("us.federal.se_net_earnings");
+var spouseSeNetEarnings = ruleRef35("us.federal.se_net_earnings.spouse");
 function seTaxRule(person, version2, effectiveFrom, effectiveTo, wageBaseCents, yearLabel) {
   const who = person.key === "taxpayer" ? "first spouse (or the single filer): selfEmploymentNetProfit; Schedule SE line 8a uses socialSecurityWages when given, else box-1 wages" : "second self-employed spouse on a joint return: spouseSelfEmploymentNetProfit; Schedule SE line 8a uses spouseSocialSecurityWages";
   const wagesNote = person.key === "taxpayer" ? "reduced by W-2 social security wages (Schedule SE line 8a = box 3; approximated by box 1 when socialSecurityWages is not supplied)" : "reduced by THIS spouse's own W-2 social security wages (Schedule SE line 8a = their box 3, spouseSocialSecurityWages)";
@@ -74835,10 +75230,10 @@ function seTaxRule(person, version2, effectiveFrom, effectiveTo, wageBaseCents, 
     formula: {
       kind: "if",
       cond: { kind: "cmp", op: "lt", left: person.netEarnings, right: param24("seFloor") },
-      then: zero27,
+      then: zero28,
       else: {
         kind: "if",
-        cond: fact40("useFormulaMethod"),
+        cond: fact41("useFormulaMethod"),
         then: { kind: "add", args: [oasdi, medicare] },
         else: {
           // printed Schedule SE: lines 10 and 11 each entered in whole dollars
@@ -74859,19 +75254,19 @@ var taxpayer = {
     kind: "if",
     cond: {
       kind: "or",
-      args: [fact40("socialSecurityWagesProvided"), { kind: "cmp", op: "gt", left: fact40("socialSecurityWages"), right: zero27 }]
+      args: [fact41("socialSecurityWagesProvided"), { kind: "cmp", op: "gt", left: fact41("socialSecurityWages"), right: zero28 }]
     },
-    then: fact40("socialSecurityWages"),
-    else: fact40("wages")
+    then: fact41("socialSecurityWages"),
+    else: fact41("wages")
   }
 };
 var spouse = {
   key: "spouse",
   netEarnings: spouseSeNetEarnings,
-  wagesForBase: fact40("spouseSocialSecurityWages")
+  wagesForBase: fact41("spouseSocialSecurityWages")
 };
 function halfDeductionRule(person) {
-  const tax = ruleRef34(`us.federal.se_tax.${person.key}`);
+  const tax = ruleRef35(`us.federal.se_tax.${person.key}`);
   const half3 = { kind: "mulRate", base: tax, rate: { num: "50", den: "100" }, round: "half-up" };
   return {
     id: `us.federal.se_tax_half_deduction.${person.key}`,
@@ -74888,7 +75283,7 @@ function halfDeductionRule(person) {
     output: { type: "money" },
     formula: {
       kind: "if",
-      cond: fact40("useFormulaMethod"),
+      cond: fact41("useFormulaMethod"),
       then: half3,
       else: { kind: "roundToDollar", value: half3, mode: "half-up" }
     }
@@ -74912,9 +75307,9 @@ var selfEmploymentRules = [
     formula: {
       // asked only on a joint return: no other return has a second spouse's Schedule SE
       kind: "if",
-      cond: { kind: "cmp", op: "eq", left: fact40("filingStatus"), right: { kind: "enum", value: "mfj" } },
-      then: fact40("spouseSelfEmploymentNetProfit"),
-      else: zero27
+      cond: { kind: "cmp", op: "eq", left: fact41("filingStatus"), right: { kind: "enum", value: "mfj" } },
+      then: fact41("spouseSelfEmploymentNetProfit"),
+      else: zero28
     }
   },
   {
@@ -74932,7 +75327,7 @@ var selfEmploymentRules = [
     output: { type: "money" },
     formula: {
       kind: "add",
-      args: [fact40("selfEmploymentNetProfit"), ruleRef34("us.federal.se_net_profit.spouse")]
+      args: [fact41("selfEmploymentNetProfit"), ruleRef35("us.federal.se_net_profit.spouse")]
     }
   },
   {
@@ -74951,7 +75346,7 @@ var selfEmploymentRules = [
     output: { type: "money" },
     formula: {
       kind: "mulRate",
-      base: fact40("selfEmploymentNetProfit"),
+      base: fact41("selfEmploymentNetProfit"),
       rate: { num: "9235", den: "10000" },
       round: "half-up"
     }
@@ -74971,7 +75366,7 @@ var selfEmploymentRules = [
     output: { type: "money" },
     formula: {
       kind: "mulRate",
-      base: ruleRef34("us.federal.se_net_profit.spouse"),
+      base: ruleRef35("us.federal.se_net_profit.spouse"),
       rate: { num: "9235", den: "10000" },
       round: "half-up"
     }
@@ -75000,7 +75395,7 @@ var selfEmploymentRules = [
     output: { type: "money" },
     formula: {
       kind: "add",
-      args: [ruleRef34("us.federal.se_tax.taxpayer"), ruleRef34("us.federal.se_tax.spouse")]
+      args: [ruleRef35("us.federal.se_tax.taxpayer"), ruleRef35("us.federal.se_tax.spouse")]
     }
   },
   halfDeductionRule(taxpayer),
@@ -75022,25 +75417,25 @@ var selfEmploymentRules = [
     formula: {
       kind: "add",
       args: [
-        ruleRef34("us.federal.se_tax_half_deduction.taxpayer"),
-        ruleRef34("us.federal.se_tax_half_deduction.spouse")
+        ruleRef35("us.federal.se_tax_half_deduction.taxpayer"),
+        ruleRef35("us.federal.se_tax_half_deduction.spouse")
       ]
     }
   }
 ];
 
 // ../corpus-us-federal/dist/rules/senior-deduction.js
-var fact41 = (factId) => ({ kind: "fact", factId });
-var money38 = (cents) => ({ kind: "money", cents });
-var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
+var fact42 = (factId) => ({ kind: "fact", factId });
+var money39 = (cents) => ({ kind: "money", cents });
+var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
 var param25 = (name) => ({ kind: "param", name });
 var isStatus33 = (status) => ({
   kind: "cmp",
   op: "eq",
-  left: fact41("filingStatus"),
+  left: fact42("filingStatus"),
   right: { kind: "enum", value: status }
 });
-var zero28 = money38("0");
+var zero29 = money39("0");
 function perSeniorNet() {
   return {
     kind: "max0",
@@ -75053,8 +75448,8 @@ function perSeniorNet() {
           kind: "max0",
           arg: {
             kind: "sub",
-            left: ruleRef35("us.federal.agi"),
-            right: ruleRef35("us.federal.senior_deduction.magi_threshold")
+            left: ruleRef36("us.federal.agi"),
+            right: ruleRef36("us.federal.senior_deduction.magi_threshold")
           }
         },
         rate: { num: "6", den: "100" },
@@ -75091,17 +75486,17 @@ var seniorDeductionRules = [
       // § 151(d)(5)(C)(v): married taxpayers must file jointly — MFS gets $0.
       kind: "if",
       cond: isStatus33("mfs"),
-      then: zero28,
+      then: zero29,
       else: {
         // Only compute (and only demand the threshold) when a senior exists.
         kind: "if",
         cond: {
           kind: "or",
           args: [
-            fact41("isAge65OrOlder"),
+            fact42("isAge65OrOlder"),
             {
               kind: "and",
-              args: [isStatus33("mfj"), fact41("spouseIsAge65OrOlder")]
+              args: [isStatus33("mfj"), fact42("spouseIsAge65OrOlder")]
             }
           ]
         },
@@ -75113,22 +75508,22 @@ var seniorDeductionRules = [
           args: [
             {
               kind: "if",
-              cond: fact41("isAge65OrOlder"),
+              cond: fact42("isAge65OrOlder"),
               then: perSeniorNet(),
-              else: zero28
+              else: zero29
             },
             {
               kind: "if",
               cond: {
                 kind: "and",
-                args: [isStatus33("mfj"), fact41("spouseIsAge65OrOlder")]
+                args: [isStatus33("mfj"), fact42("spouseIsAge65OrOlder")]
               },
               then: perSeniorNet(),
-              else: zero28
+              else: zero29
             }
           ]
         },
-        else: zero28
+        else: zero29
       }
     }
   },
@@ -75148,17 +75543,17 @@ var seniorDeductionRules = [
     output: { type: "money" },
     formula: {
       kind: "match",
-      on: fact41("filingStatus"),
+      on: fact42("filingStatus"),
       cases: [
         // $150,000 only "in the case of a joint return"; QSS is not a joint
         // return. MFS is excluded from the deduction entirely (never reached).
-        { when: "mfj", value: money38("15000000") },
+        { when: "mfj", value: money39("15000000") },
         // $150,000
-        { when: "single", value: money38("7500000") },
+        { when: "single", value: money39("7500000") },
         // $75,000
-        { when: "hoh", value: money38("7500000") },
+        { when: "hoh", value: money39("7500000") },
         // $75,000
-        { when: "qss", value: money38("7500000") }
+        { when: "qss", value: money39("7500000") }
         // $75,000
       ]
     }
@@ -75166,11 +75561,11 @@ var seniorDeductionRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/social-security.js
-var fact42 = (factId) => ({ kind: "fact", factId });
-var money39 = (cents) => ({ kind: "money", cents });
-var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
+var fact43 = (factId) => ({ kind: "fact", factId });
+var money40 = (cents) => ({ kind: "money", cents });
+var ruleRef37 = (ruleId) => ({ kind: "rule", ruleId });
 var param26 = (name) => ({ kind: "param", name });
-var pct11 = (num, base) => ({
+var pct12 = (num, base) => ({
   kind: "mulRate",
   base,
   rate: { num, den: "100" },
@@ -75183,53 +75578,53 @@ var magiBase = {
     left: {
       kind: "add",
       args: [
-        fact42("wages"),
-        fact42("taxableInterest"),
-        fact42("taxExemptInterest"),
+        fact43("wages"),
+        fact43("taxableInterest"),
+        fact43("taxExemptInterest"),
         // § 86(b)(2)(B): "increased by the amount of interest… exempt from tax"
-        ruleRef36("us.federal.schedule_d.preferential_lt_gain"),
-        fact42("qualifiedDividends"),
-        ruleRef36("us.federal.schedule_d.ordinary_st_gain"),
-        fact42("ordinaryDividends"),
-        ruleRef36("us.federal.se_net_profit"),
-        fact42("k1OrdinaryBusinessIncome"),
-        fact42("taxableIraDistributions"),
-        fact42("taxablePensionsAndAnnuities"),
-        ruleRef36("us.federal.pension.simplified_method_taxable"),
-        fact42("unemploymentCompensation"),
-        fact42("otherOrdinaryIncome"),
-        fact42("scheduleENetIncome"),
-        ruleRef36("us.federal.rental.net_income")
+        ruleRef37("us.federal.schedule_d.preferential_lt_gain"),
+        fact43("qualifiedDividends"),
+        ruleRef37("us.federal.schedule_d.ordinary_st_gain"),
+        fact43("ordinaryDividends"),
+        ruleRef37("us.federal.se_net_profit"),
+        fact43("k1OrdinaryBusinessIncome"),
+        fact43("taxableIraDistributions"),
+        fact43("taxablePensionsAndAnnuities"),
+        ruleRef37("us.federal.pension.simplified_method_taxable"),
+        fact43("unemploymentCompensation"),
+        fact43("otherOrdinaryIncome"),
+        fact43("scheduleENetIncome"),
+        ruleRef37("us.federal.rental.net_income")
       ]
     },
     right: {
       kind: "add",
       args: [
-        ruleRef36("us.federal.capital_loss_ordinary_offset"),
-        fact42("nonpassiveScheduleELoss")
+        ruleRef37("us.federal.capital_loss_ordinary_offset"),
+        fact43("nonpassiveScheduleELoss")
       ]
     }
   },
   right: {
     kind: "add",
     args: [
-      ruleRef36("us.federal.above_the_line_adjustments"),
-      ruleRef36("us.federal.ira_deduction")
+      ruleRef37("us.federal.above_the_line_adjustments"),
+      ruleRef37("us.federal.ira_deduction")
     ]
   }
 };
-var ss = fact42("socialSecurityBenefits");
-var provisional = { kind: "add", args: [magiBase, pct11("50", ss)] };
+var ss = fact43("socialSecurityBenefits");
+var provisional = { kind: "add", args: [magiBase, pct12("50", ss)] };
 var isMfs10 = {
   kind: "cmp",
   op: "eq",
-  left: fact42("filingStatus"),
+  left: fact43("filingStatus"),
   right: { kind: "enum", value: "mfs" }
 };
 var isMfj6 = {
   kind: "cmp",
   op: "eq",
-  left: fact42("filingStatus"),
+  left: fact43("filingStatus"),
   right: { kind: "enum", value: "mfj" }
 };
 var byJoint = (joint, other) => ({
@@ -75270,25 +75665,25 @@ var socialSecurityRules = [
     },
     formula: {
       kind: "if",
-      cond: { kind: "cmp", op: "eq", left: ss, right: money39("0") },
-      then: money39("0"),
+      cond: { kind: "cmp", op: "eq", left: ss, right: money40("0") },
+      then: money40("0"),
       else: {
         kind: "if",
         // § 86(c)(1)(C)(ii): the $0 base applies to an MFS filer who did NOT live apart from the
         // spouse at all times during the year; one who did is treated as unmarried ($25,000/$34,000)
-        cond: { kind: "and", args: [isMfs10, { kind: "not", arg: fact42("mfsLivedApartAllYear") }] },
+        cond: { kind: "and", args: [isMfs10, { kind: "not", arg: fact43("mfsLivedApartAllYear") }] },
         then: {
           kind: "min",
-          args: [pct11("85", ss), pct11("85", { kind: "max0", arg: provisional })]
+          args: [pct12("85", ss), pct12("85", { kind: "max0", arg: provisional })]
         },
         else: {
           kind: "min",
           args: [
-            pct11("85", ss),
+            pct12("85", ss),
             {
               kind: "add",
               args: [
-                pct11("85", {
+                pct12("85", {
                   kind: "max0",
                   arg: {
                     kind: "sub",
@@ -75302,8 +75697,8 @@ var socialSecurityRules = [
                     {
                       kind: "min",
                       args: [
-                        pct11("50", ss),
-                        pct11("50", {
+                        pct12("50", ss),
+                        pct12("50", {
                           kind: "max0",
                           arg: {
                             kind: "sub",
@@ -75326,14 +75721,14 @@ var socialSecurityRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/standard-deduction.js
-var J29 = "us.federal";
-var fact43 = (factId) => ({ kind: "fact", factId });
-var money40 = (cents) => ({ kind: "money", cents });
-var ruleRef37 = (ruleId) => ({ kind: "rule", ruleId });
+var J30 = "us.federal";
+var fact44 = (factId) => ({ kind: "fact", factId });
+var money41 = (cents) => ({ kind: "money", cents });
+var ruleRef38 = (ruleId) => ({ kind: "rule", ruleId });
 var isStatus34 = (status) => ({
   kind: "cmp",
   op: "eq",
-  left: fact43("filingStatus"),
+  left: fact44("filingStatus"),
   right: { kind: "enum", value: status }
 });
 var standardDeductionRules = [
@@ -75341,7 +75736,7 @@ var standardDeductionRules = [
     id: "us.federal.standard_deduction.base_amount",
     version: 2,
     // v1 held pre-OBBBA Rev. Proc. 2024-40 amounts ($15,000/$30,000/$22,500)
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: "Basic standard deduction amount by filing status (TY2025, as amended by OBBBA)",
     citation: {
       source: "26 U.S.C. \xA7 63(c), as amended by Pub. L. 119-21 (OBBBA) \xA7 70102",
@@ -75354,17 +75749,17 @@ var standardDeductionRules = [
     output: { type: "money" },
     formula: {
       kind: "match",
-      on: fact43("filingStatus"),
+      on: fact44("filingStatus"),
       cases: [
-        { when: "single", value: money40("1575000") },
+        { when: "single", value: money41("1575000") },
         // $15,750
-        { when: "mfs", value: money40("1575000") },
+        { when: "mfs", value: money41("1575000") },
         // $15,750 (same as single)
-        { when: "mfj", value: money40("3150000") },
+        { when: "mfj", value: money41("3150000") },
         // $31,500
-        { when: "qss", value: money40("3150000") },
+        { when: "qss", value: money41("3150000") },
         // $31,500 (§ 1(j)(2)(A): "…and Surviving Spouses")
-        { when: "hoh", value: money40("2362500") }
+        { when: "hoh", value: money41("2362500") }
         // $23,625
       ]
     }
@@ -75372,7 +75767,7 @@ var standardDeductionRules = [
   {
     id: "us.federal.standard_deduction.base_amount",
     version: 3,
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: "Basic standard deduction amount by filing status (TY2026)",
     citation: {
       source: "26 U.S.C. \xA7 63(c); Rev. Proc. 2025-32",
@@ -75385,17 +75780,17 @@ var standardDeductionRules = [
     output: { type: "money" },
     formula: {
       kind: "match",
-      on: fact43("filingStatus"),
+      on: fact44("filingStatus"),
       cases: [
-        { when: "single", value: money40("1610000") },
+        { when: "single", value: money41("1610000") },
         // $16,100
-        { when: "mfs", value: money40("1610000") },
+        { when: "mfs", value: money41("1610000") },
         // $16,100 ("single or married filing separately")
-        { when: "mfj", value: money40("3220000") },
+        { when: "mfj", value: money41("3220000") },
         // $32,200
-        { when: "qss", value: money40("3220000") },
+        { when: "qss", value: money41("3220000") },
         // $32,200 (surviving spouse)
-        { when: "hoh", value: money40("2415000") }
+        { when: "hoh", value: money41("2415000") }
         // $24,150
       ]
     }
@@ -75403,7 +75798,7 @@ var standardDeductionRules = [
   {
     id: "us.federal.standard_deduction.base",
     version: 1,
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: "Basic standard deduction",
     citation: {
       source: "26 U.S.C. \xA7 63(c)(2)",
@@ -75414,12 +75809,12 @@ var standardDeductionRules = [
     effectiveFrom: "2025-01-01",
     // structural: open-ended
     output: { type: "money" },
-    formula: ruleRef37("us.federal.standard_deduction.base_amount")
+    formula: ruleRef38("us.federal.standard_deduction.base_amount")
   },
   {
     id: "us.federal.standard_deduction.dependent_limit",
     version: 1,
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: "Limitation on basic standard deduction of a dependent",
     citation: {
       source: "26 U.S.C. \xA7 63(c)(5); Rev. Proc. 2024-40 \xA7 2.15(2); Rev. Proc. 2025-32 \xA7 4.14(2)",
@@ -75431,19 +75826,19 @@ var standardDeductionRules = [
     effectiveTo: "2027-01-01",
     // same dollar amounts apply in 2025 and 2026
     output: { type: "money" },
-    applicability: fact43("isClaimedAsDependent"),
+    applicability: fact44("isClaimedAsDependent"),
     // min(normal base amount, max($1,350, earned income + $450))
     // simplified: earned income approximated as wages
     formula: {
       kind: "min",
       args: [
-        ruleRef37("us.federal.standard_deduction.base_amount"),
+        ruleRef38("us.federal.standard_deduction.base_amount"),
         {
           kind: "max",
           args: [
-            money40("135000"),
+            money41("135000"),
             // $1,350
-            { kind: "add", args: [fact43("wages"), money40("45000")] }
+            { kind: "add", args: [fact44("wages"), money41("45000")] }
             // + $450
           ]
         }
@@ -75454,7 +75849,7 @@ var standardDeductionRules = [
   {
     id: "us.federal.standard_deduction.mfs_spouse_itemizes",
     version: 1,
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: "MFS standard deduction is zero when the spouse itemizes",
     citation: {
       source: "26 U.S.C. \xA7 63(c)(6)(A)",
@@ -75470,10 +75865,10 @@ var standardDeductionRules = [
     applicability: {
       kind: "if",
       cond: isStatus34("mfs"),
-      then: fact43("spouseItemizes"),
+      then: fact44("spouseItemizes"),
       else: { kind: "bool", value: false }
     },
-    formula: money40("0"),
+    formula: money41("0"),
     // § 63(c)(6) zeroes the ENTIRE standard deduction (basic + additional),
     // so this overrides the sum rule, not just the basic component.
     overrides: { ruleId: "us.federal.standard_deduction", priority: 10 }
@@ -75493,7 +75888,7 @@ var standardDeductionRules = [
   {
     id: "us.federal.standard_deduction",
     version: 1,
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: "Standard deduction",
     citation: {
       source: "26 U.S.C. \xA7 63(c)(1)",
@@ -75507,8 +75902,8 @@ var standardDeductionRules = [
     formula: {
       kind: "add",
       args: [
-        ruleRef37("us.federal.standard_deduction.base"),
-        ruleRef37("us.federal.standard_deduction.additional")
+        ruleRef38("us.federal.standard_deduction.base"),
+        ruleRef38("us.federal.standard_deduction.additional")
       ]
     }
   }
@@ -75516,7 +75911,7 @@ var standardDeductionRules = [
 function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unmarriedCents, label) {
   const perStatusAmount = {
     kind: "match",
-    on: fact43("filingStatus"),
+    on: fact44("filingStatus"),
     cases: [
       // the higher amount is for "unmarried AND not a surviving spouse" —
       // MFS and QSS get the married amount (read from both Rev. Procs.)
@@ -75531,12 +75926,12 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
     kind: "if",
     cond,
     then: perStatusAmount,
-    else: money40("0")
+    else: money41("0")
   });
   return {
     id: "us.federal.standard_deduction.additional",
     version: version2,
-    jurisdiction: J29,
+    jurisdiction: J30,
     title: `Additional standard deduction for the aged and blind (TY${label.year})`,
     citation: {
       source: `26 U.S.C. \xA7 63(f); ${label.sourceRevProc}`,
@@ -75554,15 +75949,15 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
     formula: {
       kind: "add",
       args: [
-        addIf(fact43("isAge65OrOlder")),
-        addIf(fact43("isBlind")),
+        addIf(fact44("isAge65OrOlder")),
+        addIf(fact44("isBlind")),
         addIf({
           kind: "and",
-          args: [isStatus34("mfj"), fact43("spouseIsAge65OrOlder")]
+          args: [isStatus34("mfj"), fact44("spouseIsAge65OrOlder")]
         }),
         addIf({
           kind: "and",
-          args: [isStatus34("mfj"), fact43("spouseIsBlind")]
+          args: [isStatus34("mfj"), fact44("spouseIsBlind")]
         })
       ]
     }
@@ -75570,12 +75965,12 @@ function additionalRule(version2, effectiveFrom, effectiveTo, marriedCents, unma
 }
 
 // ../corpus-us-federal/dist/rules/tips-eligibility.js
-var fact44 = (factId) => ({ kind: "fact", factId });
+var fact45 = (factId) => ({ kind: "fact", factId });
 var boolLit = (value) => ({ kind: "bool", value });
 var isStatus35 = (status) => ({
   kind: "cmp",
   op: "eq",
-  left: fact44("filingStatus"),
+  left: fact45("filingStatus"),
   right: { kind: "enum", value: status }
 });
 var WINDOW = { effectiveFrom: "2025-01-01", effectiveTo: "2029-01-01" };
@@ -75595,7 +75990,7 @@ var tipsEligibilityRules = [
     output: { type: "bool" },
     formula: {
       kind: "match",
-      on: fact44("occupation"),
+      on: fact45("occupation"),
       cases: [
         ...TIPPED_OCCUPATIONS.map((o) => ({ when: o.slug, value: boolLit(true) })),
         { when: "other", value: boolLit(false) }
@@ -75622,23 +76017,23 @@ var tipsEligibilityRules = [
       args: [
         { kind: "not", arg: isStatus35("mfs") },
         { kind: "rule", ruleId: "us.federal.eligible.tips_occupation" },
-        fact44("tipsWereVoluntary"),
-        { kind: "not", arg: fact44("employerIsSSTB") }
+        fact45("tipsWereVoluntary"),
+        { kind: "not", arg: fact45("employerIsSSTB") }
       ]
     }
   }
 ];
 
 // ../corpus-us-federal/dist/rules/tips-overtime.js
-var fact45 = (factId) => ({ kind: "fact", factId });
-var money41 = (cents) => ({ kind: "money", cents });
-var ruleRef38 = (ruleId) => ({ kind: "rule", ruleId });
+var fact46 = (factId) => ({ kind: "fact", factId });
+var money42 = (cents) => ({ kind: "money", cents });
+var ruleRef39 = (ruleId) => ({ kind: "rule", ruleId });
 var param27 = (name) => ({ kind: "param", name });
-var zero29 = money41("0");
+var zero30 = money42("0");
 var isStatus36 = (status) => ({
   kind: "cmp",
   op: "eq",
-  left: fact45("filingStatus"),
+  left: fact46("filingStatus"),
   right: { kind: "enum", value: status }
 });
 function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus36("mfs")) {
@@ -75646,22 +76041,22 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus36("mf
     kind: "if",
     // LAZY FIRST: with no qualified amount, no eligibility facts are ever
     // demanded — a taxpayer without tips is never asked their occupation
-    cond: { kind: "cmp", op: "gt", left: fact45(qualifiedFactId), right: zero29 },
+    cond: { kind: "cmp", op: "gt", left: fact46(qualifiedFactId), right: zero30 },
     then: {
       kind: "if",
       cond: ineligible,
-      then: zero29,
+      then: zero30,
       else: {
         kind: "max0",
         arg: {
           kind: "sub",
           left: {
             kind: "min",
-            args: [fact45(qualifiedFactId), cap]
+            args: [fact46(qualifiedFactId), cap]
           },
           right: {
             kind: "mulInt",
-            base: money41("10000"),
+            base: money42("10000"),
             // $100 per step
             count: {
               kind: "stepUnits",
@@ -75669,7 +76064,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus36("mf
                 kind: "max0",
                 arg: {
                   kind: "sub",
-                  left: ruleRef38("us.federal.agi"),
+                  left: ruleRef39("us.federal.agi"),
                   right: {
                     kind: "if",
                     cond: isStatus36("mfj"),
@@ -75687,7 +76082,7 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus36("mf
         }
       }
     },
-    else: zero29
+    else: zero30
   };
 }
 var WINDOW2 = { effectiveFrom: "2025-01-01", effectiveTo: "2029-01-01" };
@@ -75918,8 +76313,8 @@ function compileDocuments(docs, asOf, ctx = {}) {
   const notes = [];
   const missing = [];
   const unsupported = [];
-  const add23 = (id, c2) => {
-    sums[id] = (sums[id] ?? 0n) + c2;
+  const add24 = (id2, c2) => {
+    sums[id2] = (sums[id2] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
   if (docs.taxpayerDateOfBirth) {
@@ -75947,7 +76342,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
     if (allTagged) {
       const own2 = w2s.filter((w) => w.recipient === earner);
       const ssw = own2.reduce((t, w) => t + toCents(w.box3 ?? w.box1), 0n);
-      add23("socialSecurityWages", ssw);
+      add24("socialSecurityWages", ssw);
       bools.socialSecurityWagesProvided = true;
       notes.push(`Schedule SE line 8a: ${own2.length} W-2(s) belong to the ${earner} (the SE earner) \u2014 social security wages $${dollars5(ssw)} coordinate the OASDI wage base${own2.some((w) => w.box3 === void 0) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`);
     } else if (joint || multiW2) {
@@ -75959,10 +76354,10 @@ function compileDocuments(docs, asOf, ctx = {}) {
   let w2Box1Cents = (docs.w2s ?? []).length ? 0n : void 0;
   let ssTaxWithheld = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add23("wages", toCents(w.box1));
+    add24("wages", toCents(w.box1));
     w2Box1Cents = (w2Box1Cents ?? 0n) + toCents(w.box1);
     if (w.box2 !== void 0)
-      add23("federalTaxWithheld", toCents(w.box2));
+      add24("federalTaxWithheld", toCents(w.box2));
     else {
       missing.push(`documents.w2s[${i}].box2`);
       notes.push(`W-2 #${i + 1}: box 2 NOT transcribed \u2014 federal income tax withheld treated as $0 for this W-2; pass box2 (0 if the box is blank) to confirm, or set strict: true to refuse instead`);
@@ -75970,19 +76365,19 @@ function compileDocuments(docs, asOf, ctx = {}) {
     if (w.box4 !== void 0)
       ssTaxWithheld += toCents(w.box4);
     if (w.box3 !== void 0 && !multiW2 && !allTagged && !joint && !ctx.socialSecurityWagesSupplied) {
-      add23("socialSecurityWages", toCents(w.box3));
+      add24("socialSecurityWages", toCents(w.box3));
       if (hasSE)
         bools.socialSecurityWagesProvided = true;
     }
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add23("medicareWages", b5);
+      add24("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
-        const excess = toCents(w.box6) - regular;
-        if (excess > 0n) {
-          add23("federalTaxWithheld", excess);
-          notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars5(excess)}; added to withholding`);
+        const excess2 = toCents(w.box6) - regular;
+        if (excess2 > 0n) {
+          add24("federalTaxWithheld", excess2);
+          notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars5(excess2)}; added to withholding`);
         }
       }
     }
@@ -76007,9 +76402,9 @@ function compileDocuments(docs, asOf, ctx = {}) {
     for (const [who, p] of byPerson) {
       if (p.n < 2 || max2 === void 0 || p.withheld <= max2)
         continue;
-      const excess = p.withheld - max2;
-      excessTotal += excess;
-      notes.push(`W-2 box 4 total $${dollars5(p.withheld)} across ${p.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars5(max2)} by $${dollars5(excess)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
+      const excess2 = p.withheld - max2;
+      excessTotal += excess2;
+      notes.push(`W-2 box 4 total $${dollars5(p.withheld)} across ${p.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars5(max2)} by $${dollars5(excess2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
     }
     if (excessTotal > 0n) {
       unsupported.push({
@@ -76032,7 +76427,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(r.box4));
+      add24("federalTaxWithheld", toCents(r.box4));
     const taxable3 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G") && taxable3 === 0n) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
@@ -76042,65 +76437,65 @@ function compileDocuments(docs, asOf, ctx = {}) {
       notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars5(taxable3)} \u2014 a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
     }
     if (r.disabilityBeforeRetirementAge) {
-      add23("wages", taxable3);
-      add23("scheduleRDisabilityIncome", taxable3);
+      add24("wages", taxable3);
+      add24("scheduleRDisabilityIncome", taxable3);
       notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars5(taxable3)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add23("taxableIraDistributions", taxable3);
+      add24("taxableIraDistributions", taxable3);
     else
-      add23("taxablePensionsAndAnnuities", taxable3);
+      add24("taxablePensionsAndAnnuities", taxable3);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add23("earlyDistributionSubjectToPenalty", taxable3);
+        add24("earlyDistributionSubjectToPenalty", taxable3);
         notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars5(taxable3)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add23("socialSecurityBenefits", toCents(s.box5));
+    add24("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add23("federalTaxWithheld", toCents(s.box6));
+      add24("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(n.box4));
+      add24("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(k.box4));
+      add24("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add23("selfEmploymentNetProfit", net);
+        add24("selfEmploymentNetProfit", net);
       notes.push(`Schedule C: $${dollars5(seGross)} gross (1099-NEC/K) \u2212 $${dollars5(expenses)} expenses = $${dollars5(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add23("scheduleCNetLoss", -net);
+      add24("scheduleCNetLoss", -net);
       notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars5(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add23("taxableInterest", toCents(t.box1));
+      add24("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add23("taxableInterest", toCents(t.box3));
+      add24("taxableInterest", toCents(t.box3));
       notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars5(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add23("taxExemptInterest", toCents(t.box8));
+      add24("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(t.box4));
+      add24("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
@@ -76109,15 +76504,15 @@ function compileDocuments(docs, asOf, ctx = {}) {
       throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars5(qualified2)}) exceeds box 1a (total, $${dollars5(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add23("qualifiedDividends", qualified2);
+      add24("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add23("ordinaryDividends", total - qualified2);
+      add24("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add23("__ltProceeds", toCents(d3.box2a));
+      add24("__ltProceeds", toCents(d3.box2a));
       notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars5(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(d3.box4));
+      add24("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -76132,24 +76527,24 @@ function compileDocuments(docs, asOf, ctx = {}) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(b.box4));
+      add24("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add23("shortTermCapitalGains", stNet);
+      add24("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add23("shortTermCapitalLoss", -stNet);
+      add24("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add23("longTermCapitalGains", ltNet);
+      add24("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add23("longTermCapitalLoss", -ltNet);
+      add24("longTermCapitalLoss", -ltNet);
     notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars5(stNet)}, long-term net $${dollars5(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add23("unemploymentCompensation", toCents(g.box1));
+      add24("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add23("federalTaxWithheld", toCents(g.box4));
+      add24("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
       notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars5(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
@@ -76187,23 +76582,23 @@ function compileDocuments(docs, asOf, ctx = {}) {
     }
   }
   const facts2 = { ...bools };
-  for (const [id, c2] of Object.entries(sums))
-    facts2[id] = dollars5(c2);
-  for (const [id, n] of Object.entries(ints))
-    facts2[id] = n;
+  for (const [id2, c2] of Object.entries(sums))
+    facts2[id2] = dollars5(c2);
+  for (const [id2, n] of Object.entries(ints))
+    facts2[id2] = n;
   return { facts: facts2, notes, w2Box1Cents, missing, unsupported };
 }
 
 // dist/schema.js
 var corpus = getCorpus();
-var money42 = external_exports.union([external_exports.number(), external_exports.string()]).describe('dollars, e.g. 50000 or "1234.56"');
+var money43 = external_exports.union([external_exports.number(), external_exports.string()]).describe('dollars, e.g. 50000 or "1234.56"');
 function zodForFact(f) {
   if (f.id === "occupation") {
     return external_exports.string().describe('tipped occupation, fuzzy-matched to the Treasury Tipped Occupation list (Treas. Reg. \xA7 1.224-1) \u2014 e.g. "bartender", "nanny" \u2014 or "other" if genuinely unlisted. Only needed when qualifiedTips > 0.');
   }
   switch (f.type) {
     case "money":
-      return money42.describe(f.description);
+      return money43.describe(f.description);
     case "bool":
       return external_exports.boolean().describe(f.description);
     case "int":
@@ -76233,12 +76628,12 @@ var DEPENDENT_EXTRAS = /* @__PURE__ */ new Set([
   "taxpayerIsCustodialParent",
   "custodialParentReleasedClaim"
 ]);
-function domainOf(id) {
-  if (id.startsWith("corp") || id.startsWith("sCorp") || BUSINESS_EXTRAS.has(id))
+function domainOf(id2) {
+  if (id2.startsWith("corp") || id2.startsWith("sCorp") || BUSINESS_EXTRAS.has(id2))
     return "business";
-  if (id.startsWith("fiduciary"))
+  if (id2.startsWith("fiduciary"))
     return "fiduciary";
-  if (/^dep[A-Z]/.test(id) || DEPENDENT_EXTRAS.has(id))
+  if (/^dep[A-Z]/.test(id2) || DEPENDENT_EXTRAS.has(id2))
     return "dependent";
   return "individual";
 }
@@ -76322,6 +76717,12 @@ var INDIVIDUAL_GROUPS = {
     "qbiW2Wages",
     "qbiUBIA",
     "businessIsSSTB",
+    "qbiAggregationGroup",
+    "spouseQbiW2Wages",
+    "spouseQbiUBIA",
+    "spouseBusinessIsSSTB",
+    "spouseQbiAggregationGroup",
+    "qbiLossCarryforward",
     "sepContribution",
     "selfEmployedHealthPremiums",
     "homeOfficeSquareFeet",
@@ -76421,6 +76822,34 @@ var INDIVIDUAL_GROUPS = {
     "qsbsAcquiredAfterJuly2025",
     "qsbsAcquiredAfterSept2010",
     "qsbsHoldingPeriodYears"
+  ],
+  qbi_businesses: [
+    "qbiAdditionalBusinesses",
+    "qbiBusiness2Income",
+    "qbiBusiness2W2Wages",
+    "qbiBusiness2UBIA",
+    "qbiBusiness2IsSSTB",
+    "qbiBusiness2AggregationGroup",
+    "qbiBusiness3Income",
+    "qbiBusiness3W2Wages",
+    "qbiBusiness3UBIA",
+    "qbiBusiness3IsSSTB",
+    "qbiBusiness3AggregationGroup",
+    "qbiBusiness4Income",
+    "qbiBusiness4W2Wages",
+    "qbiBusiness4UBIA",
+    "qbiBusiness4IsSSTB",
+    "qbiBusiness4AggregationGroup",
+    "qbiBusiness5Income",
+    "qbiBusiness5W2Wages",
+    "qbiBusiness5UBIA",
+    "qbiBusiness5IsSSTB",
+    "qbiBusiness5AggregationGroup",
+    "qbiBusiness6Income",
+    "qbiBusiness6W2Wages",
+    "qbiBusiness6UBIA",
+    "qbiBusiness6IsSSTB",
+    "qbiBusiness6AggregationGroup"
   ],
   rentals_passive: [
     "scheduleENetIncome",
@@ -76987,11 +77416,11 @@ var GROUP_NAMES = new Set(Object.keys(INDIVIDUAL_GROUPS));
 var factById = new Map(corpus.facts.map((f) => [f.id, f]));
 function shapeFor(ids) {
   const shape = {};
-  for (const id of ids) {
-    const f = factById.get(id);
+  for (const id2 of ids) {
+    const f = factById.get(id2);
     if (!f)
       continue;
-    shape[id] = zodForFact(f).optional();
+    shape[id2] = zodForFact(f).optional();
   }
   return shape;
 }
@@ -77004,6 +77433,7 @@ var GROUP_DESCRIPTIONS = {
   tips_overtime: "\xA7 224 tips and \xA7 225 overtime deductions (OBBBA)",
   retirement: "social security, IRA/pension distributions, early-distribution penalty",
   self_employment: "Schedule C / K-1, QBI inputs, SE deductions, home office",
+  qbi_businesses: "\xA7 199A per business (Form 8995-A): up to five businesses listed separately from the main one, each with its own QBI, W-2 wages, UBIA, SSTB status and aggregation group",
   adjustments: "IRA/HSA contributions, student-loan and car-loan interest",
   itemized: "Schedule A: SALT, mortgage, medical, charitable",
   credits: "CTC/ODC counts, dependent care, saver's, adoption, education",
@@ -77166,11 +77596,11 @@ function buildFactsValidated(factsArg, defaultTarget) {
       compiled.facts.wages = 0;
       documentNotes.push("no W-2 in the documents block: wages $0 (Form 1040 line 1a)");
     }
-    for (const [id, v] of Object.entries(compiled.facts)) {
-      if (id in flat) {
-        throw new Error(`fact "${id}" was derived from the documents block AND passed directly \u2014 remove the direct value (the compiled document value is authoritative; to override, drop the document entry and disclose)`);
+    for (const [id2, v] of Object.entries(compiled.facts)) {
+      if (id2 in flat) {
+        throw new Error(`fact "${id2}" was derived from the documents block AND passed directly \u2014 remove the direct value (the compiled document value is authoritative; to override, drop the document entry and disclose)`);
       }
-      flat[id] = v;
+      flat[id2] = v;
     }
   }
   if ("otherEarnedIncome" in flat) {
@@ -77234,12 +77664,12 @@ var fmt2 = (cents) => {
     dollars6 += "," + digits.slice(i, i + 3);
   return `${sign}$${dollars6}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
-function ruleDependencies(rule) {
+function ruleDependencies(rule2) {
   const rules = /* @__PURE__ */ new Set();
   const facts2 = /* @__PURE__ */ new Set();
-  const roots = [rule.formula];
-  if (rule.applicability)
-    roots.push(rule.applicability);
+  const roots = [rule2.formula];
+  if (rule2.applicability)
+    roots.push(rule2.applicability);
   for (const root of roots) {
     walkExpr(root, (e) => {
       if (e.kind === "rule")
@@ -77271,33 +77701,33 @@ var FORM_5695_FACTS = [
   "heatPumpBiomassCosts"
 ];
 function composeForm5695(facts2, asOf, get) {
-  const present = FORM_5695_FACTS.some((id) => {
-    const f = facts2[id];
+  const present = FORM_5695_FACTS.some((id2) => {
+    const f = facts2[id2];
     return f !== void 0 && f.type !== "bool" && BigInt(String(f.value)) !== 0n;
   });
   if (!present)
     return null;
   const rd26 = (c2) => {
-    const neg2 = c2 < 0n;
-    const abs = neg2 ? -c2 : c2;
+    const neg3 = c2 < 0n;
+    const abs = neg3 ? -c2 : c2;
     const r = (abs + 50n) / 100n * 100n;
-    return neg2 ? -r : r;
+    return neg3 ? -r : r;
   };
   const d3 = (c2) => fmt2(rd26(c2));
-  const money43 = (id) => {
-    const f = facts2[id];
+  const money44 = (id2) => {
+    const f = facts2[id2];
     return f && f.type === "money" ? BigInt(String(f.value)) : 0n;
   };
   const E = (s) => get(`us.federal.energy.${s}`);
   const year = asOf.slice(0, 4);
   if (year !== "2025") {
     const costs = {};
-    for (const id of FORM_5695_FACTS) {
-      if (id === "fuelCellHalfKilowatts" || id === "residentialCleanEnergyCarryforward")
+    for (const id2 of FORM_5695_FACTS) {
+      if (id2 === "fuelCellHalfKilowatts" || id2 === "residentialCleanEnergyCarryforward")
         continue;
-      const c2 = money43(id);
+      const c2 = money44(id2);
       if (c2 !== 0n)
-        costs[id] = d3(c2);
+        costs[id2] = d3(c2);
     }
     return {
       "12_carryforward_from_prior_year": d3(E("clean.line12")),
@@ -77311,14 +77741,14 @@ function composeForm5695(facts2, asOf, get) {
     };
   }
   return {
-    "1_solar_electric": d3(money43("solarElectricCosts")),
-    "2_solar_water_heating": d3(money43("solarWaterHeatingCosts")),
-    "3_small_wind": d3(money43("smallWindEnergyCosts")),
-    "4_geothermal_heat_pump": d3(money43("geothermalHeatPumpCosts")),
-    "5b_battery_storage": d3(money43("batteryStorageCosts")),
+    "1_solar_electric": d3(money44("solarElectricCosts")),
+    "2_solar_water_heating": d3(money44("solarWaterHeatingCosts")),
+    "3_small_wind": d3(money44("smallWindEnergyCosts")),
+    "4_geothermal_heat_pump": d3(money44("geothermalHeatPumpCosts")),
+    "5b_battery_storage": d3(money44("batteryStorageCosts")),
     "6a_total": d3(E("clean.line6a")),
     "6b_30_percent": d3(E("clean.line6b")),
-    "8_fuel_cell_costs": d3(money43("fuelCellPropertyCosts")),
+    "8_fuel_cell_costs": d3(money44("fuelCellPropertyCosts")),
     "9_30_percent": d3(E("clean.line9")),
     "10_kilowatt_capacity_x_1000": d3(E("clean.line10")),
     "11_smaller_of_9_or_10": d3(E("clean.line11")),
@@ -77327,28 +77757,28 @@ function composeForm5695(facts2, asOf, get) {
     "14_limitation": d3(E("clean.line14")),
     "15_residential_clean_energy_credit": d3(E("clean_energy_credit")),
     "16_carryforward_to_next_year": d3(E("clean.carryforward")),
-    "18a_insulation_air_sealing": d3(money43("insulationAirSealingCosts")),
+    "18a_insulation_air_sealing": d3(money44("insulationAirSealingCosts")),
     "18b_30_percent_max_1200": d3(E("improvement.line18b")),
-    "19a_most_expensive_door": d3(money43("exteriorDoorMostExpensiveCost")),
+    "19a_most_expensive_door": d3(money44("exteriorDoorMostExpensiveCost")),
     "19c_30_percent_max_250": d3(E("improvement.line19c")),
-    "19f_other_doors": d3(money43("exteriorDoorOtherCosts")),
+    "19f_other_doors": d3(money44("exteriorDoorOtherCosts")),
     "19g_30_percent": d3(E("improvement.line19g")),
     "19h_doors_max_500": d3(E("improvement.line19h")),
-    "20c_windows_skylights": d3(money43("windowsSkylightsCosts")),
+    "20c_windows_skylights": d3(money44("windowsSkylightsCosts")),
     "20d_30_percent_max_600": d3(E("improvement.line20d")),
-    "22c_central_air_conditioners": d3(money43("centralAirConditionerCosts")),
+    "22c_central_air_conditioners": d3(money44("centralAirConditionerCosts")),
     "22d_30_percent_max_600": d3(E("improvement.line22d")),
-    "23c_gas_oil_water_heaters": d3(money43("gasOilWaterHeaterCosts")),
+    "23c_gas_oil_water_heaters": d3(money44("gasOilWaterHeaterCosts")),
     "23d_30_percent_max_600": d3(E("improvement.line23d")),
-    "24c_gas_oil_furnaces_boilers": d3(money43("gasOilFurnaceBoilerCosts")),
+    "24c_gas_oil_furnaces_boilers": d3(money44("gasOilFurnaceBoilerCosts")),
     "24d_30_percent_max_600": d3(E("improvement.line24d")),
-    "25c_enabling_property": d3(money43("electricalPanelCosts")),
+    "25c_enabling_property": d3(money44("electricalPanelCosts")),
     "25e_30_percent_max_600": d3(E("improvement.line25e")),
-    "26b_home_energy_audit": d3(money43("homeEnergyAuditCosts")),
+    "26b_home_energy_audit": d3(money44("homeEnergyAuditCosts")),
     "26c_30_percent_max_150": d3(E("improvement.line26c")),
     "27_total": d3(E("improvement.line27")),
     "28_smaller_of_27_or_1200": d3(E("improvement.line28")),
-    "29g_heat_pumps_biomass": d3(money43("heatPumpBiomassCosts")),
+    "29g_heat_pumps_biomass": d3(money44("heatPumpBiomassCosts")),
     "29h_30_percent_max_2000": d3(E("improvement.line29h")),
     "30_total": d3(E("improvement.line30")),
     "31_limitation": d3(E("improvement.line31")),
@@ -77520,22 +77950,22 @@ function createServer(options = {}) {
       if (args.strict === true && incomplete.length)
         throw new IncompleteReturnError(incomplete);
       const rd26 = (c2) => {
-        const neg2 = c2 < 0n;
-        const abs = neg2 ? -c2 : c2;
+        const neg3 = c2 < 0n;
+        const abs = neg3 ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
-        return neg2 ? -r : r;
+        return neg3 ? -r : r;
       };
       const facts2 = {};
       let roundedInputs = 0;
-      for (const [id, v] of Object.entries(built.facts)) {
+      for (const [id2, v] of Object.entries(built.facts)) {
         if (v.type === "money") {
           const cents = BigInt(v.value);
           const r = rd26(cents);
           if (r !== cents)
             roundedInputs += 1;
-          facts2[id] = { type: "money", value: r.toString() };
+          facts2[id2] = { type: "money", value: r.toString() };
         } else
-          facts2[id] = v;
+          facts2[id2] = v;
       }
       const w2Box1Cents = built.w2Box1Cents === void 0 ? void 0 : rd26(built.w2Box1Cents);
       if (roundedInputs > 0) {
@@ -77633,7 +78063,7 @@ function createServer(options = {}) {
     description: `Verify a claimed tax amount (yours, a user's, or another tool's) against the law. Returns verdict 'verified' or 'refuted' with the correct value. Use this as a self-check before presenting any tax number. Put asOf (and target, if any) INSIDE the facts object \u2014 e.g. facts: {..., "asOf": "2025-12-31"} \u2014 otherwise the claim is checked under today's law.`,
     inputSchema: legacyJsonSchema(external_exports.object({
       facts: factsObjectParam,
-      claimedAmount: money42.describe("the amount to verify (negative = refund)"),
+      claimedAmount: money43.describe("the amount to verify (negative = refund)"),
       toleranceDollars: external_exports.number().min(0).optional().describe("default 1")
     }).strict())
   }, async (args) => {
@@ -77683,7 +78113,7 @@ function createServer(options = {}) {
   }, async ({ ruleId, asOf }) => {
     const versions2 = corpus.byId.get(ruleId);
     if (!versions2) {
-      const near = [...corpus.byId.keys()].filter((id) => id.includes(ruleId));
+      const near = [...corpus.byId.keys()].filter((id2) => id2.includes(ruleId));
       return fail(new Error(`unknown rule "${ruleId}"${near.length ? ` \u2014 did you mean: ${near.slice(0, 5).join(", ")}` : ""}`));
     }
     const shown = asOf ? versions2.filter((r) => r.effectiveFrom <= asOf && (r.effectiveTo === void 0 || asOf < r.effectiveTo)) : versions2;
@@ -77822,7 +78252,7 @@ function createServer(options = {}) {
     description: "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Never states a verdict it cannot ground.",
     inputSchema: legacyJsonSchema(external_exports.object({
       query: external_exports.string().max(2e3).describe("what the amount is, e.g. 'standard deduction'"),
-      claimedAmount: money42,
+      claimedAmount: money43,
       filingStatus: external_exports.enum(["single", "mfj", "mfs", "hoh", "qss"]).optional(),
       asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
     }).strict())
