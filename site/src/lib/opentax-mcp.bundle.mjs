@@ -38391,7 +38391,7 @@ var IncompleteReturnError = class extends OpenTaxError {
 };
 
 // dist/version.js
-var COMPOSER_VERSION = "0.9.0";
+var COMPOSER_VERSION = "0.9.1";
 
 // ../solve/dist/sweep.js
 function evaluateAt(corpus2, baseFacts, options, atCents) {
@@ -74188,7 +74188,7 @@ var tipsOvertimeRules = [
 // ../corpus-us-federal/dist/index.js
 var corpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.42.0",
+  version: "0.43.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,

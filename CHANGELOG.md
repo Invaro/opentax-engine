@@ -2,7 +2,7 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
-## Next release · QBI per business, with aggregation
+## Nov 1, 2026 · QBI per business, with aggregation
 
 The § 199A deduction now follows Form 8995-A with one column per business. Above the threshold, each business gets its own W-2 wage and UBIA limit and its own SSTB status, instead of one limit for everything.
 

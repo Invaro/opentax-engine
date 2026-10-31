@@ -28951,7 +28951,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 // dist/version.js
-var COMPOSER_VERSION = "0.9.0";
+var COMPOSER_VERSION = "0.9.1";
 
 // dist/phone-home.js
 var ENDPOINT = "https://opentax.invaro.ai/api/t";
@@ -74244,7 +74244,7 @@ var tipsOvertimeRules = [
 // ../corpus-us-federal/dist/index.js
 var corpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.42.0",
+  version: "0.43.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
