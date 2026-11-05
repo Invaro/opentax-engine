@@ -1,7 +1,7 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
-  "version": "0.43.0",
-  "merkleRoot": "sha256:8fab8b3b91811406729808b4ed841750ebffef013fc0eed5f7e5dcd224154216",
+  "version": "0.44.0",
+  "merkleRoot": "sha256:5ec7abdc802879675e0406a1b2e1605796089ef8ff89fffab57e1433e2752a6a",
   "ruleCount": 715,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
@@ -83,7 +83,7 @@
     "us.federal.capital_loss_ordinary_offset@3": "sha256:d54ced9d88f97a357e7ce08d98ce18df88a7eb6cb72fcf8042ab859f51905972",
     "us.federal.car_loan_interest_deduction@1": "sha256:2bbf9a40e968032540d653b7c1d2fb6e5c79db5f96cdf5b08a395859a7d862f8",
     "us.federal.casualty_loss_deduction@2": "sha256:0bf3b4a5ff4eb226fd395dfb4a5db1258c8ccd438193f1f02393d4fcb9ac3ce0",
-    "us.federal.cdcc.tentative@3": "sha256:1bf7963d8beb5b380f7fefec72a0ea868f9a7ffae623953ca1503ce101592399",
+    "us.federal.cdcc.tentative@3": "sha256:ab8788c735e37e4dbcca120653beef4e31a1843dc846a928770209647744ba11",
     "us.federal.cdcc.tentative@4": "sha256:38eb858d8655a33af9eb87486dd32feb2c77fa02f6b16a8566a8300ce433e353",
     "us.federal.cdcc@1": "sha256:5c6bff33c5eba4b9b814ad4d28945e3f852171a27a6b1a941c25030a26e7105e",
     "us.federal.charitable_deduction_itemizer@3": "sha256:33ca5987125828e008b117270dc48d09a063837899a6af436f7f0e053dadf2e7",

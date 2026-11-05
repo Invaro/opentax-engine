@@ -1,6 +1,6 @@
 {
-  "corpusVersion": "0.43.0",
-  "merkleRoot": "sha256:8fab8b3b91811406729808b4ed841750ebffef013fc0eed5f7e5dcd224154216",
+  "corpusVersion": "0.44.0",
+  "merkleRoot": "sha256:5ec7abdc802879675e0406a1b2e1605796089ef8ff89fffab57e1433e2752a6a",
   "tools": [
     {
       "name": "calculate_tax",

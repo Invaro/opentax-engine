@@ -2,7 +2,7 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
-## Next release · Form 6251 line by line, and no deductions from a negative AGI
+## Nov 6, 2026 · Form 6251 line by line, and no deductions from a negative AGI
 
 The alternative minimum tax now follows Form 6251 line by line, and the Schedule A floors no longer turn a negative AGI into a deduction.
 

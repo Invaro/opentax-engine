@@ -158,7 +158,7 @@ function cdccTentativeRule(
     title: `Child and dependent care credit before the liability limit (${yearLabel})`,
     citation: {
       source:
-        version > 1
+        from >= "2026-01-01"
           ? "26 U.S.C. § 21, as amended by Pub. L. 119-21 (OBBBA) § 70405"
           : "26 U.S.C. § 21 (pre-OBBBA text, per the § 70405(b) effective date)",
       section: "§ 21(a)–(e)",

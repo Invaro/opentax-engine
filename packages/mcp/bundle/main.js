@@ -35732,7 +35732,7 @@ function cdccTentativeRule(version2, from, to, pctExpr, yearLabel, mechanicsExce
     jurisdiction: J8,
     title: `Child and dependent care credit before the liability limit (${yearLabel})`,
     citation: {
-      source: version2 > 1 ? "26 U.S.C. \xA7 21, as amended by Pub. L. 119-21 (OBBBA) \xA7 70405" : "26 U.S.C. \xA7 21 (pre-OBBBA text, per the \xA7 70405(b) effective date)",
+      source: from >= "2026-01-01" ? "26 U.S.C. \xA7 21, as amended by Pub. L. 119-21 (OBBBA) \xA7 70405" : "26 U.S.C. \xA7 21 (pre-OBBBA text, per the \xA7 70405(b) effective date)",
       section: "\xA7 21(a)\u2013(e)",
       url: "https://www.law.cornell.edu/uscode/text/26/21",
       excerpt: mechanicsExcerpt
@@ -55819,7 +55819,7 @@ var init_dist2 = __esm({
     init_occupations();
     corpusInput = {
       name: "@invaro/opentax-corpus-us-federal",
-      version: "0.43.0",
+      version: "0.44.0",
       rules: [
         ...corporateRules,
         ...corporate1120Rules,
@@ -63934,7 +63934,7 @@ var COMPOSER_VERSION;
 var init_version = __esm({
   "dist/version.js"() {
     "use strict";
-    COMPOSER_VERSION = "0.10.0";
+    COMPOSER_VERSION = "0.10.1";
   }
 });
 
