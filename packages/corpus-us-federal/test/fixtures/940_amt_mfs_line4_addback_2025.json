@@ -1,0 +1,17 @@
+{
+  "description": "Married filing separately: AMTI above $900,350 is increased by the lesser of 25% of the excess or $68,500 (§ 55(d)(2), last sentence; 2025 Form 6251 line 4 instructions). MFS 2025: wages $1,000,000; taxable income $984,250 + standard deduction $15,750 = $1,000,000; add 25% × $99,650 = $24,912.50 → AMTI $1,024,912.50. Exemption $0. TMT 28% × $1,024,912.50 − $2,391 = $284,584.50.",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 1000000,
+    "spouseItemizes": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt.tentative_minimum_tax",
+  "expect": {
+    "valueCents": "28458450",
+    "intermediates": {
+      "us.federal.amt.amti": "102491250",
+      "us.federal.amt.exemption": "0"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "description": "§ 86 modified income is AGI before the benefits, so a Schedule C loss reduces it. Single 2025: wages $30,000, Schedule C loss $20,000, benefits $30,000. Modified income $10,000 + half the benefits $15,000 = $25,000, not over the $25,000 base amount → $0 taxable (leaving the loss out gave $13,850).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "socialSecurityBenefits": 30000,
+    "scheduleCNetLoss": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.taxable_social_security",
+  "expect": {
+    "valueCents": "0"
+  }
+}

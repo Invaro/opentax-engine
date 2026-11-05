@@ -352,7 +352,7 @@ export const okRules: Rule[] = [
   },
   {
     id: "us.ok.exemptions",
-    version: 1,
+    version: 2, // v1 excluded QSS with a −$0.01 limit, which a negative federal AGI met
     jurisdiction: "us.ok",
     title: "Oklahoma exemptions — $1,000 each (self, spouse, blind, dependents) plus the special 65+ exemption allowed only when federal AGI is at or under $15,000 single / $25,000 MFJ / $12,500 MFS / $19,000 HOH (Form 511 line 11)",
     citation: {
@@ -377,10 +377,14 @@ export const okRules: Rule[] = [
       const limit: Expr = iff(
         isStatus("mfj"),
         money("2500000"),
-        iff(isStatus("mfs"), money("1250000"), iff(isStatus("single"), money("1500000"), iff(isStatus("hoh"), money("1900000"), money("-1")))),
+        iff(isStatus("mfs"), money("1250000"), iff(isStatus("single"), money("1500000"), money("1900000"))),
       );
-      // QSS: limit = -$0.01 → never satisfied (no special exemption; disclosed)
-      const special: Expr = iff(le(testAgi, limit), mulInt(money("100000"), fact("okSpecialExemptions65")), money("0"));
+      // QSS: no special exemption at any AGI (disclosed)
+      const special: Expr = iff(
+        isStatus("qss"),
+        money("0"),
+        iff(le(testAgi, limit), mulInt(money("100000"), fact("okSpecialExemptions65")), money("0")),
+      );
       return add(mulInt(money("100000"), fact("okBasicExemptions")), special);
     })(),
   },

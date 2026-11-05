@@ -234,6 +234,12 @@ export const facts: FactSpec[] = [
     },
   },
   {
+    id: "ptcEnrollmentEstimateAtLeast100Fpl",
+    type: "bool",
+    description:
+      "Household income is below 100% of the federal poverty line, yet the Marketplace estimated at enrollment that it would be at least 100% (for 2026: at least 100% but no more than 400%) of the poverty line for the family size, advance PTC was paid, no one can claim the taxpayer as a dependent, and the taxpayer did not give the Marketplace incorrect information with intentional or reckless disregard for the facts. Reg. § 1.36B-2(b)(6) then treats the taxpayer as an applicable taxpayer (Form 8962 instructions, 'Estimated household income at least 100% of the federal poverty line'). Asked only when household income is under 100% of the poverty line and advance PTC was paid.",
+  },
+  {
     id: "ptcHouseholdSize",
     type: "int",
     min: "1",
@@ -704,7 +710,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "California alternative minimum taxable income (Schedule P (540) Part I, line 17) — AGENT-COMPUTED per the R&TC §§ 17062(c)-(e), 17062.1 construction rules, then fed to the CA AMT target (us.ca.amt). CONSTRUCTION NOTES (disclose when composing this figure): California individual AMT is FROZEN to IRC §§ 55-59 as they read on January 1, 2015 (R&TC § 17062.1, re-enacted by SB 711, Stats. 2025 Ch. 231, WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19), the STANDARD DEDUCTION IS ADDED BACK (R&TC § 17062(c)(1), denying § 56(b)(1)(E)). The ISO exercise spread follows § 56(b)(3) as modified by R&TC § 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC § 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC § 17062(d) turns off § 57(a)(5)) and NO AMT foreign tax credit (R&TC § 17062(e) turns off § 59(a)). A taxpayer whose aggregate trade/business gross receipts are under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC § 17062(b)(4), the CA small-business AMTI exclusion). In dollars.",
+      "California alternative minimum taxable income (Schedule P (540) Part I, line 17) — AGENT-COMPUTED per the R&TC §§ 17062(c)-(e), 17062.1 construction rules, then fed to the CA AMT target (us.ca.amt). CONSTRUCTION NOTES (disclose when composing this figure): California individual AMT is FROZEN to IRC §§ 55-59 as they read on January 1, 2015 (R&TC § 17062.1, re-enacted by SB 711, Stats. 2025 Ch. 231, WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19; when line 19 is zero, line 17 less line 18 entered as a NEGATIVE amount — 2025 Schedule P (540) instructions, line 15), the STANDARD DEDUCTION IS ADDED BACK (R&TC § 17062(c)(1), denying § 56(b)(1)(E)). The ISO exercise spread follows § 56(b)(3) as modified by R&TC § 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC § 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC § 17062(d) turns off § 57(a)(5)) and NO AMT foreign tax credit (R&TC § 17062(e) turns off § 59(a)). A taxpayer whose aggregate trade/business gross receipts are under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC § 17062(b)(4), the CA small-business AMTI exclusion). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no CA AMT adjustments or preference items absent contrary input",
@@ -2143,7 +2149,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Federal income tax withheld so far this year (W-2 box 2 + estimated payments) — credited against the liability under 26 U.S.C. § 31. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars.",
+      "Federal income tax withheld so far this year (W-2 box 2, Form 1099 box 4 and other withholding; Form 1040 line 25d) — credited against the liability under 26 U.S.C. § 31. Estimated tax payments go in federalEstimatedPayments and a Form 4868 payment in federalExtensionPayment, never here. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no withholding reported absent contrary input",

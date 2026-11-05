@@ -1,0 +1,17 @@
+{
+  "description": "A Schedule C net loss reduces earned income for the § 21(d)(1) limit (Pub. 503: 'You must reduce your earned income by any net loss from self-employment'). HoH 2025: wages $20,000, Schedule C loss $30,000, interest $100,000, $3,000 of care expenses for one child. Earned income $20,000 − $30,000 → $0, so no expenses are creditable and the credit is $0 (wages alone gave $600).",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 20000,
+    "taxableInterest": 100000,
+    "scheduleCNetLoss": 30000,
+    "dependentCareExpenses": 3000,
+    "careQualifyingIndividuals": 1,
+    "qualifyingChildren": 1
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.cdcc.tentative",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -57,14 +57,18 @@ const mfsHalf = (full: string, half: string): Expr => ({
 });
 
 const agi = ruleRef("us.federal.agi");
+// the percentage-of-AGI floors and limits read a negative AGI as zero: a
+// floor can only withhold part of the amount paid, never add to it, and a
+// negative contribution base allows no charitable deduction (§ 170(b)(1))
+const agiFloor: Expr = { kind: "max0", arg: agi };
 
-/** Per-year § 164(b)(6)–(7) SALT deduction rule (MAGI ≈ AGI, disclosed). */
+/** Per-year § 164(b)(6)–(7) SALT deduction rule. */
 function saltRule(
   version: number,
   effectiveFrom: string,
   effectiveTo: string,
-  amounts: { cap: string; capMfs: string; threshold: string; thresholdMfs: string },
-  label: { year: string; cap: string; threshold: string },
+  amounts: { cap: string; threshold: string; thresholdMfs: string },
+  label: { year: string; cap: string; capHalf: string; threshold: string },
 ): Rule {
   return {
     id: "us.federal.salt_deduction",
@@ -75,49 +79,59 @@ function saltRule(
       source: "26 U.S.C. § 164(b)(6)–(7), as amended by Pub. L. 119-21 (OBBBA) § 70120",
       section: "§ 164(b)(6), (b)(7)",
       url: "https://www.law.cornell.edu/uscode/text/26/164",
-      excerpt: `State and local income (or sales) and property taxes are capped at the applicable limitation amount — ${label.cap} for taxable years beginning in ${label.year} (halved for a married individual filing separately) — "reduced by 30 percent of the excess (if any) of the taxpayer's modified adjusted gross income over the threshold amount" of ${label.threshold} (halved MFS); the reduction "shall not result in the applicable limitation amount being less than $10,000" ($5,000 MFS). Both the cap and the threshold escalate 1% per year through 2029, then revert to a flat $10,000 in 2030. [MAGI ≈ AGI: the § 911/931/933 foreign-exclusion add-backs are not modeled — disclosed.]`,
+      excerpt: `The applicable limitation amount — ${label.cap} for taxable years beginning in ${label.year} — is "reduced by 30 percent of the excess (if any) of the taxpayer's modified adjusted gross income over the threshold amount (half the threshold amount in the case of a married individual filing a separate return)" of ${label.threshold}; the reduction "shall not result in the applicable limitation amount being less than $10,000" (§ 164(b)(7)(B)). State and local taxes may not exceed that amount, "half the applicable limitation amount in the case of a married individual filing a separate return" (§ 164(b)(6)(B)) — so for MFS the halving comes after the phase-down and the floor, as on line 10 of the State and Local Tax Deduction Worksheet (2025 Schedule A instructions): $${label.capHalf} less 15% of MAGI over the halved threshold, never below $5,000. Modified AGI is AGI plus the § 911 exclusion (§ 164(b)(7)(B)(iv); worksheet lines 2–4). Both the amount and the threshold escalate 1% per year through 2029, then revert to a flat $10,000 in 2030. [Not modeled, disclosed: the §§ 931/933 Puerto Rico and possessions exclusions.]`,
     },
     effectiveFrom,
     effectiveTo,
     output: { type: "money" },
     parameters: {
       cap: { value: amounts.cap, type: "money" },
-      capMfs: { value: amounts.capMfs, type: "money" },
       threshold: { value: amounts.threshold, type: "money" },
       thresholdMfs: { value: amounts.thresholdMfs, type: "money" },
       floor: { value: "1000000", type: "money" }, // $10,000
-      floorMfs: { value: "500000", type: "money" }, // $5,000
     },
-    formula: {
-      kind: "min",
-      args: [
-        fact("stateAndLocalTaxesPaid"),
-        {
-          // applicable limitation amount = max(floor, cap − 30% × excess MAGI)
-          kind: "max",
-          args: [
-            mfsHalf("floor", "floorMfs"),
-            {
-              kind: "sub",
-              left: mfsHalf("cap", "capMfs"),
-              right: {
-                kind: "mulRate",
-                base: {
-                  kind: "max0",
-                  arg: {
-                    kind: "sub",
-                    left: agi,
-                    right: mfsHalf("threshold", "thresholdMfs"),
-                  },
+    formula: (() => {
+      // § 164(b)(7)(B): the full amount less 30% of MAGI over the threshold
+      // (half the threshold for MFS), never below $10,000 — MAGI is AGI plus
+      // the § 911 exclusion (worksheet lines 2–4)
+      const applicable: Expr = {
+        kind: "max",
+        args: [
+          param("floor"),
+          {
+            kind: "sub",
+            left: param("cap"),
+            right: {
+              kind: "mulRate",
+              base: {
+                kind: "max0",
+                arg: {
+                  kind: "sub",
+                  left: { kind: "add", args: [agi, ruleRef("us.federal.feie.exclusion")] },
+                  right: mfsHalf("threshold", "thresholdMfs"),
                 },
-                rate: { num: "30", den: "100" },
-                round: "half-up",
               },
+              rate: { num: "30", den: "100" },
+              round: "half-up",
             },
-          ],
-        },
-      ],
-    },
+          },
+        ],
+      };
+      return {
+        kind: "min",
+        args: [
+          fact("stateAndLocalTaxesPaid"),
+          // § 164(b)(6)(B): half the applicable limitation amount for MFS
+          // (worksheet line 10)
+          {
+            kind: "if",
+            cond: isStatus("mfs"),
+            then: { kind: "mulRate", base: applicable, rate: { num: "1", den: "2" }, round: "half-up" },
+            else: applicable,
+          },
+        ],
+      };
+    })(),
   };
 }
 
@@ -126,7 +140,7 @@ const charityCashLimited: Expr = {
   kind: "min",
   args: [
     fact("charitableCashContributions"),
-    { kind: "mulRate", base: agi, rate: { num: "60", den: "100" }, round: "half-up" },
+    { kind: "mulRate", base: agiFloor, rate: { num: "60", den: "100" }, round: "half-up" },
   ],
 };
 
@@ -139,14 +153,14 @@ const CHARITY_CITE = {
 
 export const itemizedRules: Rule[] = [
   saltRule(
-    1, "2025-01-01", "2026-01-01",
-    { cap: "4000000", capMfs: "2000000", threshold: "50000000", thresholdMfs: "25000000" },
-    { year: "2025", cap: "$40,000", threshold: "$500,000" },
+    3, "2025-01-01", "2026-01-01", // v1 halved the amount before the phase-down for MFS and left out the § 911 exclusion
+    { cap: "4000000", threshold: "50000000", thresholdMfs: "25000000" },
+    { year: "2025", cap: "$40,000", capHalf: "20,000", threshold: "$500,000" },
   ),
   saltRule(
-    2, "2026-01-01", "2027-01-01",
-    { cap: "4040000", capMfs: "2020000", threshold: "50500000", thresholdMfs: "25250000" },
-    { year: "2026", cap: "$40,400", threshold: "$505,000" },
+    4, "2026-01-01", "2027-01-01", // v2 halved the amount before the phase-down for MFS and left out the § 911 exclusion
+    { cap: "4040000", threshold: "50500000", thresholdMfs: "25250000" },
+    { year: "2026", cap: "$40,400", capHalf: "20,200", threshold: "$505,000" },
   ),
   {
     id: "us.federal.mortgage_interest_deduction",
@@ -192,13 +206,13 @@ export const itemizedRules: Rule[] = [
   },
   {
     id: "us.federal.charitable_deduction_itemizer",
-    version: 1,
+    version: 3, // v1 let a negative AGI make the 60% limit negative
     jurisdiction: J,
     title: "Charitable deduction for itemizers (TY2025: cash, 60% of AGI limit)",
     citation: {
       ...CHARITY_CITE,
       excerpt:
-        "Cash contributions to public charities are deductible up to 60 percent of the taxpayer's contribution base (≈ AGI) — the 60% limit is permanent (OBBBA § 70424 struck the pre-2026 sunset from § 170(b)(1)(G)). The § 170(b)(1)(I) 0.5% floor does not apply to taxable years beginning before 2026. [Modeled and disclosed: CASH gifts to 60%-limit organizations only; excess-contribution carryovers (§ 170(d)) are not modeled — conservative for the current year.]",
+        "Cash contributions to public charities are deductible up to 60 percent of the taxpayer's contribution base (≈ AGI) — the 60% limit is permanent (OBBBA § 70424 struck the pre-2026 sunset from § 170(b)(1)(G)). The § 170(b)(1)(I) 0.5% floor does not apply to taxable years beginning before 2026. [Modeled and disclosed: CASH gifts to 60%-limit organizations only; excess-contribution carryovers (§ 170(d)) are not modeled — conservative for the current year. A negative contribution base allows no deduction.]",
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
@@ -207,14 +221,14 @@ export const itemizedRules: Rule[] = [
   },
   {
     id: "us.federal.charitable_deduction_itemizer",
-    version: 2,
+    version: 4, // v2 let a negative AGI make the 60% limit negative
     jurisdiction: J,
     title:
       "Charitable deduction for itemizers (TY2026+: 60% of AGI limit, then the OBBBA 0.5% floor)",
     citation: {
       ...CHARITY_CITE,
       excerpt:
-        "For taxable years beginning after December 31, 2025 (OBBBA § 70425), § 170(b)(1)(I) provides: \"Any charitable contribution otherwise allowable (without regard to this subparagraph) as a deduction under this section shall be allowed only to the extent that the aggregate of such contributions exceeds 0.5 percent of the taxpayer's contribution base for the taxable year.\" Encoded as the otherwise-allowable amount (cash capped at 60% of AGI, § 170(b)(1)(G), permanent) minus 0.5% of AGI. [Modeled and disclosed: CASH gifts to 60%-limit organizations only; § 170(d) carryovers and the (b)(1)(I)(ii)–(iii) carryover coordination are not modeled — conservative for the current year.]",
+        "For taxable years beginning after December 31, 2025 (OBBBA § 70425), § 170(b)(1)(I) provides: \"Any charitable contribution otherwise allowable (without regard to this subparagraph) as a deduction under this section shall be allowed only to the extent that the aggregate of such contributions exceeds 0.5 percent of the taxpayer's contribution base for the taxable year.\" Encoded as the otherwise-allowable amount (cash capped at 60% of AGI, § 170(b)(1)(G), permanent) minus 0.5% of AGI. [Modeled and disclosed: CASH gifts to 60%-limit organizations only; § 170(d) carryovers and the (b)(1)(I)(ii)–(iii) carryover coordination are not modeled — conservative for the current year. A negative contribution base allows no deduction, and the 0.5% floor never adds to it.]",
     },
     effectiveFrom: "2026-01-01", // permanent: open-ended
     output: { type: "money" },
@@ -225,7 +239,7 @@ export const itemizedRules: Rule[] = [
         left: charityCashLimited,
         right: {
           kind: "mulRate",
-          base: agi,
+          base: agiFloor,
           rate: { num: "5", den: "1000" }, // 0.5%
           round: "half-up",
         },
@@ -234,7 +248,7 @@ export const itemizedRules: Rule[] = [
   },
   {
     id: "us.federal.medical_expense_deduction",
-    version: 1,
+    version: 2, // v1 turned a negative AGI into a deduction
     jurisdiction: J,
     title: "Medical expense deduction (expenses over 7.5% of AGI)",
     citation: {
@@ -242,7 +256,7 @@ export const itemizedRules: Rule[] = [
       section: "§ 213(a)",
       url: "https://www.law.cornell.edu/uscode/text/26/213",
       excerpt:
-        "There shall be allowed as a deduction the expenses paid during the taxable year, not compensated for by insurance or otherwise, for medical care of the taxpayer, his spouse, or a dependent… to the extent that such expenses exceed 7.5 percent of adjusted gross income. [The 7.5% floor is permanent — P.L. 116-260 struck the temporary § 213(f).]",
+        "There shall be allowed as a deduction the expenses paid during the taxable year, not compensated for by insurance or otherwise, for medical care of the taxpayer, his spouse, or a dependent… to the extent that such expenses exceed 7.5 percent of adjusted gross income. [The 7.5% floor is permanent — P.L. 116-260 struck the temporary § 213(f). A negative AGI counts as zero: the deduction is part of the expenses paid and can never exceed them.]",
     },
     effectiveFrom: "2025-01-01", // permanent: open-ended
     output: { type: "money" },
@@ -253,7 +267,7 @@ export const itemizedRules: Rule[] = [
         left: fact("medicalExpenses"),
         right: {
           kind: "mulRate",
-          base: agi,
+          base: agiFloor,
           rate: { num: "75", den: "1000" }, // 7.5%
           round: "half-up",
         },
@@ -262,7 +276,7 @@ export const itemizedRules: Rule[] = [
   },
   {
     id: "us.federal.casualty_loss_deduction",
-    version: 1,
+    version: 2, // v1 turned a negative AGI into a deduction
     jurisdiction: J,
     title:
       "Personal casualty losses — federally declared disasters (10% AGI floor) + qualified disaster losses (no AGI floor)",
@@ -271,7 +285,7 @@ export const itemizedRules: Rule[] = [
       section: "§ 165(h)(1), (2), (5)",
       url: "https://www.law.cornell.edu/uscode/text/26/165",
       excerpt:
-        "A personal casualty loss 'shall be allowed as a deduction under subsection (a) only to the extent it is attributable to a Federally declared disaster… or a State declared disaster' (§ 165(h)(5), verbatim — non-declared losses are nondeductible and must not be entered); each casualty is reduced by the § 165(h)(1) floor and the excess of losses over gains is 'allowed… only to the extent… such excess… exceeds 10 percent of the adjusted gross income of the individual' (§ 165(h)(2)(A), verbatim). Qualified disaster losses differ: 'Personal casualty and theft losses attributable to a qualified disaster loss are not subject to the 10% of the AGI reduction and the $100 reduction is increased to $500' (2025 Instructions for Form 4684, verbatim). [Per-event floors and insurance netting are attested by the two inputs; personal casualty GAINS are not modeled — enter net losses only. The qualified portion also increases the STANDARD deduction when not itemizing — see the deduction election.]",
+        "A personal casualty loss 'shall be allowed as a deduction under subsection (a) only to the extent it is attributable to a Federally declared disaster… or a State declared disaster' (§ 165(h)(5), verbatim — non-declared losses are nondeductible and must not be entered); each casualty is reduced by the § 165(h)(1) floor and the excess of losses over gains is 'allowed… only to the extent… such excess… exceeds 10 percent of the adjusted gross income of the individual' (§ 165(h)(2)(A), verbatim). Qualified disaster losses differ: 'Personal casualty and theft losses attributable to a qualified disaster loss are not subject to the 10% of the AGI reduction and the $100 reduction is increased to $500' (2025 Instructions for Form 4684, verbatim). [A negative AGI counts as zero: the 10% floor can only reduce the loss, never add to it. Per-event floors and insurance netting are attested by the two inputs; personal casualty GAINS are not modeled — enter net losses only. The qualified portion also increases the STANDARD deduction when not itemizing — see the deduction election.]",
     },
     effectiveFrom: "2025-01-01",
     output: { type: "money" },
@@ -285,7 +299,7 @@ export const itemizedRules: Rule[] = [
             left: fact("casualtyFederalDisasterLosses"),
             right: {
               kind: "mulRate",
-              base: ruleRef("us.federal.agi"),
+              base: agiFloor,
               rate: { num: "10", den: "100" },
               round: "half-up",
             },

@@ -1,0 +1,20 @@
+{
+  "description": "Form 6251 line 2a follows the deduction actually taken: a filer who elects to itemize (forceItemized) adds back the Schedule A line 7 taxes, not the standard deduction. Single 2025: wages $100,000, SALT $6,000, mortgage interest $5,000 (itemized $11,000, below the $15,750 standard deduction), ISO spread $200,000. Taxable income $89,000, regular tax $14,500 (Tax Table). AMTI $89,000 + $6,000 + $200,000 = $295,000; line 6 $206,900 × 26% = $53,794 → AMT $39,294. (Adding back the standard deduction gave AMTI $304,750 and AMT $41,829.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "stateAndLocalTaxesPaid": 6000,
+    "mortgageInterestPaid": 5000,
+    "mortgageAverageBalance": 300000,
+    "forceItemized": true,
+    "amtIsoExerciseSpread": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "3929400",
+    "intermediates": {
+      "us.federal.amt.amti": "29500000"
+    }
+  }
+}

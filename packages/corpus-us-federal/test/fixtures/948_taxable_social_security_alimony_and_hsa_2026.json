@@ -1,0 +1,15 @@
+{
+  "description": "Pre-2019 alimony received and HSA distributions not used for medical care are in AGI, so they count in § 86 modified income the same as other income. Single 2026: wages $10,000, alimony $10,000, HSA distributions $10,000 with no medical expenses, benefits $30,000. Provisional income $30,000 + $15,000 = $45,000: 50% × ($34,000 − $25,000) = $4,500; 85% × ($45,000 − $34,000) = $9,350 plus the lesser of $4,500 or $4,500 → $13,850 (less than 85% of benefits, $25,500).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 10000,
+    "socialSecurityBenefits": 30000,
+    "alimonyReceivedPre2019": 10000,
+    "hsaDistributions": 10000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.taxable_social_security",
+  "expect": {
+    "valueCents": "1385000"
+  }
+}

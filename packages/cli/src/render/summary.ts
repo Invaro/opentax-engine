@@ -49,6 +49,7 @@ export function renderSummary(proof: ProofArtifact): string | null {
   const taxable = centsOf(root, "us.federal.taxable_income");
   const before = centsOf(root, "us.federal.income_tax_before_credits");
   const amt = centsOf(root, "us.federal.amt") ?? 0n;
+  const aptcRepayment = centsOf(root, "us.federal.ptc.excess_aptc_repayment") ?? 0n;
   const ctc = centsOf(root, "us.federal.ctc") ?? 0n;
   const education = centsOf(root, "us.federal.education.nonrefundable") ?? 0n;
   const refundable = centsOf(root, "us.federal.refundable_credits") ?? 0n;
@@ -109,6 +110,9 @@ export function renderSummary(proof: ProofArtifact): string | null {
   if (amt > 0n) {
     lines.push(`  + Alternative min tax${money(amt)}${pc.dim("   (Form 6251)")}`);
   }
+  if (aptcRepayment > 0n) {
+    lines.push(`  + Excess APTC        ${money(aptcRepayment)}${pc.dim("   (Form 8962 repayment)")}`);
+  }
   lines.push(
     `  − Credits            ${money(education + ctc + refundable)}${creditParts.length ? pc.dim(`   (${creditParts.join(" + ")})`) : ""}`,
   );
@@ -141,9 +145,9 @@ export function renderSummary(proof: ProofArtifact): string | null {
   // withholding checkup: liability minus what's already been paid in
   if (withholdingMode) {
     const balance = BigInt(root.value.value as string);
-    const withheld = net - balance;
+    const paid = net - balance;
     const aprilOf = String(Number(year) + 1);
-    lines.push(row("− Withheld so far", withheld));
+    lines.push(row("− Paid so far", paid));
     lines.push(pc.dim("  ─────────────────────────────────────"));
     if (balance < 0n) {
       lines.push(

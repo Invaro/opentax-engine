@@ -43,7 +43,9 @@ export function runEval(flags: EvalFlags): number {
     // withholding given -> the question becomes "balance due / refund expected"
     const target =
       flags.target ??
-      (plain.federalTaxWithheld !== undefined
+      (plain.federalTaxWithheld !== undefined ||
+      plain.federalEstimatedPayments !== undefined ||
+      plain.federalExtensionPayment !== undefined
         ? "us.federal.balance_due"
         : DEFAULT_TARGET);
 

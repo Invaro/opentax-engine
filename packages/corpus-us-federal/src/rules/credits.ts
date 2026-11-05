@@ -56,29 +56,34 @@ const isStatus = (status: string): Expr => ({
   right: { kind: "enum", value: status },
 });
 
-/** § 26(a) base: regular tax + AMT (Schedule 2 line 1 joins line 16). */
-const limitBase: Expr = {
-  kind: "add",
-  args: [
-    ruleRef("us.federal.income_tax_before_credits"),
-    ruleRef("us.federal.amt"),
-  ],
-};
+/** § 26(a) base: Form 1040 line 18 (line 16 + Schedule 2 line 3, which carries the AMT). */
+const limitBase: Expr = ruleRef("us.federal.tax_before_nonrefundable_credits");
 
-/** earned income ≈ wages + SE net earnings after ½ SE tax (house approximation). */
+/**
+ * earned income ≈ wages + SE net earnings after ½ SE tax (house approximation),
+ * less a Schedule C net loss ("You must reduce your earned income by any net
+ * loss from self-employment", Pub. 503), floored at zero.
+ */
 const earnedIncome: Expr = {
-  kind: "add",
-  args: [
-    fact("wages"),
-    {
-      kind: "max0",
-      arg: {
-        kind: "sub",
-        left: ruleRef("us.federal.se_net_profit"),
-        right: ruleRef("us.federal.se_tax_half_deduction"),
-      },
+  kind: "max0",
+  arg: {
+    kind: "sub",
+    left: {
+      kind: "add",
+      args: [
+        fact("wages"),
+        {
+          kind: "max0",
+          arg: {
+            kind: "sub",
+            left: ruleRef("us.federal.se_net_profit"),
+            right: ruleRef("us.federal.se_tax_half_deduction"),
+          },
+        },
+      ],
     },
-  ],
+    right: fact("scheduleCNetLoss"),
+  },
 };
 
 /** whole-or-fraction $-step count over a threshold, as money cents (1¢ = 1 point). */
@@ -453,7 +458,7 @@ function adoptionRefundableRule(
 
 export const creditBlockRules: Rule[] = [
   cdccTentativeRule(
-    1,
+    3, // v1/v2 ignored a Schedule C net loss in earned income
     "2025-01-01",
     "2026-01-01",
     pct2025,
@@ -461,7 +466,7 @@ export const creditBlockRules: Rule[] = [
     "The applicable percentage is '35 percent reduced (but not below 20 percent) by 1 percentage point for each $2,000 (or fraction thereof) by which the taxpayer's adjusted gross income for the taxable year exceeds $15,000' (pre-OBBBA text, in force for taxable years beginning before 2026 per OBBBA § 70405(b)). Expenses capped at $3,000 (one qualifying individual) / $6,000 (two or more), § 21(c), net of the § 129 exclusion (netted by the input); limited to earned income — on a joint return, to the lesser spouse's earned income (§ 21(d)(1)). Married only on a joint return (§ 21(e)(2)) — MFS: $0; the § 21(e)(4) living-apart exception and § 21(d)(2) deemed student-spouse income are not modeled (conservative). Qualifying-individual status (§ 21(b)(1): dependent under 13, or incapable of self-care) is attested by the count input.",
   ),
   cdccTentativeRule(
-    2,
+    4,
     "2026-01-01",
     "2027-01-01",
     pct2026,

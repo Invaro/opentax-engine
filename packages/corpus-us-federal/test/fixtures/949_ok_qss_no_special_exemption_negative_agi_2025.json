@@ -1,0 +1,14 @@
+{
+  "description": "OK qualifying surviving spouse: the rule allows no special 65+ exemption at any federal AGI, including a negative one. 3 regular exemptions + 1 claimed special, federal AGI −$5,000 → $3,000 (the special exemption is not added).",
+  "facts": {
+    "filingStatus": "qss",
+    "okBasicExemptions": 3,
+    "okSpecialExemptions65": 1,
+    "okFederalAgi": -5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ok.exemptions",
+  "expect": {
+    "valueCents": "300000"
+  }
+}

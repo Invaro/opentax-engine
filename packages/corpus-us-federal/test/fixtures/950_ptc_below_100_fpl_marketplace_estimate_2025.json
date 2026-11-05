@@ -1,0 +1,20 @@
+{
+  "description": "Reg. § 1.36B-2(b)(6): household income below 100% of the poverty line still qualifies when the Marketplace estimated at enrollment that it would be at least 100% and advance PTC was paid. Single 2025: wages $50,000, nonpassive Schedule E loss $160,000 → household income −$110,000, entered as $0 (Form 8962 line 3). Applicable percentage 0% (first tier) → credit = min($8,000 premiums, $8,000 benchmark − $0) = $8,000; advance PTC $6,000 → net PTC $2,000 refund, nothing repaid.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "nonpassiveScheduleELoss": 160000,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 8000,
+    "marketplacePremiumsPaid": 8000,
+    "advancePTC": 6000,
+    "ptcEnrollmentEstimateAtLeast100Fpl": true
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "-200000",
+    "intermediates": {
+      "us.federal.ptc": "800000"
+    }
+  }
+}

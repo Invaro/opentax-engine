@@ -1,0 +1,18 @@
+{
+  "description": "Form 6251 line 1b is AGI less Form 1040 line 14 and is entered as a negative amount when less than zero; taxable income is floored at zero but AMTI is not. Single 2025: wages $100,000, Schedule C loss $150,000 → AGI −$50,000; standard deduction $15,750; ISO spread $300,000. Line 1b −$65,750, line 2a +$15,750, line 2i +$300,000 → AMTI $250,000. Exemption $88,100 → line 6 $161,900 × 26% = $42,094; regular tax $0 → AMT $42,094. (Starting from taxable income $0 gave AMTI $315,750.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "scheduleCNetLoss": 150000,
+    "amtIsoExerciseSpread": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "4209400",
+    "intermediates": {
+      "us.federal.amt.amti": "25000000",
+      "us.federal.amt.exemption": "8810000"
+    }
+  }
+}

@@ -55,6 +55,16 @@ const magiBase: Expr = {
         ruleRef("us.federal.pension.simplified_method_taxable"),
         fact("unemploymentCompensation"),
         fact("otherOrdinaryIncome"),
+        fact("alimonyReceivedPre2019"),
+        // § 223(f)(2): HSA distributions beyond qualified medical expenses
+        {
+          kind: "max0",
+          arg: {
+            kind: "sub",
+            left: fact("hsaDistributions"),
+            right: fact("hsaQualifiedMedicalExpenses"),
+          },
+        },
         fact("scheduleENetIncome"),
         ruleRef("us.federal.rental.net_income"),
       ],
@@ -64,6 +74,7 @@ const magiBase: Expr = {
       args: [
         ruleRef("us.federal.capital_loss_ordinary_offset"),
         fact("nonpassiveScheduleELoss"),
+        fact("scheduleCNetLoss"),
       ],
     },
   },
@@ -101,7 +112,7 @@ const byJoint = (joint: string, other: string): Expr => ({
 export const socialSecurityRules: Rule[] = [
   {
     id: "us.federal.taxable_social_security",
-    version: 10, // v9 counted one self-employed person's profit; v10 counts both spouses' (us.federal.se_net_profit). v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
+    version: 11, // v10 left a Schedule C loss, pre-2019 alimony and taxable HSA distributions out of the § 86 income. v9 counted one self-employed person's profit; v10 counts both spouses' (us.federal.se_net_profit). v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
     jurisdiction: "us.federal",
     title: "Taxable Social Security benefits (§ 86: the 0/50/85% worksheet)",
     citation: {

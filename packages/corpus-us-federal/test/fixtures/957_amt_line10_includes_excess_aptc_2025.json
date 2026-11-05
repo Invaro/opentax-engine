@@ -1,0 +1,21 @@
+{
+  "description": "Form 6251 line 10 adds Schedule 2 line 1z, which includes the excess advance premium tax credit repayment (line 1a). Single 2025: wages $60,000, advance PTC $6,000 against a credit of $900 (8.5% of $60,000 = $5,100 contribution on a $6,000 benchmark), repayment capped at $1,625 (300–400% FPL). Regular tax $5,075. AMTI $260,000 − $88,100 = $171,900 × 26% = $44,694 → AMT $44,694 − ($5,075 + $1,625) = $37,994.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "advancePTC": 6000,
+    "slcspAnnualPremium": 6000,
+    "marketplacePremiumsPaid": 6000,
+    "ptcHouseholdSize": 1,
+    "amtIsoExerciseSpread": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "3799400",
+    "intermediates": {
+      "us.federal.ptc.excess_aptc_repayment": "162500",
+      "us.federal.amt.tentative_minimum_tax": "4469400"
+    }
+  }
+}

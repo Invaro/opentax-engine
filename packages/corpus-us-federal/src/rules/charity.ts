@@ -41,13 +41,13 @@ export const charityRules: Rule[] = [
   },
   {
     id: "us.federal.charitable_deduction_nonitemizer",
-    version: 2,
+    version: 3, // v2 ignored the § 170(b)(1)(G)(i) 60%-of-contribution-base limit
     jurisdiction: "us.federal",
     title: "Charitable deduction for non-itemizers (OBBBA, permanent from 2026)",
     citation: {
       ...CITE,
       excerpt:
-        "…a deduction for charitable cash contributions of up to $1,000 ($2,000 in the case of a joint return) is allowed to individuals who do not itemize, for taxable years beginning after December 31, 2025; amounts are not indexed. [Cash to qualifying organizations only — donor-advised funds and certain private foundations excluded; assumed satisfied, disclosed.]",
+        "…a deduction for charitable cash contributions of up to $1,000 ($2,000 in the case of a joint return) is allowed to individuals who do not itemize, for taxable years beginning after December 31, 2025; amounts are not indexed. The amount is the deduction 'which would be determined under this section if the only charitable contributions taken into account ... were contributions made in cash ... (determined without regard to subsections (b)(1)(G)(ii), (b)(1)(I), and (d)(1))' (§ 170(p)): the carryover rules and the 0.5% floor are switched off, but the 60%-of-contribution-base limit of (b)(1)(G)(i) still applies, and a negative contribution base allows nothing. [Cash to qualifying organizations only — donor-advised funds and certain private foundations excluded; assumed satisfied, disclosed.]",
     },
     effectiveFrom: "2026-01-01", // permanent: open-ended
     output: { type: "money" },
@@ -59,6 +59,13 @@ export const charityRules: Rule[] = [
       kind: "min",
       args: [
         fact("charitableCashContributions"),
+        // § 170(b)(1)(G)(i): 60% of the contribution base (≈ AGI), a negative base counting as zero
+        {
+          kind: "mulRate",
+          base: { kind: "max0", arg: { kind: "rule", ruleId: "us.federal.agi" } },
+          rate: { num: "60", den: "100" },
+          round: "half-up",
+        },
         {
           kind: "match",
           on: fact("filingStatus"),

@@ -1,0 +1,21 @@
+{
+  "description": "\"Section 68 shall not apply\" for the AMT (§ 56(b)(1)(E)): TY2026 the AMT allows the itemized deductions before the overall limitation. Single: wages $1,000,000, SALT paid $50,000 (allowed $10,000 after the phase-down), mortgage interest $30,000, cash gifts $100,000 (less the 0.5% floor $5,000). Itemized $135,000 before § 68; § 68 takes 2/37 × $135,000 = $7,297.30, leaving $127,702.70. AMTI = $1,000,000 − $127,702.70 + $10,000 (taxes) − $7,297.30 (§ 68) + ISO $1,000,000 = $1,875,000; exemption $0; TMT 28% × $1,875,000 − $4,890 = $520,110.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 1000000,
+    "stateAndLocalTaxesPaid": 50000,
+    "mortgageInterestPaid": 30000,
+    "mortgageAverageBalance": 700000,
+    "charitableCashContributions": 100000,
+    "amtIsoExerciseSpread": 1000000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.amt.tentative_minimum_tax",
+  "expect": {
+    "valueCents": "52011000",
+    "intermediates": {
+      "us.federal.amt.amti": "187500000",
+      "us.federal.itemized_deductions": "12770270"
+    }
+  }
+}

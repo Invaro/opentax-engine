@@ -1,0 +1,18 @@
+{
+  "description": "Balance due subtracts every payment on Form 1040 line 33: withholding (line 25d), estimated tax payments (line 26) and the Form 4868 payment (line 31 via Schedule 3 line 13a). Single 2025: wages $100,000 → taxable income $84,250; Tax Table row $84,250–$84,300 (midpoint $84,275): $1,192.50 + 12% × $36,550 + 22% × $35,800 = $13,454.50 → $13,455. Withheld $9,000, estimated payments $3,000, extension payment $1,000 → balance due $455. (Subtracting withholding only gave $4,455.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "federalTaxWithheld": 9000,
+    "federalEstimatedPayments": 3000,
+    "federalExtensionPayment": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.balance_due",
+  "expect": {
+    "valueCents": "45500",
+    "intermediates": {
+      "us.federal.net_tax": "1345500"
+    }
+  }
+}

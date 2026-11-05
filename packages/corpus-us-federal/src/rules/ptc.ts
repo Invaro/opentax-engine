@@ -33,9 +33,14 @@
  * MFS refuses the credit (§ 36B(c)(1)(C): joint return required; the
  * Reg. § 1.36B-2(b)(2) domestic-abuse/abandonment exception is not
  * modeled — conservative). Below 100% FPL: not an applicable taxpayer —
- * $0 (the lawfully-present-immigrant special rule, § 36B(c)(1)(B), was
- * struck by OBBBA § 71302 for 2026 and is not modeled for 2025 —
- * conservative, disclosed).
+ * $0 — unless Reg. § 1.36B-2(b)(6) applies: the Marketplace estimated at
+ * enrollment that household income would be at least 100% FPL and advance
+ * payments were made (ptcEnrollmentEstimateAtLeast100Fpl, asked only then);
+ * the credit then computes at the lowest tier's percentage (Form 8962
+ * instructions, line 6). The lawfully-present-immigrant special rule,
+ * § 36B(c)(1)(B), was struck by OBBBA § 71302 for 2026 and is not modeled
+ * for 2025 — conservative, disclosed. Household income is floored at zero
+ * (Form 8962 line 3).
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
@@ -61,20 +66,24 @@ const isStatus = (status: string): Expr => ({
  * MAGI not modeled — disclosed).
  */
 const householdIncome: Expr = {
-  kind: "add",
-  args: [
-    ruleRef("us.federal.agi"),
-    ruleRef("us.federal.feie.exclusion"),
-    fact("taxExemptInterest"),
-    {
-      kind: "max0",
-      arg: {
-        kind: "sub",
-        left: fact("socialSecurityBenefits"),
-        right: ruleRef("us.federal.taxable_social_security"),
+  // Form 8962 line 3: "If the total is less than zero, enter -0-"
+  kind: "max0",
+  arg: {
+    kind: "add",
+    args: [
+      ruleRef("us.federal.agi"),
+      ruleRef("us.federal.feie.exclusion"),
+      fact("taxExemptInterest"),
+      {
+        kind: "max0",
+        arg: {
+          kind: "sub",
+          left: fact("socialSecurityBenefits"),
+          right: ruleRef("us.federal.taxable_social_security"),
+        },
       },
-    },
-  ],
+    ],
+  },
 };
 
 /** poverty line = firstPerson + increment × (household size − 1) */
@@ -214,9 +223,20 @@ function ptcRule(
   const core: Expr = {
     kind: "if",
     // § 36B(c)(1)(A): household income must be at least 100% of the
-    // poverty line — below it, not an applicable taxpayer
+    // poverty line — below it, not an applicable taxpayer unless Reg.
+    // § 1.36B-2(b)(6) applies (the Marketplace estimated 100%+ at
+    // enrollment and advance payments were made); the lowest tier's
+    // percentage then applies
     cond: { kind: "cmp", op: "lt", left: fplPercentCents, right: money("10000") },
-    then: zero,
+    then: {
+      kind: "if",
+      cond: {
+        kind: "and",
+        args: [gt0(fact("advancePTC")), fact("ptcEnrollmentEstimateAtLeast100Fpl")],
+      },
+      then: inRange,
+      else: zero,
+    },
     else: inRange,
   };
   return {
@@ -226,7 +246,7 @@ function ptcRule(
     title: `Premium tax credit (§ 36B, ${yearLabel})`,
     citation: {
       source:
-        version > 1
+        from >= "2026-01-01"
           ? "26 U.S.C. § 36B (post-ARPA-sunset); Rev. Proc. 2025-25 § 3.01; 90 FR 5917 (2025 HHS poverty guidelines)"
           : "26 U.S.C. § 36B(b)(3)(A)(iii), (c)(1)(E) (ARPA/IRA, sunset before 2026); Rev. Proc. 2024-35 § 2.01; 89 FR 2961 (2024 HHS poverty guidelines)",
       section: "§ 36B(b), (c)(1), (d)",
@@ -337,7 +357,7 @@ function repayment2025(): Rule {
   };
   return {
     id: "us.federal.ptc.excess_aptc_repayment",
-    version: 1,
+    version: 3, // v1 let household income go negative (Form 8962 line 3 floors it at zero)
     jurisdiction: J,
     title: "Excess advance PTC repayment, limited (§ 36B(f)(2)(B), TY2025)",
     citation: {
@@ -372,7 +392,7 @@ function repayment2025(): Rule {
 
 export const ptcRules: Rule[] = [
   ptcRule(
-    2,
+    4, // v2 gave $0 below 100% FPL even under Reg. § 1.36B-2(b)(6), let household income go negative, and cited the 2026 sources
     "2025-01-01",
     "2026-01-01",
     "1506000", // $15,060 (2024 guidelines, used for TY2025)
@@ -381,10 +401,10 @@ export const ptcRules: Rule[] = [
     // 400%+ in 2025: 8.5%, no cliff (§ 36B(c)(1)(E))
     money("850"),
     "TY2025: ARPA/IRA 0–8.5%, no 400% cliff",
-    "For taxable years beginning after December 31, 2020, and before January 1, 2026, the enhanced table applies (§ 36B(b)(3)(A)(iii); Rev. Proc. 2024-35: 0% to 150% FPL, rising linearly to 8.5% at 300–400%) and subparagraph (A) is applied 'without regard to \"but does not exceed 400 percent\"' (§ 36B(c)(1)(E)) — 8.5% with NO income cliff. Premium assistance is the lesser of enrollment premiums or the excess of the SLCSP benchmark over the applicable percentage of household income (§ 36B(b)(2)). Household income = MAGI + tax-exempt interest + the § 911 exclusion + nontaxable social security (§ 36B(d)(2)(B)); poverty line per the 2024 HHS guidelines (89 FR 2961: $15,060 + $5,380/person, 48 contiguous states — Alaska/Hawaii's higher guidelines not modeled, conservative). Below 100% FPL: not an applicable taxpayer — $0 (§ 36B(c)(1)(A); the (c)(1)(B) immigrant special rule not modeled, conservative). Married filing separately: $0 (§ 36B(c)(1)(C); the abuse/abandonment exception not modeled). [Monthly computation annualized; dependents' MAGI and the § 36B(c)(2) employer-coverage/affordability disqualifications attested by the inputs; Form 8962's whole-percent and 4-decimal table rounding may differ sub-dollar — statutory linear interpolation encoded.]",
+    "For taxable years beginning after December 31, 2020, and before January 1, 2026, the enhanced table applies (§ 36B(b)(3)(A)(iii); Rev. Proc. 2024-35: 0% to 150% FPL, rising linearly to 8.5% at 300–400%) and subparagraph (A) is applied 'without regard to \"but does not exceed 400 percent\"' (§ 36B(c)(1)(E)) — 8.5% with NO income cliff. Premium assistance is the lesser of enrollment premiums or the excess of the SLCSP benchmark over the applicable percentage of household income (§ 36B(b)(2)). Household income = MAGI + tax-exempt interest + the § 911 exclusion + nontaxable social security (§ 36B(d)(2)(B)); poverty line per the 2024 HHS guidelines (89 FR 2961: $15,060 + $5,380/person, 48 contiguous states — Alaska/Hawaii's higher guidelines not modeled, conservative). Below 100% FPL: not an applicable taxpayer — $0 (§ 36B(c)(1)(A); the (c)(1)(B) immigrant special rule not modeled, conservative) — unless the Marketplace estimated at enrollment that household income would be at least 100% FPL and advance payments were made (Reg. § 1.36B-2(b)(6); 2025 Form 8962 instructions, 'Estimated household income at least 100% of the federal poverty line'), when the 0% first-tier percentage applies. Household income below zero counts as zero (Form 8962 line 3). Married filing separately: $0 (§ 36B(c)(1)(C); the abuse/abandonment exception not modeled). [Monthly computation annualized; dependents' MAGI and the § 36B(c)(2) employer-coverage/affordability disqualifications attested by the inputs; Form 8962's whole-percent and 4-decimal table rounding may differ sub-dollar — statutory linear interpolation encoded.]",
   ),
   ptcRule(
-    3,
+    5, // v3 gave $0 below 100% FPL even under Reg. § 1.36B-2(b)(6) and let household income go negative
     "2026-01-01",
     "2027-01-01",
     "1565000", // $15,650 (2025 guidelines, used for TY2026)
@@ -393,7 +413,7 @@ export const ptcRules: Rule[] = [
     // the 2026 cliff: over 400% FPL → not an applicable taxpayer → $0 credit
     "cliff",
     "TY2026: indexed statutory table, the 400% cliff returns",
-    "For taxable years beginning in 2026 the ARPA/IRA enhancements have sunset by their own terms: the applicable percentage comes from the indexed statutory table (Rev. Proc. 2025-25 § 3.01: 2.10% under 133% FPL; 3.14→4.19 at 133–150; 4.19→6.60 at 150–200; 6.60→8.44 at 200–250; 8.44→9.96 at 250–300; 9.96 at 300–400), and the term 'applicable taxpayer' again requires household income that 'does not exceed 400 percent of… the poverty line' (§ 36B(c)(1)(A)) — one dollar past 400% FPL destroys the entire credit. Premium assistance is the lesser of enrollment premiums or the SLCSP benchmark minus the applicable percentage of household income (§ 36B(b)(2)). Household income = MAGI + tax-exempt interest + the § 911 exclusion + nontaxable social security (§ 36B(d)(2)(B)); poverty line per the 2025 HHS guidelines (90 FR 5917: $15,650 + $5,500/person, 48 contiguous states — AK/HI not modeled, conservative). Below 100% FPL: $0 (§ 36B(c)(1)(A); OBBBA § 71302 struck the (c)(1)(B) special rule). MFS: $0 (§ 36B(c)(1)(C)). [Monthly computation annualized; dependents' MAGI and employer-coverage disqualifications attested; Form 8962 rounding may differ sub-dollar.]",
+    "For taxable years beginning in 2026 the ARPA/IRA enhancements have sunset by their own terms: the applicable percentage comes from the indexed statutory table (Rev. Proc. 2025-25 § 3.01: 2.10% under 133% FPL; 3.14→4.19 at 133–150; 4.19→6.60 at 150–200; 6.60→8.44 at 200–250; 8.44→9.96 at 250–300; 9.96 at 300–400), and the term 'applicable taxpayer' again requires household income that 'does not exceed 400 percent of… the poverty line' (§ 36B(c)(1)(A)) — one dollar past 400% FPL destroys the entire credit. Premium assistance is the lesser of enrollment premiums or the SLCSP benchmark minus the applicable percentage of household income (§ 36B(b)(2)). Household income = MAGI + tax-exempt interest + the § 911 exclusion + nontaxable social security (§ 36B(d)(2)(B)); poverty line per the 2025 HHS guidelines (90 FR 5917: $15,650 + $5,500/person, 48 contiguous states — AK/HI not modeled, conservative). Below 100% FPL: $0 (§ 36B(c)(1)(A); OBBBA § 71302 struck the (c)(1)(B) special rule) — unless the Marketplace estimated at enrollment that household income would be at least 100% but no more than 400% FPL and advance payments were made (Reg. § 1.36B-2(b)(6); 2026 draft Form 8962 instructions), when the 2.10% first-tier percentage applies. Household income below zero counts as zero (Form 8962 line 3). MFS: $0 (§ 36B(c)(1)(C)). [Monthly computation annualized; dependents' MAGI and employer-coverage disqualifications attested; Form 8962 rounding may differ sub-dollar.]",
   ),
   {
     id: "us.federal.ptc.net",

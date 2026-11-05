@@ -1,0 +1,20 @@
+{
+  "description": "TY2026, household income below 100% of the poverty line and the Reg. § 1.36B-2(b)(6) conditions not met: not an applicable taxpayer, credit $0, and the $6,000 advance is repaid in full (the § 36B(f)(2)(B) cap is repealed for 2026).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "nonpassiveScheduleELoss": 160000,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 8000,
+    "marketplacePremiumsPaid": 8000,
+    "advancePTC": 6000,
+    "ptcEnrollmentEstimateAtLeast100Fpl": false
+  },
+  "asOf": "2026-12-31",
+  "expect": {
+    "valueCents": "600000",
+    "intermediates": {
+      "us.federal.ptc": "0"
+    }
+  }
+}

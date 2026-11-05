@@ -1,0 +1,21 @@
+{
+  "description": "TY2026 single: qualified dividends $200,000, net LTCG $1,000,000. Taxable income $1,183,900; worksheet line 4 $1,200,000, line 5 $0. Regular tax: 0% on $49,450, 15% on $496,050 = $74,407.50, 20% on $638,400 = $127,680 → $202,087.50. AMTI $1,200,000; exemption $90,100 − 50% × $700,000 → $0. Form 6251 line 16 = $1,200,000, line 17 $0; 15% on $496,050 = $74,407.50; 20% on $654,500 = $130,900; line 38 $205,307.50 < line 39 28% × $1,200,000 − $4,890 = $331,110 → AMT $3,220. NIIT 3.8% × $1,000,000 = $38,000. Total $243,307.50.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "qualifiedDividends": 200000,
+    "longTermCapitalGains": 1000000
+  },
+  "asOf": "2026-12-31",
+  "expect": {
+    "valueCents": "24330750",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "20208750",
+      "us.federal.amt.amti": "120000000",
+      "us.federal.amt.capital_gain_amount": "120000000",
+      "us.federal.amt.tentative_minimum_tax": "20530750",
+      "us.federal.amt": "322000",
+      "us.federal.niit": "3800000"
+    }
+  }
+}
