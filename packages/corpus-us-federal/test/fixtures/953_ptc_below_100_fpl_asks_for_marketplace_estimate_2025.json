@@ -1,0 +1,20 @@
+{
+  "description": "Below 100% of the poverty line with advance PTC paid, the engine asks whether the Marketplace estimated at least 100% at enrollment (Reg. § 1.36B-2(b)(6)) instead of assuming either answer.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "nonpassiveScheduleELoss": 160000,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 8000,
+    "marketplacePremiumsPaid": 8000,
+    "advancePTC": 6000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.ptc",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "ptcEnrollmentEstimateAtLeast100Fpl"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "TY2026 MFS add-back: § 55(d)(4)(A)(ii)(IV) substitutes 50 percent for 25 percent in § 55(d)(2), and the exemption reaches zero at $640,200 (the 2026 draft Form 6251 line 4 threshold). MFS: wages $800,000 → line 4 before the add-back $800,000; 50% × $159,800 = $79,900, capped at the $70,100 exemption → AMTI $870,100.",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 800000,
+    "spouseItemizes": false
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.amt.amti",
+  "expect": {
+    "valueCents": "87010000"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "description": "A negative AGI never creates a deduction. TY2026 single: wages $90,000, interest $100,000, Schedule C loss $256,000 → AGI −$66,000; state and local taxes $5,000; no medical, casualty or charitable amounts. The 7.5% and 10% floors read the negative AGI as zero, so the medical and casualty deductions are $0 (reading it as negative gave $4,950 and $6,600, 17.5% of $66,000). Itemized deductions $5,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "taxableInterest": 100000,
+    "scheduleCNetLoss": 256000,
+    "stateAndLocalTaxesPaid": 5000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.itemized_deductions",
+  "expect": {
+    "valueCents": "500000",
+    "intermediates": {
+      "us.federal.agi": "-6600000",
+      "us.federal.medical_expense_deduction": "0",
+      "us.federal.casualty_loss_deduction": "0",
+      "us.federal.charitable_deduction_itemizer": "0"
+    }
+  }
+}

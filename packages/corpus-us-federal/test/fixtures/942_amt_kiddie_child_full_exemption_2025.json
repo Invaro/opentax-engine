@@ -1,0 +1,22 @@
+{
+  "description": "§ 59(j) does not cap a kiddie-tax child's AMT exemption: § 55(d)(4)(A)(iii) says it \"shall not apply\" for taxable years beginning after 2017, and the 2025 Exemption Worksheet has no such step. A dependent child: wages $5,000 (standard deduction $5,450, taxable income $0), ISO spread $120,000. Line 1b −$450 + line 2a $5,450 + $120,000 → AMTI $125,000; exemption the full $88,100; line 6 $36,900 × 26% = $9,594; regular tax $0 → AMT $9,594. (Capping the exemption at $5,000 + $9,550 gave $28,717.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 5000,
+    "isClaimedAsDependent": true,
+    "isSubjectToKiddieTax": true,
+    "parentTaxableIncome": 100000,
+    "parentHasPreferentialIncome": false,
+    "amtIsoExerciseSpread": 120000,
+    "parentFilingStatus": "mfj"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "959400",
+    "intermediates": {
+      "us.federal.amt.amti": "12500000",
+      "us.federal.amt.exemption": "8810000"
+    }
+  }
+}

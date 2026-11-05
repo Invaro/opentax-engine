@@ -1,0 +1,22 @@
+{
+  "description": "Form 6251 Part III line 13 is line 4 of the Qualified Dividends and Capital Gain Tax Worksheet, not limited to taxable income. MFJ 2025: interest $10,000, net LTCG $2,000,000. AGI $2,010,000, taxable income $1,978,500, worksheet line 4 $2,000,000, line 5 $0. Regular tax: 0% on $96,700, 15% on $503,350 = $75,502.50, 20% on $1,378,450 = $275,690.00 → $351,192.50. AMTI $2,010,000 (line 1b $1,978,500 + standard deduction $31,500); exemption $137,000 − 25% × $757,300 → $0. Line 16 = min($2,010,000, $2,000,000); line 17 $10,000 × 26% = $2,600; line 23 0% on $96,700; line 30 15% on $503,350 = $75,502.50; line 33 20% on $1,399,950 = $279,990.00; line 38 $358,092.50 < line 39 $558,018 → TMT $358,092.50, AMT $6,900.00. NIIT 3.8% × $1,760,000 = $66,880. Total $424,972.50. Capping line 13 at taxable income gives AMT $8,190.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "taxableInterest": 10000,
+    "longTermCapitalGains": 2000000
+  },
+  "asOf": "2025-12-31",
+  "expect": {
+    "valueCents": "42497250",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "35119250",
+      "us.federal.amt.amti": "201000000",
+      "us.federal.amt.exemption": "0",
+      "us.federal.amt.capital_gain_amount": "200000000",
+      "us.federal.amt.tentative_minimum_tax": "35809250",
+      "us.federal.amt": "690000",
+      "us.federal.niit": "6688000"
+    }
+  }
+}

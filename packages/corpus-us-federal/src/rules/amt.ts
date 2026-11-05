@@ -1,35 +1,56 @@
 /**
- * Individual alternative minimum tax — 26 U.S.C. §§ 55–59, Form 6251.
- * Verified July 2026 from the Rev. Procs. (read from the PDFs):
+ * Individual alternative minimum tax — 26 U.S.C. §§ 55–59, Form 6251,
+ * line by line. Verified November 2026 against the 2025 Form 6251 and its
+ * instructions, the 2026 draft Form 6251 (created 5/26/26), and the Rev.
+ * Procs. (all read from the PDFs):
  *
  *   TY2025 (Rev. Proc. 2024-40 § 2.11): exemptions $88,100 single/HoH,
  *   $137,000 joint/QSS, $68,500 MFS; phase-out at 25% above $626,350 /
- *   $1,252,700 / $626,350; 28% rate above $239,100 ($119,550 MFS);
- *   § 59(j) kiddie-child exemption ≤ earned income + $9,550.
+ *   $1,252,700 / $626,350; 28% rate above $239,100 ($119,550 MFS), i.e.
+ *   28% less $4,782 ($2,391 MFS). MFS line 4 add-back above $900,350.
  *
  *   TY2026 (Rev. Proc. 2025-32 §§ 3.10–3.11, verbatim): exemptions
  *   $90,100 / $140,200 / $70,100; the OBBBA RESET the phase-out to
- *   $500,000 / $1,000,000 / $500,000 at a 50% rate — the printed
- *   complete-phase-out amounts ($680,200 / $1,280,400 / $640,200)
- *   arithmetically confirm the 50% rate; 28% above $244,500 ($122,250
- *   MFS); kiddie exemption ≤ earned income + $9,750.
+ *   $500,000 / $1,000,000 / $500,000 at a 50% rate (§ 55(d)(4)(A)(ii)(IV)
+ *   substitutes "50 percent" for "25 percent" in § 55(d)(2), and the MFS
+ *   add-back sentence is part of § 55(d)(2), so its rate is 50% too — read
+ *   from the statute; the 2026 instructions are not out, and the draft
+ *   form's $640,200 MFS line 4 threshold confirms only where the exemption
+ *   reaches zero); 28% above $244,500 ($122,250 MFS), i.e. 28% less $4,890
+ *   ($2,445 MFS).
  *
- * AMTI here = taxable income plus the adjustments our fact space can
- * produce: the SALT deduction (§ 56(b)(1)(A)(ii)) when itemizing, the
- * standard deduction (§ 56(b)(1)(E)) when not, the OBBBA senior
- * deduction (added back per the 2025 Form 6251 instructions — treated
- * as a personal-exemption adjustment), the ISO exercise spread
- * (§ 56(b)(3)), and a catch-all preferences fact (private-activity-bond
- * interest, depreciation adjustments, …). The §§ 224/225/163(h)(4)/
- * 170(p) OBBBA deductions and § 199A have no AMT addback — allowed.
- * Capital gains keep their 0/15/20 treatment (Form 6251 Part III),
- * positioned by the regular worksheet's quantities.
+ * Part I. Line 1b is Form 1040 line 11b (AGI) less line 14 (the standard or
+ * itemized deduction, the § 170(p) deduction for 2026, Schedule 1-A and
+ * § 199A) with the Schedule 1-A senior deduction left in (2025 Form 6251
+ * instructions: it is a personal exemption, which § 56(b)(1)(D) disallows;
+ * the instructions print the cite as "section 56(b)(5)(D)").
+ * An itemizer also subtracts the TY2026+ § 68 reduction ("Section 68 shall
+ * not apply", § 56(b)(1)(E)); a non-itemizer whose standard deduction was
+ * increased by a net qualified disaster loss adds back only the standard
+ * deduction before the increase (2025 instructions, lines 2a and 3).
+ * Unlike taxable income it is NOT floored at zero: "if less than zero,
+ * enter as a negative amount". Line 2a adds back the Schedule A taxes when
+ * itemizing, the line 12e deduction otherwise; line 2i is the § 56(b)(3)
+ * ISO spread; other adjustments come in as one attested amount.
  *
- * Disclosed simplifications: the § 55(d)(3) MFS add-back above the
- * complete phase-out and the new-§ 68 unwind question are not modeled;
- * when the AMT base is smaller than the preferential gains (deep
- * exemption territory) the ordinary part floors at zero — TMT is far
- * below the regular tax there and the max0 yields zero AMT.
+ * Part III. Line 13 is line 4 of the Qualified Dividends and Capital Gain
+ * Tax Worksheet (net capital gain plus qualified dividends), NOT limited
+ * to taxable income; line 16 takes the smaller of it and line 12, so the
+ * 26/28% rates reach only the part of the AMT base that is not adjusted net
+ * capital gain (§ 55(b)(3)). The 0% and 15% bands are positioned by the
+ * regular worksheet's line 5 (lines 20 and 27), and line 40 caps the result
+ * at the flat 26/28% tax on the whole base (line 39).
+ *
+ * § 59(j) (a kiddie-tax child's exemption capped at earned income plus a
+ * dollar amount) does not apply: § 55(d)(4)(A)(iii) switches it off for
+ * taxable years beginning after December 31, 2017, and the 2025 Exemption
+ * Worksheet has no such step. The Rev. Procs. still print the amount.
+ *
+ * Disclosed simplifications: of Schedule 2 line 1z only the excess advance
+ * premium tax credit repayment is modeled; no Schedule D Tax Worksheet (unrecaptured
+ * § 1250 and 28% gain are not modeled, so lines 14 and 35–37 are zero);
+ * line 13 is not refigured for AMT basis differences; no AMT foreign tax
+ * credit (line 8); no § 53 credit carryforward.
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
@@ -42,243 +63,325 @@ const money = (cents: string): Expr => ({ kind: "money", cents });
 const ruleRef = (ruleId: string): Expr => ({ kind: "rule", ruleId });
 const param = (name: string): Expr => ({ kind: "param", name });
 const d = (dollars: number): Expr => money(String(BigInt(dollars) * 100n));
+const add = (...args: Expr[]): Expr => ({ kind: "add", args });
+const sub = (left: Expr, right: Expr): Expr => ({ kind: "sub", left, right });
+const max0 = (arg: Expr): Expr => ({ kind: "max0", arg });
+const min = (...args: Expr[]): Expr => ({ kind: "min", args });
+const pct = (base: Expr, num: string, den = "100"): Expr => ({
+  kind: "mulRate",
+  base,
+  rate: { num, den },
+  round: "half-up",
+});
+const isMfs: Expr = {
+  kind: "cmp",
+  op: "eq",
+  left: fact("filingStatus"),
+  right: { kind: "enum", value: "mfs" },
+};
 
-const taxable = ruleRef("us.federal.taxable_income");
-const regOrdinary = ruleRef("us.federal.ordinary_taxable_income");
+const amti = ruleRef("us.federal.amt.amti");
+const line12 = ruleRef("us.federal.amt.taxable_excess");
+const line13 = ruleRef("us.federal.amt.capital_gain_amount");
+const qdcgLine5 = ruleRef("us.federal.ordinary_taxable_income");
+
+const SOURCE_2025 = "Form 6251 (2025) and instructions; Rev. Proc. 2024-40 § 2.11";
+const SOURCE_2026 = "Form 6251 (2026, draft created 5/26/26); Rev. Proc. 2025-32 §§ 3.10–3.11; Pub. L. 119-21 (OBBBA) § 70107";
+const F6251_URL = "https://www.irs.gov/pub/irs-pdf/f6251.pdf";
 
 interface AmtYear {
+  year: string;
+  from: string;
+  to: string;
+  source: string;
   exemptSingle: string; exemptJoint: string; exemptMfs: string;
   threshSingle: string; threshJoint: string; threshMfs: string;
-  phaseRate: { num: string; den: string };
+  /** § 55(d)(2) phase-out rate, also the MFS add-back rate */
+  phaseRate: string;
+  /** MFS AMTI at which the exemption reaches zero (line 4 instruction) */
+  mfsZeroAt: string;
   break28: string; break28Mfs: string;
-  kiddiePlus: string;
+  sub28: string; sub28Mfs: string;
+  cg: YearTables;
+  amountsNote: string;
 }
 
-function amtRule(
-  version: number,
-  from: string,
-  to: string,
-  year: string,
-  p: AmtYear,
-  cg: YearTables,
-  source: string,
-  amountsNote: string,
-): Rule {
-  const byStatus = (single: string, joint: string, mfs: string): Expr => ({
-    kind: "match",
-    on: fact("filingStatus"),
-    cases: [
-      { when: "single", value: param(single) },
-      { when: "hoh", value: param(single) },
-      { when: "mfj", value: param(joint) },
-      { when: "qss", value: param(joint) },
-      { when: "mfs", value: param(mfs) },
-    ],
-  });
+const Y2025: AmtYear = {
+  year: "2025", from: "2025-01-01", to: "2026-01-01", source: SOURCE_2025,
+  exemptSingle: "8810000", exemptJoint: "13700000", exemptMfs: "6850000",
+  threshSingle: "62635000", threshJoint: "125270000", threshMfs: "62635000",
+  phaseRate: "25",
+  mfsZeroAt: "90035000",
+  break28: "23910000", break28Mfs: "11955000",
+  sub28: "478200", sub28Mfs: "239100",
+  cg: TY2025,
+  amountsNote: "For 2025: exemptions $88,100 ($137,000 joint/QSS; $68,500 MFS) phasing out at 25% of AMTI over $626,350 ($1,252,700 joint/QSS; $626,350 MFS); 26% up to $239,100 ($119,550 MFS), above that 28% less $4,782 ($2,391 MFS).",
+};
 
-  // AMTI = taxable income + the addbacks our chain produced
-  const itemizing: Expr = {
+const Y2026: AmtYear = {
+  year: "2026", from: "2026-01-01", to: "2027-01-01", source: SOURCE_2026,
+  exemptSingle: "9010000", exemptJoint: "14020000", exemptMfs: "7010000",
+  threshSingle: "50000000", threshJoint: "100000000", threshMfs: "50000000",
+  phaseRate: "50",
+  mfsZeroAt: "64020000",
+  break28: "24450000", break28Mfs: "12225000",
+  sub28: "489000", sub28Mfs: "244500",
+  cg: TY2026,
+  amountsNote: "For 2026: exemptions $90,100 ($140,200 joint/QSS; $70,100 MFS) phasing out at 50% of AMTI over $500,000 ($1,000,000 joint/QSS; $500,000 MFS); 26% up to $244,500 ($122,250 MFS), above that 28% less $4,890 ($2,445 MFS).",
+};
+
+const byStatus = (single: string, joint: string, mfs: string): Expr => ({
+  kind: "match",
+  on: fact("filingStatus"),
+  cases: [
+    { when: "single", value: param(single) },
+    { when: "hoh", value: param(single) },
+    { when: "mfj", value: param(joint) },
+    { when: "qss", value: param(joint) },
+    { when: "mfs", value: param(mfs) },
+  ],
+});
+
+/** 26% up to the breakpoint, otherwise 28% less the subtraction (lines 18 and 39) */
+const tax2628 = (base: Expr): Expr => ({
+  kind: "if",
+  cond: {
     kind: "cmp",
-    op: "gt",
-    left: ruleRef("us.federal.itemized_deductions"),
-    right: {
-      kind: "add",
-      args: [
+    op: "le",
+    left: base,
+    right: { kind: "if", cond: isMfs, then: param("break28Mfs"), else: param("break28") },
+  },
+  then: pct(base, "26"),
+  else: sub(
+    pct(base, "28"),
+    { kind: "if", cond: isMfs, then: param("sub28Mfs"), else: param("sub28") },
+  ),
+});
+
+// the same decision as us.federal.deduction_election: a forced election, or
+// itemized deductions above the standard side (which carries the § 170(p)
+// deduction and the net qualified disaster loss increase)
+const itemizing: Expr = {
+  kind: "or",
+  args: [
+    fact("forceItemized"),
+    {
+      kind: "cmp",
+      op: "gt",
+      left: ruleRef("us.federal.itemized_deductions"),
+      right: add(
         ruleRef("us.federal.standard_deduction"),
         ruleRef("us.federal.charitable_deduction_nonitemizer"),
-      ],
+        fact("casualtyQualifiedDisasterLosses"),
+      ),
     },
-  };
-  const amti: Expr = {
-    kind: "add",
-    args: [
-      taxable,
+  ],
+};
+
+// Part I lines 1a–1b: AGI less Form 1040 line 14 without the senior deduction
+const line1b: Expr = sub(
+  ruleRef("us.federal.agi"),
+  add(
+    ruleRef("us.federal.deduction_election"),
+    ruleRef("us.federal.tips_deduction"),
+    ruleRef("us.federal.overtime_deduction"),
+    ruleRef("us.federal.car_loan_interest_deduction"),
+    ruleRef("us.federal.qbi_deduction"),
+  ),
+);
+const line4BeforeMfs: Expr = add(
+  line1b,
+  {
+    kind: "if",
+    cond: itemizing,
+    then: sub(
+      ruleRef("us.federal.salt_deduction"), // line 2a: Schedule A line 7
+      // line 3: "Section 68 shall not apply" (§ 56(b)(1)(E)) — the AMT
+      // allows the itemized deductions before the TY2026+ overall
+      // limitation (zero for 2025, when § 68 is suspended)
+      sub(
+        ruleRef("us.federal.itemized_deductions_before_limitation"),
+        ruleRef("us.federal.itemized_deductions"),
+      ),
+    ),
+    // line 2a (Form 1040 line 12e), or with a net qualified disaster loss,
+    // line 3: the standard deduction before the increase (2025 instructions)
+    else: ruleRef("us.federal.standard_deduction"),
+  },
+  fact("amtIsoExerciseSpread"), // line 2i
+  fact("amtOtherPreferences"), // lines 2b–3, attested
+);
+
+function amtiRule(version: number, y: AmtYear): Rule {
+  return {
+    id: "us.federal.amt.amti",
+    version,
+    jurisdiction: J,
+    title: `Alternative minimum taxable income — Form 6251 line 4 (TY${y.year})`,
+    citation: {
+      source: `26 U.S.C. §§ 55(b)(2), (d)(2), 56; ${y.source}`,
+      section: "Form 6251 lines 1a–4; § 55(d)(2) last sentence",
+      url: F6251_URL,
+      excerpt: `Line 1b: "Subtract line 1a from Form 1040, 1040-SR, or 1040-NR, line 11b (if less than zero, enter as a negative amount)", where line 1a is Form 1040 line 14 less the Schedule 1-A enhanced deduction for seniors. Line 2a: "If filing Schedule A (Form 1040), enter the taxes from Schedule A, line 7; otherwise, enter the amount from Form 1040 or 1040-SR, line 12e." An itemizer also subtracts the § 68 reduction, since "Section 68 shall not apply" (§ 56(b)(1)(E)); a filer who used Schedule A only for the net qualified disaster loss increase enters zero on line 2a and adds back the standard deduction before the increase on line 3 (2025 instructions). Line 2i adds the incentive stock option spread; other adjustments and preferences come in as one entered amount. Married filing separately: AMTI "shall be increased by the lesser of" ${y.phaseRate}% of the excess over $${(Number(y.mfsZeroAt) / 100).toLocaleString("en-US")} or the exemption amount (§ 55(d)(2)).`,
+    },
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
+    output: { type: "money" },
+    parameters: {
+      exemptMfs: { value: y.exemptMfs, type: "money" },
+      mfsZeroAt: { value: y.mfsZeroAt, type: "money" },
+    },
+    formula: add(
+      line4BeforeMfs,
       {
         kind: "if",
-        cond: itemizing,
-        then: ruleRef("us.federal.salt_deduction"),
-        else: ruleRef("us.federal.standard_deduction"),
+        cond: isMfs,
+        then: min(pct(max0(sub(line4BeforeMfs, param("mfsZeroAt"))), y.phaseRate), param("exemptMfs")),
+        else: money("0"),
       },
-      ruleRef("us.federal.senior_deduction"),
-      fact("amtIsoExerciseSpread"),
-      fact("amtOtherPreferences"),
-    ],
+    ),
   };
+}
 
-  // exemption with phase-out, capped for a § 1(g) child (§ 59(j))
-  const exemptionPhased: Expr = {
-    kind: "max0",
-    arg: {
-      kind: "sub",
-      left: byStatus("exemptSingle", "exemptJoint", "exemptMfs"),
-      right: {
-        kind: "mulRate",
-        base: {
-          kind: "max0",
-          arg: {
-            kind: "sub",
-            left: amti,
-            right: byStatus("threshSingle", "threshJoint", "threshMfs"),
-          },
-        },
-        rate: p.phaseRate,
-        round: "half-up",
-      },
+function exemptionRule(version: number, y: AmtYear): Rule {
+  return {
+    id: "us.federal.amt.exemption",
+    version,
+    jurisdiction: J,
+    title: `AMT exemption — Form 6251 line 5 (TY${y.year})`,
+    citation: {
+      source: `26 U.S.C. § 55(d); ${y.source}`,
+      section: "§ 55(d)(1), (d)(2), (d)(4); Form 6251 Exemption Worksheet",
+      url: "https://www.law.cornell.edu/uscode/text/26/55",
+      excerpt: `${y.amountsNote} The exemption is "reduced (but not below zero)" by the phase-out (§ 55(d)(2)). § 59(j) does not cap a kiddie-tax child's exemption: "subsection (j) of section 59 shall not apply" (§ 55(d)(4)(A)(iii)).`,
     },
-  };
-  const exemption: Expr = {
-    kind: "if",
-    cond: fact("isSubjectToKiddieTax"),
-    then: {
-      kind: "min",
-      args: [
-        exemptionPhased,
-        { kind: "add", args: [fact("wages"), param("kiddiePlus")] }, // earned ≈ wages
-      ],
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
+    output: { type: "money" },
+    parameters: {
+      exemptSingle: { value: y.exemptSingle, type: "money" },
+      exemptJoint: { value: y.exemptJoint, type: "money" },
+      exemptMfs: { value: y.exemptMfs, type: "money" },
+      threshSingle: { value: y.threshSingle, type: "money" },
+      threshJoint: { value: y.threshJoint, type: "money" },
+      threshMfs: { value: y.threshMfs, type: "money" },
     },
-    else: exemptionPhased,
+    formula: max0(
+      sub(
+        byStatus("exemptSingle", "exemptJoint", "exemptMfs"),
+        pct(max0(sub(amti, byStatus("threshSingle", "threshJoint", "threshMfs"))), y.phaseRate),
+      ),
+    ),
   };
+}
 
-  const base: Expr = { kind: "max0", arg: { kind: "sub", left: amti, right: exemption } };
-  // Part III: gains keep 0/15/20, positioned by the regular worksheet
-  const prefRegular: Expr = { kind: "sub", left: taxable, right: regOrdinary };
-  const amtOrdinary: Expr = { kind: "max0", arg: { kind: "sub", left: base, right: prefRegular } };
-  const break28: Expr = {
-    kind: "if",
-    cond: {
-      kind: "cmp",
-      op: "eq",
-      left: fact("filingStatus"),
-      right: { kind: "enum", value: "mfs" },
-    },
-    then: param("break28Mfs"),
-    else: param("break28"),
+function tmtRule(version: number, y: AmtYear): Rule {
+  // Part III, lines 16–40 (lines 14 and 35–37 are zero without a Schedule D Tax Worksheet)
+  const line16 = min(line12, line13);
+  const line17 = sub(line12, line16);
+  const line18 = tax2628(line17);
+  const bands = (s: { zeroMax: number; fifteenMax: number }): Expr => {
+    const line21 = max0(sub(d(s.zeroMax), qdcgLine5));
+    const line22 = min(line12, line13);
+    const line23 = min(line21, line22);
+    const line24 = sub(line22, line23);
+    const line29 = max0(sub(d(s.fifteenMax), add(line21, qdcgLine5)));
+    const line30 = min(line24, line29);
+    const line33 = sub(line22, add(line23, line30));
+    return add(pct(line30, "15"), pct(line33, "20"));
   };
-  const tmt26_28: Expr = {
-    kind: "add",
-    args: [
-      {
-        kind: "mulRate",
-        base: { kind: "min", args: [amtOrdinary, break28] },
-        rate: { num: "26", den: "100" },
-        round: "half-up",
-      },
-      {
-        kind: "mulRate",
-        base: { kind: "max0", arg: { kind: "sub", left: amtOrdinary, right: break28 } },
-        rate: { num: "28", den: "100" },
-        round: "half-up",
-      },
-    ],
-  };
-  // the same 15%/20% gain slices as the regular computation
-  const gainSlices = (sy: { zeroMax: number; fifteenMax: number }): Expr => {
-    const gain0: Expr = {
-      kind: "max0",
-      arg: {
-        kind: "sub",
-        left: { kind: "min", args: [d(sy.zeroMax), taxable] },
-        right: regOrdinary,
-      },
-    };
-    const gain15: Expr = {
-      kind: "max0",
-      arg: {
-        kind: "sub",
-        left: {
-          kind: "sub",
-          left: { kind: "min", args: [d(sy.fifteenMax), taxable] },
-          right: regOrdinary,
-        },
-        right: gain0,
-      },
-    };
-    const gain20: Expr = {
-      kind: "max0",
-      arg: {
-        kind: "sub",
-        left: { kind: "sub", left: prefRegular, right: gain0 },
-        right: gain15,
-      },
-    };
-    return {
-      kind: "add",
-      args: [
-        { kind: "mulRate", base: gain15, rate: { num: "15", den: "100" }, round: "half-up" },
-        { kind: "mulRate", base: gain20, rate: { num: "20", den: "100" }, round: "half-up" },
-      ],
-    };
-  };
-  const gainsTax: Expr = {
+  const line38 = add(line18, {
     kind: "match",
     on: fact("filingStatus"),
     cases: (["single", "mfj", "hoh", "mfs", "qss"] as const).map((st) => ({
       when: st,
-      value: gainSlices(cg[st]),
+      value: bands(y.cg[st]),
     })),
-  };
-
+  });
   return {
-    id: "us.federal.amt",
+    id: "us.federal.amt.tentative_minimum_tax",
     version,
     jurisdiction: J,
-    title: `Alternative minimum tax — Form 6251 (TY${year})`,
+    title: `Tentative minimum tax — Form 6251 lines 7 and 9, Part III (TY${y.year})`,
     citation: {
-      source: `26 U.S.C. §§ 55–59; ${source}`,
-      section: "§ 55(b), (d); §§ 56–59; § 59(j)",
-      url: "https://www.law.cornell.edu/uscode/text/26/55",
-      excerpt: `The excess of the tentative minimum tax — 26 percent of the taxable excess up to the 28-percent breakpoint and 28 percent above, with capital gains keeping their §1(h) rates (Form 6251 Part III) — over the regular tax. ${amountsNote} AMTI adds back the SALT deduction when itemizing, the standard deduction otherwise (§ 56(b)(1)), the OBBBA senior deduction (2025 Form 6251 instructions), the § 56(b)(3) ISO exercise spread, and entered preference items; the §§ 224/225/163(h)(4)/170(p) deductions and § 199A carry no addback. A § 1(g) child's exemption is capped at earned income (≈ wages) plus the § 59(j) amount. [Not modeled, disclosed: the § 55(d)(3) MFS add-back, AMT credit carryforward (§ 53), and the new-§ 68 unwind question.]`,
+      source: `26 U.S.C. § 55(b)(1), (b)(3); ${y.source}`,
+      section: "§ 55(b)(1)(A), (b)(3); Form 6251 lines 12–40",
+      url: F6251_URL,
+      excerpt: `Line 13: "Enter the amount from line 4 of the Qualified Dividends and Capital Gain Tax Worksheet"; line 16: "Enter the smaller of line 12 or line 15"; lines 20 and 27: the worksheet's line 5; line 22: "Enter the smaller of line 12 or line 13"; line 40: "Enter the smaller of line 38 or line 39". ${y.amountsNote} The 0% band ends at $${y.cg.single.zeroMax.toLocaleString("en-US")} single / $${y.cg.mfj.zeroMax.toLocaleString("en-US")} joint / $${y.cg.hoh.zeroMax.toLocaleString("en-US")} HoH / $${y.cg.mfs.zeroMax.toLocaleString("en-US")} MFS and the 15% band at $${y.cg.single.fifteenMax.toLocaleString("en-US")} / $${y.cg.mfj.fifteenMax.toLocaleString("en-US")} / $${y.cg.hoh.fifteenMax.toLocaleString("en-US")} / $${y.cg.mfs.fifteenMax.toLocaleString("en-US")}. [Not modeled, disclosed: the Schedule D Tax Worksheet (unrecaptured § 1250 and 28% gain), AMT refiguring of line 13, the AMT foreign tax credit (line 8).]`,
     },
-    effectiveFrom: from,
-    effectiveTo: to,
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
     output: { type: "money" },
     parameters: {
-      exemptSingle: { value: p.exemptSingle, type: "money" },
-      exemptJoint: { value: p.exemptJoint, type: "money" },
-      exemptMfs: { value: p.exemptMfs, type: "money" },
-      threshSingle: { value: p.threshSingle, type: "money" },
-      threshJoint: { value: p.threshJoint, type: "money" },
-      threshMfs: { value: p.threshMfs, type: "money" },
-      break28: { value: p.break28, type: "money" },
-      break28Mfs: { value: p.break28Mfs, type: "money" },
-      kiddiePlus: { value: p.kiddiePlus, type: "money" },
+      break28: { value: y.break28, type: "money" },
+      break28Mfs: { value: y.break28Mfs, type: "money" },
+      sub28: { value: y.sub28, type: "money" },
+      sub28Mfs: { value: y.sub28Mfs, type: "money" },
     },
-    formula: {
-      kind: "max0",
-      arg: {
-        kind: "sub",
-        left: { kind: "add", args: [tmt26_28, gainsTax] },
-        right: ruleRef("us.federal.income_tax_before_credits"),
-      },
-    },
+    formula: min(line38, tax2628(line12)),
   };
 }
 
 export const amtRules: Rule[] = [
-  amtRule(
-    1, "2025-01-01", "2026-01-01", "2025",
-    {
-      exemptSingle: "8810000", exemptJoint: "13700000", exemptMfs: "6850000",
-      threshSingle: "62635000", threshJoint: "125270000", threshMfs: "62635000",
-      phaseRate: { num: "25", den: "100" },
-      break28: "23910000", break28Mfs: "11955000",
-      kiddiePlus: "955000",
+  amtiRule(1, Y2025),
+  amtiRule(2, Y2026),
+  exemptionRule(1, Y2025),
+  exemptionRule(2, Y2026),
+  {
+    id: "us.federal.amt.taxable_excess",
+    version: 1,
+    jurisdiction: J,
+    title: "AMT taxable excess — Form 6251 line 6 (AMTI less the exemption)",
+    citation: {
+      source: "26 U.S.C. § 55(b)(1)(A)(ii), (b)(2)",
+      section: "§ 55(b)(1)(A)(ii); Form 6251 line 6",
+      url: F6251_URL,
+      excerpt: "Line 6: \"Subtract line 5 from line 4. If more than zero, go to line 7. If zero or less, enter -0- here and on lines 7, 9, and 11.\"",
     },
-    TY2025,
-    "Rev. Proc. 2024-40 §§ 2.11–2.12",
-    "For 2025: exemptions $88,100 ($137,000 joint/QSS; $68,500 MFS) phasing out at 25% of AMTI over $626,350 ($1,252,700 joint); the 28% rate applies above $239,100 ($119,550 MFS); the § 59(j) kiddie amount is $9,550.",
-  ),
-  amtRule(
-    2, "2026-01-01", "2027-01-01", "2026",
-    {
-      exemptSingle: "9010000", exemptJoint: "14020000", exemptMfs: "7010000",
-      threshSingle: "50000000", threshJoint: "100000000", threshMfs: "50000000",
-      phaseRate: { num: "50", den: "100" },
-      break28: "24450000", break28Mfs: "12225000",
-      kiddiePlus: "975000",
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: max0(sub(amti, ruleRef("us.federal.amt.exemption"))),
+  },
+  {
+    id: "us.federal.amt.capital_gain_amount",
+    version: 1,
+    jurisdiction: J,
+    title: "Form 6251 line 13: net capital gain plus qualified dividends (QDCG worksheet line 4, not limited to taxable income)",
+    citation: {
+      source: "26 U.S.C. § 55(b)(3); § 1(h)(3), (h)(11); Form 6251 line 13",
+      section: "§ 55(b)(3); Form 6251 line 13",
+      url: F6251_URL,
+      excerpt: "Line 13: \"Enter the amount from line 4 of the Qualified Dividends and Capital Gain Tax Worksheet in the Instructions for Form 1040\". Worksheet line 4 adds qualified dividends (line 2) and the smaller of Schedule D line 15 or 16 (line 3); taxable income enters only at line 5.",
     },
-    TY2026,
-    "Rev. Proc. 2025-32 §§ 3.10–3.11; Pub. L. 119-21 (OBBBA)",
-    "For 2026: exemptions $90,100 ($140,200 joint/QSS; $70,100 MFS) — but the OBBBA RESET the phase-out thresholds to $500,000 ($1,000,000 joint) at a DOUBLED 50% rate (the printed complete-phase-out amounts $680,200/$1,280,400 confirm it arithmetically); the 28% rate applies above $244,500 ($122,250 MFS); the § 59(j) kiddie amount is $9,750.",
-  ),
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: add(ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends")),
+  },
+  tmtRule(1, Y2025),
+  tmtRule(2, Y2026),
+  {
+    id: "us.federal.amt",
+    version: 3, // v1/v2 capped line 13 at taxable income, never applied line 39, floored line 1 at zero, applied § 59(j) and skipped the MFS add-back
+    jurisdiction: J,
+    title: "Alternative minimum tax — Form 6251 line 11",
+    citation: {
+      source: "26 U.S.C. § 55(a); Form 6251 lines 9–11",
+      section: "§ 55(a)",
+      url: "https://www.law.cornell.edu/uscode/text/26/55",
+      excerpt: "The alternative minimum tax is \"the excess (if any) of the tentative minimum tax for the taxable year, over the regular tax for the taxable year\" (§ 55(a)). Line 10: \"Add Form 1040 or 1040-SR, line 16 (minus any tax from Form 4972), and Schedule 2 (Form 1040), line 1z\" — of line 1z the engine models line 1a, the excess advance premium tax credit repayment; line 11: \"Subtract line 10 from line 9. If zero or less, enter -0-.\" [Not modeled, disclosed: AMT foreign tax credit, § 53 credit carryforward.]",
+    },
+    effectiveFrom: "2025-01-01",
+    output: { type: "money" },
+    formula: max0(
+      sub(
+        ruleRef("us.federal.amt.tentative_minimum_tax"),
+        add(
+          ruleRef("us.federal.income_tax_before_credits"),
+          // Schedule 2 line 1z: of its items the engine models line 1a,
+          // the excess advance premium tax credit repayment
+          ruleRef("us.federal.ptc.excess_aptc_repayment"),
+        ),
+      ),
+    ),
+  },
 ];

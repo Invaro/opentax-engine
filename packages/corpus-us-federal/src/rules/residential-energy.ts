@@ -79,8 +79,8 @@ const pctOf = (base: Expr, rateRule: string): Expr => ({
   round: "half-up",
 });
 
-/** § 26(a) base: regular tax + AMT (Form 1040 line 16 + Schedule 2 line 1) — the corpus's limit base for every nonrefundable credit. */
-const limitBase: Expr = add(ruleRef("us.federal.income_tax_before_credits"), ruleRef("us.federal.amt"));
+/** § 26(a) base: Form 1040 line 18 (line 16 + Schedule 2 line 3, which carries the AMT) — the corpus's limit base for every nonrefundable credit. */
+const limitBase: Expr = ruleRef("us.federal.tax_before_nonrefundable_credits");
 
 const F5695_2025 = "2025 Form 5695 (Cat. No. 13540P, created 3/20/25) and Instructions for Form 5695 (2025) (Cat. No. 66412G, rev. Jan. 22, 2026)";
 const URL_25D = "https://www.law.cornell.edu/uscode/text/26/25D";

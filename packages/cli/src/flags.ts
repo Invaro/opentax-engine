@@ -4204,6 +4204,23 @@ export const FACT_FLAGS: FactFlag[] = [
     boolean: true,
   },
   {
+    factId: "ptcEnrollmentEstimateAtLeast100Fpl",
+    option: "--ptc-enrollment-estimate-eligible",
+    key: "ptcEnrollmentEstimateEligible",
+    group: "Health coverage (§ 36B):",
+    help: "Reg. 1.36B-2(b)(6): Marketplace estimated 100%+ FPL at enrollment (PTC below 100% FPL)",
+    boolean: true,
+  },
+  {
+    factId: "ptcEnrollmentEstimateAtLeast100Fpl",
+    option: "--ptc-enrollment-estimate-not-eligible",
+    key: "ptcEnrollmentEstimateNotEligible",
+    group: "Health coverage (§ 36B):",
+    help: "Reg. 1.36B-2(b)(6) does not apply (no PTC below 100% FPL)",
+    boolean: true,
+    setValue: false,
+  },
+  {
     factId: "mfsAbuseOrAbandonmentException",
     option: "--mfs-abuse-abandonment-relief",
     key: "mfsAbuseAbandonmentRelief",

@@ -481,6 +481,8 @@ server.registerTool(
       const ti = get("us.federal.taxable_income");
       const tax16 = get("us.federal.income_tax_before_credits");
       const amt = get("us.federal.amt");
+      // Schedule 2 line 1a joins the AMT on line 17 (Schedule 2 line 3)
+      const aptcRepayment = get("us.federal.ptc.excess_aptc_repayment");
       const ctc = get("us.federal.ctc");
       const after = get("us.federal.income_tax_after_credits");
       const other = get("us.federal.other_taxes");
@@ -533,6 +535,7 @@ server.registerTool(
           "15_taxable_income": d(ti),
           "16_tax": d(tax16),
           "17_amt": d(amt),
+          ...(aptcRepayment > 0n ? { "17_excess_aptc_repayment": d(aptcRepayment) } : {}),
           "19_ctc_odc": d(ctc),
           "20_other_nonrefundable_credits": d(line20),
           "22_tax_after_credits": d(after),

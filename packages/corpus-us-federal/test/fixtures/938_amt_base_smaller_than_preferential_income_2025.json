@@ -1,0 +1,18 @@
+{
+  "description": "When the AMT base (Form 6251 line 12) is smaller than net capital gain plus qualified dividends, the whole base is taxed at the capital gain rates (line 22 = min(line 12, line 13)). MFJ 2025: wages $90,000, qualified dividends $150,000. Taxable income $208,500, worksheet line 5 $58,500. AMTI $240,000 − exemption $137,000 = $103,000. Line 17 $0; line 21 $96,700 − $58,500 = $38,200 at 0%; line 24 $64,800; line 29 $600,050 − $96,700 = $503,350; line 30 $64,800 × 15% = $9,720; line 33 $0. Line 38 $9,720 < line 39 26% × $103,000 = $26,780 → TMT $9,720.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 90000,
+    "qualifiedDividends": 150000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt.tentative_minimum_tax",
+  "expect": {
+    "valueCents": "972000",
+    "intermediates": {
+      "us.federal.amt.taxable_excess": "10300000",
+      "us.federal.amt.capital_gain_amount": "15000000",
+      "us.federal.ordinary_taxable_income": "5850000"
+    }
+  }
+}

@@ -4,8 +4,8 @@
     "title": "OpenTax hosted API",
     "version": "corpus 0.43.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:d6b9c2d6a0202049e9a03849d278979ea9111786707a7154a41cf823cfa2368b",
-    "x-generated": "2026-10-31T20:06:25.333Z"
+    "x-corpus-merkle-root": "sha256:6eb28721bca93d9a2ab318c19c7e5f8c082844882e3b87cfb0d6d021afa687b4",
+    "x-generated": "2026-11-05T22:07:31.293Z"
   },
   "servers": [
     {
@@ -1260,6 +1260,10 @@
                                   }
                                 ],
                                 "description": "Tax family size for the § 36B poverty-line lookup (§ 36B(d)(1): the taxpayer, spouse on a joint return, and dependents). Required when claiming the premium tax credit."
+                              },
+                              "ptcEnrollmentEstimateAtLeast100Fpl": {
+                                "type": "boolean",
+                                "description": "Household income is below 100% of the federal poverty line, yet the Marketplace estimated at enrollment that it would be at least 100% (for 2026: at least 100% but no more than 400%) of the poverty line for the family size, advance PTC was paid, no one can claim the taxpayer as a dependent, and the taxpayer did not give the Marketplace incorrect information with intentional or reckless disregard for the facts. Reg. § 1.36B-2(b)(6) then treats the taxpayer as an applicable taxpayer (Form 8962 instructions, 'Estimated household income at least 100% of the federal poverty line'). Asked only when household income is under 100% of the poverty line and advance PTC was paid."
                               }
                             },
                             "additionalProperties": false,
@@ -1629,7 +1633,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "California alternative minimum taxable income (Schedule P (540) Part I, line 17) — AGENT-COMPUTED per the R&TC §§ 17062(c)-(e), 17062.1 construction rules, then fed to the CA AMT target (us.ca.amt). CONSTRUCTION NOTES (disclose when composing this figure): California individual AMT is FROZEN to IRC §§ 55-59 as they read on January 1, 2015 (R&TC § 17062.1, re-enacted by SB 711, Stats. 2025 Ch. 231, WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19), the STANDARD DEDUCTION IS ADDED BACK (R&TC § 17062(c)(1), denying § 56(b)(1)(E)). The ISO exercise spread follows § 56(b)(3) as modified by R&TC § 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC § 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC § 17062(d) turns off § 57(a)(5)) and NO AMT foreign tax credit (R&TC § 17062(e) turns off § 59(a)). A taxpayer whose aggregate trade/business gross receipts are under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC § 17062(b)(4), the CA small-business AMTI exclusion). In dollars."
+                                "description": "California alternative minimum taxable income (Schedule P (540) Part I, line 17) — AGENT-COMPUTED per the R&TC §§ 17062(c)-(e), 17062.1 construction rules, then fed to the CA AMT target (us.ca.amt). CONSTRUCTION NOTES (disclose when composing this figure): California individual AMT is FROZEN to IRC §§ 55-59 as they read on January 1, 2015 (R&TC § 17062.1, re-enacted by SB 711, Stats. 2025 Ch. 231, WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19; when line 19 is zero, line 17 less line 18 entered as a NEGATIVE amount — 2025 Schedule P (540) instructions, line 15), the STANDARD DEDUCTION IS ADDED BACK (R&TC § 17062(c)(1), denying § 56(b)(1)(E)). The ISO exercise spread follows § 56(b)(3) as modified by R&TC § 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC § 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC § 17062(d) turns off § 57(a)(5)) and NO AMT foreign tax credit (R&TC § 17062(e) turns off § 59(a)). A taxpayer whose aggregate trade/business gross receipts are under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC § 17062(b)(4), the CA small-business AMTI exclusion). In dollars."
                               },
                               "caRegularTax": {
                                 "type": [
@@ -12084,6 +12088,10 @@
                                   }
                                 ],
                                 "description": "Tax family size for the § 36B poverty-line lookup (§ 36B(d)(1): the taxpayer, spouse on a joint return, and dependents). Required when claiming the premium tax credit."
+                              },
+                              "ptcEnrollmentEstimateAtLeast100Fpl": {
+                                "type": "boolean",
+                                "description": "Household income is below 100% of the federal poverty line, yet the Marketplace estimated at enrollment that it would be at least 100% (for 2026: at least 100% but no more than 400%) of the poverty line for the family size, advance PTC was paid, no one can claim the taxpayer as a dependent, and the taxpayer did not give the Marketplace incorrect information with intentional or reckless disregard for the facts. Reg. § 1.36B-2(b)(6) then treats the taxpayer as an applicable taxpayer (Form 8962 instructions, 'Estimated household income at least 100% of the federal poverty line'). Asked only when household income is under 100% of the poverty line and advance PTC was paid."
                               }
                             },
                             "additionalProperties": false,
@@ -12453,7 +12461,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "California alternative minimum taxable income (Schedule P (540) Part I, line 17) — AGENT-COMPUTED per the R&TC §§ 17062(c)-(e), 17062.1 construction rules, then fed to the CA AMT target (us.ca.amt). CONSTRUCTION NOTES (disclose when composing this figure): California individual AMT is FROZEN to IRC §§ 55-59 as they read on January 1, 2015 (R&TC § 17062.1, re-enacted by SB 711, Stats. 2025 Ch. 231, WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19), the STANDARD DEDUCTION IS ADDED BACK (R&TC § 17062(c)(1), denying § 56(b)(1)(E)). The ISO exercise spread follows § 56(b)(3) as modified by R&TC § 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC § 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC § 17062(d) turns off § 57(a)(5)) and NO AMT foreign tax credit (R&TC § 17062(e) turns off § 59(a)). A taxpayer whose aggregate trade/business gross receipts are under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC § 17062(b)(4), the CA small-business AMTI exclusion). In dollars."
+                                "description": "California alternative minimum taxable income (Schedule P (540) Part I, line 17) — AGENT-COMPUTED per the R&TC §§ 17062(c)-(e), 17062.1 construction rules, then fed to the CA AMT target (us.ca.amt). CONSTRUCTION NOTES (disclose when composing this figure): California individual AMT is FROZEN to IRC §§ 55-59 as they read on January 1, 2015 (R&TC § 17062.1, re-enacted by SB 711, Stats. 2025 Ch. 231, WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19; when line 19 is zero, line 17 less line 18 entered as a NEGATIVE amount — 2025 Schedule P (540) instructions, line 15), the STANDARD DEDUCTION IS ADDED BACK (R&TC § 17062(c)(1), denying § 56(b)(1)(E)). The ISO exercise spread follows § 56(b)(3) as modified by R&TC § 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC § 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC § 17062(d) turns off § 57(a)(5)) and NO AMT foreign tax credit (R&TC § 17062(e) turns off § 59(a)). A taxpayer whose aggregate trade/business gross receipts are under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC § 17062(b)(4), the CA small-business AMTI exclusion). In dollars."
                               },
                               "caRegularTax": {
                                 "type": [

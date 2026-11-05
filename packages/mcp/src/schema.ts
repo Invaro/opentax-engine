@@ -286,6 +286,7 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "marketplacePremiumsPaid",
     "advancePTC",
     "ptcHouseholdSize",
+    "ptcEnrollmentEstimateAtLeast100Fpl",
   ],
   kiddie_tax: [
     "isSubjectToKiddieTax",

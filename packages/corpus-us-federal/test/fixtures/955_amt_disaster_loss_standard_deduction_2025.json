@@ -1,0 +1,17 @@
+{
+  "description": "A net qualified disaster loss raises the standard deduction; for the AMT only the standard deduction before the increase is added back (2025 Form 6251 instructions, lines 2a and 3). Single 2025: wages $100,000, qualified disaster loss $20,000, ISO spread $200,000. Deduction $15,750 + $20,000 = $35,750; taxable income $64,250, regular tax $9,055. AMTI $64,250 + $15,750 + $200,000 = $280,000; line 6 $191,900 × 26% = $49,894 → AMT $40,839. (Treating the return as itemizing added back $0 and gave AMTI $264,250.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "casualtyQualifiedDisasterLosses": 20000,
+    "amtIsoExerciseSpread": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "4083900",
+    "intermediates": {
+      "us.federal.amt.amti": "28000000"
+    }
+  }
+}

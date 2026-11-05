@@ -1,0 +1,13 @@
+{
+  "description": "The § 170(p) non-itemizer deduction is figured 'without regard to subsections (b)(1)(G)(ii), (b)(1)(I), and (d)(1)' — the carryovers and the 0.5% floor — so the (b)(1)(G)(i) limit of 60% of the contribution base still applies. TY2026 single: wages $1,000, cash gifts $1,500 → 60% × $1,000 = $600 (under the $1,000 cap).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 1000,
+    "charitableCashContributions": 1500
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.charitable_deduction_nonitemizer",
+  "expect": {
+    "valueCents": "60000"
+  }
+}

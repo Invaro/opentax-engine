@@ -294,3 +294,24 @@ describe("compute_return: Form 5695 line set and Form 1040 line 20", () => {
     expect(a.complete).toBe(true);
   });
 });
+
+describe("compute_return: excess APTC repayment sits on line 17 (Schedule 2 line 1a)", () => {
+  it("adds it beside the AMT so lines 16 + 17 − 19 − 20 = 22, and keeps it out of line 23", async () => {
+    const r = await call(
+      "compute_return",
+      single(
+        { box1: "60000", box2: "6000" },
+        { healthcare_ptc: { advancePTC: 6000, slcspAnnualPremium: 6000, marketplacePremiumsPaid: 6000, ptcHouseholdSize: 1 } },
+      ),
+    );
+    const l = lines(r);
+    expect(l["17_excess_aptc_repayment"]).toBe("$1,625.00");
+    expect(l["22_tax_after_credits"]).toBe("$6,700.00");
+    expect(l["23_other_taxes"]).toBe("$0.00");
+    expect(l["24_total_tax"]).toBe("$6,700.00");
+  });
+  it("omits the line when nothing is repaid", async () => {
+    const r = await call("compute_return", single({ box1: "60000", box2: "6000" }));
+    expect(lines(r)["17_excess_aptc_repayment"]).toBeUndefined();
+  });
+});

@@ -179,15 +179,15 @@ export const investmentTaxRules: Rule[] = [
   },
   {
     id: "us.federal.other_taxes",
-    version: 4, // v3 predated the § 223(f) HSA distribution taxes
+    version: 5, // v4 also carried the excess APTC repayment, which is Schedule 2 Part I (line 1a) and now reaches line 22 through us.federal.tax_before_nonrefundable_credits. v3 predated the § 223(f) HSA distribution taxes
     jurisdiction: "us.federal",
-    title: "Other taxes (SE tax + Additional Medicare + NIIT + \u00a7 72(t) + excess APTC + Schedule H)",
+    title: "Other taxes — Schedule 2 Part II (SE tax + Additional Medicare + NIIT + \u00a7 72(t) + HSA + Schedule H)",
     citation: {
       source: "26 U.S.C. §§ 1401, 1411, 3101(b)(2); Form 1040 Schedule 2",
       section: "Schedule 2, Part II",
       url: "https://www.irs.gov/forms-pubs/about-schedule-2-form-1040",
       excerpt:
-        "Self-employment tax, Additional Medicare Tax (Form 8959), net investment income tax (Form 8960), and the \u00a7 72(t) 10-percent additional tax on early distributions (exceptions — age 59\u00bd, disability, SEPP, \u00a7 72(t)(2) list — attested by entering only the penalized amount) , the \u00a7 36B(f)(2) excess advance premium tax credit repayment (Schedule 2 line 2), household employment taxes (Schedule H, Schedule 2 line 9), and the § 223(f)(4) 20-percent additional tax on nonqualified HSA distributions (Form 8889 Part II; waived at 65+/death/disability) are added to income tax in computing total tax.",
+        "Self-employment tax, Additional Medicare Tax (Form 8959), net investment income tax (Form 8960), and the \u00a7 72(t) 10-percent additional tax on early distributions (exceptions — age 59\u00bd, disability, SEPP, \u00a7 72(t)(2) list — attested by entering only the penalized amount) , household employment taxes (Schedule H, Schedule 2 line 9), and the § 223(f)(4) 20-percent additional tax on nonqualified HSA distributions (Form 8889 Part II; waived at 65+/death/disability) are added to income tax in computing total tax. [The § 36B(f)(2) excess advance premium tax credit repayment is Schedule 2 Part I (line 1a): it joins Form 1040 line 17, so it is in us.federal.tax_before_nonrefundable_credits, not here.]",
     },
     ...FROM,
     output: { type: "money" },
@@ -223,7 +223,6 @@ export const investmentTaxRules: Rule[] = [
           rate: { num: "10", den: "100" },
           round: "half-up",
         },
-        ruleRef("us.federal.ptc.excess_aptc_repayment"),
         ruleRef("us.federal.household_employment_taxes"),
       ],
     },

@@ -1,0 +1,14 @@
+{
+  "description": "TY2026 MFS, AGI $300,000, SALT paid $30,000: $40,400 − 30% × ($300,000 − $252,500) = $26,150; half = $13,075.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 300000,
+    "stateAndLocalTaxesPaid": 30000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.salt_deduction",
+  "expect": {
+    "valueCents": "1307500"
+  }
+}

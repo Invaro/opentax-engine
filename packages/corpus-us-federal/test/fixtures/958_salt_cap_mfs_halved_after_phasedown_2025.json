@@ -1,0 +1,14 @@
+{
+  "description": "Married filing separately: § 164(b)(7)(B) phases the $40,000 amount down by 30% of MAGI over HALF the $500,000 threshold and floors it at $10,000; § 164(b)(6)(B) then halves the result (State and Local Tax Deduction Worksheet line 10). MFS 2025, AGI $300,000, SALT paid $30,000: $40,000 − 30% × $50,000 = $25,000; half = $12,500. (Halving the amount first gave $20,000 − $15,000 = $5,000.)",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 300000,
+    "stateAndLocalTaxesPaid": 30000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.salt_deduction",
+  "expect": {
+    "valueCents": "1250000"
+  }
+}

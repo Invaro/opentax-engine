@@ -2,6 +2,33 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · Form 6251 line by line, and no deductions from a negative AGI
+
+The alternative minimum tax now follows Form 6251 line by line, and the Schedule A floors no longer turn a negative AGI into a deduction.
+
+- Line 13 is line 4 of the Qualified Dividends and Capital Gain Tax Worksheet: net capital gain plus qualified dividends, not limited to taxable income. Only the part of the AMT base above that amount is taxed at 26% or 28%. When net capital gain exceeded taxable income, the AMT was too high: for MFJ 2025 with $10,000 of interest and $2,000,000 of long-term gain it was $8,190, and it is now $6,900.
+- Line 40 now caps the tentative minimum tax at the flat 26%/28% tax on the whole base (line 39), and the 0% and 15% bands are measured as lines 19–30 do. When the AMT base is smaller than the capital gain and dividends, the whole base is taxed at the capital gain rates.
+- Line 1b starts from AGI less the Form 1040 line 14 deductions and can be negative, as the form says. Before, AMT income started from taxable income, which stops at zero, so a loss year with an ISO exercise overstated it.
+- Married filing separately adds the § 55(d)(2) amount to AMT income above $900,350 for 2025 (25% of the excess, at most $68,500) and above $640,200 for 2026 (50%, at most $70,100).
+- A child subject to the kiddie tax gets the full AMT exemption. § 55(d)(4)(A)(iii) turns off the § 59(j) cap for years after 2017, and the 2025 Exemption Worksheet has no such step.
+- Line 2a follows the deduction actually taken: a filer who elects to itemize adds back the Schedule A taxes, and a filer whose standard deduction includes a net qualified disaster loss adds back only the standard deduction before the increase. For 2026 itemizers, AMT income also allows the deductions before the § 68 limit ("Section 68 shall not apply", § 56(b)(1)(E)).
+- Line 10 includes Schedule 2 line 1z, so the excess advance premium tax credit repayment now reduces the AMT.
+- New targets for each step: `us.federal.amt.amti` (line 4), `us.federal.amt.exemption` (line 5), `us.federal.amt.taxable_excess` (line 6), `us.federal.amt.capital_gain_amount` (line 13) and `us.federal.amt.tentative_minimum_tax` (line 9).
+
+When AGI is negative, the 7.5% medical floor and the 10% casualty floor treat it as zero. Before, they turned it into a deduction of up to 17.5% of the loss with no expense entered. The 60% cash charitable limit also treats a negative AGI as zero: it allows no deduction, where for 2025 it produced a negative charitable deduction.
+
+The SALT cap for married filing separately now halves the amount after the phase-down, as § 164(b)(6)(B) and line 10 of the Schedule A worksheet do: $20,000 less 15% of modified AGI over $250,000 for 2025, never below $5,000. Before, it took 30% off $20,000 and reached the $5,000 floor at $300,000 instead of $350,000. Modified AGI now includes the § 911 foreign earned income exclusion.
+
+The nonrefundable credits are now limited by Form 1040 line 18, which includes the excess advance premium tax credit repayment, as every credit limit worksheet says (`us.federal.tax_before_nonrefundable_credits`). The repayment moves from `us.federal.other_taxes` (Schedule 2 Part II) to that line; net tax is unchanged except where a credit was cut short by the old limit.
+
+A check of every rule for the same kind of error found four more, now fixed:
+
+- The child and dependent care credit now reduces earned income by a Schedule C loss (Pub. 503). Before, wages alone set the limit.
+- Taxable Social Security now counts a Schedule C loss, pre-2019 alimony received and HSA distributions not spent on medical care in modified income, the same as AGI does.
+- The premium tax credit treats household income below zero as zero (Form 8962 line 3). Below 100% of the poverty line it now applies Reg. § 1.36B-2(b)(6): when the Marketplace estimated at enrollment that income would be at least 100% and advance payments were made, the credit is allowed at the lowest tier's percentage. Before, those taxpayers got no credit and repaid the advance. The engine asks `ptcEnrollmentEstimateAtLeast100Fpl` only in that case.
+- Oklahoma's special 65+ exemption is no longer allowed to a qualifying surviving spouse whose federal AGI is negative.
+- The 2026 charitable deduction for non-itemizers (§ 170(p)) is limited to 60% of AGI. § 170(p) switches off only the carryovers and the 0.5% floor, not the (b)(1)(G)(i) limit, so a negative AGI allows nothing.
+
 ## Nov 1, 2026 · QBI per business, with aggregation
 
 The § 199A deduction now follows Form 8995-A with one column per business. Above the threshold, each business gets its own W-2 wage and UBIA limit and its own SSTB status, instead of one limit for everything.

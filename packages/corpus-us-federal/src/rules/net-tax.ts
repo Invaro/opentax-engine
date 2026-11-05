@@ -12,6 +12,29 @@ const FROM = { effectiveFrom: "2025-01-01" }; // structural: open-ended
 
 export const netTaxRules: Rule[] = [
   {
+    id: "us.federal.tax_before_nonrefundable_credits",
+    version: 1,
+    jurisdiction: "us.federal",
+    title: "Tax before nonrefundable credits — Form 1040 line 18 (line 16 + Schedule 2 line 3)",
+    citation: {
+      source: "Form 1040 (2025) lines 16–18; Schedule 2 (Form 1040) lines 1z–3; 26 U.S.C. §§ 26(a), 36B(f)(2)(A), 55(a)",
+      section: "Form 1040 line 18",
+      url: "https://www.irs.gov/pub/irs-pdf/f1040.pdf",
+      excerpt:
+        "The credit limit worksheets for the nonrefundable credits start from Form 1040 line 18 (Schedule 8812 Credit Limit Worksheet A line 1; Form 2441, Form 8863, Schedule R and Form 5695 worksheets): the line 16 tax plus Schedule 2 line 3, which adds the alternative minimum tax (line 2) to line 1z. Of line 1z the engine models line 1a, the excess advance premium tax credit repayment — 'the tax imposed by this chapter for such taxable year shall be increased by the amount of such excess' (§ 36B(f)(2)(A)).",
+    },
+    ...FROM,
+    output: { type: "money" },
+    formula: {
+      kind: "add",
+      args: [
+        ruleRef("us.federal.income_tax_before_credits"),
+        ruleRef("us.federal.ptc.excess_aptc_repayment"),
+        ruleRef("us.federal.amt"),
+      ],
+    },
+  },
+  {
     id: "us.federal.refundable_credits",
     version: 3, // v2 predated the refundable adoption credit and the net premium tax credit
     jurisdiction: "us.federal",

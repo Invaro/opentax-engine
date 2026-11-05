@@ -249,13 +249,7 @@ export const educationCreditRules: Rule[] = [
           kind: "max0",
           arg: {
             kind: "sub",
-            left: {
-              kind: "add",
-              args: [
-                ruleRef("us.federal.income_tax_before_credits"),
-                ruleRef("us.federal.amt"),
-              ],
-            },
+            left: ruleRef("us.federal.tax_before_nonrefundable_credits"),
             right: ruleRef("us.federal.cdcc"),
           },
         },

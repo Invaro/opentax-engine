@@ -37,6 +37,14 @@ function knownDifference(s) {
       if ((s.overtime ?? 0) > 0 && excess > 0 && excess % 1000 !== 0) return d;
       continue;
     }
+    if (m.mfsSaltPhaseDown) {
+      // the readings differ only for MFS with SALT over $5,000 while MAGI is
+      // between half the threshold and the point where both reach the floor
+      const half = s.asOf.startsWith("2026") ? 252500 : 250000;
+      const agi = s.wages + (s.interest ?? 0) + (s.gains ?? 0);
+      if (s.status === "mfs" && (s.salt ?? 0) > 5000 && agi > half && agi < half + 100000) return d;
+      continue;
+    }
     if (m.status && s.status !== m.status) continue;
     if (m.kids === ">=1" && !(s.kids >= 1)) continue;
     if (m.wagesOver !== undefined && !(s.wages > m.wagesOver)) continue;
