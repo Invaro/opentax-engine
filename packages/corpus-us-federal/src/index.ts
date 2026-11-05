@@ -62,7 +62,7 @@ import { tipsOvertimeRules } from "./rules/tips-overtime.js";
 
 export const corpusInput: CorpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.44.0",
+  version: "0.45.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,

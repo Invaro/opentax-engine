@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "0.44.0",
+  "corpusVersion": "0.45.0",
   "merkleRoot": "sha256:6e649618b239a1ef6e7a01d6ec5746f6ba9323afbf06e12a27743721bfc2faa7",
   "tools": [
     {

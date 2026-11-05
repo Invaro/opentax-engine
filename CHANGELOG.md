@@ -2,7 +2,7 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
-## Next release · Tax year 2027
+## Nov 6, 2026 · Tax year 2027
 
 Federal returns now compute for tax year 2027 (`--as-of 2027-12-31`) on the published 2027 law, so a planning scenario can be carried from 2025 through 2027.
 
