@@ -135,9 +135,14 @@ export const dependentRules: Rule[] = [
     2, "2026-01-01", "2027-01-01",
     "530000", "2026", "Rev. Proc. 2025-32 § 4.23 ($5,300)",
   ),
+  qualifyingRelativeRule(
+    3, "2027-01-01", "2028-01-01",
+    "550000", "2027", "Rev. Proc. 2026-35 § 3.25 ($5,500)",
+  ),
   ...([
     { version: 1, from: "2025-01-01", to: "2026-01-01", limit: "520000", year: "2025", revProc: "Rev. Proc. 2024-40 § 2.24 ($5,200)" },
     { version: 2, from: "2026-01-01", to: "2027-01-01", limit: "530000", year: "2026", revProc: "Rev. Proc. 2025-32 § 4.23 ($5,300)" },
+    { version: 3, from: "2027-01-01", to: "2028-01-01", limit: "550000", year: "2027", revProc: "Rev. Proc. 2026-35 § 3.25 ($5,500)" },
   ].map(({ version, from, to, limit, year, revProc }): Rule => ({
     id: "us.federal.dependent.qualifying_relative.multiple_support",
     version,

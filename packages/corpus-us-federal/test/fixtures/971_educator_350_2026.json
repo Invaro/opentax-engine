@@ -1,0 +1,13 @@
+{
+  "description": "The § 62(a)(2)(D) educator amount is $350 for 2026 (Rev. Proc. 2025-32 § 4.12) and 2027 (Rev. Proc. 2026-35 § 3.13); it was $300 for 2025. Single 2026, wages $50,000, classroom expenses $500 → $350 adjustment.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "educatorExpenses": 500
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.above_the_line_adjustments",
+  "expect": {
+    "valueCents": "35000"
+  }
+}

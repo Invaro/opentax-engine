@@ -1,0 +1,15 @@
+{
+  "description": "TY2027 single at exactly 4 × $15,960 = $63,840 of household income: still an applicable taxpayer at the 10.22% applicable percentage (Rev. Proc. 2026-26) → contribution $6,524.45 (half-up) → credit $12,000 − $6,524.45 = $5,475.55.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 63840,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 12000,
+    "marketplacePremiumsPaid": 12000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.ptc",
+  "expect": {
+    "valueCents": "547555"
+  }
+}

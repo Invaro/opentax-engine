@@ -1,0 +1,16 @@
+{
+  "description": "TY2027 (Rev. Proc. 2026-35): single, wages $75,000. Standard deduction $16,600 (§ 3.15(1)) → taxable income $58,400. Tax Table row $58,400–$58,450 (midpoint $58,425) on the § 3.01 Table 3 rates: $1,280 + 12% × ($52,025 − $12,800) = $4,707 + 22% × ($58,425 − $52,025) = $1,408 → $7,395.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 75000
+  },
+  "asOf": "2027-12-31",
+  "expect": {
+    "valueCents": "739500",
+    "intermediates": {
+      "us.federal.standard_deduction": "1660000",
+      "us.federal.taxable_income": "5840000",
+      "us.federal.income_tax_before_credits": "739500"
+    }
+  }
+}

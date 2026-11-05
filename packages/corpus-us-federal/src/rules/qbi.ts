@@ -50,7 +50,8 @@ function qbiRule(
   effectiveTo: string,
   yearLabel: string,
   source: string,
-  withMinimum: boolean,
+  /** the § 199A(i) minimum deduction and its QBI test, null before 2026 */
+  minimum: { deductionCents: string; testCents: string } | null,
 ): Rule {
   // overall § 199A(a)(2) limit: 20% of (taxable income − net capital gain),
   // and § 199A(e)(3) treats qualified dividend income as net capital gain here
@@ -67,9 +68,9 @@ function qbiRule(
   });
   const limited: Expr = { kind: "min", args: [ruleRef("us.federal.qbi.total_component"), overall] };
 
-  const withFloor: Expr = withMinimum
+  const withFloor: Expr = minimum
     ? {
-        // OBBBA § 70105: $400 minimum when QBI ≥ $1,000 (TY2026+)
+        // OBBBA § 70105: the § 199A(i) minimum (TY2026+; indexed after 2026)
         kind: "if",
         cond: { kind: "cmp", op: "ge", left: ruleRef("us.federal.qbi.active_total"), right: param("minQbiFloor") },
         then: { kind: "max", args: [limited, param("minDeduction")] },
@@ -86,15 +87,15 @@ function qbiRule(
       source: `26 U.S.C. § 199A; ${source}`,
       section: "§ 199A(a)–(d)",
       url: "https://www.law.cornell.edu/uscode/text/26/199A",
-      excerpt: `The lesser of the combined qualified business income amount — 20 percent of each business's QBI, limited above the § 199A(e)(2) threshold by that business's W-2 wages and UBIA and phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) range" : "OBBBA-widened $75,000 ($150,000 joint) range (§ 70105, taxable years after 2025)"}, after the SSTB applicable percentage, aggregation and loss netting (us.federal.qbi.total_component) — or 20 percent of taxable income (without this deduction) less net capital gain.${withMinimum ? " OBBBA § 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed — disclosed)." : ""} [No REIT/PTP component or cooperative patron reduction; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages — disclosed.]`,
+      excerpt: `The lesser of the combined qualified business income amount — 20 percent of each business's QBI, limited above the § 199A(e)(2) threshold by that business's W-2 wages and UBIA and phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) range" : "OBBBA-widened $75,000 ($150,000 joint) range (§ 70105, taxable years after 2025)"}, after the SSTB applicable percentage, aggregation and loss netting (us.federal.qbi.total_component) — or 20 percent of taxable income (without this deduction) less net capital gain.${minimum ? ` OBBBA § 70105 minimum deduction of $${Number(minimum.deductionCents) / 100} with at least $${(Number(minimum.testCents) / 100).toLocaleString("en-US")} of QBI from qualified businesses (active participation assumed — disclosed).` : ""} [No REIT/PTP component or cooperative patron reduction; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages — disclosed.]`,
     },
     effectiveFrom,
     effectiveTo,
     output: { type: "money" },
-    parameters: withMinimum
+    parameters: minimum
       ? {
-          minDeduction: { value: "40000", type: "money" as const }, // $400
-          minQbiFloor: { value: "100000", type: "money" as const }, // $1,000
+          minDeduction: { value: minimum.deductionCents, type: "money" as const },
+          minQbiFloor: { value: minimum.testCents, type: "money" as const },
         }
       : {},
     formula: {
@@ -111,13 +112,19 @@ export const qbiRules: Rule[] = [
     13, // v11 computed one business above the threshold and refused two spouses' businesses; v13 sums each business's component (us.federal.qbi.total_component). v9 counted one self-employed person; v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit
     "2025-01-01", "2026-01-01", "2025",
     "Rev. Proc. 2024-40 § 2.27",
-    false,
+    null,
   ),
   qbiRule(
     14, // v12 computed one business above the threshold and refused two spouses' businesses; v14 sums each business's component. v10 counted one self-employed person; v8 counted qualifiedDividends in the overall limit
     "2026-01-01", "2027-01-01", "2026",
     "Rev. Proc. 2025-32 § 4.26; OBBBA § 70105 (range + $400 minimum)",
-    true,
+    { deductionCents: "40000", testCents: "100000" }, // $400 when active QBI ≥ $1,000
+  ),
+  qbiRule(
+    15,
+    "2027-01-01", "2028-01-01", "2027",
+    "Rev. Proc. 2026-35 § 3.28; OBBBA § 70105",
+    { deductionCents: "41500", testCents: "103000" }, // $415 when active QBI ≥ $1,030 (§ 3.28(2))
   ),
   ...qbiBusinessRules,
 ];

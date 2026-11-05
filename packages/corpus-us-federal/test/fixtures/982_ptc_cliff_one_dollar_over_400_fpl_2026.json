@@ -1,0 +1,15 @@
+{
+  "description": "TY2026 single, poverty line $15,650 → $62,600. Household income $62,601 is over 400% → no credit (the floored percentage allowed $5,765.04).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 62601,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 12000,
+    "marketplacePremiumsPaid": 12000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.ptc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

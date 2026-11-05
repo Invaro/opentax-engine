@@ -4,7 +4,8 @@
  * Schedule H (§§ 3101/3111 via § 3121(a)(7)(B), (x)): FICA attaches to a
  * household employee's cash wages only once they reach the SSA-indexed
  * threshold — $2,800 for 2025 (89 FR 85276; 2025 Schedule H instructions)
- * and $3,000 for 2026 (90 FR 49047) — then applies from dollar one.
+ * and $3,000 for 2026 (90 FR 49047), $3,100 for 2027 (91 FR 67380) — then
+ * applies from dollar one.
  * Combined employer+employee FICA = 15.3%. FUTA: 6.0% on the first
  * $7,000 if $1,000+ was paid in any calendar quarter (§ 3306(c)(2)),
  * with the full 5.4% state credit assumed (net 0.6%) — attested.
@@ -110,6 +111,11 @@ export const residualRules: Rule[] = [
     2, "2026-01-01", "2027-01-01",
     "300000", "$3,000",
     "90 FR 49047",
+  ),
+  householdRule(
+    3, "2027-01-01", "2028-01-01",
+    "310000", "$3,100",
+    "91 FR 67380 (SSA, Cost-of-Living Increase and Other Determinations for 2027)",
   ),
   {
     id: "us.federal.estimated.required_annual_payment.farmer",

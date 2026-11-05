@@ -93,10 +93,38 @@ export const qsbsRules: Rule[] = [
       excerpt:
         "For qualified small business stock acquired after July 4, 2025: 50 percent of gain excluded after a 3-year holding period, 75 percent after 4 years, 100 percent after 5 years; per-issuer limit the greater of $15,000,000 (indexed after 2026) or 10 times basis [the 10×-basis alternative is not modeled — the flat cap is conservative]; issuer aggregate gross assets must not exceed $75,000,000. For stock acquired after September 27, 2010 and on or before July 4, 2025: 100 percent excluded after 5 years, $10,000,000 cap. [Assumed and disclosed: original issuance for money/services, active qualified trade or business, and the asset test; earlier-vintage stock (50%/75% legacy with § 1(h)(4) 28%-rate gain and the 7% AMT preference) REFUSES. The non-excluded remainder of the new 50%/75% tiers is likewise 28%-rate gain — do not enter it as longTermCapitalGains; this target answers the exclusion amount only.]",
     },
-    effectiveFrom: "2025-01-01", // statutory: open-ended
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01", // § 1202(b)(5) indexes the $15,000,000 for taxable years beginning after 2026 (v2)
     output: { type: "money" },
     parameters: {
       capNew: { value: "1500000000", type: "money" }, // $15,000,000
+      capOld: { value: "1000000000", type: "money" }, // $10,000,000
+    },
+    formula: {
+      kind: "if",
+      cond: { kind: "cmp", op: "eq", left: fact("qsbsGain"), right: money("0") },
+      then: money("0"),
+      else: tiers,
+    },
+  },
+  {
+    id: "us.federal.qsbs_exclusion",
+    version: 2,
+    jurisdiction: "us.federal",
+    title:
+      "QSBS gain exclusion — OBBBA tiers (50/75/100% at 3/4/5 years) or prior-law 100% at 5 years",
+    citation: {
+      source: "26 U.S.C. § 1202, as amended by Pub. L. 119-21 (OBBBA); Rev. Proc. 2026-35 § 3.42(1) (the $15,000,000 limit is $15,480,000 for 2027)",
+      section: "§ 1202(a), (b)",
+      url: "https://www.law.cornell.edu/uscode/text/26/1202",
+      excerpt:
+        "For qualified small business stock acquired after July 4, 2025: 50 percent of gain excluded after a 3-year holding period, 75 percent after 4 years, 100 percent after 5 years; per-issuer limit the greater of $15,000,000 (indexed after 2026) or 10 times basis [the 10×-basis alternative is not modeled — the flat cap is conservative]; issuer aggregate gross assets must not exceed $77,390,000 for 2027 (the $75,000,000 amount as adjusted, Rev. Proc. 2026-35 § 3.42(2)). For stock acquired after September 27, 2010 and on or before July 4, 2025: 100 percent excluded after 5 years, $10,000,000 cap. [Assumed and disclosed: original issuance for money/services, active qualified trade or business, and the asset test; earlier-vintage stock (50%/75% legacy with § 1(h)(4) 28%-rate gain and the 7% AMT preference) REFUSES. The non-excluded remainder of the new 50%/75% tiers is likewise 28%-rate gain — do not enter it as longTermCapitalGains; this target answers the exclusion amount only.]",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: {
+      capNew: { value: "1548000000", type: "money" }, // $15,480,000 (Rev. Proc. 2026-35 § 3.42(1))
       capOld: { value: "1000000000", type: "money" }, // $10,000,000
     },
     formula: {

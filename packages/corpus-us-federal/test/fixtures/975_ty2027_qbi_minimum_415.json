@@ -1,0 +1,13 @@
+{
+  "description": "TY2027 § 199A(i) minimum: $415 when active QBI is at least $1,030 (Rev. Proc. 2026-35 § 3.28(2)). Single, wages $50,000, Schedule C profit $1,500: SE tax $172 + $40 = $212, ½ = $106; QBI $1,394 ≥ $1,030; 20% = $278.80 < $415 → $415.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "selfEmploymentNetProfit": 1500
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "41500"
+  }
+}

@@ -10,7 +10,7 @@ import { describe, expect, it } from "vitest";
 import { EITC_PARAMS } from "../src/rules/eitc.js";
 
 // Completed phaseout amounts as READ from the Rev. Procs. (whole dollars):
-// rp-24-40 § 2.06 and rp-25-32 § 4.06 — [1 kid, 2 kids, 3+ kids, 0 kids]
+// rp-24-40 § 2.06, rp-25-32 § 4.06 and rp-26-35 § 3.06 — [1 kid, 2 kids, 3+ kids, 0 kids]
 const COMPLETED = {
   TY2025: {
     other: [50434, 57310, 61555, 19104],
@@ -20,10 +20,14 @@ const COMPLETED = {
     other: [51593, 58629, 62974, 19540],
     mfj: [58863, 65899, 70244, 26820],
   },
+  TY2027: {
+    other: [53277, 60519, 65002, 20164],
+    mfj: [60787, 68029, 72512, 27684],
+  },
 } as const;
 
 describe("EITC parameter identity (threshold + max/rate == completed)", () => {
-  for (const year of ["TY2025", "TY2026"] as const) {
+  for (const year of ["TY2025", "TY2026", "TY2027"] as const) {
     const p = EITC_PARAMS[year];
     it(`${year}: all eight completed-phaseout amounts reproduce within $1`, () => {
       for (const kids of [0, 1, 2, 3] as const) {

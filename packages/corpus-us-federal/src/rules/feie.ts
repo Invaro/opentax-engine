@@ -2,7 +2,8 @@
  * § 911 Foreign Earned Income Exclusion — verified July 2026.
  *
  * Exclusion: $130,000 for TY2025 (Rev. Proc. 2024-40 § 2.39) / $132,900
- * for TY2026 (Rev. Proc. 2025-32 § 4.39). Qualification (§ 911(d)(1):
+ * for TY2026 (Rev. Proc. 2025-32 § 4.39) / $137,300 for TY2027 (Rev. Proc.
+ * 2026-35 § 3.41). Qualification (§ 911(d)(1):
  * bona fide residence for an entire taxable year, or 330 full days of
  * foreign presence in 12 months, each with a foreign tax home) is
  * ATTESTED by the input. The § 911(c) housing exclusion is NOT modeled —
@@ -25,7 +26,7 @@
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
-import { ordinaryRateTaxExpr } from "./income-tax.js";
+import { ordinaryRateTaxExpr, type TaxYear } from "./income-tax.js";
 
 const J = "us.federal";
 
@@ -68,7 +69,7 @@ function feieExclusionRule(
   };
 }
 
-function feieStackingRule(version: number, from: string, to: string, year: "2025" | "2026"): Rule {
+function feieStackingRule(version: number, from: string, to: string, year: TaxYear): Rule {
   const withExcluded = ordinaryRateTaxExpr(
     {
       kind: "add",
@@ -128,9 +129,11 @@ function feieStackingRule(version: number, from: string, to: string, year: "2025
 export const feieRules: Rule[] = [
   feieExclusionRule(1, "2025-01-01", "2026-01-01", "13000000", "$130,000", "Rev. Proc. 2024-40 § 2.39"),
   feieExclusionRule(2, "2026-01-01", "2027-01-01", "13290000", "$132,900", "Rev. Proc. 2025-32 § 4.39"),
+  feieExclusionRule(3, "2027-01-01", "2028-01-01", "13730000", "$137,300", "Rev. Proc. 2026-35 § 3.41"),
   // v3/v4: the preferential-income refusal guard also catches the standalone qualifiedDividends fact
   feieStackingRule(3, "2025-01-01", "2026-01-01", "2025"),
   feieStackingRule(4, "2026-01-01", "2027-01-01", "2026"),
+  feieStackingRule(5, "2027-01-01", "2028-01-01", "2027"),
   {
     id: "us.federal.eitc.feie_denial",
     version: 1,

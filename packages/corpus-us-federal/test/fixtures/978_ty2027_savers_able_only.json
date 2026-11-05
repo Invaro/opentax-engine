@@ -1,0 +1,13 @@
+{
+  "description": "From 2027 the saver's credit counts only ABLE-account contributions (§ 25B(d)(1) after SECURE 2.0 § 103) and its 2027 AGI limits are unpublished: a 2027 return with saver's contributions refuses.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 30000,
+    "saversContributions": 1000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.savers.tentative",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "description": "TY2027: married filing jointly, wages $180,000, two qualifying children. Standard deduction $33,200 → taxable income $146,800 (≥ $100,000, so the rate schedule): $2,560 + 12% × ($104,050 − $25,600) = $9,414 + 22% × ($146,800 − $104,050) = $9,405 → $21,379. Child tax credit $2,300 per child (§ 3.05(1)) = $4,600, under the $400,000 phase-out → net tax $16,779.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 180000,
+    "qualifyingChildren": 2
+  },
+  "asOf": "2027-12-31",
+  "expect": {
+    "valueCents": "1677900",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "2137900",
+      "us.federal.ctc": "460000"
+    }
+  }
+}

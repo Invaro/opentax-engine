@@ -112,7 +112,7 @@ Exit 0 = verified, 1 = refuted (with the correct value), 2 = the claim can't be 
 
 Plus the general contract: add `--json` to **any** command — single JSON object, `ok: true|false`, stable error codes and exit codes, no ANSI. Full agent docs in **[AGENTS.md](AGENTS.md)**.
 
-## What's covered today (tax years 2025 & 2026, current law)
+## What's covered today (federal tax years 2025, 2026 & 2027; states 2025 & 2026; current law)
 
 **Every W-2 household, all five filing statuses, refunds included.** 276 rules, 295 documented input facts, 329 golden fixtures. The default answer is **net tax** — negative means the government owes you.
 

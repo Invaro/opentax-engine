@@ -3,7 +3,7 @@
  *
  * Payroll tax per employee (§§ 3111, 3301–3302): the employer's 6.2%
  * social security share up to the SSA wage base ($176,100 for 2025;
- * $184,500 for 2026), 1.45% Medicare on all wages, and FUTA — 6.0% on the
+ * $184,500 for 2026; $192,300 for 2027), 1.45% Medicare on all wages, and FUTA — 6.0% on the
  * first $7,000 less the full 5.4% state credit = 0.6% (the wage base is
  * unchanged since 1983; a full-credit, non-credit-reduction state is
  * assumed and disclosed).
@@ -73,6 +73,7 @@ function payrollRule(
 export const employerRules: Rule[] = [
   payrollRule(1, "2025-01-01", "2026-01-01", "17610000", "2025", "$176,100"),
   payrollRule(2, "2026-01-01", "2027-01-01", "18450000", "2026", "$184,500"),
+  payrollRule(3, "2027-01-01", "2028-01-01", "19230000", "2027", "$192,300"), // 91 FR 67380
   {
     id: "us.federal.credit.research_asc",
     version: 1,

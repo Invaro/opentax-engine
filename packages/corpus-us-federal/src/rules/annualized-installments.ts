@@ -32,7 +32,7 @@
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
-import { ordinaryRateTaxExpr } from "./income-tax.js";
+import { ordinaryRateTaxExpr, type TaxYear } from "./income-tax.js";
 
 const J = "us.federal";
 
@@ -112,12 +112,13 @@ function cumulative(yearFactId: string, periodFactId: string | null): Expr {
 
 function quarterRule(
   q: Quarter,
-  year: "2025" | "2026",
+  year: TaxYear,
   from: string,
   to: string,
   proratedLimitCents: string,
   proratedLabel: string,
-  withQbiMinimum: boolean,
+  /** the § 199A(i) minimum deduction and its QBI test, null before 2026 */
+  qbiMinimum: { deductionCents: string; testCents: string } | null,
 ): Rule {
   const cumWages = cumulative("wages", q.wagesFact);
   const cumSE = cumulative("selfEmploymentNetProfit", q.seFact);
@@ -187,11 +188,11 @@ function quarterRule(
       { kind: "mulRate", base: tiBeforeQbi, rate: { num: "20", den: "100" }, round: "half-up" },
     ],
   };
-  const qbi: Expr = withQbiMinimum
+  const qbi: Expr = qbiMinimum
     ? {
         kind: "if",
-        cond: { kind: "cmp", op: "ge", left: qbiBase, right: money("100000") },
-        then: { kind: "max", args: [qbiCore, money("40000")] }, // OBBBA $400 min
+        cond: { kind: "cmp", op: "ge", left: qbiBase, right: money(qbiMinimum.testCents) },
+        then: { kind: "max", args: [qbiCore, money(qbiMinimum.deductionCents)] }, // § 199A(i) minimum
         else: qbiCore,
       }
     : qbiCore;
@@ -232,11 +233,11 @@ function quarterRule(
 
   return {
     id: `us.federal.estimated.annualized_installment_q${q.n}`,
-    version: year === "2025" ? 3 : 4, // v1/v2 predated the per-bucket capital-loss facts in the scope guard
+    version: { "2025": 3, "2026": 4, "2027": 5 }[year], // v1/v2 predated the per-bucket capital-loss facts in the scope guard
     jurisdiction: J,
     title: `Annualized-income required installment #${q.n} (§ 6654(d)(2), TY${year})`,
     citation: {
-      source: `26 U.S.C. § 6654(d)(2); ${year} Form 2210 Schedule AI`,
+      source: year === "2027" ? "26 U.S.C. § 6654(d)(2); Form 2210 Schedule AI as printed for 2025 (the 2027 form is not yet published); Rev. Proc. 2026-35; 91 FR 67380" : `26 U.S.C. § 6654(d)(2); ${year} Form 2210 Schedule AI`,
       section: "§ 6654(d)(2); Schedule AI",
       url: "https://www.irs.gov/forms-pubs/about-form-2210",
       excerpt: `Installment #${q.n}: annualize the period's income by ${q.num === q.den ? "1" : Number(q.num) / Number(q.den)} (Schedule AI line 2), standard deduction in full (line 7), annualized SE tax per Part II (prorated social security limit ${proratedLabel}; printed factor-embedded rates), take ${Number(q.pct.num) / (Number(q.pct.den) / 100)}% of the resulting tax (line 20), subtract earlier columns' installments, and cap at 25% of the required annual payment plus amounts saved in earlier columns (lines 22–27). [Scope: the wage + self-employment core; anything else refuses. Per-column credits (line 18) not modeled — can only overstate an installment, conservative. Exact cents; the paper form's whole-dollar rounding may differ by small amounts. Cumulative period facts are demanded only for nonzero year amounts.]`,
@@ -261,12 +262,24 @@ const P2025 = ["4402500", "7337500", "11740000", "17610000"]; // printed on the 
 const L2025 = ["$44,025", "$73,375", "$117,400", "$176,100"];
 const P2026 = ["4612500", "7687500", "12300000", "18450000"]; // $184,500 × 1/4, 5/12, 2/3, 1
 const L2026 = ["$46,125 (from the $184,500 base)", "$76,875", "$123,000", "$184,500"];
+const P2027 = ["4807500", "8012500", "12820000", "19230000"]; // $192,300 × 1/4, 5/12, 2/3, 1
+const L2027 = ["$48,075 (from the $192,300 base, 91 FR 67380)", "$80,125", "$128,200", "$192,300"];
 
 export const annualizedInstallmentRules: Rule[] = [
   ...QUARTERS.map((q) =>
-    quarterRule(q, "2025", "2025-01-01", "2026-01-01", P2025[q.n - 1], L2025[q.n - 1], false),
+    quarterRule(q, "2025", "2025-01-01", "2026-01-01", P2025[q.n - 1], L2025[q.n - 1], null),
   ),
   ...QUARTERS.map((q) =>
-    quarterRule(q, "2026", "2026-01-01", "2027-01-01", P2026[q.n - 1], L2026[q.n - 1], true),
+    quarterRule(q, "2026", "2026-01-01", "2027-01-01", P2026[q.n - 1], L2026[q.n - 1], {
+      deductionCents: "40000", // $400
+      testCents: "100000", // $1,000
+    }),
+  ),
+  ...QUARTERS.map((q) =>
+    // Rev. Proc. 2026-35 § 3.28(2): the minimum is $415 and the QBI test $1,030
+    quarterRule(q, "2027", "2027-01-01", "2028-01-01", P2027[q.n - 1], L2027[q.n - 1], {
+      deductionCents: "41500",
+      testCents: "103000",
+    }),
   ),
 ];

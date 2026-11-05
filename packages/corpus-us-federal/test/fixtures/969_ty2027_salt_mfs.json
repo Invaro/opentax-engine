@@ -1,0 +1,14 @@
+{
+  "description": "TY2027 SALT for married filing separately: § 164(b)(7) makes the 2027 amount 101% of 2026 — $40,804 — and the threshold $510,050 (half, $255,025, for MFS). MFS, AGI $300,000, SALT paid $30,000: $40,804 − 30% × ($300,000 − $255,025) = $27,311.50, above the $10,000 floor; half for MFS (§ 164(b)(6)(B)) = $13,655.75.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 300000,
+    "stateAndLocalTaxesPaid": 30000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.salt_deduction",
+  "expect": {
+    "valueCents": "1365575"
+  }
+}

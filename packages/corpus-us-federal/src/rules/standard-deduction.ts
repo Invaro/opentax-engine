@@ -4,7 +4,8 @@
  * Structure:
  *   base_amount        — the per-status dollar table; one VERSION per tax year
  *                        (v2 TY2025 per OBBBA § 70102; v3 TY2026 per
- *                        Rev. Proc. 2025-32 § 4.14)
+ *                        Rev. Proc. 2025-32 § 4.14; v4 TY2027 per
+ *                        Rev. Proc. 2026-35 § 3.15)
  *   base               — normally just base_amount…
  *   dependent_limit    — …unless claimable as a dependent (§ 63(c)(5)),
  *                        a true statutory exception encoded as an override
@@ -82,6 +83,33 @@ export const standardDeductionRules: Rule[] = [
     },
   },
   {
+    id: "us.federal.standard_deduction.base_amount",
+    version: 4,
+    jurisdiction: J,
+    title: "Basic standard deduction amount by filing status (TY2027)",
+    citation: {
+      source: "26 U.S.C. § 63(c); Rev. Proc. 2026-35",
+      section: "Rev. Proc. 2026-35 § 3.15(1)",
+      url: "https://www.irs.gov/pub/irs-drop/rp-26-35.pdf",
+      excerpt:
+        "For taxable years beginning in 2027, the standard deduction amounts under § 63(c)(2) are as follows: $33,200 (married individuals filing joint returns and surviving spouses), $24,925 (heads of households), $16,600 (unmarried individuals other than surviving spouses and heads of households), $16,600 (married individuals filing separate returns).",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "match",
+      on: fact("filingStatus"),
+      cases: [
+        { when: "single", value: money("1660000") }, // $16,600
+        { when: "mfs", value: money("1660000") }, // $16,600
+        { when: "mfj", value: money("3320000") }, // $33,200
+        { when: "qss", value: money("3320000") }, // $33,200 (surviving spouse)
+        { when: "hoh", value: money("2492500") }, // $24,925
+      ],
+    },
+  },
+  {
     id: "us.federal.standard_deduction.base",
     version: 1,
     jurisdiction: J,
@@ -131,6 +159,38 @@ export const standardDeductionRules: Rule[] = [
     overrides: { ruleId: "us.federal.standard_deduction.base", priority: 10 },
   },
   {
+    id: "us.federal.standard_deduction.dependent_limit",
+    version: 2,
+    jurisdiction: J,
+    title: "Limitation on basic standard deduction of a dependent (TY2027)",
+    citation: {
+      source: "26 U.S.C. § 63(c)(5); Rev. Proc. 2026-35 § 3.15(2)",
+      section: "§ 63(c)(5)",
+      url: "https://www.irs.gov/pub/irs-drop/rp-26-35.pdf",
+      excerpt:
+        "For taxable years beginning in 2027, the standard deduction amount under § 63(c)(5) for an individual who may be claimed as a dependent by another taxpayer cannot exceed the greater of (1) $1,400, or (2) the sum of $500 and the individual's earned income.",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    applicability: fact("isClaimedAsDependent"),
+    // min(normal base amount, max($1,400, earned income + $500)); earned income ≈ wages
+    formula: {
+      kind: "min",
+      args: [
+        ruleRef("us.federal.standard_deduction.base_amount"),
+        {
+          kind: "max",
+          args: [
+            money("140000"), // $1,400
+            { kind: "add", args: [fact("wages"), money("50000")] }, // + $500
+          ],
+        },
+      ],
+    },
+    overrides: { ruleId: "us.federal.standard_deduction.base", priority: 10 },
+  },
+  {
     id: "us.federal.standard_deduction.mfs_spouse_itemizes",
     version: 1,
     jurisdiction: J,
@@ -169,6 +229,12 @@ export const standardDeductionRules: Rule[] = [
     year: "2026",
     married: "$1,650",
     unmarried: "$2,050",
+  }),
+  additionalRule(3, "2027-01-01", "2028-01-01", "170000", "210000", {
+    sourceRevProc: "Rev. Proc. 2026-35 § 3.15(3)",
+    year: "2027",
+    married: "$1,700",
+    unmarried: "$2,100",
   }),
   {
     id: "us.federal.standard_deduction",

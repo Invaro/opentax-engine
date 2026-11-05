@@ -2,6 +2,33 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · Tax year 2027
+
+Federal returns now compute for tax year 2027 (`--as-of 2027-12-31`) on the published 2027 law, so a planning scenario can be carried from 2025 through 2027.
+
+- **Amounts and sources.** Every inflation-adjusted amount is from an official source:
+  - Rev. Proc. 2026-35 (released November 5, 2026): brackets, capital gain breakpoints, standard deduction, AMT, EITC, CTC $2,300 and ACTC $1,800, adoption credit, kiddie tax, QBI threshold and the $415 / $1,030 minimum, student loan interest, educator expenses, § 179, § 461(l), § 163(j) gross receipts, the foreign earned income exclusion, the qualifying-relative test, estate and trust brackets.
+  - Rev. Proc. 2026-24: HSA limits, $4,500 and $9,000.
+  - Rev. Proc. 2026-26: premium tax credit percentages, 2.15% to 10.22%, with the 2026 poverty guidelines (91 FR 1797).
+  - SSA (91 FR 67380): wage base $192,300 and household employee threshold $3,100.
+  - Statute: SALT is 101% of 2026 under § 164(b)(7), so $40,804 with a $510,050 threshold.
+- **Law that changes in 2027:**
+  - The saver's credit counts only ABLE-account contributions (§ 25B(d)(1) after SECURE 2.0).
+  - The premium tax credit is limited to eligible individuals (OBBBA § 71301). The inputs attest it.
+- **Not published yet, so these refuse rather than guess:**
+  - The IRS's 2027 retirement-plan limits: a 2027 IRA, SEP/solo-401(k) or saver's contribution, and the retirement maximum targets.
+  - The 2027 standard mileage rate.
+  - A return with none of these computes normally.
+- **States:** they still cover 2025 and 2026 and refuse 2027 until their own 2027 amounts are published.
+
+Fixes found while checking:
+
+- The educator expense amount is $350 for 2026 (Rev. Proc. 2025-32 § 4.12). The engine had kept 2025's $300. It stays $350 for 2027.
+- Gambling losses from 2026 follow § 165(d) as amended by OBBBA § 70114: 90 percent of the losses, limited to the winnings. From 2026, `gamblingLossesItemized` is the total losses for the year, and the new input `gamblingWinnings` supplies the limit. Before, the engine deducted 100 percent.
+- The premium tax credit's 400% cliff now compares household income to 4 × the poverty line directly. It used to compare a percentage rounded down to the cent, so income up to a few dollars over the line still got the full credit. This applies to 2026 and 2027.
+- The 2026 standard mileage rate is 72.5¢ before July 1 and 76¢ from July 1 (Announcement 2026-11). The new input `businessMilesDrivenFromJuly` gives the later miles. Before, every 2026 mile used 72.5¢.
+- Additional Medicare Tax no longer counts self-employment net earnings under $400. They are not self-employment income (§ 1402(b)), and Form 8959 line 8 takes Schedule SE line 6, which is blank in that case. This applies to every year.
+
 ## Nov 6, 2026 · Form 6251 line by line, and no deductions from a negative AGI
 
 The alternative minimum tax now follows Form 6251 line by line, and the Schedule A floors no longer turn a negative AGI into a deduction.

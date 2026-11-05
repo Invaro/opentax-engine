@@ -93,5 +93,5 @@ opentax lookup standard deduction --expect 32200 --filing-status mfj --json
 - **The engine never guesses.** A refusal (exit 2/3) is a correct answer, not an error to work around. Do not fabricate a number when you get one.
 - **Citations are in the proof.** Every node of `proof.root` has `citation.source/section/url` and a content `ruleHash` — quote them when explaining an answer.
 - `opentax corpus list --json` → every rule (id, title, citation, validity window, hash). `opentax explain <ruleId> --json` → one rule in full, including its formula and dependencies.
-- `--as-of YYYY-MM-DD` selects rule versions by date (corpus covers tax years 2025 and 2026; other dates refuse with exit 3).
+- `--as-of YYYY-MM-DD` selects rule versions by date. Federal rules cover tax years 2025, 2026 and 2027 (2027 from Rev. Proc. 2026-35 and the other published 2027 amounts; a 2027 IRA, SEP/solo-401(k) or saver's contribution, the 2027 retirement-plan maximums and the 2027 mileage rate refuse until the IRS publishes them). State rules cover 2025 and 2026. Other dates refuse with exit 3.
 - Facts files are plain JSON: `{ "filingStatus": "mfj", "wages": 120000, "qualifyingChildren": 2 }`.

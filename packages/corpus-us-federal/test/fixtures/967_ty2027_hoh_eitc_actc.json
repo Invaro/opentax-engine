@@ -1,0 +1,17 @@
+{
+  "description": "TY2027 head of household, wages $30,000, one qualifying child. Standard deduction $24,925 → taxable income $5,075; Tax Table row $5,050–$5,100 (midpoint $5,075) → $508. CTC $2,300 limited to the $508 of tax; ACTC = min($2,300 − $508, $1,800 (§ 3.05(2)), 15% × ($30,000 − $2,500)) = $1,792. EITC (§ 3.06, one child): max $4,573, phase-out from $24,660 at 15.98%; EIC Table midpoint $30,025 → $4,573 − 15.98% × $5,365 = $3,715.67 → $3,716. Net tax $508 − $508 − $1,792 − $3,716 = −$5,508.",
+  "facts": {
+    "filingStatus": "hoh",
+    "wages": 30000,
+    "qualifyingChildren": 1
+  },
+  "asOf": "2027-12-31",
+  "expect": {
+    "valueCents": "-550800",
+    "intermediates": {
+      "us.federal.eitc": "371600",
+      "us.federal.actc": "179200",
+      "us.federal.income_tax_before_credits": "50800"
+    }
+  }
+}
