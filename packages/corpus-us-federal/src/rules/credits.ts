@@ -379,7 +379,7 @@ function adoptionAllowedRule(
     jurisdiction: J,
     title: `Adoption credit after the MAGI phase-out (§ 23, ${yearLabel})`,
     citation: {
-      source: `26 U.S.C. § 23, as amended by Pub. L. 119-21 (OBBBA) § 70402; ${yearLabel === "TY2025" ? "Rev. Proc. 2024-40 § 2.04" : "Rev. Proc. 2025-32 § 3.04"}`,
+      source: `26 U.S.C. § 23, as amended by Pub. L. 119-21 (OBBBA) § 70402; ${{ TY2025: "Rev. Proc. 2024-40 § 2.04", TY2026: "Rev. Proc. 2025-32 § 3.04", TY2027: "Rev. Proc. 2026-35 § 3.04" }[yearLabel]}`,
       section: "§ 23(a)–(b), (f)",
       url: "https://www.law.cornell.edu/uscode/text/26/23",
       excerpt: `${amountsExcerpt} A special-needs adoption is treated as having paid the maximum regardless of actual expenses (§ 23(a)(3)). The credit is reduced by the ratio of the MAGI excess over the threshold to $40,000 (§ 23(b)(2)(A) — the $40,000 span is NOT indexed; MAGI is AGI without §§ 911/931/933, § 23(b)(2)(B) — MAGI ≈ AGI here, disclosed). Married taxpayers only on a joint return (§ 23(f)(1), rules similar to § 21(e)(2)) — MFS: $0; the living-apart exception is not modeled (conservative). The § 23(a)(2) expense-timing rules (year after payment for pre-final years; foreign adoptions only when final) are attested by the input.`,
@@ -473,6 +473,14 @@ export const creditBlockRules: Rule[] = [
     "TY2026: OBBBA 50% → 35% → 20%",
     "OBBBA § 70405 (taxable years beginning after December 31, 2025): the applicable percentage 'means 50 percent— (A) reduced (but not below 35 percent) by 1 percentage point for each $2,000 or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $15,000, and (B) further reduced (but not below 20 percent) by 1 percentage point for each $2,000 ($4,000 in the case of a joint return) or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $75,000 ($150,000 in the case of a joint return).' Expense caps $3,000/$6,000 (§ 21(c), unindexed, unchanged by the OBBBA), limited to earned income — joint returns to the lesser spouse's earned income (§ 21(d)(1)). Married only on a joint return (§ 21(e)(2)) — MFS: $0; § 21(e)(4) and § 21(d)(2) not modeled (conservative). Qualifying-individual status attested by the count input.",
   ),
+  cdccTentativeRule(
+    5,
+    "2027-01-01",
+    "2028-01-01",
+    pct2026,
+    "TY2027: OBBBA 50% → 35% → 20%",
+    "OBBBA § 70405 (taxable years beginning after December 31, 2025): the applicable percentage 'means 50 percent— (A) reduced (but not below 35 percent) by 1 percentage point for each $2,000 or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $15,000, and (B) further reduced (but not below 20 percent) by 1 percentage point for each $2,000 ($4,000 in the case of a joint return) or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $75,000 ($150,000 in the case of a joint return).' None of these amounts is indexed (Rev. Proc. 2026-35 lists no § 21 item), so 2027 applies them unchanged. Expense caps $3,000/$6,000 (§ 21(c)), limited to earned income — joint returns to the lesser spouse's earned income (§ 21(d)(1)). Married only on a joint return (§ 21(e)(2)) — MFS: $0; § 21(e)(4) and § 21(d)(2) not modeled (conservative). Qualifying-individual status attested by the count input.",
+  ),
   {
     id: "us.federal.cdcc",
     version: 1,
@@ -518,6 +526,41 @@ export const creditBlockRules: Rule[] = [
     "Notice 2025-67",
     "For 2026 (Notice 2025-67): joint 50% to $48,500, 20% to $52,500, 10% to $80,500; head of household $36,375/$39,375/$60,375; all other statuses $24,250/$26,250/$40,250 — zero above.",
   ),
+  {
+    id: "us.federal.savers.tentative",
+    version: 3,
+    jurisdiction: J,
+    title: "Saver's credit before the liability limit (TY2027: ABLE contributions only; AGI limits not yet published)",
+    citation: {
+      source: "26 U.S.C. § 25B(a), (d)(1), as amended by Pub. L. 117-328 (SECURE 2.0) § 103 and Pub. L. 119-21 (OBBBA) § 70116",
+      section: "§ 25B(a), (b), (d)(1)",
+      url: "https://www.law.cornell.edu/uscode/text/26/25B",
+      excerpt:
+        "From 2027, qualified retirement savings contributions are 'the amount of contributions made by the eligible individual during such taxable year to the ABLE account (within the meaning of section 529A) of which such individual is the designated beneficiary'; IRA contributions and elective deferrals count only 'in the case of any taxable year beginning before January 1, 2027' (§ 25B(d)(1); SECURE 2.0 § 103 replaces them with the § 6433 Saver's Match). The per-person cap becomes $2,100 for taxable years beginning after December 31, 2026 (OBBBA § 70116(b)). The 2027 § 25B(b) AGI limits are inflation-adjusted in the IRS's annual retirement-plan notice, which is not yet published — so a 2027 return with saver's contributions refuses rather than guess; with none, the credit is $0.",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: {
+        kind: "or",
+        args: [
+          gt0(fact("saversContributions")),
+          {
+            kind: "and",
+            args: [isStatus("mfj"), gt0(fact("saversContributionsSpouse"))],
+          },
+        ],
+      },
+      then: {
+        kind: "unsupported",
+        reason:
+          "the 2027 saver's credit counts only ABLE-account contributions (§ 25B(d)(1) after SECURE 2.0 § 103), up to $2,100, and its 2027 AGI limits are not yet published by the IRS — not modeled for 2027",
+      },
+      else: zero,
+    },
+  },
   {
     id: "us.federal.savers_credit",
     version: 1,
@@ -571,8 +614,18 @@ export const creditBlockRules: Rule[] = [
     "TY2026",
     "For taxable years beginning in 2026, the credit allowed for an adoption of a child with special needs is $17,670; the maximum credit allowed for other adoptions is the amount of qualified adoption expenses up to $17,670; phase-out begins at modified adjusted gross income in excess of $265,080 and is complete at $305,080 (Rev. Proc. 2025-32 § 3.04, verbatim).",
   ),
+  adoptionAllowedRule(
+    3,
+    "2027-01-01",
+    "2028-01-01",
+    "1825000",
+    "27368000",
+    "TY2027",
+    "For taxable years beginning in 2027, under § 23(a)(3), the credit allowed for an adoption of a child with special needs is $18,250. Under § 23(b)(1), the maximum credit allowed for other adoptions is the amount of qualified adoption expenses up to $18,250. The available adoption credit begins to phase out under § 23(b)(2)(A) for taxpayers with modified adjusted gross income in excess of $273,680 and is completely phased out for taxpayers with modified adjusted gross income of $313,680 or more (Rev. Proc. 2026-35 § 3.04).",
+  ),
   adoptionRefundableRule(1, "2025-01-01", "2026-01-01", "500000", "$5,000", "statutory, unindexed for 2025"),
   adoptionRefundableRule(2, "2026-01-01", "2027-01-01", "512000", "$5,120", "Rev. Proc. 2025-32 § 3.04(3)"),
+  adoptionRefundableRule(3, "2027-01-01", "2028-01-01", "528000", "$5,280", "Rev. Proc. 2026-35 § 3.04(3)"),
   {
     id: "us.federal.adoption.nonrefundable",
     version: 2, // v1 sat ahead of Schedule R and the CTC; the 2025 Form 8839 Credit Limit Worksheet puts it after them (and after Form 5695 line 32)

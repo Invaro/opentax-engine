@@ -8,7 +8,7 @@
  *   (wages fill the base first — § 1402(b)(1); W-2 SS wages ≈ wages, disclosed)
  * Medicare 2.9% uncapped
  *
- * Wage base: $176,100 (2025) / $184,500 (2026) — SSA-announced.
+ * Wage base: $176,100 (2025) / $184,500 (2026) / $192,300 (2027, 91 FR 67380) — SSA-announced.
  * Method note: DEFAULT follows the printed Schedule SE — lines 10 (OASDI),
  * 11 (Medicare), and 13 (half deduction) each rounded to whole dollars
  * before entry, exactly as filed returns compute them; useFormulaMethod
@@ -259,8 +259,10 @@ export const selfEmploymentRules: Rule[] = [
   // (box-3 socialSecurityWages coordination, printed per-line rounding)
   seTaxRule(taxpayer, 1, "2025-01-01", "2026-01-01", "17610000", "2025"), // $176,100
   seTaxRule(taxpayer, 2, "2026-01-01", "2027-01-01", "18450000", "2026"), // $184,500
+  seTaxRule(taxpayer, 3, "2027-01-01", "2028-01-01", "19230000", "2027"), // $192,300 (91 FR 67380)
   seTaxRule(spouse, 1, "2025-01-01", "2026-01-01", "17610000", "2025"),
   seTaxRule(spouse, 2, "2026-01-01", "2027-01-01", "18450000", "2026"),
+  seTaxRule(spouse, 3, "2027-01-01", "2028-01-01", "19230000", "2027"),
   {
     id: "us.federal.se_tax",
     version: 7, // v5/v6 were one Schedule SE; v7 adds the second self-employed spouse's on a joint return

@@ -206,6 +206,7 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "selfEmployedHealthPremiums",
     "homeOfficeSquareFeet",
     "businessMilesDriven",
+    "businessMilesDrivenFromJuly",
     "aggregateBusinessLoss",
   ],
   adjustments: [
@@ -236,6 +237,7 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "noncashCharitableContributions",
     "investmentInterestDeduction",
     "gamblingLossesItemized",
+    "gamblingWinnings",
     "otherItemizedDeductions",
     "casualtyFederalDisasterLosses",
     "casualtyQualifiedDisasterLosses",

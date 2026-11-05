@@ -5,6 +5,7 @@
  * Rev. Proc. 2025-32 § 2.01):
  *   TY2025 (Rev. Proc. 2024-40 § 2.01 Table 5): $3,150 / $11,450 / $15,650
  *   TY2026 (Rev. Proc. 2025-32 § 4.01 Table 5): $3,300 / $11,700 / $16,000
+ *   TY2027 (Rev. Proc. 2026-35 § 3.01 Table 5): $3,400 / $12,100 / $16,500
  * No Tax Table — Form 1041 uses its rate schedule directly.
  *
  * Exemption in lieu of § 151 (§ 642(b), statutory): $600 estate / $300
@@ -110,5 +111,10 @@ export const fiduciaryRules: Rule[] = [
     2, "2026-01-01", "2027-01-01",
     "330000", "1170000", "1600000",
     "TY2026", "Rev. Proc. 2025-32 § 4.01",
+  ),
+  fiduciaryRule(
+    3, "2027-01-01", "2028-01-01",
+    "340000", "1210000", "1650000",
+    "TY2027", "Rev. Proc. 2026-35 § 3.01",
   ),
 ];

@@ -96,6 +96,7 @@ function studentLoanRule(
   jointRangeCents: string,
   source: string,
   yearLabel: string,
+  thresholdCents = "8500000", // $85,000 (2025 and 2026)
 ): Rule {
   const magi = ruleRef("us.federal.agi_before_student_loan");
   const threshold: Expr = {
@@ -130,7 +131,7 @@ function studentLoanRule(
     output: { type: "money" },
     parameters: {
       cap: { value: "250000", type: "money" }, // $2,500, not indexed
-      threshold: { value: "8500000", type: "money" }, // $85,000
+      threshold: { value: thresholdCents, type: "money" },
       range: { value: "1500000", type: "money" }, // $15,000
       thresholdJoint: { value: jointThresholdCents, type: "money" },
       rangeJoint: { value: jointRangeCents, type: "money" },
@@ -228,8 +229,35 @@ function sepRule(
 export const adjustmentRules: Rule[] = [
   hsaRule(1, "2025-01-01", "2026-01-01", "430000", "855000", "Rev. Proc. 2024-25", "2025"),
   hsaRule(2, "2026-01-01", "2027-01-01", "440000", "875000", "Rev. Proc. 2025-19", "2026"),
+  hsaRule(3, "2027-01-01", "2028-01-01", "450000", "900000", "Rev. Proc. 2026-24 § 3.01(1)", "2027"),
   sepRule(1, "2025-01-01", "2026-01-01", "7000000", "Notice 2024-80", "2025", "$70,000"),
   sepRule(2, "2026-01-01", "2027-01-01", "7200000", "Notice 2025-67", "2026", "$72,000"),
+  {
+    id: "us.federal.sep_deduction",
+    version: 3,
+    jurisdiction: "us.federal",
+    title: "SEP / solo-401(k) employer contribution deduction (TY2027: the § 415(c) limit is not yet published)",
+    citation: {
+      source: "26 U.S.C. §§ 404(a)(8), (h), 415(c), (d)",
+      section: "§ 404(h); § 415(c)(1)(A), (d)",
+      url: "https://www.law.cornell.edu/uscode/text/26/415",
+      excerpt:
+        "The deduction is limited by the § 415(c)(1)(A) annual addition limit, which § 415(d) adjusts each year; the IRS publishes the 2027 amount in its annual retirement-plan cost-of-living notice, which is not yet out. A 2027 return with a SEP or solo-401(k) employer contribution refuses rather than guess; with none, the deduction is $0.",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: { kind: "cmp", op: "gt", left: fact("sepContribution"), right: zero },
+      then: {
+        kind: "unsupported",
+        reason:
+          "the 2027 § 415(c) annual addition limit is not yet published by the IRS — a 2027 SEP or solo-401(k) employer contribution is not modeled until it is",
+      },
+      else: zero,
+    },
+  },
   {
     id: "us.federal.sehi_deduction",
     version: 1,
@@ -284,5 +312,11 @@ export const adjustmentRules: Rule[] = [
     2, "2026-01-01", "2027-01-01",
     "17500000", "3000000", // $175,000 threshold, $30,000 range ($175k–$205k)
     "Rev. Proc. 2025-32 § 4.29", "2026",
+  ),
+  studentLoanRule(
+    3, "2027-01-01", "2028-01-01",
+    "18000000", "3000000", // $180,000 threshold, $30,000 range ($180k–$210k)
+    "Rev. Proc. 2026-35 § 3.31", "2027",
+    "9000000", // $90,000 (range $15,000: $90k–$105k)
   ),
 ];

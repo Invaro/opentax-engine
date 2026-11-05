@@ -19,6 +19,12 @@
  *   reaches zero); 28% above $244,500 ($122,250 MFS), i.e. 28% less $4,890
  *   ($2,445 MFS).
  *
+ *   TY2027 (Rev. Proc. 2026-35 § 3.11): exemptions $93,000 / $144,700 /
+ *   $72,350; phase-out at 50% above $515,950 / $1,031,900 / $515,950
+ *   (complete at $701,950 / $1,321,300 / $660,650 — the MFS figure is the
+ *   line 4 add-back threshold); 28% above $252,500 ($126,250 MFS), i.e.
+ *   28% less $5,050 ($2,525 MFS).
+ *
  * Part I. Line 1b is Form 1040 line 11b (AGI) less line 14 (the standard or
  * itemized deduction, the § 170(p) deduction for 2026, Schedule 1-A and
  * § 199A) with the Schedule 1-A senior deduction left in (2025 Form 6251
@@ -54,7 +60,7 @@
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
-import { TY2025, TY2026, type YearTables } from "./income-tax.js";
+import { TY2025, TY2026, TY2027, type YearTables } from "./income-tax.js";
 
 const J = "us.federal";
 
@@ -87,6 +93,7 @@ const qdcgLine5 = ruleRef("us.federal.ordinary_taxable_income");
 
 const SOURCE_2025 = "Form 6251 (2025) and instructions; Rev. Proc. 2024-40 § 2.11";
 const SOURCE_2026 = "Form 6251 (2026, draft created 5/26/26); Rev. Proc. 2025-32 §§ 3.10–3.11; Pub. L. 119-21 (OBBBA) § 70107";
+const SOURCE_2027 = "Rev. Proc. 2026-35 §§ 3.03, 3.11; Form 6251 line structure as on the 2026 draft (the 2027 form is not yet published); Pub. L. 119-21 (OBBBA) § 70107";
 const F6251_URL = "https://www.irs.gov/pub/irs-pdf/f6251.pdf";
 
 interface AmtYear {
@@ -128,6 +135,18 @@ const Y2026: AmtYear = {
   sub28: "489000", sub28Mfs: "244500",
   cg: TY2026,
   amountsNote: "For 2026: exemptions $90,100 ($140,200 joint/QSS; $70,100 MFS) phasing out at 50% of AMTI over $500,000 ($1,000,000 joint/QSS; $500,000 MFS); 26% up to $244,500 ($122,250 MFS), above that 28% less $4,890 ($2,445 MFS).",
+};
+
+const Y2027: AmtYear = {
+  year: "2027", from: "2027-01-01", to: "2028-01-01", source: SOURCE_2027,
+  exemptSingle: "9300000", exemptJoint: "14470000", exemptMfs: "7235000",
+  threshSingle: "51595000", threshJoint: "103190000", threshMfs: "51595000",
+  phaseRate: "50",
+  mfsZeroAt: "66065000",
+  break28: "25250000", break28Mfs: "12625000",
+  sub28: "505000", sub28Mfs: "252500",
+  cg: TY2027,
+  amountsNote: "For 2027: exemptions $93,000 ($144,700 joint/QSS; $72,350 MFS) phasing out at 50% of AMTI over $515,950 ($1,031,900 joint/QSS; $515,950 MFS), completely phased out at $701,950 / $1,321,300 / $660,650; 26% up to $252,500 ($126,250 MFS), above that 28% less $5,050 ($2,525 MFS).",
 };
 
 const byStatus = (single: string, joint: string, mfs: string): Expr => ({
@@ -325,8 +344,10 @@ function tmtRule(version: number, y: AmtYear): Rule {
 export const amtRules: Rule[] = [
   amtiRule(1, Y2025),
   amtiRule(2, Y2026),
+  amtiRule(3, Y2027),
   exemptionRule(1, Y2025),
   exemptionRule(2, Y2026),
+  exemptionRule(3, Y2027),
   {
     id: "us.federal.amt.taxable_excess",
     version: 1,
@@ -359,6 +380,7 @@ export const amtRules: Rule[] = [
   },
   tmtRule(1, Y2025),
   tmtRule(2, Y2026),
+  tmtRule(3, Y2027),
   {
     id: "us.federal.amt",
     version: 3, // v1/v2 capped line 13 at taxable income, never applied line 39, floored line 1 at zero, applied § 59(j) and skipped the MFS add-back

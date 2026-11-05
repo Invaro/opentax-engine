@@ -1,0 +1,16 @@
+{
+  "description": "§ 165(d)(1) as amended by OBBBA § 70114 (taxable years beginning after 2025): the gambling loss deduction 'shall be equal to 90 percent of the amount of such losses' and 'shall be allowed only to the extent of the gains'. Single 2026, total losses $5,000, winnings $10,000 → $4,500.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "otherOrdinaryIncome": 10000,
+    "stateAndLocalTaxesPaid": 20000,
+    "gamblingLossesItemized": 5000,
+    "gamblingWinnings": 10000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.gambling_loss_deduction",
+  "expect": {
+    "valueCents": "450000"
+  }
+}

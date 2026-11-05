@@ -1,0 +1,13 @@
+{
+  "description": "Form 8959 line 8 is Schedule SE line 6, which stays blank when net earnings (line 4c) are under $400 — such earnings are not 'self-employment income' (§ 1402(b)). Single 2025: wages $250,000 → Part I 0.9% × $50,000 = $450; Schedule C profit $400 → net earnings $369.40 < $400 → Part II $0. Additional Medicare Tax $450 (counting the $369.40 gave $453).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "selfEmploymentNetProfit": 400
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.additional_medicare_tax",
+  "expect": {
+    "valueCents": "45000"
+  }
+}

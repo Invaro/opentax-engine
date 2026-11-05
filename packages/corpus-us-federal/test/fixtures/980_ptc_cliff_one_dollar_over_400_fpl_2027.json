@@ -1,0 +1,15 @@
+{
+  "description": "The 400% cliff compares household income to 4 × the poverty line itself (§ 36B(c)(1)(A): 'does not exceed 400 percent'; Form 8962 Worksheet 2). TY2027 single, poverty line $15,960 → $63,840. Household income $63,841 is over it → no credit (the floored percentage read it as 400.00% and allowed $5,475.55).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 63841,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 12000,
+    "marketplacePremiumsPaid": 12000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.ptc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

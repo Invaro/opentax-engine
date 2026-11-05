@@ -1,0 +1,19 @@
+{
+  "description": "TY2027 premium tax credit (Rev. Proc. 2026-26 § 3.01; 2026 poverty guidelines $15,960, 91 FR 1797). Single, household income $40,000 = 250.62% FPL → 8.66% + 1.56% × 0.62/50 = 8.68% (percent-cents, half-up) → contribution $3,472; credit $7,000 − $3,472 = $3,528; advance $5,000 → repay $1,472 in full. Tax: taxable income $23,400, Tax Table midpoint $23,425 → $1,280 + 12% × $10,625 = $2,555. Net tax $2,555 + $1,472 = $4,027.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "ptcHouseholdSize": 1,
+    "slcspAnnualPremium": 7000,
+    "marketplacePremiumsPaid": 7000,
+    "advancePTC": 5000
+  },
+  "asOf": "2027-12-31",
+  "expect": {
+    "valueCents": "402700",
+    "intermediates": {
+      "us.federal.ptc": "352800",
+      "us.federal.ptc.excess_aptc_repayment": "147200"
+    }
+  }
+}

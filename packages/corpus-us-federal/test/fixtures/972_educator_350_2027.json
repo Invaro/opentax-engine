@@ -1,0 +1,14 @@
+{
+  "description": "TY2027: the educator amount is $350 per eligible educator (Rev. Proc. 2026-35 § 3.13); two educator spouses each get their own cap. MFJ, expenses $500 and $400 → $350 + $350 = $700.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 100000,
+    "educatorExpenses": 500,
+    "spouseEducatorExpenses": 400
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.above_the_line_adjustments",
+  "expect": {
+    "valueCents": "70000"
+  }
+}

@@ -4417,7 +4417,15 @@ export const FACT_FLAGS: FactFlag[] = [
     option: "--business-miles <n>",
     key: "businessMiles",
     group: "Business owner:",
-    help: "business miles for the standard mileage rate (70¢ 2025 / 72.5¢ 2026; standalone target)",
+    help: "business miles for the standard mileage rate (70¢ 2025; 2026: 72.5¢ to June 30, 76¢ from July 1; standalone target)",
+    boolean: false,
+  },
+  {
+    factId: "businessMilesDrivenFromJuly",
+    option: "--business-miles-from-july <n>",
+    key: "businessMilesFromJuly",
+    group: "Business owner:",
+    help: "TY2026: the business miles driven on or after July 1 (76¢/mile, Announcement 2026-11)",
     boolean: false,
   },
   {
@@ -4441,7 +4449,15 @@ export const FACT_FLAGS: FactFlag[] = [
     option: "--gambling-losses <dollars>",
     key: "gamblingLosses",
     group: "Deductions & savings:",
-    help: "gambling losses (§ 165(d), Schedule A line 16) — already limited to winnings by the preparer; 100% for TY2025, OBBBA 90% haircut begins TY2026",
+    help: "gambling losses (§ 165(d), Schedule A line 16) — TY2025: already limited to winnings; TY2026+: total losses (90% allowed, up to --gambling-winnings)",
+    boolean: false,
+  },
+  {
+    factId: "gamblingWinnings",
+    option: "--gambling-winnings <dollars>",
+    key: "gamblingWinnings",
+    group: "Deductions & savings:",
+    help: "gambling winnings for the year — the TY2026+ § 165(d) limit on the loss deduction (include the winnings in income too)",
     boolean: false,
   },
   {

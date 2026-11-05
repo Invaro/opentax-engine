@@ -162,6 +162,12 @@ export const itemizedRules: Rule[] = [
     { cap: "4040000", threshold: "50500000", thresholdMfs: "25250000" },
     { year: "2026", cap: "$40,400", capHalf: "20,200", threshold: "$505,000" },
   ),
+  saltRule(
+    5, "2027-01-01", "2028-01-01",
+    // § 164(b)(7)(A)(iii), (B)(ii)(III): 101 percent of the 2026 amounts
+    { cap: "4080400", threshold: "51005000", thresholdMfs: "25502500" },
+    { year: "2027", cap: "$40,804", capHalf: "20,402", threshold: "$510,050" },
+  ),
   {
     id: "us.federal.mortgage_interest_deduction",
     version: 1,
@@ -310,8 +316,52 @@ export const itemizedRules: Rule[] = [
     },
   },
   {
+    id: "us.federal.gambling_loss_deduction",
+    version: 1,
+    jurisdiction: J,
+    title: "Gambling loss deduction (§ 165(d), Schedule A line 16; TY2025: the attested winnings-limited amount)",
+    citation: {
+      source: "26 U.S.C. § 165(d) (as in effect for 2025)",
+      section: "§ 165(d)",
+      url: "https://www.law.cornell.edu/uscode/text/26/165",
+      excerpt:
+        "'Losses from wagering transactions shall be allowed only to the extent of the gains from such transactions' (§ 165(d) before OBBBA § 70114, which applies to taxable years beginning after December 31, 2025). The input attests the winnings-limited amount.",
+    },
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01",
+    output: { type: "money" },
+    formula: fact("gamblingLossesItemized"),
+  },
+  {
+    id: "us.federal.gambling_loss_deduction",
+    version: 2,
+    jurisdiction: J,
+    title: "Gambling loss deduction (§ 165(d) as amended by OBBBA: 90 percent of losses, limited to winnings)",
+    citation: {
+      source: "26 U.S.C. § 165(d), as amended by Pub. L. 119-21 (OBBBA) § 70114",
+      section: "§ 165(d)(1)",
+      url: "https://www.law.cornell.edu/uscode/text/26/165",
+      excerpt:
+        "For purposes of losses from wagering transactions, the amount allowed as a deduction for any taxable year— '(A) shall be equal to 90 percent of the amount of such losses during such taxable year, and (B) shall be allowed only to the extent of the gains from such transactions during such taxable year' (§ 165(d)(1)); 'losses from wagering transactions' includes any deduction otherwise allowable incurred in carrying on any wagering transaction (§ 165(d)(2)). Effective for taxable years beginning after December 31, 2025 (OBBBA § 70114(b)).",
+    },
+    effectiveFrom: "2026-01-01", // permanent: open-ended
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: { kind: "cmp", op: "gt", left: fact("gamblingLossesItemized"), right: zero },
+      then: {
+        kind: "min",
+        args: [
+          { kind: "mulRate", base: fact("gamblingLossesItemized"), rate: { num: "90", den: "100" }, round: "half-up" },
+          fact("gamblingWinnings"),
+        ],
+      },
+      else: zero,
+    },
+  },
+  {
     id: "us.federal.itemized_deductions_before_limitation",
-    version: 4, // v2 lacked investment interest (§ 163(d)) and noncash charitable; v4 adds gambling losses (§ 165(d), Schedule A line 16) as an attested-limited fact
+    version: 5, // v4 added the attested gambling loss fact at 100% in every year; v5 takes us.federal.gambling_loss_deduction (90% from 2026). v2 lacked investment interest (§ 163(d)) and noncash charitable
     jurisdiction: J,
     title:
       "Itemized deductions before the § 68 overall limitation (SALT + mortgage + charitable cash/noncash + medical + casualty + investment interest + gambling losses)",
@@ -320,7 +370,7 @@ export const itemizedRules: Rule[] = [
       section: "§ 63(d)",
       url: "https://www.law.cornell.edu/uscode/text/26/63",
       excerpt:
-        "'Itemized deductions' means the deductions allowable under this chapter other than (1) the deductions allowable in arriving at adjusted gross income, and (2) any deduction referred to in any paragraph of subsection (b). [Modeled Schedule A lines: taxes (§ 164), home mortgage interest (§ 163(h)), gifts to charity (§ 170) — cash via the limited charitable rule, noncash as the attested-allowed Form 8283 amount — medical (§ 213), casualty losses (§ 165(h), Form 4684), investment interest (§ 163(d)) as the attested post-Form-4952 allowed amount, and gambling losses (§ 165(d), Schedule A line 16) as the attested winnings-limited amount (TY2025: 100% of the limited amount; the OBBBA 90% haircut begins TY2026). Other miscellaneous itemized deductions are not modeled — conservative.]",
+        "'Itemized deductions' means the deductions allowable under this chapter other than (1) the deductions allowable in arriving at adjusted gross income, and (2) any deduction referred to in any paragraph of subsection (b). [Modeled Schedule A lines: taxes (§ 164), home mortgage interest (§ 163(h)), gifts to charity (§ 170) — cash via the limited charitable rule, noncash as the attested-allowed Form 8283 amount — medical (§ 213), casualty losses (§ 165(h), Form 4684), investment interest (§ 163(d)) as the attested post-Form-4952 allowed amount, and gambling losses (§ 165(d), Schedule A line 16) from us.federal.gambling_loss_deduction (TY2025: the attested winnings-limited amount; TY2026+: 90 percent of the losses, limited to the winnings). Other miscellaneous itemized deductions are not modeled — conservative.]",
     },
     effectiveFrom: "2025-01-01", // structural: open-ended
     output: { type: "money" },
@@ -334,7 +384,7 @@ export const itemizedRules: Rule[] = [
         ruleRef("us.federal.medical_expense_deduction"),
         ruleRef("us.federal.casualty_loss_deduction"),
         fact("investmentInterestDeduction"),
-        fact("gamblingLossesItemized"),
+        ruleRef("us.federal.gambling_loss_deduction"),
         fact("otherItemizedDeductions"),
       ],
     },
@@ -406,6 +456,97 @@ export const itemizedRules: Rule[] = [
           { when: "mfj", value: money("76870000") }, // $768,700
           { when: "qss", value: money("76870000") }, // $768,700
           { when: "mfs", value: money("38435000") }, // $384,350
+        ],
+      };
+      const reductionBase: Expr = {
+        kind: "min",
+        args: [
+          itemizedPre,
+          { kind: "max0", arg: { kind: "sub", left: tiIncreased, right: bracket37Start } },
+        ],
+      };
+      return {
+        kind: "if",
+        cond: {
+          kind: "and",
+          args: [
+            {
+              kind: "cmp",
+              op: "gt",
+              left: ruleRef("us.federal.se_net_profit"),
+              right: zero,
+            },
+            { kind: "cmp", op: "gt", left: reductionBase, right: zero },
+          ],
+        },
+        then: {
+          kind: "unsupported",
+          reason:
+            "the § 68 overall limitation and the § 199A deduction interact through the taxable-income term — this combination is not modeled yet",
+        },
+        else: {
+          kind: "sub",
+          left: itemizedPre,
+          right: {
+            kind: "mulRate",
+            base: reductionBase,
+            rate: { num: "2", den: "37" },
+            round: "half-up",
+          },
+        },
+      } satisfies Expr;
+    })(),
+  },
+  {
+    id: "us.federal.itemized_deductions",
+    version: 3,
+    jurisdiction: J,
+    title:
+      "Itemized deductions after the § 68 overall limitation (TY2027: 2/37 of the amount over the 37% bracket)",
+    citation: {
+      source: "26 U.S.C. § 68, as amended by Pub. L. 119-21 (OBBBA) § 70111; Rev. Proc. 2026-35 § 3.01",
+      section: "§ 68(a), (b)",
+      url: "https://www.law.cornell.edu/uscode/text/26/68",
+      excerpt:
+        "For taxable years beginning after December 31, 2025, itemized deductions are reduced by 2/37 of the lesser of (1) such amount of itemized deductions, or (2) so much of the taxable income of the taxpayer for the taxable year (determined without regard to this section and increased by such amount of itemized deductions) as exceeds the dollar amount at which the 37 percent rate bracket under section 1 begins (Rev. Proc. 2026-35 § 3.01: $661,375 single, $661,350 head of household, $793,650 MFJ/QSS, $396,825 MFS for 2027); applied after the application of any other limitation (§ 68(b)). [The taxable-income term nets out every deduction except the itemized deductions themselves; the § 199A interaction is NOT modeled — when both would apply, this rule refuses rather than guess.]",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01", // the 37%-bracket start is indexed
+    output: { type: "money" },
+    formula: (() => {
+      const itemizedPre = ruleRef("us.federal.itemized_deductions_before_limitation");
+      // "taxable income … determined without regard to this section and
+      // increased by such amount of itemized deductions" = AGI minus the
+      // § 63(b)-listed deductions that apply either way (senior/tips/
+      // overtime/car-loan) minus § 199A. § 199A is guarded below instead of
+      // subtracted: subtracting it would create a rule cycle through the
+      // election, and any scenario where it is nonzero in § 68 territory
+      // either refuses at § 199A's own threshold guard or refuses here.
+      const tiIncreased: Expr = {
+        kind: "max0",
+        arg: {
+          kind: "sub",
+          left: agi,
+          right: {
+            kind: "add",
+            args: [
+              ruleRef("us.federal.senior_deduction"),
+              ruleRef("us.federal.tips_deduction"),
+              ruleRef("us.federal.overtime_deduction"),
+              ruleRef("us.federal.car_loan_interest_deduction"),
+            ],
+          },
+        },
+      };
+      const bracket37Start: Expr = {
+        kind: "match",
+        on: fact("filingStatus"),
+        cases: [
+          { when: "single", value: money("66137500") }, // $661,375
+          { when: "hoh", value: money("66135000") }, // $661,350
+          { when: "mfj", value: money("79365000") }, // $793,650
+          { when: "qss", value: money("79365000") }, // $793,650
+          { when: "mfs", value: money("39682500") }, // $396,825
         ],
       };
       const reductionBase: Expr = {

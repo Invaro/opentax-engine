@@ -14,6 +14,7 @@
  * Bracket tables and gains breakpoints per year, one rule VERSION per year:
  *   v3 TY2025 — Rev. Proc. 2024-40 §§ 2.01, 2.03
  *   v4 TY2026 — Rev. Proc. 2025-32 §§ 4.01, 4.03
+ *   v5 TY2027 — Rev. Proc. 2026-35 §§ 3.01, 3.03
  * (v1/v2 were the ordinary-only formulas, superseded in git history.)
  *
  * Method note: the ordinary part follows worksheet line 22 (Tax Table under
@@ -74,6 +75,25 @@ export const TY2026: YearTables = {
   hoh: { brackets: B26.hoh, zeroMax: 66200, fifteenMax: 579600 },
   mfs: { brackets: B26.mfs, zeroMax: 49450, fifteenMax: 306850 },
 };
+
+// Rev. Proc. 2026-35 §§ 3.01, 3.03 (2027)
+const B27 = {
+  single: table([0, 12800, 52025, 109125, 208325, 264550, 661375]),
+  mfj: table([0, 25600, 104050, 218250, 416650, 529100, 793650]),
+  hoh: table([0, 18250, 69650, 109100, 208300, 264550, 661350]),
+  mfs: table([0, 12800, 52025, 109125, 208325, 264550, 396825]),
+};
+export const TY2027: YearTables = {
+  single: { brackets: B27.single, zeroMax: 51050, fifteenMax: 563200 },
+  mfj: { brackets: B27.mfj, zeroMax: 102100, fifteenMax: 633600 },
+  qss: { brackets: B27.mfj, zeroMax: 102100, fifteenMax: 633600 },
+  hoh: { brackets: B27.hoh, zeroMax: 68350, fifteenMax: 598400 },
+  mfs: { brackets: B27.mfs, zeroMax: 51050, fifteenMax: 316800 },
+};
+
+/** The rate tables for a supported tax year. */
+export const TABLES_BY_YEAR = { "2025": TY2025, "2026": TY2026, "2027": TY2027 } as const;
+export type TaxYear = keyof typeof TABLES_BY_YEAR;
 
 const taxable = ruleRef("us.federal.taxable_income");
 const ordinary = ruleRef("us.federal.ordinary_taxable_income");
@@ -317,9 +337,9 @@ function taxTableRule(
 export function ordinaryRateTaxExpr(
   base: Expr,
   statusFactId: string,
-  year: "2025" | "2026",
+  year: TaxYear,
 ): Expr {
-  const tables = year === "2025" ? TY2025 : TY2026;
+  const tables = TABLES_BY_YEAR[year];
   const perStatus = (sy: StatusYear): Expr => ({
     kind: "if",
     cond: { kind: "cmp", op: "lt", left: base, right: money("10000000") }, // < $100,000
@@ -381,6 +401,13 @@ export const incomeTaxRules: Rule[] = [
     excerpt:
       "2026 ordinary rate tables (10–37%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet.",
   }),
+  incomeTaxRule(5, "2027-01-01", "2028-01-01", TY2027, "2027", {
+    source: "26 U.S.C. § 1(h), (j); Rev. Proc. 2026-35",
+    section: "§ 1(j)(2), (j)(5); Rev. Proc. 2026-35 §§ 3.01, 3.03",
+    url: "https://www.irs.gov/pub/irs-drop/rp-26-35.pdf",
+    excerpt:
+      "2027 ordinary rate tables (10–37%): single 10% to $12,800, 12% to $52,025, 22% to $109,125, 24% to $208,325, 32% to $264,550, 35% to $661,375, 37% above ($396,825 MFS; joint $25,600 / $104,050 / $218,250 / $416,650 / $529,100 / $793,650; head of household $18,250 / $69,650 / $109,100 / $208,300 / $264,550 / $661,350). Maximum zero rate amounts $51,050/$102,100/$68,350/$51,050 and maximum 15% rate amounts $563,200/$633,600/$598,400/$316,800 (single/joint/head of household/MFS). Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet.",
+  }),
   taxTableRule(
     1, "2025-01-01", "2026-01-01", TY2025, "2025",
     "Sampled entries verified against the printed 2025 Publication 1040 table.",
@@ -388,5 +415,9 @@ export const incomeTaxRules: Rule[] = [
   taxTableRule(
     2, "2026-01-01", "2027-01-01", TY2026, "2026",
     "The official 2026 table publishes with the 2026 filing season; entries here are computed by the same published method over the 2026 brackets.",
+  ),
+  taxTableRule(
+    3, "2027-01-01", "2028-01-01", TY2027, "2027",
+    "The official 2027 table publishes with the 2027 filing season; entries here are computed by the same published method over the 2027 brackets (Rev. Proc. 2026-35 § 3.01).",
   ),
 ];

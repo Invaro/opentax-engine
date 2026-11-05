@@ -6,7 +6,7 @@
  * floored at zero. Statutory rates (§ 32(b)(1)): phase-in 7.65/34/40/45%,
  * phase-out 7.65/15.98/21.06/21.06% for 0/1/2/3+ qualifying children.
  * Dollar parameters are per-year (Rev. Proc. 2024-40 § 2.06;
- * Rev. Proc. 2025-32 § 4.06).
+ * Rev. Proc. 2025-32 § 4.06; Rev. Proc. 2026-35 § 3.06).
  *
  * Eligibility encoded: not claimable as a dependent; investment income
  * (approximated by taxableInterest) within the § 32(i) limit; childless
@@ -85,6 +85,19 @@ const TY2026: YearParams = {
   completedOther0: 19540,
   completedMFJ0: 26820,
   investmentLimit: 12200,
+};
+
+// Rev. Proc. 2026-35 § 3.06
+const TY2027: YearParams = {
+  eia: [8960, 13450, 18880, 18880],
+  max: [685, 4573, 7552, 8496],
+  thresholdOther0: 11210,
+  thresholdMFJ0: 18730,
+  thresholdOtherKids: 24660,
+  thresholdMFJKids: 32170,
+  completedOther0: 20164,
+  completedMFJ0: 27684,
+  investmentLimit: 12600,
 };
 
 const dollars = (d: number): string => (BigInt(d) * 100n).toString();
@@ -390,6 +403,7 @@ export const eitcRules: Rule[] = [
   // netted results ("capital gain net income", § 32(i)(1)(C))
   eitcRule(14, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06"),
   eitcRule(15, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06"),
+  eitcRule(16, "2027-01-01", "2028-01-01", TY2027, "2027", "Rev. Proc. 2026-35 § 3.06"),
   // us.federal.eitc_no_age_gate (new): the same § 32(a)-(b),(f),(i) formula with
   // the childless § 32(c)(1)(A)(ii) age gate removed, for state EITC statutes
   // that decouple from it (35 ILCS 5/212(b-5)/(b-10), IL P.A. 102-700) — see
@@ -406,7 +420,13 @@ export const eitcRules: Rule[] = [
     titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2026; for state decoupling statutes only)",
     extraExcerpt: NO_AGE_GATE_EXCERPT,
   }),
+  eitcRule(5, "2027-01-01", "2028-01-01", TY2027, "2027", "Rev. Proc. 2026-35 § 3.06", {
+    ruleId: "us.federal.eitc_no_age_gate",
+    ageGate: false,
+    titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2027; for state decoupling statutes only)",
+    extraExcerpt: NO_AGE_GATE_EXCERPT,
+  }),
 ];
 
 /** Exported for the parameter-identity test (threshold + max/rate ≈ completed). */
-export const EITC_PARAMS = { TY2025, TY2026, PHASE_OUT };
+export const EITC_PARAMS = { TY2025, TY2026, TY2027, PHASE_OUT };

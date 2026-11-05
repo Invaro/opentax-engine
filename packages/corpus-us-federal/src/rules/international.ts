@@ -340,6 +340,13 @@ export const internationalAndRemainderRules: Rule[] = [
     "2026",
     "\"$256,000 ($512,000 for joint returns)\" for 2026 (Rev. Proc. 2025-32 § 3.31, verbatim — a DECREASE from 2025)",
   ),
+  eblRule(
+    3, "2027-01-01", "2028-01-01",
+    "26400000", "52800000",
+    "Rev. Proc. 2026-35 § 3.33",
+    "2027",
+    "\"$264,000 ($528,000 for joint returns)\" for 2027 (Rev. Proc. 2026-35 § 3.33, verbatim)",
+  ),
   {
     id: "us.federal.corp.gbc_allowed",
     version: 2, // v1 predated the foreign tax credit in "net income tax"

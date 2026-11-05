@@ -190,5 +190,64 @@ function mileageRule(
 
 export const mileageRules: Rule[] = [
   mileageRule(1, "2025-01-01", "2026-01-01", "700", "70 cents", "Notice 2025-5"),
-  mileageRule(2, "2026-01-01", "2027-01-01", "725", "72.5 cents", "Notice 2026-10"),
+  {
+    id: "us.federal.vehicle_standard_mileage",
+    version: 3, // v2 applied 72.5¢ to every 2026 mile; Announcement 2026-11 raised the rate to 76¢ from July 1, 2026
+    jurisdiction: J,
+    title: "Business standard mileage deduction (2026: 72.5 cents/mile through June 30, 76 cents/mile from July 1)",
+    citation: {
+      source: "Notice 2026-10; Announcement 2026-11 (2026-29 I.R.B.); Rev. Proc. 2019-46",
+      section: "Announcement 2026-11",
+      url: "https://www.irs.gov/irb/2026-29_irb",
+      excerpt:
+        "Notice 2026-10 set the 2026 business standard mileage rate at 72.5 cents per mile. Announcement 2026-11 revised it: 'The revised standard mileage rates are: (1) Business 76 cents per mile' and they 'apply to deductible transportation expenses paid or incurred for business… on or after July 1, 2026'; 'The standard mileage rates set forth in Notice 2026-10 continue to apply to deductible transportation expenses paid or incurred… before July 1, 2026.' [A STANDALONE determination in lieu of actual vehicle expenses (Rev. Proc. 2019-46 rules attested): subtract the result from your Schedule C profit yourself — it changes SE tax and QBI.]",
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: {
+        kind: "cmp",
+        op: "gt",
+        left: fact("businessMilesDriven"),
+        right: { kind: "int", value: "0" },
+      },
+      then: {
+        kind: "if",
+        cond: {
+          kind: "cmp",
+          op: "gt",
+          left: fact("businessMilesDrivenFromJuly"),
+          right: fact("businessMilesDriven"),
+        },
+        then: {
+          kind: "unsupported",
+          reason: "businessMilesDrivenFromJuly is part of businessMilesDriven and cannot exceed it",
+        },
+        else: {
+          kind: "add",
+          args: [
+            {
+              kind: "mulRate",
+              base: {
+                kind: "mulInt",
+                base: money("100"),
+                count: { kind: "sub", left: fact("businessMilesDriven"), right: fact("businessMilesDrivenFromJuly") },
+              },
+              rate: { num: "725", den: "1000" },
+              round: "half-up",
+            },
+            {
+              kind: "mulRate",
+              base: { kind: "mulInt", base: money("100"), count: fact("businessMilesDrivenFromJuly") },
+              rate: { num: "760", den: "1000" },
+              round: "half-up",
+            },
+          ],
+        },
+      },
+      else: money("0"),
+    },
+  },
 ];

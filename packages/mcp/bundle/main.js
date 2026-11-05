@@ -28321,10 +28321,16 @@ var init_facts = __esm({
         }
       },
       {
+        id: "businessMilesDrivenFromJuly",
+        type: "int",
+        min: "0",
+        description: "TY2026 only: the part of businessMilesDriven driven on or after July 1, 2026, which takes the 76\xA2/mile rate of Announcement 2026-11 (the earlier miles take 72.5\xA2, Notice 2026-10). Asked only for 2026 when businessMilesDriven is entered."
+      },
+      {
         id: "businessMilesDriven",
         type: "int",
         min: "0",
-        description: "Business miles driven for the optional standard mileage rate (70\xA2/mile for 2025 per Notice 2025-5; 72.5\xA2/mile for 2026 per Notice 2026-10) \u2014 the standalone target us.federal.vehicle_standard_mileage computes the deduction; subtract it from your Schedule C profit yourself.",
+        description: "Business miles driven during the year for the optional standard mileage rate (70\xA2/mile for 2025 per Notice 2025-5; for 2026, 72.5\xA2/mile through June 30 per Notice 2026-10 and 76\xA2/mile from July 1 per Announcement 2026-11 \u2014 give the July\u2013December miles in businessMilesDrivenFromJuly) \u2014 the standalone target us.federal.vehicle_standard_mileage computes the deduction; subtract it from your Schedule C profit yourself.",
         default: {
           value: "0",
           rationale: "Assumed no business mileage absent contrary input"
@@ -28410,10 +28416,16 @@ var init_facts = __esm({
         }
       },
       {
+        id: "gamblingWinnings",
+        type: "money",
+        min: "0",
+        description: "Gains from wagering transactions for the year (Form W-2G and all other gambling winnings) \u2014 the \xA7 165(d)(1)(B) limit on the TY2026+ gambling loss deduction. Used only for that limit: the winnings themselves must also be included in income (for example in otherOrdinaryIncome). Asked only for TY2026 and later when gamblingLossesItemized is entered. In dollars."
+      },
+      {
         id: "gamblingLossesItemized",
         type: "money",
         min: "0",
-        description: "Gambling losses deductible as an itemized deduction (\xA7 165(d), Schedule A line 16) \u2014 LIMITED TO GAMBLING WINNINGS included in income: enter min(losses paid, winnings reported), attested by the input (the engine does not track the per-session limit). TY2025: the full limited amount deducts; the OBBBA 90%-of-losses haircut (\xA7 165(d) as amended) applies only to taxable years beginning after 12/31/2025. Itemized-only; never reduces winnings directly. In dollars.",
+        description: "Gambling losses for the \xA7 165(d) itemized deduction (Schedule A line 16). TY2025: enter min(losses paid, winnings reported) \u2014 the full limited amount deducts. TY2026 and later: enter the TOTAL wagering losses for the year (including any deduction incurred in carrying on a wagering transaction, \xA7 165(d)(2)); the engine allows 90 percent of them, limited to gamblingWinnings (\xA7 165(d)(1) as amended by OBBBA \xA7 70114). Itemized-only; never reduces winnings directly. In dollars.",
         default: {
           value: "0",
           rationale: "Assumed no deductible gambling losses absent contrary input"
@@ -28577,7 +28589,7 @@ var init_facts = __esm({
         id: "educatorExpenses",
         type: "money",
         min: "0",
-        description: "TAXPAYER's eligible educator classroom expenses (\xA7 62(a)(2)(D)) \u2014 capped at $300 for 2025 (indexed). K-12 teachers/counselors/aides with 900+ hours (attested). A spouse who is ALSO an eligible educator gets a separate $300 cap: put the spouse's expenses in spouseEducatorExpenses, never summed here. In dollars.",
+        description: "TAXPAYER's eligible educator classroom expenses (\xA7 62(a)(2)(D)) \u2014 capped at $300 for 2025 and $350 for 2026 and 2027 (indexed). K-12 teachers/counselors/aides with 900+ hours (attested). A spouse who is ALSO an eligible educator gets a separate cap: put the spouse's expenses in spouseEducatorExpenses, never summed here. In dollars.",
         default: {
           value: "0",
           rationale: "Assumed no educator expenses absent contrary input"
@@ -28587,7 +28599,7 @@ var init_facts = __esm({
         id: "spouseEducatorExpenses",
         type: "money",
         min: "0",
-        description: "SPOUSE's eligible educator classroom expenses (\xA7 62(a)(2)(D)) \u2014 separately capped at $300 for 2025 (per-educator cap; an MFJ couple of two educators deducts up to $600 total). In dollars.",
+        description: "SPOUSE's eligible educator classroom expenses (\xA7 62(a)(2)(D)) \u2014 separately capped at $300 for 2025 and $350 for 2026 and 2027 (per-educator cap; an MFJ couple of two educators deducts up to $600 / $700 total). In dollars.",
         default: {
           value: "0",
           rationale: "Assumed the spouse is not an eligible educator absent contrary input"
@@ -33225,7 +33237,7 @@ function hsaRule(version2, effectiveFrom, effectiveTo, selfCents, familyCents, s
     }
   };
 }
-function studentLoanRule(version2, effectiveFrom, effectiveTo, jointThresholdCents, jointRangeCents, source, yearLabel) {
+function studentLoanRule(version2, effectiveFrom, effectiveTo, jointThresholdCents, jointRangeCents, source, yearLabel, thresholdCents = "8500000") {
   const magi2 = ruleRef("us.federal.agi_before_student_loan");
   const threshold2 = {
     kind: "if",
@@ -33260,8 +33272,7 @@ function studentLoanRule(version2, effectiveFrom, effectiveTo, jointThresholdCen
     parameters: {
       cap: { value: "250000", type: "money" },
       // $2,500, not indexed
-      threshold: { value: "8500000", type: "money" },
-      // $85,000
+      threshold: { value: thresholdCents, type: "money" },
       range: { value: "1500000", type: "money" },
       // $15,000
       thresholdJoint: { value: jointThresholdCents, type: "money" },
@@ -33364,8 +33375,33 @@ var init_adjustments = __esm({
     adjustmentRules = [
       hsaRule(1, "2025-01-01", "2026-01-01", "430000", "855000", "Rev. Proc. 2024-25", "2025"),
       hsaRule(2, "2026-01-01", "2027-01-01", "440000", "875000", "Rev. Proc. 2025-19", "2026"),
+      hsaRule(3, "2027-01-01", "2028-01-01", "450000", "900000", "Rev. Proc. 2026-24 \xA7 3.01(1)", "2027"),
       sepRule(1, "2025-01-01", "2026-01-01", "7000000", "Notice 2024-80", "2025", "$70,000"),
       sepRule(2, "2026-01-01", "2027-01-01", "7200000", "Notice 2025-67", "2026", "$72,000"),
+      {
+        id: "us.federal.sep_deduction",
+        version: 3,
+        jurisdiction: "us.federal",
+        title: "SEP / solo-401(k) employer contribution deduction (TY2027: the \xA7 415(c) limit is not yet published)",
+        citation: {
+          source: "26 U.S.C. \xA7\xA7 404(a)(8), (h), 415(c), (d)",
+          section: "\xA7 404(h); \xA7 415(c)(1)(A), (d)",
+          url: "https://www.law.cornell.edu/uscode/text/26/415",
+          excerpt: "The deduction is limited by the \xA7 415(c)(1)(A) annual addition limit, which \xA7 415(d) adjusts each year; the IRS publishes the 2027 amount in its annual retirement-plan cost-of-living notice, which is not yet out. A 2027 return with a SEP or solo-401(k) employer contribution refuses rather than guess; with none, the deduction is $0."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: { kind: "cmp", op: "gt", left: fact("sepContribution"), right: zero },
+          then: {
+            kind: "unsupported",
+            reason: "the 2027 \xA7 415(c) annual addition limit is not yet published by the IRS \u2014 a 2027 SEP or solo-401(k) employer contribution is not modeled until it is"
+          },
+          else: zero
+        }
+      },
       {
         id: "us.federal.sehi_deduction",
         version: 1,
@@ -33430,6 +33466,17 @@ var init_adjustments = __esm({
         // $175,000 threshold, $30,000 range ($175k–$205k)
         "Rev. Proc. 2025-32 \xA7 4.29",
         "2026"
+      ),
+      studentLoanRule(
+        3,
+        "2027-01-01",
+        "2028-01-01",
+        "18000000",
+        "3000000",
+        // $180,000 threshold, $30,000 range ($180k–$210k)
+        "Rev. Proc. 2026-35 \xA7 3.31",
+        "2027",
+        "9000000"
       )
     ];
   }
@@ -33643,7 +33690,7 @@ function taxTableRule(version2, effectiveFrom, effectiveTo, tables, yearLabel, m
   };
 }
 function ordinaryRateTaxExpr(base, statusFactId, year) {
-  const tables = year === "2025" ? TY2025 : TY2026;
+  const tables = TABLES_BY_YEAR[year];
   const perStatus = (sy) => ({
     kind: "if",
     cond: { kind: "cmp", op: "lt", left: base, right: money2("10000000") },
@@ -33664,7 +33711,7 @@ function ordinaryRateTaxExpr(base, statusFactId, year) {
     }))
   };
 }
-var fact2, money2, ruleRef2, RATES, d, B25, TY2025, B26, TY2026, taxable, ordinary, incomeTaxRules;
+var fact2, money2, ruleRef2, RATES, d, B25, TY2025, B26, TY2026, B27, TY2027, TABLES_BY_YEAR, taxable, ordinary, incomeTaxRules;
 var init_income_tax = __esm({
   "../corpus-us-federal/dist/rules/income-tax.js"() {
     "use strict";
@@ -33699,6 +33746,20 @@ var init_income_tax = __esm({
       hoh: { brackets: B26.hoh, zeroMax: 66200, fifteenMax: 579600 },
       mfs: { brackets: B26.mfs, zeroMax: 49450, fifteenMax: 306850 }
     };
+    B27 = {
+      single: table([0, 12800, 52025, 109125, 208325, 264550, 661375]),
+      mfj: table([0, 25600, 104050, 218250, 416650, 529100, 793650]),
+      hoh: table([0, 18250, 69650, 109100, 208300, 264550, 661350]),
+      mfs: table([0, 12800, 52025, 109125, 208325, 264550, 396825])
+    };
+    TY2027 = {
+      single: { brackets: B27.single, zeroMax: 51050, fifteenMax: 563200 },
+      mfj: { brackets: B27.mfj, zeroMax: 102100, fifteenMax: 633600 },
+      qss: { brackets: B27.mfj, zeroMax: 102100, fifteenMax: 633600 },
+      hoh: { brackets: B27.hoh, zeroMax: 68350, fifteenMax: 598400 },
+      mfs: { brackets: B27.mfs, zeroMax: 51050, fifteenMax: 316800 }
+    };
+    TABLES_BY_YEAR = { "2025": TY2025, "2026": TY2026, "2027": TY2027 };
     taxable = ruleRef2("us.federal.taxable_income");
     ordinary = ruleRef2("us.federal.ordinary_taxable_income");
     incomeTaxRules = [
@@ -33741,8 +33802,15 @@ var init_income_tax = __esm({
         url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
         excerpt: "2026 ordinary rate tables (10\u201337%); maximum zero rate amounts $49,450/$98,900/$66,200/$49,450 and maximum 15% rate amounts $545,500/$613,700/$579,600/$306,850 by filing status. Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet."
       }),
+      incomeTaxRule(5, "2027-01-01", "2028-01-01", TY2027, "2027", {
+        source: "26 U.S.C. \xA7 1(h), (j); Rev. Proc. 2026-35",
+        section: "\xA7 1(j)(2), (j)(5); Rev. Proc. 2026-35 \xA7\xA7 3.01, 3.03",
+        url: "https://www.irs.gov/pub/irs-drop/rp-26-35.pdf",
+        excerpt: "2027 ordinary rate tables (10\u201337%): single 10% to $12,800, 12% to $52,025, 22% to $109,125, 24% to $208,325, 32% to $264,550, 35% to $661,375, 37% above ($396,825 MFS; joint $25,600 / $104,050 / $218,250 / $416,650 / $529,100 / $793,650; head of household $18,250 / $69,650 / $109,100 / $208,300 / $264,550 / $661,350). Maximum zero rate amounts $51,050/$102,100/$68,350/$51,050 and maximum 15% rate amounts $563,200/$633,600/$598,400/$316,800 (single/joint/head of household/MFS). Qualified Dividends and Capital Gain Tax Worksheet line 22: tax on the ordinary part from the Tax Table if it is less than $100,000, otherwise the Tax Computation Worksheet."
+      }),
       taxTableRule(1, "2025-01-01", "2026-01-01", TY2025, "2025", "Sampled entries verified against the printed 2025 Publication 1040 table."),
-      taxTableRule(2, "2026-01-01", "2027-01-01", TY2026, "2026", "The official 2026 table publishes with the 2026 filing season; entries here are computed by the same published method over the 2026 brackets.")
+      taxTableRule(2, "2026-01-01", "2027-01-01", TY2026, "2026", "The official 2026 table publishes with the 2026 filing season; entries here are computed by the same published method over the 2026 brackets."),
+      taxTableRule(3, "2027-01-01", "2028-01-01", TY2027, "2027", "The official 2027 table publishes with the 2027 filing season; entries here are computed by the same published method over the 2027 brackets (Rev. Proc. 2026-35 \xA7 3.01).")
     ];
   }
 });
@@ -33846,7 +33914,7 @@ function tmtRule(version2, y) {
     formula: min(line38, tax2628(line12))
   };
 }
-var J, fact3, money3, ruleRef3, param2, d2, add, sub, max02, min, pct, isMfs, amti, line12, line13, qdcgLine5, SOURCE_2025, SOURCE_2026, F6251_URL, Y2025, Y2026, byStatus, tax2628, itemizing, line1b, line4BeforeMfs, amtRules;
+var J, fact3, money3, ruleRef3, param2, d2, add, sub, max02, min, pct, isMfs, amti, line12, line13, qdcgLine5, SOURCE_2025, SOURCE_2026, SOURCE_2027, F6251_URL, Y2025, Y2026, Y2027, byStatus, tax2628, itemizing, line1b, line4BeforeMfs, amtRules;
 var init_amt = __esm({
   "../corpus-us-federal/dist/rules/amt.js"() {
     "use strict";
@@ -33879,6 +33947,7 @@ var init_amt = __esm({
     qdcgLine5 = ruleRef3("us.federal.ordinary_taxable_income");
     SOURCE_2025 = "Form 6251 (2025) and instructions; Rev. Proc. 2024-40 \xA7 2.11";
     SOURCE_2026 = "Form 6251 (2026, draft created 5/26/26); Rev. Proc. 2025-32 \xA7\xA7 3.10\u20133.11; Pub. L. 119-21 (OBBBA) \xA7 70107";
+    SOURCE_2027 = "Rev. Proc. 2026-35 \xA7\xA7 3.03, 3.11; Form 6251 line structure as on the 2026 draft (the 2027 form is not yet published); Pub. L. 119-21 (OBBBA) \xA7 70107";
     F6251_URL = "https://www.irs.gov/pub/irs-pdf/f6251.pdf";
     Y2025 = {
       year: "2025",
@@ -33919,6 +33988,26 @@ var init_amt = __esm({
       sub28Mfs: "244500",
       cg: TY2026,
       amountsNote: "For 2026: exemptions $90,100 ($140,200 joint/QSS; $70,100 MFS) phasing out at 50% of AMTI over $500,000 ($1,000,000 joint/QSS; $500,000 MFS); 26% up to $244,500 ($122,250 MFS), above that 28% less $4,890 ($2,445 MFS)."
+    };
+    Y2027 = {
+      year: "2027",
+      from: "2027-01-01",
+      to: "2028-01-01",
+      source: SOURCE_2027,
+      exemptSingle: "9300000",
+      exemptJoint: "14470000",
+      exemptMfs: "7235000",
+      threshSingle: "51595000",
+      threshJoint: "103190000",
+      threshMfs: "51595000",
+      phaseRate: "50",
+      mfsZeroAt: "66065000",
+      break28: "25250000",
+      break28Mfs: "12625000",
+      sub28: "505000",
+      sub28Mfs: "252500",
+      cg: TY2027,
+      amountsNote: "For 2027: exemptions $93,000 ($144,700 joint/QSS; $72,350 MFS) phasing out at 50% of AMTI over $515,950 ($1,031,900 joint/QSS; $515,950 MFS), completely phased out at $701,950 / $1,321,300 / $660,650; 26% up to $252,500 ($126,250 MFS), above that 28% less $5,050 ($2,525 MFS)."
     };
     byStatus = (single, joint, mfs) => ({
       kind: "match",
@@ -33979,8 +34068,10 @@ var init_amt = __esm({
     amtRules = [
       amtiRule(1, Y2025),
       amtiRule(2, Y2026),
+      amtiRule(3, Y2027),
       exemptionRule(1, Y2025),
       exemptionRule(2, Y2026),
+      exemptionRule(3, Y2027),
       {
         id: "us.federal.amt.taxable_excess",
         version: 1,
@@ -34013,6 +34104,7 @@ var init_amt = __esm({
       },
       tmtRule(1, Y2025),
       tmtRule(2, Y2026),
+      tmtRule(3, Y2027),
       {
         id: "us.federal.amt",
         version: 3,
@@ -34049,7 +34141,7 @@ function cumulative(yearFactId, periodFactId) {
     else: zero2
   };
 }
-function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, withQbiMinimum) {
+function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, qbiMinimum) {
   const cumWages = cumulative("wages", q.wagesFact);
   const cumSE = cumulative("selfEmploymentNetProfit", q.seFact);
   const netEarn = {
@@ -34117,11 +34209,11 @@ function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, withQ
       { kind: "mulRate", base: tiBeforeQbi, rate: { num: "20", den: "100" }, round: "half-up" }
     ]
   };
-  const qbi = withQbiMinimum ? {
+  const qbi = qbiMinimum ? {
     kind: "if",
-    cond: { kind: "cmp", op: "ge", left: qbiBase, right: money4("100000") },
-    then: { kind: "max", args: [qbiCore, money4("40000")] },
-    // OBBBA $400 min
+    cond: { kind: "cmp", op: "ge", left: qbiBase, right: money4(qbiMinimum.testCents) },
+    then: { kind: "max", args: [qbiCore, money4(qbiMinimum.deductionCents)] },
+    // § 199A(i) minimum
     else: qbiCore
   } : qbiCore;
   const ti = { kind: "max0", arg: { kind: "sub", left: tiBeforeQbi, right: qbi } };
@@ -34155,12 +34247,12 @@ function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, withQ
   };
   return {
     id: `us.federal.estimated.annualized_installment_q${q.n}`,
-    version: year === "2025" ? 3 : 4,
+    version: { "2025": 3, "2026": 4, "2027": 5 }[year],
     // v1/v2 predated the per-bucket capital-loss facts in the scope guard
     jurisdiction: J2,
     title: `Annualized-income required installment #${q.n} (\xA7 6654(d)(2), TY${year})`,
     citation: {
-      source: `26 U.S.C. \xA7 6654(d)(2); ${year} Form 2210 Schedule AI`,
+      source: year === "2027" ? "26 U.S.C. \xA7 6654(d)(2); Form 2210 Schedule AI as printed for 2025 (the 2027 form is not yet published); Rev. Proc. 2026-35; 91 FR 67380" : `26 U.S.C. \xA7 6654(d)(2); ${year} Form 2210 Schedule AI`,
       section: "\xA7 6654(d)(2); Schedule AI",
       url: "https://www.irs.gov/forms-pubs/about-form-2210",
       excerpt: `Installment #${q.n}: annualize the period's income by ${q.num === q.den ? "1" : Number(q.num) / Number(q.den)} (Schedule AI line 2), standard deduction in full (line 7), annualized SE tax per Part II (prorated social security limit ${proratedLabel}; printed factor-embedded rates), take ${Number(q.pct.num) / (Number(q.pct.den) / 100)}% of the resulting tax (line 20), subtract earlier columns' installments, and cap at 25% of the required annual payment plus amounts saved in earlier columns (lines 22\u201327). [Scope: the wage + self-employment core; anything else refuses. Per-column credits (line 18) not modeled \u2014 can only overstate an installment, conservative. Exact cents; the paper form's whole-dollar rounding may differ by small amounts. Cumulative period facts are demanded only for nonzero year amounts.]`
@@ -34179,7 +34271,7 @@ function quarterRule(q, year, from, to, proratedLimitCents, proratedLabel, withQ
     }
   };
 }
-var J2, fact4, money4, ruleRef4, zero2, gt0, OUT_OF_SCOPE, QUARTERS, P2025, L2025, P2026, L2026, annualizedInstallmentRules;
+var J2, fact4, money4, ruleRef4, zero2, gt0, OUT_OF_SCOPE, QUARTERS, P2025, L2025, P2026, L2026, P2027, L2027, annualizedInstallmentRules;
 var init_annualized_installments = __esm({
   "../corpus-us-federal/dist/rules/annualized-installments.js"() {
     "use strict";
@@ -34236,9 +34328,23 @@ var init_annualized_installments = __esm({
     L2025 = ["$44,025", "$73,375", "$117,400", "$176,100"];
     P2026 = ["4612500", "7687500", "12300000", "18450000"];
     L2026 = ["$46,125 (from the $184,500 base)", "$76,875", "$123,000", "$184,500"];
+    P2027 = ["4807500", "8012500", "12820000", "19230000"];
+    L2027 = ["$48,075 (from the $192,300 base, 91 FR 67380)", "$80,125", "$128,200", "$192,300"];
     annualizedInstallmentRules = [
-      ...QUARTERS.map((q) => quarterRule(q, "2025", "2025-01-01", "2026-01-01", P2025[q.n - 1], L2025[q.n - 1], false)),
-      ...QUARTERS.map((q) => quarterRule(q, "2026", "2026-01-01", "2027-01-01", P2026[q.n - 1], L2026[q.n - 1], true))
+      ...QUARTERS.map((q) => quarterRule(q, "2025", "2025-01-01", "2026-01-01", P2025[q.n - 1], L2025[q.n - 1], null)),
+      ...QUARTERS.map((q) => quarterRule(q, "2026", "2026-01-01", "2027-01-01", P2026[q.n - 1], L2026[q.n - 1], {
+        deductionCents: "40000",
+        // $400
+        testCents: "100000"
+        // $1,000
+      })),
+      ...QUARTERS.map((q) => (
+        // Rev. Proc. 2026-35 § 3.28(2): the minimum is $415 and the QBI test $1,030
+        quarterRule(q, "2027", "2027-01-01", "2028-01-01", P2027[q.n - 1], L2027[q.n - 1], {
+          deductionCents: "41500",
+          testCents: "103000"
+        })
+      ))
     ];
   }
 });
@@ -34832,7 +34938,7 @@ function section179Rule(version2, from, to, capCents, thresholdCents, capLabel, 
       source: `26 U.S.C. \xA7 179, as amended by Pub. L. 119-21 (OBBBA \xA7 70306); ${sourceLabel}`,
       section: "\xA7 179(b)(1)\u2013(3)",
       url: "https://www.law.cornell.edu/uscode/text/26/179",
-      excerpt: `"The aggregate cost which may be taken into account under subsection (a) for any taxable year shall not exceed ${capLabel}" \u2014 "reduced (but not below zero) by the amount by which the cost of section 179 property placed in service during such taxable year exceeds ${thresholdLabel}" (${yearLabel}; the OBBBA amounts apply to taxable years beginning after December 31, 2024). The \xA7 179(b)(3)(A) limit caps the deduction at taxable income from the active conduct of a trade or business computed without \xA7 179 \u2014 approximated here as gross income less ordinary/depreciation/research/interest deductions, capital gains excluded (enter active amounts only if this limit binds); the excess carries forward (\xA7 179(b)(3)(B), its own target). [The \xA7 179(b)(5) SUV cap ($32,000 for 2026, Rev. Proc. 2025-32 \xA7 3.24) and the \xA7 280F passenger-auto interaction are not modeled \u2014 exclude vehicles; primary use: qualified real property that \xA7 168(k) cannot reach.]`
+      excerpt: `"The aggregate cost which may be taken into account under subsection (a) for any taxable year shall not exceed ${capLabel}" \u2014 "reduced (but not below zero) by the amount by which the cost of section 179 property placed in service during such taxable year exceeds ${thresholdLabel}" (${yearLabel}; the OBBBA amounts apply to taxable years beginning after December 31, 2024). The \xA7 179(b)(3)(A) limit caps the deduction at taxable income from the active conduct of a trade or business computed without \xA7 179 \u2014 approximated here as gross income less ordinary/depreciation/research/interest deductions, capital gains excluded (enter active amounts only if this limit binds); the excess carries forward (\xA7 179(b)(3)(B), its own target). [The \xA7 179(b)(5) SUV cap (${{ TY2025: "$31,300 for 2025, Rev. Proc. 2024-40 \xA7 2.25", TY2026: "$32,000 for 2026, Rev. Proc. 2025-32 \xA7 3.24", TY2027: "$33,100 for 2027, Rev. Proc. 2026-35 \xA7 3.26" }[yearLabel]}) and the \xA7 280F passenger-auto interaction are not modeled \u2014 exclude vehicles; primary use: qualified real property that \xA7 168(k) cannot reach.]`
     },
     effectiveFrom: from,
     effectiveTo: to,
@@ -35121,10 +35227,14 @@ var init_corporate_1120 = __esm({
       },
       interestRule(1, "2025-01-01", "2026-01-01", "3100000000", "$31,000,000", "2025"),
       interestRule(2, "2026-01-01", "2027-01-01", "3200000000", "$32,000,000", "2026"),
+      interestRule(3, "2027-01-01", "2028-01-01", "3300000000", "$33,000,000", "2027"),
+      // Rev. Proc. 2026-35 § 3.32
       section179Rule(1, "2025-01-01", "2026-01-01", "250000000", "400000000", "$2,500,000", "$4,000,000", "TY2025", "Rev. Proc. 2025-32 \xA7 2.10 (OBBBA statutory amounts)"),
       section179Rule(2, "2026-01-01", "2027-01-01", "256000000", "409000000", "$2,560,000", "$4,090,000", "TY2026", "Rev. Proc. 2025-32 \xA7 3.24, verbatim"),
+      section179Rule(3, "2027-01-01", "2028-01-01", "264000000", "423000000", "$2,640,000", "$4,230,000", "TY2027", "Rev. Proc. 2026-35 \xA7 3.26, verbatim"),
       section179CarryforwardRule(1, "2025-01-01", "2026-01-01", "250000000", "400000000", "TY2025"),
       section179CarryforwardRule(2, "2026-01-01", "2027-01-01", "256000000", "409000000", "TY2026"),
+      section179CarryforwardRule(3, "2027-01-01", "2028-01-01", "264000000", "423000000", "TY2027"),
       corpCharitableRule(7, "2025-01-01", "2026-01-01", false, "TY2025"),
       corpCharitableRule(8, "2026-01-01", void 0, true, "TY2026+, permanent"),
       {
@@ -35705,11 +35815,39 @@ var init_qsbs = __esm({
           excerpt: "For qualified small business stock acquired after July 4, 2025: 50 percent of gain excluded after a 3-year holding period, 75 percent after 4 years, 100 percent after 5 years; per-issuer limit the greater of $15,000,000 (indexed after 2026) or 10 times basis [the 10\xD7-basis alternative is not modeled \u2014 the flat cap is conservative]; issuer aggregate gross assets must not exceed $75,000,000. For stock acquired after September 27, 2010 and on or before July 4, 2025: 100 percent excluded after 5 years, $10,000,000 cap. [Assumed and disclosed: original issuance for money/services, active qualified trade or business, and the asset test; earlier-vintage stock (50%/75% legacy with \xA7 1(h)(4) 28%-rate gain and the 7% AMT preference) REFUSES. The non-excluded remainder of the new 50%/75% tiers is likewise 28%-rate gain \u2014 do not enter it as longTermCapitalGains; this target answers the exclusion amount only.]"
         },
         effectiveFrom: "2025-01-01",
-        // statutory: open-ended
+        effectiveTo: "2027-01-01",
+        // § 1202(b)(5) indexes the $15,000,000 for taxable years beginning after 2026 (v2)
         output: { type: "money" },
         parameters: {
           capNew: { value: "1500000000", type: "money" },
           // $15,000,000
+          capOld: { value: "1000000000", type: "money" }
+          // $10,000,000
+        },
+        formula: {
+          kind: "if",
+          cond: { kind: "cmp", op: "eq", left: fact12("qsbsGain"), right: money12("0") },
+          then: money12("0"),
+          else: tiers
+        }
+      },
+      {
+        id: "us.federal.qsbs_exclusion",
+        version: 2,
+        jurisdiction: "us.federal",
+        title: "QSBS gain exclusion \u2014 OBBBA tiers (50/75/100% at 3/4/5 years) or prior-law 100% at 5 years",
+        citation: {
+          source: "26 U.S.C. \xA7 1202, as amended by Pub. L. 119-21 (OBBBA); Rev. Proc. 2026-35 \xA7 3.42(1) (the $15,000,000 limit is $15,480,000 for 2027)",
+          section: "\xA7 1202(a), (b)",
+          url: "https://www.law.cornell.edu/uscode/text/26/1202",
+          excerpt: "For qualified small business stock acquired after July 4, 2025: 50 percent of gain excluded after a 3-year holding period, 75 percent after 4 years, 100 percent after 5 years; per-issuer limit the greater of $15,000,000 (indexed after 2026) or 10 times basis [the 10\xD7-basis alternative is not modeled \u2014 the flat cap is conservative]; issuer aggregate gross assets must not exceed $77,390,000 for 2027 (the $75,000,000 amount as adjusted, Rev. Proc. 2026-35 \xA7 3.42(2)). For stock acquired after September 27, 2010 and on or before July 4, 2025: 100 percent excluded after 5 years, $10,000,000 cap. [Assumed and disclosed: original issuance for money/services, active qualified trade or business, and the asset test; earlier-vintage stock (50%/75% legacy with \xA7 1(h)(4) 28%-rate gain and the 7% AMT preference) REFUSES. The non-excluded remainder of the new 50%/75% tiers is likewise 28%-rate gain \u2014 do not enter it as longTermCapitalGains; this target answers the exclusion amount only.]"
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        parameters: {
+          capNew: { value: "1548000000", type: "money" },
+          // $15,480,000 (Rev. Proc. 2026-35 § 3.42(1))
           capOld: { value: "1000000000", type: "money" }
           // $10,000,000
         },
@@ -35856,7 +35994,7 @@ function adoptionAllowedRule(version2, from, to, maxCents, thresholdCents, yearL
     jurisdiction: J8,
     title: `Adoption credit after the MAGI phase-out (\xA7 23, ${yearLabel})`,
     citation: {
-      source: `26 U.S.C. \xA7 23, as amended by Pub. L. 119-21 (OBBBA) \xA7 70402; ${yearLabel === "TY2025" ? "Rev. Proc. 2024-40 \xA7 2.04" : "Rev. Proc. 2025-32 \xA7 3.04"}`,
+      source: `26 U.S.C. \xA7 23, as amended by Pub. L. 119-21 (OBBBA) \xA7 70402; ${{ TY2025: "Rev. Proc. 2024-40 \xA7 2.04", TY2026: "Rev. Proc. 2025-32 \xA7 3.04", TY2027: "Rev. Proc. 2026-35 \xA7 3.04" }[yearLabel]}`,
       section: "\xA7 23(a)\u2013(b), (f)",
       url: "https://www.law.cornell.edu/uscode/text/26/23",
       excerpt: `${amountsExcerpt} A special-needs adoption is treated as having paid the maximum regardless of actual expenses (\xA7 23(a)(3)). The credit is reduced by the ratio of the MAGI excess over the threshold to $40,000 (\xA7 23(b)(2)(A) \u2014 the $40,000 span is NOT indexed; MAGI is AGI without \xA7\xA7 911/931/933, \xA7 23(b)(2)(B) \u2014 MAGI \u2248 AGI here, disclosed). Married taxpayers only on a joint return (\xA7 23(f)(1), rules similar to \xA7 21(e)(2)) \u2014 MFS: $0; the living-apart exception is not modeled (conservative). The \xA7 23(a)(2) expense-timing rules (year after payment for pre-final years; foreign adoptions only when final) are attested by the input.`
@@ -36090,6 +36228,7 @@ var init_credits = __esm({
         "The applicable percentage is '35 percent reduced (but not below 20 percent) by 1 percentage point for each $2,000 (or fraction thereof) by which the taxpayer's adjusted gross income for the taxable year exceeds $15,000' (pre-OBBBA text, in force for taxable years beginning before 2026 per OBBBA \xA7 70405(b)). Expenses capped at $3,000 (one qualifying individual) / $6,000 (two or more), \xA7 21(c), net of the \xA7 129 exclusion (netted by the input); limited to earned income \u2014 on a joint return, to the lesser spouse's earned income (\xA7 21(d)(1)). Married only on a joint return (\xA7 21(e)(2)) \u2014 MFS: $0; the \xA7 21(e)(4) living-apart exception and \xA7 21(d)(2) deemed student-spouse income are not modeled (conservative). Qualifying-individual status (\xA7 21(b)(1): dependent under 13, or incapable of self-care) is attested by the count input."
       ),
       cdccTentativeRule(4, "2026-01-01", "2027-01-01", pct2026, "TY2026: OBBBA 50% \u2192 35% \u2192 20%", "OBBBA \xA7 70405 (taxable years beginning after December 31, 2025): the applicable percentage 'means 50 percent\u2014 (A) reduced (but not below 35 percent) by 1 percentage point for each $2,000 or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $15,000, and (B) further reduced (but not below 20 percent) by 1 percentage point for each $2,000 ($4,000 in the case of a joint return) or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $75,000 ($150,000 in the case of a joint return).' Expense caps $3,000/$6,000 (\xA7 21(c), unindexed, unchanged by the OBBBA), limited to earned income \u2014 joint returns to the lesser spouse's earned income (\xA7 21(d)(1)). Married only on a joint return (\xA7 21(e)(2)) \u2014 MFS: $0; \xA7 21(e)(4) and \xA7 21(d)(2) not modeled (conservative). Qualifying-individual status attested by the count input."),
+      cdccTentativeRule(5, "2027-01-01", "2028-01-01", pct2026, "TY2027: OBBBA 50% \u2192 35% \u2192 20%", "OBBBA \xA7 70405 (taxable years beginning after December 31, 2025): the applicable percentage 'means 50 percent\u2014 (A) reduced (but not below 35 percent) by 1 percentage point for each $2,000 or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $15,000, and (B) further reduced (but not below 20 percent) by 1 percentage point for each $2,000 ($4,000 in the case of a joint return) or fraction thereof by which the taxpayer's adjusted gross income for the taxable year exceeds $75,000 ($150,000 in the case of a joint return).' None of these amounts is indexed (Rev. Proc. 2026-35 lists no \xA7 21 item), so 2027 applies them unchanged. Expense caps $3,000/$6,000 (\xA7 21(c)), limited to earned income \u2014 joint returns to the lesser spouse's earned income (\xA7 21(d)(1)). Married only on a joint return (\xA7 21(e)(2)) \u2014 MFS: $0; \xA7 21(e)(4) and \xA7 21(d)(2) not modeled (conservative). Qualifying-individual status attested by the count input."),
       {
         id: "us.federal.cdcc",
         version: 1,
@@ -36118,6 +36257,39 @@ var init_credits = __esm({
         t20: saversTier("5250000", "3937500", "2625000"),
         t10: saversTier("8050000", "6037500", "4025000")
       }, "TY2026", "Notice 2025-67", "For 2026 (Notice 2025-67): joint 50% to $48,500, 20% to $52,500, 10% to $80,500; head of household $36,375/$39,375/$60,375; all other statuses $24,250/$26,250/$40,250 \u2014 zero above."),
+      {
+        id: "us.federal.savers.tentative",
+        version: 3,
+        jurisdiction: J8,
+        title: "Saver's credit before the liability limit (TY2027: ABLE contributions only; AGI limits not yet published)",
+        citation: {
+          source: "26 U.S.C. \xA7 25B(a), (d)(1), as amended by Pub. L. 117-328 (SECURE 2.0) \xA7 103 and Pub. L. 119-21 (OBBBA) \xA7 70116",
+          section: "\xA7 25B(a), (b), (d)(1)",
+          url: "https://www.law.cornell.edu/uscode/text/26/25B",
+          excerpt: "From 2027, qualified retirement savings contributions are 'the amount of contributions made by the eligible individual during such taxable year to the ABLE account (within the meaning of section 529A) of which such individual is the designated beneficiary'; IRA contributions and elective deferrals count only 'in the case of any taxable year beginning before January 1, 2027' (\xA7 25B(d)(1); SECURE 2.0 \xA7 103 replaces them with the \xA7 6433 Saver's Match). The per-person cap becomes $2,100 for taxable years beginning after December 31, 2026 (OBBBA \xA7 70116(b)). The 2027 \xA7 25B(b) AGI limits are inflation-adjusted in the IRS's annual retirement-plan notice, which is not yet published \u2014 so a 2027 return with saver's contributions refuses rather than guess; with none, the credit is $0."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: {
+            kind: "or",
+            args: [
+              gt03(fact13("saversContributions")),
+              {
+                kind: "and",
+                args: [isStatus3("mfj"), gt03(fact13("saversContributionsSpouse"))]
+              }
+            ]
+          },
+          then: {
+            kind: "unsupported",
+            reason: "the 2027 saver's credit counts only ABLE-account contributions (\xA7 25B(d)(1) after SECURE 2.0 \xA7 103), up to $2,100, and its 2027 AGI limits are not yet published by the IRS \u2014 not modeled for 2027"
+          },
+          else: zero7
+        }
+      },
       {
         id: "us.federal.savers_credit",
         version: 1,
@@ -36154,8 +36326,10 @@ var init_credits = __esm({
       },
       adoptionAllowedRule(1, "2025-01-01", "2026-01-01", "1728000", "25919000", "TY2025", "For taxable years beginning in 2025, the credit allowed for an adoption of a child with special needs is $17,280; the maximum credit allowed for other adoptions is the amount of qualified adoption expenses up to $17,280; phase-out begins at modified adjusted gross income in excess of $259,190 and is complete at $299,190 (Rev. Proc. 2024-40 \xA7 2.04, verbatim)."),
       adoptionAllowedRule(2, "2026-01-01", "2027-01-01", "1767000", "26508000", "TY2026", "For taxable years beginning in 2026, the credit allowed for an adoption of a child with special needs is $17,670; the maximum credit allowed for other adoptions is the amount of qualified adoption expenses up to $17,670; phase-out begins at modified adjusted gross income in excess of $265,080 and is complete at $305,080 (Rev. Proc. 2025-32 \xA7 3.04, verbatim)."),
+      adoptionAllowedRule(3, "2027-01-01", "2028-01-01", "1825000", "27368000", "TY2027", "For taxable years beginning in 2027, under \xA7 23(a)(3), the credit allowed for an adoption of a child with special needs is $18,250. Under \xA7 23(b)(1), the maximum credit allowed for other adoptions is the amount of qualified adoption expenses up to $18,250. The available adoption credit begins to phase out under \xA7 23(b)(2)(A) for taxpayers with modified adjusted gross income in excess of $273,680 and is completely phased out for taxpayers with modified adjusted gross income of $313,680 or more (Rev. Proc. 2026-35 \xA7 3.04)."),
       adoptionRefundableRule(1, "2025-01-01", "2026-01-01", "500000", "$5,000", "statutory, unindexed for 2025"),
       adoptionRefundableRule(2, "2026-01-01", "2027-01-01", "512000", "$5,120", "Rev. Proc. 2025-32 \xA7 3.04(3)"),
+      adoptionRefundableRule(3, "2027-01-01", "2028-01-01", "528000", "$5,280", "Rev. Proc. 2026-35 \xA7 3.04(3)"),
       {
         id: "us.federal.adoption.nonrefundable",
         version: 2,
@@ -36265,6 +36439,42 @@ var init_ctc = __esm({
         parameters: {
           perChild: { value: "220000", type: "money" },
           // $2,200
+          perOtherDependent: { value: "50000", type: "money" }
+          // $500, unindexed
+        },
+        formula: {
+          kind: "add",
+          args: [
+            {
+              kind: "mulInt",
+              base: { kind: "param", name: "perChild" },
+              count: fact14("qualifyingChildren")
+            },
+            {
+              kind: "mulInt",
+              base: { kind: "param", name: "perOtherDependent" },
+              count: fact14("otherDependents")
+            }
+          ]
+        }
+      },
+      {
+        id: "us.federal.ctc.tentative",
+        version: 4,
+        jurisdiction: J9,
+        title: "Child tax credit + credit for other dependents, before phase-out (TY2027)",
+        citation: {
+          source: "26 U.S.C. \xA7 24(a), (h)(4), as amended by Pub. L. 119-21 (OBBBA) \xA7 70104; Rev. Proc. 2026-35 \xA7 3.05",
+          section: "\xA7 24(a), (h)(2), (h)(4)",
+          url: "https://www.law.cornell.edu/uscode/text/26/24",
+          excerpt: "For taxable years beginning in 2027, the maximum amount of the credit allowed under \xA7 24(a) is $2,300 (Rev. Proc. 2026-35 \xA7 3.05(1)). \xA7 24(h)(4): 'The credit determined under subsection (a) (after the application of paragraph (2)) shall be increased by $500 for each dependent of the taxpayer (as defined in section 152) other than a qualifying child' \u2014 unindexed, never refundable (the \xA7 24(d)(1)(A) ACTC cross-reference excludes it via (h)(5)'s per-child cap), subject to the same \xA7 24(b) phase-out as part of the combined credit (Schedule 8812 line 8). [\xA7 24(h)(4)(B) noncitizen exception and the dependent's TIN requirement (\xA7 24(e)) attested by the count.]"
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        parameters: {
+          perChild: { value: "230000", type: "money" },
+          // $2,300
           perOtherDependent: { value: "50000", type: "money" }
           // $500, unindexed
         },
@@ -36439,7 +36649,9 @@ var init_ctc = __esm({
           url: "https://www.law.cornell.edu/uscode/text/26/24",
           excerpt: "The credit is refundable up to $1,700 per qualifying child (2025 and 2026, as adjusted), limited to 15 percent of so much of earned income as exceeds $2,500, and to the portion of the credit not used against tax. [The \xA7 24(d)(1)(B)(ii) alternative for taxpayers with 3+ children (social security taxes minus EIC) is NOT modeled \u2014 it can only increase the refund at very low earned income; disclosed. Earned income approximated as wages.]"
         },
-        ...FROM6,
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2027-01-01",
+        // the $1,700 refundable amount is indexed; 2027 is v4
         output: { type: "money" },
         parameters: {
           refundableCapPerChild: { value: "170000", type: "money" },
@@ -36460,6 +36672,81 @@ var init_ctc = __esm({
               }
             },
             // refundable cap: $1,700 per qualifying child
+            {
+              kind: "mulInt",
+              base: { kind: "param", name: "refundableCapPerChild" },
+              count: fact14("qualifyingChildren")
+            },
+            // 15% of earned income (wages + SE earnings net of ½ SE tax) above $2,500
+            {
+              kind: "mulRate",
+              base: {
+                kind: "max0",
+                arg: {
+                  kind: "sub",
+                  left: {
+                    kind: "add",
+                    args: [
+                      fact14("wages"),
+                      {
+                        kind: "max0",
+                        arg: {
+                          kind: "sub",
+                          left: ruleRef12("us.federal.se_net_profit"),
+                          right: ruleRef12("us.federal.se_tax_half_deduction")
+                        }
+                      }
+                    ]
+                  },
+                  right: {
+                    kind: "add",
+                    args: [
+                      { kind: "param", name: "earnedIncomeFloor" },
+                      // Schedule C net loss reduces § 24(d) earned income too
+                      fact14("scheduleCNetLoss")
+                    ]
+                  }
+                }
+              },
+              rate: { num: "15", den: "100" },
+              round: "half-up"
+            }
+          ]
+        }
+      },
+      {
+        id: "us.federal.actc",
+        version: 4,
+        jurisdiction: J9,
+        title: "Additional child tax credit \u2014 refundable, TY2027 (simplified: 3+-child SS-tax alternative not modeled)",
+        citation: {
+          source: "26 U.S.C. \xA7 24(d), (h)(5); Rev. Proc. 2026-35 \xA7 3.05(2)",
+          section: "\xA7 24(d)(1); \xA7 24(h)(5)",
+          url: "https://www.law.cornell.edu/uscode/text/26/24",
+          excerpt: "The credit is refundable up to $1,800 per qualifying child (2027, as adjusted \u2014 Rev. Proc. 2026-35 \xA7 3.05(2)), limited to 15 percent of so much of earned income as exceeds $2,500, and to the portion of the credit not used against tax. [The \xA7 24(d)(1)(B)(ii) alternative for taxpayers with 3+ children (social security taxes minus EIC) is NOT modeled \u2014 it can only increase the refund at very low earned income; disclosed. Earned income approximated as wages.]"
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        parameters: {
+          refundableCapPerChild: { value: "180000", type: "money" },
+          // $1,800
+          earnedIncomeFloor: { value: "250000", type: "money" }
+          // $2,500
+        },
+        formula: {
+          kind: "min",
+          args: [
+            // the part of the credit the liability limit left unused
+            {
+              kind: "max0",
+              arg: {
+                kind: "sub",
+                left: ruleRef12("us.federal.ctc.after_phaseout"),
+                right: ruleRef12("us.federal.ctc")
+              }
+            },
+            // refundable cap: $1,800 per qualifying child
             {
               kind: "mulInt",
               base: { kind: "param", name: "refundableCapPerChild" },
@@ -36636,9 +36923,11 @@ var init_dependents = __esm({
       },
       qualifyingRelativeRule(1, "2025-01-01", "2026-01-01", "520000", "2025", "Rev. Proc. 2024-40 \xA7 2.24 ($5,200)"),
       qualifyingRelativeRule(2, "2026-01-01", "2027-01-01", "530000", "2026", "Rev. Proc. 2025-32 \xA7 4.23 ($5,300)"),
+      qualifyingRelativeRule(3, "2027-01-01", "2028-01-01", "550000", "2027", "Rev. Proc. 2026-35 \xA7 3.25 ($5,500)"),
       ...[
         { version: 1, from: "2025-01-01", to: "2026-01-01", limit: "520000", year: "2025", revProc: "Rev. Proc. 2024-40 \xA7 2.24 ($5,200)" },
-        { version: 2, from: "2026-01-01", to: "2027-01-01", limit: "530000", year: "2026", revProc: "Rev. Proc. 2025-32 \xA7 4.23 ($5,300)" }
+        { version: 2, from: "2026-01-01", to: "2027-01-01", limit: "530000", year: "2026", revProc: "Rev. Proc. 2025-32 \xA7 4.23 ($5,300)" },
+        { version: 3, from: "2027-01-01", to: "2028-01-01", limit: "550000", year: "2027", revProc: "Rev. Proc. 2026-35 \xA7 3.25 ($5,500)" }
       ].map(({ version: version2, from, to, limit, year, revProc }) => ({
         id: "us.federal.dependent.qualifying_relative.multiple_support",
         version: version2,
@@ -37194,7 +37483,7 @@ function eitcRule(version2, effectiveFrom, effectiveTo, p, yearLabel, revProc, o
     }
   };
 }
-var fact17, money16, ruleRef14, param8, intLit2, zero9, isStatus5, PHASE_IN, PHASE_OUT, TY20252, TY20262, dollars, earned, phaseoutIncome, NO_AGE_GATE_EXCERPT, eitcRules;
+var fact17, money16, ruleRef14, param8, intLit2, zero9, isStatus5, PHASE_IN, PHASE_OUT, TY20252, TY20262, TY20272, dollars, earned, phaseoutIncome, NO_AGE_GATE_EXCERPT, eitcRules;
 var init_eitc = __esm({
   "../corpus-us-federal/dist/rules/eitc.js"() {
     "use strict";
@@ -37244,6 +37533,17 @@ var init_eitc = __esm({
       completedMFJ0: 26820,
       investmentLimit: 12200
     };
+    TY20272 = {
+      eia: [8960, 13450, 18880, 18880],
+      max: [685, 4573, 7552, 8496],
+      thresholdOther0: 11210,
+      thresholdMFJ0: 18730,
+      thresholdOtherKids: 24660,
+      thresholdMFJKids: 32170,
+      completedOther0: 20164,
+      completedMFJ0: 27684,
+      investmentLimit: 12600
+    };
     dollars = (d3) => (BigInt(d3) * 100n).toString();
     earned = {
       // A Schedule C net loss reduces § 32(c)(2) earned income (Pub. 596 worksheet:
@@ -37281,6 +37581,7 @@ var init_eitc = __esm({
       // netted results ("capital gain net income", § 32(i)(1)(C))
       eitcRule(14, "2025-01-01", "2026-01-01", TY20252, "2025", "Rev. Proc. 2024-40 \xA7 2.06"),
       eitcRule(15, "2026-01-01", "2027-01-01", TY20262, "2026", "Rev. Proc. 2025-32 \xA7 4.06"),
+      eitcRule(16, "2027-01-01", "2028-01-01", TY20272, "2027", "Rev. Proc. 2026-35 \xA7 3.06"),
       // us.federal.eitc_no_age_gate (new): the same § 32(a)-(b),(f),(i) formula with
       // the childless § 32(c)(1)(A)(ii) age gate removed, for state EITC statutes
       // that decouple from it (35 ILCS 5/212(b-5)/(b-10), IL P.A. 102-700) — see
@@ -37295,6 +37596,12 @@ var init_eitc = __esm({
         ruleId: "us.federal.eitc_no_age_gate",
         ageGate: false,
         titleSuffix: "Earned income credit, \xA7 32(c)(1)(A)(ii) childless age gate REMOVED (TY2026; for state decoupling statutes only)",
+        extraExcerpt: NO_AGE_GATE_EXCERPT
+      }),
+      eitcRule(5, "2027-01-01", "2028-01-01", TY20272, "2027", "Rev. Proc. 2026-35 \xA7 3.06", {
+        ruleId: "us.federal.eitc_no_age_gate",
+        ageGate: false,
+        titleSuffix: "Earned income credit, \xA7 32(c)(1)(A)(ii) childless age gate REMOVED (TY2027; for state decoupling statutes only)",
         extraExcerpt: NO_AGE_GATE_EXCERPT
       })
     ];
@@ -37391,9 +37698,11 @@ var init_feie = __esm({
     feieRules = [
       feieExclusionRule(1, "2025-01-01", "2026-01-01", "13000000", "$130,000", "Rev. Proc. 2024-40 \xA7 2.39"),
       feieExclusionRule(2, "2026-01-01", "2027-01-01", "13290000", "$132,900", "Rev. Proc. 2025-32 \xA7 4.39"),
+      feieExclusionRule(3, "2027-01-01", "2028-01-01", "13730000", "$137,300", "Rev. Proc. 2026-35 \xA7 3.41"),
       // v3/v4: the preferential-income refusal guard also catches the standalone qualifiedDividends fact
       feieStackingRule(3, "2025-01-01", "2026-01-01", "2025"),
       feieStackingRule(4, "2026-01-01", "2027-01-01", "2026"),
+      feieStackingRule(5, "2027-01-01", "2028-01-01", "2027"),
       {
         id: "us.federal.eitc.feie_denial",
         version: 1,
@@ -37485,7 +37794,8 @@ var init_fiduciary = __esm({
     };
     fiduciaryRules = [
       fiduciaryRule(1, "2025-01-01", "2026-01-01", "315000", "1145000", "1565000", "TY2025", "Rev. Proc. 2024-40 \xA7 2.01"),
-      fiduciaryRule(2, "2026-01-01", "2027-01-01", "330000", "1170000", "1600000", "TY2026", "Rev. Proc. 2025-32 \xA7 4.01")
+      fiduciaryRule(2, "2026-01-01", "2027-01-01", "330000", "1170000", "1600000", "TY2026", "Rev. Proc. 2025-32 \xA7 4.01"),
+      fiduciaryRule(3, "2027-01-01", "2028-01-01", "340000", "1210000", "1650000", "TY2027", "Rev. Proc. 2026-35 \xA7 3.01")
     ];
   }
 });
@@ -37526,12 +37836,14 @@ function tierChain(fplPct, tiers2, above400) {
 function ptcRule(version2, from, to, fplFirstPersonCents, fplPerAdditionalCents, tiers2, above400, yearLabel, excerpt) {
   const inRange = above400 === "cliff" ? {
     kind: "if",
+    // compare the income itself to 4 × the poverty line: the floored
+    // percentage reads income a few dollars over the line as 400.00%
+    // (Form 8962 Worksheet 2 tests line 1 against line 2 × 4.0)
     cond: {
       kind: "cmp",
       op: "gt",
-      left: fplPercentCents,
-      right: money19("40000")
-      // 400.00%
+      left: householdIncome,
+      right: { kind: "mulInt", base: povertyLine, count: { kind: "int", value: "4" } }
     },
     then: zero12,
     else: assistanceAmount(tierChain(
@@ -37566,7 +37878,7 @@ function ptcRule(version2, from, to, fplFirstPersonCents, fplPerAdditionalCents,
     jurisdiction: J13,
     title: `Premium tax credit (\xA7 36B, ${yearLabel})`,
     citation: {
-      source: from >= "2026-01-01" ? "26 U.S.C. \xA7 36B (post-ARPA-sunset); Rev. Proc. 2025-25 \xA7 3.01; 90 FR 5917 (2025 HHS poverty guidelines)" : "26 U.S.C. \xA7 36B(b)(3)(A)(iii), (c)(1)(E) (ARPA/IRA, sunset before 2026); Rev. Proc. 2024-35 \xA7 2.01; 89 FR 2961 (2024 HHS poverty guidelines)",
+      source: from >= "2027-01-01" ? "26 U.S.C. \xA7 36B, as amended by Pub. L. 119-21 (OBBBA) \xA7\xA7 71301, 71302, 71305; Rev. Proc. 2026-26 \xA7 3.01; 91 FR 1797 (2026 HHS poverty guidelines)" : from >= "2026-01-01" ? "26 U.S.C. \xA7 36B (post-ARPA-sunset); Rev. Proc. 2025-25 \xA7 3.01; 90 FR 5917 (2025 HHS poverty guidelines)" : "26 U.S.C. \xA7 36B(b)(3)(A)(iii), (c)(1)(E) (ARPA/IRA, sunset before 2026); Rev. Proc. 2024-35 \xA7 2.01; 89 FR 2961 (2024 HHS poverty guidelines)",
       section: "\xA7 36B(b), (c)(1), (d)",
       url: "https://www.law.cornell.edu/uscode/text/26/36B",
       excerpt
@@ -37682,7 +37994,7 @@ function repayment2025() {
     }
   };
 }
-var J13, fact20, money19, ruleRef16, param10, zero12, gt06, isStatus6, householdIncome, povertyLine, fplPercentCents, contribution, assistanceAmount, TIERS_2025, TIERS_2026, ptcRules;
+var J13, fact20, money19, ruleRef16, param10, zero12, gt06, isStatus6, householdIncome, povertyLine, fplPercentCents, contribution, assistanceAmount, TIERS_2025, TIERS_2027, TIERS_2026, ptcRules;
 var init_ptc = __esm({
   "../corpus-us-federal/dist/rules/ptc.js"() {
     "use strict";
@@ -37769,6 +38081,15 @@ var init_ptc = __esm({
       { lo: "25000", hi: "30000", initial: "400", final: "600" },
       { lo: "30000", hi: "40000", initial: "600", final: "850" }
     ];
+    TIERS_2027 = [
+      { lo: "10000", hi: "13300", initial: "215", final: "215" },
+      { lo: "13300", hi: "15000", initial: "323", final: "430" },
+      { lo: "15000", hi: "20000", initial: "430", final: "678" },
+      { lo: "20000", hi: "25000", initial: "678", final: "866" },
+      { lo: "25000", hi: "30000", initial: "866", final: "1022" },
+      { lo: "30000", hi: "40001", initial: "1022", final: "1022" }
+      // "but not more than 400%" — inclusive
+    ];
     TIERS_2026 = [
       { lo: "10000", hi: "13300", initial: "210", final: "210" },
       { lo: "13300", hi: "15000", initial: "314", final: "419" },
@@ -37795,8 +38116,8 @@ var init_ptc = __esm({
         `For taxable years beginning after December 31, 2020, and before January 1, 2026, the enhanced table applies (\xA7 36B(b)(3)(A)(iii); Rev. Proc. 2024-35: 0% to 150% FPL, rising linearly to 8.5% at 300\u2013400%) and subparagraph (A) is applied 'without regard to "but does not exceed 400 percent"' (\xA7 36B(c)(1)(E)) \u2014 8.5% with NO income cliff. Premium assistance is the lesser of enrollment premiums or the excess of the SLCSP benchmark over the applicable percentage of household income (\xA7 36B(b)(2)). Household income = MAGI + tax-exempt interest + the \xA7 911 exclusion + nontaxable social security (\xA7 36B(d)(2)(B)); poverty line per the 2024 HHS guidelines (89 FR 2961: $15,060 + $5,380/person, 48 contiguous states \u2014 Alaska/Hawaii's higher guidelines not modeled, conservative). Below 100% FPL: not an applicable taxpayer \u2014 $0 (\xA7 36B(c)(1)(A); the (c)(1)(B) immigrant special rule not modeled, conservative) \u2014 unless the Marketplace estimated at enrollment that household income would be at least 100% FPL and advance payments were made (Reg. \xA7 1.36B-2(b)(6); 2025 Form 8962 instructions, 'Estimated household income at least 100% of the federal poverty line'), when the 0% first-tier percentage applies. Household income below zero counts as zero (Form 8962 line 3). Married filing separately: $0 (\xA7 36B(c)(1)(C); the abuse/abandonment exception not modeled). [Monthly computation annualized; dependents' MAGI and the \xA7 36B(c)(2) employer-coverage/affordability disqualifications attested by the inputs; Form 8962's whole-percent and 4-decimal table rounding may differ sub-dollar \u2014 statutory linear interpolation encoded.]`
       ),
       ptcRule(
-        5,
-        // v3 gave $0 below 100% FPL even under Reg. § 1.36B-2(b)(6) and let household income go negative
+        6,
+        // v5 tested the 400% cliff on the floored percentage, so income just over 4 × the poverty line kept the credit; v3 gave $0 below 100% FPL even under Reg. § 1.36B-2(b)(6) and let household income go negative
         "2026-01-01",
         "2027-01-01",
         "1565000",
@@ -37808,6 +38129,21 @@ var init_ptc = __esm({
         "cliff",
         "TY2026: indexed statutory table, the 400% cliff returns",
         "For taxable years beginning in 2026 the ARPA/IRA enhancements have sunset by their own terms: the applicable percentage comes from the indexed statutory table (Rev. Proc. 2025-25 \xA7 3.01: 2.10% under 133% FPL; 3.14\u21924.19 at 133\u2013150; 4.19\u21926.60 at 150\u2013200; 6.60\u21928.44 at 200\u2013250; 8.44\u21929.96 at 250\u2013300; 9.96 at 300\u2013400), and the term 'applicable taxpayer' again requires household income that 'does not exceed 400 percent of\u2026 the poverty line' (\xA7 36B(c)(1)(A)) \u2014 one dollar past 400% FPL destroys the entire credit. Premium assistance is the lesser of enrollment premiums or the SLCSP benchmark minus the applicable percentage of household income (\xA7 36B(b)(2)). Household income = MAGI + tax-exempt interest + the \xA7 911 exclusion + nontaxable social security (\xA7 36B(d)(2)(B)); poverty line per the 2025 HHS guidelines (90 FR 5917: $15,650 + $5,500/person, 48 contiguous states \u2014 AK/HI not modeled, conservative). Below 100% FPL: $0 (\xA7 36B(c)(1)(A); OBBBA \xA7 71302 struck the (c)(1)(B) special rule) \u2014 unless the Marketplace estimated at enrollment that household income would be at least 100% but no more than 400% FPL and advance payments were made (Reg. \xA7 1.36B-2(b)(6); 2026 draft Form 8962 instructions), when the 2.10% first-tier percentage applies. Household income below zero counts as zero (Form 8962 line 3). MFS: $0 (\xA7 36B(c)(1)(C)). [Monthly computation annualized; dependents' MAGI and employer-coverage disqualifications attested; Form 8962 rounding may differ sub-dollar.]"
+      ),
+      ptcRule(
+        7,
+        // the 400% cliff tests household income against 4 × the poverty line, not the floored percentage
+        "2027-01-01",
+        "2028-01-01",
+        "1596000",
+        // $15,960 (2026 guidelines, used for TY2027)
+        "568000",
+        // $5,680 per additional person
+        TIERS_2027,
+        // over 400% FPL → not an applicable taxpayer → $0 credit
+        "cliff",
+        "TY2027: indexed statutory table, the 400% cliff",
+        "For taxable years beginning in 2027 the applicable percentage comes from the indexed statutory table (Rev. Proc. 2026-26 \xA7 3.01: 2.15% under 133% FPL; 3.23\u21924.30 at 133\u2013150; 4.30\u21926.78 at 150\u2013200; 6.78\u21928.66 at 200\u2013250; 8.66\u219210.22 at 250\u2013300; 10.22 at 300\u2013400), and the term 'applicable taxpayer' requires household income that 'does not exceed 400 percent of\u2026 the poverty line' (\xA7 36B(c)(1)(A)). Premium assistance is the lesser of enrollment premiums or the SLCSP benchmark minus the applicable percentage of household income (\xA7 36B(b)(2)). Household income = MAGI + tax-exempt interest + the \xA7 911 exclusion + nontaxable social security (\xA7 36B(d)(2)(B)); poverty line per the 2026 HHS guidelines (91 FR 1797: $15,960 + $5,680/person, 48 contiguous states \u2014 AK/HI not modeled, conservative). Below 100% FPL: $0 (\xA7 36B(c)(1)(A)) \u2014 unless the Marketplace estimated at enrollment that household income would be at least 100% but no more than 400% FPL and advance payments were made (Reg. \xA7 1.36B-2(b)(6)), when the 2.15% first-tier percentage applies. Household income below zero counts as zero (Form 8962 line 3). MFS: $0 (\xA7 36B(c)(1)(C)). From 2027 (OBBBA \xA7 71301, effective for taxable years beginning after December 31, 2026) the credit is limited to eligible individuals as that section defines them (citizens, lawful permanent residents and the other listed groups); the inputs attest that every covered individual qualifies. Excess advance payments are repaid in full (OBBBA \xA7 71305). [Monthly computation annualized; dependents' MAGI and employer-coverage disqualifications attested; Form 8962 rounding may differ sub-dollar; the 2027 Form 8962 is not yet published.]"
       ),
       {
         id: "us.federal.ptc.net",
@@ -37933,6 +38269,7 @@ var init_residual = __esm({
     residualRules = [
       householdRule(1, "2025-01-01", "2026-01-01", "280000", "$2,800", "89 FR 85276; 2025 Instructions for Schedule H"),
       householdRule(2, "2026-01-01", "2027-01-01", "300000", "$3,000", "90 FR 49047"),
+      householdRule(3, "2027-01-01", "2028-01-01", "310000", "$3,100", "91 FR 67380 (SSA, Cost-of-Living Increase and Other Determinations for 2027)"),
       {
         id: "us.federal.estimated.required_annual_payment.farmer",
         version: 1,
@@ -38068,6 +38405,8 @@ var init_employer = __esm({
     employerRules = [
       payrollRule(1, "2025-01-01", "2026-01-01", "17610000", "2025", "$176,100"),
       payrollRule(2, "2026-01-01", "2027-01-01", "18450000", "2026", "$184,500"),
+      payrollRule(3, "2027-01-01", "2028-01-01", "19230000", "2027", "$192,300"),
+      // 91 FR 67380
       {
         id: "us.federal.credit.research_asc",
         version: 1,
@@ -38572,11 +38911,57 @@ var init_income = __esm({
           url: "https://www.law.cornell.edu/uscode/text/26/62",
           excerpt: "adjusted gross income means gross income minus\u2026 the deduction allowed by section 164(f) [half of SE tax]\u2026 the deduction allowed by section 223 [HSA]\u2026 the deductions allowed by section 404 [self-employed retirement plans]\u2026 the deduction allowed by section 162(l) [self-employed health insurance]\u2026 the deductions\u2026 [for] expenses\u2026 of eligible educators (\xA7 62(a)(2)(D) \u2014 $300 cap PER ELIGIBLE EDUCATOR for 2025 (an MFJ couple of two educators deducts up to $600: use educatorExpenses for the taxpayer and spouseEducatorExpenses for the spouse, each capped separately), the 2025 indexed amount)\u2026 [and] penalties forfeited because of premature withdrawal of funds from time savings accounts or deposits (\xA7 62(a)(9), uncapped)."
         },
-        ...FROM10,
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        // the § 62(a)(2)(D) amount is indexed: $350 from 2026 (v6)
         output: { type: "money" },
         parameters: {
           educatorCap: { value: "30000", type: "money" }
           // $300 (2025)
+        },
+        formula: {
+          kind: "add",
+          args: [
+            ruleRef20("us.federal.se_tax_half_deduction"),
+            ruleRef20("us.federal.hsa_deduction"),
+            ruleRef20("us.federal.sep_deduction"),
+            ruleRef20("us.federal.sehi_deduction"),
+            {
+              kind: "min",
+              args: [fact25("educatorExpenses"), { kind: "param", name: "educatorCap" }]
+            },
+            // § 62(a)(2)(D): the $300 cap is PER eligible educator — a spouse who
+            // is also an eligible educator gets their own cap
+            {
+              kind: "min",
+              args: [fact25("spouseEducatorExpenses"), { kind: "param", name: "educatorCap" }]
+            },
+            fact25("earlyWithdrawalPenaltyPaid"),
+            // pre-TCJA § 215/§ 62(a)(10): pre-2019-instrument alimony paid
+            fact25("alimonyPaidPre2019"),
+            // Schedule 1 lines 24a-z write-in adjustments (attested total)
+            fact25("otherAdjustments")
+          ]
+        }
+      },
+      {
+        id: "us.federal.above_the_line_adjustments",
+        version: 6,
+        // v5 kept the 2025 $300 educator amount in 2026; Rev. Proc. 2025-32 § 4.12 sets $350 for 2026 and Rev. Proc. 2026-35 § 3.13 keeps $350 for 2027
+        jurisdiction: J17,
+        title: "Above-the-line adjustments before the student-loan deduction (\xBD SE tax + HSA + SEP + SE health insurance + educator + early-withdrawal penalty)",
+        citation: {
+          source: "26 U.S.C. \xA7 62(a)(1), (a)(2)(D), (a)(6), (a)(9), (a)(17), (a)(19)",
+          section: "\xA7 62(a)",
+          url: "https://www.law.cornell.edu/uscode/text/26/62",
+          excerpt: "adjusted gross income means gross income minus\u2026 the deduction allowed by section 164(f) [half of SE tax]\u2026 the deduction allowed by section 223 [HSA]\u2026 the deductions allowed by section 404 [self-employed retirement plans]\u2026 the deduction allowed by section 162(l) [self-employed health insurance]\u2026 the deductions\u2026 [for] expenses\u2026 of eligible educators (\xA7 62(a)(2)(D) \u2014 $350 cap PER ELIGIBLE EDUCATOR for 2026 and 2027 (Rev. Proc. 2025-32 \xA7 4.12; Rev. Proc. 2026-35 \xA7 3.13 \u2014 an MFJ couple of two educators deducts up to $700: use educatorExpenses for the taxpayer and spouseEducatorExpenses for the spouse, each capped separately))\u2026 [and] penalties forfeited because of premature withdrawal of funds from time savings accounts or deposits (\xA7 62(a)(9), uncapped)."
+        },
+        effectiveFrom: "2026-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        parameters: {
+          educatorCap: { value: "35000", type: "money" }
+          // $350 (2026 and 2027)
         },
         formula: {
           kind: "add",
@@ -38941,6 +39326,7 @@ var init_international = __esm({
       section250Rule(2, "2026-01-01", void 0, { num: "3334", den: "10000" }, { num: "40", den: "100" }, "TY2026+: 33.34% of FDDEI + 40% of NCTI (OBBBA)", "For taxable years beginning after December 31, 2025 (OBBBA): FDII becomes FOREIGN-DERIVED DEDUCTION ELIGIBLE INCOME and GILTI becomes NET CFC TESTED INCOME, QBAI (the 10% deemed tangible return) is ABOLISHED, and the deduction is 33.34 percent of FDDEI plus 40 percent of NCTI (effective rates 14% and 12.6\u201314%), limited by \xA7 250(a)(2) pro-rata scaling against taxable income computed without this section. [Include the \xA7 78 gross-up in the NCTI input; the 90% NCTI foreign-tax-credit allowance and \xA7 59A BEAT (10.5% from 2026) are not modeled \u2014 disclosed.]"),
       eblRule(1, "2025-01-01", "2026-01-01", "31300000", "62600000", "2025 Instructions for Form 461", "2025", "$313,000 ($626,000 for joint returns) for 2025"),
       eblRule(2, "2026-01-01", "2027-01-01", "25600000", "51200000", "Rev. Proc. 2025-32 \xA7 3.31", "2026", '"$256,000 ($512,000 for joint returns)" for 2026 (Rev. Proc. 2025-32 \xA7 3.31, verbatim \u2014 a DECREASE from 2025)'),
+      eblRule(3, "2027-01-01", "2028-01-01", "26400000", "52800000", "Rev. Proc. 2026-35 \xA7 3.33", "2027", '"$264,000 ($528,000 for joint returns)" for 2027 (Rev. Proc. 2026-35 \xA7 3.33, verbatim)'),
       {
         id: "us.federal.corp.gbc_allowed",
         version: 2,
@@ -39218,8 +39604,8 @@ var init_investment_taxes = __esm({
       },
       {
         id: "us.federal.additional_medicare_tax",
-        version: 4,
-        // v3 had one self-employed person; Form 8959 line 8 combines both spouses' Schedule SE line 6 on a joint return. v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
+        version: 5,
+        // v4 counted net earnings under $400, which are not self-employment income (§ 1402(b); Schedule SE line 6 is blank when line 4c is under $400). v3 had one self-employed person; Form 8959 line 8 combines both spouses' Schedule SE line 6 on a joint return. v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
         jurisdiction: "us.federal",
         title: "Additional Medicare Tax (0.9%; Form 8959 uses medicareWages box 5 when given, else box-1 wages)",
         citation: {
@@ -39244,11 +39630,21 @@ var init_investment_taxes = __esm({
             round: "half-up"
           });
           const wagesPart = pct09({ kind: "max0", arg: { kind: "sub", left: mw, right: amThreshold } });
+          const seIncome = (ruleId) => ({
+            kind: "if",
+            cond: { kind: "cmp", op: "lt", left: ruleRef22(ruleId), right: money24("40000") },
+            then: money24("0"),
+            else: ruleRef22(ruleId)
+          });
+          const line8 = {
+            kind: "add",
+            args: [seIncome("us.federal.se_net_earnings"), seIncome("us.federal.se_net_earnings.spouse")]
+          };
           const sePart = pct09({
             kind: "max0",
             arg: {
               kind: "sub",
-              left: { kind: "add", args: [ruleRef22("us.federal.se_net_earnings"), ruleRef22("us.federal.se_net_earnings.spouse")] },
+              left: line8,
               right: { kind: "max0", arg: { kind: "sub", left: amThreshold, right: mw } }
             }
           });
@@ -39256,7 +39652,7 @@ var init_investment_taxes = __esm({
             kind: "max0",
             arg: {
               kind: "sub",
-              left: { kind: "add", args: [mw, { kind: "add", args: [ruleRef22("us.federal.se_net_earnings"), ruleRef22("us.federal.se_net_earnings.spouse")] }] },
+              left: { kind: "add", args: [mw, line8] },
               right: amThreshold
             }
           });
@@ -39521,7 +39917,31 @@ var init_ira = __esm({
         // $129,000
         thresholdSpousal: "24200000"
         // $242,000
-      }, "Notice 2025-67", "For 2026 the deductible amount rises to $7,500 ($8,600 if age 50+ \u2014 the $1,100 catch-up is the first indexed increase under \xA7 219(b)(5)(C)); phase-out ranges $81,000\u2013$91,000 (single/HoH), $129,000\u2013$149,000 (joint/QSS), $0\u2013$10,000 (MFS \u2014 but \xA7 219(g)(4): an MFS filer who lived apart from the spouse at ALL times during the year is not treated as married, so the single range applies and no spousal attribution occurs; set mfsLivedApartAllYear); $242,000\u2013$252,000 where only the spouse participates.")
+      }, "Notice 2025-67", "For 2026 the deductible amount rises to $7,500 ($8,600 if age 50+ \u2014 the $1,100 catch-up is the first indexed increase under \xA7 219(b)(5)(C)); phase-out ranges $81,000\u2013$91,000 (single/HoH), $129,000\u2013$149,000 (joint/QSS), $0\u2013$10,000 (MFS \u2014 but \xA7 219(g)(4): an MFS filer who lived apart from the spouse at ALL times during the year is not treated as married, so the single range applies and no spousal attribution occurs; set mfsLivedApartAllYear); $242,000\u2013$252,000 where only the spouse participates."),
+      {
+        id: "us.federal.ira_deduction",
+        version: 4,
+        jurisdiction: J19,
+        title: "Traditional IRA deduction (TY2027: the \xA7 219 amounts are not yet published)",
+        citation: {
+          source: "26 U.S.C. \xA7 219(b)(5), (g)",
+          section: "\xA7 219(b)(5)(C), (D); \xA7 219(g)(8)",
+          url: "https://www.law.cornell.edu/uscode/text/26/219",
+          excerpt: "The deductible amount, its catch-up and the active-participant phase-out ranges are inflation-adjusted each year (\xA7 219(b)(5)(C)\u2013(D), (g)(8)); the IRS publishes the 2027 amounts in its annual retirement-plan cost-of-living notice, which is not yet out. A 2027 return with a traditional IRA contribution refuses rather than guess; with none, the deduction is $0."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: { kind: "cmp", op: "gt", left: fact28("iraContribution"), right: { kind: "money", cents: "0" } },
+          then: {
+            kind: "unsupported",
+            reason: "the 2027 IRA deduction limits and phase-out ranges are not yet published by the IRS \u2014 a 2027 traditional IRA contribution is not modeled until they are"
+          },
+          else: { kind: "money", cents: "0" }
+        }
+      }
     ];
   }
 });
@@ -39738,6 +40158,14 @@ var init_itemized = __esm({
         { cap: "4040000", threshold: "50500000", thresholdMfs: "25250000" },
         { year: "2026", cap: "$40,400", capHalf: "20,200", threshold: "$505,000" }
       ),
+      saltRule(
+        5,
+        "2027-01-01",
+        "2028-01-01",
+        // § 164(b)(7)(A)(iii), (B)(ii)(III): 101 percent of the 2026 amounts
+        { cap: "4080400", threshold: "51005000", thresholdMfs: "25502500" },
+        { year: "2027", cap: "$40,804", capHalf: "20,402", threshold: "$510,050" }
+      ),
       {
         id: "us.federal.mortgage_interest_deduction",
         version: 1,
@@ -39889,16 +40317,59 @@ var init_itemized = __esm({
         }
       },
       {
+        id: "us.federal.gambling_loss_deduction",
+        version: 1,
+        jurisdiction: J21,
+        title: "Gambling loss deduction (\xA7 165(d), Schedule A line 16; TY2025: the attested winnings-limited amount)",
+        citation: {
+          source: "26 U.S.C. \xA7 165(d) (as in effect for 2025)",
+          section: "\xA7 165(d)",
+          url: "https://www.law.cornell.edu/uscode/text/26/165",
+          excerpt: "'Losses from wagering transactions shall be allowed only to the extent of the gains from such transactions' (\xA7 165(d) before OBBBA \xA7 70114, which applies to taxable years beginning after December 31, 2025). The input attests the winnings-limited amount."
+        },
+        effectiveFrom: "2025-01-01",
+        effectiveTo: "2026-01-01",
+        output: { type: "money" },
+        formula: fact30("gamblingLossesItemized")
+      },
+      {
+        id: "us.federal.gambling_loss_deduction",
+        version: 2,
+        jurisdiction: J21,
+        title: "Gambling loss deduction (\xA7 165(d) as amended by OBBBA: 90 percent of losses, limited to winnings)",
+        citation: {
+          source: "26 U.S.C. \xA7 165(d), as amended by Pub. L. 119-21 (OBBBA) \xA7 70114",
+          section: "\xA7 165(d)(1)",
+          url: "https://www.law.cornell.edu/uscode/text/26/165",
+          excerpt: "For purposes of losses from wagering transactions, the amount allowed as a deduction for any taxable year\u2014 '(A) shall be equal to 90 percent of the amount of such losses during such taxable year, and (B) shall be allowed only to the extent of the gains from such transactions during such taxable year' (\xA7 165(d)(1)); 'losses from wagering transactions' includes any deduction otherwise allowable incurred in carrying on any wagering transaction (\xA7 165(d)(2)). Effective for taxable years beginning after December 31, 2025 (OBBBA \xA7 70114(b))."
+        },
+        effectiveFrom: "2026-01-01",
+        // permanent: open-ended
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: { kind: "cmp", op: "gt", left: fact30("gamblingLossesItemized"), right: zero18 },
+          then: {
+            kind: "min",
+            args: [
+              { kind: "mulRate", base: fact30("gamblingLossesItemized"), rate: { num: "90", den: "100" }, round: "half-up" },
+              fact30("gamblingWinnings")
+            ]
+          },
+          else: zero18
+        }
+      },
+      {
         id: "us.federal.itemized_deductions_before_limitation",
-        version: 4,
-        // v2 lacked investment interest (§ 163(d)) and noncash charitable; v4 adds gambling losses (§ 165(d), Schedule A line 16) as an attested-limited fact
+        version: 5,
+        // v4 added the attested gambling loss fact at 100% in every year; v5 takes us.federal.gambling_loss_deduction (90% from 2026). v2 lacked investment interest (§ 163(d)) and noncash charitable
         jurisdiction: J21,
         title: "Itemized deductions before the \xA7 68 overall limitation (SALT + mortgage + charitable cash/noncash + medical + casualty + investment interest + gambling losses)",
         citation: {
           source: "26 U.S.C. \xA7 63(d)",
           section: "\xA7 63(d)",
           url: "https://www.law.cornell.edu/uscode/text/26/63",
-          excerpt: "'Itemized deductions' means the deductions allowable under this chapter other than (1) the deductions allowable in arriving at adjusted gross income, and (2) any deduction referred to in any paragraph of subsection (b). [Modeled Schedule A lines: taxes (\xA7 164), home mortgage interest (\xA7 163(h)), gifts to charity (\xA7 170) \u2014 cash via the limited charitable rule, noncash as the attested-allowed Form 8283 amount \u2014 medical (\xA7 213), casualty losses (\xA7 165(h), Form 4684), investment interest (\xA7 163(d)) as the attested post-Form-4952 allowed amount, and gambling losses (\xA7 165(d), Schedule A line 16) as the attested winnings-limited amount (TY2025: 100% of the limited amount; the OBBBA 90% haircut begins TY2026). Other miscellaneous itemized deductions are not modeled \u2014 conservative.]"
+          excerpt: "'Itemized deductions' means the deductions allowable under this chapter other than (1) the deductions allowable in arriving at adjusted gross income, and (2) any deduction referred to in any paragraph of subsection (b). [Modeled Schedule A lines: taxes (\xA7 164), home mortgage interest (\xA7 163(h)), gifts to charity (\xA7 170) \u2014 cash via the limited charitable rule, noncash as the attested-allowed Form 8283 amount \u2014 medical (\xA7 213), casualty losses (\xA7 165(h), Form 4684), investment interest (\xA7 163(d)) as the attested post-Form-4952 allowed amount, and gambling losses (\xA7 165(d), Schedule A line 16) from us.federal.gambling_loss_deduction (TY2025: the attested winnings-limited amount; TY2026+: 90 percent of the losses, limited to the winnings). Other miscellaneous itemized deductions are not modeled \u2014 conservative.]"
         },
         effectiveFrom: "2025-01-01",
         // structural: open-ended
@@ -39913,7 +40384,7 @@ var init_itemized = __esm({
             ruleRef24("us.federal.medical_expense_deduction"),
             ruleRef24("us.federal.casualty_loss_deduction"),
             fact30("investmentInterestDeduction"),
-            fact30("gamblingLossesItemized"),
+            ruleRef24("us.federal.gambling_loss_deduction"),
             fact30("otherItemizedDeductions")
           ]
         }
@@ -39981,6 +40452,93 @@ var init_itemized = __esm({
               // $768,700
               { when: "mfs", value: money27("38435000") }
               // $384,350
+            ]
+          };
+          const reductionBase = {
+            kind: "min",
+            args: [
+              itemizedPre,
+              { kind: "max0", arg: { kind: "sub", left: tiIncreased, right: bracket37Start } }
+            ]
+          };
+          return {
+            kind: "if",
+            cond: {
+              kind: "and",
+              args: [
+                {
+                  kind: "cmp",
+                  op: "gt",
+                  left: ruleRef24("us.federal.se_net_profit"),
+                  right: zero18
+                },
+                { kind: "cmp", op: "gt", left: reductionBase, right: zero18 }
+              ]
+            },
+            then: {
+              kind: "unsupported",
+              reason: "the \xA7 68 overall limitation and the \xA7 199A deduction interact through the taxable-income term \u2014 this combination is not modeled yet"
+            },
+            else: {
+              kind: "sub",
+              left: itemizedPre,
+              right: {
+                kind: "mulRate",
+                base: reductionBase,
+                rate: { num: "2", den: "37" },
+                round: "half-up"
+              }
+            }
+          };
+        })()
+      },
+      {
+        id: "us.federal.itemized_deductions",
+        version: 3,
+        jurisdiction: J21,
+        title: "Itemized deductions after the \xA7 68 overall limitation (TY2027: 2/37 of the amount over the 37% bracket)",
+        citation: {
+          source: "26 U.S.C. \xA7 68, as amended by Pub. L. 119-21 (OBBBA) \xA7 70111; Rev. Proc. 2026-35 \xA7 3.01",
+          section: "\xA7 68(a), (b)",
+          url: "https://www.law.cornell.edu/uscode/text/26/68",
+          excerpt: "For taxable years beginning after December 31, 2025, itemized deductions are reduced by 2/37 of the lesser of (1) such amount of itemized deductions, or (2) so much of the taxable income of the taxpayer for the taxable year (determined without regard to this section and increased by such amount of itemized deductions) as exceeds the dollar amount at which the 37 percent rate bracket under section 1 begins (Rev. Proc. 2026-35 \xA7 3.01: $661,375 single, $661,350 head of household, $793,650 MFJ/QSS, $396,825 MFS for 2027); applied after the application of any other limitation (\xA7 68(b)). [The taxable-income term nets out every deduction except the itemized deductions themselves; the \xA7 199A interaction is NOT modeled \u2014 when both would apply, this rule refuses rather than guess.]"
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        // the 37%-bracket start is indexed
+        output: { type: "money" },
+        formula: (() => {
+          const itemizedPre = ruleRef24("us.federal.itemized_deductions_before_limitation");
+          const tiIncreased = {
+            kind: "max0",
+            arg: {
+              kind: "sub",
+              left: agi,
+              right: {
+                kind: "add",
+                args: [
+                  ruleRef24("us.federal.senior_deduction"),
+                  ruleRef24("us.federal.tips_deduction"),
+                  ruleRef24("us.federal.overtime_deduction"),
+                  ruleRef24("us.federal.car_loan_interest_deduction")
+                ]
+              }
+            }
+          };
+          const bracket37Start = {
+            kind: "match",
+            on: fact30("filingStatus"),
+            cases: [
+              { when: "single", value: money27("66137500") },
+              // $661,375
+              { when: "hoh", value: money27("66135000") },
+              // $661,350
+              { when: "mfj", value: money27("79365000") },
+              // $793,650
+              { when: "qss", value: money27("79365000") },
+              // $793,650
+              { when: "mfs", value: money27("39682500") }
+              // $396,825
             ]
           };
           const reductionBase = {
@@ -40178,12 +40736,41 @@ var init_kiddie = __esm({
           ]
         }
       },
+      {
+        id: "us.federal.kiddie.net_unearned_income",
+        version: 2,
+        jurisdiction: J22,
+        title: "Net unearned income of a \xA7 1(g) child (TY2027)",
+        citation: {
+          ...CITE4,
+          section: "\xA7 1(g)(4); Rev. Proc. 2026-35 \xA7 3.02",
+          excerpt: "\u2026the excess of the portion of adjusted gross income\u2026 not attributable to earned income, over the sum of the amount in effect under section 63(c)(5)(A) ($1,400 for taxable years beginning in 2027 \u2014 Rev. Proc. 2026-35 \xA7 3.02: 'the amount in \xA7 1(g)(4)(A)(ii)(I)\u2026 is $1,400') plus the greater of that amount or the itemized deductions directly connected \u2014 $2,800 with none such (child itemized deductions not modeled); shall not exceed the child's taxable income. [Unearned income \u2248 taxable interest \u2014 the child's capital gains refuse in the tax rule; disclosed.]"
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        parameters: {
+          threshold: { value: "280000", type: "money" }
+          // $2,800 = 2 × $1,400
+        },
+        formula: {
+          kind: "min",
+          args: [
+            {
+              kind: "max0",
+              arg: { kind: "sub", left: fact31("taxableInterest"), right: param17("threshold") }
+            },
+            ruleRef25("us.federal.taxable_income")
+          ]
+        }
+      },
       // v3/v4: the § 1(g) capital-gains refusal guard also catches the standalone qualifiedDividends fact
       // v5/v6: the refusal guard also catches shortTermCapitalGains/ordinaryDividends (unearned income
       // the "unearned income ≈ taxable interest" approximation in net_unearned_income would otherwise drop)
       // v5/v6: the refusal guard predated the per-bucket capital-loss facts and netCapitalLoss
       kiddieTaxRule(7, "2025-01-01", "2026-01-01", "2025"),
       kiddieTaxRule(8, "2026-01-01", "2027-01-01", "2026"),
+      kiddieTaxRule(9, "2027-01-01", "2028-01-01", "2027"),
       {
         id: "us.federal.income_tax_before_credits.kiddie",
         version: 1,
@@ -40196,6 +40783,23 @@ var init_kiddie = __esm({
         },
         effectiveFrom: "2025-01-01",
         effectiveTo: "2027-01-01",
+        output: { type: "money" },
+        applicability: fact31("isSubjectToKiddieTax"),
+        formula: ruleRef25("us.federal.kiddie_tax"),
+        overrides: { ruleId: "us.federal.income_tax_before_credits", priority: 20 }
+      },
+      {
+        id: "us.federal.income_tax_before_credits.kiddie",
+        version: 2,
+        jurisdiction: J22,
+        title: "\xA7 1(g) override: a kiddie child's income tax is the Form 8615 tax",
+        citation: {
+          ...CITE4,
+          section: "\xA7 1(g)(1)",
+          excerpt: "In the case of any child to whom this subsection applies, the tax imposed by this section shall be equal to the greater of [the regular tax or the Form 8615 sum] \u2014 this override replaces the ordinary income-tax computation (including the Tax Table method, which the Form 8615 computation applies internally)."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
         output: { type: "money" },
         applicability: fact31("isSubjectToKiddieTax"),
         formula: ruleRef25("us.federal.kiddie_tax"),
@@ -40458,7 +41062,66 @@ var init_passive_losses = __esm({
     ];
     mileageRules = [
       mileageRule(1, "2025-01-01", "2026-01-01", "700", "70 cents", "Notice 2025-5"),
-      mileageRule(2, "2026-01-01", "2027-01-01", "725", "72.5 cents", "Notice 2026-10")
+      {
+        id: "us.federal.vehicle_standard_mileage",
+        version: 3,
+        // v2 applied 72.5¢ to every 2026 mile; Announcement 2026-11 raised the rate to 76¢ from July 1, 2026
+        jurisdiction: J23,
+        title: "Business standard mileage deduction (2026: 72.5 cents/mile through June 30, 76 cents/mile from July 1)",
+        citation: {
+          source: "Notice 2026-10; Announcement 2026-11 (2026-29 I.R.B.); Rev. Proc. 2019-46",
+          section: "Announcement 2026-11",
+          url: "https://www.irs.gov/irb/2026-29_irb",
+          excerpt: "Notice 2026-10 set the 2026 business standard mileage rate at 72.5 cents per mile. Announcement 2026-11 revised it: 'The revised standard mileage rates are: (1) Business 76 cents per mile' and they 'apply to deductible transportation expenses paid or incurred for business\u2026 on or after July 1, 2026'; 'The standard mileage rates set forth in Notice 2026-10 continue to apply to deductible transportation expenses paid or incurred\u2026 before July 1, 2026.' [A STANDALONE determination in lieu of actual vehicle expenses (Rev. Proc. 2019-46 rules attested): subtract the result from your Schedule C profit yourself \u2014 it changes SE tax and QBI.]"
+        },
+        effectiveFrom: "2026-01-01",
+        effectiveTo: "2027-01-01",
+        output: { type: "money" },
+        formula: {
+          kind: "if",
+          cond: {
+            kind: "cmp",
+            op: "gt",
+            left: fact32("businessMilesDriven"),
+            right: { kind: "int", value: "0" }
+          },
+          then: {
+            kind: "if",
+            cond: {
+              kind: "cmp",
+              op: "gt",
+              left: fact32("businessMilesDrivenFromJuly"),
+              right: fact32("businessMilesDriven")
+            },
+            then: {
+              kind: "unsupported",
+              reason: "businessMilesDrivenFromJuly is part of businessMilesDriven and cannot exceed it"
+            },
+            else: {
+              kind: "add",
+              args: [
+                {
+                  kind: "mulRate",
+                  base: {
+                    kind: "mulInt",
+                    base: money29("100"),
+                    count: { kind: "sub", left: fact32("businessMilesDriven"), right: fact32("businessMilesDrivenFromJuly") }
+                  },
+                  rate: { num: "725", den: "1000" },
+                  round: "half-up"
+                },
+                {
+                  kind: "mulRate",
+                  base: { kind: "mulInt", base: money29("100"), count: fact32("businessMilesDrivenFromJuly") },
+                  rate: { num: "760", den: "1000" },
+                  round: "half-up"
+                }
+              ]
+            }
+          },
+          else: money29("0")
+        }
+      }
     ];
   }
 });
@@ -40719,7 +41382,7 @@ var init_rental = __esm({
 });
 
 // ../corpus-us-federal/dist/rules/residential-energy.js
-var J26, FROM15, TY20253, TERMINATED, fact35, money32, ruleRef30, param18, zero23, gt09, add4, sub4, min3, max05, pctOf2, limitBase2, F5695_2025, URL_25D, URL_25C, URL_I5695, line, cleanRate, improvementRate, actcMaximum, worksheetBApplies, residentialEnergyRules;
+var J26, FROM15, TY20253, TERMINATED, fact35, money32, ruleRef30, param18, zero23, gt09, add4, sub4, min3, max05, pctOf2, limitBase2, F5695_2025, URL_25D, URL_25C, URL_I5695, line, cleanRate, improvementRate, actcMaximum, actcMaximum2027, worksheetBApplies, residentialEnergyRules;
 var init_residential_energy = __esm({
   "../corpus-us-federal/dist/rules/residential-energy.js"() {
     "use strict";
@@ -40793,11 +41456,40 @@ var init_residential_energy = __esm({
         url: "https://www.irs.gov/instructions/i1040s8",
         excerpt: "Worksheet B line 2: number of qualifying children under age 17 with the required social security number \xD7 $1,700; line 4: earned income over $2,500; line 5: 15% of line 4; line 13: the smaller of line 2 or line 12. [Line 12 is the larger of line 5 and the 3+-child social security tax alternative (lines 6\u201311), which is NOT modeled \u2014 it can only raise the maximum at very low earned income; disclosed. Earned income approximated as wages + self-employment earnings net of the \xBD SE deduction, less a Schedule C net loss.]"
       },
-      ...FROM15,
+      effectiveFrom: "2025-01-01",
+      effectiveTo: "2027-01-01",
+      // the § 24(h)(5) amount is indexed: $1,800 for 2027 (v2)
       output: { type: "money" },
       parameters: {
         refundableCapPerChild: { value: "170000", type: "money" },
         // $1,700 (2025 and 2026)
+        earnedIncomeFloor: { value: "250000", type: "money" }
+        // $2,500
+      },
+      formula: min3({ kind: "mulInt", base: param18("refundableCapPerChild"), count: fact35("qualifyingChildren") }, {
+        kind: "mulRate",
+        base: max05(sub4(add4(fact35("wages"), max05(sub4(ruleRef30("us.federal.se_net_profit"), ruleRef30("us.federal.se_tax_half_deduction")))), add4(param18("earnedIncomeFloor"), fact35("scheduleCNetLoss")))),
+        rate: { num: "15", den: "100" },
+        round: "half-up"
+      })
+    };
+    actcMaximum2027 = {
+      id: `${J26}.actc.maximum`,
+      version: 2,
+      jurisdiction: J26,
+      title: "Maximum additional child tax credit (Schedule 8812 Credit Limit Worksheet B, line 13; TY2027)",
+      citation: {
+        source: "26 U.S.C. \xA7 24(d)(1), (h)(5); Rev. Proc. 2026-35 \xA7 3.05(2); Credit Limit Worksheet B as in the 2025 Instructions for Schedule 8812",
+        section: "\xA7 24(d)(1)(B)(i); \xA7 24(h)(5)",
+        url: "https://www.irs.gov/instructions/i1040s8",
+        excerpt: "Worksheet B line 2: number of qualifying children under age 17 with the required social security number \xD7 $1,800 (the 2027 \xA7 24(d)(1)(A) amount, Rev. Proc. 2026-35 \xA7 3.05(2)); line 4: earned income over $2,500; line 5: 15% of line 4; line 13: the smaller of line 2 or line 12. [Line 12 is the larger of line 5 and the 3+-child social security tax alternative (lines 6\u201311), which is NOT modeled \u2014 it can only raise the maximum at very low earned income; disclosed. Earned income approximated as wages + self-employment earnings net of the \xBD SE deduction, less a Schedule C net loss.]"
+      },
+      effectiveFrom: "2027-01-01",
+      effectiveTo: "2028-01-01",
+      output: { type: "money" },
+      parameters: {
+        refundableCapPerChild: { value: "180000", type: "money" },
+        // $1,800 (2027)
         earnedIncomeFloor: { value: "250000", type: "money" }
         // $2,500
       },
@@ -40887,6 +41579,7 @@ var init_residential_energy = __esm({
         excerpt: "Line 13: 'Add lines 6b, 11, and 12'."
       }, add4(ruleRef30(`${J26}.energy.clean.line6b`), ruleRef30(`${J26}.energy.clean.line11`), ruleRef30(`${J26}.energy.clean.line12`))),
       actcMaximum,
+      actcMaximum2027,
       worksheetBApplies,
       line("clean.ctc_for_limit", "Child tax credit amount subtracted in the Form 5695 line 14 and Form 8839 line 17 worksheets (Form 1040 line 19, or Schedule 8812 Worksheet B line 14)", {
         source: "2025 Instructions for Form 5695, Residential Clean Energy Credit Limit Worksheet\u2014Line 14, footnote; 2025 Instructions for Schedule 8812, Credit Limit Worksheet B line 14",
@@ -54550,6 +55243,32 @@ var init_qbi_businesses = __esm({
         }
       },
       {
+        id: `${J29}.qbi.threshold`,
+        version: 3,
+        jurisdiction: J29,
+        title: "\xA7 199A threshold amount (TY2027)",
+        citation: {
+          source: "26 U.S.C. \xA7 199A(e)(2); Rev. Proc. 2026-35 \xA7 3.28(1)",
+          section: "\xA7 199A(e)(2)",
+          url: CORNELL,
+          excerpt: "For taxable years beginning in 2027, the threshold amounts under \xA7 199A(e)(2) are $416,600 (married filing jointly), $208,325 (married filing separately) and $208,300 (all other returns); the phase-in range ends at $566,600, $283,325 and $283,300 (Rev. Proc. 2026-35 \xA7 3.28(1))."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        formula: {
+          kind: "match",
+          on: fact39("filingStatus"),
+          cases: [
+            { when: "mfj", value: money36("41660000") },
+            { when: "mfs", value: money36("20832500") },
+            { when: "single", value: money36("20830000") },
+            { when: "hoh", value: money36("20830000") },
+            { when: "qss", value: money36("20830000") }
+          ]
+        }
+      },
+      {
         id: `${J29}.qbi.phase_in_range`,
         version: 1,
         jurisdiction: J29,
@@ -54578,6 +55297,22 @@ var init_qbi_businesses = __esm({
         },
         effectiveFrom: "2026-01-01",
         effectiveTo: "2027-01-01",
+        output: { type: "money" },
+        formula: iff23(isStatus32("mfj"), money36("15000000"), money36("7500000"))
+      },
+      {
+        id: `${J29}.qbi.phase_in_range`,
+        version: 3,
+        jurisdiction: J29,
+        title: "\xA7 199A phase-in range (TY2027: $75,000, $150,000 joint \u2014 OBBBA \xA7 70105)",
+        citation: {
+          source: "26 U.S.C. \xA7 199A(b)(3)(B), (d)(3) as amended by OBBBA \xA7 70105; Rev. Proc. 2026-35 \xA7 3.28(1)",
+          section: "\xA7 199A(b)(3)(B)(ii)(II)",
+          url: CORNELL,
+          excerpt: "For taxable years beginning after December 31, 2025, the phase-in range is $75,000 ($150,000 for a joint return)."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
         output: { type: "money" },
         formula: iff23(isStatus32("mfj"), money36("15000000"), money36("7500000"))
       },
@@ -54628,7 +55363,7 @@ var init_qbi_businesses = __esm({
 });
 
 // ../corpus-us-federal/dist/rules/qbi.js
-function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, source, withMinimum) {
+function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, source, minimum) {
   const overall = pctOf3("20", "100", {
     kind: "max0",
     arg: {
@@ -54641,8 +55376,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, source, withMi
     }
   });
   const limited = { kind: "min", args: [ruleRef34("us.federal.qbi.total_component"), overall] };
-  const withFloor = withMinimum ? {
-    // OBBBA § 70105: $400 minimum when QBI ≥ $1,000 (TY2026+)
+  const withFloor = minimum ? {
+    // OBBBA § 70105: the § 199A(i) minimum (TY2026+; indexed after 2026)
     kind: "if",
     cond: { kind: "cmp", op: "ge", left: ruleRef34("us.federal.qbi.active_total"), right: param23("minQbiFloor") },
     then: { kind: "max", args: [limited, param23("minDeduction")] },
@@ -54657,16 +55392,14 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, source, withMi
       source: `26 U.S.C. \xA7 199A; ${source}`,
       section: "\xA7 199A(a)\u2013(d)",
       url: "https://www.law.cornell.edu/uscode/text/26/199A",
-      excerpt: `The lesser of the combined qualified business income amount \u2014 20 percent of each business's QBI, limited above the \xA7 199A(e)(2) threshold by that business's W-2 wages and UBIA and phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) range" : "OBBBA-widened $75,000 ($150,000 joint) range (\xA7 70105, taxable years after 2025)"}, after the SSTB applicable percentage, aggregation and loss netting (us.federal.qbi.total_component) \u2014 or 20 percent of taxable income (without this deduction) less net capital gain.${withMinimum ? " OBBBA \xA7 70105 $400 minimum deduction with at least $1,000 of QBI (active participation assumed \u2014 disclosed)." : ""} [No REIT/PTP component or cooperative patron reduction; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages \u2014 disclosed.]`
+      excerpt: `The lesser of the combined qualified business income amount \u2014 20 percent of each business's QBI, limited above the \xA7 199A(e)(2) threshold by that business's W-2 wages and UBIA and phased in over the ${yearLabel === "2025" ? "$50,000 ($100,000 joint) range" : "OBBBA-widened $75,000 ($150,000 joint) range (\xA7 70105, taxable years after 2025)"}, after the SSTB applicable percentage, aggregation and loss netting (us.federal.qbi.total_component) \u2014 or 20 percent of taxable income (without this deduction) less net capital gain.${minimum ? ` OBBBA \xA7 70105 minimum deduction of $${Number(minimum.deductionCents) / 100} with at least $${(Number(minimum.testCents) / 100).toLocaleString("en-US")} of QBI from qualified businesses (active participation assumed \u2014 disclosed).` : ""} [No REIT/PTP component or cooperative patron reduction; W-2 wages and UBIA default to $0, which is conservative; exact ratios where Form 8995-A rounds percentages \u2014 disclosed.]`
     },
     effectiveFrom,
     effectiveTo,
     output: { type: "money" },
-    parameters: withMinimum ? {
-      minDeduction: { value: "40000", type: "money" },
-      // $400
-      minQbiFloor: { value: "100000", type: "money" }
-      // $1,000
+    parameters: minimum ? {
+      minDeduction: { value: minimum.deductionCents, type: "money" },
+      minQbiFloor: { value: minimum.testCents, type: "money" }
     } : {},
     formula: {
       kind: "if",
@@ -54708,7 +55441,7 @@ var init_qbi = __esm({
         "2026-01-01",
         "2025",
         "Rev. Proc. 2024-40 \xA7 2.27",
-        false
+        null
       ),
       qbiRule(
         14,
@@ -54717,8 +55450,9 @@ var init_qbi = __esm({
         "2027-01-01",
         "2026",
         "Rev. Proc. 2025-32 \xA7 4.26; OBBBA \xA7 70105 (range + $400 minimum)",
-        true
+        { deductionCents: "40000", testCents: "100000" }
       ),
+      qbiRule(15, "2027-01-01", "2028-01-01", "2027", "Rev. Proc. 2026-35 \xA7 3.28; OBBBA \xA7 70105", { deductionCents: "41500", testCents: "103000" }),
       ...qbiBusinessRules
     ];
   }
@@ -54926,8 +55660,11 @@ var init_self_employment = __esm({
       // $176,100
       seTaxRule(taxpayer, 2, "2026-01-01", "2027-01-01", "18450000", "2026"),
       // $184,500
+      seTaxRule(taxpayer, 3, "2027-01-01", "2028-01-01", "19230000", "2027"),
+      // $192,300 (91 FR 67380)
       seTaxRule(spouse, 1, "2025-01-01", "2026-01-01", "17610000", "2025"),
       seTaxRule(spouse, 2, "2026-01-01", "2027-01-01", "18450000", "2026"),
+      seTaxRule(spouse, 3, "2027-01-01", "2028-01-01", "19230000", "2027"),
       {
         id: "us.federal.se_tax",
         version: 7,
@@ -55429,6 +56166,37 @@ var init_standard_deduction = __esm({
         }
       },
       {
+        id: "us.federal.standard_deduction.base_amount",
+        version: 4,
+        jurisdiction: J30,
+        title: "Basic standard deduction amount by filing status (TY2027)",
+        citation: {
+          source: "26 U.S.C. \xA7 63(c); Rev. Proc. 2026-35",
+          section: "Rev. Proc. 2026-35 \xA7 3.15(1)",
+          url: "https://www.irs.gov/pub/irs-drop/rp-26-35.pdf",
+          excerpt: "For taxable years beginning in 2027, the standard deduction amounts under \xA7 63(c)(2) are as follows: $33,200 (married individuals filing joint returns and surviving spouses), $24,925 (heads of households), $16,600 (unmarried individuals other than surviving spouses and heads of households), $16,600 (married individuals filing separate returns)."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        formula: {
+          kind: "match",
+          on: fact44("filingStatus"),
+          cases: [
+            { when: "single", value: money41("1660000") },
+            // $16,600
+            { when: "mfs", value: money41("1660000") },
+            // $16,600
+            { when: "mfj", value: money41("3320000") },
+            // $33,200
+            { when: "qss", value: money41("3320000") },
+            // $33,200 (surviving spouse)
+            { when: "hoh", value: money41("2492500") }
+            // $24,925
+          ]
+        }
+      },
+      {
         id: "us.federal.standard_deduction.base",
         version: 1,
         jurisdiction: J30,
@@ -55480,6 +56248,39 @@ var init_standard_deduction = __esm({
         overrides: { ruleId: "us.federal.standard_deduction.base", priority: 10 }
       },
       {
+        id: "us.federal.standard_deduction.dependent_limit",
+        version: 2,
+        jurisdiction: J30,
+        title: "Limitation on basic standard deduction of a dependent (TY2027)",
+        citation: {
+          source: "26 U.S.C. \xA7 63(c)(5); Rev. Proc. 2026-35 \xA7 3.15(2)",
+          section: "\xA7 63(c)(5)",
+          url: "https://www.irs.gov/pub/irs-drop/rp-26-35.pdf",
+          excerpt: "For taxable years beginning in 2027, the standard deduction amount under \xA7 63(c)(5) for an individual who may be claimed as a dependent by another taxpayer cannot exceed the greater of (1) $1,400, or (2) the sum of $500 and the individual's earned income."
+        },
+        effectiveFrom: "2027-01-01",
+        effectiveTo: "2028-01-01",
+        output: { type: "money" },
+        applicability: fact44("isClaimedAsDependent"),
+        // min(normal base amount, max($1,400, earned income + $500)); earned income ≈ wages
+        formula: {
+          kind: "min",
+          args: [
+            ruleRef38("us.federal.standard_deduction.base_amount"),
+            {
+              kind: "max",
+              args: [
+                money41("140000"),
+                // $1,400
+                { kind: "add", args: [fact44("wages"), money41("50000")] }
+                // + $500
+              ]
+            }
+          ]
+        },
+        overrides: { ruleId: "us.federal.standard_deduction.base", priority: 10 }
+      },
+      {
         id: "us.federal.standard_deduction.mfs_spouse_itemizes",
         version: 1,
         jurisdiction: J30,
@@ -55517,6 +56318,12 @@ var init_standard_deduction = __esm({
         year: "2026",
         married: "$1,650",
         unmarried: "$2,050"
+      }),
+      additionalRule(3, "2027-01-01", "2028-01-01", "170000", "210000", {
+        sourceRevProc: "Rev. Proc. 2026-35 \xA7 3.15(3)",
+        year: "2027",
+        married: "$1,700",
+        unmarried: "$2,100"
       }),
       {
         id: "us.federal.standard_deduction",
@@ -63934,7 +64741,7 @@ var COMPOSER_VERSION;
 var init_version = __esm({
   "dist/version.js"() {
     "use strict";
-    COMPOSER_VERSION = "0.10.1";
+    COMPOSER_VERSION = "0.11.0";
   }
 });
 
@@ -80853,6 +81660,7 @@ var init_schema = __esm({
         "selfEmployedHealthPremiums",
         "homeOfficeSquareFeet",
         "businessMilesDriven",
+        "businessMilesDrivenFromJuly",
         "aggregateBusinessLoss"
       ],
       adjustments: [
@@ -80883,6 +81691,7 @@ var init_schema = __esm({
         "noncashCharitableContributions",
         "investmentInterestDeduction",
         "gamblingLossesItemized",
+        "gamblingWinnings",
         "otherItemizedDeductions",
         "casualtyFederalDisasterLosses",
         "casualtyQualifiedDisasterLosses",
@@ -89098,7 +89907,15 @@ var FACT_FLAGS = [
     option: "--business-miles <n>",
     key: "businessMiles",
     group: "Business owner:",
-    help: "business miles for the standard mileage rate (70\xA2 2025 / 72.5\xA2 2026; standalone target)",
+    help: "business miles for the standard mileage rate (70\xA2 2025; 2026: 72.5\xA2 to June 30, 76\xA2 from July 1; standalone target)",
+    boolean: false
+  },
+  {
+    factId: "businessMilesDrivenFromJuly",
+    option: "--business-miles-from-july <n>",
+    key: "businessMilesFromJuly",
+    group: "Business owner:",
+    help: "TY2026: the business miles driven on or after July 1 (76\xA2/mile, Announcement 2026-11)",
     boolean: false
   },
   {
@@ -89122,7 +89939,15 @@ var FACT_FLAGS = [
     option: "--gambling-losses <dollars>",
     key: "gamblingLosses",
     group: "Deductions & savings:",
-    help: "gambling losses (\xA7 165(d), Schedule A line 16) \u2014 already limited to winnings by the preparer; 100% for TY2025, OBBBA 90% haircut begins TY2026",
+    help: "gambling losses (\xA7 165(d), Schedule A line 16) \u2014 TY2025: already limited to winnings; TY2026+: total losses (90% allowed, up to --gambling-winnings)",
+    boolean: false
+  },
+  {
+    factId: "gamblingWinnings",
+    option: "--gambling-winnings <dollars>",
+    key: "gamblingWinnings",
+    group: "Deductions & savings:",
+    help: "gambling winnings for the year \u2014 the TY2026+ \xA7 165(d) limit on the loss deduction (include the winnings in income too)",
     boolean: false
   },
   {

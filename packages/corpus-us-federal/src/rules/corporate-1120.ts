@@ -160,7 +160,7 @@ function section179Rule(
       source: `26 U.S.C. § 179, as amended by Pub. L. 119-21 (OBBBA § 70306); ${sourceLabel}`,
       section: "§ 179(b)(1)–(3)",
       url: "https://www.law.cornell.edu/uscode/text/26/179",
-      excerpt: `"The aggregate cost which may be taken into account under subsection (a) for any taxable year shall not exceed ${capLabel}" — "reduced (but not below zero) by the amount by which the cost of section 179 property placed in service during such taxable year exceeds ${thresholdLabel}" (${yearLabel}; the OBBBA amounts apply to taxable years beginning after December 31, 2024). The § 179(b)(3)(A) limit caps the deduction at taxable income from the active conduct of a trade or business computed without § 179 — approximated here as gross income less ordinary/depreciation/research/interest deductions, capital gains excluded (enter active amounts only if this limit binds); the excess carries forward (§ 179(b)(3)(B), its own target). [The § 179(b)(5) SUV cap ($32,000 for 2026, Rev. Proc. 2025-32 § 3.24) and the § 280F passenger-auto interaction are not modeled — exclude vehicles; primary use: qualified real property that § 168(k) cannot reach.]`,
+      excerpt: `"The aggregate cost which may be taken into account under subsection (a) for any taxable year shall not exceed ${capLabel}" — "reduced (but not below zero) by the amount by which the cost of section 179 property placed in service during such taxable year exceeds ${thresholdLabel}" (${yearLabel}; the OBBBA amounts apply to taxable years beginning after December 31, 2024). The § 179(b)(3)(A) limit caps the deduction at taxable income from the active conduct of a trade or business computed without § 179 — approximated here as gross income less ordinary/depreciation/research/interest deductions, capital gains excluded (enter active amounts only if this limit binds); the excess carries forward (§ 179(b)(3)(B), its own target). [The § 179(b)(5) SUV cap (${{ TY2025: "$31,300 for 2025, Rev. Proc. 2024-40 § 2.25", TY2026: "$32,000 for 2026, Rev. Proc. 2025-32 § 3.24", TY2027: "$33,100 for 2027, Rev. Proc. 2026-35 § 3.26" }[yearLabel]}) and the § 280F passenger-auto interaction are not modeled — exclude vehicles; primary use: qualified real property that § 168(k) cannot reach.]`,
     },
     effectiveFrom: from,
     effectiveTo: to,
@@ -430,6 +430,7 @@ export const corporate1120Rules: Rule[] = [
   },
   interestRule(1, "2025-01-01", "2026-01-01", "3100000000", "$31,000,000", "2025"),
   interestRule(2, "2026-01-01", "2027-01-01", "3200000000", "$32,000,000", "2026"),
+  interestRule(3, "2027-01-01", "2028-01-01", "3300000000", "$33,000,000", "2027"), // Rev. Proc. 2026-35 § 3.32
   section179Rule(
     1, "2025-01-01", "2026-01-01",
     "250000000", "400000000", "$2,500,000", "$4,000,000",
@@ -440,8 +441,14 @@ export const corporate1120Rules: Rule[] = [
     "256000000", "409000000", "$2,560,000", "$4,090,000",
     "TY2026", "Rev. Proc. 2025-32 § 3.24, verbatim",
   ),
+  section179Rule(
+    3, "2027-01-01", "2028-01-01",
+    "264000000", "423000000", "$2,640,000", "$4,230,000",
+    "TY2027", "Rev. Proc. 2026-35 § 3.26, verbatim",
+  ),
   section179CarryforwardRule(1, "2025-01-01", "2026-01-01", "250000000", "400000000", "TY2025"),
   section179CarryforwardRule(2, "2026-01-01", "2027-01-01", "256000000", "409000000", "TY2026"),
+  section179CarryforwardRule(3, "2027-01-01", "2028-01-01", "264000000", "423000000", "TY2027"),
   corpCharitableRule(7, "2025-01-01", "2026-01-01", false, "TY2025"),
   corpCharitableRule(8, "2026-01-01", undefined, true, "TY2026+, permanent"),
   {

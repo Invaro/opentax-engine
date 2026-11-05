@@ -10,7 +10,8 @@
  *
  * § 1(g)(4): net unearned income = unearned income − [the § 63(c)(5)(A)
  * amount ($1,350 for 2025 and 2026, Rev. Proc. 2024-40 § 2.15(2) /
- * 2025-32 § 4.14(2)) + the greater of that amount or directly-connected
+ * 2025-32 § 4.14(2); $1,400 for 2027, Rev. Proc. 2026-35 § 3.02) + the
+ * greater of that amount or directly-connected
  * itemized deductions] — i.e. $2,700 with no such itemized deductions —
  * capped at the child's taxable income.
  *
@@ -32,7 +33,7 @@
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
-import { ordinaryRateTaxExpr } from "./income-tax.js";
+import { ordinaryRateTaxExpr, type TaxYear } from "./income-tax.js";
 
 const J = "us.federal";
 
@@ -49,7 +50,7 @@ const CITE = {
 
 const nui = ruleRef("us.federal.kiddie.net_unearned_income");
 
-function kiddieTaxRule(version: number, from: string, to: string, year: "2025" | "2026"): Rule {
+function kiddieTaxRule(version: number, from: string, to: string, year: TaxYear): Rule {
   const childRegular = ordinaryRateTaxExpr(
     ruleRef("us.federal.taxable_income"),
     "filingStatus",
@@ -170,12 +171,41 @@ export const kiddieRules: Rule[] = [
       ],
     },
   },
+  {
+    id: "us.federal.kiddie.net_unearned_income",
+    version: 2,
+    jurisdiction: J,
+    title: "Net unearned income of a § 1(g) child (TY2027)",
+    citation: {
+      ...CITE,
+      section: "§ 1(g)(4); Rev. Proc. 2026-35 § 3.02",
+      excerpt:
+        "…the excess of the portion of adjusted gross income… not attributable to earned income, over the sum of the amount in effect under section 63(c)(5)(A) ($1,400 for taxable years beginning in 2027 — Rev. Proc. 2026-35 § 3.02: 'the amount in § 1(g)(4)(A)(ii)(I)… is $1,400') plus the greater of that amount or the itemized deductions directly connected — $2,800 with none such (child itemized deductions not modeled); shall not exceed the child's taxable income. [Unearned income ≈ taxable interest — the child's capital gains refuse in the tax rule; disclosed.]",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: {
+      threshold: { value: "280000", type: "money" }, // $2,800 = 2 × $1,400
+    },
+    formula: {
+      kind: "min",
+      args: [
+        {
+          kind: "max0",
+          arg: { kind: "sub", left: fact("taxableInterest"), right: param("threshold") },
+        },
+        ruleRef("us.federal.taxable_income"),
+      ],
+    },
+  },
   // v3/v4: the § 1(g) capital-gains refusal guard also catches the standalone qualifiedDividends fact
   // v5/v6: the refusal guard also catches shortTermCapitalGains/ordinaryDividends (unearned income
   // the "unearned income ≈ taxable interest" approximation in net_unearned_income would otherwise drop)
   // v5/v6: the refusal guard predated the per-bucket capital-loss facts and netCapitalLoss
   kiddieTaxRule(7, "2025-01-01", "2026-01-01", "2025"),
   kiddieTaxRule(8, "2026-01-01", "2027-01-01", "2026"),
+  kiddieTaxRule(9, "2027-01-01", "2028-01-01", "2027"),
   {
     id: "us.federal.income_tax_before_credits.kiddie",
     version: 1,
@@ -189,6 +219,24 @@ export const kiddieRules: Rule[] = [
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2027-01-01",
+    output: { type: "money" },
+    applicability: fact("isSubjectToKiddieTax"),
+    formula: ruleRef("us.federal.kiddie_tax"),
+    overrides: { ruleId: "us.federal.income_tax_before_credits", priority: 20 },
+  },
+  {
+    id: "us.federal.income_tax_before_credits.kiddie",
+    version: 2,
+    jurisdiction: J,
+    title: "§ 1(g) override: a kiddie child's income tax is the Form 8615 tax",
+    citation: {
+      ...CITE,
+      section: "§ 1(g)(1)",
+      excerpt:
+        "In the case of any child to whom this subsection applies, the tax imposed by this section shall be equal to the greater of [the regular tax or the Form 8615 sum] — this override replaces the ordinary income-tax computation (including the Tax Table method, which the Form 8615 computation applies internally).",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
     output: { type: "money" },
     applicability: fact("isSubjectToKiddieTax"),
     formula: ruleRef("us.federal.kiddie_tax"),

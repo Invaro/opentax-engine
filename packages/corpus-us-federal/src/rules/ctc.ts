@@ -59,6 +59,43 @@ export const ctcRules: Rule[] = [
     },
   },
   {
+    id: "us.federal.ctc.tentative",
+    version: 4,
+    jurisdiction: J,
+    title:
+      "Child tax credit + credit for other dependents, before phase-out (TY2027)",
+    citation: {
+      source:
+        "26 U.S.C. § 24(a), (h)(4), as amended by Pub. L. 119-21 (OBBBA) § 70104; Rev. Proc. 2026-35 § 3.05",
+      section: "§ 24(a), (h)(2), (h)(4)",
+      url: "https://www.law.cornell.edu/uscode/text/26/24",
+      excerpt:
+        "For taxable years beginning in 2027, the maximum amount of the credit allowed under § 24(a) is $2,300 (Rev. Proc. 2026-35 § 3.05(1)). § 24(h)(4): 'The credit determined under subsection (a) (after the application of paragraph (2)) shall be increased by $500 for each dependent of the taxpayer (as defined in section 152) other than a qualifying child' — unindexed, never refundable (the § 24(d)(1)(A) ACTC cross-reference excludes it via (h)(5)'s per-child cap), subject to the same § 24(b) phase-out as part of the combined credit (Schedule 8812 line 8). [§ 24(h)(4)(B) noncitizen exception and the dependent's TIN requirement (§ 24(e)) attested by the count.]",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: {
+      perChild: { value: "230000", type: "money" }, // $2,300
+      perOtherDependent: { value: "50000", type: "money" }, // $500, unindexed
+    },
+    formula: {
+      kind: "add",
+      args: [
+        {
+          kind: "mulInt",
+          base: { kind: "param", name: "perChild" },
+          count: fact("qualifyingChildren"),
+        },
+        {
+          kind: "mulInt",
+          base: { kind: "param", name: "perOtherDependent" },
+          count: fact("otherDependents"),
+        },
+      ],
+    },
+  },
+  {
     id: "us.federal.ctc.phaseout_threshold",
     version: 1,
     jurisdiction: J,
@@ -208,7 +245,8 @@ export const ctcRules: Rule[] = [
       excerpt:
         "The credit is refundable up to $1,700 per qualifying child (2025 and 2026, as adjusted), limited to 15 percent of so much of earned income as exceeds $2,500, and to the portion of the credit not used against tax. [The § 24(d)(1)(B)(ii) alternative for taxpayers with 3+ children (social security taxes minus EIC) is NOT modeled — it can only increase the refund at very low earned income; disclosed. Earned income approximated as wages.]",
     },
-    ...FROM,
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2027-01-01", // the $1,700 refundable amount is indexed; 2027 is v4
     output: { type: "money" },
     parameters: {
       refundableCapPerChild: { value: "170000", type: "money" }, // $1,700
@@ -227,6 +265,80 @@ export const ctcRules: Rule[] = [
           },
         },
         // refundable cap: $1,700 per qualifying child
+        {
+          kind: "mulInt",
+          base: { kind: "param", name: "refundableCapPerChild" },
+          count: fact("qualifyingChildren"),
+        },
+        // 15% of earned income (wages + SE earnings net of ½ SE tax) above $2,500
+        {
+          kind: "mulRate",
+          base: {
+            kind: "max0",
+            arg: {
+              kind: "sub",
+              left: {
+                kind: "add",
+                args: [
+                  fact("wages"),
+                  {
+                    kind: "max0",
+                    arg: {
+                      kind: "sub",
+                      left: ruleRef("us.federal.se_net_profit"),
+                      right: ruleRef("us.federal.se_tax_half_deduction"),
+                    },
+                  },
+                ],
+              },
+              right: {
+                kind: "add",
+                args: [
+                  { kind: "param", name: "earnedIncomeFloor" },
+                  // Schedule C net loss reduces § 24(d) earned income too
+                  fact("scheduleCNetLoss"),
+                ],
+              },
+            },
+          },
+          rate: { num: "15", den: "100" },
+          round: "half-up",
+        },
+      ],
+    },
+  },  {
+    id: "us.federal.actc",
+    version: 4,
+    jurisdiction: J,
+    title:
+      "Additional child tax credit — refundable, TY2027 (simplified: 3+-child SS-tax alternative not modeled)",
+    citation: {
+      source: "26 U.S.C. § 24(d), (h)(5); Rev. Proc. 2026-35 § 3.05(2)",
+      section: "§ 24(d)(1); § 24(h)(5)",
+      url: "https://www.law.cornell.edu/uscode/text/26/24",
+      excerpt:
+        "The credit is refundable up to $1,800 per qualifying child (2027, as adjusted — Rev. Proc. 2026-35 § 3.05(2)), limited to 15 percent of so much of earned income as exceeds $2,500, and to the portion of the credit not used against tax. [The § 24(d)(1)(B)(ii) alternative for taxpayers with 3+ children (social security taxes minus EIC) is NOT modeled — it can only increase the refund at very low earned income; disclosed. Earned income approximated as wages.]",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: {
+      refundableCapPerChild: { value: "180000", type: "money" }, // $1,800
+      earnedIncomeFloor: { value: "250000", type: "money" }, // $2,500
+    },
+    formula: {
+      kind: "min",
+      args: [
+        // the part of the credit the liability limit left unused
+        {
+          kind: "max0",
+          arg: {
+            kind: "sub",
+            left: ruleRef("us.federal.ctc.after_phaseout"),
+            right: ruleRef("us.federal.ctc"),
+          },
+        },
+        // refundable cap: $1,800 per qualifying child
         {
           kind: "mulInt",
           base: { kind: "param", name: "refundableCapPerChild" },

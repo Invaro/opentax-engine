@@ -90,10 +90,55 @@ export const incomeRules: Rule[] = [
       excerpt:
         "adjusted gross income means gross income minus… the deduction allowed by section 164(f) [half of SE tax]… the deduction allowed by section 223 [HSA]… the deductions allowed by section 404 [self-employed retirement plans]… the deduction allowed by section 162(l) [self-employed health insurance]… the deductions… [for] expenses… of eligible educators (§ 62(a)(2)(D) — $300 cap PER ELIGIBLE EDUCATOR for 2025 (an MFJ couple of two educators deducts up to $600: use educatorExpenses for the taxpayer and spouseEducatorExpenses for the spouse, each capped separately), the 2025 indexed amount)… [and] penalties forfeited because of premature withdrawal of funds from time savings accounts or deposits (§ 62(a)(9), uncapped).",
     },
-    ...FROM,
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2026-01-01", // the § 62(a)(2)(D) amount is indexed: $350 from 2026 (v6)
     output: { type: "money" },
     parameters: {
       educatorCap: { value: "30000", type: "money" }, // $300 (2025)
+    },
+    formula: {
+      kind: "add",
+      args: [
+        ruleRef("us.federal.se_tax_half_deduction"),
+        ruleRef("us.federal.hsa_deduction"),
+        ruleRef("us.federal.sep_deduction"),
+        ruleRef("us.federal.sehi_deduction"),
+        {
+          kind: "min",
+          args: [fact("educatorExpenses"), { kind: "param", name: "educatorCap" }],
+        },
+        // § 62(a)(2)(D): the $300 cap is PER eligible educator — a spouse who
+        // is also an eligible educator gets their own cap
+        {
+          kind: "min",
+          args: [fact("spouseEducatorExpenses"), { kind: "param", name: "educatorCap" }],
+        },
+        fact("earlyWithdrawalPenaltyPaid"),
+        // pre-TCJA § 215/§ 62(a)(10): pre-2019-instrument alimony paid
+        fact("alimonyPaidPre2019"),
+        // Schedule 1 lines 24a-z write-in adjustments (attested total)
+        fact("otherAdjustments"),
+      ],
+    },
+  },
+  {
+    id: "us.federal.above_the_line_adjustments",
+    version: 6, // v5 kept the 2025 $300 educator amount in 2026; Rev. Proc. 2025-32 § 4.12 sets $350 for 2026 and Rev. Proc. 2026-35 § 3.13 keeps $350 for 2027
+    jurisdiction: J,
+    title:
+      "Above-the-line adjustments before the student-loan deduction (½ SE tax + HSA + SEP + SE health insurance + educator + early-withdrawal penalty)",
+    citation: {
+      source: "26 U.S.C. § 62(a)(1), (a)(2)(D), (a)(6), (a)(9), (a)(17), (a)(19)",
+      section: "§ 62(a)",
+      url: "https://www.law.cornell.edu/uscode/text/26/62",
+      excerpt:
+        "adjusted gross income means gross income minus… the deduction allowed by section 164(f) [half of SE tax]… the deduction allowed by section 223 [HSA]… the deductions allowed by section 404 [self-employed retirement plans]… the deduction allowed by section 162(l) [self-employed health insurance]… the deductions… [for] expenses… of eligible educators (§ 62(a)(2)(D) — $350 cap PER ELIGIBLE EDUCATOR for 2026 and 2027 (Rev. Proc. 2025-32 § 4.12; Rev. Proc. 2026-35 § 3.13 — an MFJ couple of two educators deducts up to $700: use educatorExpenses for the taxpayer and spouseEducatorExpenses for the spouse, each capped separately))… [and] penalties forfeited because of premature withdrawal of funds from time savings accounts or deposits (§ 62(a)(9), uncapped).",
+    },
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    parameters: {
+      educatorCap: { value: "35000", type: "money" }, // $350 (2026 and 2027)
     },
     formula: {
       kind: "add",

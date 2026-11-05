@@ -1,0 +1,19 @@
+{
+  "description": "TY2027 Form 6251 with preferential income above taxable income: MFJ, interest $10,000, LTCG $2,000,000. Taxable income $2,010,000 − $33,200 = $1,976,800 (QDCG worksheet line 5 = $0). Regular tax: 0% to $102,100; 15% × $531,500 = $79,725; 20% × $1,343,200 = $268,640 → $348,365. AMTI $2,010,000; exemption $144,700 − 50% × $978,100 → $0 (§ 3.11). Line 16 = $2,000,000; line 17 $10,000 × 26% = $2,600; 15% × $531,500 = $79,725; 20% × $1,366,400 = $273,280 → line 38 $355,605 < line 39 28% × $2,010,000 − $5,050 = $557,750. AMT $355,605 − $348,365 = $7,240.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "taxableInterest": 10000,
+    "longTermCapitalGains": 2000000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "724000",
+    "intermediates": {
+      "us.federal.income_tax_before_credits": "34836500",
+      "us.federal.amt.tentative_minimum_tax": "35560500",
+      "us.federal.amt.exemption": "0"
+    }
+  }
+}

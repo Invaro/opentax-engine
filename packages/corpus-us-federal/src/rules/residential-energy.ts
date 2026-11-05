@@ -147,10 +147,46 @@ const actcMaximum: Rule = {
     excerpt:
       "Worksheet B line 2: number of qualifying children under age 17 with the required social security number × $1,700; line 4: earned income over $2,500; line 5: 15% of line 4; line 13: the smaller of line 2 or line 12. [Line 12 is the larger of line 5 and the 3+-child social security tax alternative (lines 6–11), which is NOT modeled — it can only raise the maximum at very low earned income; disclosed. Earned income approximated as wages + self-employment earnings net of the ½ SE deduction, less a Schedule C net loss.]",
   },
-  ...FROM,
+  effectiveFrom: "2025-01-01",
+  effectiveTo: "2027-01-01", // the § 24(h)(5) amount is indexed: $1,800 for 2027 (v2)
   output: { type: "money" },
   parameters: {
     refundableCapPerChild: { value: "170000", type: "money" }, // $1,700 (2025 and 2026)
+    earnedIncomeFloor: { value: "250000", type: "money" }, // $2,500
+  },
+  formula: min(
+    { kind: "mulInt", base: param("refundableCapPerChild"), count: fact("qualifyingChildren") },
+    {
+      kind: "mulRate",
+      base: max0(
+        sub(
+          add(fact("wages"), max0(sub(ruleRef("us.federal.se_net_profit"), ruleRef("us.federal.se_tax_half_deduction")))),
+          add(param("earnedIncomeFloor"), fact("scheduleCNetLoss")),
+        ),
+      ),
+      rate: { num: "15", den: "100" },
+      round: "half-up",
+    },
+  ),
+};
+
+const actcMaximum2027: Rule = {
+  id: `${J}.actc.maximum`,
+  version: 2,
+  jurisdiction: J,
+  title: "Maximum additional child tax credit (Schedule 8812 Credit Limit Worksheet B, line 13; TY2027)",
+  citation: {
+    source: "26 U.S.C. § 24(d)(1), (h)(5); Rev. Proc. 2026-35 § 3.05(2); Credit Limit Worksheet B as in the 2025 Instructions for Schedule 8812",
+    section: "§ 24(d)(1)(B)(i); § 24(h)(5)",
+    url: "https://www.irs.gov/instructions/i1040s8",
+    excerpt:
+      "Worksheet B line 2: number of qualifying children under age 17 with the required social security number × $1,800 (the 2027 § 24(d)(1)(A) amount, Rev. Proc. 2026-35 § 3.05(2)); line 4: earned income over $2,500; line 5: 15% of line 4; line 13: the smaller of line 2 or line 12. [Line 12 is the larger of line 5 and the 3+-child social security tax alternative (lines 6–11), which is NOT modeled — it can only raise the maximum at very low earned income; disclosed. Earned income approximated as wages + self-employment earnings net of the ½ SE deduction, less a Schedule C net loss.]",
+  },
+  effectiveFrom: "2027-01-01",
+  effectiveTo: "2028-01-01",
+  output: { type: "money" },
+  parameters: {
+    refundableCapPerChild: { value: "180000", type: "money" }, // $1,800 (2027)
     earnedIncomeFloor: { value: "250000", type: "money" }, // $2,500
   },
   formula: min(
@@ -325,6 +361,7 @@ export const residentialEnergyRules: Rule[] = [
     add(ruleRef(`${J}.energy.clean.line6b`), ruleRef(`${J}.energy.clean.line11`), ruleRef(`${J}.energy.clean.line12`)),
   ),
   actcMaximum,
+  actcMaximum2027,
   worksheetBApplies,
   line(
     "clean.ctc_for_limit",

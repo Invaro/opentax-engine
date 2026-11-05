@@ -1,0 +1,16 @@
+{
+  "description": "TY2027 single, Schedule C profit $120,000. Net earnings $110,820; SE tax (2027 wage base $192,300, 91 FR 67380; Schedule SE rounds each line): 12.4% → $13,742 + 2.9% → $3,214 = $16,956; ½-SE deduction $8,478 → AGI $111,522. QBI 20% × ($120,000 − $8,478) = $22,304.40, limited to 20% of taxable income before QBI ($111,522 − $16,600 = $94,922) = $18,984.40 → taxable income $75,937.60; Tax Table $75,900–$75,950 (midpoint $75,925): $1,280 + $4,707 + 22% × $23,900 = $11,245. Net tax $11,245 + $16,956 = $28,201.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 120000
+  },
+  "asOf": "2027-12-31",
+  "expect": {
+    "valueCents": "2820100",
+    "intermediates": {
+      "us.federal.se_tax": "1695600",
+      "us.federal.qbi_deduction": "1898440"
+    }
+  }
+}

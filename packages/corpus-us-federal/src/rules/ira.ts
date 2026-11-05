@@ -240,5 +240,31 @@ export const iraRules: Rule[] = [
     },
     "Notice 2025-67",
     "For 2026 the deductible amount rises to $7,500 ($8,600 if age 50+ — the $1,100 catch-up is the first indexed increase under § 219(b)(5)(C)); phase-out ranges $81,000–$91,000 (single/HoH), $129,000–$149,000 (joint/QSS), $0–$10,000 (MFS — but § 219(g)(4): an MFS filer who lived apart from the spouse at ALL times during the year is not treated as married, so the single range applies and no spousal attribution occurs; set mfsLivedApartAllYear); $242,000–$252,000 where only the spouse participates.",
-  ),
+  ),  {
+    id: "us.federal.ira_deduction",
+    version: 4,
+    jurisdiction: J,
+    title: "Traditional IRA deduction (TY2027: the § 219 amounts are not yet published)",
+    citation: {
+      source: "26 U.S.C. § 219(b)(5), (g)",
+      section: "§ 219(b)(5)(C), (D); § 219(g)(8)",
+      url: "https://www.law.cornell.edu/uscode/text/26/219",
+      excerpt:
+        "The deductible amount, its catch-up and the active-participant phase-out ranges are inflation-adjusted each year (§ 219(b)(5)(C)–(D), (g)(8)); the IRS publishes the 2027 amounts in its annual retirement-plan cost-of-living notice, which is not yet out. A 2027 return with a traditional IRA contribution refuses rather than guess; with none, the deduction is $0.",
+    },
+    effectiveFrom: "2027-01-01",
+    effectiveTo: "2028-01-01",
+    output: { type: "money" },
+    formula: {
+      kind: "if",
+      cond: { kind: "cmp", op: "gt", left: fact("iraContribution"), right: { kind: "money", cents: "0" } },
+      then: {
+        kind: "unsupported",
+        reason:
+          "the 2027 IRA deduction limits and phase-out ranges are not yet published by the IRS — a 2027 traditional IRA contribution is not modeled until they are",
+      },
+      else: { kind: "money", cents: "0" },
+    },
+  },
+
 ];

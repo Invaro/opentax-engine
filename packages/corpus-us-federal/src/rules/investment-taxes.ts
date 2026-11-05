@@ -117,7 +117,7 @@ export const investmentTaxRules: Rule[] = [
   },
   {
     id: "us.federal.additional_medicare_tax",
-    version: 4, // v3 had one self-employed person; Form 8959 line 8 combines both spouses' Schedule SE line 6 on a joint return. v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
+    version: 5, // v4 counted net earnings under $400, which are not self-employment income (§ 1402(b); Schedule SE line 6 is blank when line 4c is under $400). v3 had one self-employed person; Form 8959 line 8 combines both spouses' Schedule SE line 6 on a joint return. v2 rounded once combined; the printed Form 8959 rounds Parts I and II per line
     jurisdiction: "us.federal",
     title:
       "Additional Medicare Tax (0.9%; Form 8959 uses medicareWages box 5 when given, else box-1 wages)",
@@ -145,12 +145,24 @@ export const investmentTaxRules: Rule[] = [
       });
       // Form 8959 Part I: wages over the threshold
       const wagesPart = pct09({ kind: "max0", arg: { kind: "sub", left: mw, right: amThreshold } });
+      // Form 8959 line 8: each Schedule SE's line 6 — zero when that
+      // person's net earnings are under $400 (§ 1402(b): not self-employment income)
+      const seIncome = (ruleId: string): Expr => ({
+        kind: "if",
+        cond: { kind: "cmp", op: "lt", left: ruleRef(ruleId), right: money("40000") },
+        then: money("0"),
+        else: ruleRef(ruleId),
+      });
+      const line8: Expr = {
+        kind: "add",
+        args: [seIncome("us.federal.se_net_earnings"), seIncome("us.federal.se_net_earnings.spouse")],
+      };
       // Part II: SE earnings over the threshold REDUCED by Medicare wages
       const sePart = pct09({
         kind: "max0",
         arg: {
           kind: "sub",
-          left: { kind: "add", args: [ruleRef("us.federal.se_net_earnings"), ruleRef("us.federal.se_net_earnings.spouse")] },
+          left: line8,
           right: { kind: "max0", arg: { kind: "sub", left: amThreshold, right: mw } },
         },
       });
@@ -158,7 +170,7 @@ export const investmentTaxRules: Rule[] = [
         kind: "max0",
         arg: {
           kind: "sub",
-          left: { kind: "add", args: [mw, { kind: "add", args: [ruleRef("us.federal.se_net_earnings"), ruleRef("us.federal.se_net_earnings.spouse")] }] },
+          left: { kind: "add", args: [mw, line8] },
           right: amThreshold,
         },
       });

@@ -1,0 +1,13 @@
+{
+  "description": "2026 business standard mileage: 72.5¢ per mile before July 1 (Notice 2026-10) and 76¢ from July 1 (Announcement 2026-11, 2026-29 I.R.B.). 10,000 business miles, 4,000 of them from July → 6,000 × $0.725 + 4,000 × $0.76 = $4,350 + $3,040 = $7,390.",
+  "facts": {
+    "filingStatus": "single",
+    "businessMilesDriven": 10000,
+    "businessMilesDrivenFromJuly": 4000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.vehicle_standard_mileage",
+  "expect": {
+    "valueCents": "739000"
+  }
+}

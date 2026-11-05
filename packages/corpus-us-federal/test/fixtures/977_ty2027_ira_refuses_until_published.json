@@ -1,0 +1,13 @@
+{
+  "description": "The 2027 IRA deduction limits come from the IRS's annual retirement-plan notice, not yet published; a 2027 traditional IRA contribution refuses rather than guess.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 90000,
+    "iraContribution": 7000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.ira_deduction",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

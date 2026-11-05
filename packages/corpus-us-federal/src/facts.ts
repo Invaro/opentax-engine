@@ -1469,11 +1469,18 @@ export const facts: FactSpec[] = [
     },
   },
   {
+    id: "businessMilesDrivenFromJuly",
+    type: "int",
+    min: "0",
+    description:
+      "TY2026 only: the part of businessMilesDriven driven on or after July 1, 2026, which takes the 76¢/mile rate of Announcement 2026-11 (the earlier miles take 72.5¢, Notice 2026-10). Asked only for 2026 when businessMilesDriven is entered.",
+  },
+  {
     id: "businessMilesDriven",
     type: "int",
     min: "0",
     description:
-      "Business miles driven for the optional standard mileage rate (70¢/mile for 2025 per Notice 2025-5; 72.5¢/mile for 2026 per Notice 2026-10) — the standalone target us.federal.vehicle_standard_mileage computes the deduction; subtract it from your Schedule C profit yourself.",
+      "Business miles driven during the year for the optional standard mileage rate (70¢/mile for 2025 per Notice 2025-5; for 2026, 72.5¢/mile through June 30 per Notice 2026-10 and 76¢/mile from July 1 per Announcement 2026-11 — give the July–December miles in businessMilesDrivenFromJuly) — the standalone target us.federal.vehicle_standard_mileage computes the deduction; subtract it from your Schedule C profit yourself.",
     default: {
       value: "0",
       rationale: "Assumed no business mileage absent contrary input",
@@ -1568,11 +1575,18 @@ export const facts: FactSpec[] = [
     },
   },
   {
+    id: "gamblingWinnings",
+    type: "money",
+    min: "0",
+    description:
+      "Gains from wagering transactions for the year (Form W-2G and all other gambling winnings) — the § 165(d)(1)(B) limit on the TY2026+ gambling loss deduction. Used only for that limit: the winnings themselves must also be included in income (for example in otherOrdinaryIncome). Asked only for TY2026 and later when gamblingLossesItemized is entered. In dollars.",
+  },
+  {
     id: "gamblingLossesItemized",
     type: "money",
     min: "0",
     description:
-      "Gambling losses deductible as an itemized deduction (§ 165(d), Schedule A line 16) — LIMITED TO GAMBLING WINNINGS included in income: enter min(losses paid, winnings reported), attested by the input (the engine does not track the per-session limit). TY2025: the full limited amount deducts; the OBBBA 90%-of-losses haircut (§ 165(d) as amended) applies only to taxable years beginning after 12/31/2025. Itemized-only; never reduces winnings directly. In dollars.",
+      "Gambling losses for the § 165(d) itemized deduction (Schedule A line 16). TY2025: enter min(losses paid, winnings reported) — the full limited amount deducts. TY2026 and later: enter the TOTAL wagering losses for the year (including any deduction incurred in carrying on a wagering transaction, § 165(d)(2)); the engine allows 90 percent of them, limited to gamblingWinnings (§ 165(d)(1) as amended by OBBBA § 70114). Itemized-only; never reduces winnings directly. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no deductible gambling losses absent contrary input",
@@ -1754,7 +1768,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "TAXPAYER's eligible educator classroom expenses (§ 62(a)(2)(D)) — capped at $300 for 2025 (indexed). K-12 teachers/counselors/aides with 900+ hours (attested). A spouse who is ALSO an eligible educator gets a separate $300 cap: put the spouse's expenses in spouseEducatorExpenses, never summed here. In dollars.",
+      "TAXPAYER's eligible educator classroom expenses (§ 62(a)(2)(D)) — capped at $300 for 2025 and $350 for 2026 and 2027 (indexed). K-12 teachers/counselors/aides with 900+ hours (attested). A spouse who is ALSO an eligible educator gets a separate cap: put the spouse's expenses in spouseEducatorExpenses, never summed here. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no educator expenses absent contrary input",
@@ -1765,7 +1779,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "SPOUSE's eligible educator classroom expenses (§ 62(a)(2)(D)) — separately capped at $300 for 2025 (per-educator cap; an MFJ couple of two educators deducts up to $600 total). In dollars.",
+      "SPOUSE's eligible educator classroom expenses (§ 62(a)(2)(D)) — separately capped at $300 for 2025 and $350 for 2026 and 2027 (per-educator cap; an MFJ couple of two educators deducts up to $600 / $700 total). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed the spouse is not an eligible educator absent contrary input",
