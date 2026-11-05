@@ -994,7 +994,7 @@ export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
   shape.documents = documentsShape.optional();
   shape.strict = strictParam;
   shape.target = targetParam(
-    "net tax; balance due when payments_estimates.federalTaxWithheld is given",
+    "net tax; balance due when payments_estimates has withholding, estimated payments or an extension payment",
     "Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met",
   );
   shape.asOf = asOfParam;
@@ -1118,7 +1118,10 @@ export function buildFacts(
     asOf: args.asOf,
     target:
       (args.target as string | undefined) ??
-      (defaultTarget === DEFAULT_TARGET && args.federalTaxWithheld !== undefined
+      (defaultTarget === DEFAULT_TARGET &&
+      (plain.federalTaxWithheld !== undefined ||
+        plain.federalEstimatedPayments !== undefined ||
+        plain.federalExtensionPayment !== undefined)
         ? "us.federal.balance_due"
         : defaultTarget),
   };

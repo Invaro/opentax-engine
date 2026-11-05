@@ -4,8 +4,8 @@
     "title": "OpenTax hosted API",
     "version": "corpus 0.43.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:6eb28721bca93d9a2ab318c19c7e5f8c082844882e3b87cfb0d6d021afa687b4",
-    "x-generated": "2026-11-05T22:07:31.293Z"
+    "x-corpus-merkle-root": "sha256:8fab8b3b91811406729808b4ed841750ebffef013fc0eed5f7e5dcd224154216",
+    "x-generated": "2026-11-05T22:25:09.594Z"
   },
   "servers": [
     {
@@ -5521,7 +5521,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "Federal income tax withheld so far this year (W-2 box 2 + estimated payments) — credited against the liability under 26 U.S.C. § 31. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars."
+                                "description": "Federal income tax withheld so far this year (W-2 box 2, Form 1099 box 4 and other withholding; Form 1040 line 25d) — credited against the liability under 26 U.S.C. § 31. Estimated tax payments go in federalEstimatedPayments and a Form 4868 payment in federalExtensionPayment, never here. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars."
                               },
                               "priorYearTax": {
                                 "type": [
@@ -5982,7 +5982,7 @@
                           },
                           "target": {
                             "type": "string",
-                            "description": "rule to derive (default: net tax; balance due when payments_estimates.federalTaxWithheld is given). Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met"
+                            "description": "rule to derive (default: net tax; balance due when payments_estimates has withholding, estimated payments or an extension payment). Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met"
                           },
                           "asOf": {
                             "type": "string",
@@ -16349,7 +16349,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "Federal income tax withheld so far this year (W-2 box 2 + estimated payments) — credited against the liability under 26 U.S.C. § 31. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars."
+                                "description": "Federal income tax withheld so far this year (W-2 box 2, Form 1099 box 4 and other withholding; Form 1040 line 25d) — credited against the liability under 26 U.S.C. § 31. Estimated tax payments go in federalEstimatedPayments and a Form 4868 payment in federalExtensionPayment, never here. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars."
                               },
                               "priorYearTax": {
                                 "type": [
@@ -16810,7 +16810,7 @@
                           },
                           "target": {
                             "type": "string",
-                            "description": "rule to derive (default: net tax; balance due when payments_estimates.federalTaxWithheld is given). Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met"
+                            "description": "rule to derive (default: net tax; balance due when payments_estimates has withholding, estimated payments or an extension payment). Determinations: us.federal.eligible.tips_deduction, us.federal.estimated.quarterly_payment, us.federal.estimated.safe_harbor_met"
                           },
                           "asOf": {
                             "type": "string",

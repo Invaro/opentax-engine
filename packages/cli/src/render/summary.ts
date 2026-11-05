@@ -145,9 +145,9 @@ export function renderSummary(proof: ProofArtifact): string | null {
   // withholding checkup: liability minus what's already been paid in
   if (withholdingMode) {
     const balance = BigInt(root.value.value as string);
-    const withheld = net - balance;
+    const paid = net - balance;
     const aprilOf = String(Number(year) + 1);
-    lines.push(row("− Withheld so far", withheld));
+    lines.push(row("− Paid so far", paid));
     lines.push(pc.dim("  ─────────────────────────────────────"));
     if (balance < 0n) {
       lines.push(

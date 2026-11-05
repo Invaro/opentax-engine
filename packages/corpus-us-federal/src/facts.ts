@@ -2149,7 +2149,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Federal income tax withheld so far this year (W-2 box 2 + estimated payments) — credited against the liability under 26 U.S.C. § 31. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars.",
+      "Federal income tax withheld so far this year (W-2 box 2, Form 1099 box 4 and other withholding; Form 1040 line 25d) — credited against the liability under 26 U.S.C. § 31. Estimated tax payments go in federalEstimatedPayments and a Form 4868 payment in federalExtensionPayment, never here. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no withholding reported absent contrary input",

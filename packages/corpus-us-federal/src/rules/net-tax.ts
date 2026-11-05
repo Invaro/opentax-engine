@@ -89,23 +89,30 @@ export const netTaxRules: Rule[] = [
   },
   {
     id: "us.federal.balance_due",
-    version: 1,
+    version: 2, // v1 subtracted withholding only, ignoring estimated (line 26) and extension (line 31) payments
     jurisdiction: "us.federal",
     title:
-      "Balance due after withholding (negative = refund expected at filing)",
+      "Balance due after payments: withholding, estimated tax and extension payments (negative = refund expected at filing)",
     citation: {
-      source: "26 U.S.C. § 31(a)",
-      section: "§ 31(a)(1)",
+      source: "26 U.S.C. §§ 31(a), 6315; Form 1040 (2025) lines 25d, 26, 31, 33",
+      section: "§ 31(a)(1); § 6315",
       url: "https://www.law.cornell.edu/uscode/text/26/31",
       excerpt:
-        "The amount withheld as tax under chapter 24 shall be allowed to the recipient of the income as a credit against the tax imposed by this subtitle. [The mid-year withholding checkup: liability minus what has already been paid in.]",
+        "The amount withheld as tax under chapter 24 shall be allowed to the recipient of the income as a credit against the tax imposed by this subtitle (§ 31(a)(1)); 'Payments of estimated income tax… shall be considered payment on account of such taxes' (§ 6315). Form 1040 line 33 totals the payments: line 25d withholding, line 26 estimated tax payments and amount applied from the prior year, and line 31 (Schedule 3 line 13a, the payment with Form 4868). [The refundable credits are already in net tax.]",
     },
     ...FROM,
     output: { type: "money" },
     formula: {
       kind: "sub",
       left: ruleRef("us.federal.net_tax"),
-      right: { kind: "fact", factId: "federalTaxWithheld" },
+      right: {
+        kind: "add",
+        args: [
+          { kind: "fact", factId: "federalTaxWithheld" },
+          { kind: "fact", factId: "federalEstimatedPayments" },
+          { kind: "fact", factId: "federalExtensionPayment" },
+        ],
+      },
     },
   },
 ];

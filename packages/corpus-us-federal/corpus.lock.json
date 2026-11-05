@@ -1,7 +1,7 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
   "version": "0.43.0",
-  "merkleRoot": "sha256:6eb28721bca93d9a2ab318c19c7e5f8c082844882e3b87cfb0d6d021afa687b4",
+  "merkleRoot": "sha256:8fab8b3b91811406729808b4ed841750ebffef013fc0eed5f7e5dcd224154216",
   "ruleCount": 715,
   "rules": {
     "us.ak.income_tax@1": "sha256:a56c5ed15be4326f057dd48110997acb3eac25ba847ef351fbb6e65584e01f3e",
@@ -74,7 +74,7 @@
     "us.federal.amt.tentative_minimum_tax@1": "sha256:ffefbf9267833f82df9b9ef3808415f1edefd98ec8fd02c9df47d77cbf42026a",
     "us.federal.amt.tentative_minimum_tax@2": "sha256:c035928c57e08271649632b418db2025fb534906e38e09961ce9041628d3d5ed",
     "us.federal.amt@3": "sha256:b835da3bc1c96f7afef1793d789c2448e88f3beef328ae0e1cc89f9440e6a0ac",
-    "us.federal.balance_due@1": "sha256:58c35325e74d9b0f672e29a1ee77370e403a742c0e5467a77f73dc286cc16494",
+    "us.federal.balance_due@2": "sha256:b4f89e88513416ed3b9cd8e8b8556016a7429a7ca4aed55169fa369251f3c39b",
     "us.federal.capital_loss_carryover.adjusted_taxable_income@1": "sha256:b4b6f289ee1844e83a86eae886fd06b872d0f77650c709d6aafdb79b8e19ec9e",
     "us.federal.capital_loss_carryover.long_term@1": "sha256:26061e722e2cb02df08a3b30657c6305a31fcd0c72fc9bc65f726a6eaed5157f",
     "us.federal.capital_loss_carryover.loss_used@1": "sha256:6617f2f9c17789fe2412bec02955c5392502d8885815cf79d4e80ff133fdb6cb",

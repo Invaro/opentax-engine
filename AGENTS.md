@@ -85,7 +85,7 @@ opentax lookup standard deduction --expect 32200 --filing-status mfj --json
 
 - **`value.value` is integer cents as a string** (`"564000"` = $5,640.00). Use `formatted` for display. Never do float math on it.
 - **Negative money = a refund.** The default target (`us.federal.net_tax`) subtracts refundable credits (EITC, ACTC) and is NOT clamped at zero — `"-977700"` means the taxpayer is owed $9,777.00.
-- **`--withheld <dollars>` switches the target to `us.federal.balance_due`** (liability minus § 31 withholding credit): the mid-year checkup. Negative = refund expected at filing; positive = they will owe.
+- **`--withheld <dollars>` (or estimated or extension payments) switches the target to `us.federal.balance_due`**: liability minus the payments on Form 1040 lines 25d (withholding), 26 (`federalEstimatedPayments`) and 31 (`federalExtensionPayment`). The mid-year checkup. Negative = refund expected at filing; positive = they will owe.
 - All four OBBBA Schedule 1-A deductions are inputs: `--tips`, `--overtime`, `--car-loan`, plus `--charity` (§ 170(p), 2026+; correctly $0 if asked about 2025).
 - Schedule A is modeled and the standard-vs-itemized election is automatic (a `max` — no flag needed): `--salt`, `--mortgage-interest` + `--mortgage-balance`, `--medical`, and `--charity` doubles as the itemizer's cash charitable input. The SALT cap is year-aware ($40,000 TY2025 / $40,400 TY2026, 30% phase-down over $500k/$505k MAGI, $10,000 floor, MFS halves).
 - **`assumptions` matter.** They are documented defaults the engine used (e.g. `taxableInterest = 0`). If your user's situation differs, pass the real fact and re-run.

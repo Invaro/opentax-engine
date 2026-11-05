@@ -21,6 +21,8 @@ The SALT cap for married filing separately now halves the amount after the phase
 
 The nonrefundable credits are now limited by Form 1040 line 18, which includes the excess advance premium tax credit repayment, as every credit limit worksheet says (`us.federal.tax_before_nonrefundable_credits`). The repayment moves from `us.federal.other_taxes` (Schedule 2 Part II) to that line; net tax is unchanged except where a credit was cut short by the old limit.
 
+`us.federal.balance_due` now subtracts estimated tax payments (`federalEstimatedPayments`, Form 1040 line 26) and the extension payment (`federalExtensionPayment`, line 31) as well as withholding. Before, it subtracted withholding only. Giving any of the three now switches the CLI and MCP to the balance-due answer.
+
 A check of every rule for the same kind of error found four more, now fixed:
 
 - The child and dependent care credit now reduces earned income by a Schedule C loss (Pub. 503). Before, wages alone set the limit.

@@ -6895,7 +6895,7 @@ var facts = [
     id: "federalTaxWithheld",
     type: "money",
     min: "0",
-    description: "Federal income tax withheld so far this year (W-2 box 2 + estimated payments) \u2014 credited against the liability under 26 U.S.C. \xA7 31. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars.",
+    description: "Federal income tax withheld so far this year (W-2 box 2, Form 1099 box 4 and other withholding; Form 1040 line 25d) \u2014 credited against the liability under 26 U.S.C. \xA7 31. Estimated tax payments go in federalEstimatedPayments and a Form 4868 payment in federalExtensionPayment, never here. INCLUDE Form 8959 Part IV excess Medicare withholding: any W-2 box 6 amount over 1.45% of box 5 is Additional-Medicare-Tax withholding that belongs here (otherwise the 0.9% tax is paid twice). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no withholding reported absent contrary input"
@@ -18055,21 +18055,29 @@ var netTaxRules = [
   },
   {
     id: "us.federal.balance_due",
-    version: 1,
+    version: 2,
+    // v1 subtracted withholding only, ignoring estimated (line 26) and extension (line 31) payments
     jurisdiction: "us.federal",
-    title: "Balance due after withholding (negative = refund expected at filing)",
+    title: "Balance due after payments: withholding, estimated tax and extension payments (negative = refund expected at filing)",
     citation: {
-      source: "26 U.S.C. \xA7 31(a)",
-      section: "\xA7 31(a)(1)",
+      source: "26 U.S.C. \xA7\xA7 31(a), 6315; Form 1040 (2025) lines 25d, 26, 31, 33",
+      section: "\xA7 31(a)(1); \xA7 6315",
       url: "https://www.law.cornell.edu/uscode/text/26/31",
-      excerpt: "The amount withheld as tax under chapter 24 shall be allowed to the recipient of the income as a credit against the tax imposed by this subtitle. [The mid-year withholding checkup: liability minus what has already been paid in.]"
+      excerpt: "The amount withheld as tax under chapter 24 shall be allowed to the recipient of the income as a credit against the tax imposed by this subtitle (\xA7 31(a)(1)); 'Payments of estimated income tax\u2026 shall be considered payment on account of such taxes' (\xA7 6315). Form 1040 line 33 totals the payments: line 25d withholding, line 26 estimated tax payments and amount applied from the prior year, and line 31 (Schedule 3 line 13a, the payment with Form 4868). [The refundable credits are already in net tax.]"
     },
     ...FROM12,
     output: { type: "money" },
     formula: {
       kind: "sub",
       left: ruleRef26("us.federal.net_tax"),
-      right: { kind: "fact", factId: "federalTaxWithheld" }
+      right: {
+        kind: "add",
+        args: [
+          { kind: "fact", factId: "federalTaxWithheld" },
+          { kind: "fact", factId: "federalEstimatedPayments" },
+          { kind: "fact", factId: "federalExtensionPayment" }
+        ]
+      }
     }
   }
 ];
@@ -39462,7 +39470,7 @@ function runCheck(flags) {
   }
   try {
     Object.assign(plain, factsFromOptions(flags));
-    const target = flags.target ?? (plain.federalTaxWithheld !== void 0 ? "us.federal.balance_due" : DEFAULT_TARGET);
+    const target = flags.target ?? (plain.federalTaxWithheld !== void 0 || plain.federalEstimatedPayments !== void 0 || plain.federalExtensionPayment !== void 0 ? "us.federal.balance_due" : DEFAULT_TARGET);
     const expected = parseDollars(flags.expect);
     const tolerance = parseDollars(flags.tolerance ?? "1");
     const facts2 = coerceFacts(corpus, plain);
@@ -39685,9 +39693,9 @@ function renderSummary(proof) {
   }
   if (withholdingMode) {
     const balance = BigInt(root.value.value);
-    const withheld = net - balance;
+    const paid = net - balance;
     const aprilOf = String(Number(year) + 1);
-    lines.push(row2("\u2212 Withheld so far", withheld));
+    lines.push(row2("\u2212 Paid so far", paid));
     lines.push(import_picocolors4.default.dim("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"));
     if (balance < 0n) {
       lines.push(row2("Refund expected", -balance, (s) => import_picocolors4.default.bold(import_picocolors4.default.green(s))) + import_picocolors4.default.dim(`   (April ${aprilOf})`));
@@ -39775,7 +39783,7 @@ function runEval(flags) {
   }
   try {
     Object.assign(plain, factsFromOptions(flags));
-    const target = flags.target ?? (plain.federalTaxWithheld !== void 0 ? "us.federal.balance_due" : DEFAULT_TARGET);
+    const target = flags.target ?? (plain.federalTaxWithheld !== void 0 || plain.federalEstimatedPayments !== void 0 || plain.federalExtensionPayment !== void 0 ? "us.federal.balance_due" : DEFAULT_TARGET);
     const facts2 = coerceFacts(corpus, plain);
     const { value, proof } = evaluate(corpus, facts2, {
       asOf,

@@ -51,7 +51,9 @@ export function runCheck(flags: CheckFlags): number {
     Object.assign(plain, factsFromOptions(flags));
     const target =
       flags.target ??
-      (plain.federalTaxWithheld !== undefined
+      (plain.federalTaxWithheld !== undefined ||
+      plain.federalEstimatedPayments !== undefined ||
+      plain.federalExtensionPayment !== undefined
         ? "us.federal.balance_due"
         : DEFAULT_TARGET);
 
