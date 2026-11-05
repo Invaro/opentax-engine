@@ -28,7 +28,9 @@ function run(args: string[]): { code: number; stdout: string } {
   }
 }
 
-describe.skipIf(!existsSync(cli))("CLI agent contract (--json)", () => {
+// each test spawns the CLI one or more times, and a cold start loads the
+// whole corpus — slow CI runners need more than the 5 s default
+describe.skipIf(!existsSync(cli))("CLI agent contract (--json)", { timeout: 30_000 }, () => {
   it("success: ok=true with value, formatted, assumptions, proof; exit 0", () => {
     const { code, stdout } = run([
       "eval", "--status", "mfj", "--wages", "120000", "--kids", "2",
