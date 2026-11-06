@@ -1109,18 +1109,18 @@ var require_suggestSimilar = __commonJS({
       }
       return d3[a.length][b.length];
     }
-    function suggestSimilar(word, candidates) {
-      if (!candidates || candidates.length === 0) return "";
-      candidates = Array.from(new Set(candidates));
+    function suggestSimilar(word, candidates2) {
+      if (!candidates2 || candidates2.length === 0) return "";
+      candidates2 = Array.from(new Set(candidates2));
       const searchingOptions = word.startsWith("--");
       if (searchingOptions) {
         word = word.slice(2);
-        candidates = candidates.map((candidate) => candidate.slice(2));
+        candidates2 = candidates2.map((candidate) => candidate.slice(2));
       }
       let similar = [];
       let bestDistance = maxDistance;
       const minSimilarity = 0.4;
-      candidates.forEach((candidate) => {
+      candidates2.forEach((candidate) => {
         if (candidate.length <= 1) return;
         const distance = editDistance(word, candidate);
         const length = Math.max(word.length, candidate.length);
@@ -4221,29 +4221,29 @@ function evalRule(ruleId, ctx) {
     const base = selectVersion(ctx.corpus, ruleId, ctx.asOf);
     const overs = selectOverriders(ctx.corpus, ruleId, ctx.asOf);
     const children = [];
-    const candidates = [];
+    const candidates2 = [];
     let winner = null;
     let poisoned = false;
     for (const cand of overs) {
       const guard = evalExpr(cand.applicability, cand, ctx, children);
       if (guard === POISON) {
-        candidates.push(candidateEntry(cand, "unknown"));
+        candidates2.push(candidateEntry(cand, "unknown"));
         poisoned = true;
         break;
       }
       expectType(guard, "bool", cand, "applicability");
       if (guard.value) {
-        candidates.push(candidateEntry(cand, true));
+        candidates2.push(candidateEntry(cand, true));
         winner = cand;
         break;
       }
-      candidates.push(candidateEntry(cand, false));
+      candidates2.push(candidateEntry(cand, false));
     }
     if (!winner && !poisoned) {
       if (base.applicability) {
         const guard = evalExpr(base.applicability, base, ctx, children);
         if (guard === POISON) {
-          candidates.push({ ...candidateEntry(base, "unknown"), priority: 0 });
+          candidates2.push({ ...candidateEntry(base, "unknown"), priority: 0 });
           poisoned = true;
         } else {
           expectType(guard, "bool", base, "applicability");
@@ -4256,12 +4256,12 @@ function evalRule(ruleId, ctx) {
               }
             ]);
           }
-          candidates.push({ ...candidateEntry(base, true), priority: 0 });
+          candidates2.push({ ...candidateEntry(base, true), priority: 0 });
           winner = base;
         }
       } else {
         if (overs.length > 0) {
-          candidates.push({ ...candidateEntry(base, true), priority: 0 });
+          candidates2.push({ ...candidateEntry(base, true), priority: 0 });
         }
         winner = base;
       }
@@ -4311,7 +4311,7 @@ function evalRule(ruleId, ctx) {
       title: winner.title,
       citation: winner.citation,
       ...winner.id !== ruleId ? { resolvedFrom: ruleId } : {},
-      ...overs.length > 0 ? { candidatesConsidered: candidates } : {},
+      ...overs.length > 0 ? { candidatesConsidered: candidates2 } : {},
       ...contributions.length > 0 ? { contributions } : {},
       ...ctx.excluded.size > 0 ? { excluding: [...ctx.excluded].sort() } : {},
       inputs,
@@ -33943,10 +33943,423 @@ var tipsOvertimeRules = [
   }
 ];
 
+// ../corpus-us-federal/dist/projection-spec.js
+var PROJECTION_PARAMS = [
+  { "kind": "indexed", "id": "brackets.single.12_bracket_start", "label": "brackets.single.12% bracket start (10% end)", "statute": "\xA7 1(j)(2)(C), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "952500", "ratio": ["2011421", "1495923"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "1280000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "brackets.single.22_bracket_start", "label": "brackets.single.22% bracket start (12% end)", "statute": "\xA7 1(j)(2)(C), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "3870000", "ratio": ["2011421", "1495923"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "5202500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "brackets.single.24_bracket_start", "label": "brackets.single.24% bracket start", "statute": "\xA7 1(j)(2)(C), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "8250000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "10912500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "brackets.single.32_bracket_start", "label": "brackets.single.32% bracket start", "statute": "\xA7 1(j)(2)(C), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "15750000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "20832500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "brackets.single.35_bracket_start", "label": "brackets.single.35% bracket start", "statute": "\xA7 1(j)(2)(C), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "20000000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "26455000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "brackets.single.37_bracket_start", "label": "brackets.single.37% bracket start", "statute": "\xA7 1(j)(2)(C), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "50000000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "66137500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }, { "id": "us.federal.itemized_deductions", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "brackets.mfj.12_bracket_start", "label": "brackets.mfj.12% bracket start (10% end)", "statute": "\xA7 1(j)(2)(A), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "1905000", "ratio": ["2011421", "1495923"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "2560000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "brackets.mfj.22_bracket_start", "label": "brackets.mfj.22% bracket start (12% end)", "statute": "\xA7 1(j)(2)(A), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "7740000", "ratio": ["2011421", "1495923"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "10405000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "brackets.mfj.24_bracket_start", "label": "brackets.mfj.24% bracket start", "statute": "\xA7 1(j)(2)(A), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "16500000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "21825000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "brackets.mfj.32_bracket_start", "label": "brackets.mfj.32% bracket start", "statute": "\xA7 1(j)(2)(A), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "31500000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "41665000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "brackets.mfj.35_bracket_start", "label": "brackets.mfj.35% bracket start", "statute": "\xA7 1(j)(2)(A), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "40000000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "52910000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "brackets.mfj.37_bracket_start", "label": "brackets.mfj.37% bracket start", "statute": "\xA7 1(j)(2)(A), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "60000000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "79365000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }, { "id": "us.federal.itemized_deductions", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "brackets.hoh.12_bracket_start", "label": "brackets.hoh.12% bracket start (10% end)", "statute": "\xA7 1(j)(2)(B), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "1360000", "ratio": ["2011421", "1495923"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "1825000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "brackets.hoh.22_bracket_start", "label": "brackets.hoh.22% bracket start (12% end)", "statute": "\xA7 1(j)(2)(B), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "5180000", "ratio": ["2011421", "1495923"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "6965000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "brackets.hoh.24_bracket_start", "label": "brackets.hoh.24% bracket start", "statute": "\xA7 1(j)(2)(B), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "8250000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "10910000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "brackets.hoh.32_bracket_start", "label": "brackets.hoh.32% bracket start", "statute": "\xA7 1(j)(2)(B), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "15750000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "20830000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "brackets.hoh.35_bracket_start", "label": "brackets.hoh.35% bracket start", "statute": "\xA7 1(j)(2)(B), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "20000000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "26455000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "brackets.hoh.37_bracket_start", "label": "brackets.hoh.37% bracket start", "statute": "\xA7 1(j)(2)(B), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "50000000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "66135000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }, { "id": "us.federal.itemized_deductions", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "brackets.mfs.12_bracket_start", "label": "brackets.mfs.12% bracket start (10% end)", "statute": "\xA7 1(j)(2)(D), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "952500", "ratio": ["2011421", "1495923"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "1280000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfs"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "brackets.mfs.22_bracket_start", "label": "brackets.mfs.22% bracket start (12% end)", "statute": "\xA7 1(j)(2)(D), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "3870000", "ratio": ["2011421", "1495923"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "5202500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfs"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "brackets.mfs.24_bracket_start", "label": "brackets.mfs.24% bracket start", "statute": "\xA7 1(j)(2)(D), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "8250000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "10912500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfs"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "brackets.mfs.32_bracket_start", "label": "brackets.mfs.32% bracket start", "statute": "\xA7 1(j)(2)(D), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "15750000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "20832500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfs"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "brackets.mfs.35_bracket_start", "label": "brackets.mfs.35% bracket start", "statute": "\xA7 1(j)(2)(D), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "20000000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "26455000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfs"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "brackets.mfs.37_bracket_start", "label": "brackets.mfs.37% bracket start", "statute": "\xA7 1(j)(2)(D), (j)(3)(B); \xA7 1(f)(3), (f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "30000000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "39682500", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfs"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfs"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfs"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfs"] }, { "id": "us.federal.itemized_deductions", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "brackets.estate.24_start", "label": "brackets.estate.24% start (10% end)", "statute": "\xA7 1(j)(2)(E), (j)(3)(B); \xA7 1(f)(7)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "255000", "ratio": ["2011421", "1495923"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "340000", "rules": [{ "id": "us.federal.fiduciary.income_tax" }] },
+  { "kind": "indexed", "id": "brackets.estate.35_start", "label": "brackets.estate.35% start", "statute": "\xA7 1(j)(2)(E), (j)(3)(B); \xA7 1(f)(7)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "915000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "1210000", "rules": [{ "id": "us.federal.fiduciary.income_tax" }] },
+  { "kind": "indexed", "id": "brackets.estate.37_start", "label": "brackets.estate.37% start", "statute": "\xA7 1(j)(2)(E), (j)(3)(B); \xA7 1(f)(7)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "1250000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "1650000", "rules": [{ "id": "us.federal.fiduciary.income_tax" }] },
+  { "kind": "indexed", "id": "capgains.mfj.zero", "label": "capgains.mfj.zero", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "7720000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "10210000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }, { "id": "us.federal.amt.tentative_minimum_tax", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "capgains.hoh.zero", "label": "capgains.hoh.zero", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "5170000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "6835000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }, { "id": "us.federal.amt.tentative_minimum_tax", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "capgains.estate.zero", "label": "capgains.estate.zero", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "260000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "340000", "rules": [] },
+  { "kind": "indexed", "id": "capgains.mfj.fifteen", "label": "capgains.mfj.fifteen", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "47900000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "63360000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["mfj", "qss"] }, { "id": "us.federal.kiddie_tax", "statuses": ["mfj", "qss"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["mfj", "qss"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["mfj", "qss"] }, { "id": "us.federal.amt.tentative_minimum_tax", "statuses": ["mfj", "qss"] }] },
+  { "kind": "indexed", "id": "capgains.hoh.fifteen", "label": "capgains.hoh.fifteen", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "45240000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "59840000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["hoh"] }, { "id": "us.federal.kiddie_tax", "statuses": ["hoh"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["hoh"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["hoh"] }, { "id": "us.federal.amt.tentative_minimum_tax", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "capgains.single.fifteen", "label": "capgains.single.fifteen", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "42580000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "56320000", "rules": [{ "id": "us.federal.income_tax_before_credits", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.tax_table", "statuses": ["single"] }, { "id": "us.federal.kiddie_tax", "statuses": ["single"] }, { "id": "us.federal.income_tax_before_credits.feie", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q1", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q2", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q3", "statuses": ["single"] }, { "id": "us.federal.estimated.annualized_installment_q4", "statuses": ["single"] }, { "id": "us.federal.amt.tentative_minimum_tax", "statuses": ["single"] }] },
+  { "kind": "indexed", "id": "capgains.estate.fifteen", "label": "capgains.estate.fifteen", "statute": "\xA7 1(j)(5)(B), (C)", "index": "c-cpi-u", "comps": [{ "baseCents": "1270000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "1675000", "rules": [] },
+  { "kind": "indexed", "id": "standardDeduction.single", "label": "standardDeduction.single (MFS same; MFJ/QSS = 200%)", "statute": "\xA7 63(c)(2)(C), (c)(7)(A)(ii), (c)(7)(B)(ii)", "index": "c-cpi-u", "comps": [{ "baseCents": "1575000", "ratio": ["12068526", "11419045"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "1660000", "rules": [{ "id": "us.federal.standard_deduction.base_amount", "statuses": ["single", "mfs"] }] },
+  { "kind": "indexed", "id": "standardDeduction.hoh", "label": "standardDeduction.hoh", "statute": "\xA7 63(c)(2)(B), (c)(7)(A)(i), (c)(7)(B)(ii)", "index": "c-cpi-u", "comps": [{ "baseCents": "2362500", "ratio": ["12068526", "11419045"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "2492500", "rules": [{ "id": "us.federal.standard_deduction.base_amount", "statuses": ["hoh"] }] },
+  { "kind": "indexed", "id": "dependentStdDed.floor", "label": "dependentStdDed.floor ($500) [= \xA7 1(g)(4)(A)(ii)(I) kiddie amount]", "statute": "\xA7 63(c)(5)(A), (c)(4)(B)(i); \xA7 1(f)(7)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "50000", "ratio": ["480023610229", "167518443950"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "140000", "rules": [{ "id": "us.federal.standard_deduction.dependent_limit" }, { "id": "us.federal.kiddie_tax" }] },
+  { "kind": "indexed", "id": "dependentStdDed.earnedIncomeAddOn", "label": "dependentStdDed.earnedIncomeAddOn ($250)", "statute": "\xA7 63(c)(5)(B), (c)(4)(B)(ii)", "index": "c-cpi-u", "comps": [{ "baseCents": "25000", "ratio": ["480023610229", "238587252475"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "50000", "rules": [{ "id": "us.federal.standard_deduction.dependent_limit" }] },
+  { "kind": "indexed", "id": "additionalStdDed.married", "label": "additionalStdDed.married (aged/blind)", "statute": "\xA7 63(f)(1),(2), (c)(4)(B)(i)", "index": "c-cpi-u", "comps": [{ "baseCents": "60000", "ratio": ["480023610229", "167518443950"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "170000", "rules": [{ "id": "us.federal.standard_deduction.additional", "path": "\\.parameters\\.amountMarried$" }] },
+  { "kind": "indexed", "id": "additionalStdDed.unmarried", "label": "additionalStdDed.unmarried", "statute": "\xA7 63(f)(3), (c)(4)(B)(i)", "index": "c-cpi-u", "comps": [{ "baseCents": "75000", "ratio": ["480023610229", "167518443950"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "210000", "rules": [{ "id": "us.federal.standard_deduction.additional", "path": "\\.parameters\\.amountUnmarried$" }] },
+  { "kind": "indexed", "id": "amt.exemption.joint", "label": "amt.exemption.joint (MFS = 50%)", "statute": "\xA7 55(d)(1)(A), (d)(4)(A)(i)(I), (d)(4)(B)", "index": "c-cpi-u", "comps": [{ "baseCents": "10940000", "ratio": ["8045684", "6082417"] }], "roundCents": "10000", "roundMode": "nearest", "on": "amount", "published2027": "14470000", "rules": [{ "id": "us.federal.amt.exemption", "path": "\\.parameters\\.exemptJoint$" }] },
+  { "kind": "indexed", "id": "amt.exemption.unmarried", "label": "amt.exemption.unmarried", "statute": "\xA7 55(d)(1)(B), (d)(4)(A)(i)(II), (d)(4)(B)", "index": "c-cpi-u", "comps": [{ "baseCents": "7030000", "ratio": ["8045684", "6082417"] }], "roundCents": "10000", "roundMode": "nearest", "on": "amount", "published2027": "9300000", "rules": [{ "id": "us.federal.amt.exemption", "path": "\\.parameters\\.exemptSingle$" }] },
+  { "kind": "indexed", "id": "amt.phaseoutThreshold.joint", "label": "amt.phaseoutThreshold.joint (single/MFS = 50%)", "statute": "\xA7 55(d)(2)(A), (d)(4)(A)(ii)(I), (d)(4)(B)(i)(II)(2)", "index": "c-cpi-u", "comps": [{ "baseCents": "100000000", "ratio": ["12068526", "11695585"] }], "roundCents": "10000", "roundMode": "nearest", "on": "amount", "published2027": "103190000", "rules": [{ "id": "us.federal.amt.exemption", "path": "\\.parameters\\.threshJoint$" }] },
+  { "kind": "indexed", "id": "amt.break28", "label": "amt.break28 (MFS = 50%)", "statute": "\xA7 55(b)(1)(A)(iii), (d)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "17500000", "ratio": ["960047220458", "665483785395"] }], "roundCents": "10000", "roundMode": "nearest", "on": "amount", "published2027": "25250000", "rules": [{ "id": "us.federal.amt.tentative_minimum_tax", "path": "\\.parameters\\.break28$" }] },
+  { "kind": "indexed", "id": "eitc.earnedIncomeAmount.0kids", "label": "eitc.earnedIncomeAmount.0kids", "statute": "\xA7 32(b)(2)(A), (j)(1)(B)(i), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "422000", "ratio": ["480023610229", "225996567225"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "896000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.eia0$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.eia0$" }] },
+  { "kind": "indexed", "id": "eitc.earnedIncomeAmount.1kid", "label": "eitc.earnedIncomeAmount.1kid", "statute": "\xA7 32(b)(2)(A), (j)(1)(B)(i), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "633000", "ratio": ["480023610229", "225996567225"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "1345000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.eia1$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.eia1$" }] },
+  { "kind": "indexed", "id": "eitc.earnedIncomeAmount.2_kids", "label": "eitc.earnedIncomeAmount.2+kids", "statute": "\xA7 32(b)(2)(A), (j)(1)(B)(i), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "889000", "ratio": ["480023610229", "225996567225"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "1888000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.eia[23]$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.eia[23]$" }] },
+  { "kind": "indexed", "id": "eitc.phaseoutThreshold.0kids.other", "label": "eitc.phaseoutThreshold.0kids.other", "statute": "\xA7 32(b)(2)(A), (j)(1)(B)(i), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "528000", "ratio": ["480023610229", "225996567225"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "1121000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.thresholdOther0$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.thresholdOther0$" }] },
+  { "kind": "indexed", "id": "eitc.phaseoutThreshold.kids.other", "label": "eitc.phaseoutThreshold.kids.other", "statute": "\xA7 32(b)(2)(A), (j)(1)(B)(i), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "1161000", "ratio": ["480023610229", "225996567225"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "2466000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.thresholdOtherKids$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.thresholdOtherKids$" }] },
+  { "kind": "indexed", "id": "eitc.phaseoutThreshold.0kids.mfj", "label": "eitc.phaseoutThreshold.0kids.mfj", "statute": "\xA7 32(b)(2)(A)+(B), (j)(1)(B)(i),(ii), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "528000", "ratio": ["480023610229", "225996567225"] }, { "baseCents": "500000", "ratio": ["480023610229", "319536632415"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "1873000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.thresholdMFJ0$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.thresholdMFJ0$" }] },
+  { "kind": "indexed", "id": "eitc.phaseoutThreshold.kids.mfj", "label": "eitc.phaseoutThreshold.kids.mfj", "statute": "\xA7 32(b)(2)(A)+(B), (j)(1)(B)(i),(ii), (j)(2)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "1161000", "ratio": ["480023610229", "225996567225"] }, { "baseCents": "500000", "ratio": ["480023610229", "319536632415"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "3217000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.thresholdMFJKids$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.thresholdMFJKids$" }] },
+  { "kind": "indexed", "id": "eitc.investmentIncomeLimit", "label": "eitc.investmentIncomeLimit", "statute": "\xA7 32(i)(1), (j)(1)(B)(iii), (j)(2)(B)", "index": "c-cpi-u", "comps": [{ "baseCents": "1000000", "ratio": ["24137052", "19115459"] }], "roundCents": "5000", "roundMode": "down", "on": "amount", "published2027": "1260000", "rules": [{ "id": "us.federal.eitc", "path": "\\.parameters\\.investmentLimit$" }, { "id": "us.federal.eitc_no_age_gate", "path": "\\.parameters\\.investmentLimit$" }] },
+  { "kind": "indexed", "id": "ctc.perChild", "label": "ctc.perChild", "statute": "\xA7 24(h)(2), (i)(2), (i)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "220000", "ratio": ["12068526", "11419045"] }], "roundCents": "10000", "roundMode": "down", "on": "increase", "published2027": "230000", "rules": [{ "id": "us.federal.ctc.tentative" }] },
+  { "kind": "indexed", "id": "actc.refundableCapPerChild", "label": "actc.refundableCapPerChild", "statute": "\xA7 24(h)(5), (i)(1), (i)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "140000", "ratio": ["8045684", "6082417"] }], "roundCents": "10000", "roundMode": "down", "on": "increase", "published2027": "180000", "rules": [{ "id": "us.federal.actc" }, { "id": "us.federal.actc.maximum" }] },
+  { "kind": "indexed", "id": "adoption.maxCredit", "label": "adoption.maxCredit (and special-needs amount)", "statute": "\xA7 23(a)(3), (b)(1), (h)(1),(2)", "index": "c-cpi-u", "comps": [{ "baseCents": "1000000", "ratio": ["480023610229", "263095457625"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "1825000", "rules": [{ "id": "us.federal.adoption.allowed" }] },
+  { "kind": "indexed", "id": "adoption.phaseoutStart", "label": "adoption.phaseoutStart", "statute": "\xA7 23(b)(2)(A)(i), (h)(1),(2)", "index": "c-cpi-u", "comps": [{ "baseCents": "15000000", "ratio": ["480023610229", "263095457625"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "27368000", "rules": [{ "id": "us.federal.adoption.allowed" }] },
+  { "kind": "indexed", "id": "adoption.refundableCap", "label": "adoption.refundableCap", "statute": "\xA7 23(a)(4), (h)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "500000", "ratio": ["12068526", "11419045"] }], "roundCents": "1000", "roundMode": "nearest", "on": "amount", "published2027": "528000", "rules": [{ "id": "us.federal.adoption.refundable" }] },
+  { "kind": "indexed", "id": "qbi.threshold.other", "label": "qbi.threshold.other (MFJ = 200%)", "statute": "\xA7 199A(e)(2)(A),(B); \xA7 1(f)(7)", "index": "c-cpi-u", "comps": [{ "baseCents": "15750000", "ratio": ["8045684", "6082417"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "20830000", "rules": [{ "id": "us.federal.qbi.threshold", "statuses": ["single", "hoh", "qss"] }] },
+  { "kind": "indexed", "id": "qbi.threshold.mfs", "label": "qbi.threshold.mfs", "statute": "\xA7 199A(e)(2); \xA7 1(f)(7)(B)", "index": "c-cpi-u", "comps": [{ "baseCents": "15750000", "ratio": ["8045684", "6082417"] }], "roundCents": "2500", "roundMode": "down", "on": "increase", "published2027": "20832500", "rules": [{ "id": "us.federal.qbi.threshold", "statuses": ["mfs"] }] },
+  { "kind": "indexed", "id": "qbi.minDeduction", "label": "qbi.minDeduction", "statute": "\xA7 199A(i)(1)(B), (i)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "40000", "ratio": ["12068526", "11695585"] }], "roundCents": "500", "roundMode": "nearest", "on": "increase", "published2027": "41500", "rules": [{ "id": "us.federal.qbi_deduction" }, { "id": "us.federal.estimated.annualized_installment_q1" }, { "id": "us.federal.estimated.annualized_installment_q2" }, { "id": "us.federal.estimated.annualized_installment_q3" }, { "id": "us.federal.estimated.annualized_installment_q4" }] },
+  { "kind": "indexed", "id": "qbi.minQbiFloor", "label": "qbi.minQbiFloor", "statute": "\xA7 199A(i)(2)(A), (i)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "100000", "ratio": ["12068526", "11695585"] }], "roundCents": "500", "roundMode": "nearest", "on": "increase", "published2027": "103000", "rules": [{ "id": "us.federal.qbi_deduction" }, { "id": "us.federal.estimated.annualized_installment_q1" }, { "id": "us.federal.estimated.annualized_installment_q2" }, { "id": "us.federal.estimated.annualized_installment_q3" }, { "id": "us.federal.estimated.annualized_installment_q4" }] },
+  { "kind": "indexed", "id": "studentLoan.phaseoutStart.other", "label": "studentLoan.phaseoutStart.other", "statute": "\xA7 221(b)(2)(B), (f)", "index": "c-cpi-u", "comps": [{ "baseCents": "5000000", "ratio": ["480023610229", "263095457625"] }], "roundCents": "500000", "roundMode": "down", "on": "amount", "published2027": "9000000", "rules": [{ "id": "us.federal.student_loan_interest_deduction", "path": "\\.parameters\\.threshold$" }] },
+  { "kind": "indexed", "id": "studentLoan.phaseoutStart.joint", "label": "studentLoan.phaseoutStart.joint", "statute": "\xA7 221(b)(2)(B), (f)", "index": "c-cpi-u", "comps": [{ "baseCents": "10000000", "ratio": ["480023610229", "263095457625"] }], "roundCents": "500000", "roundMode": "down", "on": "amount", "published2027": "18000000", "rules": [{ "id": "us.federal.student_loan_interest_deduction", "path": "\\.parameters\\.thresholdJoint$" }] },
+  { "kind": "indexed", "id": "educatorCap", "label": "educatorCap", "statute": "\xA7 62(a)(2)(D), (d)(3)", "index": "c-cpi-u", "comps": [{ "baseCents": "25000", "ratio": ["480023610229", "352566612255"] }], "roundCents": "5000", "roundMode": "nearest", "on": "increase", "published2027": "35000", "rules": [{ "id": "us.federal.above_the_line_adjustments" }] },
+  { "kind": "indexed", "id": "feie.exclusion", "label": "feie.exclusion", "statute": "\xA7 911(b)(2)(D)", "index": "c-cpi-u", "comps": [{ "baseCents": "8000000", "ratio": ["480023610229", "279675270875"] }], "roundCents": "10000", "roundMode": "down", "on": "increase", "published2027": "13730000", "rules": [{ "id": "us.federal.feie.exclusion" }, { "id": "us.federal.income_tax_before_credits.feie" }] },
+  { "kind": "indexed", "id": "qsbs.capNew", "label": "qsbs.capNew", "statute": "\xA7 1202(b)(4)(B), (b)(5)", "index": "c-cpi-u", "comps": [{ "baseCents": "1500000000", "ratio": ["12068526", "11695585"] }], "roundCents": "1000000", "roundMode": "nearest", "on": "increase", "published2027": "1548000000", "rules": [{ "id": "us.federal.qsbs_exclusion", "path": "\\.parameters\\.capNew$" }] },
+  { "kind": "indexed", "id": "section179.limit", "label": "section179.limit", "statute": "\xA7 179(b)(1), (b)(6)(A)(ii)(I), (b)(6)(B)", "index": "c-cpi-u", "comps": [{ "baseCents": "250000000", "ratio": ["12068526", "11419045"] }], "roundCents": "1000000", "roundMode": "nearest", "on": "increase", "published2027": "264000000", "rules": [{ "id": "us.federal.corp.section179_deduction" }, { "id": "us.federal.corp.section179_carryforward" }] },
+  { "kind": "indexed", "id": "section179.phaseoutThreshold", "label": "section179.phaseoutThreshold", "statute": "\xA7 179(b)(2), (b)(6)", "index": "c-cpi-u", "comps": [{ "baseCents": "400000000", "ratio": ["12068526", "11419045"] }], "roundCents": "1000000", "roundMode": "nearest", "on": "increase", "published2027": "423000000", "rules": [{ "id": "us.federal.corp.section179_deduction" }, { "id": "us.federal.corp.section179_carryforward" }] },
+  { "kind": "indexed", "id": "section179.suvLimit", "label": "section179.suvLimit", "statute": "\xA7 179(b)(5)(A), (b)(6)(A)(ii)(II)", "index": "c-cpi-u", "comps": [{ "baseCents": "2500000", "ratio": ["8045684", "6082417"] }], "roundCents": "10000", "roundMode": "nearest", "on": "increase", "published2027": "3310000", "rules": [] },
+  { "kind": "indexed", "id": "grossReceiptsTest", "label": "grossReceiptsTest", "statute": "\xA7 448(c)(1), (c)(4)", "index": "c-cpi-u", "comps": [{ "baseCents": "2500000000", "ratio": ["8045684", "6082417"] }], "roundCents": "100000000", "roundMode": "nearest", "on": "amount", "published2027": "3300000000", "rules": [{ "id": "us.federal.corp.interest_deduction" }] },
+  { "kind": "indexed", "id": "ebl.threshold", "label": "ebl.threshold (joint = 200%)", "statute": "\xA7 461(l)(3)(A)(ii)(II), (l)(3)(C)", "index": "c-cpi-u", "comps": [{ "baseCents": "25000000", "ratio": ["12068526", "11419045"] }], "roundCents": "100000", "roundMode": "nearest", "on": "amount", "published2027": "26400000", "rules": [{ "id": "us.federal.excess_business_loss_disallowed", "path": "\\.parameters\\.threshold$" }] },
+  { "kind": "indexed", "id": "qualifyingRelative.grossIncomeLimit", "label": "qualifyingRelative.grossIncomeLimit", "statute": "\xA7 152(d)(1)(B); \xA7 151(d)(1),(d)(4),(d)(5)(B); \xA7 1(f)(7)(A)", "index": "c-cpi-u", "comps": [{ "baseCents": "200000", "ratio": ["480023610229", "174449553850"] }], "roundCents": "5000", "roundMode": "down", "on": "increase", "published2027": "550000", "rules": [{ "id": "us.federal.dependent.qualifying_relative" }, { "id": "us.federal.dependent.qualifying_relative.multiple_support" }] },
+  { "kind": "indexed", "id": "hsa.limitSelf", "label": "hsa.limitSelf", "statute": "\xA7 223(b)(2), (g)(1)", "index": "c-cpi-u", "comps": [{ "baseCents": "225000", "ratio": ["472164898659", "236343367975"] }], "roundCents": "5000", "roundMode": "nearest", "on": "increase", "published2027": "450000", "rules": [{ "id": "us.federal.hsa_deduction", "path": "\\.parameters\\.limitSelf$" }] },
+  { "kind": "indexed", "id": "hsa.limitFamily", "label": "hsa.limitFamily", "statute": "\xA7 223(b)(2), (g)(1)", "index": "c-cpi-u", "comps": [{ "baseCents": "450000", "ratio": ["472164898659", "236343367975"] }], "roundCents": "5000", "roundMode": "nearest", "on": "increase", "published2027": "900000", "rules": [{ "id": "us.federal.hsa_deduction", "path": "\\.parameters\\.limitFamily$" }] },
+  { "kind": "indexed", "id": "ssWageBase", "label": "social security wage base", "statute": "\xA7 3121(a)(1), \xA7 1402(b)(1); Social Security Act \xA7 230(b)", "index": "awi", "comps": [{ "baseCents": "6060000", "ratio": ["7280033", "2293542"] }], "roundCents": "30000", "roundMode": "nearest", "on": "amount", "published2027": "19230000", "rules": [{ "id": "us.federal.employer.payroll_tax" }, { "id": "us.federal.se_tax.taxpayer" }, { "id": "us.federal.se_tax.spouse" }, { "id": "us.federal.estimated.annualized_installment_q4" }], "neverDecreases": true },
+  { "kind": "indexed", "id": "householdEmployeeThreshold", "label": "domestic employee coverage threshold", "statute": "\xA7 3121(x), (a)(7)(B); Social Security Act \xA7 215(a)(1)(B)(ii)", "index": "awi", "comps": [{ "baseCents": "100000", "ratio": ["7280033", "2313267"] }], "roundCents": "10000", "roundMode": "down", "on": "amount", "published2027": "310000", "rules": [{ "id": "us.federal.household_employment_taxes", "path": "\\.parameters\\.ficaThreshold$" }] }
+];
+var CG = [
+  "us.federal.income_tax_before_credits",
+  "us.federal.income_tax_before_credits.tax_table",
+  "us.federal.kiddie_tax",
+  "us.federal.income_tax_before_credits.feie",
+  "us.federal.estimated.annualized_installment_q1",
+  "us.federal.estimated.annualized_installment_q2",
+  "us.federal.estimated.annualized_installment_q3",
+  "us.federal.estimated.annualized_installment_q4",
+  "us.federal.amt.tentative_minimum_tax"
+];
+var derived = (id2, label, statute, terms, published2027, rules, roundCents = "1", roundMode = "nearest") => ({
+  kind: "derived",
+  id: id2,
+  label,
+  statute,
+  terms: terms.map(([param28, num, den]) => ({ param: param28, num: String(num), den: String(den) })),
+  roundCents,
+  roundMode,
+  published2027,
+  rules
+});
+var eitc = (path) => ["us.federal.eitc", "us.federal.eitc_no_age_gate"].map((id2) => ({ id: id2, path }));
+PROJECTION_PARAMS.push(derived("standardDeduction.joint", "standard deduction, joint (200% of single)", "\xA7 63(c)(2)(A)", [["standardDeduction.single", 2, 1]], "3320000", [{ id: "us.federal.standard_deduction.base_amount", statuses: ["mfj", "qss"] }]), derived("capgains.single.zero", "0% capital gain bracket end, single/MFS (\xBD of joint)", "\xA7 1(j)(5)(B)(i)(III)", [["capgains.mfj.zero", 1, 2]], "5105000", CG.map((id2) => ({ id: id2, statuses: ["single", "mfs"] }))), derived("capgains.mfs.fifteen", "15% capital gain bracket end, MFS (\xBD of joint)", "\xA7 1(j)(5)(B)(ii)(I)", [["capgains.mfj.fifteen", 1, 2]], "31680000", CG.map((id2) => ({ id: id2, statuses: ["mfs"] }))), derived("amt.exemption.mfs", "AMT exemption, MFS (50% of joint)", "\xA7 55(d)(1)(C)", [["amt.exemption.joint", 1, 2]], "7235000", [
+  { id: "us.federal.amt.exemption", path: "\\.parameters\\.exemptMfs$" },
+  { id: "us.federal.amt.amti", path: "\\.parameters\\.exemptMfs$" }
+]), derived("amt.phaseoutThreshold.unmarried", "AMT phase-out threshold, single and MFS (50% of joint)", "\xA7 55(d)(2)", [["amt.phaseoutThreshold.joint", 1, 2]], "51595000", [{ id: "us.federal.amt.exemption", path: "\\.parameters\\.thresh(Single|Mfs)$" }]), derived("amt.mfsZeroAt", "AMTI at which the MFS exemption is fully phased out (threshold + 2 \xD7 exemption)", "\xA7 55(d)(1)(C), (d)(2)", [["amt.phaseoutThreshold.joint", 1, 2], ["amt.exemption.joint", 1, 1]], "66065000", [{ id: "us.federal.amt.amti", path: "\\.parameters\\.mfsZeroAt$" }]), derived("amt.break28.mfs", "AMT 28% break, MFS (50%)", "\xA7 55(b)(1)(A)(iii)", [["amt.break28", 1, 2]], "12625000", [{ id: "us.federal.amt.tentative_minimum_tax", path: "\\.parameters\\.break28Mfs$" }]), derived("amt.sub28", "2% of the AMT 28% break", "\xA7 55(b)(1)(A)(i)(II)", [["amt.break28", 2, 100]], "505000", [{ id: "us.federal.amt.tentative_minimum_tax", path: "\\.parameters\\.sub28$" }]), derived("amt.sub28.mfs", "2% of the MFS AMT 28% break", "\xA7 55(b)(1)(A)(i)(II)", [["amt.break28", 1, 100]], "252500", [{ id: "us.federal.amt.tentative_minimum_tax", path: "\\.parameters\\.sub28Mfs$" }]), derived("eitc.max0", "EITC maximum, no children (7.65% \xD7 earned income amount)", "\xA7 32(b)(1)", [["eitc.earnedIncomeAmount.0kids", 765, 1e4]], "68500", eitc("\\.parameters\\.max0$"), "100"), derived("eitc.max1", "EITC maximum, one child (34%)", "\xA7 32(b)(1)", [["eitc.earnedIncomeAmount.1kid", 34, 100]], "457300", eitc("\\.parameters\\.max1$"), "100"), derived("eitc.max2", "EITC maximum, two children (40%)", "\xA7 32(b)(1)", [["eitc.earnedIncomeAmount.2_kids", 40, 100]], "755200", eitc("\\.parameters\\.max2$"), "100"), derived("eitc.max3", "EITC maximum, three or more children (45%)", "\xA7 32(b)(1)", [["eitc.earnedIncomeAmount.2_kids", 45, 100]], "849600", eitc("\\.parameters\\.max3$"), "100"), derived("eitc.completedOther0", "EITC completed phase-out, no children (threshold + maximum \xF7 7.65%)", "\xA7 32(a)(2), (b)", [["eitc.phaseoutThreshold.0kids.other", 1, 1], ["eitc.max0", 1e4, 765]], "2016400", eitc("\\.parameters\\.completedOther0$"), "100"), derived("eitc.completedMFJ0", "EITC completed phase-out, no children, joint", "\xA7 32(a)(2), (b)", [["eitc.phaseoutThreshold.0kids.mfj", 1, 1], ["eitc.max0", 1e4, 765]], "2768400", eitc("\\.parameters\\.completedMFJ0$"), "100"), derived("kiddie.threshold", "kiddie tax threshold (2 \xD7 the \xA7 63(c)(5)(A) amount)", "\xA7 1(g)(4)(A)(ii)", [["dependentStdDed.floor", 2, 1]], "280000", [{ id: "us.federal.kiddie.net_unearned_income" }, { id: "us.federal.kiddie_tax" }]), derived("qbi.threshold.joint", "QBI threshold, joint (200%)", "\xA7 199A(e)(2)(A)", [["qbi.threshold.other", 2, 1]], "41660000", [{ id: "us.federal.qbi.threshold", statuses: ["mfj"] }]), derived("ebl.threshold.joint", "\xA7 461(l) threshold, joint (200%)", "\xA7 461(l)(3)(A)(ii)", [["ebl.threshold", 2, 1]], "52800000", [{ id: "us.federal.excess_business_loss_disallowed", path: "\\.parameters\\.thresholdJoint$" }]), derived("ssWageBase.q1", "Schedule AI line 29 prorated limit, column (a) (\xBC of the wage base)", "Form 2210 Schedule AI line 29", [["ssWageBase", 1, 4]], "4807500", [{ id: "us.federal.estimated.annualized_installment_q1" }]), derived("ssWageBase.q2", "Schedule AI line 29 prorated limit, column (b) (5/12)", "Form 2210 Schedule AI line 29", [["ssWageBase", 5, 12]], "8012500", [{ id: "us.federal.estimated.annualized_installment_q2" }]), derived("ssWageBase.q3", "Schedule AI line 29 prorated limit, column (c) (2/3)", "Form 2210 Schedule AI line 29", [["ssWageBase", 2, 3]], "12820000", [{ id: "us.federal.estimated.annualized_installment_q3" }]));
+var pctSteps = (start, from, year, lastYear) => {
+  let v = start;
+  for (let y = from + 1; y <= Math.min(year, lastYear); y++)
+    v = (v * 101n * 2n + 100n) / 200n;
+  return v;
+};
+PROJECTION_PARAMS.push({
+  kind: "law",
+  id: "salt.cap",
+  label: "SALT limitation",
+  statute: "\xA7 164(b)(7)(A)(ii), (b)(6)(B) (OBBBA \xA7 70120)",
+  published2027: "4080400",
+  byYear: (y) => y >= 2030 ? "1000000" : pctSteps(4080400n, 2027, y, 2029).toString(),
+  rules: [{ id: "us.federal.salt_deduction", path: "\\.parameters\\.cap$" }]
+}, {
+  kind: "law",
+  id: "salt.threshold",
+  label: "SALT phase-down threshold",
+  statute: "\xA7 164(b)(7)(B)",
+  published2027: "51005000",
+  byYear: (y) => pctSteps(51005000n, 2027, y, 2029).toString(),
+  rules: [{ id: "us.federal.salt_deduction", path: "\\.parameters\\.threshold$" }]
+}, {
+  kind: "law",
+  id: "salt.threshold.mfs",
+  label: "SALT phase-down threshold, MFS (half)",
+  statute: "\xA7 164(b)(7)(B)",
+  published2027: "25502500",
+  byYear: (y) => ((pctSteps(51005000n, 2027, y, 2029) + 1n) / 2n).toString(),
+  rules: [{ id: "us.federal.salt_deduction", path: "\\.parameters\\.thresholdMfs$" }]
+});
+var TAX_TABLE = ["250", "500", "1000", "1250", "1500", "2000", "2500", "5000", "300000", "10000000"];
+var FIXED_LITERALS = {
+  "us.federal.income_tax_before_credits": TAX_TABLE,
+  "us.federal.income_tax_before_credits.tax_table": TAX_TABLE,
+  "us.federal.income_tax_before_credits.feie": TAX_TABLE,
+  "us.federal.kiddie_tax": TAX_TABLE,
+  // Schedule AI: the Tax Table, and the ½-SE deduction's annualization factor written as den / (2 × num)
+  "us.federal.estimated.annualized_installment_q1": [...TAX_TABLE, "1", "8"],
+  "us.federal.estimated.annualized_installment_q2": [...TAX_TABLE, "5", "24"],
+  "us.federal.estimated.annualized_installment_q3": [...TAX_TABLE, "2", "6"],
+  "us.federal.estimated.annualized_installment_q4": [...TAX_TABLE, "1", "2"],
+  "us.federal.qsbs_exclusion": ["1000000000"],
+  // § 1202(b)(1)(A) $10,000,000 (only the § 1202(b)(4) $15M is indexed)
+  "us.federal.salt_deduction": ["1000000"],
+  // § 164(b)(7)(B) $10,000 floor
+  "us.federal.ctc.tentative": ["50000"],
+  // § 24(h)(4) $500 other-dependent credit, not indexed
+  "us.federal.actc": ["250000"],
+  // § 24(d)(1)(B)(i) $2,500 earned income floor
+  "us.federal.actc.maximum": ["250000"],
+  // § 21 as amended by OBBBA § 70405: $3,000/$6,000, 50%→35%→20%, $15,000 / $75,000 / $150,000 steps — none indexed
+  "us.federal.cdcc.tentative": ["1", "20", "35", "50", "100", "300000", "600000", "1500000", "7500000", "15000000"],
+  "us.federal.adoption.allowed": ["4000000"],
+  // § 23(b)(2)(A)(ii) $40,000 phase-out range
+  "us.federal.fiduciary.income_tax": ["10000", "30000", "60000"],
+  // § 642(b) $600 / $300 / $100 exemptions
+  "us.federal.household_employment_taxes": ["700000"],
+  // § 3306(b)(1) $7,000 FUTA wage base
+  "us.federal.employer.payroll_tax": ["700000"],
+  "us.federal.eitc": ["2500", "5000"],
+  // the printed EIC Table's $25 / $50 rows
+  "us.federal.eitc_no_age_gate": ["2500", "5000"],
+  "us.federal.se_tax.taxpayer": ["40000"],
+  // § 6017 / § 1402(b) $400
+  "us.federal.se_tax.spouse": ["40000"],
+  "us.federal.hsa_deduction": ["100000"],
+  // § 223(b)(3)(B) $1,000 catch-up
+  "us.federal.student_loan_interest_deduction": ["250000", "1500000", "3000000"],
+  // § 221(b)(1) $2,500; § 221(b)(2)(B) $15,000 / $30,000 ranges
+  "us.federal.qbi.phase_in_range": ["7500000", "15000000"]
+  // § 199A(b)(3)(B) as amended by OBBBA § 70105: $75,000 / $150,000
+};
+var gt011 = (factId) => ({ kind: "cmp", op: "gt", left: { kind: "fact", factId }, right: { kind: "money", cents: "0" } });
+var NOT_PROJECTED = {
+  "us.federal.ptc": {
+    usedWhen: { kind: "or", args: [gt011("marketplacePremiumsPaid"), gt011("advancePTC"), gt011("slcspAnnualPremium")] },
+    reason: "the premium tax credit's applicable percentages are indexed to premium growth over income growth (\xA7 36B(b)(3)(A)(ii)) and its poverty line to HHS guidelines, neither of which is a price index the projection can carry forward"
+  }
+};
+
+// ../corpus-us-federal/dist/projection.js
+var LAST_PUBLISHED_YEAR = 2027;
+var PROJECTION_HORIZON = 2035;
+function percentToRational(p, label) {
+  const m = /^(-?)(\d{1,2})(?:\.(\d{1,4}))?$/.exec(p.trim());
+  if (!m)
+    throw new Error(`${label}: expected a percent like 2.5 (at most 4 decimals), got "${p}"`);
+  const frac = m[3] ?? "";
+  const den = 100n * 10n ** BigInt(frac.length);
+  const num = BigInt(m[2] + frac) * (m[1] ? -1n : 1n);
+  if (num * 100n < -10n * den || num * 100n > 25n * den)
+    throw new Error(`${label}: ${p}% is outside -10% to 25%`);
+  return { num, den };
+}
+var mul = (a, b) => ({ n: a.n * b.n, d: a.d * b.d });
+var pow = (a, k) => {
+  let r = { n: 1n, d: 1n };
+  for (let i = 0; i < k; i++)
+    r = mul(r, a);
+  return r;
+};
+function roundTo(x, multiple, mode) {
+  if (x.n < 0n)
+    throw new Error("projection: negative amount");
+  const d3 = x.d * multiple;
+  const q = mode === "down" ? x.n / d3 : (2n * x.n + d3) / (2n * d3);
+  return q * multiple;
+}
+var PARAM_BY_ID = new Map(PROJECTION_PARAMS.map((p) => [p.id, p]));
+function projectedValue(p, year, opts) {
+  if (p.kind === "law")
+    return BigInt(p.byYear(year));
+  if (p.kind === "derived") {
+    let sum = { n: 0n, d: 1n };
+    for (const t of p.terms) {
+      const q = PARAM_BY_ID.get(t.param);
+      if (!q)
+        throw new Error(`projection spec: unknown parameter ${t.param}`);
+      const v2 = projectedValue(q, year, opts);
+      const term = { n: v2 * BigInt(t.num), d: BigInt(t.den) };
+      sum = { n: sum.n * term.d + term.n * sum.d, d: sum.d * term.d };
+    }
+    return roundTo(sum, BigInt(p.roundCents), p.roundMode);
+  }
+  const growth = percentToRational(p.index === "awi" ? opts.wageGrowthPercent ?? opts.inflationPercent : opts.inflationPercent, p.index === "awi" ? "wageGrowthPercent" : "inflationPercent");
+  const g = { n: growth.den + growth.num, d: growth.den };
+  const at = (y) => {
+    const k = y - LAST_PUBLISHED_YEAR;
+    let raw = { n: 0n, d: 1n };
+    let base = 0n;
+    for (const c2 of p.comps) {
+      const term = mul({ n: BigInt(c2.baseCents), d: 1n }, mul({ n: BigInt(c2.ratio[0]), d: BigInt(c2.ratio[1]) }, pow(g, k)));
+      raw = { n: raw.n * term.d + term.n * raw.d, d: raw.d * term.d };
+      base += BigInt(c2.baseCents);
+    }
+    if (raw.n < base * raw.d)
+      raw = { n: base, d: 1n };
+    if (p.on === "amount")
+      return roundTo(raw, BigInt(p.roundCents), p.roundMode);
+    return base + roundTo({ n: raw.n - base * raw.d, d: raw.d }, BigInt(p.roundCents), p.roundMode);
+  };
+  let v = at(year);
+  if (p.neverDecreases) {
+    for (let y = LAST_PUBLISHED_YEAR; y < year; y++)
+      if (at(y) > v)
+        v = at(y);
+  }
+  return v;
+}
+function moneySlots(rule2) {
+  const out = [];
+  const walk = (x, path) => {
+    if (Array.isArray(x))
+      return x.forEach((v, i) => walk(v, `${path}[${i}]`));
+    if (!x || typeof x !== "object")
+      return;
+    const o = x;
+    if (o.kind === "money" && typeof o.cents === "string")
+      out.push({ path, get: () => o.cents, set: (v) => o.cents = v });
+    if (o.kind === "brackets" && Array.isArray(o.table))
+      o.table.forEach((row2, i) => out.push({ path: `${path}.table[${i}]`, get: () => row2.threshold, set: (v) => row2.threshold = v }));
+    if (o.type === "money" && typeof o.value === "string" && !("kind" in o))
+      out.push({ path, get: () => o.value, set: (v) => o.value = v });
+    for (const [k, v] of Object.entries(o)) {
+      if (k === "citation")
+        continue;
+      if (k === "cases" && Array.isArray(v))
+        v.forEach((c2, i) => walk(c2, `${path}.cases[${c2.when ?? i}]`));
+      else
+        walk(v, `${path}.${k}`);
+    }
+  };
+  walk({ formula: rule2.formula, applicability: rule2.applicability, parameters: rule2.parameters }, "");
+  return out;
+}
+var inWindow = (r, d3) => r.effectiveFrom <= d3 && (r.effectiveTo === void 0 || d3 < r.effectiveTo);
+function rulesEndingWith2027(base) {
+  return base.rules.filter((r) => r.jurisdiction === "us.federal" && inWindow(r, `${LAST_PUBLISHED_YEAR}-06-30`) && r.effectiveTo === `${LAST_PUBLISHED_YEAR + 1}-01-01`);
+}
+function candidates(ruleId, cents2, path) {
+  const cases = [...path.matchAll(/cases\[([^\]]+)\]/g)];
+  const status = cases.length ? cases[cases.length - 1][1] : void 0;
+  return PROJECTION_PARAMS.filter((p) => p.published2027 === cents2 && p.rules.some((r) => r.id === ruleId && (r.statuses === void 0 || status !== void 0 && r.statuses.includes(status)) && (r.path === void 0 || new RegExp(r.path).test(path))));
+}
+function classifyLiterals(base) {
+  const out = [];
+  for (const r of rulesEndingWith2027(base)) {
+    if (NOT_PROJECTED[r.id])
+      continue;
+    for (const s of moneySlots(r)) {
+      const cents2 = s.get();
+      const c2 = candidates(r.id, cents2, s.path);
+      const fixed = FIXED_LITERALS[r.id]?.includes(cents2) || cents2 === "0";
+      if (c2.length === 1)
+        out.push({ ruleId: r.id, path: s.path, cents: cents2, param: c2[0].id });
+      else if (c2.length > 1)
+        out.push({ ruleId: r.id, path: s.path, cents: cents2, error: `ambiguous: ${c2.map((p) => p.id).join(", ")}` });
+      else if (fixed)
+        out.push({ ruleId: r.id, path: s.path, cents: cents2, fixed: true });
+      else
+        out.push({ ruleId: r.id, path: s.path, cents: cents2, error: "neither an indexed parameter nor a declared fixed amount" });
+    }
+  }
+  return out;
+}
+var SUNSET_AFTER_2028 = {
+  "us.federal.tips_deduction": "26 U.S.C. \xA7 224(h) (OBBBA \xA7 70201): no deduction for taxable years beginning after December 31, 2028",
+  "us.federal.eligible.tips_deduction": "26 U.S.C. \xA7 224(h) (OBBBA \xA7 70201): no deduction for taxable years beginning after December 31, 2028",
+  "us.federal.eligible.tips_occupation": "26 U.S.C. \xA7 224(h) (OBBBA \xA7 70201): no deduction for taxable years beginning after December 31, 2028",
+  "us.federal.overtime_deduction": "26 U.S.C. \xA7 225(e) (OBBBA \xA7 70202): no deduction for taxable years beginning after December 31, 2028",
+  "us.federal.car_loan_interest_deduction": "26 U.S.C. \xA7 163(h)(4)(D) (OBBBA \xA7 70203): applies only to taxable years beginning before January 1, 2029",
+  "us.federal.senior_deduction": "26 U.S.C. \xA7 151(f)(4) (OBBBA \xA7 70103): applies only to taxable years beginning before January 1, 2029",
+  "us.federal.senior_deduction.magi_threshold": "26 U.S.C. \xA7 151(f)(4) (OBBBA \xA7 70103): applies only to taxable years beginning before January 1, 2029"
+};
+function projectCorpusInput(base, opts) {
+  const { year } = opts;
+  if (!Number.isInteger(year) || year <= LAST_PUBLISHED_YEAR || year > PROJECTION_HORIZON)
+    throw new Error(`projection covers tax years ${LAST_PUBLISHED_YEAR + 1}\u2013${PROJECTION_HORIZON}; ${year} is published law or beyond the horizon`);
+  const r = percentToRational(opts.inflationPercent, "inflationPercent");
+  const w = opts.wageGrowthPercent === void 0 ? r : percentToRational(opts.wageGrowthPercent, "wageGrowthPercent");
+  const fmtPct = (x) => {
+    const scale = x.den / 100n;
+    const neg3 = x.num < 0n;
+    const a = neg3 ? -x.num : x.num;
+    const digits = scale.toString().length - 1;
+    const whole = (a / scale).toString();
+    const frac = digits ? (a % scale).toString().padStart(digits, "0").replace(/0+$/, "") : "";
+    return `${neg3 ? "-" : ""}${whole}${frac ? "." + frac : ""}`;
+  };
+  const tag = `projected.${year}.cpi-${fmtPct(r)}.awi-${fmtPct(w)}`;
+  const from = `${year}-01-01`;
+  const to = `${year + 1}-01-01`;
+  const errors = classifyLiterals(base).filter((x) => x.error);
+  if (errors.length)
+    throw new Error(`projection spec is incomplete: ${errors.slice(0, 5).map((e) => `${e.ruleId} ${e.path} ${e.cents}: ${e.error}`).join("; ")}`);
+  const added = [];
+  for (const rule2 of rulesEndingWith2027(base)) {
+    const clone2 = structuredClone(rule2);
+    clone2.version = rule2.version + 1e3 * (year - LAST_PUBLISHED_YEAR);
+    clone2.effectiveFrom = from;
+    clone2.effectiveTo = to;
+    const changed = [];
+    if (NOT_PROJECTED[rule2.id]) {
+      const np = NOT_PROJECTED[rule2.id];
+      clone2.formula = { kind: "if", cond: np.usedWhen, then: { kind: "unsupported", reason: `${year} is a projection: ${np.reason}` }, else: clone2.formula };
+      changed.push(`refuses when used \u2014 ${np.reason}`);
+    } else {
+      for (const s of moneySlots(clone2)) {
+        const c2 = candidates(rule2.id, s.get(), s.path);
+        if (c2.length !== 1)
+          continue;
+        const v = projectedValue(c2[0], year, opts).toString();
+        if (v !== s.get())
+          changed.push(`${c2[0].label}: ${s.get()} \u2192 ${v}`);
+        s.set(v);
+      }
+    }
+    clone2.title = `${rule2.title} \u2014 PROJECTED ${year}`;
+    clone2.citation = {
+      ...rule2.citation,
+      source: `PROJECTION, NOT PUBLISHED LAW (${year}; C-CPI-U +${fmtPct(r)}%/yr, average wage index +${fmtPct(w)}%/yr assumed after the indexes used for 2027): ${rule2.citation.source}`,
+      excerpt: `${rule2.citation.excerpt} [Projected from 2027 by each amount's statutory indexing formula at the assumed rates. Projected amounts: ${changed.length ? [...new Set(changed)].join("; ") : "none in this rule"}.]`
+    };
+    added.push(clone2);
+  }
+  if (year > 2028) {
+    for (const [id2, cite] of Object.entries(SUNSET_AFTER_2028)) {
+      const last = base.rules.filter((r2) => r2.id === id2).sort((a, b) => b.version - a.version)[0];
+      if (!last)
+        continue;
+      added.push({
+        id: id2,
+        version: last.version + 1e3 * (year - LAST_PUBLISHED_YEAR),
+        jurisdiction: last.jurisdiction,
+        title: `${last.title} \u2014 ended after 2028`,
+        citation: { source: cite, section: last.citation.section, url: last.citation.url, excerpt: `The provision does not apply to ${year}: ${cite}.` },
+        effectiveFrom: from,
+        effectiveTo: to,
+        output: last.output,
+        formula: last.output.type === "bool" ? { kind: "bool", value: false } : { kind: "money", cents: "0" }
+      });
+    }
+  }
+  const covered = new Set([...base.rules.filter((r2) => inWindow(r2, `${year}-06-30`)), ...added].map((r2) => r2.id));
+  const missing = [...new Set(base.rules.filter((r2) => r2.jurisdiction === "us.federal" && inWindow(r2, `${LAST_PUBLISHED_YEAR}-06-30`)).map((r2) => r2.id))].filter((id2) => !covered.has(id2));
+  if (missing.length)
+    throw new Error(`projection has no ${year} version of: ${missing.join(", ")}`);
+  return { name: base.name, version: `${base.version}+${tag}`, rules: [...base.rules, ...added], facts: base.facts };
+}
+var cache = /* @__PURE__ */ new Map();
+function getProjectedCorpus(base, opts) {
+  const key = JSON.stringify([base.version, opts.year, opts.inflationPercent, opts.wageGrowthPercent ?? null]);
+  let c2 = cache.get(key);
+  if (!c2) {
+    c2 = loadCorpus(projectCorpusInput(base, opts));
+    if (cache.size > 32)
+      cache.clear();
+    cache.set(key, c2);
+  }
+  return c2;
+}
+function projectionFromVersion(version2) {
+  const m = /\+projected\.(\d{4})\.cpi-(-?[\d.]+)\.awi-(-?[\d.]+)$/.exec(version2);
+  return m ? { year: Number(m[1]), inflationPercent: m[2], wageGrowthPercent: m[3] } : null;
+}
+
 // ../corpus-us-federal/dist/index.js
 var corpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.45.0",
+  version: "0.46.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -34005,6 +34418,41 @@ function getCorpus() {
   return cached;
 }
 var DEFAULT_TARGET = "us.federal.net_tax";
+function getProjectedFederalCorpus(opts) {
+  return getProjectedCorpus(corpusInput, opts);
+}
+function corpusForVersion(version2) {
+  const p = projectionFromVersion(version2);
+  return p ? getProjectedFederalCorpus(p) : getCorpus();
+}
+
+// dist/projection.js
+function corpusForFlags(asOf, flags) {
+  const year = Number(asOf.slice(0, 4));
+  if (flags.projectInflation === void 0) {
+    if (flags.projectWageGrowth !== void 0)
+      throw new Error("--project-wage-growth needs --project-inflation");
+    return getCorpus();
+  }
+  if (year <= LAST_PUBLISHED_YEAR)
+    throw new Error(`--project-inflation is for tax years after ${LAST_PUBLISHED_YEAR}; ${year} is published law \u2014 drop the flag`);
+  return getProjectedFederalCorpus({ year, inflationPercent: String(flags.projectInflation), wageGrowthPercent: flags.projectWageGrowth });
+}
+function projectionLabel(asOf, flags, corpus) {
+  if (flags.projectInflation === void 0)
+    return void 0;
+  return {
+    taxYear: Number(asOf.slice(0, 4)),
+    inflationPercent: String(flags.projectInflation),
+    wageGrowthPercent: String(flags.projectWageGrowth ?? flags.projectInflation),
+    corpusVersion: corpus.version,
+    warning: "PROJECTED, NOT PUBLISHED LAW: every inflation-indexed amount is the 2027 amount carried forward by its statutory indexing formula at the assumed rates"
+  };
+}
+var PROJECTION_HELP = {
+  inflation: "project a tax year after 2027: assumed annual C-CPI-U growth in percent (e.g. 2.5); the answer is labeled projected",
+  wage: "with --project-inflation: assumed annual average wage index growth in percent (social security wage base); default: the inflation rate"
+};
 
 // dist/flags.js
 var STATUS_ALIASES = {
@@ -40281,8 +40729,14 @@ function print(obj) {
 
 // dist/commands/check.js
 function runCheck(flags) {
-  const corpus = getCorpus();
   const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  let corpus;
+  try {
+    corpus = corpusForFlags(asOf, flags);
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+  const projected = projectionLabel(asOf, flags, corpus);
   let plain = {};
   if (flags.facts) {
     try {
@@ -40326,6 +40780,7 @@ function runCheck(flags) {
         differenceCents: diff.toString(),
         toleranceCents: tolerance.toString(),
         assumptions: proof.assumptions,
+        ...projected ? { projected } : {},
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash
       });
@@ -40488,25 +40943,25 @@ function renderSummary(proof) {
   const statusNode = findNode(root, "us.federal.income_tax_before_credits");
   const statusTag = statusNode?.inputs?.filingStatus?.value !== void 0 ? STATUS_LABEL[String(statusNode.inputs.filingStatus.value)] : null;
   const year = proof.asOf.slice(0, 4);
-  const money43 = (c2) => formatMoney(c2).padStart(14);
+  const money44 = (c2) => formatMoney(c2).padStart(14);
   const lines = [];
   lines.push(import_picocolors4.default.bold(`${statusTag ?? "Taxpayer"} \xB7 tax year ${year}`));
   lines.push("");
-  lines.push(`  Income               ${money43(agi2)}`);
-  lines.push(`  \u2212 Deductions         ${money43(deductions)}${dedParts.length ? import_picocolors4.default.dim(`   (${dedParts.join(" + ")})`) : ""}`);
-  lines.push(`  = Taxable income     ${money43(taxable2)}`);
-  lines.push(`  Tax before credits   ${money43(before)}`);
+  lines.push(`  Income               ${money44(agi2)}`);
+  lines.push(`  \u2212 Deductions         ${money44(deductions)}${dedParts.length ? import_picocolors4.default.dim(`   (${dedParts.join(" + ")})`) : ""}`);
+  lines.push(`  = Taxable income     ${money44(taxable2)}`);
+  lines.push(`  Tax before credits   ${money44(before)}`);
   if (amt > 0n) {
-    lines.push(`  + Alternative min tax${money43(amt)}${import_picocolors4.default.dim("   (Form 6251)")}`);
+    lines.push(`  + Alternative min tax${money44(amt)}${import_picocolors4.default.dim("   (Form 6251)")}`);
   }
   if (aptcRepayment > 0n) {
-    lines.push(`  + Excess APTC        ${money43(aptcRepayment)}${import_picocolors4.default.dim("   (Form 8962 repayment)")}`);
+    lines.push(`  + Excess APTC        ${money44(aptcRepayment)}${import_picocolors4.default.dim("   (Form 8962 repayment)")}`);
   }
-  lines.push(`  \u2212 Credits            ${money43(education + ctc + refundable)}${creditParts.length ? import_picocolors4.default.dim(`   (${creditParts.join(" + ")})`) : ""}`);
+  lines.push(`  \u2212 Credits            ${money44(education + ctc + refundable)}${creditParts.length ? import_picocolors4.default.dim(`   (${creditParts.join(" + ")})`) : ""}`);
   if (otherTaxes > 0n) {
-    lines.push(`  + Other taxes        ${money43(otherTaxes)}${import_picocolors4.default.dim("   (SE tax / Add'l Medicare / NIIT)")}`);
+    lines.push(`  + Other taxes        ${money44(otherTaxes)}${import_picocolors4.default.dim("   (SE tax / Add'l Medicare / NIIT)")}`);
   }
-  const row2 = (label, amount, paint = (s) => s) => `  ${paint(label.padEnd(21))}${paint(money43(amount))}`;
+  const row2 = (label, amount, paint = (s) => s) => `  ${paint(label.padEnd(21))}${paint(money44(amount))}`;
   lines.push(import_picocolors4.default.dim("  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"));
   if (net < 0n) {
     lines.push(row2("Your refund", -net, (s) => import_picocolors4.default.bold(import_picocolors4.default.green(s))));
@@ -40594,8 +41049,14 @@ function renderNode(node2, prefix, isLast, lines, seen) {
 
 // dist/commands/eval.js
 function runEval(flags) {
-  const corpus = getCorpus();
   const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  let corpus;
+  try {
+    corpus = corpusForFlags(asOf, flags);
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+  const projected = projectionLabel(asOf, flags, corpus);
   let plain = {};
   if (flags.facts) {
     try {
@@ -40625,6 +41086,7 @@ function runEval(flags) {
         value: proof.root.value,
         formatted: formatValue(proof.root.value),
         assumptions: proof.assumptions,
+        ...projected ? { projected } : {},
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
         proof
@@ -40632,6 +41094,8 @@ function runEval(flags) {
     } else {
       const summary = renderSummary(proof);
       console.log();
+      if (projected)
+        console.log(import_picocolors6.default.yellow(import_picocolors6.default.bold(`PROJECTED ${projected.taxYear} \u2014 not published law (C-CPI-U +${projected.inflationPercent}%/yr, wages +${projected.wageGrowthPercent}%/yr assumed)`)) + "\n");
       if (summary) {
         console.log(summary);
         console.log();
@@ -41386,7 +41850,8 @@ next: \`opentax explain <ruleId>\` for a formula \xB7 \`opentax lookup ${query}\
 var import_picocolors12 = __toESM(require_picocolors(), 1);
 import { readFileSync as readFileSync3 } from "node:fs";
 function setup(flags) {
-  const corpus = getCorpus();
+  const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  const corpus = corpusForFlags(asOf, flags);
   let plain = {};
   if (flags.facts)
     plain = JSON.parse(readFileSync3(flags.facts, "utf8"));
@@ -41396,7 +41861,7 @@ function setup(flags) {
     corpus,
     base,
     vary: flags.vary ?? "wages",
-    asOf: flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10),
+    asOf,
     target: flags.target ?? DEFAULT_TARGET
   };
 }
@@ -42249,7 +42714,7 @@ __export(util_exports, {
   createTransparentProxy: () => createTransparentProxy,
   defineLazy: () => defineLazy,
   defineLazyInternal: () => defineLazyInternal,
-  derived: () => derived,
+  derived: () => derived2,
   esc: () => esc,
   escapeRegex: () => escapeRegex,
   explicitlyAborted: () => explicitlyAborted,
@@ -42979,7 +43444,7 @@ function hide(inst, key, value) {
   return own(inst, key, value, false);
 }
 // @__NO_SIDE_EFFECTS__
-function derived(computes, table2) {
+function derived2(computes, table2) {
   for (const key in computes) {
     const compute = computes[key];
     Object.defineProperty(table2, key, {
@@ -55044,45 +55509,45 @@ var PATTERN_IS_COMPLETE = /* @__PURE__ */ new Set([
   "xid"
 ]);
 function generateStringFormatCheck(doc, ctx, def, accessor, needsValue = true) {
-  const fmt2 = def.format;
-  if (fmt2 === "base64") {
+  const fmt3 = def.format;
+  if (fmt3 === "base64") {
     const validator = addConstant(ctx, isValidBase64);
     doc.write(`if (!${validator}(${accessor})) return INVALID;`);
     return accessor;
   }
-  if (fmt2 === "base64url") {
+  if (fmt3 === "base64url") {
     const validator = addConstant(ctx, isValidBase64URL);
     doc.write(`if (!${validator}(${accessor})) return INVALID;`);
     return accessor;
   }
-  if (fmt2 === "jwt") {
+  if (fmt3 === "jwt") {
     const validator = addConstant(ctx, isValidJWT);
     const alg = addConstant(ctx, def.alg ?? null);
     doc.write(`if (!${validator}(${accessor}, ${alg})) return INVALID;`);
     return accessor;
   }
-  if (fmt2 === "ipv6") {
+  if (fmt3 === "ipv6") {
     const validator = addConstant(ctx, isValidIPv6);
     doc.write(`if (!${validator}(${accessor})) return INVALID;`);
     return accessor;
   }
-  if (fmt2 === "cidrv6") {
+  if (fmt3 === "cidrv6") {
     const validator = addConstant(ctx, isValidCIDRv6);
     doc.write(`if (!${validator}(${accessor})) return INVALID;`);
     return accessor;
   }
-  if (fmt2 === "credit_card") {
+  if (fmt3 === "credit_card") {
     const validator = addConstant(ctx, isValidCreditCard);
     doc.write(`if (!${validator}(${accessor})) return INVALID;`);
     return accessor;
   }
-  if (fmt2 === "iban") {
+  if (fmt3 === "iban") {
     const validator = addConstant(ctx, isValidIBAN);
     doc.write(`if (!${validator}(${accessor})) return INVALID;`);
     return accessor;
   }
   const formatDef = def;
-  if (fmt2 === "url" || fmt2 === "httpurl" || formatDef.normalize || formatDef.hostname !== void 0 || formatDef.protocol !== void 0) {
+  if (fmt3 === "url" || fmt3 === "httpurl" || formatDef.normalize || formatDef.hostname !== void 0 || formatDef.protocol !== void 0) {
     const parseConst = addConstant(ctx, validateURL);
     const defConst = addConstant(ctx, def);
     const trimVar = newVar(ctx);
@@ -55108,12 +55573,12 @@ function generateStringFormatCheck(doc, ctx, def, accessor, needsValue = true) {
   const customFn = def.fn;
   if (customFn) {
     if (isAsyncFunction(customFn))
-      throw new ZodCompileUnsupportedError(`async string format ${fmt2}`);
+      throw new ZodCompileUnsupportedError(`async string format ${fmt3}`);
     const fnConst = addConstant(ctx, customFn);
     doc.write(`if (!${fnConst}(${accessor})) return INVALID;`);
     return accessor;
   }
-  if (PATTERN_IS_COMPLETE.has(fmt2) && def.pattern) {
+  if (PATTERN_IS_COMPLETE.has(fmt3) && def.pattern) {
     const patternConst = addConstant(ctx, def.pattern);
     doc.write(`${patternConst}.lastIndex = 0;`);
     doc.write(`if (!${patternConst}.test(${accessor})) return INVALID;`);
@@ -61142,21 +61607,21 @@ function visit(schema, fnOrHandlers) {
     const h = fnOrHandlers[node2._zod.def.type];
     return h ? h(node2, rewritten) : node2;
   };
-  const cache = /* @__PURE__ */ new Map();
+  const cache2 = /* @__PURE__ */ new Map();
   function run(s) {
-    const cached3 = cache.get(s);
+    const cached3 = cache2.get(s);
     if (cached3 === RESOLVING) {
       return new $ZodLazy({
         type: "lazy",
-        getter: () => cache.get(s)
+        getter: () => cache2.get(s)
       });
     }
     if (cached3 !== void 0)
       return cached3;
-    cache.set(s, RESOLVING);
+    cache2.set(s, RESOLVING);
     const inner = mapInner(s);
     const mapped = fn(inner, inner !== s);
-    cache.set(s, mapped);
+    cache2.set(s, mapped);
     return mapped;
   }
   function mapInner(s) {
@@ -64307,26 +64772,26 @@ function composeAR(input2, evalStateTax, notes) {
     regular.notes.push(`AR line 26: Regular Income Tax Table kept \u2014 tax ${fmtD(regular.tax)} (net ${fmtD(regular.netTax)}) vs ${fmtD(lowOk.tax)} (net ${fmtD(lowOk.netTax)}) on the Low Income Tax Table (pass arUseLowIncomeTable: true to override)`);
     return regular;
   };
-  const candidates = [];
+  const candidates2 = [];
   if (married && input2.arStatus4 !== false && (input2.arStatus4 === true || spouseGiven)) {
     if (!spouseGiven)
       notes.push("AR filing status 4: arSpouseIncome not given \u2014 the spouse's column B carries only line 18B (pass arSpouseIncome = the spouse's share of lines 8-22 and arSpouseAdjustments)");
     const s4 = best(true);
     if (s4)
-      candidates.push(s4);
+      candidates2.push(s4);
   }
-  if (!(married && input2.arStatus4 === true) || candidates.length === 0) {
+  if (!(married && input2.arStatus4 === true) || candidates2.length === 0) {
     const s2 = best(false);
     if (s2)
-      candidates.push(s2);
+      candidates2.push(s2);
   }
-  let chosen = candidates[0];
-  for (const cand of candidates)
+  let chosen = candidates2[0];
+  for (const cand of candidates2)
     if (cand.netTax < chosen.netTax)
       chosen = cand;
-  if (candidates.length === 2) {
-    const s4 = candidates.find((x) => x.status4);
-    const s2 = candidates.find((x) => !x.status4);
+  if (candidates2.length === 2) {
+    const s4 = candidates2.find((x) => x.status4);
+    const s2 = candidates2.find((x) => !x.status4);
     notes.push(`AR filing status: married filing separately on the same return (status 4) nets ${fmtD(s4.netTax)}; married filing joint (status 2) nets ${fmtD(s2.netTax)} \u2014 status ${chosen.status4 ? "4" : "2"} composed ('Use the method that suits you best'; pass arStatus4 to force)`);
   } else if (married && input2.arStatus4 === void 0 && !spouseGiven)
     notes.push("AR filing status 2 (joint) composed \u2014 Arkansas has ONE rate table for every status, so a two-income couple usually saves with status 4 (separately on the same return); pass arSpouseIncome (the spouse's share of lines 8-22) to compare");
@@ -65449,12 +65914,12 @@ function composeME(input2, evalStateTax, notes) {
   }
   const fedEic = D6(input2.federalEITC);
   const hasQc = input2.meHasQualifyingChild === true;
-  const eitc = fedEic > 0n ? rd25(evalStateTax("us.me.eitc", 0n, { meFederalEic: fedEic, meHasQualifyingChild: hasQc })) : 0n;
-  if (eitc > 0n)
-    notes.push(`ME Schedule A line 4: earned income tax credit ${fmtD(eitc)} = ${hasQc ? "25%" : "50% (no qualifying child)"} of the ${fmtD(fedEic)} federal EIC; refundable${!hasQc && deps > 0 && input2.meHasQualifyingChild === void 0 ? " \u2014 pass meHasQualifyingChild if a dependent is an EIC qualifying child (25%)" : ""}`);
+  const eitc2 = fedEic > 0n ? rd25(evalStateTax("us.me.eitc", 0n, { meFederalEic: fedEic, meHasQualifyingChild: hasQc })) : 0n;
+  if (eitc2 > 0n)
+    notes.push(`ME Schedule A line 4: earned income tax credit ${fmtD(eitc2)} = ${hasQc ? "25%" : "50% (no qualifying child)"} of the ${fmtD(fedEic)} federal EIC; refundable${!hasQc && deps > 0 && input2.meHasQualifyingChild === void 0 ? " \u2014 pass meHasQualifyingChild if a dependent is an EIC qualifying child (25%)" : ""}`);
   const studentLoan = min22(D6(input2.meStudentLoanCredit), 250000n);
   const otherRef = D6(input2.refundableCredits);
-  const l25c = depCredit + ccRefundable + adcRefundable + eitc + studentLoan + otherRef;
+  const l25c = depCredit + ccRefundable + adcRefundable + eitc2 + studentLoan + otherRef;
   const totalIncomeGiven = typeof input2.meTotalIncome === "number";
   const totalIncome = totalIncomeGiven ? rd25(c(input2.meTotalIncome)) : l14;
   let l25d = 0n;
@@ -65532,7 +65997,7 @@ function composeME(input2, evalStateTax, notes) {
     ...put("A1_dependent_exemption_credit", depCredit),
     ...put("A2_child_care_refundable", ccRefundable),
     ...put("A3_adult_care_refundable", adcRefundable),
-    ...put("A4_earned_income_credit", eitc),
+    ...put("A4_earned_income_credit", eitc2),
     ...put("A5_student_loan_credit", studentLoan),
     ...put("25c_refundable_credits", l25c),
     ...put("25d_property_tax_fairness_credit", l25d),
@@ -66573,17 +67038,17 @@ function composeVT(input2, evalStateTax, notes) {
   const kids = Math.max(0, input2.vtChildrenSixOrUnder ?? 0);
   const ctc = kids > 0 ? tryEval("us.vt.child_tax_credit", 0n, { ...agiFacts, vtChildrenSixOrUnder: kids }, "Schedule IN-112 line 4 (child tax credit)") ?? 0n : 0n;
   const fedEic = D11(input2.federalEITC);
-  const eitc = fedEic > 0n ? tryEval("us.vt.eitc", 0n, { vtFederalEic: fedEic, vtEitcQualifyingChildren: Math.max(0, input2.vtEitcQualifyingChildren ?? 0) }, "Schedule IN-112 line 7 (earned income credit)") ?? 0n : 0n;
+  const eitc2 = fedEic > 0n ? tryEval("us.vt.eitc", 0n, { vtFederalEic: fedEic, vtEitcQualifyingChildren: Math.max(0, input2.vtEitcQualifyingChildren ?? 0) }, "Schedule IN-112 line 7 (earned income credit)") ?? 0n : 0n;
   const veteran = input2.vtVeteranDischargeRecord === true ? tryEval("us.vt.veteran_credit", 0n, { ...agiFacts, vtVeteranDischargeRecord: true }, "Schedule IN-112 line 12 (veteran credit)") ?? 0n : 0n;
   if (cdcc > 0n)
     notes.push(`VT Schedule IN-112 line 2: child and dependent care credit ${fmtD(cdcc)} \u2014 72% of the federal credit, REFUNDABLE (\xA7 5828c)`);
   if (kids > 0)
     notes.push(ctc > 0n ? `VT Schedule IN-112 line 4: child tax credit ${fmtD(ctc)} for ${kids} child(ren) six or younger \u2014 $1,000 each less $20 per $1,000 or fraction of federal AGI over $125,000 regardless of filing status, REFUNDABLE (\xA7 5830f; 2025 Act 71 raised the age from five to six)` : `VT Schedule IN-112 line 4: no child tax credit \u2014 federal AGI ${fmtD(l1)} is above $174,000, where the $20-per-$1,000 reduction exhausts the $1,000`);
   if (fedEic > 0n)
-    notes.push(`VT Schedule IN-112 line 7: earned income credit ${fmtD(eitc)} \u2014 ${input2.vtEitcQualifyingChildren > 0 ? "38% of the federal credit with qualifying children" : "100% of the federal credit with NO qualifying children (2025 Act 71 \xA7 2, up from 38%)"}, REFUNDABLE`);
+    notes.push(`VT Schedule IN-112 line 7: earned income credit ${fmtD(eitc2)} \u2014 ${input2.vtEitcQualifyingChildren > 0 ? "38% of the federal credit with qualifying children" : "100% of the federal credit with NO qualifying children (2025 Act 71 \xA7 2, up from 38%)"}, REFUNDABLE`);
   if (input2.vtVeteranDischargeRecord === true)
     notes.push(veteran > 0n ? `VT Schedule IN-112 line 12: veteran tax credit ${fmtD(veteran)} \u2014 $250 less $5 per full $100 of federal AGI over $25,000, REFUNDABLE (\xA7 5830g, new for 2025)` : `VT Schedule IN-112 line 12: no veteran credit \u2014 federal AGI ${fmtD(l1)} is $30,000 or more`);
-  const l26c = cdcc + ctc + eitc + veteran + D11(input2.refundableCredits);
+  const l26c = cdcc + ctc + eitc2 + veteran + D11(input2.refundableCredits);
   const l26d = D11(input2.vtRealEstateWithholding);
   const l26e = D11(input2.vtNonresidentEstimatedPayments);
   const l26f = l26a + l26b + l26c + l26d + l26e;
@@ -66649,7 +67114,7 @@ function composeVT(input2, evalStateTax, notes) {
     "26b_estimated_and_extension_payments": fmtD(l26b),
     "IN112_II_2_child_dependent_care_credit": fmtD(cdcc),
     "IN112_II_4_child_tax_credit": fmtD(ctc),
-    "IN112_II_7_earned_income_credit": fmtD(eitc),
+    "IN112_II_7_earned_income_credit": fmtD(eitc2),
     "IN112_II_12_veteran_credit": fmtD(veteran),
     "IN112_II_13_total_refundable_credits": fmtD(l26c),
     "26c_refundable_credits": fmtD(l26c),
@@ -66855,11 +67320,11 @@ function composeHI(input2, evalStateTax, notes) {
   if (l31 > 0n)
     notes.push("HI line 31: $25 child passenger restraint system credit (\xA7 235-15; attach the invoice)");
   const fedEic = D12(input2.federalEITC);
-  const eitc = fedEic > 0n ? rd25(evalStateTax("us.hi.eitc", 0n, { hiFederalEic: fedEic })) : 0n;
-  if (eitc > 0n)
-    notes.push(`HI Schedule CR line 8 (Form N-356): earned income tax credit ${fmtD(eitc)} = 40% of the ${fmtD(fedEic)} federal EIC; refundable (same filing status and dependents as the federal return${mfs ? " \u2014 a separate filer qualifies only when the federal EIC was allowed under \xA7 32(d)(2)" : ""})`);
+  const eitc2 = fedEic > 0n ? rd25(evalStateTax("us.hi.eitc", 0n, { hiFederalEic: fedEic })) : 0n;
+  if (eitc2 > 0n)
+    notes.push(`HI Schedule CR line 8 (Form N-356): earned income tax credit ${fmtD(eitc2)} = 40% of the ${fmtD(fedEic)} federal EIC; refundable (same filing status and dependents as the federal return${mfs ? " \u2014 a separate filer qualifies only when the federal EIC was allowed under \xA7 32(d)(2)" : ""})`);
   const otherRef = D12(input2.refundableCredits);
-  const l32 = eitc + otherRef;
+  const l32 = eitc2 + otherRef;
   const l33 = l28 + l29 + l30 + l31 + l32;
   const l34 = l27 - l33;
   let osc = 0n;
@@ -66935,7 +67400,7 @@ function composeHI(input2, evalStateTax, notes) {
     ...put("29_renters_credit", l29),
     ...put("30_child_dependent_care_credit", l30),
     ...put("31_child_passenger_restraint_credit", l31),
-    ...put("CR8_earned_income_credit", eitc),
+    ...put("CR8_earned_income_credit", eitc2),
     ...put("32_schedule_cr_refundable_credits", l32),
     "33_total_refundable_credits": fmtD(l33),
     "34_adjusted_tax_liability": fmtD(l34),
@@ -68511,6 +68976,697 @@ var ndShape = {
 };
 var stateReturnShape = { ...shared, ...il, ...va, ...ca, ...ny, ...pa, ...nj, ...oh, ...nc, ...ga, ...md, ...mo, ...wi, ...mn, ...sc, ...al, ...orShape, ...okShape, ...ctShape, ...ksShape, ...arShape, ...nmShape, ...neShape, ...idShape, ...wvShape, ...meShape, ...hiShape, ...riShape, ...mtShape, ...deShape, ...ndShape };
 
+// ../compose/dist/form2210.js
+var SCHEDULE_AI_FACTS = {
+  // income
+  wages: "annualize",
+  taxableInterest: "annualize",
+  taxExemptInterest: "annualize",
+  ordinaryDividends: "annualize",
+  qualifiedDividends: "annualize",
+  shortTermCapitalGains: "annualize",
+  shortTermCapitalLoss: "annualize",
+  longTermCapitalGains: "annualize",
+  longTermCapitalLoss: "annualize",
+  netCapitalLoss: "annualize",
+  selfEmploymentNetProfit: "annualize",
+  spouseSelfEmploymentNetProfit: "annualize",
+  scheduleCNetLoss: "annualize",
+  k1OrdinaryBusinessIncome: "annualize",
+  taxableIraDistributions: "annualize",
+  taxablePensionsAndAnnuities: "annualize",
+  unemploymentCompensation: "annualize",
+  otherOrdinaryIncome: "annualize",
+  alimonyReceivedPre2019: "annualize",
+  hsaDistributions: "annualize",
+  hsaQualifiedMedicalExpenses: "annualize",
+  scheduleENetIncome: "annualize",
+  rentalIncomeBeforeDepreciation: "annualize",
+  nonpassiveScheduleELoss: "annualize",
+  socialSecurityBenefits: "annualize",
+  socialSecurityWages: "annualize",
+  spouseSocialSecurityWages: "annualize",
+  medicareWages: "annualize",
+  gamblingWinnings: "annualize",
+  qualifiedTips: "annualize",
+  qualifiedOvertimePremium: "annualize",
+  scheduleRDisabilityIncome: "annualize",
+  nontaxableBenefitsForScheduleR: "annualize",
+  earlyDistributionSubjectToPenalty: "annualize",
+  amtIsoExerciseSpread: "annualize",
+  amtOtherPreferences: "annualize",
+  // QBI (the businesses' income and W-2 wages are the period's; UBIA is basis)
+  qbiBusiness2Income: "annualize",
+  qbiBusiness3Income: "annualize",
+  qbiBusiness4Income: "annualize",
+  qbiBusiness5Income: "annualize",
+  qbiBusiness6Income: "annualize",
+  qbiLossOffset: "annualize",
+  qbiW2Wages: "annualize",
+  spouseQbiW2Wages: "annualize",
+  qbiBusiness2W2Wages: "annualize",
+  qbiBusiness3W2Wages: "annualize",
+  qbiBusiness4W2Wages: "annualize",
+  qbiBusiness5W2Wages: "annualize",
+  qbiBusiness6W2Wages: "annualize",
+  qbiUBIA: "keep",
+  spouseQbiUBIA: "keep",
+  qbiBusiness2UBIA: "keep",
+  qbiBusiness3UBIA: "keep",
+  qbiBusiness4UBIA: "keep",
+  qbiBusiness5UBIA: "keep",
+  qbiBusiness6UBIA: "keep",
+  // adjustments
+  hsaContribution: "annualize",
+  sepContribution: "annualize",
+  selfEmployedHealthPremiums: "annualize",
+  educatorExpenses: "annualize",
+  spouseEducatorExpenses: "annualize",
+  earlyWithdrawalPenaltyPaid: "annualize",
+  alimonyPaidPre2019: "annualize",
+  otherAdjustments: "annualize",
+  iraContribution: "annualize",
+  studentLoanInterest: "annualize",
+  // itemized and Schedule 1-A deductions
+  stateAndLocalTaxesPaid: "annualize",
+  mortgageInterestPaid: "annualize",
+  mortgageAverageBalance: "keep",
+  charitableCashContributions: "annualize",
+  noncashCharitableContributions: "annualize",
+  medicalExpenses: "annualize",
+  casualtyFederalDisasterLosses: "annualize",
+  casualtyQualifiedDisasterLosses: "annualize",
+  investmentInterestDeduction: "annualize",
+  gamblingLossesItemized: "annualize",
+  otherItemizedDeductions: "annualize",
+  carLoanInterest: "annualize",
+  niitInvestmentExpenses: "annualize",
+  // credits (Schedule AI line 18: the items used to figure each credit are annualized)
+  dependentCareExpenses: "annualize",
+  secondaryEarnedIncome: "annualize",
+  aotcExpensesStudent1: "annualize",
+  aotcExpensesStudent2: "annualize",
+  aotcExpensesStudent3: "annualize",
+  llcQualifiedExpenses: "annualize",
+  saversContributions: "annualize",
+  saversContributionsSpouse: "annualize",
+  qualifiedAdoptionExpenses: "annualize",
+  insulationAirSealingCosts: "annualize",
+  exteriorDoorMostExpensiveCost: "annualize",
+  exteriorDoorOtherCosts: "annualize",
+  windowsSkylightsCosts: "annualize",
+  centralAirConditionerCosts: "annualize",
+  gasOilWaterHeaterCosts: "annualize",
+  gasOilFurnaceBoilerCosts: "annualize",
+  electricalPanelCosts: "annualize",
+  homeEnergyAuditCosts: "annualize",
+  heatPumpBiomassCosts: "annualize",
+  solarElectricCosts: "annualize",
+  solarWaterHeatingCosts: "annualize",
+  smallWindEnergyCosts: "annualize",
+  geothermalHeatPumpCosts: "annualize",
+  batteryStorageCosts: "annualize",
+  fuelCellPropertyCosts: "annualize",
+  // bases and balances
+  pensionCostBasis: "keep",
+  pensionBasisPreviouslyRecovered: "keep",
+  rentalDepreciableBasis: "keep",
+  // payments are Part III inputs, never income
+  federalTaxWithheld: "keep",
+  federalEstimatedPayments: "keep",
+  federalExtensionPayment: "keep",
+  priorYearTax: "keep",
+  priorYearAGI: "keep",
+  // out of scope: the form or the statute treats these differently by period
+  foreignEarnedIncome: { refuse: "the foreign earned income exclusion is prorated by qualifying days (\xA7 911(b)(2)(A)), which Schedule AI does not annualize by a single factor" },
+  priorYearShortTermCapitalLossCarryover: { refuse: "a prior-year capital loss carryover is not an amount of the period; neither the form nor the instructions say whether it is annualized" },
+  priorYearLongTermCapitalLossCarryover: { refuse: "a prior-year capital loss carryover is not an amount of the period; neither the form nor the instructions say whether it is annualized" },
+  qbiLossCarryforward: { refuse: "a prior-year qualified business loss carryforward is not an amount of the period; the instructions don't say whether it is annualized" },
+  residentialCleanEnergyCarryforward: { refuse: "a prior-year credit carryforward is not an amount of the period" },
+  advancePTC: { refuse: "the premium tax credit is reconciled by coverage month (\xA7 36B(b)(2)), not by annualizing a period" },
+  slcspAnnualPremium: { refuse: "the premium tax credit is reconciled by coverage month (\xA7 36B(b)(2)), not by annualizing a period" },
+  marketplacePremiumsPaid: { refuse: "the premium tax credit is reconciled by coverage month (\xA7 36B(b)(2)), not by annualizing a period" },
+  parentTaxableIncome: { refuse: "Form 8615 uses the parent's annual taxable income" },
+  pensionGrossPayments: { refuse: "the simplified method's tax-free part is a per-payment amount (\xA7 72(d)), not an annualized one \u2014 enter taxablePensionsAndAnnuities instead" },
+  householdEmployeeCashWages: { refuse: "Schedule H thresholds apply to the calendar year's wages (\xA7 3121(x)), and the instructions give no period method" }
+};
+function scopeFlags(facts2) {
+  const out = [];
+  const b = (id2) => facts2[id2]?.type === "bool" && facts2[id2].value === true;
+  if (b("isClaimedAsDependent"))
+    out.push("a dependent's standard deduction depends on the year's earned income (\xA7 63(c)(5)); line 7 takes the deduction in full, which the period's annualized earned income would change");
+  if (b("isSubjectToKiddieTax"))
+    out.push("Form 8615 uses the parent's annual taxable income");
+  const month = facts2.rentalPlacedInServiceMonth;
+  if (month && month.type === "int" && BigInt(month.value) > 0n && money43(facts2, "rentalDepreciableBasis") > 0n)
+    out.push("rental property placed in service this year: its first-year depreciation depends on the month (Pub. 946 Table A-6), not on an annualized period");
+  return out;
+}
+var money43 = (facts2, id2) => {
+  const f = facts2[id2];
+  return f && f.type === "money" ? BigInt(f.value) : 0n;
+};
+var dayNum = (iso) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso))
+    throw new Error(`invalid date "${iso}" (use YYYY-MM-DD)`);
+  const t = Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)));
+  const d3 = new Date(t);
+  if (d3.toISOString().slice(0, 10) !== iso)
+    throw new Error(`invalid date "${iso}"`);
+  return Math.round(t / 864e5);
+};
+var isoOf = (n) => new Date(n * 864e5).toISOString().slice(0, 10);
+var isLeap = (y) => y % 4 === 0 && y % 100 !== 0 || y % 400 === 0;
+function nthWeekday(y, m, weekday, n) {
+  const first = Date.UTC(y, m - 1, 1) / 864e5;
+  const dow = new Date(first * 864e5).getUTCDay();
+  return first + (weekday - dow + 7) % 7 + (n - 1) * 7;
+}
+function observed(y, m, d3) {
+  const n = Date.UTC(y, m - 1, d3) / 864e5;
+  const dow = new Date(n * 864e5).getUTCDay();
+  return dow === 6 ? n - 1 : dow === 0 ? n + 1 : n;
+}
+function isLegalHoliday(n) {
+  const y = Number(isoOf(n).slice(0, 4));
+  return [
+    observed(y, 1, 1),
+    observed(y + 1, 1, 1),
+    nthWeekday(y, 1, 1, 3),
+    observed(y, 4, 16),
+    observed(y, 6, 19),
+    nthWeekday(y, 9, 1, 1)
+  ].includes(n);
+}
+function nextBusinessDay(n) {
+  let d3 = n;
+  for (; ; ) {
+    const dow = new Date(d3 * 864e5).getUTCDay();
+    if (dow !== 0 && dow !== 6 && !isLegalHoliday(d3))
+      return d3;
+    d3 += 1;
+  }
+}
+var UNDERPAYMENT_RATES = {
+  "2025-Q2": { percent: 7, source: "Rev. Rul. 2025-7, I.R.B. 2025-13 (IR-2025-29)" },
+  "2025-Q3": { percent: 7, source: "Rev. Rul. 2025-11, I.R.B. 2025-23 (IR-2025-59)" },
+  "2025-Q4": { percent: 7, source: "Rev. Rul. 2025-18, I.R.B. 2025-37 (IR-2025-87)" },
+  "2026-Q1": { percent: 7, source: "Rev. Rul. 2025-22, I.R.B. 2025-48 (IR-2025-112)" },
+  "2026-Q2": { percent: 6, source: "Rev. Rul. 2026-5, I.R.B. 2026-8" },
+  "2026-Q3": { percent: 7, source: "Rev. Rul. 2026-10, I.R.B. 2026-22" },
+  "2026-Q4": { percent: 7, source: "Rev. Rul. 2026-15, I.R.B. 2026-36 (IR-2026-98)" }
+};
+function ratePeriods(year) {
+  const q = (y2, n, from, to) => ({
+    from: dayNum(from),
+    to: dayNum(to),
+    quarter: `${y2}-Q${n}`,
+    divisor: isLeap(y2) ? 366 : 365
+  });
+  const y = year;
+  return [
+    q(y, 2, `${y}-04-16`, `${y}-06-30`),
+    q(y, 3, `${y}-07-01`, `${y}-09-30`),
+    q(y, 4, `${y}-10-01`, `${y}-12-31`),
+    q(y + 1, 1, `${y + 1}-01-01`, `${y + 1}-03-31`),
+    q(y + 1, 2, `${y + 1}-04-01`, `${y + 1}-04-15`)
+  ];
+}
+var rd26 = (x) => {
+  const neg3 = x < 0n;
+  const a = neg3 ? -x : x;
+  const r = (a + 50n) / 100n * 100n;
+  return neg3 ? -r : r;
+};
+var max029 = (x) => x > 0n ? x : 0n;
+var minC = (a, b) => a < b ? a : b;
+var fmt2 = (cents2, withCents = false) => {
+  const neg3 = cents2 < 0n;
+  const a = neg3 ? -cents2 : cents2;
+  const dollars5 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${neg3 ? "-" : ""}$${dollars5}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
+};
+var D13 = (c2) => fmt2(rd26(c2));
+var mulRate2 = (c2, num, den) => {
+  const p = c2 * num;
+  const neg3 = p < 0n;
+  const a = neg3 ? -p : p;
+  const q = (a * 2n + den) / (2n * den);
+  return neg3 ? -q : q;
+};
+var ANNUALIZATION = [
+  { num: 4n, den: 1n, label: "4", pct: [225n, 1000n] },
+  { num: 12n, den: 5n, label: "2.4", pct: [45n, 100n] },
+  { num: 3n, den: 2n, label: "1.5", pct: [675n, 1000n] },
+  { num: 1n, den: 1n, label: "1", pct: [90n, 100n] }
+];
+function composeForm2210(input2, run) {
+  const { facts: facts2, taxYear: year } = input2;
+  if (![2025, 2026, 2027].includes(year))
+    throw new Error(`Form 2210 is composed for tax years 2025, 2026 and 2027, not ${year}`);
+  const notes = [];
+  const boxes = [];
+  const get = (target) => run(facts2, target);
+  const line1 = rd26(get("us.federal.income_tax_after_credits"));
+  let other = get("us.federal.other_taxes");
+  const withheld = money43(facts2, "federalTaxWithheld");
+  const household = get("us.federal.household_employment_taxes");
+  const line32 = rd26(get("us.federal.refundable_credits"));
+  if (household > 0n && withheld === 0n && line1 + rd26(other - household) - line32 < 100000n) {
+    other -= household;
+    notes.push("line 2 leaves out the household employment taxes: no income tax was withheld and, without them, the year's tax is under $1,000 (Instructions for Form 2210, line 2)");
+  }
+  const line2 = rd26(other);
+  const line4 = line1 + line2 - line32;
+  const line5 = mulRate2(line4, 90n, 100n);
+  const line6 = rd26(withheld);
+  const line72 = line4 - line6;
+  const partI = {
+    "1_tax_after_credits": fmt2(line1),
+    "2_other_taxes": fmt2(line2),
+    "3_refundable_credits": fmt2(line32),
+    "4_current_year_tax": fmt2(line4)
+  };
+  const result = { taxYear: year, partI, boxes, notes };
+  if (line4 < 100000n) {
+    result.noPenalty = "line 4 is less than $1,000: no penalty (\xA7 6654(e)(1))";
+    return result;
+  }
+  partI["5_90_percent_of_line_4"] = fmt2(rd26(line5));
+  partI["6_withholding"] = fmt2(line6);
+  partI["7_line_4_minus_line_6"] = fmt2(line72);
+  if (line72 < 100000n) {
+    result.noPenalty = "line 7 is less than $1,000: no penalty (\xA7 6654(e)(1))";
+    return result;
+  }
+  let line92;
+  if (input2.noPriorYearReturn) {
+    line92 = rd26(line5);
+    partI["8_prior_year_tax"] = "not applicable (no prior-year return, or it covered under 12 months)";
+  } else {
+    const prior = facts2.priorYearTax;
+    const priorAgi = facts2.priorYearAGI;
+    if (!prior || prior.type !== "money")
+      throw new MissingInput(["priorYearTax"]);
+    if (!priorAgi || priorAgi.type !== "money")
+      throw new MissingInput(["priorYearAGI"]);
+    const mfs = facts2.filingStatus?.type === "enum" && facts2.filingStatus.value === "mfs";
+    const high = BigInt(priorAgi.value) > (mfs ? 7500000n : 15000000n);
+    const line8 = rd26(mulRate2(BigInt(prior.value), high ? 110n : 100n, 100n));
+    partI["8_prior_year_tax"] = fmt2(line8) + (high ? ` (110% \u2014 prior-year AGI over ${mfs ? "$75,000" : "$150,000"})` : "");
+    line92 = minC(rd26(line5), line8);
+  }
+  partI["9_required_annual_payment"] = fmt2(line92);
+  if (line6 >= line92) {
+    result.noPenalty = "line 6 (withholding) is at least line 9 (the required annual payment): no penalty";
+    return result;
+  }
+  let annualized;
+  if (input2.periods) {
+    const ai = scheduleAI(input2, run, line92, notes);
+    if ("refused" in ai)
+      result.scheduleAI = ai;
+    else {
+      result.scheduleAI = { columns: ai.columns };
+      annualized = ai.installments;
+    }
+  }
+  const installments = [{ m: "regular", line10: Array(4).fill(rd26(mulRate2(line92, 25n, 100n))) }];
+  if (annualized)
+    installments.push({ m: "annualized", line10: annualized });
+  const modes = input2.withholdingByDate ? ["even", "actual"] : ["even"];
+  const runs = modes.map((w) => ({ w, notes: [], res: {} }));
+  for (const r of runs)
+    for (const { m, line10 } of installments)
+      r.res[m] = partIII(input2, line10, r.notes, r.w, line4);
+  const all = runs.flatMap((r) => installments.map(({ m }) => ({ w: r.w, m, r: r.res[m], run: r })));
+  const unpriced = all.find((x) => x.r.penaltyCents === void 0);
+  let chosen = runs[0];
+  if (unpriced) {
+    result.penalty = { refused: `${unpriced.m} method${modes.length > 1 ? `, withholding ${unpriced.w === "even" ? "spread evenly" : "on its actual dates"}` : ""}: ${unpriced.r.refused}` };
+  } else {
+    const best = all.reduce((a, b) => BigInt(b.r.penaltyCents) < BigInt(a.r.penaltyCents) ? b : a);
+    chosen = best.run;
+    result.penalty = { method: best.m, amount: best.r.penalty, amountCents: best.r.penaltyCents };
+    if (best.m === "annualized")
+      boxes.push("C");
+    if (best.w === "actual")
+      boxes.push("D");
+    if (modes.length > 1)
+      notes.push(best.w === "actual" ? "box D: treating withholding as paid on the dates it was actually withheld gives the lower penalty" : "withholding is treated as paid one-fourth on each due date: the actual withholding dates (box D) would not lower the penalty");
+  }
+  result.partIII = chosen.res;
+  notes.push(...chosen.notes);
+  result.notes = [...new Set(notes)];
+  return result;
+}
+var MissingInput = class extends Error {
+  missing;
+  constructor(missing) {
+    super(`Form 2210 needs: ${missing.join(", ")}`);
+    this.missing = missing;
+    this.name = "MissingInput";
+  }
+};
+function scheduleAI(input2, run, line92, notes) {
+  const { facts: facts2 } = input2;
+  const periods = input2.periods;
+  const refused = [];
+  for (const [id2, kind] of Object.entries(SCHEDULE_AI_FACTS)) {
+    if (typeof kind === "object" && money43(facts2, id2) !== 0n)
+      refused.push(`${id2}: ${kind.refuse}`);
+  }
+  refused.push(...scopeFlags(facts2));
+  if (refused.length)
+    return { refused };
+  const cols = [periods.mar31, periods.may31, periods.aug31];
+  const names = ["mar31", "may31", "aug31"];
+  const missing = [];
+  cols.forEach((p, i) => {
+    for (const id2 of Object.keys(p)) {
+      const kind = SCHEDULE_AI_FACTS[id2];
+      if (kind === void 0)
+        throw new Error(`periods.${names[i]}.${id2}: not a fact Schedule AI reads`);
+      if (kind !== "annualize")
+        throw new Error(`periods.${names[i]}.${id2}: not a period amount (${kind === "keep" ? "it is used as is in every column" : "out of scope"})`);
+      if (p[id2].type !== "money")
+        throw new Error(`periods.${names[i]}.${id2}: must be money`);
+    }
+    for (const [id2, kind] of Object.entries(SCHEDULE_AI_FACTS)) {
+      if (kind === "annualize" && money43(facts2, id2) !== 0n && p[id2] === void 0)
+        missing.push(`periods.${names[i]}.${id2}`);
+    }
+  });
+  if (missing.length)
+    throw new MissingInput(missing);
+  const columns = [];
+  const installments = [];
+  let prior27 = 0n;
+  let prior26minus27 = 0n;
+  const line24 = rd26(mulRate2(line92, 25n, 100n));
+  for (let i = 0; i < 4; i++) {
+    const a = ANNUALIZATION[i];
+    const colFacts = { ...facts2 };
+    if (i < 3) {
+      for (const [id2, kind] of Object.entries(SCHEDULE_AI_FACTS)) {
+        if (kind !== "annualize")
+          continue;
+        const period = cols[i][id2];
+        const v = period && period.type === "money" ? BigInt(period.value) : 0n;
+        if (v === 0n && colFacts[id2] === void 0)
+          continue;
+        colFacts[id2] = { type: "money", value: mulRate2(v, a.num, a.den).toString() };
+      }
+      for (const id2 of ["selfEmploymentNetProfit", "spouseSelfEmploymentNetProfit"]) {
+        const p = cols[i][id2];
+        const ne = p && p.type === "money" ? mulRate2(BigInt(p.value), 9235n, 10000n) : 0n;
+        if (ne > 0n && ne < 40000n)
+          return {
+            refused: [
+              `periods.${names[i]}.${id2}: the period's net earnings from self-employment are under $400, which Part II line 28 enters as zero while the period's income still counts on line 1 \u2014 not modeled`
+            ]
+          };
+      }
+    }
+    const g = (t) => run(colFacts, t);
+    const saltPaid = money43(colFacts, "stateAndLocalTaxesPaid");
+    if (i < 3 && saltPaid > 0n && g("us.federal.salt_deduction") < saltPaid && g("us.federal.itemized_deductions") >= g("us.federal.standard_deduction"))
+      return {
+        refused: [
+          `column (${"abcd"[i]}): the annualized state and local taxes exceed the year's SALT limit, and the instructions don't say whether the period's itemized deductions (line 4) are limited before or after line 5's annualization`
+        ]
+      };
+    const agi2 = g("us.federal.agi");
+    const deduction = g("us.federal.deduction_election");
+    const ti = g("us.federal.taxable_income");
+    const line14 = g("us.federal.income_tax_before_credits");
+    const se = g("us.federal.se_tax");
+    const amt = g("us.federal.amt");
+    const otherTaxes = g("us.federal.other_taxes");
+    const beforeNonref = g("us.federal.tax_before_nonrefundable_credits");
+    const afterCredits = g("us.federal.income_tax_after_credits");
+    const refundable = g("us.federal.refundable_credits");
+    const line16 = amt + otherTaxes - se;
+    const line17 = rd26(line14) + rd26(se) + rd26(line16);
+    const line18 = rd26(beforeNonref - afterCredits) + rd26(refundable);
+    const line19 = max029(line17 - line18);
+    const line21 = rd26(mulRate2(line19, a.pct[0], a.pct[1]));
+    const line22 = prior27;
+    const line23 = max029(line21 - line22);
+    const line25 = i === 0 ? 0n : prior26minus27;
+    const line26 = line24 + line25;
+    const line27 = minC(line23, line26);
+    columns.push({
+      column: `(${"abcd"[i]}) ${["1/1\u20133/31", "1/1\u20135/31", "1/1\u20138/31", "1/1\u201312/31"][i]}`,
+      "2_annualization": a.label,
+      "3_annualized_agi": D13(agi2),
+      "8_deduction": D13(deduction),
+      "13_annualized_taxable_income": D13(ti),
+      "14_tax": D13(line14),
+      "15_se_tax": D13(se),
+      "16_other_taxes_incl_amt": D13(line16),
+      "17_total_tax": fmt2(line17),
+      "18_credits": fmt2(line18),
+      "19_net": fmt2(line19),
+      "20_applicable_percentage": `${Number(a.pct[0]) / (Number(a.pct[1]) / 100)}%`,
+      "21": fmt2(line21),
+      "22": fmt2(line22),
+      "23": fmt2(line23),
+      "24": fmt2(line24),
+      ...i > 0 ? { "25": fmt2(line25) } : {},
+      "26": fmt2(line26),
+      "27_required_installment": fmt2(line27)
+    });
+    installments.push(line27);
+    prior27 += line27;
+    prior26minus27 = line26 - line27;
+  }
+  notes.push("Schedule AI: each column is the full return evaluated on the period's cumulative amounts \xD7 the annualization amount (line 2), with the standard deduction in full (line 7); lines 14\u201319 are that evaluation's tax, self-employment tax, other taxes including AMT, and credits");
+  return { columns, installments };
+}
+function partIII(input2, line10, notes, withholdingDates, line4) {
+  const year = input2.taxYear;
+  const printed = [`${year}-04-15`, `${year}-06-15`, `${year}-09-15`, `${year + 1}-01-15`].map(dayNum);
+  const effective = printed.map(nextBusinessDay);
+  const dueLabels = printed.map((n, i) => isoOf(n) + (effective[i] !== n ? ` (payable ${isoOf(effective[i])}, \xA7 7503)` : ""));
+  const jan31 = dayNum(`${year + 1}-01-31`);
+  const filedBy = input2.filedAndPaidInFullOn ? dayNum(input2.filedAndPaidInFullOn) : void 0;
+  const section6654h = filedBy !== void 0 && filedBy <= jan31;
+  const asMade = (day) => {
+    for (let i = 0; i < 4; i++)
+      if (day > printed[i] && day <= effective[i])
+        return printed[i];
+    return day;
+  };
+  const estimated = input2.payments.map((p) => ({ day: asMade(dayNum(p.date)), amount: p.amount })).filter((p) => {
+    if (p.amount < 0n)
+      throw new Error("a payment amount can't be negative");
+    return p.amount > 0n;
+  });
+  let withholding;
+  if (withholdingDates === "actual") {
+    const list = input2.withholdingByDate;
+    const total2 = list.reduce((t, p) => t + p.amount, 0n);
+    if (total2 !== money43(input2.facts, "federalTaxWithheld"))
+      throw new Error(`withholdingByDate totals ${fmt2(total2, true)} but federalTaxWithheld is ${fmt2(money43(input2.facts, "federalTaxWithheld"), true)} \u2014 they must agree`);
+    withholding = list.map((p) => ({ day: asMade(dayNum(p.date)), amount: p.amount })).filter((p) => p.amount > 0n);
+  } else {
+    const w = money43(input2.facts, "federalTaxWithheld");
+    const quarter = w / 4n;
+    withholding = printed.map((day, i) => ({ day, amount: i < 3 ? quarter : w - 3n * quarter })).filter((p) => p.amount > 0n);
+  }
+  const windowOf = (day) => {
+    for (let i = 0; i < 4; i++)
+      if (day <= effective[i])
+        return i;
+    return section6654h && day <= filedBy ? 3 : 4;
+  };
+  const line112 = [0n, 0n, 0n, 0n];
+  for (const p of [...estimated, ...withholding]) {
+    const w = windowOf(p.day);
+    if (w < 4)
+      line112[w] += p.amount;
+  }
+  if (section6654h) {
+    const paidByFiling = [...estimated, ...withholding].filter((p) => p.day <= filedBy).reduce((t, p) => t + p.amount, 0n);
+    if (paidByFiling < line4)
+      throw new Error(`filedAndPaidInFullOn: \xA7 6654(h) needs the tax paid in full by ${input2.filedAndPaidInFullOn}, but the payments and withholding through that date total ${fmt2(paidByFiling, true)}, less than line 4 (${fmt2(line4)}) \u2014 list the payment made with the return in payments`);
+  }
+  const L11 = line112.map(rd26);
+  const A = { "10": line10, "11": L11, "12": [], "13": [], "14": [], "15": [], "16": [], "17": [], "18": [] };
+  let prev18 = 0n;
+  let prev16plus17 = 0n;
+  for (let i = 0; i < 4; i++) {
+    const l12 = i === 0 ? 0n : prev18;
+    const l13 = L11[i] + l12;
+    const l14 = i === 0 ? 0n : prev16plus17;
+    const l15 = i === 0 ? L11[0] : max029(l13 - l14);
+    const l16 = i === 0 ? 0n : l15 === 0n ? l14 - l13 : 0n;
+    const l17 = line10[i] >= l15 ? line10[i] - l15 : 0n;
+    const l18 = l15 > line10[i] ? l15 - line10[i] : 0n;
+    A["12"].push(l12);
+    A["13"].push(l13);
+    A["14"].push(l14);
+    A["15"].push(l15);
+    A["16"].push(l16);
+    A["17"].push(l17);
+    A["18"].push(l18);
+    prev18 = l18;
+    prev16plus17 = l16 + l17;
+  }
+  const sectionA = Object.fromEntries(Object.entries(A).map(([k, v]) => [k, v.map((c2) => fmt2(c2))]));
+  const out = { dueDates: dueLabels, sectionA, worksheet: [] };
+  const under = [...A["17"]];
+  if (section6654h) {
+    if (under[3] > 0n)
+      notes.push("\xA7 6654(h): the return was filed and the tax paid in full by January 31, so there's no penalty on the January 15 installment");
+    under[3] = 0n;
+  }
+  const end = dayNum(`${year + 1}-04-15`);
+  const balances = under.map((u, i) => ({ col: i, left: u }));
+  const chunks = [];
+  const all = [...estimated, ...withholding].sort((x, y) => x.day - y.day);
+  for (const p of all) {
+    let rest = p.amount;
+    for (const b of balances) {
+      if (rest === 0n)
+        break;
+      if (b.left === 0n || p.day <= effective[b.col])
+        continue;
+      const use = minC(rest, b.left);
+      chunks.push({ col: b.col, amount: use, paid: Math.min(p.day, end) });
+      b.left -= use;
+      rest -= use;
+    }
+  }
+  for (const b of balances)
+    if (b.left > 0n)
+      chunks.push({ col: b.col, amount: b.left, paid: end });
+  const merged = /* @__PURE__ */ new Map();
+  for (const ch of chunks) {
+    const key = `${ch.col}|${ch.paid}`;
+    const m = merged.get(key);
+    if (m)
+      m.amount += ch.amount;
+    else
+      merged.set(key, { ...ch });
+  }
+  const periods = ratePeriods(year);
+  let total = 0n;
+  let missingRate;
+  for (const ch of [...merged.values()].sort((x, y) => x.col - y.col || x.paid - y.paid)) {
+    if (ch.paid <= printed[ch.col])
+      continue;
+    for (const rp of periods) {
+      const start = Math.max(printed[ch.col], rp.from - 1);
+      const stop = Math.min(ch.paid, rp.to);
+      const days = stop - start;
+      if (days <= 0)
+        continue;
+      const rate2 = UNDERPAYMENT_RATES[rp.quarter];
+      if (!rate2) {
+        missingRate ??= rp.quarter;
+        continue;
+      }
+      const num = ch.amount * BigInt(Math.round(rate2.percent * 100)) * BigInt(days);
+      const den = 10000n * BigInt(rp.divisor);
+      const cents2 = (num * 2n + den) / (2n * den);
+      total += cents2;
+      out.worksheet.push({
+        column: "abcd"[ch.col],
+        amount: fmt2(ch.amount, true),
+        from: isoOf(start),
+        paidOn: isoOf(ch.paid),
+        days,
+        ratePercent: rate2.percent,
+        quarter: rp.quarter,
+        penalty: fmt2(cents2, true)
+      });
+    }
+  }
+  if (missingRate) {
+    out.refused = `the underpayment rate for ${missingRate} hasn't been announced (\xA7 6621(a)(2) rates are set each quarter); the underpayments in Section A are final, the penalty isn't`;
+    return out;
+  }
+  if (year === 2025 && out.worksheet.some((w) => w.quarter === "2026-Q2"))
+    notes.push(`the printed 2025 penalty worksheet applies 7% through April 15, 2026, but the \xA7 6621 rate for April 1\u201315, 2026 is 6% (Rev. Rul. 2026-5); the penalty here uses each quarter's actual rate, which the instructions allow ("You don't have to use the method used on Form 2210 as long as you enter the correct penalty amount")`);
+  out.penalty = fmt2(total, true);
+  out.penaltyCents = total.toString();
+  return out;
+}
+function dollarsToCents(v, path) {
+  const s = typeof v === "number" ? Number.isFinite(v) ? String(v) : "" : typeof v === "string" ? v.replace(/[$,\s]/g, "") : "";
+  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
+  if (!m)
+    throw new Error(`${path}: expected a dollar amount like 1234.56, got ${JSON.stringify(v)}`);
+  const cents2 = BigInt(m[2]) * 100n + BigInt((m[3] ?? "").padEnd(2, "0"));
+  return m[1] ? -cents2 : cents2;
+}
+var isObj = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+function parsePayments(raw, path) {
+  if (!Array.isArray(raw))
+    throw new Error(`${path}: expected an array of { date, amount }`);
+  return raw.map((p, i) => {
+    if (!isObj(p))
+      throw new Error(`${path}[${i}]: expected { date, amount }`);
+    const extra = Object.keys(p).filter((k) => k !== "date" && k !== "amount");
+    if (extra.length)
+      throw new Error(`${path}[${i}]: unknown key(s) ${extra.join(", ")}`);
+    if (typeof p.date !== "string")
+      throw new Error(`${path}[${i}].date: expected YYYY-MM-DD`);
+    dayNum(p.date);
+    const amount = dollarsToCents(p.amount, `${path}[${i}].amount`);
+    if (amount < 0n)
+      throw new Error(`${path}[${i}].amount: can't be negative`);
+    return { date: p.date, amount };
+  });
+}
+function form2210InputFromArgs(args, taxYear, facts2, coerce) {
+  const known = /* @__PURE__ */ new Set(["payments", "periods", "withholdingByDate", "noPriorYearReturn", "filedAndPaidInFullOn"]);
+  const unknown2 = Object.keys(args).filter((k) => !known.has(k));
+  if (unknown2.length)
+    throw new Error(`unknown Form 2210 option(s): ${unknown2.join(", ")}`);
+  if (args.payments === void 0)
+    throw new Error("payments is required: every estimated tax payment for the year with its date (an empty array if none) \u2014 the penalty depends on when each was paid");
+  const input2 = { taxYear, facts: facts2, payments: parsePayments(args.payments, "payments") };
+  if (args.withholdingByDate !== void 0)
+    input2.withholdingByDate = parsePayments(args.withholdingByDate, "withholdingByDate");
+  if (args.noPriorYearReturn !== void 0) {
+    if (typeof args.noPriorYearReturn !== "boolean")
+      throw new Error("noPriorYearReturn: expected true or false");
+    input2.noPriorYearReturn = args.noPriorYearReturn;
+  }
+  if (args.filedAndPaidInFullOn !== void 0) {
+    if (typeof args.filedAndPaidInFullOn !== "string")
+      throw new Error("filedAndPaidInFullOn: expected YYYY-MM-DD");
+    dayNum(args.filedAndPaidInFullOn);
+    input2.filedAndPaidInFullOn = args.filedAndPaidInFullOn;
+  }
+  if (args.periods !== void 0) {
+    const p = args.periods;
+    if (!isObj(p))
+      throw new Error("periods: expected { mar31, may31, aug31 }");
+    const keys = ["mar31", "may31", "aug31"];
+    const extra = Object.keys(p).filter((k) => !keys.includes(k));
+    if (extra.length)
+      throw new Error(`periods: unknown key(s) ${extra.join(", ")} (use mar31, may31, aug31)`);
+    const out = {};
+    for (const k of keys) {
+      const v = p[k];
+      if (!isObj(v))
+        throw new Error(`periods.${k}: expected an object of cumulative amounts from January 1 (e.g. { "wages": 15000 })`);
+      for (const [id2] of Object.entries(v)) {
+        const kind = SCHEDULE_AI_FACTS[id2];
+        if (kind !== "annualize")
+          throw new Error(`periods.${k}.${id2}: ${kind === void 0 ? "not an amount Schedule AI annualizes" : kind === "keep" ? "used as is in every column, not a period amount" : "out of scope for Schedule AI"}`);
+      }
+      out[k] = coerce(v);
+    }
+    input2.periods = out;
+  }
+  return input2;
+}
+
 // ../compose/dist/index.js
 function makeStateTaxEvaluator(runTarget, input2) {
   return (target, stateTaxableIncomeCents, extraFacts) => {
@@ -68670,19 +69826,105 @@ function runState(flags) {
   }
 }
 
-// dist/commands/verify.js
+// dist/commands/form2210.js
 var import_picocolors15 = __toESM(require_picocolors(), 1);
 import { readFileSync as readFileSync5 } from "node:fs";
+function runForm2210(flags) {
+  const corpus = getCorpus();
+  let args;
+  try {
+    args = JSON.parse(readFileSync5(flags.facts, "utf8"));
+    if (!args || typeof args !== "object" || Array.isArray(args))
+      throw new Error("expected a JSON object");
+  } catch (err) {
+    return emitError(new Error(`cannot read ${flags.facts}: ${err.message}`), flags.json);
+  }
+  const asOf = flags.asOf ?? (typeof args.asOf === "string" ? args.asOf : void 0);
+  if (!asOf) {
+    return emitError(new Error(`--as-of is required (the tax year's year-end, e.g. 2025-12-31), or put "asOf" in the file`), flags.json);
+  }
+  try {
+    const { facts: plainFacts, asOf: _ignored, ...options } = args;
+    const facts2 = coerceFacts(corpus, plainFacts ?? {});
+    const run = (f, target) => {
+      const { value } = evaluate(corpus, f, { asOf, target });
+      return value.type === "money" ? value.cents : 0n;
+    };
+    const input2 = form2210InputFromArgs(options, Number(asOf.slice(0, 4)), facts2, (plain) => coerceFacts(corpus, plain));
+    const form = composeForm2210(input2, run);
+    const refused = form.penalty && "refused" in form.penalty ? form.penalty.refused : void 0;
+    if (flags.json && refused) {
+      print({ ok: false, error: { code: "NOT_MODELED", message: `Form 2210 penalty refused: ${refused}`, data: { form: { asOf, ...form } } } });
+      return EXIT.NOT_COVERED;
+    }
+    if (flags.json) {
+      print({ ok: true, asOf, form: "2210", ...form, corpusMerkleRoot: corpus.merkleRoot });
+      return EXIT.OK;
+    }
+    const section = (title, lines) => {
+      console.log(import_picocolors15.default.bold(title));
+      const width = Math.max(...Object.keys(lines).map((k) => k.length)) + 2;
+      for (const [k, v] of Object.entries(lines))
+        console.log(`  ${k.padEnd(width)}${v}`);
+      console.log();
+    };
+    console.log();
+    section(`Form 2210 (${form.taxYear}) \u2014 Part I`, form.partI);
+    if (form.noPenalty)
+      console.log(import_picocolors15.default.green(`  ${form.noPenalty}
+`));
+    if (form.scheduleAI && "columns" in form.scheduleAI) {
+      for (const col of form.scheduleAI.columns)
+        section(`Schedule AI ${col.column}`, Object.fromEntries(Object.entries(col).filter(([k]) => k !== "column")));
+    } else if (form.scheduleAI) {
+      console.log(import_picocolors15.default.yellow("Schedule AI refused:"));
+      for (const r of form.scheduleAI.refused)
+        console.log(import_picocolors15.default.yellow(`  ${r}`));
+      console.log();
+    }
+    for (const m of ["regular", "annualized"]) {
+      const p = form.partIII?.[m];
+      if (!p)
+        continue;
+      console.log(import_picocolors15.default.bold(`Part III \u2014 ${m === "regular" ? "regular installments" : "annualized (Schedule AI) installments"}`));
+      console.log(`  due dates  ${p.dueDates.join("  ")}`);
+      for (const [line2, cols] of Object.entries(p.sectionA))
+        console.log(`  line ${line2.padEnd(4)}${cols.map((c2) => c2.padStart(12)).join("")}`);
+      for (const w of p.worksheet)
+        console.log(import_picocolors15.default.dim(`  (${w.column}) ${w.amount} from ${w.from} to ${w.paidOn}: ${w.days} days at ${w.ratePercent}% = ${w.penalty}`));
+      console.log(p.penalty ? `  penalty: ${import_picocolors15.default.bold(p.penalty)}` : import_picocolors15.default.yellow(`  ${p.refused}`));
+      console.log();
+    }
+    if (form.penalty) {
+      console.log("method" in form.penalty ? import_picocolors15.default.bold(`Line 19 penalty: ${form.penalty.amount} (${form.penalty.method} method${form.boxes.length ? `; box ${form.boxes.join(", ")}` : ""})`) : import_picocolors15.default.yellow(form.penalty.refused));
+      console.log();
+    }
+    for (const n of form.notes)
+      console.log(import_picocolors15.default.dim(`  ${n}`));
+    if (form.notes.length)
+      console.log();
+    return refused ? EXIT.NOT_COVERED : EXIT.OK;
+  } catch (err) {
+    if (err instanceof MissingInput) {
+      return emitError(new NeedsFactsError(err.missing.map((id2) => ({ factId: id2, type: "money", description: "Form 2210 needs this amount" }))), flags.json);
+    }
+    return emitError(err, flags.json);
+  }
+}
+
+// dist/commands/verify.js
+var import_picocolors16 = __toESM(require_picocolors(), 1);
+import { readFileSync as readFileSync6 } from "node:fs";
 function runVerify(proofPath, flags) {
   let artifact;
   try {
-    artifact = JSON.parse(readFileSync5(proofPath, "utf8"));
+    artifact = JSON.parse(readFileSync6(proofPath, "utf8"));
   } catch (err) {
     return emitError(new Error(`cannot read proof ${proofPath}: ${err.message}`), flags.json);
   }
   let result;
   try {
-    result = verifyProof(artifact, getCorpus());
+    result = verifyProof(artifact, corpusForVersion(String(artifact?.corpus?.version ?? "")));
   } catch (err) {
     return emitError(err, flags.json);
   }
@@ -68719,19 +69961,19 @@ function runVerify(proofPath, flags) {
   }
   if (result.ok) {
     console.log();
-    console.log(`${import_picocolors15.default.green("\u2713 VERIFIED")}  ${import_picocolors15.default.bold(artifact.target)}`);
-    console.log(`  value      ${import_picocolors15.default.green(formatValue(artifact.root.value))} (as of ${artifact.asOf})`);
+    console.log(`${import_picocolors16.default.green("\u2713 VERIFIED")}  ${import_picocolors16.default.bold(artifact.target)}`);
+    console.log(`  value      ${import_picocolors16.default.green(formatValue(artifact.root.value))} (as of ${artifact.asOf})`);
     console.log(`  corpus     ${result.corpusMerkleRoot}`);
     console.log(`  artifact   ${artifact.artifactHash}`);
-    console.log(import_picocolors15.default.dim("  independently re-derived from the corpus; every node matches the recorded derivation"));
+    console.log(import_picocolors16.default.dim("  independently re-derived from the corpus; every node matches the recorded derivation"));
     console.log();
     return EXIT.OK;
   }
   console.error();
-  console.error(`${import_picocolors15.default.red("\u2717 VERIFICATION FAILED")}  (${result.reason})`);
+  console.error(`${import_picocolors16.default.red("\u2717 VERIFICATION FAILED")}  (${result.reason})`);
   console.error(`  ${result.message}`);
   if (result.path)
-    console.error(`  divergence at: ${import_picocolors15.default.bold(result.path)}`);
+    console.error(`  divergence at: ${import_picocolors16.default.bold(result.path)}`);
   if (result.expected)
     console.error(`  expected: ${result.expected}`);
   if (result.actual)
@@ -68776,12 +70018,12 @@ Every command accepts --json (single JSON object on stdout, ok: true|false).
 Exit codes: 0 ok \xB7 2 needs more facts (retry with them) \xB7 3 not covered by the corpus (don't retry) \xB7 1 other error.`).version("0.1.0");
 var evalCmd = program2.command("eval").description("compute a tax answer and print its proof tree").option("--facts <file>", "JSON facts file (inline flags below override it)");
 registerFactFlags(evalCmd);
-evalCmd.option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to derive (default: income tax after credits)").option("--proof <file>", "write the proof artifact JSON to this file").option("--brief", "plain-English summary only (skip the proof tree)").option("--assumptions", "list every default the engine relied on (folded by default)").option("--json", "print the proof artifact JSON instead of the tree").option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included").option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept").action((flags) => {
+evalCmd.option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to derive (default: income tax after credits)").option("--proof <file>", "write the proof artifact JSON to this file").option("--brief", "plain-English summary only (skip the proof tree)").option("--assumptions", "list every default the engine relied on (folded by default)").option("--json", "print the proof artifact JSON instead of the tree").option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included").option("--project-inflation <percent>", PROJECTION_HELP.inflation).option("--project-wage-growth <percent>", PROJECTION_HELP.wage).option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept").action((flags) => {
   process.exitCode = runEval(flags);
 });
 var checkCmd = program2.command("check").description("verify a claimed tax amount (e.g. an AI agent's answer) against the law \u2014 exit 0 verified, 1 refuted").option("--facts <file>", "JSON facts file (inline flags below override it)");
 registerFactFlags(checkCmd);
-checkCmd.requiredOption("--expect <dollars>", "the claimed amount to verify (negative = refund)").option("--tolerance <dollars>", "allowed absolute difference", "1").option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to check (default: net tax; balance due if --withheld)").option("--proof <file>", "write the proof artifact JSON to this file").option("--json", "machine-readable verdict").option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included").option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept").action((flags) => {
+checkCmd.requiredOption("--expect <dollars>", "the claimed amount to verify (negative = refund)").option("--tolerance <dollars>", "allowed absolute difference", "1").option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to check (default: net tax; balance due if --withheld)").option("--proof <file>", "write the proof artifact JSON to this file").option("--json", "machine-readable verdict").option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included").option("--project-inflation <percent>", PROJECTION_HELP.inflation).option("--project-wage-growth <percent>", PROJECTION_HELP.wage).option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept").action((flags) => {
   process.exitCode = runCheck(flags);
 });
 program2.command("facts").description("list every input fact the corpus understands").option("--json", "machine-readable output").action((flags) => {
@@ -68829,6 +70071,9 @@ program2.command("occupation").description("is this a \xA7 224 tipped occupation
 program2.command("state").description("compose a state return (IL-1040, VA 760, CA 540, NY IT-201, PA-40, NJ-1040, OH IT 1040, NC D-400, GA 500, MD 502, MO-1040, WI Form 1, MN M1, SC1040, AL Form 40, OR-40, OK Form 511, CT-1040, KS K-40, AR AR1000F, NM PIT-1, NE 1040N, ID Form 40, WV IT-140, ME 1040ME) from a composer-facts JSON file").requiredOption("--facts <file>", "composer facts JSON (same shape as the MCP compute_state_return tool)").option("--as-of <date>", "law in force on this ISO date (default: today)").option("--json", "machine-readable output").action((flags) => {
   process.exitCode = runState({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
 });
+program2.command("form2210").description("Form 2210: the estimated tax underpayment penalty (\xA7 6654), with Schedule AI (the annualized income installment method), from a JSON file").requiredOption("--facts <file>", "JSON: { facts, payments, periods?, withholdingByDate?, noPriorYearReturn?, filedAndPaidInFullOn? } (same shape as the MCP compute_form_2210 tool)").option("--as-of <date>", "the tax year's rules (e.g. 2025-12-31); required unless the file has asOf").option("--json", "machine-readable output").action((flags) => {
+  process.exitCode = runForm2210({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
+});
 program2.command("signup").description("get OpenTax updates by email (new features and other things worth knowing)").argument("<email>", "your email address").option("--json", "machine-readable output").action(async (email3, flags) => {
   process.exitCode = await runSignup(email3, { json: flags.json });
 });
@@ -68842,7 +70087,7 @@ function solverCommand(name, description) {
   const cmd = program2.command(name).description(description);
   cmd.option("--facts <file>", "JSON facts file (inline flags below override it)");
   registerFactFlags(cmd);
-  cmd.option("--vary <factId>", "fact to vary", "wages").option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to derive (default: net tax)").option("--json", "machine-readable output");
+  cmd.option("--vary <factId>", "fact to vary", "wages").option("--as-of <date>", "evaluate rules as of this ISO date (default: today)").option("--target <ruleId>", "rule to derive (default: net tax)").option("--project-inflation <percent>", PROJECTION_HELP.inflation).option("--project-wage-growth <percent>", PROJECTION_HELP.wage).option("--json", "machine-readable output");
   return cmd;
 }
 solverCommand("sweep", "evaluate the target across a range of one input").requiredOption("--from <dollars>", "range start").requiredOption("--to <dollars>", "range end").option("--step <dollars>", "step size", "1000").option("--csv", "CSV output").action((flags) => {

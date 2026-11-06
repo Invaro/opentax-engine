@@ -60,9 +60,11 @@ import { standardDeductionRules } from "./rules/standard-deduction.js";
 import { tipsEligibilityRules } from "./rules/tips-eligibility.js";
 import { tipsOvertimeRules } from "./rules/tips-overtime.js";
 
+import { getProjectedCorpus, projectionFromVersion } from "./projection.js";
+
 export const corpusInput: CorpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.45.0",
+  version: "0.46.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -139,3 +141,25 @@ export {
   OCCUPATION_ENUM,
   TIPPED_OCCUPATIONS,
 } from "./occupations.js";
+
+export {
+  classifyLiterals,
+  LAST_PUBLISHED_YEAR,
+  PROJECTION_HORIZON,
+  projectCorpusInput,
+  projectedValue,
+  projectionFromVersion,
+  rulesEndingWith2027,
+} from "./projection.js";
+export type { ProjectionOptions } from "./projection.js";
+
+/** The published corpus projected to a tax year after 2027 at assumed index growth (see projection.ts). */
+export function getProjectedFederalCorpus(opts: import("./projection.js").ProjectionOptions): LoadedCorpus {
+  return getProjectedCorpus(corpusInput, opts);
+}
+
+/** The corpus a proof was made against: the published one, or the projection its corpus version names. */
+export function corpusForVersion(version: string): LoadedCorpus {
+  const p = projectionFromVersion(version);
+  return p ? getProjectedFederalCorpus(p) : getCorpus();
+}

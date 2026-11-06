@@ -25,6 +25,8 @@ import {
 } from "./commands/solve.js";
 import { runSignup } from "./commands/signup.js";
 import { runState } from "./commands/state.js";
+import { runForm2210 } from "./commands/form2210.js";
+import { PROJECTION_HELP } from "./projection.js";
 import { runVerify } from "./commands/verify.js";
 import { FACT_FLAGS } from "./flags.js";
 
@@ -75,6 +77,8 @@ evalCmd
   .option("--assumptions", "list every default the engine relied on (folded by default)")
   .option("--json", "print the proof artifact JSON instead of the tree")
   .option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included")
+  .option("--project-inflation <percent>", PROJECTION_HELP.inflation)
+  .option("--project-wage-growth <percent>", PROJECTION_HELP.wage)
   .option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept")
   .action((flags) => {
     process.exitCode = runEval(flags);
@@ -95,6 +99,8 @@ checkCmd
   .option("--proof <file>", "write the proof artifact JSON to this file")
   .option("--json", "machine-readable verdict")
   .option("--refuse-defaults", "refuse instead of assuming: any fact not given exits 2 (NEEDS_FACTS), defaults included")
+  .option("--project-inflation <percent>", PROJECTION_HELP.inflation)
+  .option("--project-wage-growth <percent>", PROJECTION_HELP.wage)
   .option("--allow-default <factIds...>", "with --refuse-defaults: fact ids whose defaults you accept")
   .action((flags) => {
     process.exitCode = runCheck(flags);
@@ -179,6 +185,16 @@ program
   });
 
 program
+  .command("form2210")
+  .description("Form 2210: the estimated tax underpayment penalty (§ 6654), with Schedule AI (the annualized income installment method), from a JSON file")
+  .requiredOption("--facts <file>", "JSON: { facts, payments, periods?, withholdingByDate?, noPriorYearReturn?, filedAndPaidInFullOn? } (same shape as the MCP compute_form_2210 tool)")
+  .option("--as-of <date>", "the tax year's rules (e.g. 2025-12-31); required unless the file has asOf")
+  .option("--json", "machine-readable output")
+  .action((flags) => {
+    process.exitCode = runForm2210({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
+  });
+
+program
   .command("signup")
   .description("get OpenTax updates by email (new features and other things worth knowing)")
   .argument("<email>", "your email address")
@@ -215,6 +231,8 @@ function solverCommand(name: string, description: string) {
     .option("--vary <factId>", "fact to vary", "wages")
     .option("--as-of <date>", "evaluate rules as of this ISO date (default: today)")
     .option("--target <ruleId>", "rule to derive (default: net tax)")
+    .option("--project-inflation <percent>", PROJECTION_HELP.inflation)
+    .option("--project-wage-growth <percent>", PROJECTION_HELP.wage)
     .option("--json", "machine-readable output");
   return cmd;
 }

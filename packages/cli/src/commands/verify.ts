@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import pc from "picocolors";
 import { verifyProof } from "@invaro/opentax-core";
 import type { ProofArtifact } from "@invaro/opentax-core";
-import { getCorpus } from "@invaro/opentax-corpus-us-federal";
+import { corpusForVersion } from "@invaro/opentax-corpus-us-federal";
 import { formatValue } from "../render/format.js";
 import { EXIT, emitError, print } from "../render/output.js";
 
@@ -21,7 +21,8 @@ export function runVerify(proofPath: string, flags: { json?: boolean }): number 
   // guarantee that the --json contract survives even an unexpected throw.
   let result: ReturnType<typeof verifyProof>;
   try {
-    result = verifyProof(artifact, getCorpus());
+    // a projected proof names its projection in the corpus version: rebuild that corpus
+    result = verifyProof(artifact, corpusForVersion(String(artifact?.corpus?.version ?? "")));
   } catch (err) {
     return emitError(err, flags.json);
   }

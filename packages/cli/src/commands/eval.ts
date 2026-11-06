@@ -1,14 +1,15 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import pc from "picocolors";
 import { coerceFacts, evaluate } from "@invaro/opentax-core";
-import { DEFAULT_TARGET, getCorpus } from "@invaro/opentax-corpus-us-federal";
+import { DEFAULT_TARGET } from "@invaro/opentax-corpus-us-federal";
+import { corpusForFlags, projectionLabel, type ProjectionFlags } from "../projection.js";
 import { factsFromOptions } from "../flags.js";
 import { formatValue } from "../render/format.js";
 import { EXIT, emitError, print } from "../render/output.js";
 import { renderSummary } from "../render/summary.js";
 import { renderProof } from "../render/tree.js";
 
-export interface EvalFlags extends Record<string, unknown> {
+export interface EvalFlags extends Record<string, unknown>, ProjectionFlags {
   facts?: string;
   asOf?: string;
   target?: string;
@@ -22,9 +23,15 @@ export interface EvalFlags extends Record<string, unknown> {
 }
 
 export function runEval(flags: EvalFlags): number {
-  const corpus = getCorpus();
   // default: current law — today's date selects the rule versions in force now
   const asOf = flags.asOf ?? new Date().toISOString().slice(0, 10);
+  let corpus;
+  try {
+    corpus = corpusForFlags(asOf, flags);
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+  const projected = projectionLabel(asOf, flags, corpus);
 
   let plain: Record<string, unknown> = {};
   if (flags.facts) {
@@ -69,6 +76,7 @@ export function runEval(flags: EvalFlags): number {
         value: proof.root.value,
         formatted: formatValue(proof.root.value),
         assumptions: proof.assumptions,
+        ...(projected ? { projected } : {}),
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
         proof,
@@ -76,6 +84,7 @@ export function runEval(flags: EvalFlags): number {
     } else {
       const summary = renderSummary(proof);
       console.log();
+      if (projected) console.log(pc.yellow(pc.bold(`PROJECTED ${projected.taxYear} — not published law (C-CPI-U +${projected.inflationPercent}%/yr, wages +${projected.wageGrowthPercent}%/yr assumed)`)) + "\n");
       if (summary) {
         console.log(summary);
         console.log();

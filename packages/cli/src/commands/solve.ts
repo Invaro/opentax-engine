@@ -9,7 +9,8 @@ import pc from "picocolors";
 import { coerceFacts, parseDollars } from "@invaro/opentax-core";
 import type { LoadedCorpus, TypedValueJSON } from "@invaro/opentax-core";
 import { compareAcross, findCliffs, invert, marginal, sweep } from "@invaro/opentax-solve";
-import { DEFAULT_TARGET, getCorpus } from "@invaro/opentax-corpus-us-federal";
+import { DEFAULT_TARGET } from "@invaro/opentax-corpus-us-federal";
+import { corpusForFlags } from "../projection.js";
 import { factsFromOptions } from "../flags.js";
 import { formatMoney } from "../render/format.js";
 import { EXIT, emitError, print } from "../render/output.js";
@@ -29,7 +30,8 @@ function setup(flags: CommonFlags): {
   asOf: string;
   target: string;
 } {
-  const corpus = getCorpus();
+  const asOf = (flags.asOf as string) ?? new Date().toISOString().slice(0, 10);
+  const corpus = corpusForFlags(asOf, flags as { projectInflation?: string; projectWageGrowth?: string });
   let plain: Record<string, unknown> = {};
   if (flags.facts) plain = JSON.parse(readFileSync(flags.facts, "utf8"));
   Object.assign(plain, factsFromOptions(flags));
@@ -38,7 +40,7 @@ function setup(flags: CommonFlags): {
     corpus,
     base,
     vary: flags.vary ?? "wages",
-    asOf: (flags.asOf as string) ?? new Date().toISOString().slice(0, 10),
+    asOf,
     target: (flags.target as string) ?? DEFAULT_TARGET,
   };
 }
