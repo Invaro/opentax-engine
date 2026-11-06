@@ -15,12 +15,13 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import pc from "picocolors";
 import { coerceFacts, evaluate, parseDollars } from "@invaro/opentax-core";
-import { DEFAULT_TARGET, getCorpus } from "@invaro/opentax-corpus-us-federal";
+import { DEFAULT_TARGET } from "@invaro/opentax-corpus-us-federal";
+import { corpusForFlags, projectionLabel, type ProjectionFlags } from "../projection.js";
 import { factsFromOptions } from "../flags.js";
 import { formatMoney } from "../render/format.js";
 import { EXIT, emitError, print } from "../render/output.js";
 
-export interface CheckFlags extends Record<string, unknown> {
+export interface CheckFlags extends Record<string, unknown>, ProjectionFlags {
   facts?: string;
   expect: string;
   tolerance?: string;
@@ -33,8 +34,14 @@ export interface CheckFlags extends Record<string, unknown> {
 }
 
 export function runCheck(flags: CheckFlags): number {
-  const corpus = getCorpus();
   const asOf = flags.asOf ?? new Date().toISOString().slice(0, 10);
+  let corpus;
+  try {
+    corpus = corpusForFlags(asOf, flags);
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+  const projected = projectionLabel(asOf, flags, corpus);
 
   let plain: Record<string, unknown> = {};
   if (flags.facts) {
@@ -94,6 +101,7 @@ export function runCheck(flags: CheckFlags): number {
         differenceCents: diff.toString(),
         toleranceCents: tolerance.toString(),
         assumptions: proof.assumptions,
+        ...(projected ? { projected } : {}),
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
       });
