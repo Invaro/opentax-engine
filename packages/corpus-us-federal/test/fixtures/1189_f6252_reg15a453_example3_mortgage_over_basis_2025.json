@@ -1,0 +1,25 @@
+{
+  "description": "Temp. Reg. § 15a.453-1(b)(5) Example (3): the same sale with a basis of $40,000. 'In the year of the sale C is deemed to have received payment of $20,000 ($60,000−$40,000 ...) ... the gross profit ratio is 1 ($120,000/$120,000) and C will report 100% of the $20,000 deemed payment in the year of sale and each $10,000 annual payment as gain'. With one $10,000 payment in the year of sale: $30,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 160000,
+    "installmentSale1MortgagesAssumed": 60000,
+    "installmentSale1CostBasis": 40000,
+    "installmentSale1PaymentsThisYear": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.line24",
+  "expect": {
+    "valueCents": "3000000",
+    "intermediates": {
+      "us.federal.form6252.sale1.line16": "12000000",
+      "us.federal.form6252.sale1.line18": "12000000",
+      "us.federal.form6252.sale1.line20": "2000000"
+    }
+  }
+}

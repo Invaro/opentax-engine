@@ -124,9 +124,17 @@ const sale = (i: number): FactSpec[] => {
       id: s("RelatedParty"),
       type: "bool",
       description: first
-        ? "Installment sale 1 was to a related party (Form 6252 line 3; § 453(f)(1)): your spouse, child, grandchild, parent or sibling, or a related corporation, S corporation, partnership, estate or trust. A sale of depreciable property to a related person can't use the installment method (§ 453(g)) and is refused."
+        ? "Installment sale 1 was to a related party (Form 6252 line 3; § 453(f)(1)): your spouse, child, grandchild, parent or sibling, or a related corporation, S corporation, partnership, estate or trust."
         : `Installment sale ${i} was to a related party (Form 6252 line 3).`,
       default: { value: false, rationale: `Assumed installment sale ${i} was not to a related party` },
+    },
+    {
+      id: s("DepreciableToControlledBuyer"),
+      type: "bool",
+      description: first
+        ? "Installment sale 1 (related party only): the property is depreciable in the buyer's hands AND the buyer is a § 453(g)(3) related person — a corporation or partnership you own more than 50% of (directly or indirectly), a trust of which you or your spouse is a beneficiary, or an estate of which you are executor or beneficiary. Family members are not § 453(g) related persons. Such a sale can't use the installment method (all payments are treated as received in the year of sale) unless the IRS agrees tax avoidance wasn't a principal purpose — refused; report it as a sale."
+        : `Installment sale ${i} (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary).`,
+      // no default — asked when the sale was to a related party
     },
     {
       id: s("SecondDisposition"),

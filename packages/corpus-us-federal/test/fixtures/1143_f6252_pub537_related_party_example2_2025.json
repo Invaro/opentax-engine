@@ -14,7 +14,8 @@
     "installmentSale1PaymentsThisYear": 100000,
     "installmentSale1PaymentsPriorYears": 100000,
     "installmentSale1SecondDisposition": true,
-    "installmentSale1RelatedPartyAmountRealized": 400000
+    "installmentSale1RelatedPartyAmountRealized": 400000,
+    "installmentSale1DepreciableToControlledBuyer": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.form6252.sale1.income",

@@ -196,7 +196,7 @@ const exchangeRules = (i: number): Rule[] => [
     x(i, "line24"),
     `Like-kind exchange ${i}: Form 8824 line 24 — deferred gain or (loss)`,
     "§ 1031(a), (c); Form 8824 line 24",
-    'I8824 line 24: "If line 19 is a loss, enter it on line 24. Otherwise, subtract the amount on line 23 from the amount on line 19 and enter the result." § 1031(c): "no loss from such exchange shall be recognized."',
+    'I8824 line 24: "If line 19 is a loss, enter it on line 24. Otherwise, subtract the amount on line 23 from the amount on line 19 and enter the result." § 1031(c): "no loss from the exchange shall be recognized."',
     iff(cmp("lt", X(i, "line19"), zero), X(i, "line19"), sub(X(i, "line19"), X(i, "line23"))),
   ),
   rule(

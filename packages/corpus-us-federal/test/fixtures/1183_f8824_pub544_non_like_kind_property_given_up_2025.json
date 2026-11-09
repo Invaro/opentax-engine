@@ -1,0 +1,23 @@
+{
+  "description": "Pub. 544 (2025), Non-like-kind property given up: stock (FMV $1,000) and real estate (adjusted basis $15,000) for real estate worth $20,000. 'Your realized gain on the exchange is $4,000, the FMV of the real estate received ($20,000) less the sum of the adjusted basis of the real estate given up ($15,000) and the FMV of the stock you transferred ($1,000). You do not recognize gain on the exchange of the real estate'. (The $3,000 loss on the stock is its own sale, Form 8824 line 14.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "capital",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 20000,
+    "likeKindExchange1AdjustedBasisGivenUp": 15000,
+    "likeKindExchange1OtherPropertyGivenUpFmv": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "400000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line18": "1600000",
+      "us.federal.form8824.exchange1.line19": "400000",
+      "us.federal.form8824.exchange1.line23": "0"
+    }
+  }
+}

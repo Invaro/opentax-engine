@@ -1,0 +1,22 @@
+{
+  "description": "Temp. Reg. § 15a.453-1(b)(5) Example (4): selling price $806,955 after unstated interest, basis (including selling expenses) $200,000. 'gross profit is $606,955 ... the gross profit ratio is 75.21547%. Accordingly, of the $500,000 cash down payment ... $376,077 (75.21547% of $500,000) is gain'. Exact: $606,955 ÷ $806,955 × $500,000 = $376,077.35.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 806955,
+    "installmentSale1CostBasis": 200000,
+    "installmentSale1PaymentsThisYear": 500000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.line24",
+  "expect": {
+    "valueCents": "37607735",
+    "intermediates": {
+      "us.federal.form6252.sale1.line16": "60695500"
+    }
+  }
+}

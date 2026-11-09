@@ -1,0 +1,26 @@
+{
+  "description": "Pub. 544 (2025), next example: 'the property you received had an FMV of $140,000 and was subject to a $40,000 mortgage that you assumed.' Realized gain still $55,000 ($180,000 − $5,000 − $80,000 − $40,000). 'Mortgage assumed by other party $30,000 Minus: Mortgage you assumed (40,000) Total (not below zero) $0 ... Minus: Exchange expenses paid (5,000) Recognized gain $5,000'.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "capital",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 140000,
+    "likeKindExchange1AdjustedBasisGivenUp": 80000,
+    "likeKindExchange1CashReceived": 10000,
+    "likeKindExchange1LiabilitiesRelieved": 30000,
+    "likeKindExchange1LiabilitiesAssumed": 40000,
+    "likeKindExchange1ExchangeExpenses": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line23",
+  "expect": {
+    "valueCents": "500000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line15": "500000",
+      "us.federal.form8824.exchange1.line18": "9000000",
+      "us.federal.form8824.exchange1.line19": "5500000"
+    }
+  }
+}

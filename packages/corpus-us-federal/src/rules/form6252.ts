@@ -24,7 +24,9 @@
  * sales of depreciable property to a related person, § 453A interest on
  * deferred tax, § 453B dispositions of the obligation, repossessions, a
  * like-kind exchange with an installment obligation (§ 453(f)(6)), and
- * depreciated capital assets (worksheet line 12).
+ * depreciated capital assets (worksheet line 12). § 453(g) (property depreciable
+ * in the buyer's hands sold to a § 453(g)(3) related person — a controlled
+ * entity or trust, not a family member) is asked on related-party sales.
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
@@ -61,7 +63,6 @@ const onSlot = (i: number, cond: Expr): Expr => iff(active(i), cond, FALSE);
 const amt = (i: number, name: string): Expr => iff(active(i), sf(i, name), zero);
 const kindIs = (i: number, k: string): Expr => onSlot(i, cmp("eq", sf(i, "Kind"), enumV(k)));
 const business = (i: number): Expr => onSlot(i, cmp("ne", sf(i, "Kind"), enumV("capital")));
-const depreciable = (i: number): Expr => or(kindIs(i, "section1245"), kindIs(i, "section1250"));
 const longTerm = (i: number): Expr => onSlot(i, sf(i, "HeldOverOneYear"));
 const yearOfSale = (i: number): Expr => onSlot(i, sf(i, "YearOfSale"));
 const bpsGiven = (i: number): Expr => onSlot(i, cmp("gt", sf(i, "GrossProfitPercentageBps"), int("0")));
@@ -109,8 +110,9 @@ const gpApply = (i: number, payments: Expr): Expr =>
     mulDiv(payments, S(i, "line16"), S(i, "line18")),
   );
 
+// a slot past installmentSales has no sale: $0, and nothing is asked or divided
 const scopeChecks = (i: number, value: Expr): Expr =>
-  iff(active(i), saleChecks(i, value), value);
+  iff(active(i), saleChecks(i, value), zero);
 
 const saleChecks = (i: number, value: Expr): Expr =>
   iff(
@@ -123,8 +125,8 @@ const saleChecks = (i: number, value: Expr): Expr =>
         and(gt0(amt(i, "ExcludedGain")), not(kindIs(i, "capital"))),
         unsupported(`installment sale ${i}: a § 121 main-home exclusion (line 15) applies only to a capital asset — a home used partly for business is two sales`),
         iff(
-          iff(depreciable(i), sf(i, "RelatedParty"), FALSE),
-          unsupported(`installment sale ${i} is depreciable property sold to a related person: § 453(g) denies the installment method (all payments are treated as received in the year of sale) unless the IRS agrees there was no tax-avoidance purpose — report it as a sale`),
+          iff(sf(i, "RelatedParty"), sf(i, "DepreciableToControlledBuyer"), FALSE),
+          unsupported(`installment sale ${i} is property depreciable in the buyer's hands sold to a § 453(g)(3) related person (a controlled entity or trust): § 453(g) denies the installment method (all payments are treated as received in the year of sale) unless the IRS agrees there was no tax-avoidance purpose — report it as a sale`),
           iff(
             cmp("le", S(i, "line14"), zero),
             unsupported(`installment sale ${i} is not at a gain (Form 6252 line 14 is zero or less): a loss can't use the installment method — report the sale in the Form 4797 or capital loss facts`),
@@ -214,7 +216,7 @@ const saleRules = (i: number): Rule[] => [
     s(i, "line35"),
     `Installment sale ${i}: Form 6252 line 35 — related party second disposition treated as a payment (Part III)`,
     "§ 453(e); Form 6252 Part III lines 28–37",
-    'Form 6252 Part III: "28 Did the related party resell or dispose of the property (“second disposition”) during this tax year?"; "30 Selling price of property sold by related party"; "31 Enter contract price from line 18 for year of first sale"; "32 Enter the smaller of line 30 or line 31"; "33 Total payments received by the end of this tax year"; "34 Subtract line 33 from line 32. If zero or less, enter -0-"; "35 Multiply line 34 by the gross profit percentage on line 19 for year of first sale". Line 33: "Enter the sum of lines 22 and 23 from Part II." § 453(e)(1): "the amount realized with respect to such second disposition shall be treated as received at the time of the second disposition by the person who made the first disposition." Pub. 537 Example 1: "Lesser of: 1) Amount realized on second disposition, or 2) Contract price on first disposition ... $500,000 Subtract: Sum of payments from Adrian in 2024 and 2025 ... − 200,000 Amount treated as received because of second disposition ... $300,000". [Asked only when the sale was to a related party; installmentSaleNSecondDisposition already excludes the line 29 exceptions. Line 36 is not modeled, so line 37 is line 35.]',
+    'Form 6252 Part III: "28 Did the related party resell or dispose of the property (“second disposition”) during this tax year?"; "30 Selling price of property sold by related party"; "31 Enter contract price from line 18 for year of first sale"; "32 Enter the smaller of line 30 or line 31"; "33 Total payments received by the end of this tax year"; "34 Subtract line 33 from line 32. If zero or less, enter -0-"; "35 Multiply line 34 by the gross profit percentage on line 19 for year of first sale". Line 33: "Enter the sum of lines 22 and 23 from Part II." § 453(e)(1): "the amount realized with respect to such second disposition shall be treated as received at the time of the second disposition by the person making the first disposition." Pub. 537 Example 1: "Lesser of: 1) Amount realized on second disposition, or 2) Contract price on first disposition ... $500,000 Subtract: Sum of payments from Adrian in 2024 and 2025 ... − 200,000 Amount treated as received because of second disposition ... $300,000". [Asked only when the sale was to a related party; installmentSaleNSecondDisposition already excludes the line 29 exceptions. Line 36 is not modeled, so line 37 is line 35.]',
     iff(
       onSlot(i, iff(sf(i, "RelatedParty"), sf(i, "SecondDisposition"), FALSE)),
       scopeChecks(

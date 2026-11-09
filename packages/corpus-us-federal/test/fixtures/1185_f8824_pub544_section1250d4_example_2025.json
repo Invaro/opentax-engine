@@ -1,0 +1,31 @@
+{
+  "description": "Pub. 544 (2025), § 1250: real property (FMV $200,000, adjusted basis $120,000) for real property worth $160,000 and $40,000 cash. The § 1250 QIP given up has a basis of $15,000 and an adjusted basis of $0; § 1250 recapture $10,000; all § 1250 property received. 'Gain recognized on the like-kind exchange $40,000 or section 1250 Recapture $10,000 Less: FMV section 1250 property received (160,000) Section 1250(d)(4)(A) limit $0 The greater of these two amounts, $40,000, is the limit ... so the $10,000 section 1250 recapture is reported as ordinary income.'",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1LikeKindReceivedFmv": 160000,
+    "likeKindExchange1AdjustedBasisGivenUp": 120000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1Section1250Depreciation": 15000,
+    "likeKindExchange1Section1250AdditionalDepreciation": 10000,
+    "likeKindExchange1Section1250Fmv": 15000,
+    "likeKindExchange1Section1250AdjustedBasis": 0,
+    "likeKindExchange1Received1250Fmv": 160000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "4000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "8000000",
+      "us.federal.form8824.exchange1.line20": "4000000",
+      "us.federal.form8824.exchange1.line21": "1000000",
+      "us.federal.form8824.exchange1.line22": "3000000",
+      "us.federal.form8824.exchange1.recapture_1250": "1000000"
+    }
+  }
+}

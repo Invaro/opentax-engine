@@ -1,5 +1,5 @@
 {
-  "description": "§ 453(g) / Pub. 537 Sale of Depreciable Property: 'If you sell depreciable property to certain related persons, you generally can’t report the sale using the installment method.' A building sold to a related party is refused.",
+  "description": "§ 453(g) / Pub. 537 Sale of Depreciable Property: 'If you sell depreciable property to certain related persons, you generally can’t report the sale using the installment method.' A building sold to a corporation you control (a § 453(g)(3) related person, § 1239(b)), depreciable in its hands, is refused.",
   "facts": {
     "filingStatus": "single",
     "wages": 50000,
@@ -12,7 +12,8 @@
     "installmentSale1Depreciation": 50000,
     "installmentSale1PaymentsThisYear": 50000,
     "installmentSale1RelatedParty": true,
-    "installmentSale1Qbi": false
+    "installmentSale1Qbi": false,
+    "installmentSale1DepreciableToControlledBuyer": true
   },
   "asOf": "2025-12-31",
   "target": "us.federal.net_tax",

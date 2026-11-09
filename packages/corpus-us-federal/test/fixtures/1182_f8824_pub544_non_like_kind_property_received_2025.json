@@ -1,0 +1,22 @@
+{
+  "description": "Pub. 544 (2025), Non-like-kind property received: real estate (FMV $20,000, adjusted basis $16,000) for real estate worth $18,000 and other property worth $2,000. 'Realized gain $4,000 Recognized gain $2,000'.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "capital",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 18000,
+    "likeKindExchange1AdjustedBasisGivenUp": 16000,
+    "likeKindExchange1OtherPropertyReceivedFmv": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "200000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "400000",
+      "us.federal.form8824.exchange1.line23": "200000"
+    }
+  }
+}

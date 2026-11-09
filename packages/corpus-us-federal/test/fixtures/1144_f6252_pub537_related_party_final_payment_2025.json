@@ -13,7 +13,8 @@
     "installmentSale1Qbi": false,
     "installmentSale1PaymentsThisYear": 100000,
     "installmentSale1PaymentsPriorYears": 400000,
-    "installmentSale1SecondDisposition": false
+    "installmentSale1SecondDisposition": false,
+    "installmentSale1DepreciableToControlledBuyer": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.form6252.sale1.income",
