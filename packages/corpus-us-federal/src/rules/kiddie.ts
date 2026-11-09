@@ -109,12 +109,13 @@ function kiddieTaxRule(version: number, from: string, to: string, year: TaxYear)
             { kind: "cmp", op: "gt", left: fact("longTermCapitalLoss"), right: zero },
             { kind: "cmp", op: "gt", left: fact("netCapitalLoss"), right: zero },
             { kind: "cmp", op: "ne", left: ruleRef("us.federal.passive.net"), right: zero },
+            { kind: "cmp", op: "gt", left: ruleRef("us.federal.form4797.present"), right: zero },
           ],
         },
         then: {
           kind: "unsupported",
           reason:
-            "a § 1(g) child with capital gains/losses, qualified dividends, ordinary dividends or passive activity income (unearned income, § 1(g)(4)) needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income ≈ taxable interest' approximation would silently drop — not modeled",
+            "a § 1(g) child with capital gains/losses, qualified dividends, ordinary dividends, passive activity income or business property sales (unearned income, § 1(g)(4)) needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income ≈ taxable interest' approximation would silently drop — not modeled",
         },
         else: {
           kind: "if",
@@ -204,10 +205,10 @@ export const kiddieRules: Rule[] = [
   // v5/v6: the refusal guard also catches shortTermCapitalGains/ordinaryDividends (unearned income
   // the "unearned income ≈ taxable interest" approximation in net_unearned_income would otherwise drop)
   // v5/v6: the refusal guard predated the per-bucket capital-loss facts and netCapitalLoss
-  // v7–v9 did not refuse a child with passive activity income
-  kiddieTaxRule(10, "2025-01-01", "2026-01-01", "2025"),
-  kiddieTaxRule(11, "2026-01-01", "2027-01-01", "2026"),
-  kiddieTaxRule(12, "2027-01-01", "2028-01-01", "2027"),
+  // v7–v9 did not refuse a child with passive activity income; v10–v12 a child with Form 4797 sales
+  kiddieTaxRule(13, "2025-01-01", "2026-01-01", "2025"),
+  kiddieTaxRule(14, "2026-01-01", "2027-01-01", "2026"),
+  kiddieTaxRule(15, "2027-01-01", "2028-01-01", "2027"),
   {
     id: "us.federal.income_tax_before_credits.kiddie",
     version: 1,

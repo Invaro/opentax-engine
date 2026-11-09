@@ -1,0 +1,23 @@
+{
+  "description": "§ 1250(a), (b)(1); Form 4797 line 26: § 1250 property with $100,000 of depreciation, $90,000 of it in excess of straight line (e.g. a special allowance), sold for $80,000 with a $100,000 cost: gain $80,000, all ordinary (the smaller of the gain or the additional depreciation, at 100%), and no unrecaptured § 1250 gain left.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 80000,
+    "businessProperty1CostBasis": 100000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1AdditionalDepreciation": 90000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "valueCents": "8000000",
+    "intermediates": {
+      "us.federal.form4797.property1.recapture": "8000000"
+    }
+  }
+}

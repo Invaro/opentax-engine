@@ -421,3 +421,21 @@ describe("compute_return: Form 8582-CR and Form 3800", () => {
     expect(r.forms && (r.forms as Record<string, unknown>)["8582-CR"]).toBeUndefined();
   });
 });
+
+describe("compute_return: Form 4797", () => {
+  it("a rental sold with $100,000 of straight-line depreciation: $150,000 to Schedule D, $100,000 unrecaptured § 1250 gain at up to 25%", async () => {
+    const r = await call("compute_return", single({ box1: "250000", box2: "60000" }, {
+      business_property: {
+        businessProperties: 1, businessProperty1Kind: "section1250", businessProperty1HeldOverOneYear: true,
+        businessProperty1SalesPrice: 350000, businessProperty1CostBasis: 300000, businessProperty1Depreciation: 100000,
+        businessProperty1Qbi: false, businessProperty1NetInvestmentIncome: true,
+      },
+    }));
+    expect(r.ok).toBe(true);
+    expect(lines(r)["16_tax"]).toBe("$84,523.00");
+    const f = (r.forms as Record<string, Record<string, unknown>>)["4797"];
+    expect(f["9_to_schedule_d_line_11"]).toBe("$150,000.00");
+    expect(f["unrecaptured_section_1250_schedule_d_line_19"]).toBe("$100,000.00");
+    expect(f.properties).toEqual([{ property: 1, gain_or_loss: "$150,000.00", recapture: "$0.00", section_1231: "$150,000.00" }]);
+  });
+});

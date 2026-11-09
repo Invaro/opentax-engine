@@ -1,0 +1,20 @@
+{
+  "description": "§ 1411(c)(1)(A)(iii): a rental that isn't a trade or business — its $150,000 gain is net investment income. Single, wages $250,000; MAGI 400,000 − 200,000 = 200,000 → NIIT 3.8% x 150,000 = $5,700.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false,
+    "businessProperty1NetInvestmentIncome": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "570000"
+  }
+}

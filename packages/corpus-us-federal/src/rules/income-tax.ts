@@ -386,6 +386,90 @@ export function regularTaxOnExpr(ti: Expr, year: TaxYear): Expr {
   };
 }
 
+/**
+ * Schedule D Tax Worksheet (2025 Instructions for Schedule D), lines 1–47, for a return with
+ * unrecaptured § 1250 gain (Schedule D line 19). No 28% rate gain and no Form 4952 line 4g
+ * election are modeled, so lines 3–5, 8 and 41–43 are zero. Line 19 is the top of the 24%
+ * bracket — "taxable income taxed at a rate below 28 percent" (§ 1(h)(1)(B)(ii)(I), with
+ * § 1(j)) — which the printed 2025 worksheet shows as $197,300 / $394,600.
+ */
+function scheduleDWorksheetTax(sy: StatusYear): Expr {
+  const add = (...args: Expr[]): Expr => ({ kind: "add", args });
+  const sub = (left: Expr, right: Expr): Expr => ({ kind: "sub", left, right });
+  const max0 = (arg: Expr): Expr => ({ kind: "max0", arg });
+  const min = (...args: Expr[]): Expr => ({ kind: "min", args });
+  const max = (...args: Expr[]): Expr => ({ kind: "max", args });
+  const pctOf = (e: Expr, n: string): Expr => ({ kind: "mulRate", base: e, rate: { num: n, den: "100" }, round: "half-up" });
+  const top24 = sy.brackets.find((b) => b.rate.num === "32")!.threshold;
+  const ordTax = (base: Expr): Expr => ({
+    kind: "if",
+    cond: {
+      kind: "and",
+      args: [
+        { kind: "cmp", op: "lt", left: base, right: money("10000000") }, // Tax Table under $100,000
+        { kind: "not", arg: fact("useFormulaMethod") },
+      ],
+    },
+    then: { kind: "roundToDollar", value: { kind: "brackets", base: bandMidpoint(base), table: sy.brackets }, mode: "half-up" },
+    else: { kind: "brackets", base, table: sy.brackets },
+  });
+  const L1 = taxable;
+  const L6 = fact("qualifiedDividends");
+  const L9 = ruleRef("us.federal.schedule_d.preferential_lt_gain"); // line 7 = smaller of Schedule D lines 15 and 16
+  const L10 = add(L6, L9);
+  const unrecap = ruleRef("us.federal.schedule_d.unrecaptured_1250");
+  const L12 = min(L9, unrecap); // line 11 = lines 18 + 19 of Schedule D (no 28% gain)
+  const L13 = sub(L10, L12);
+  const L14 = max0(sub(L1, L13));
+  const L16 = min(L1, d(sy.zeroMax));
+  const L17 = min(L14, L16);
+  const L18 = max0(sub(L1, L10));
+  const L20 = min(L14, min(L1, money(top24)));
+  const L21 = max(L18, L20);
+  const L22 = sub(L16, L17);
+  const L23 = min(L1, L13);
+  const L25 = max0(sub(L23, L22));
+  const L29 = max0(sub(min(L1, d(sy.fifteenMax)), add(L21, L22)));
+  const L30 = min(L25, L29);
+  const L32 = add(L22, L30);
+  const L33 = max0(sub(L23, L32));
+  const L38 = max0(sub(add(L10, L21), L1));
+  const L39 = max0(sub(min(L9, unrecap), L38));
+  const L45 = add(pctOf(L30, "15"), pctOf(L33, "20"), pctOf(L39, "25"), ordTax(L21));
+  return min(L45, ordTax(L1));
+}
+
+function scheduleDWorksheetRule(version: number, from: string, to: string, tables: YearTables, yearLabel: string): Rule {
+  return {
+    id: "us.federal.income_tax_before_credits.schedule_d_worksheet",
+    version,
+    jurisdiction: "us.federal",
+    title: `Schedule D Tax Worksheet — tax with unrecaptured § 1250 gain at up to 25% (${yearLabel})`,
+    citation: {
+      source: "26 U.S.C. § 1(h)(1)(E), (h)(6); 2025 Instructions for Schedule D (Form 1040), Schedule D Tax Worksheet",
+      section: "§ 1(h)(1); Schedule D Tax Worksheet lines 1–47",
+      url: "https://www.irs.gov/forms-pubs/about-schedule-d-form-1040",
+      excerpt: `"Complete this worksheet only if line 18 or line 19 of Schedule D is more than zero and lines 15 and 16 of Schedule D are gains". "11. Add lines 18 and 19 of Schedule D"; "12. Enter the smaller of line 9 or line 11"; "13. Subtract line 12 from line 10"; "19. Enter the smaller of line 1 or: $197,300 if single or married filing separately; $394,600 if married filing jointly or qualifying surviving spouse; or $197,300 if head of household"; "35. Enter the smaller of line 9 above or Schedule D, line 19"; "38. Subtract line 37 from line 36"; "39. Subtract line 38 from line 35"; "40. Multiply line 39 by 25% (0.25)"; "44. Figure the tax on the amount on line 21. If the amount on line 21 is less than $100,000, use the Tax Table"; "47. Tax on all taxable income ... Enter the smaller of line 45 or line 46." § 1(h)(1)(E): "25 percent of the excess (if any) of— (i) the unrecaptured section 1250 gain (or, if less, the net capital gain (determined without regard to paragraph (11))), over (ii) the excess (if any) of— (I) the sum of the amount on which tax is determined under subparagraph (A) plus the net capital gain, over (II) taxable income". [Line 19 for ${yearLabel} is the start of the 32% bracket in the year’s rate table. Not modeled: 28% rate gain (Schedule D line 18) and the Form 4952 line 4g election.]`,
+    },
+    effectiveFrom: from,
+    effectiveTo: to,
+    output: { type: "money" },
+    applicability: {
+      kind: "and",
+      args: [
+        { kind: "cmp", op: "gt", left: ruleRef("us.federal.schedule_d.unrecaptured_1250"), right: money("0") },
+        { kind: "cmp", op: "gt", left: ruleRef("us.federal.schedule_d.preferential_lt_gain"), right: money("0") },
+      ],
+    },
+    formula: {
+      kind: "match",
+      on: fact("filingStatus"),
+      cases: (["single", "mfj", "hoh", "mfs", "qss"] as const).map((s) => ({ when: s, value: scheduleDWorksheetTax(tables[s]) })),
+    },
+    overrides: { ruleId: "us.federal.income_tax_before_credits", priority: 12 }, // above the Tax Table (10); FEIE stacking (15) and kiddie (20) refuse capital gains
+  };
+}
+
 export const incomeTaxRules: Rule[] = [
   {
     id: "us.federal.ordinary_taxable_income",
@@ -446,4 +530,7 @@ export const incomeTaxRules: Rule[] = [
     3, "2027-01-01", "2028-01-01", TY2027, "2027",
     "The official 2027 table publishes with the 2027 filing season; entries here are computed by the same published method over the 2027 brackets (Rev. Proc. 2026-35 § 3.01).",
   ),
+  scheduleDWorksheetRule(1, "2025-01-01", "2026-01-01", TY2025, "2025"),
+  scheduleDWorksheetRule(2, "2026-01-01", "2027-01-01", TY2026, "2026"),
+  scheduleDWorksheetRule(3, "2027-01-01", "2028-01-01", TY2027, "2027"),
 ];

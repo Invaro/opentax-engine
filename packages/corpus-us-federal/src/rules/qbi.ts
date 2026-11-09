@@ -40,6 +40,7 @@ const hasBusinessIncome: Expr = {
     { kind: "cmp", op: "gt", left: ruleRef("us.federal.se_net_profit"), right: zero },
     { kind: "cmp", op: "gt", left: fact("k1OrdinaryBusinessIncome"), right: zero },
     { kind: "cmp", op: "gt", left: ruleRef("us.federal.passive.qbi_net"), right: zero },
+    { kind: "cmp", op: "gt", left: ruleRef("us.federal.form4797.qbi_net"), right: zero },
   ],
 };
 
@@ -110,19 +111,19 @@ function qbiRule(
 
 export const qbiRules: Rule[] = [
   qbiRule(
-    16, // v13–v15 did not open the deduction for passive activity QBI alone. v11 computed one business above the threshold and refused two spouses' businesses; v13 sums each business's component (us.federal.qbi.total_component). v9 counted one self-employed person; v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit
+    19, // v16–v18 did not open the deduction for Form 4797 QBI alone. v13–v15 did not open the deduction for passive activity QBI alone. v11 computed one business above the threshold and refused two spouses' businesses; v13 sums each business's component (us.federal.qbi.total_component). v9 counted one self-employed person; v7 counted qualifiedDividends in the § 199A(a)(2)/(e)(3) overall limit
     "2025-01-01", "2026-01-01", "2025",
     "Rev. Proc. 2024-40 § 2.27",
     null,
   ),
   qbiRule(
-    17, // v14 did not open the deduction for passive activity QBI alone. v12 computed one business above the threshold and refused two spouses' businesses; v14 sums each business's component. v10 counted one self-employed person; v8 counted qualifiedDividends in the overall limit
+    20, // v17 did not open the deduction for Form 4797 QBI alone. v14 did not open the deduction for passive activity QBI alone. v12 computed one business above the threshold and refused two spouses' businesses; v14 sums each business's component. v10 counted one self-employed person; v8 counted qualifiedDividends in the overall limit
     "2026-01-01", "2027-01-01", "2026",
     "Rev. Proc. 2025-32 § 4.26; OBBBA § 70105 (range + $400 minimum)",
     { deductionCents: "40000", testCents: "100000" }, // $400 when active QBI ≥ $1,000
   ),
   qbiRule(
-    18, // v15 did not open the deduction for passive activity QBI alone
+    21, // v18 did not open the deduction for Form 4797 QBI alone; v15 for passive activity QBI alone
     "2027-01-01", "2028-01-01", "2027",
     "Rev. Proc. 2026-35 § 3.28; OBBBA § 70105",
     { deductionCents: "41500", testCents: "103000" }, // $415 when active QBI ≥ $1,030 (§ 3.28(2))

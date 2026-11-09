@@ -1,0 +1,22 @@
+{
+  "description": "With modified AGI under the $200,000 threshold no NIIT is possible, so whether the property's gain is investment income is never asked.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 20000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "0",
+    "notAssumedFacts": [
+      "businessProperty1NetInvestmentIncome"
+    ]
+  }
+}

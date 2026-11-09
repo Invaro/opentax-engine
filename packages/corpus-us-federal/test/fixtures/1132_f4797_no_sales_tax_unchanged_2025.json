@@ -1,0 +1,16 @@
+{
+  "description": "Without Form 4797 amounts nothing changes and nothing is asked: single, wages $60,000 → tax $5,075.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "507500",
+    "notAssumedFacts": [
+      "businessProperty1Kind",
+      "k1Section1231NetInvestmentIncome"
+    ]
+  }
+}

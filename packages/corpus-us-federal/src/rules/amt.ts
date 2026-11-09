@@ -73,6 +73,9 @@ const add = (...args: Expr[]): Expr => ({ kind: "add", args });
 const sub = (left: Expr, right: Expr): Expr => ({ kind: "sub", left, right });
 const max0 = (arg: Expr): Expr => ({ kind: "max0", arg });
 const min = (...args: Expr[]): Expr => ({ kind: "min", args });
+const max = (...args: Expr[]): Expr => ({ kind: "max", args });
+const tmtIf = (cond: Expr, then: Expr, els: Expr): Expr => ({ kind: "if", cond, then, else: els });
+const isPositive = (e: Expr): Expr => ({ kind: "cmp", op: "gt", left: e, right: money("0") });
 const pct = (base: Expr, num: string, den = "100"): Expr => ({
   kind: "mulRate",
   base,
@@ -318,19 +321,32 @@ function exemptionRule(version: number, y: AmtYear): Rule {
 }
 
 function tmtRule(version: number, y: AmtYear): Rule {
-  // Part III, lines 16–40 (lines 14 and 35–37 are zero without a Schedule D Tax Worksheet)
-  const line16 = min(line12, line13);
+  // Part III, lines 12–40. Line 13 is the Schedule D Tax Worksheet's line 13 (qualified dividends
+  // and net capital gain less the unrecaptured § 1250 gain), line 14 the unrecaptured § 1250 gain;
+  // with none, line 15 is line 13 and lines 35–37 are zero, as on the Qualified Dividends worksheet
+  const unrecap = ruleRef("us.federal.schedule_d.unrecaptured_1250");
+  const sdLine10 = add(ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends"));
+  const line15 = tmtIf(isPositive(unrecap), min(add(line13, unrecap), sdLine10), line13);
+  const line16 = min(line12, line15);
   const line17 = sub(line12, line16);
   const line18 = tax2628(line17);
-  const bands = (s: { zeroMax: number; fifteenMax: number }): Expr => {
-    const line21 = max0(sub(d(s.zeroMax), qdcgLine5));
+  const taxable = ruleRef("us.federal.taxable_income");
+  const bands = (s: { zeroMax: number; fifteenMax: number; brackets: { threshold: string; rate: { num: string } }[] }): Expr => {
+    // lines 20 and 27: Schedule D Tax Worksheet lines 14 and 21 as figured for the regular tax
+    // (the Qualified Dividends worksheet's line 5 when there is no unrecaptured § 1250 gain)
+    const top24 = money(s.brackets.find((b) => b.rate.num === "32")!.threshold);
+    const sdLine14 = tmtIf(isPositive(unrecap), max0(sub(taxable, line13)), qdcgLine5);
+    const sdLine21 = tmtIf(isPositive(unrecap), max(max0(sub(taxable, sdLine10)), min(sdLine14, min(taxable, top24))), qdcgLine5);
+    const line21 = max0(sub(d(s.zeroMax), sdLine14));
     const line22 = min(line12, line13);
     const line23 = min(line21, line22);
     const line24 = sub(line22, line23);
-    const line29 = max0(sub(d(s.fifteenMax), add(line21, qdcgLine5)));
+    const line29 = max0(sub(d(s.fifteenMax), add(line21, sdLine21)));
     const line30 = min(line24, line29);
-    const line33 = sub(line22, add(line23, line30));
-    return add(pct(line30, "15"), pct(line33, "20"));
+    const line32 = add(line23, line30);
+    const line33 = sub(line22, line32);
+    const line36 = tmtIf(isPositive(unrecap), max0(sub(line12, add(line17, line32, line33))), money("0"));
+    return add(pct(line30, "15"), pct(line33, "20"), pct(line36, "25"));
   };
   const line38 = add(line18, {
     kind: "match",
@@ -349,7 +365,7 @@ function tmtRule(version: number, y: AmtYear): Rule {
       source: `26 U.S.C. § 55(b)(1), (b)(3); ${y.source}`,
       section: "§ 55(b)(1)(A), (b)(3); Form 6251 lines 12–40",
       url: F6251_URL,
-      excerpt: `Line 13: "Enter the amount from line 4 of the Qualified Dividends and Capital Gain Tax Worksheet"; line 16: "Enter the smaller of line 12 or line 15"; lines 20 and 27: the worksheet's line 5; line 22: "Enter the smaller of line 12 or line 13"; line 40: "Enter the smaller of line 38 or line 39". ${y.amountsNote} The 0% band ends at $${y.cg.single.zeroMax.toLocaleString("en-US")} single / $${y.cg.mfj.zeroMax.toLocaleString("en-US")} joint / $${y.cg.hoh.zeroMax.toLocaleString("en-US")} HoH / $${y.cg.mfs.zeroMax.toLocaleString("en-US")} MFS and the 15% band at $${y.cg.single.fifteenMax.toLocaleString("en-US")} / $${y.cg.mfj.fifteenMax.toLocaleString("en-US")} / $${y.cg.hoh.fifteenMax.toLocaleString("en-US")} / $${y.cg.mfs.fifteenMax.toLocaleString("en-US")}. [Not modeled, disclosed: the Schedule D Tax Worksheet (unrecaptured § 1250 and 28% gain), AMT refiguring of line 13, the AMT foreign tax credit (line 8).]`,
+      excerpt: `Line 13: "Enter the amount from line 4 of the Qualified Dividends and Capital Gain Tax Worksheet"; line 16: "Enter the smaller of line 12 or line 15"; lines 20 and 27: the worksheet's line 5; line 22: "Enter the smaller of line 12 or line 13"; line 40: "Enter the smaller of line 38 or line 39". ${y.amountsNote} The 0% band ends at $${y.cg.single.zeroMax.toLocaleString("en-US")} single / $${y.cg.mfj.zeroMax.toLocaleString("en-US")} joint / $${y.cg.hoh.zeroMax.toLocaleString("en-US")} HoH / $${y.cg.mfs.zeroMax.toLocaleString("en-US")} MFS and the 15% band at $${y.cg.single.fifteenMax.toLocaleString("en-US")} / $${y.cg.mfj.fifteenMax.toLocaleString("en-US")} / $${y.cg.hoh.fifteenMax.toLocaleString("en-US")} / $${y.cg.mfs.fifteenMax.toLocaleString("en-US")}. Line 14: "Enter the amount from Schedule D (Form 1040), line 19"; line 15: "add lines 13 and 14, and enter the smaller of that result or the amount from line 10 of the Schedule D Tax Worksheet"; lines 20 and 27: "the amount from line 14 [line 21] of the Schedule D Tax Worksheet"; "35 Add lines 17, 32, and 33"; "36 Subtract line 35 from line 12"; "37 Multiply line 36 by 25% (0.25)". [Not modeled, disclosed: 28% rate gain, AMT refiguring of lines 13 and 14, the AMT foreign tax credit (line 8).]`,
     },
     effectiveFrom: y.from,
     effectiveTo: y.to,
@@ -389,22 +405,26 @@ export const amtRules: Rule[] = [
   },
   {
     id: "us.federal.amt.capital_gain_amount",
-    version: 1,
+    version: 2, // v1 had no unrecaptured § 1250 gain (Schedule D Tax Worksheet line 13)
     jurisdiction: J,
-    title: "Form 6251 line 13: net capital gain plus qualified dividends (QDCG worksheet line 4, not limited to taxable income)",
+    title: "Form 6251 line 13: net capital gain plus qualified dividends less the unrecaptured § 1250 gain (QDCG worksheet line 4 / Schedule D Tax Worksheet line 13, not limited to taxable income)",
     citation: {
       source: "26 U.S.C. § 55(b)(3); § 1(h)(3), (h)(11); Form 6251 line 13",
       section: "§ 55(b)(3); Form 6251 line 13",
       url: F6251_URL,
-      excerpt: "Line 13: \"Enter the amount from line 4 of the Qualified Dividends and Capital Gain Tax Worksheet in the Instructions for Form 1040\". Worksheet line 4 adds qualified dividends (line 2) and the smaller of Schedule D line 15 or 16 (line 3); taxable income enters only at line 5.",
+      excerpt: "Line 13: \"Enter the amount from line 4 of the Qualified Dividends and Capital Gain Tax Worksheet in the Instructions for Form 1040\". Worksheet line 4 adds qualified dividends (line 2) and the smaller of Schedule D line 15 or 16 (line 3); taxable income enters only at line 5. With unrecaptured § 1250 gain, line 13 is \"the amount from line 13 of the Schedule D Tax Worksheet\": lines 6 and 9 less \"the smaller of line 9 or line 11\" (line 11 is Schedule D lines 18 + 19; no 28% gain is modeled). [Not refigured for the AMT.]",
     },
     effectiveFrom: "2025-01-01",
     output: { type: "money" },
-    formula: add(ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends")),
+    formula: sub(
+      add(ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends")),
+      min(ruleRef("us.federal.schedule_d.preferential_lt_gain"), ruleRef("us.federal.schedule_d.unrecaptured_1250")),
+    ),
   },
-  tmtRule(1, Y2025),
-  tmtRule(2, Y2026),
-  tmtRule(3, Y2027),
+  // v1–v3 had no unrecaptured § 1250 gain (lines 14 and 35–37)
+  tmtRule(4, Y2025),
+  tmtRule(5, Y2026),
+  tmtRule(6, Y2027),
   {
     id: "us.federal.amt",
     version: 3, // v1/v2 capped line 13 at taxable income, never applied line 39, floored line 1 at zero, applied § 59(j) and skipped the MFS add-back

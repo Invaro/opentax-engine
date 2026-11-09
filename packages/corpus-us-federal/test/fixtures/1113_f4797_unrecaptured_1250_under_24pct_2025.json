@@ -1,0 +1,22 @@
+{
+  "description": "Schedule D Tax Worksheet: a rental building bought for $300,000, $100,000 of straight-line depreciation, sold for $350,000 — $150,000 § 1231 gain to Schedule D, $100,000 unrecaptured § 1250 gain. Single, wages $100,000, taxable income 234,250: lines 18–21 put the $100,000 in line 21 (184,250, under the $197,300 top of the 24% bracket), line 39 is zero, so the unrecaptured gain is taxed at ordinary rates below 25%: 7,500 (15% of 50,000) + tax on 184,250 (37,067) = $44,567, under the regular tax $52,023.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "4456700",
+    "intermediates": {
+      "us.federal.schedule_d.unrecaptured_1250": "10000000"
+    }
+  }
+}

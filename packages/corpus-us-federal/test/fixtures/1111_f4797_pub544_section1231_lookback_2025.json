@@ -1,0 +1,22 @@
+{
+  "description": "Pub. 544 (2025), nonrecaptured § 1231 losses: a $2,000 net § 1231 gain in 2025 with $700 of net § 1231 loss left from 2020–2024 ($2,500 in 2022 less the $1,800 gain of 2024): '$700 Gain treated as ordinary income', '$1,300 Gain treated as long-term capital gain' (Form 4797 lines 8, 9 and 12).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "section1231LookbackLosses": 700,
+    "businessProperty1Kind": "other",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 12000,
+    "businessProperty1CostBasis": 10000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line9",
+  "expect": {
+    "valueCents": "130000",
+    "intermediates": {
+      "us.federal.form4797.line12": "70000"
+    }
+  }
+}

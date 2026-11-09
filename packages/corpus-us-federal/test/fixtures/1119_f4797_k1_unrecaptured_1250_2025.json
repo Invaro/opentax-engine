@@ -1,0 +1,14 @@
+{
+  "description": "Unrecaptured Section 1250 Gain Worksheet line 5: a $50,000 K-1 § 1231 gain of which $20,000 is unrecaptured § 1250 gain → Schedule D line 19 = $20,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "k1Section1231Gain": 50000,
+    "k1UnrecapturedSection1250Gain": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "2000000"
+  }
+}

@@ -49,7 +49,7 @@ const amThreshold: Expr = {
 export const investmentTaxRules: Rule[] = [
   {
     id: "us.federal.niit",
-    version: 8, // v7 had no passive activities (§ 469 by activity): passive trade or business and rental results, released suspended losses included, are Form 8960 line 4a. v6 left net rental income out of net investment income; § 1411(c)(1)(A)(i) rents now count (Form 8960 line 4a) unless rentalNotInvestmentIncome
+    version: 9, // v8 had no Form 4797 gains (Form 8960 lines 5a/5b). v7 had no passive activities (§ 469 by activity): passive trade or business and rental results, released suspended losses included, are Form 8960 line 4a. v6 left net rental income out of net investment income; § 1411(c)(1)(A)(i) rents now count (Form 8960 line 4a) unless rentalNotInvestmentIncome
     jurisdiction: "us.federal",
     title:
       "Net investment income tax (investment income = interest + capital gains (LT/ST) + dividends (qualified/ordinary) + net rental income − allocable deductions; MAGI ≈ AGI)",
@@ -58,7 +58,7 @@ export const investmentTaxRules: Rule[] = [
       section: "§ 1411(a)(1), (b), (c)(1)",
       url: "https://www.law.cornell.edu/uscode/text/26/1411",
       excerpt:
-        "…a tax equal to 3.8 percent of the lesser of (A) net investment income… or (B) the excess (if any) of modified adjusted gross income… over the threshold amount [$250,000 joint return or surviving spouse; $125,000 married filing separately; $200,000 otherwise — not indexed]. Net investment income is the excess of the gross investment income items 'over (B) the deductions allowed by this subtitle which are properly allocable to such gross income or net gain' (§ 1411(c)(1), verbatim) — investment interest expense, allocable state tax, and other Form 8960 line 9–10 amounts enter through niitInvestmentExpenses. Gross income from rents is investment income (§ 1411(c)(1)(A)(i)) unless derived in the ordinary course of a trade or business that is not passive (§ 1411(c)(2)(A)): Form 8960 line 4a takes the rental net, and line 4b removes a real estate professional's nonpassive rental trade or business (rentalNotInvestmentIncome). Passive activities (§ 1411(c)(2)(A)) enter through us.federal.passive.niit_net after the § 469 limits: their income less allowed losses, suspended losses released this year included (Reg. § 1.1411-4(f)(2), (g)(9)), less significant participation income recharacterized as nonpassive (Reg. § 1.1411-5(b)(2)(i)); gains on disposing of their property are in the capital facts. Scope, disclosed: the rental enters through us.federal.rental.net_income, which is never a loss; scheduleENetIncome is nonpassive by its definition and stays out.",
+        "…a tax equal to 3.8 percent of the lesser of (A) net investment income… or (B) the excess (if any) of modified adjusted gross income… over the threshold amount [$250,000 joint return or surviving spouse; $125,000 married filing separately; $200,000 otherwise — not indexed]. Net investment income is the excess of the gross investment income items 'over (B) the deductions allowed by this subtitle which are properly allocable to such gross income or net gain' (§ 1411(c)(1), verbatim) — investment interest expense, allocable state tax, and other Form 8960 line 9–10 amounts enter through niitInvestmentExpenses. Gross income from rents is investment income (§ 1411(c)(1)(A)(i)) unless derived in the ordinary course of a trade or business that is not passive (§ 1411(c)(2)(A)): Form 8960 line 4a takes the rental net, and line 4b removes a real estate professional's nonpassive rental trade or business (rentalNotInvestmentIncome). Passive activities (§ 1411(c)(2)(A)) enter through us.federal.passive.niit_net after the § 469 limits: their income less allowed losses, suspended losses released this year included (Reg. § 1.1411-4(f)(2), (g)(9)), less significant participation income recharacterized as nonpassive (Reg. § 1.1411-5(b)(2)(i)); gains on disposing of their property are in the capital facts. Form 4797: its § 1231 gain is in the Schedule D amounts and its ordinary gain or loss (Schedule 1 line 4) is added (Form 8960 line 5a); gains and losses on property held in a nonpassive trade or business come out (line 5b, us.federal.form4797.niit_excluded). With modified AGI at or under the threshold the tax is zero and net investment income isn't figured. Scope, disclosed: the rental enters through us.federal.rental.net_income, which is never a loss; scheduleENetIncome is nonpassive by its definition and stays out.",
     },
     ...FROM,
     output: { type: "money" },
@@ -96,6 +96,10 @@ export const investmentTaxRules: Rule[] = [
                     // passive activities after § 469 (Form 8960 line 4a; § 469(g) and
                     // released suspended losses are properly allocable deductions)
                     ruleRef("us.federal.passive.niit_net"),
+                    // Form 8960 line 5a: Form 4797's ordinary gain or loss (Schedule 1 line 4) —
+                    // its § 1231 gain is already in the Schedule D amounts above — less line 5b,
+                    // the properties held in a nonpassive trade or business
+                    { kind: "sub", left: ruleRef("us.federal.form4797.line17"), right: ruleRef("us.federal.form4797.niit_excluded") },
                   ],
                 },
                 right: fact("niitInvestmentExpenses"),
@@ -110,11 +114,18 @@ export const investmentTaxRules: Rule[] = [
         rate: { num: "38", den: "1000" },
         round: "half-up",
       };
-      return {
+      const result: Expr = {
         kind: "if",
         cond: fact("useFormulaMethod"),
         then: tax,
         else: { kind: "roundToDollar", value: tax, mode: "half-up" }, // Form 8960 line 17, whole dollars
+      };
+      // modified AGI at or under the threshold: no tax, and net investment income isn't needed
+      return {
+        kind: "if",
+        cond: { kind: "cmp", op: "le", left: ruleRef("us.federal.agi"), right: threshold },
+        then: money("0"),
+        else: result,
       };
     })(),
   },

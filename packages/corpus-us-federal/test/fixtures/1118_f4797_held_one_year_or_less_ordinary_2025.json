@@ -1,0 +1,22 @@
+{
+  "description": "Form 4797 line 10: equipment held 1 year or less — its $2,000 gain is ordinary (Part II), not § 1231.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1245",
+    "businessProperty1HeldOverOneYear": false,
+    "businessProperty1SalesPrice": 12000,
+    "businessProperty1CostBasis": 11000,
+    "businessProperty1Depreciation": 1000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "valueCents": "200000",
+    "intermediates": {
+      "us.federal.form4797.line7": "0"
+    }
+  }
+}

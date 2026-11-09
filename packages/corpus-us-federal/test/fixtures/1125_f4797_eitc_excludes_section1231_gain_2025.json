@@ -1,0 +1,19 @@
+{
+  "description": "Pub. 596 (2025) Worksheet 1 line 6: 'Enter any gain from Form 4797, line 7' — subtracted from capital gain net income. Head of household, one child, wages $20,000 and a $15,000 § 1231 gain on business land: investment income is $0, and the EITC equals that of the same return with $15,000 of non-investment income ($2,462) — the same gain as a capital gain would exceed the $11,950 limit.",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "wages": 20000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "other",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 40000,
+    "businessProperty1CostBasis": 25000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "246200"
+  }
+}

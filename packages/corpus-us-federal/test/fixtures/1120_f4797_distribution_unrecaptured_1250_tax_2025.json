@@ -1,0 +1,14 @@
+{
+  "description": "Unrecaptured Section 1250 Gain Worksheet line 11 (Form 1099-DIV box 2b): $30,000 of capital gain distributions, $10,000 of them unrecaptured § 1250 gain; single, wages $300,000, taxable income 314,250. Schedule D Tax Worksheet: line 31 = 15% x 20,000 = 3,000; line 39 = 10,000 → line 40 = 2,500; line 44 = tax on 284,250 = 69,034.75; line 45 = $74,534.75 ($1,000 more than 15% on all of it).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 300000,
+    "longTermCapitalGains": 30000,
+    "unrecapturedSection1250GainDistributions": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "7453475"
+  }
+}

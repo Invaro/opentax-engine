@@ -1,0 +1,27 @@
+{
+  "description": "Form 4797 line 7: land sold at a $10,000 gain and equipment at a $4,000 loss (both held over a year) net to a $6,000 § 1231 gain — long-term capital gain on Schedule D line 11; nothing ordinary.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 2,
+    "businessProperty1Kind": "other",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 30000,
+    "businessProperty1CostBasis": 20000,
+    "businessProperty1Qbi": false,
+    "businessProperty2Kind": "section1245",
+    "businessProperty2HeldOverOneYear": true,
+    "businessProperty2SalesPrice": 1000,
+    "businessProperty2CostBasis": 15000,
+    "businessProperty2Depreciation": 10000,
+    "businessProperty2Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line9",
+  "expect": {
+    "valueCents": "600000",
+    "intermediates": {
+      "us.federal.form4797.line7": "600000"
+    }
+  }
+}

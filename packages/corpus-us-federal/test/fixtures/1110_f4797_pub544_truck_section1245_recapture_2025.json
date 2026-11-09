@@ -1,0 +1,23 @@
+{
+  "description": "Pub. 544 (2025), § 1245 example: a light-duty truck bought for $10,000, MACRS deductions $2,000 + $3,200 + $960 = $6,160, sold for $7,000. Adjusted basis $3,840, gain $3,160; 'Gain treated as ordinary income (lesser of line 3 or line 5) $3,160' — Form 4797 line 25b, then line 13 and line 17 to Schedule 1 line 4.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1245",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 7000,
+    "businessProperty1CostBasis": 10000,
+    "businessProperty1Depreciation": 6160,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "valueCents": "316000",
+    "intermediates": {
+      "us.federal.form4797.property1.recapture": "316000",
+      "us.federal.form4797.property1.gain": "316000"
+    }
+  }
+}

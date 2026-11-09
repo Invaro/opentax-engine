@@ -1,0 +1,20 @@
+{
+  "description": "Unrecaptured Section 1250 Gain Worksheet lines 15–18: a $30,000 net short-term capital loss reduces the $100,000 unrecaptured § 1250 gain of the rental sale to $70,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "shortTermCapitalLoss": 30000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "7000000"
+  }
+}

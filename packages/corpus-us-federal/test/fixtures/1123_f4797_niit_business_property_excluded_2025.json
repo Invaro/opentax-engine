@@ -1,0 +1,23 @@
+{
+  "description": "Form 8960 line 5b: the same $150,000 gain on property held in a nonpassive trade or business is taken out of net investment income → NIIT $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false,
+    "businessProperty1NetInvestmentIncome": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.form4797.niit_excluded": "15000000"
+    }
+  }
+}

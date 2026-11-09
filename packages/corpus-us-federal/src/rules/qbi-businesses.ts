@@ -127,6 +127,8 @@ function rule(
 // passive activities flagged as qualified trades or businesses (Reg. § 1.199A-3(b)(1)(iv)):
 // a net profit joins the Schedule C / K-1 pool, a net loss the loss pool
 const passiveQbi = ruleRef(`${J}.passive.qbi_net`);
+// Form 4797 ordinary gains and losses of qualified-business property (Reg. § 1.199A-3(b)(2)(ii)(A))
+const form4797Qbi = ruleRef(`${J}.form4797.qbi_net`);
 const scheduleCPool: Expr = add(
   max0(
     sub(
@@ -140,8 +142,9 @@ const scheduleCPool: Expr = add(
   ),
   fact("k1OrdinaryBusinessIncome"),
   max0(passiveQbi),
+  max0(form4797Qbi),
 );
-const lossPool: Expr = add(fact("qbiLossOffset"), max0(neg(passiveQbi)));
+const lossPool: Expr = add(fact("qbiLossOffset"), max0(neg(passiveQbi)), max0(neg(form4797Qbi)));
 const listedProfits = add(...LISTED.map((u) => max0(qbiOf(u))));
 const listedLosses = add(...LISTED.map((u) => max0(neg(qbiOf(u)))));
 
@@ -151,7 +154,7 @@ const rawQbiRules: Rule[] = [
     "QBI of the main business: the return's Schedule C and K-1 QBI less qbiLossOffset, less every listed business",
     "§ 199A(c); Reg. § 1.199A-3(b)(1)(vi)",
     "https://www.law.cornell.edu/cfr/text/26/1.199A-3",
-    "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit − its ½-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome − qbiLossOffset + the QBI-flagged passive activities after § 469 (us.federal.passive.qbi_net; Reg. § 1.199A-3(b)(1)(iv)), less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]",
+    "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit − its ½-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome − qbiLossOffset + the QBI-flagged passive activities after § 469 (us.federal.passive.qbi_net; Reg. § 1.199A-3(b)(1)(iv)) + Form 4797 ordinary gains and losses of QBI property (us.federal.form4797.qbi_net), less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]",
     "money",
     iff(
       cmp("gt", listedProfits, scheduleCPool),
@@ -171,7 +174,7 @@ const rawQbiRules: Rule[] = [
       ),
     ),
     undefined,
-    2, // v1 had no passive activities (us.federal.passive.qbi_net)
+    3, // v2 had no Form 4797 ordinary gains and losses; v1 had no passive activities (us.federal.passive.qbi_net)
   ),
   rule(
     id(QBI_UNITS[1], "qbi"),

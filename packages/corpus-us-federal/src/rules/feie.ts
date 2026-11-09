@@ -107,12 +107,13 @@ function feieStackingRule(version: number, from: string, to: string, year: TaxYe
           gt0(fact("qualifiedDividends")),
           gt0(fact("amtIsoExerciseSpread")),
           gt0(fact("amtOtherPreferences")),
+          gt0(ruleRef("us.federal.form4797.present")),
         ],
       },
       then: {
         kind: "unsupported",
         reason:
-          "the § 911(f)(2) preferential-rate coordination and the § 911(f)(1)(B) AMT stacking are not modeled — a § 911 return with capital gains/qualified dividends or entered AMT preference items refuses",
+          "the § 911(f)(2) preferential-rate coordination and the § 911(f)(1)(B) AMT stacking are not modeled — a § 911 return with capital gains/qualified dividends, business property sales (Form 4797) or entered AMT preference items refuses",
       },
       else: {
         kind: "max0",
@@ -130,10 +131,11 @@ export const feieRules: Rule[] = [
   feieExclusionRule(1, "2025-01-01", "2026-01-01", "13000000", "$130,000", "Rev. Proc. 2024-40 § 2.39"),
   feieExclusionRule(2, "2026-01-01", "2027-01-01", "13290000", "$132,900", "Rev. Proc. 2025-32 § 4.39"),
   feieExclusionRule(3, "2027-01-01", "2028-01-01", "13730000", "$137,300", "Rev. Proc. 2026-35 § 3.41"),
-  // v3/v4: the preferential-income refusal guard also catches the standalone qualifiedDividends fact
-  feieStackingRule(3, "2025-01-01", "2026-01-01", "2025"),
-  feieStackingRule(4, "2026-01-01", "2027-01-01", "2026"),
-  feieStackingRule(5, "2027-01-01", "2028-01-01", "2027"),
+  // v3/v4: the preferential-income refusal guard also catches the standalone qualifiedDividends fact;
+  // v6–v8 also catch Form 4797 sales
+  feieStackingRule(6, "2025-01-01", "2026-01-01", "2025"),
+  feieStackingRule(7, "2026-01-01", "2027-01-01", "2026"),
+  feieStackingRule(8, "2027-01-01", "2028-01-01", "2027"),
   {
     id: "us.federal.eitc.feie_denial",
     version: 1,
