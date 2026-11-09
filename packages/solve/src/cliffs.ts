@@ -96,6 +96,14 @@ export function findCliffs(
       prevX = x;
       prevV = v;
     }
+    // the range need not be a whole number of steps: the last, shorter interval is scanned too
+    if (prevX < options.toCents) {
+      const v = at(options.toCents);
+      const dv = v - prevV;
+      if ((dv < 0n ? -dv : dv) > options.toCents - prevX) {
+        collectCliffs(at, prevX, prevV, options.toCents, v, cliffs, limits?.maxCliffs ?? Infinity);
+      }
+    }
   } catch (err) {
     if (!(err instanceof BudgetExhausted)) throw err;
     truncated = true;

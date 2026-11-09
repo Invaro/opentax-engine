@@ -1,6 +1,6 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
-  "version": "0.52.0",
+  "version": "0.53.0",
   "merkleRoot": "sha256:4eae27a1e3cae36b505634b4cdf717ce0fcc6a291a646caa2a12c57fe1280149",
   "ruleCount": 1151,
   "rules": {

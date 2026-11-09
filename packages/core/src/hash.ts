@@ -5,6 +5,7 @@
  */
 
 import { canonical } from "./canonical.js";
+import { compareIds } from "./order.js";
 import type { FactSpec, Rule } from "./rule.js";
 import { sha256HexPure } from "./sha256.js";
 
@@ -25,18 +26,19 @@ export function ruleHash(rule: Rule): string {
 }
 
 /**
- * Merkle root over the corpus: one leaf per rule (ordered by id, version)
+ * Merkle root over the corpus: one leaf per rule (ordered by id, version;
+ * ids in compareIds order, which no locale can change)
  * plus one leaf for the fact catalog — fact DEFAULTS affect answers, so they
  * are pinned too. Odd node at any level is duplicated. An empty corpus
  * hashes the empty string.
  */
 export function merkleRoot(rules: Rule[], facts: FactSpec[] = []): string {
   const ordered = [...rules].sort(
-    (a, b) => a.id.localeCompare(b.id) || a.version - b.version,
+    (a, b) => compareIds(a.id, b.id) || a.version - b.version,
   );
   let level = ordered.map((r) => sha256Hex(canonical(r)));
   if (facts.length > 0) {
-    const orderedFacts = [...facts].sort((a, b) => a.id.localeCompare(b.id));
+    const orderedFacts = [...facts].sort((a, b) => compareIds(a.id, b.id));
     level.push(sha256Hex(canonical({ facts: orderedFacts })));
   }
   if (level.length === 0) return `sha256:${sha256Hex("")}`;

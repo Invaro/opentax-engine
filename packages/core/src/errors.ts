@@ -160,8 +160,14 @@ export class CorpusValidationError extends OpenTaxError {
 }
 
 export class FactValidationError extends OpenTaxError {
-  constructor(message: string) {
+  /** The fact the problem is with, when it is about one fact. */
+  readonly factId?: string;
+  constructor(message: string, factId?: string) {
     super("FACT_INVALID", message);
+    if (factId !== undefined) this.factId = factId;
+  }
+  override data(): Record<string, unknown> {
+    return this.factId === undefined ? {} : { factId: this.factId };
   }
 }
 

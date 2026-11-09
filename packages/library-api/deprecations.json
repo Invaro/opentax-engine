@@ -1,0 +1,11 @@
+{
+  "$comment": "Deliberate breaks of the contract since baseline.json. Each entry is { announcedIn: the release whose notes announced it, announcedOn: YYYY-MM-DD, note: what replaces it } (changedStableDeclarations entries also have kind: additive | breaking). Keys: a fact id, 'factId=value' for an enum value, a rule id, or 'package#export'. The contract test fails on any break that is not listed here; remove an entry once the baseline has been rolled past it.",
+  "removedFacts": {},
+  "retypedFacts": {},
+  "removedEnumValues": {},
+  "removedDefaults": {},
+  "narrowedRanges": {},
+  "removedRuleIds": {},
+  "removedStableExports": {},
+  "changedStableDeclarations": {}
+}

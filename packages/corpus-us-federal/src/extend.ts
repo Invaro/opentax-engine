@@ -10,9 +10,10 @@
  *    it doesn't break you, and the proof shows your item as its own node.
  *  - Replace a sub-computation: a rule with `overrides: { ruleId, priority }`
  *    and an applicability guard wins over our rule whenever its guard holds.
- *    Every rule you override must be pinned in `pins` to the exact hash of
- *    our version you built against; if a release changes that rule, loading
- *    fails instead of silently computing with a stale replacement.
+ *    Every version of a rule you override that applies during your rule's
+ *    dates must be pinned in `pins` to the exact hash you built against; if a
+ *    release changes one, retires one, or adds a version for a new year,
+ *    loading fails instead of silently computing with a stale replacement.
  *
  * The result is an ordinary LoadedCorpus whose Merkle root covers both the
  * federal corpus and your extension, so evaluate() and verifyProof() work
@@ -52,9 +53,10 @@ export interface CorpusExtension {
    */
   rules?: Rule[];
   /**
-   * `"ruleId@version" -> "sha256:…"` for every federal rule you override
-   * (copy the value from corpus.lock.json). A pin that no longer matches
-   * refuses to load.
+   * `"ruleId@version" -> "sha256:…"` for every version of a federal rule you
+   * override that applies during your rule's dates (the values are in
+   * `getCorpus().ruleHashes`). A pin that no longer matches, or a version
+   * you have not pinned, refuses to load.
    */
   pins?: Record<string, string>;
 }
@@ -83,9 +85,19 @@ export function extendCorpus(extension: CorpusExtension): LoadedCorpus {
       );
     }
     if (r.overrides && baseRuleIds.has(r.overrides.ruleId)) {
-      const pinned = Object.keys(pins).some((k) => k.slice(0, k.lastIndexOf("@")) === r.overrides!.ruleId);
-      if (!pinned) {
-        issues.push(`rule "${r.id}" overrides "${r.overrides.ruleId}"; pin the version you built against in pins`);
+      // every version of the target that applies while this rule does: the override replaces each of them
+      const target = r.overrides.ruleId;
+      const replaced = corpusInput.rules.filter(
+        (b) =>
+          b.id === target &&
+          b.effectiveFrom < (r.effectiveTo ?? "9999-12-31") &&
+          r.effectiveFrom < (b.effectiveTo ?? "9999-12-31"),
+      );
+      const unpinned = replaced.map((b) => `${target}@${b.version}`).filter((key) => !(key in pins));
+      if (unpinned.length > 0) {
+        issues.push(
+          `rule "${r.id}" overrides "${target}" and replaces ${unpinned.join(", ")} in its dates (${r.effectiveFrom} to ${r.effectiveTo ?? "open"}); review and pin each in pins, or end your rule's dates before a version you have not reviewed`,
+        );
       }
     }
   }

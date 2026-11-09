@@ -44,6 +44,7 @@ export type {
 } from "./rule.js";
 
 export { canonical } from "./canonical.js";
+export { compareIds } from "./order.js";
 export { hashOf, merkleRoot, ruleHash, sha256Hex } from "./hash.js";
 
 export type { LoadedCorpus } from "./corpus.js";

@@ -1,0 +1,1919 @@
+{
+ "engine": {
+  "name": "@invaro/opentax-core",
+  "version": "0.1.0"
+ },
+ "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0",
+ "ruleHashes": {
+  "demo.A-b@1": "sha256:9aac981e5a950d5ea9407cf927e371b860b0c04d5bbe070df2f54338567274ab",
+  "demo.a.b@1": "sha256:eabd12814dbbf80b7d415080a64f920332833826985616d24e0ee2823eb9e6c5",
+  "demo.a1@1": "sha256:7c3e913e2aae0959f69f6957fc6dd08df8d4a6beb681054548a61ffb140f5043",
+  "demo.aB@1": "sha256:699ccca725d7986cdc0f864845640541b3fc79364b8236b339665fbdc898217b",
+  "demo.a_b@1": "sha256:e9646132e267f0edb41f76a38d1f269c45a006c190b3fb1a36d7b7c33899fbba",
+  "demo.ab@1": "sha256:4fb9d92d44640bc314d32974d909dae34b4692fa3bd8b15e8c3ac7815047bc74",
+  "demo.credit@1": "sha256:b42553f5420faefea858a9a319c6463f6f49b66bfd2da63455fc4380cc79c7fa",
+  "demo.deduction@1": "sha256:44566691dbf76aa7a5728d9a7386d6ec9ad499a55e6cb44a195a11b97cba24c5",
+  "demo.deduction@2": "sha256:78b6f3303e486d08ce50315f985e15120de7059c01e0c8d2868cfbf07a0257a8",
+  "demo.flags@1": "sha256:8697525f9b237d4abc5370dca44e88e14001dd3d443379637174ab75aa84a574",
+  "demo.gross@1": "sha256:49aaba73539d3ecb81c801cce48df1ac64a9dc33fc486504eec4799c7da7ed03",
+  "demo.guarded@1": "sha256:853c5a135b5d2e021152b8771c20e570f68ead45b67cfc154b23f288f720afa8",
+  "demo.max_piece@1": "sha256:f59fc0341502e0355f88c0c4f05827dfd23482f930902f86d3629087dec1aeb5",
+  "demo.net@1": "sha256:3e56ad95e9ccb3357cb2bcd1cd168b5790e9fe155a65b7d7ffa1fc673d0466f9",
+  "demo.net_special@1": "sha256:3d6b60883bf83ba332bb19c6be8615f6acc1a6b144df258e00dbd87e5f669a27",
+  "demo.order_sum@1": "sha256:f8f19ba32719169d12d051193678f4235c498cccfadf0bd6b808547e9ab0ad42",
+  "demo.rate_piece@1": "sha256:803530d873e05c4e4ac70989d64c5c209a09a12221d9338ccf12ff4a470f3567",
+  "demo.side_income@1": "sha256:e9ba4d639cbe00a9583ffa014d6af553c69556d8549936dced106810cc355b0c",
+  "demo.tax@1": "sha256:784846df6670a6d040803c5a77caf5fa5988dd9e6dcc08646432663a80675d7c",
+  "demo.tax_rounded@1": "sha256:dd732234f89d4753a5cd247ae873791b92f5fe2ef5f32c25c8f07c6223ee1395",
+  "demo.taxable@1": "sha256:b38c877bc56c6755aca80850f7e1f2c8873e1755e2baa13e3bda6ec94aa21fbf",
+  "demo.taxable_without_side@1": "sha256:665c40f7fecc43371ee4d933be9e6ae20ac4cd54cc9580ca53256fc6fcd0fa03"
+ },
+ "cases": [
+  {
+   "name": "single 2025",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2025-06-30",
+    "target": "demo.guarded",
+    "facts": {
+     "income": {
+      "type": "money",
+      "value": "8500000"
+     },
+     "status": {
+      "type": "enum",
+      "value": "single"
+     }
+    },
+    "assumptions": [
+     {
+      "factId": "isBlind",
+      "value": {
+       "type": "bool",
+       "value": false
+      },
+      "source": "default",
+      "rationale": "Assumed not blind"
+     },
+     {
+      "factId": "kids",
+      "value": {
+       "type": "int",
+       "value": "0"
+      },
+      "source": "default",
+      "rationale": "Assumed no children"
+     },
+     {
+      "factId": "Bonus_pay",
+      "value": {
+       "type": "money",
+       "value": "0"
+      },
+      "source": "default",
+      "rationale": "Assumed no bonus"
+     },
+     {
+      "factId": "bonus_extra",
+      "value": {
+       "type": "money",
+       "value": "0"
+      },
+      "source": "default",
+      "rationale": "Assumed no side income"
+     }
+    ],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.guarded",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:853c5a135b5d2e021152b8771c20e570f68ead45b67cfc154b23f288f720afa8",
+     "title": "Demo demo.guarded",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "inputs": {
+      "income": {
+       "type": "money",
+       "value": "8500000"
+      },
+      "demo.net": {
+       "type": "money",
+       "value": "4871000"
+      }
+     },
+     "value": {
+      "type": "money",
+      "value": "4871000"
+     },
+     "children": [
+      {
+       "kind": "fact",
+       "factId": "income",
+       "value": {
+        "type": "money",
+        "value": "8500000"
+       }
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.net",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:3e56ad95e9ccb3357cb2bcd1cd168b5790e9fe155a65b7d7ffa1fc673d0466f9",
+       "title": "Demo demo.net",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "candidatesConsidered": [
+        {
+         "ruleId": "demo.net_special",
+         "version": 1,
+         "priority": 5,
+         "applicable": false
+        },
+        {
+         "ruleId": "demo.net",
+         "version": 1,
+         "priority": 0,
+         "applicable": true
+        }
+       ],
+       "inputs": {
+        "demo.flags": {
+         "type": "bool",
+         "value": false
+        },
+        "demo.tax_rounded": {
+         "type": "money",
+         "value": "800000"
+        },
+        "demo.max_piece": {
+         "type": "money",
+         "value": "4071000"
+        },
+        "demo.credit": {
+         "type": "money",
+         "value": "0"
+        }
+       },
+       "value": {
+        "type": "money",
+        "value": "4871000"
+       },
+       "children": [
+        {
+         "kind": "rule",
+         "ruleId": "demo.flags",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:8697525f9b237d4abc5370dca44e88e14001dd3d443379637174ab75aa84a574",
+         "title": "Demo demo.flags",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "isBlind": {
+           "type": "bool",
+           "value": false
+          },
+          "kids": {
+           "type": "int",
+           "value": "0"
+          }
+         },
+         "value": {
+          "type": "bool",
+          "value": false
+         },
+         "children": [
+          {
+           "kind": "assumption",
+           "factId": "isBlind",
+           "value": {
+            "type": "bool",
+            "value": false
+           }
+          },
+          {
+           "kind": "assumption",
+           "factId": "kids",
+           "value": {
+            "type": "int",
+            "value": "0"
+           }
+          }
+         ]
+        },
+        {
+         "kind": "rule",
+         "ruleId": "demo.tax_rounded",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:dd732234f89d4753a5cd247ae873791b92f5fe2ef5f32c25c8f07c6223ee1395",
+         "title": "Demo demo.tax_rounded",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "demo.tax": {
+           "type": "money",
+           "value": "800000"
+          }
+         },
+         "value": {
+          "type": "money",
+          "value": "800000"
+         },
+         "children": [
+          {
+           "kind": "rule",
+           "ruleId": "demo.tax",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:784846df6670a6d040803c5a77caf5fa5988dd9e6dcc08646432663a80675d7c",
+           "title": "Demo demo.tax",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "inputs": {
+            "demo.taxable": {
+             "type": "money",
+             "value": "7000000"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "800000"
+           },
+           "children": [
+            {
+             "kind": "rule",
+             "ruleId": "demo.taxable",
+             "ruleVersion": 1,
+             "ruleHash": "sha256:b38c877bc56c6755aca80850f7e1f2c8873e1755e2baa13e3bda6ec94aa21fbf",
+             "title": "Demo demo.taxable",
+             "citation": {
+              "source": "Frozen demo corpus",
+              "section": "§ 1",
+              "url": "https://example.com/frozen",
+              "excerpt": "A rule that exists to pin the engine's behavior."
+             },
+             "inputs": {
+              "demo.gross": {
+               "type": "money",
+               "value": "8500000"
+              },
+              "demo.deduction": {
+               "type": "money",
+               "value": "1500000"
+              }
+             },
+             "value": {
+              "type": "money",
+              "value": "7000000"
+             },
+             "children": [
+              {
+               "kind": "rule",
+               "ruleId": "demo.gross",
+               "ruleVersion": 1,
+               "ruleHash": "sha256:49aaba73539d3ecb81c801cce48df1ac64a9dc33fc486504eec4799c7da7ed03",
+               "title": "Demo demo.gross",
+               "citation": {
+                "source": "Frozen demo corpus",
+                "section": "§ 1",
+                "url": "https://example.com/frozen",
+                "excerpt": "A rule that exists to pin the engine's behavior."
+               },
+               "contributions": [
+                {
+                 "ruleId": "demo.side_income",
+                 "value": {
+                  "type": "money",
+                  "value": "0"
+                 }
+                }
+               ],
+               "inputs": {
+                "income": {
+                 "type": "money",
+                 "value": "8500000"
+                },
+                "Bonus_pay": {
+                 "type": "money",
+                 "value": "0"
+                },
+                "demo.side_income": {
+                 "type": "money",
+                 "value": "0"
+                }
+               },
+               "value": {
+                "type": "money",
+                "value": "8500000"
+               },
+               "children": [
+                {
+                 "kind": "fact",
+                 "factId": "income",
+                 "value": {
+                  "type": "money",
+                  "value": "8500000"
+                 }
+                },
+                {
+                 "kind": "assumption",
+                 "factId": "Bonus_pay",
+                 "value": {
+                  "type": "money",
+                  "value": "0"
+                 }
+                },
+                {
+                 "kind": "rule",
+                 "ruleId": "demo.side_income",
+                 "ruleVersion": 1,
+                 "ruleHash": "sha256:e9ba4d639cbe00a9583ffa014d6af553c69556d8549936dced106810cc355b0c",
+                 "title": "Demo demo.side_income",
+                 "citation": {
+                  "source": "Frozen demo corpus",
+                  "section": "§ 1",
+                  "url": "https://example.com/frozen",
+                  "excerpt": "A rule that exists to pin the engine's behavior."
+                 },
+                 "inputs": {
+                  "bonus_extra": {
+                   "type": "money",
+                   "value": "0"
+                  }
+                 },
+                 "value": {
+                  "type": "money",
+                  "value": "0"
+                 },
+                 "children": [
+                  {
+                   "kind": "assumption",
+                   "factId": "bonus_extra",
+                   "value": {
+                    "type": "money",
+                    "value": "0"
+                   }
+                  }
+                 ]
+                }
+               ]
+              },
+              {
+               "kind": "rule",
+               "ruleId": "demo.deduction",
+               "ruleVersion": 1,
+               "ruleHash": "sha256:44566691dbf76aa7a5728d9a7386d6ec9ad499a55e6cb44a195a11b97cba24c5",
+               "title": "Demo demo.deduction",
+               "citation": {
+                "source": "Frozen demo corpus",
+                "section": "§ 1",
+                "url": "https://example.com/frozen",
+                "excerpt": "A rule that exists to pin the engine's behavior."
+               },
+               "inputs": {
+                "status": {
+                 "type": "enum",
+                 "value": "single"
+                }
+               },
+               "value": {
+                "type": "money",
+                "value": "1500000"
+               },
+               "children": [
+                {
+                 "kind": "fact",
+                 "factId": "status",
+                 "value": {
+                  "type": "enum",
+                  "value": "single"
+                 }
+                }
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "kind": "rule",
+         "ruleId": "demo.max_piece",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:f59fc0341502e0355f88c0c4f05827dfd23482f930902f86d3629087dec1aeb5",
+         "title": "Demo demo.max_piece",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "demo.rate_piece": {
+           "type": "money",
+           "value": "4071000"
+          }
+         },
+         "value": {
+          "type": "money",
+          "value": "4071000"
+         },
+         "children": [
+          {
+           "kind": "rule",
+           "ruleId": "demo.rate_piece",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:803530d873e05c4e4ac70989d64c5c209a09a12221d9338ccf12ff4a470f3567",
+           "title": "Demo demo.rate_piece",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "inputs": {
+            "demo.taxable": {
+             "type": "money",
+             "value": "7000000"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "4071000"
+           },
+           "children": [
+            {
+             "kind": "rule",
+             "ruleId": "demo.taxable",
+             "ruleVersion": 1,
+             "ruleHash": "sha256:b38c877bc56c6755aca80850f7e1f2c8873e1755e2baa13e3bda6ec94aa21fbf",
+             "title": "Demo demo.taxable",
+             "citation": {
+              "source": "Frozen demo corpus",
+              "section": "§ 1",
+              "url": "https://example.com/frozen",
+              "excerpt": "A rule that exists to pin the engine's behavior."
+             },
+             "inputs": {
+              "demo.gross": {
+               "type": "money",
+               "value": "8500000"
+              },
+              "demo.deduction": {
+               "type": "money",
+               "value": "1500000"
+              }
+             },
+             "value": {
+              "type": "money",
+              "value": "7000000"
+             }
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "kind": "rule",
+         "ruleId": "demo.credit",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:b42553f5420faefea858a9a319c6463f6f49b66bfd2da63455fc4380cc79c7fa",
+         "title": "Demo demo.credit",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "kids": {
+           "type": "int",
+           "value": "0"
+          },
+          "demo.tax_rounded": {
+           "type": "money",
+           "value": "800000"
+          },
+          "demo.gross": {
+           "type": "money",
+           "value": "8500000"
+          }
+         },
+         "value": {
+          "type": "money",
+          "value": "0"
+         },
+         "children": [
+          {
+           "kind": "assumption",
+           "factId": "kids",
+           "value": {
+            "type": "int",
+            "value": "0"
+           }
+          },
+          {
+           "kind": "rule",
+           "ruleId": "demo.tax_rounded",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:dd732234f89d4753a5cd247ae873791b92f5fe2ef5f32c25c8f07c6223ee1395",
+           "title": "Demo demo.tax_rounded",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "inputs": {
+            "demo.tax": {
+             "type": "money",
+             "value": "800000"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "800000"
+           }
+          },
+          {
+           "kind": "rule",
+           "ruleId": "demo.gross",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:49aaba73539d3ecb81c801cce48df1ac64a9dc33fc486504eec4799c7da7ed03",
+           "title": "Demo demo.gross",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "contributions": [
+            {
+             "ruleId": "demo.side_income",
+             "value": {
+              "type": "money",
+              "value": "0"
+             }
+            }
+           ],
+           "inputs": {
+            "income": {
+             "type": "money",
+             "value": "8500000"
+            },
+            "Bonus_pay": {
+             "type": "money",
+             "value": "0"
+            },
+            "demo.side_income": {
+             "type": "money",
+             "value": "0"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "8500000"
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    "artifactHash": "sha256:09586f50bfa3f30875316dd44c24b5262d503646b2cf386100a39a657ff40e7a"
+   }
+  },
+  {
+   "name": "joint 2026, kids, bonus, side income",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2026-12-31",
+    "target": "demo.guarded",
+    "facts": {
+     "income": {
+      "type": "money",
+      "value": "24000000"
+     },
+     "status": {
+      "type": "enum",
+      "value": "joint"
+     },
+     "kids": {
+      "type": "int",
+      "value": "2"
+     },
+     "Bonus_pay": {
+      "type": "money",
+      "value": "1234567"
+     },
+     "bonus_extra": {
+      "type": "money",
+      "value": "500000"
+     }
+    },
+    "assumptions": [
+     {
+      "factId": "isBlind",
+      "value": {
+       "type": "bool",
+       "value": false
+      },
+      "source": "default",
+      "rationale": "Assumed not blind"
+     }
+    ],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.guarded",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:853c5a135b5d2e021152b8771c20e570f68ead45b67cfc154b23f288f720afa8",
+     "title": "Demo demo.guarded",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "inputs": {
+      "income": {
+       "type": "money",
+       "value": "24000000"
+      },
+      "demo.net": {
+       "type": "money",
+       "value": "17097029"
+      }
+     },
+     "value": {
+      "type": "money",
+      "value": "17097029"
+     },
+     "children": [
+      {
+       "kind": "fact",
+       "factId": "income",
+       "value": {
+        "type": "money",
+        "value": "24000000"
+       }
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.net",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:3e56ad95e9ccb3357cb2bcd1cd168b5790e9fe155a65b7d7ffa1fc673d0466f9",
+       "title": "Demo demo.net",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "candidatesConsidered": [
+        {
+         "ruleId": "demo.net_special",
+         "version": 1,
+         "priority": 5,
+         "applicable": false
+        },
+        {
+         "ruleId": "demo.net",
+         "version": 1,
+         "priority": 0,
+         "applicable": true
+        }
+       ],
+       "inputs": {
+        "demo.flags": {
+         "type": "bool",
+         "value": false
+        },
+        "demo.tax_rounded": {
+         "type": "money",
+         "value": "4113200"
+        },
+        "demo.max_piece": {
+         "type": "money",
+         "value": "13093829"
+        },
+        "demo.credit": {
+         "type": "money",
+         "value": "110000"
+        }
+       },
+       "value": {
+        "type": "money",
+        "value": "17097029"
+       },
+       "children": [
+        {
+         "kind": "rule",
+         "ruleId": "demo.flags",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:8697525f9b237d4abc5370dca44e88e14001dd3d443379637174ab75aa84a574",
+         "title": "Demo demo.flags",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "isBlind": {
+           "type": "bool",
+           "value": false
+          },
+          "kids": {
+           "type": "int",
+           "value": "2"
+          }
+         },
+         "value": {
+          "type": "bool",
+          "value": false
+         },
+         "children": [
+          {
+           "kind": "assumption",
+           "factId": "isBlind",
+           "value": {
+            "type": "bool",
+            "value": false
+           }
+          },
+          {
+           "kind": "fact",
+           "factId": "kids",
+           "value": {
+            "type": "int",
+            "value": "2"
+           }
+          }
+         ]
+        },
+        {
+         "kind": "rule",
+         "ruleId": "demo.tax_rounded",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:dd732234f89d4753a5cd247ae873791b92f5fe2ef5f32c25c8f07c6223ee1395",
+         "title": "Demo demo.tax_rounded",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "demo.tax": {
+           "type": "money",
+           "value": "4113205"
+          }
+         },
+         "value": {
+          "type": "money",
+          "value": "4113200"
+         },
+         "children": [
+          {
+           "kind": "rule",
+           "ruleId": "demo.tax",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:784846df6670a6d040803c5a77caf5fa5988dd9e6dcc08646432663a80675d7c",
+           "title": "Demo demo.tax",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "inputs": {
+            "demo.taxable": {
+             "type": "money",
+             "value": "22514567"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "4113205"
+           },
+           "children": [
+            {
+             "kind": "rule",
+             "ruleId": "demo.taxable",
+             "ruleVersion": 1,
+             "ruleHash": "sha256:b38c877bc56c6755aca80850f7e1f2c8873e1755e2baa13e3bda6ec94aa21fbf",
+             "title": "Demo demo.taxable",
+             "citation": {
+              "source": "Frozen demo corpus",
+              "section": "§ 1",
+              "url": "https://example.com/frozen",
+              "excerpt": "A rule that exists to pin the engine's behavior."
+             },
+             "inputs": {
+              "demo.gross": {
+               "type": "money",
+               "value": "25734567"
+              },
+              "demo.deduction": {
+               "type": "money",
+               "value": "3220000"
+              }
+             },
+             "value": {
+              "type": "money",
+              "value": "22514567"
+             },
+             "children": [
+              {
+               "kind": "rule",
+               "ruleId": "demo.gross",
+               "ruleVersion": 1,
+               "ruleHash": "sha256:49aaba73539d3ecb81c801cce48df1ac64a9dc33fc486504eec4799c7da7ed03",
+               "title": "Demo demo.gross",
+               "citation": {
+                "source": "Frozen demo corpus",
+                "section": "§ 1",
+                "url": "https://example.com/frozen",
+                "excerpt": "A rule that exists to pin the engine's behavior."
+               },
+               "contributions": [
+                {
+                 "ruleId": "demo.side_income",
+                 "value": {
+                  "type": "money",
+                  "value": "500000"
+                 }
+                }
+               ],
+               "inputs": {
+                "income": {
+                 "type": "money",
+                 "value": "24000000"
+                },
+                "Bonus_pay": {
+                 "type": "money",
+                 "value": "1234567"
+                },
+                "demo.side_income": {
+                 "type": "money",
+                 "value": "500000"
+                }
+               },
+               "value": {
+                "type": "money",
+                "value": "25734567"
+               },
+               "children": [
+                {
+                 "kind": "fact",
+                 "factId": "income",
+                 "value": {
+                  "type": "money",
+                  "value": "24000000"
+                 }
+                },
+                {
+                 "kind": "fact",
+                 "factId": "Bonus_pay",
+                 "value": {
+                  "type": "money",
+                  "value": "1234567"
+                 }
+                },
+                {
+                 "kind": "rule",
+                 "ruleId": "demo.side_income",
+                 "ruleVersion": 1,
+                 "ruleHash": "sha256:e9ba4d639cbe00a9583ffa014d6af553c69556d8549936dced106810cc355b0c",
+                 "title": "Demo demo.side_income",
+                 "citation": {
+                  "source": "Frozen demo corpus",
+                  "section": "§ 1",
+                  "url": "https://example.com/frozen",
+                  "excerpt": "A rule that exists to pin the engine's behavior."
+                 },
+                 "inputs": {
+                  "bonus_extra": {
+                   "type": "money",
+                   "value": "500000"
+                  }
+                 },
+                 "value": {
+                  "type": "money",
+                  "value": "500000"
+                 },
+                 "children": [
+                  {
+                   "kind": "fact",
+                   "factId": "bonus_extra",
+                   "value": {
+                    "type": "money",
+                    "value": "500000"
+                   }
+                  }
+                 ]
+                }
+               ]
+              },
+              {
+               "kind": "rule",
+               "ruleId": "demo.deduction",
+               "ruleVersion": 2,
+               "ruleHash": "sha256:78b6f3303e486d08ce50315f985e15120de7059c01e0c8d2868cfbf07a0257a8",
+               "title": "Demo demo.deduction",
+               "citation": {
+                "source": "Frozen demo corpus",
+                "section": "§ 1",
+                "url": "https://example.com/frozen",
+                "excerpt": "A rule that exists to pin the engine's behavior."
+               },
+               "inputs": {
+                "status": {
+                 "type": "enum",
+                 "value": "joint"
+                },
+                "isBlind": {
+                 "type": "bool",
+                 "value": false
+                }
+               },
+               "value": {
+                "type": "money",
+                "value": "3220000"
+               },
+               "children": [
+                {
+                 "kind": "fact",
+                 "factId": "status",
+                 "value": {
+                  "type": "enum",
+                  "value": "joint"
+                 }
+                },
+                {
+                 "kind": "assumption",
+                 "factId": "isBlind",
+                 "value": {
+                  "type": "bool",
+                  "value": false
+                 }
+                }
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "kind": "rule",
+         "ruleId": "demo.max_piece",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:f59fc0341502e0355f88c0c4f05827dfd23482f930902f86d3629087dec1aeb5",
+         "title": "Demo demo.max_piece",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "demo.rate_piece": {
+           "type": "money",
+           "value": "13093829"
+          }
+         },
+         "value": {
+          "type": "money",
+          "value": "13093829"
+         },
+         "children": [
+          {
+           "kind": "rule",
+           "ruleId": "demo.rate_piece",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:803530d873e05c4e4ac70989d64c5c209a09a12221d9338ccf12ff4a470f3567",
+           "title": "Demo demo.rate_piece",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "inputs": {
+            "demo.taxable": {
+             "type": "money",
+             "value": "22514567"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "13093829"
+           },
+           "children": [
+            {
+             "kind": "rule",
+             "ruleId": "demo.taxable",
+             "ruleVersion": 1,
+             "ruleHash": "sha256:b38c877bc56c6755aca80850f7e1f2c8873e1755e2baa13e3bda6ec94aa21fbf",
+             "title": "Demo demo.taxable",
+             "citation": {
+              "source": "Frozen demo corpus",
+              "section": "§ 1",
+              "url": "https://example.com/frozen",
+              "excerpt": "A rule that exists to pin the engine's behavior."
+             },
+             "inputs": {
+              "demo.gross": {
+               "type": "money",
+               "value": "25734567"
+              },
+              "demo.deduction": {
+               "type": "money",
+               "value": "3220000"
+              }
+             },
+             "value": {
+              "type": "money",
+              "value": "22514567"
+             }
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "kind": "rule",
+         "ruleId": "demo.credit",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:b42553f5420faefea858a9a319c6463f6f49b66bfd2da63455fc4380cc79c7fa",
+         "title": "Demo demo.credit",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "kids": {
+           "type": "int",
+           "value": "2"
+          },
+          "demo.tax_rounded": {
+           "type": "money",
+           "value": "4113200"
+          },
+          "demo.gross": {
+           "type": "money",
+           "value": "25734567"
+          }
+         },
+         "value": {
+          "type": "money",
+          "value": "110000"
+         },
+         "children": [
+          {
+           "kind": "fact",
+           "factId": "kids",
+           "value": {
+            "type": "int",
+            "value": "2"
+           }
+          },
+          {
+           "kind": "rule",
+           "ruleId": "demo.tax_rounded",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:dd732234f89d4753a5cd247ae873791b92f5fe2ef5f32c25c8f07c6223ee1395",
+           "title": "Demo demo.tax_rounded",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "inputs": {
+            "demo.tax": {
+             "type": "money",
+             "value": "4113205"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "4113200"
+           }
+          },
+          {
+           "kind": "rule",
+           "ruleId": "demo.gross",
+           "ruleVersion": 1,
+           "ruleHash": "sha256:49aaba73539d3ecb81c801cce48df1ac64a9dc33fc486504eec4799c7da7ed03",
+           "title": "Demo demo.gross",
+           "citation": {
+            "source": "Frozen demo corpus",
+            "section": "§ 1",
+            "url": "https://example.com/frozen",
+            "excerpt": "A rule that exists to pin the engine's behavior."
+           },
+           "contributions": [
+            {
+             "ruleId": "demo.side_income",
+             "value": {
+              "type": "money",
+              "value": "500000"
+             }
+            }
+           ],
+           "inputs": {
+            "income": {
+             "type": "money",
+             "value": "24000000"
+            },
+            "Bonus_pay": {
+             "type": "money",
+             "value": "1234567"
+            },
+            "demo.side_income": {
+             "type": "money",
+             "value": "500000"
+            }
+           },
+           "value": {
+            "type": "money",
+            "value": "25734567"
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    "artifactHash": "sha256:bca641485b161755bf29973f158c08fbd54a3dda9a8691e0fa76452ffb1cce8e"
+   }
+  },
+  {
+   "name": "override fires (blind)",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2026-01-01",
+    "target": "demo.net",
+    "facts": {
+     "income": {
+      "type": "money",
+      "value": "6000000"
+     },
+     "status": {
+      "type": "enum",
+      "value": "single"
+     },
+     "isBlind": {
+      "type": "bool",
+      "value": true
+     }
+    },
+    "assumptions": [],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.net_special",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:3d6b60883bf83ba332bb19c6be8615f6acc1a6b144df258e00dbd87e5f669a27",
+     "title": "Demo demo.net_special",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "resolvedFrom": "demo.net",
+     "candidatesConsidered": [
+      {
+       "ruleId": "demo.net_special",
+       "version": 1,
+       "priority": 5,
+       "applicable": true
+      }
+     ],
+     "inputs": {
+      "demo.flags": {
+       "type": "bool",
+       "value": true
+      }
+     },
+     "value": {
+      "type": "money",
+      "value": "0"
+     },
+     "children": [
+      {
+       "kind": "rule",
+       "ruleId": "demo.flags",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:8697525f9b237d4abc5370dca44e88e14001dd3d443379637174ab75aa84a574",
+       "title": "Demo demo.flags",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {
+        "isBlind": {
+         "type": "bool",
+         "value": true
+        },
+        "income": {
+         "type": "money",
+         "value": "6000000"
+        }
+       },
+       "value": {
+        "type": "bool",
+        "value": true
+       },
+       "children": [
+        {
+         "kind": "fact",
+         "factId": "isBlind",
+         "value": {
+          "type": "bool",
+          "value": true
+         }
+        },
+        {
+         "kind": "fact",
+         "factId": "income",
+         "value": {
+          "type": "money",
+          "value": "6000000"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    "artifactHash": "sha256:76f3e99400b0a0d97f1e1a32a187918e90f18bd2aa7158950ffeabda5f5b8ec8"
+   }
+  },
+  {
+   "name": "computed without regard to the contribution",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2025-12-31",
+    "target": "demo.taxable_without_side",
+    "facts": {
+     "income": {
+      "type": "money",
+      "value": "5000000"
+     },
+     "status": {
+      "type": "enum",
+      "value": "joint"
+     },
+     "bonus_extra": {
+      "type": "money",
+      "value": "999999"
+     }
+    },
+    "assumptions": [
+     {
+      "factId": "Bonus_pay",
+      "value": {
+       "type": "money",
+       "value": "0"
+      },
+      "source": "default",
+      "rationale": "Assumed no bonus"
+     }
+    ],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.taxable_without_side",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:665c40f7fecc43371ee4d933be9e6ae20ac4cd54cc9580ca53256fc6fcd0fa03",
+     "title": "Demo demo.taxable_without_side",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "inputs": {
+      "demo.gross": {
+       "type": "money",
+       "value": "5000000"
+      },
+      "demo.deduction": {
+       "type": "money",
+       "value": "3000000"
+      }
+     },
+     "value": {
+      "type": "money",
+      "value": "2000000"
+     },
+     "children": [
+      {
+       "kind": "rule",
+       "ruleId": "demo.gross",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:49aaba73539d3ecb81c801cce48df1ac64a9dc33fc486504eec4799c7da7ed03",
+       "title": "Demo demo.gross",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "excluding": [
+        "demo.side_income"
+       ],
+       "inputs": {
+        "income": {
+         "type": "money",
+         "value": "5000000"
+        },
+        "Bonus_pay": {
+         "type": "money",
+         "value": "0"
+        }
+       },
+       "value": {
+        "type": "money",
+        "value": "5000000"
+       },
+       "children": [
+        {
+         "kind": "fact",
+         "factId": "income",
+         "value": {
+          "type": "money",
+          "value": "5000000"
+         }
+        },
+        {
+         "kind": "assumption",
+         "factId": "Bonus_pay",
+         "value": {
+          "type": "money",
+          "value": "0"
+         }
+        }
+       ]
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.deduction",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:44566691dbf76aa7a5728d9a7386d6ec9ad499a55e6cb44a195a11b97cba24c5",
+       "title": "Demo demo.deduction",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {
+        "status": {
+         "type": "enum",
+         "value": "joint"
+        }
+       },
+       "value": {
+        "type": "money",
+        "value": "3000000"
+       },
+       "children": [
+        {
+         "kind": "fact",
+         "factId": "status",
+         "value": {
+          "type": "enum",
+          "value": "joint"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    "artifactHash": "sha256:f5db5d1df7264b75ea270734b8fda06cb2d8d1c744c918648d5e1479eb779f35"
+   }
+  },
+  {
+   "name": "a boolean answer",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2025-01-01",
+    "target": "demo.flags",
+    "facts": {
+     "income": {
+      "type": "money",
+      "value": "50000"
+     },
+     "status": {
+      "type": "enum",
+      "value": "single"
+     },
+     "kids": {
+      "type": "int",
+      "value": "3"
+     }
+    },
+    "assumptions": [
+     {
+      "factId": "isBlind",
+      "value": {
+       "type": "bool",
+       "value": false
+      },
+      "source": "default",
+      "rationale": "Assumed not blind"
+     }
+    ],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.flags",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:8697525f9b237d4abc5370dca44e88e14001dd3d443379637174ab75aa84a574",
+     "title": "Demo demo.flags",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "inputs": {
+      "isBlind": {
+       "type": "bool",
+       "value": false
+      },
+      "kids": {
+       "type": "int",
+       "value": "3"
+      },
+      "income": {
+       "type": "money",
+       "value": "50000"
+      }
+     },
+     "value": {
+      "type": "bool",
+      "value": false
+     },
+     "children": [
+      {
+       "kind": "assumption",
+       "factId": "isBlind",
+       "value": {
+        "type": "bool",
+        "value": false
+       }
+      },
+      {
+       "kind": "fact",
+       "factId": "kids",
+       "value": {
+        "type": "int",
+        "value": "3"
+       }
+      },
+      {
+       "kind": "fact",
+       "factId": "income",
+       "value": {
+        "type": "money",
+        "value": "50000"
+       }
+      }
+     ]
+    },
+    "artifactHash": "sha256:bb557834a4c90ea8dff31717c10efeece168473aaaa95e792f48fcb34852ebc5"
+   }
+  },
+  {
+   "name": "override fires (three kids)",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2025-01-01",
+    "target": "demo.guarded",
+    "facts": {
+     "income": {
+      "type": "money",
+      "value": "9000000"
+     },
+     "status": {
+      "type": "enum",
+      "value": "joint"
+     },
+     "kids": {
+      "type": "int",
+      "value": "3"
+     }
+    },
+    "assumptions": [
+     {
+      "factId": "isBlind",
+      "value": {
+       "type": "bool",
+       "value": false
+      },
+      "source": "default",
+      "rationale": "Assumed not blind"
+     }
+    ],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.guarded",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:853c5a135b5d2e021152b8771c20e570f68ead45b67cfc154b23f288f720afa8",
+     "title": "Demo demo.guarded",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "inputs": {
+      "income": {
+       "type": "money",
+       "value": "9000000"
+      },
+      "demo.net_special": {
+       "type": "money",
+       "value": "0"
+      }
+     },
+     "value": {
+      "type": "money",
+      "value": "0"
+     },
+     "children": [
+      {
+       "kind": "fact",
+       "factId": "income",
+       "value": {
+        "type": "money",
+        "value": "9000000"
+       }
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.net_special",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:3d6b60883bf83ba332bb19c6be8615f6acc1a6b144df258e00dbd87e5f669a27",
+       "title": "Demo demo.net_special",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "resolvedFrom": "demo.net",
+       "candidatesConsidered": [
+        {
+         "ruleId": "demo.net_special",
+         "version": 1,
+         "priority": 5,
+         "applicable": true
+        }
+       ],
+       "inputs": {
+        "demo.flags": {
+         "type": "bool",
+         "value": true
+        }
+       },
+       "value": {
+        "type": "money",
+        "value": "0"
+       },
+       "children": [
+        {
+         "kind": "rule",
+         "ruleId": "demo.flags",
+         "ruleVersion": 1,
+         "ruleHash": "sha256:8697525f9b237d4abc5370dca44e88e14001dd3d443379637174ab75aa84a574",
+         "title": "Demo demo.flags",
+         "citation": {
+          "source": "Frozen demo corpus",
+          "section": "§ 1",
+          "url": "https://example.com/frozen",
+          "excerpt": "A rule that exists to pin the engine's behavior."
+         },
+         "inputs": {
+          "isBlind": {
+           "type": "bool",
+           "value": false
+          },
+          "kids": {
+           "type": "int",
+           "value": "3"
+          },
+          "income": {
+           "type": "money",
+           "value": "9000000"
+          }
+         },
+         "value": {
+          "type": "bool",
+          "value": true
+         },
+         "children": [
+          {
+           "kind": "assumption",
+           "factId": "isBlind",
+           "value": {
+            "type": "bool",
+            "value": false
+           }
+          },
+          {
+           "kind": "fact",
+           "factId": "kids",
+           "value": {
+            "type": "int",
+            "value": "3"
+           }
+          },
+          {
+           "kind": "fact",
+           "factId": "income",
+           "value": {
+            "type": "money",
+            "value": "9000000"
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    "artifactHash": "sha256:e99dcfb47d1a8406aa6e37cd12cf4a2e360b9db1bef6db744e961c3c723e83b5"
+   }
+  },
+  {
+   "name": "ids sorted",
+   "proof": {
+    "schemaVersion": "2",
+    "engine": {
+     "name": "@invaro/opentax-core",
+     "version": "0.1.0"
+    },
+    "corpus": {
+     "name": "frozen-demo",
+     "version": "1.0.0",
+     "merkleRoot": "sha256:855484c54683e2fccc557dd4f2e993dcfae2db2fb00d6ca1d46ab8d409ef80a0"
+    },
+    "asOf": "2027-03-01",
+    "target": "demo.order_sum",
+    "facts": {},
+    "assumptions": [],
+    "root": {
+     "kind": "rule",
+     "ruleId": "demo.order_sum",
+     "ruleVersion": 1,
+     "ruleHash": "sha256:f8f19ba32719169d12d051193678f4235c498cccfadf0bd6b808547e9ab0ad42",
+     "title": "Demo demo.order_sum",
+     "citation": {
+      "source": "Frozen demo corpus",
+      "section": "§ 1",
+      "url": "https://example.com/frozen",
+      "excerpt": "A rule that exists to pin the engine's behavior."
+     },
+     "inputs": {
+      "demo.a_b": {
+       "type": "money",
+       "value": "1"
+      },
+      "demo.a.b": {
+       "type": "money",
+       "value": "2"
+      },
+      "demo.aB": {
+       "type": "money",
+       "value": "3"
+      },
+      "demo.ab": {
+       "type": "money",
+       "value": "4"
+      },
+      "demo.a1": {
+       "type": "money",
+       "value": "5"
+      },
+      "demo.A-b": {
+       "type": "money",
+       "value": "6"
+      }
+     },
+     "value": {
+      "type": "money",
+      "value": "21"
+     },
+     "children": [
+      {
+       "kind": "rule",
+       "ruleId": "demo.a_b",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:e9646132e267f0edb41f76a38d1f269c45a006c190b3fb1a36d7b7c33899fbba",
+       "title": "Demo demo.a_b",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {},
+       "value": {
+        "type": "money",
+        "value": "1"
+       },
+       "children": []
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.a.b",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:eabd12814dbbf80b7d415080a64f920332833826985616d24e0ee2823eb9e6c5",
+       "title": "Demo demo.a.b",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {},
+       "value": {
+        "type": "money",
+        "value": "2"
+       },
+       "children": []
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.aB",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:699ccca725d7986cdc0f864845640541b3fc79364b8236b339665fbdc898217b",
+       "title": "Demo demo.aB",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {},
+       "value": {
+        "type": "money",
+        "value": "3"
+       },
+       "children": []
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.ab",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:4fb9d92d44640bc314d32974d909dae34b4692fa3bd8b15e8c3ac7815047bc74",
+       "title": "Demo demo.ab",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {},
+       "value": {
+        "type": "money",
+        "value": "4"
+       },
+       "children": []
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.a1",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:7c3e913e2aae0959f69f6957fc6dd08df8d4a6beb681054548a61ffb140f5043",
+       "title": "Demo demo.a1",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {},
+       "value": {
+        "type": "money",
+        "value": "5"
+       },
+       "children": []
+      },
+      {
+       "kind": "rule",
+       "ruleId": "demo.A-b",
+       "ruleVersion": 1,
+       "ruleHash": "sha256:9aac981e5a950d5ea9407cf927e371b860b0c04d5bbe070df2f54338567274ab",
+       "title": "Demo demo.A-b",
+       "citation": {
+        "source": "Frozen demo corpus",
+        "section": "§ 1",
+        "url": "https://example.com/frozen",
+        "excerpt": "A rule that exists to pin the engine's behavior."
+       },
+       "inputs": {},
+       "value": {
+        "type": "money",
+        "value": "6"
+       },
+       "children": []
+      }
+     ]
+    },
+    "artifactHash": "sha256:4bd643b38b65404893def5d8d13de2f6289fd2143772a6c9f20887aeb86de2ee"
+   }
+  },
+  {
+   "name": "refused",
+   "error": "NOT_MODELED"
+  },
+  {
+   "name": "needs facts",
+   "error": "NEEDS_FACTS"
+  }
+ ]
+}

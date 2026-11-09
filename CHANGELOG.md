@@ -2,6 +2,36 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 10, 2026 · A stable library API
+
+The four library packages now have a documented, versioned API and a written compatibility policy: [docs/LIBRARY-API.md](docs/LIBRARY-API.md). Checking the document against the code found five defects in the engine, fixed here.
+
+- **What is stable:**
+  - `@invaro/opentax-core` 1.0.0: `evaluate`, `coerceFacts`, `loadCorpus`, `selectVersion`, `verifyProof`, the eight error classes and their codes, the proof and hashing functions, and every type you write rules with.
+  - `@invaro/opentax-solve` 1.0.0: `sweep`, `marginal`, `findCliffs`, `invert`, `compareAcross`. `searchRules`, `lookupParameters` and `factCheck` are provisional (their ranking is tuned over time).
+  - `@invaro/opentax-corpus-us-federal`: `getCorpus`, `corpusInput`, `facts`, `DEFAULT_TARGET`, `extendCorpus` with `EXTENSION_POINTS`, and the projection functions.
+  - `@invaro/opentax-compose` (state returns, Form 2210, Form 4562) is provisional: its shapes follow each year's forms.
+- **Version numbers:** core and solve follow semantic versioning from 1.0.0, so only a major version can break stable code. The corpus version stays the release number.
+- **Ids:** fact ids, rule ids, enum values, accepted ranges, defaults and extension points are not removed, narrowed or repurposed, and a published rule version never changes (a change is a new version with a new number). Answers still change when the law does or a mistake is fixed, and the release notes list every rule.
+- **Fixed:**
+  - **A proof edited in memory could still verify.** The hashing code remembered an object's canonical form for the life of the process, so editing a proof object (or a rule object) after it had been hashed kept the old hash. A stored or re-parsed proof was always checked correctly. The memory now lasts one call.
+  - **The corpus fingerprint depended on the machine's language.** Rule and fact ids were sorted with the runtime's locale, so a browser set to Czech, Lithuanian, Turkish and a dozen other languages computed a different Merkle root and rejected valid proofs. Ids now sort in one fixed order (`compareIds`, specified in [docs/PROOF-FORMAT.md](docs/PROOF-FORMAT.md) § 4). It is the order English locales already gave, so every published root is unchanged.
+  - **`findCliffs` skipped the end of a range** that wasn't a whole number of steps, and a range shorter than one step. `find_tax_cliffs` and `opentax cliffs` had the same gap.
+  - **An override needed only one pin.** With several versions of a rule (one per tax year), pinning one let the override silently replace the others, including a version added later. `extendCorpus` now requires a pin for every version that applies during your rule's dates.
+  - **State composer amounts were formatted in the machine's language** (`$1.234.567` on a German system). They are always `$1,234,567` now.
+- **API changes** (what a caller may need to do):
+  - `extendCorpus`: if you override a rule that has several versions, add a pin for each version in your rule's dates, or set your rule's `effectiveTo`. The error names the pins that are missing.
+  - A malformed formula in your own rules (an unknown kind, a money literal with a decimal point, a rate with a zero denominator) is now reported by `loadCorpus` as `CORPUS_INVALID`, with every problem listed, where it used to surface as a `TypeError` or `RangeError` during an evaluation.
+  - `evaluate` reports a fact that isn't a typed value as `FACT_INVALID` (was a `TypeError`), and `FACT_INVALID` now carries `data().factId`.
+  - New proofs carry engine version 1.0.0. Proofs made earlier still verify, and the reverse.
+- **Answers are unchanged.** Every answer, every proof tree and the Merkle root are identical to v0.52.0.
+- **Each package's tarball now has a README**, the corpus and the solver accept any core 1.x, and the document has six runnable examples: evaluate, errors, verify, extend, solve and project.
+- **Enforced in CI** (Node 20, 22 and 24):
+  - Every export is classified as stable, provisional or internal, and an API report of every declaration is committed, so a change to the surface is a visible diff.
+  - The last release's baseline is compared with the tree: 1,204 fact ids with types, enum values, ranges and defaults; 971 rule ids with output types; the hash of 1,151 rule versions; extension points; error codes and data fields; a hash of every stable declaration. A break fails the build unless it was announced, and a breaking change to a stable declaration fails until the major version goes up.
+  - A frozen corpus using every kind of formula keeps the Merkle root, rule hashes and proofs it had under core 0.1.0; today's core must reproduce them byte for byte.
+  - The document's examples are run and their answers checked, and the tarballs are packed, installed into an empty project, bundled for the browser and type-checked from a strict TypeScript consumer.
+
 ## Nov 10, 2026 · Installment sales and like-kind exchanges: Form 6252 and Form 8824
 
 Installment sales (Form 6252) and like-kind exchanges of real property (Form 8824) are modeled for 2025, 2026 and 2027, with their results flowing through Form 4797, Schedule D and the 25% rate.

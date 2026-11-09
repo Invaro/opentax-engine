@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [22, 24]
+        node: [20, 22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -47,6 +47,8 @@ jobs:
         run: node packages/corpus-us-federal/scripts/gen-lock.mjs
       - name: Rebuild hosted MCP bundle
         run: pnpm -F @invaro/opentax build:hosted
+      - name: Regenerate the library API report
+        run: pnpm -F @invaro/opentax-library-api api:report
       - name: Committed artifacts must match regenerated ones
         run: |
           if ! git diff --exit-code -- \
@@ -54,10 +56,26 @@ jobs:
             packages/corpus-us-federal/rule-index.json \
             packages/cli/bundle \
             packages/mcp/bundle \
+            packages/library-api/report \
             site/src/lib/opentax-mcp.bundle.mjs; then
-            echo "::error::Generated artifacts are stale. Run: pnpm build && pnpm -F @invaro/opentax-corpus-us-federal gen:lock && pnpm -F @invaro/opentax build:hosted — then commit the diff."
+            echo "::error::Generated artifacts are stale. Run: pnpm build && pnpm -F @invaro/opentax-corpus-us-federal gen:lock && pnpm -F @invaro/opentax build:hosted && pnpm -F @invaro/opentax-library-api api:report — then commit the diff."
             exit 1
           fi
+
+  library:
+    name: library packages as a licensee installs them
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Pack the tarballs, install them in an empty project, run the examples, bundle for the browser, type-check a consumer
+        run: node packages/library-api/scripts/consumer-check.mjs
 
   site:
     name: site build
