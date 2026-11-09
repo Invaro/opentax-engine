@@ -8,6 +8,7 @@
 
 import type { FactSpec } from "@invaro/opentax-core";
 import { OCCUPATION_ENUM } from "./occupations.js";
+import { passiveActivityFacts } from "./passive-facts.js";
 
 export const FILING_STATUSES = [
   "single",
@@ -1298,7 +1299,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Net INCOME from passive activities this year (§ 469(c): rentals without real-estate-professional status, passive royalties, passive K-1 income) — absorbs passive losses dollar-for-dollar on Form 8582. Transcribe the TOTAL including any self-rental income items, and ALSO flag the self-rental subset in selfRentalNetIncome — the rule itself excludes that subset from the absorption pool (Reg. § 1.469-2(f)(6)); do not pre-net. For the standalone target us.federal.passive_loss_allowed. In dollars.",
+      "Net INCOME from passive activities this year (§ 469(c): rentals without real-estate-professional status, passive royalties, passive K-1 income) — absorbs passive losses dollar-for-dollar on Form 8582. Transcribe the TOTAL including any self-rental income items, and ALSO flag the self-rental subset in selfRentalNetIncome — the rule itself excludes that subset from the absorption pool (Reg. § 1.469-2(f)(6)); do not pre-net. For the standalone target us.federal.passive_loss_allowed only — it does not flow into the return; to compute the return use passiveActivities. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no passive-activity income absent contrary input",
@@ -1320,7 +1321,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Total passive-activity losses claimed this year as a POSITIVE number (current-year passive losses plus prior-year suspended carryovers being applied). For the standalone target us.federal.passive_loss_allowed. In dollars.",
+      "Total passive-activity losses claimed this year as a POSITIVE number (current-year passive losses plus prior-year suspended carryovers being applied). For the standalone target us.federal.passive_loss_allowed only — it does not flow into the return; to compute the return use passiveActivities. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no passive-activity losses absent contrary input",
@@ -1363,7 +1364,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars.",
+      "Net NONPASSIVE Schedule E rental/royalty income that is NOT QBI-eligible (passive activities go in passiveActivities, where the engine applies § 469 and routes the result itself). NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no non-QBI Schedule E income absent contrary input",
@@ -1559,7 +1560,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "NONPASSIVE Schedule E losses as a positive number (§ 469(c)(7) real-estate-professional rentals with material participation, or allowed § 469 losses not netted elsewhere) — subtracts from gross income. Schedule E ONLY: never route a Schedule C amount here. A Schedule C 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading — that field is the § 199A wage-limit input (qbiW2Wages), never an expense; Schedule C profit = gross receipts minus ACTUAL Schedule C expenses. If the activity is QBI-flagged, also enter the same amount in qbiLossOffset. In dollars.",
+      "NONPASSIVE Schedule E losses as a positive number (§ 469(c)(7) real-estate-professional rentals with material participation) — subtracts from gross income, and is added back to the § 469(i) special allowance's modified AGI. Passive activities go in passiveActivities instead (the engine applies § 469 to them). Schedule E ONLY: never route a Schedule C amount here. A Schedule C 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading — that field is the § 199A wage-limit input (qbiW2Wages), never an expense; Schedule C profit = gross receipts minus ACTUAL Schedule C expenses. If the activity is QBI-flagged, also enter the same amount in qbiLossOffset. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no nonpassive Schedule E losses absent contrary input",
@@ -2414,7 +2415,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in the passive facts. If QBI-flagged, also enter it in qbiLossOffset. In dollars.",
+      "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in passiveActivities. If QBI-flagged, also enter it in qbiLossOffset. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no K-1 business loss absent contrary input",
@@ -7034,4 +7035,5 @@ export const facts: FactSpec[] = [
       "Schedule IN-119 Part II line 1: the number of VHEIP account beneficiaries contributed for — each carries its own $2,500 ($5,000 joint) contribution cap (us.vt.vheip_credit).",
     default: { value: "0", rationale: "Assumed 0 absent contrary input" },
   },
+  ...passiveActivityFacts,
 ];

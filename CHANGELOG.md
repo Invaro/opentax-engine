@@ -2,6 +2,41 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 10, 2026 · Passive activities by activity: Form 8582 through AGI and NIIT
+
+Passive K-1s, rentals and other passive activities now go through § 469 inside the return, one activity at a time, for 2025, 2026 and 2027. Before, the § 469 rule was a standalone check whose result you netted into Schedule E yourself.
+
+- **Up to eight activities** (`passiveActivities`, then `passiveActivityN…`), each with a kind:
+  - `rental_active` (rental real estate with active participation, Part IV);
+  - `rental` and `business` (Part V);
+  - `business_sp` (significant participation);
+  - `ptp`.
+
+  Each also takes current income or loss, prior-year unallowed losses, gains or losses on disposition, and whether the entire interest was sold.
+- **Form 8582:**
+  - Passive income absorbs passive losses.
+  - The $25,000 special allowance phases out from $100,000 of modified AGI ($12,500 / $50,000 married filing separately and apart all year; none if they lived together).
+  - The disallowed loss is spread over the loss activities in proportion to their losses (Parts VI–VIII; Reg. § 1.469-1T(f)(2)) and carried forward per activity (`us.federal.passive.activityN.unallowed`).
+  - Modified AGI is AGI without the Form 8582 activities, less taxable Social Security, plus the IRA, student loan and ½-SE deductions and real estate professional losses.
+- **Released losses:**
+  - Selling an entire interest in a fully taxable sale frees every loss of the activity when the overall result is a loss (§ 469(g)); with an overall gain the activity stays on the form, and its gain absorbs other passive losses.
+  - A PTP's losses offset only its own income (§ 469(k)).
+  - Significant participation income over those activities' losses is nonpassive.
+- **Where the results go:**
+  - **AGI and § 86 income:** each activity's Schedule E/C/F result.
+  - **NIIT:** Form 8960 line 4a. Released suspended losses are properly allocable deductions (Reg. § 1.1411-4(g)(9)), and significant participation income recharacterized as nonpassive is out (Reg. § 1.1411-5(b)(2)(i)).
+  - **QBI:** activities flagged `Qbi`, with released losses (Reg. § 1.199A-3(b)(1)(iv)). They are not active QBI for the § 199A(i) minimum.
+  - **§ 461(l):** passive business results count after § 469.
+  - **EITC investment-income test:** § 32(i)(2)(D).
+  - **Kiddie tax:** a child with passive income is refused.
+- **`compute_return`** shows `forms['8582']`: Part I, line 9, line 11, and each activity's result and carryforward.
+- **Refused, with the reason:** former passive activities (§ 469(f)), installment, gift, death and related-party dispositions, a disposition loss on an activity whose losses are partly disallowed (Part IX), a QBI-flagged PTP, and pre-2018 suspended losses in a QBI activity when some are released.
+- **Checked:**
+  - 36 new fixtures from the published examples (Pub. 925, the Form 8582 instructions, Reg. § 1.469-1T(f)(2)(i)(D) Examples 1 and 2, the PTP examples) and the special allowance, MAGI, NIIT, QBI and EITC rules.
+  - Every existing fixture, the IRS ATS scenarios and the AMT regression cases give the same answers as v0.48.0.
+  - 550 random multi-activity returns pass the form's invariants, and an independent rebuild of Form 8582 from the IRS documents and regulations alone, without this code, agrees on every one: lines 1d, 2d, 3 and 9, each activity's result and carryforward, and AGI. Each share is within 1.24 cents of the exact fraction, because Part VI is rounded to the cent before Part VII.
+  - The rebuild found one error, fixed before release: an entire disposition at an overall loss was counted in the significant participation test. Its losses are nonpassive, so it is not a passive activity deduction (Reg. § 1.469-2T(d)(2)(v)).
+
 ## Nov 9, 2026 · California 2026, and five 2025 California fixes
 
 `compute_state_return` now composes a 2026 California Form 540 from FTB's published 2026 amounts.

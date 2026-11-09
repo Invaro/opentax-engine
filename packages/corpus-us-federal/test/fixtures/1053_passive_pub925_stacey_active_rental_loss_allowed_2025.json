@@ -1,0 +1,18 @@
+{
+  "description": "Pub. 925 (2025), active participation example: Stacey, single, salary $42,300, dividends $300, interest $1,400, rental loss $4,000 from a house Stacey actively managed — 'Stacey can use the entire $4,000 loss to offset other income'. AGI = 42,300 + 300 + 1,400 − 4,000 = $40,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 42300,
+    "ordinaryDividends": 300,
+    "taxableInterest": 1400,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 4000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "4000000"
+  }
+}

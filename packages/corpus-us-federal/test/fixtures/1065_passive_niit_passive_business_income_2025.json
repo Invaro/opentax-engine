@@ -1,0 +1,19 @@
+{
+  "description": "§ 1411(c)(1)(A), (c)(2)(A); Form 8960 line 4a: income from a trade or business that is a passive activity is net investment income. Single, wages $250,000, passive K-1 business income $40,000: NII $40,000, MAGI excess $90,000 → NIIT 3.8% x 40,000 = $1,520.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Income": 40000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "152000",
+    "intermediates": {
+      "us.federal.passive.niit_net": "4000000"
+    }
+  }
+}

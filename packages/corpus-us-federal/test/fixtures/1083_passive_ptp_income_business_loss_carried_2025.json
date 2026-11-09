@@ -1,0 +1,19 @@
+{
+  "description": "Fixture 1061: the PTP's $4,000 net income does not absorb the passive business's $6,000 loss — all $6,000 carried over (§ 469(k)).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 2,
+    "passiveActivity1Kind": "ptp",
+    "passiveActivity1Income": 4000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "business",
+    "passiveActivity2Loss": 6000,
+    "passiveActivity2Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "600000"
+  }
+}

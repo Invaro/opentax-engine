@@ -1,0 +1,20 @@
+{
+  "description": "Form 8582 instructions (2025), Dispositions Example 2 (fixture 1055): with an overall loss on the entire disposition 'none of the amounts are entered on Form 8582' — line 3 is $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "longTermCapitalGains": 2000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Loss": 3330,
+    "passiveActivity1PriorUnallowed": 1115,
+    "passiveActivity1DispositionGain": 2000,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.form8582.line3",
+  "expect": {
+    "valueCents": "0"
+  }
+}

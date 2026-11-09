@@ -1,0 +1,23 @@
+{
+  "description": "Form 8582 instructions (2025), Dispositions Example 2: entire interest in an oil and gas limited partnership sold for a $2,000 gain; $3,330 current-year Schedule E loss and $1,115 prior-year unallowed loss. 'Because you have an overall loss of $2,445 ... none of the amounts are entered on Form 8582. You enter the net loss plus the prior-year unallowed loss ($3,330 + $1,115 = $4,445) on Schedule E'. AGI = 40,000 + 2,000 − 4,445 = $37,555.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "longTermCapitalGains": 2000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Loss": 3330,
+    "passiveActivity1PriorUnallowed": 1115,
+    "passiveActivity1DispositionGain": 2000,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "3755500",
+    "intermediates": {
+      "us.federal.passive.activity1.net": "-444500"
+    }
+  }
+}

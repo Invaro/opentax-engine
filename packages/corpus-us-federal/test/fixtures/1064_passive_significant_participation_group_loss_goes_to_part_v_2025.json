@@ -1,0 +1,23 @@
+{
+  "description": "Pub. 925 Worksheet A: 'If column (d) is a net loss, skip Worksheet B ... Include the income and losses in Part V of Form 8582.' Significant participation activities netting income $3,000 and loss $9,000 = −$6,000: both in Part V, line 3 = −$6,000, all disallowed and allocated to the loss activity.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 2,
+    "passiveActivity1Kind": "business_sp",
+    "passiveActivity1Income": 3000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "business_sp",
+    "passiveActivity2Loss": 9000,
+    "passiveActivity2Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "600000",
+    "intermediates": {
+      "us.federal.passive.activity2.unallowed": "600000",
+      "us.federal.passive.form8582.line2a": "300000"
+    }
+  }
+}

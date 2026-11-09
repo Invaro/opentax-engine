@@ -1,0 +1,19 @@
+{
+  "description": "Form 8582 instructions PTP example (fixture 1062): $7,200 of the PTP's $12,000 losses is allowed against its $7,200 gain; AGI = 50,000 + 7,200 − 7,200 = $50,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "longTermCapitalGains": 7200,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "ptp",
+    "passiveActivity1Loss": 9000,
+    "passiveActivity1PriorUnallowed": 3000,
+    "passiveActivity1DispositionGain": 7200,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "5000000"
+  }
+}

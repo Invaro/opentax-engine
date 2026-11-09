@@ -285,6 +285,8 @@ function eitcRule(
         fact("qualifiedDividends"),
         ruleRef("us.federal.schedule_d.ordinary_st_gain"),
         fact("ordinaryDividends"),
+        // § 32(i)(2)(D): net income from passive activities (Pub. 596 Worksheet 1 line 13)
+        ruleRef("us.federal.passive.eitc_income"),
       ],
     },
     right: param("investmentLimit"),
@@ -367,7 +369,7 @@ function eitcRule(
       source: `26 U.S.C. § 32; ${revProc}; Form 1040 instructions (EIC Worksheet and EIC Table)`,
       section: `§ 32(a)-(b), (f), (i); ${revProc}`,
       url: "https://www.law.cornell.edu/uscode/text/26/32",
-      excerpt: `Credit = phase-in percentage of earned income up to the maximum, reduced by the phase-out percentage of AGI (or, if greater, earned income) above the threshold; denied entirely if investment income exceeds the § 32(i) limit. 'The amount of the credit allowed by this section shall be determined under tables prescribed by the Secretary… [which] shall reflect the provisions of subsections (a) and (b) and shall have income brackets of not greater than $50 each' (§ 32(f), verbatim) — the DEFAULT here is that table method (statutory amounts computed at each $50 bracket's midpoint, whole dollars; the EIC Worksheet looks up earned income, and also AGI when AGI reaches the phase-out threshold, taking the smaller); useFormulaMethod opts back to the continuous formula. Married taxpayers must file jointly (§ 32(d)) — UNLESS the MFS filer meets the § 32(d)(2) separation requirements (set mfsConsideredUnmarried: qualifying child in the home > half year, > half household cost furnished, legally separated or spouse absent the last 6 months), in which case the credit computes normally. Earned income approximated as wages + SE net earnings; § 32(c)(3) qualifying children = the CTC child count plus eitcAdditionalQualifyingChildren (children under 19, students under 24, or permanently and totally disabled at ANY age, who miss the CTC's under-17 cut). TY${yearLabel} dollar amounts per ${revProc}.${opts.extraExcerpt ?? ""}`,
+      excerpt: `Credit = phase-in percentage of earned income up to the maximum, reduced by the phase-out percentage of AGI (or, if greater, earned income) above the threshold; denied entirely if investment income exceeds the § 32(i) limit (interest, dividends, capital gain net income and, under § 32(i)(2)(D), net income from passive activities after Form 8582 — Pub. 596 Worksheet 1 lines 11–13). 'The amount of the credit allowed by this section shall be determined under tables prescribed by the Secretary… [which] shall reflect the provisions of subsections (a) and (b) and shall have income brackets of not greater than $50 each' (§ 32(f), verbatim) — the DEFAULT here is that table method (statutory amounts computed at each $50 bracket's midpoint, whole dollars; the EIC Worksheet looks up earned income, and also AGI when AGI reaches the phase-out threshold, taking the smaller); useFormulaMethod opts back to the continuous formula. Married taxpayers must file jointly (§ 32(d)) — UNLESS the MFS filer meets the § 32(d)(2) separation requirements (set mfsConsideredUnmarried: qualifying child in the home > half year, > half household cost furnished, legally separated or spouse absent the last 6 months), in which case the credit computes normally. Earned income approximated as wages + SE net earnings; § 32(c)(3) qualifying children = the CTC child count plus eitcAdditionalQualifyingChildren (children under 19, students under 24, or permanently and totally disabled at ANY age, who miss the CTC's under-17 cut). TY${yearLabel} dollar amounts per ${revProc}.${opts.extraExcerpt ?? ""}`,
     },
     effectiveFrom,
     effectiveTo,
@@ -401,26 +403,27 @@ export const eitcRules: Rule[] = [
   // v10/v11: § 32(i) investment-income limit also counts shortTermCapitalGains/ordinaryDividends
   // v12/v13 read the raw gain facts; the § 32(i) test now takes the schedule_d
   // netted results ("capital gain net income", § 32(i)(1)(C))
-  eitcRule(14, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06"),
-  eitcRule(15, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06"),
-  eitcRule(16, "2027-01-01", "2028-01-01", TY2027, "2027", "Rev. Proc. 2026-35 § 3.06"),
-  // us.federal.eitc_no_age_gate (new): the same § 32(a)-(b),(f),(i) formula with
+  // v14–v16 left net passive income (§ 32(i)(2)(D)) out of the § 32(i) test
+  eitcRule(17, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06"),
+  eitcRule(18, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06"),
+  eitcRule(19, "2027-01-01", "2028-01-01", TY2027, "2027", "Rev. Proc. 2026-35 § 3.06"),
+  // us.federal.eitc_no_age_gate (v3–v5 left net passive income out of § 32(i)): the same § 32(a)-(b),(f),(i) formula with
   // the childless § 32(c)(1)(A)(ii) age gate removed, for state EITC statutes
   // that decouple from it (35 ILCS 5/212(b-5)/(b-10), IL P.A. 102-700) — see
   // us.il.eitc, which is 20% of THIS rule's answer, not us.federal.eitc's.
-  eitcRule(3, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06", {
+  eitcRule(6, "2025-01-01", "2026-01-01", TY2025, "2025", "Rev. Proc. 2024-40 § 2.06", {
     ruleId: "us.federal.eitc_no_age_gate",
     ageGate: false,
     titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2025; for state decoupling statutes only)",
     extraExcerpt: NO_AGE_GATE_EXCERPT,
   }),
-  eitcRule(4, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06", {
+  eitcRule(7, "2026-01-01", "2027-01-01", TY2026, "2026", "Rev. Proc. 2025-32 § 4.06", {
     ruleId: "us.federal.eitc_no_age_gate",
     ageGate: false,
     titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2026; for state decoupling statutes only)",
     extraExcerpt: NO_AGE_GATE_EXCERPT,
   }),
-  eitcRule(5, "2027-01-01", "2028-01-01", TY2027, "2027", "Rev. Proc. 2026-35 § 3.06", {
+  eitcRule(8, "2027-01-01", "2028-01-01", TY2027, "2027", "Rev. Proc. 2026-35 § 3.06", {
     ruleId: "us.federal.eitc_no_age_gate",
     ageGate: false,
     titleSuffix: "Earned income credit, § 32(c)(1)(A)(ii) childless age gate REMOVED (TY2027; for state decoupling statutes only)",

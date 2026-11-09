@@ -1,0 +1,16 @@
+{
+  "description": "Pub. 925, installment sale of an entire interest: the losses allowed each year follow the gain recognized — not modeled, refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental",
+    "passiveActivity1PriorUnallowed": 5000,
+    "passiveActivity1Disposition": "installment"
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

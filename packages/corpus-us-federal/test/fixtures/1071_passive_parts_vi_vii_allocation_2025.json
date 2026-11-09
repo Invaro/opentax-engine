@@ -1,0 +1,28 @@
+{
+  "description": "Form 8582 Parts VI and VII: rentals with active participation A (loss 20,000) and B (loss 10,000), a passive business with $2,000 income, wages $130,000. Line 3 = −28,000; line 8 = 50% x (150,000 − 130,000) = 10,000 = line 9. Part VI: A 10,000 x 20,000/30,000 = 6,666.67, B 3,333.33; column (d) 13,333.33 and 6,666.67. Part VII: line C = 28,000 − 10,000 = 18,000; A 18,000 x 13,333.33/20,000 = 11,999.997 → $12,000.00, B $6,000.00. AGI = 130,000 + 2,000 − 8,000 − 4,000 = $120,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 130000,
+    "passiveActivities": 3,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 20000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "rental_active",
+    "passiveActivity2Loss": 10000,
+    "passiveActivity2Qbi": false,
+    "passiveActivity3Kind": "business",
+    "passiveActivity3Income": 2000,
+    "passiveActivity3Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "1800000",
+    "intermediates": {
+      "us.federal.passive.activity1.unallowed": "1200000",
+      "us.federal.passive.activity2.unallowed": "600000",
+      "us.federal.passive.activity1.special_allowance": "666667",
+      "us.federal.passive.activity2.special_allowance": "333333"
+    }
+  }
+}

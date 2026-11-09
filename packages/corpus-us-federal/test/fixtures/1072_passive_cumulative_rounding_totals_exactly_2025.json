@@ -1,0 +1,28 @@
+{
+  "description": "Form 8582 Part VII column (c) 'Multiply each ratio in column (b) by the amount on line C': with losses of $1,111.11, $2,222.22 and $3,333.33 against $5,000.00 of passive income, line C is $1,666.66 and the three shares, rounded cumulatively, add to exactly that.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 4,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Loss": "1111.11",
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "business",
+    "passiveActivity2Loss": "2222.22",
+    "passiveActivity2Qbi": false,
+    "passiveActivity3Kind": "business",
+    "passiveActivity3Loss": "3333.33",
+    "passiveActivity3Qbi": false,
+    "passiveActivity4Kind": "business",
+    "passiveActivity4Income": 5000,
+    "passiveActivity4Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "166666",
+    "intermediates": {
+      "us.federal.passive.form8582.disallowed": "166666"
+    }
+  }
+}

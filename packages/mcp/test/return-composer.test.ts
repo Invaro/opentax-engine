@@ -361,3 +361,36 @@ describe("compute_return: Schedule 1 lines 8a/8p and the NOL carryovers", () => 
     expect(r.losses).toBeUndefined();
   });
 });
+
+describe("compute_return: Form 8582 by activity", () => {
+  it("Pub. 925 phase-out example: $31,000 rental loss at $120,000 — line 9 $15,000, $16,000 carried, AGI $105,000", async () => {
+    const r = await call("compute_return", single({ box1: "120000", box2: "15000" }, {
+      passive_activities: { passiveActivities: 1, passiveActivity1Kind: "rental_active", passiveActivity1Loss: 31000, passiveActivity1Qbi: false },
+    }));
+    expect(r.ok).toBe(true);
+    expect(lines(r)["11_agi"]).toBe("$105,000.00");
+    const f = (r.forms as { "8582": Record<string, unknown> })["8582"];
+    expect(f["1b"]).toBe("-$31,000.00");
+    expect(f["3"]).toBe("-$31,000.00");
+    expect(f["9_special_allowance"]).toBe("$15,000.00");
+    expect(f["11_losses_allowed"]).toBe("$15,000.00");
+    expect(f.activities).toEqual([{ activity: 1, result: "-$15,000.00", unallowed_carryforward: "$16,000.00" }]);
+    expect(f.carryforward_total).toBe("$16,000.00");
+  });
+  it("an entire disposition with an overall loss is off the form, every loss allowed", async () => {
+    const r = await call("compute_return", single({ box1: "40000", box2: "4000" }, {
+      income: { longTermCapitalGains: 2000 },
+      passive_activities: {
+        passiveActivities: 1, passiveActivity1Kind: "business", passiveActivity1Loss: 3330, passiveActivity1PriorUnallowed: 1115,
+        passiveActivity1DispositionGain: 2000, passiveActivity1Disposition: "entire_taxable", passiveActivity1Qbi: false,
+      },
+    }));
+    expect(lines(r)["11_agi"]).toBe("$37,555.00");
+    const f = (r.forms as { "8582": Record<string, unknown> })["8582"];
+    expect(f.activities).toEqual([{ activity: 1, result: "-$4,445.00", unallowed_carryforward: "$0.00", off_form_8582: true }]);
+  });
+  it("a return without passive activities has no Form 8582", async () => {
+    const r = await call("compute_return", single({ box1: "75000", box2: "9000" }));
+    expect(r.forms).toBeUndefined();
+  });
+});

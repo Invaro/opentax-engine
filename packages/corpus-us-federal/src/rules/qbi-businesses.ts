@@ -108,10 +108,11 @@ function rule(
   type: "money" | "int" | "bool",
   formula: Expr,
   source = "26 U.S.C. § 199A; Form 8995-A (2025) and Schedules A–C",
+  version = 1,
 ): Rule {
   return {
     id: ruleId,
-    version: 1,
+    version,
     jurisdiction: J,
     title,
     citation: { source, section, url, excerpt },
@@ -123,6 +124,9 @@ function rule(
 
 // --- per-business QBI ------------------------------------------------------
 
+// passive activities flagged as qualified trades or businesses (Reg. § 1.199A-3(b)(1)(iv)):
+// a net profit joins the Schedule C / K-1 pool, a net loss the loss pool
+const passiveQbi = ruleRef(`${J}.passive.qbi_net`);
 const scheduleCPool: Expr = add(
   max0(
     sub(
@@ -135,7 +139,9 @@ const scheduleCPool: Expr = add(
     ),
   ),
   fact("k1OrdinaryBusinessIncome"),
+  max0(passiveQbi),
 );
+const lossPool: Expr = add(fact("qbiLossOffset"), max0(neg(passiveQbi)));
 const listedProfits = add(...LISTED.map((u) => max0(qbiOf(u))));
 const listedLosses = add(...LISTED.map((u) => max0(neg(qbiOf(u)))));
 
@@ -145,25 +151,27 @@ const rawQbiRules: Rule[] = [
     "QBI of the main business: the return's Schedule C and K-1 QBI less qbiLossOffset, less every listed business",
     "§ 199A(c); Reg. § 1.199A-3(b)(1)(vi)",
     "https://www.law.cornell.edu/cfr/text/26/1.199A-3",
-    "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit − its ½-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome − qbiLossOffset, less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]",
+    "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit − its ½-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome − qbiLossOffset + the QBI-flagged passive activities after § 469 (us.federal.passive.qbi_net; Reg. § 1.199A-3(b)(1)(iv)), less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]",
     "money",
     iff(
       cmp("gt", listedProfits, scheduleCPool),
       {
         kind: "unsupported",
         reason:
-          "the listed businesses' QBI (qbiBusiness2Income–qbiBusiness6Income) is more than the return's Schedule C and K-1 QBI: a listed business must already be in the totals (selfEmploymentNetProfit or k1OrdinaryBusinessIncome)",
+          "the listed businesses' QBI (qbiBusiness2Income–qbiBusiness6Income) is more than the return's Schedule C, K-1 and passive activity QBI: a listed business must already be in the totals (selfEmploymentNetProfit, k1OrdinaryBusinessIncome or a QBI-flagged passive activity)",
       },
       iff(
-        cmp("gt", listedLosses, fact("qbiLossOffset")),
+        cmp("gt", listedLosses, lossPool),
         {
           kind: "unsupported",
           reason:
-            "the listed businesses' QBI losses are more than qbiLossOffset: a listed loss business's QBI loss must already be in qbiLossOffset",
+            "the listed businesses' QBI losses are more than qbiLossOffset and the passive activities' QBI losses: a listed loss business's QBI loss must already be in the totals",
         },
-        sub(sub(scheduleCPool, listedProfits), sub(fact("qbiLossOffset"), listedLosses)),
+        sub(sub(scheduleCPool, listedProfits), sub(lossPool, listedLosses)),
       ),
     ),
+    undefined,
+    2, // v1 had no passive activities (us.federal.passive.qbi_net)
   ),
   rule(
     id(QBI_UNITS[1], "qbi"),
@@ -568,13 +576,19 @@ const totalRules: Rule[] = [
     "QBI from qualified trades or businesses for the $1,000 test of the § 199A(i) minimum deduction",
     "§ 199A(i)(2), (d)(3)",
     CORNELL,
-    "§ 199A(i): a taxpayer whose aggregate QBI with respect to all active qualified trades or businesses is at least $1,000. Draft 2026 Form 8995 instructions, line 16: aggregate all active qualified business income taken into account for purposes of this form. [At or below the threshold, total QBI; above it, each business after Schedule A, so an SSTB past the phase-in range is not a qualified trade or business and one within it counts at its applicable percentage. The prior-year carryforward is its own line on the form and is not active QBI of this year. Material participation is assumed — disclosed.]",
+    "§ 199A(i): a taxpayer whose aggregate QBI with respect to all active qualified trades or businesses is at least $1,000. Draft 2026 Form 8995 instructions, line 16: aggregate all active qualified business income taken into account for purposes of this form. [At or below the threshold, total QBI; above it, each business after Schedule A, so an SSTB past the phase-in range is not a qualified trade or business and one within it counts at its applicable percentage. The prior-year carryforward is its own line on the form and is not active QBI of this year. Passive activities (us.federal.passive.qbi_net) are not active and are taken out — above the threshold at face value, before any SSTB percentage; material participation is assumed for everything else — disclosed.]",
     "money",
-    iff(
-      cmp("eq", excess, zero),
-      ruleRef(`${J}.qbi.total`),
-      add(...QBI_UNITS.map((u) => ruleRef(id(u, "sstb_qbi")))),
+    // passive activities are not active trades or businesses (§ 469(h) material participation)
+    sub(
+      iff(
+        cmp("eq", excess, zero),
+        ruleRef(`${J}.qbi.total`),
+        add(...QBI_UNITS.map((u) => ruleRef(id(u, "sstb_qbi")))),
+      ),
+      ruleRef(`${J}.passive.qbi_net`),
     ),
+    undefined,
+    2, // v1 counted passive activities' QBI as active
   ),
   rule(
     `${J}.qbi.total_component`,

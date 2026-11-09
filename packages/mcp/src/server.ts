@@ -445,7 +445,7 @@ server.registerTool(
   "compute_return",
   {
     description:
-      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), and with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
     inputSchema: legacyJsonSchema(z.object(individualNestedShape).strict()),
   },
   async (args: Record<string, unknown>) => {
@@ -551,6 +551,41 @@ server.registerTool(
           else throw err;
         }
       }
+      // Form 8582 when passive activities are entered: Part I, the special allowance, line 11,
+      // and each activity's allowed loss, Schedule E/C/F result and carryforward (§ 469(b))
+      const passiveCount = facts.passiveActivities?.type === "int" ? Number(facts.passiveActivities.value) : 0;
+      let form8582: Record<string, unknown> | undefined;
+      if (passiveCount > 0) {
+        const p = (id: string) => get(`us.federal.passive.${id}`);
+        const pBool = (id: string): boolean => {
+          const { value } = evaluate(returnCorpus, facts, { asOf, target: `us.federal.passive.${id}`, ...built.defaults });
+          return value.type === "bool" && value.value;
+        };
+        const line3 = p("form8582.line3");
+        form8582 = {
+          "1a": d(p("form8582.line1a")),
+          "1b": d(-p("form8582.line1b")),
+          "1c": d(-p("form8582.line1c")),
+          "1d": d(p("form8582.line1d")),
+          "2a": d(p("form8582.line2a")),
+          "2b": d(-p("form8582.line2b")),
+          "2c": d(-p("form8582.line2c")),
+          "2d": d(p("form8582.line2d")),
+          "3": d(line3),
+          ...(line3 < 0n ? { "9_special_allowance": d(p("form8582.line9")), "11_losses_allowed": d(p("form8582.line11")) } : {}),
+          activities: Array.from({ length: passiveCount }, (_, k) => {
+            const n = k + 1;
+            const a = (id: string) => p(`activity${n}.${id}`);
+            return {
+              activity: n,
+              result: d(a("net")),
+              unallowed_carryforward: d(a("unallowed")),
+              ...(pBool(`activity${n}.off_form`) ? { off_form_8582: true } : {}),
+            };
+          }),
+          carryforward_total: d(p("carryforward")),
+        };
+      }
       return ok({
         ok: true,
         asOf,
@@ -590,7 +625,7 @@ server.registerTool(
         },
         schedule3: Object.fromEntries(Object.entries(sched3).map(([k, v]) => [k, d(v)])),
         ...(losses ? { losses } : {}),
-        ...(form5695 ? { forms: { "5695": form5695 } } : {}),
+        ...(form5695 || form8582 ? { forms: { ...(form5695 ? { "5695": form5695 } : {}), ...(form8582 ? { "8582": form8582 } : {}) } } : {}),
         note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Line 20 is the sum of the modeled Schedule 3 nonrefundable credits (schedule3); when any Form 5695 input is given, forms['5695'] carries that form's printed lines. Report these numbers as-is.",
         assumptions: proof.assumptions,
         ...(built.projection ? { projected: projectedLabel(asOf, built.projection, proof.corpus.version) } : {}),

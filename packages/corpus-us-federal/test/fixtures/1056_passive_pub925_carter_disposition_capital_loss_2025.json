@@ -1,0 +1,22 @@
+{
+  "description": "Pub. 925 (2025), disposition example: Carter, $60,000 salary, sells an entire 5% limited partnership interest to an unrelated person for $30,000 with a $42,000 basis (a $12,000 capital loss, entered in the loss facts) and $2,000 of carried-over ordinary passive deductions. 'Carter's deductible loss for 2025 is $5,000': $3,000 of capital loss (§ 1211 limit) plus the $2,000 carryover. AGI = 60,000 − 5,000 = $55,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "longTermCapitalLoss": 12000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1PriorUnallowed": 2000,
+    "passiveActivity1DispositionLoss": 12000,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "5500000",
+    "intermediates": {
+      "us.federal.passive.activity1.net": "-200000"
+    }
+  }
+}
