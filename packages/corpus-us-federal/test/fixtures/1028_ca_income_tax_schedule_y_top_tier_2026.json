@@ -1,0 +1,12 @@
+{
+  "description": "California 2026 Schedule Y, MFJ, taxable income $2,000,000: $149,350.54 + 12.3% of the $463,574 over $1,536,426 = $206,370.14 (the 1% BHST over $1,000,000 is line 62, separate).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 2000000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.income_tax",
+  "expect": {
+    "valueCents": "20637014"
+  }
+}

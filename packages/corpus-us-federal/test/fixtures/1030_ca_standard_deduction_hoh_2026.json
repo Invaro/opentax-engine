@@ -1,0 +1,11 @@
+{
+  "description": "2026 California standard deduction, head of household: $11,800 (FTB 2026 indexing memo: 'For joint, surviving spouse, or head of household taxpayers, the standard deduction increases from $11,412 to $11,800').",
+  "facts": {
+    "filingStatus": "hoh"
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.standard_deduction",
+  "expect": {
+    "valueCents": "1180000"
+  }
+}

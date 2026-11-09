@@ -1,0 +1,13 @@
+{
+  "description": "The renter's credit qualification record asks for CALIFORNIA AGI ('Is your California adjusted gross income the amount on line 17: $53,994 or less if single'): a retiree with federal AGI of $70,000, $25,000 of it taxable social security that California subtracts, has California AGI of $45,000 and gets the $60 credit.",
+  "facts": {
+    "filingStatus": "single",
+    "caAgi": 45000,
+    "caRentedPrincipalResidence": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.renters_credit",
+  "expect": {
+    "valueCents": "6000"
+  }
+}

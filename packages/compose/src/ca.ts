@@ -1,11 +1,10 @@
-/** 2025 California Form 540 line composer. */
+/**
+ * California Form 540 line composer (TY2025 and TY2026). The year's amounts — tax, standard
+ * deduction, exemption credits with the AGI limitation, renter's credit, AMT — come from the
+ * corpus rules for the asOf date; line numbers are the same on both years' forms.
+ */
 import { c, rd, max0, fmtD, type Cents } from "./money.js";
-import { isJoint, isHohOrQss, type StateReturnInput, type StateTaxEvaluator } from "./types.js";
-
-const STD_DEDUCTION_SINGLE = 570600n; // $5,706
-const STD_DEDUCTION_JOINT_HOH = 1141200n; // $11,412
-const PERSONAL_EXEMPTION_CREDIT = 15300n; // $153 (also the 65+/blind add-on)
-const DEPENDENT_EXEMPTION_CREDIT = 47500n; // $475
+import { isJoint, type StateReturnInput, type StateTaxEvaluator } from "./types.js";
 
 /** Schedule CA nonconformity adjustments the composer applies itself. */
 function scheduleCaAdjustments(input: StateReturnInput, notes: string[]): { adds: Cents; subs: Cents } {
@@ -37,25 +36,30 @@ export function composeCA(
   notes: string[],
 ): Record<string, string> {
   const joint = isJoint(input);
-  // 2025 Form 540: L75 = CalEITC, L76 = YCTC (printed order; FYTC is 77)
+  // Form 540: L75 = CalEITC, L76 = YCTC (printed order; FYTC is 77)
   const l13 = rd(c(input.federalAGI));
   const { adds, subs } = scheduleCaAdjustments(input, notes);
   const l17 = rd(l13 + c(input.additions) + adds - c(input.subtractions) - subs);
-  const standard = joint || isHohOrQss(input) ? STD_DEDUCTION_JOINT_HOH : STD_DEDUCTION_SINGLE;
+  const standard = rd(evalStateTax("us.ca.standard_deduction", 0n));
   const itemized = rd(c(input.caItemizedDeductions));
   const l18 = itemized > standard ? itemized : standard; // § 63(e) election: greater of standard or itemized
   if (itemized > standard) notes.push(`CA itemized deduction ${fmtD(itemized)} exceeds the standard deduction ${fmtD(standard)} — line 18 itemizes (Schedule CA Part II, agent-computed and disclosed)`);
   const l19 = max0(l17 - l18);
   const l31 = rd(evalStateTax("us.ca.income_tax", l19));
-  // CA gives a QSS filer the same TWO personal exemption credits as MFJ
-  // (Form 540 line 7 doubles for MFJ/QSS per the 540 instructions).
-  const persons = joint || (input as { filingStatus?: string }).filingStatus === "qss" ? 2n : 1n;
-  const l32 = rd(
-    persons * PERSONAL_EXEMPTION_CREDIT +
-      BigInt((input.dependents as number) ?? 0) * DEPENDENT_EXEMPTION_CREDIT +
-      BigInt((input.ageOrBlindBoxes as number) ?? 0) * PERSONAL_EXEMPTION_CREDIT,
-  );
-  const renters = rd(c(input.caRentersCredit));
+  // Line 7 has two boxes on a joint or QSS return; lines 8 and 9 (blind, 65 or older) add one
+  // box each; line 32 is lines 7-10 after the AGI Limitation Worksheet (federal AGI, line 13).
+  const persons = joint || (input as { filingStatus?: string }).filingStatus === "qss" ? 2 : 1;
+  const personalBoxes = persons + ((input.ageOrBlindBoxes as number) ?? 0);
+  const dependents = (input.dependents as number) ?? 0;
+  const l32 = rd(evalStateTax("us.ca.exemption_credits", 0n, { caFederalAgi: l13, caPersonalExemptions: personalBoxes, caDependentExemptions: dependents }));
+  const unlimited = rd(evalStateTax("us.ca.exemption_credits", 0n, { caFederalAgi: 0n, caPersonalExemptions: personalBoxes, caDependentExemptions: dependents }));
+  if (l32 < unlimited) notes.push(`CA line 32: exemption credits ${fmtD(unlimited)} reduced to ${fmtD(l32)} by the AGI Limitation Worksheet (federal AGI ${fmtD(l13)}; $6 per box for each $2,500, or $1,250 if married filing separately, over the threshold)`);
+  // Line 46 renter's credit: the qualification record tests CALIFORNIA AGI (line 17)
+  let renters = rd(c(input.caRentersCredit));
+  if (input.caRentersCredit === undefined && input.caRentedPrincipalResidence === true) {
+    renters = rd(evalStateTax("us.ca.renters_credit", 0n, { caRentedPrincipalResidence: true, caAgi: l17 }));
+    notes.push(renters > 0n ? `CA line 46: renter's credit ${fmtD(renters)} (California AGI ${fmtD(l17)} is within the limit)` : `CA line 46: no renter's credit — California AGI ${fmtD(l17)} is over the limit`);
+  }
   // Form 540 line 48: line 31 minus exemption credits (line 32) minus the
   // renter's credit (line 46) and other nonrefundable credits — floored at 0.
   const l48 = max0(l31 - l32 - renters);
@@ -72,7 +76,7 @@ export function composeCA(
     amt = rd(evalStateTax("us.ca.amt", l19, { caAmti: amti, caRegularTax: l31 }));
     notes.push(`Schedule P: AMTI ${fmtD(amti)} = taxable income ${fmtD(l19)} + ${itemized > standard ? "itemized-taxes addback" : "standard-deduction addback"} ${fmtD(addback)} + ISO preference ${fmtD(rd(c(input.caIsoPreference)))}; AMT ${fmtD(amt)}`);
   }
-  const bhst = rd(c(input.caBhst));
+  const bhst = input.caBhst !== undefined ? rd(c(input.caBhst)) : rd(evalStateTax("us.ca.bhst", l19));
   // Line 63: California 2.5% additional tax on early distributions
   // (R&TC § 17085(c)(1), FTB 3805P) — computed from the federally penalized base.
   const earlyBase = rd(c(input.caTaxableEarlyDistribution));
@@ -80,7 +84,7 @@ export function composeCA(
   if (l63 > 0n) notes.push(`CA line 63: 2.5% early-distribution additional tax ${fmtD(l63)} on ${fmtD(earlyBase)} (R&TC § 17085(c)(1))`);
   const l64 = l48 + amt + bhst + l63; // line 64: add line 48, line 61, line 62, and line 63
   const l71 = c(input.stateWithholding);
-  // Form 540 line 72 = "2025 CA estimated tax and other payments" — extension
+  // Form 540 line 72 = "CA estimated tax and other payments" — extension
   // (FTB 3519) payments and prior-year credited overpayments fold in here.
   const l72 = c(input.estimatedPayments) + rd(c(input.extensionPayment)) + rd(c(input.priorYearOverpaymentCredited));
   const l75 = rd(c(input.caCalEITC));

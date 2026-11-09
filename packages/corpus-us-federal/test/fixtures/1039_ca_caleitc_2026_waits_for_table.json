@@ -1,0 +1,12 @@
+{
+  "description": "The 2026 California EITC Table prints in the 2026 FTB 3514 booklet; FTB's 2026 memo gives the earned income amounts and limits but not the gentle phase-out segment, so a 2026 CalEITC has no rule yet.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 10000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.caleitc",
+  "expect": {
+    "error": "NO_APPLICABLE_RULE"
+  }
+}

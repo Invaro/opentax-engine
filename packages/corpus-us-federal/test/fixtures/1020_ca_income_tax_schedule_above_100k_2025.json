@@ -1,0 +1,12 @@
+{
+  "description": "California 2025, MFJ, taxable income $100,001: above the Tax Table, Schedule Y: $2,044.02 + 6% of the $17,097 over $82,904 = $3,069.84.",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 100001
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": {
+    "valueCents": "306984"
+  }
+}

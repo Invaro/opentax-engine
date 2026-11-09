@@ -1,0 +1,12 @@
+{
+  "description": "California 2026, single, taxable income $50,000: Tax Table row 49,951-50,050 at its whole-dollar midpoint $50,000 on the 2026 Schedule X — $1,056.74 + 6% of $7,139 = $1,485.08 -> $1,485.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.income_tax",
+  "expect": {
+    "valueCents": "148500"
+  }
+}

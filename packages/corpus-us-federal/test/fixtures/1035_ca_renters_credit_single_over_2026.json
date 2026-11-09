@@ -1,0 +1,13 @@
+{
+  "description": "2026 renter's credit, single, California AGI $55,831, one dollar over the limit -> $0.",
+  "facts": {
+    "filingStatus": "single",
+    "caAgi": 55831,
+    "caRentedPrincipalResidence": true
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.renters_credit",
+  "expect": {
+    "valueCents": "0"
+  }
+}

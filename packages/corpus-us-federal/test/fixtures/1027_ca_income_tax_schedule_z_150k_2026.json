@@ -1,0 +1,12 @@
+{
+  "description": "California 2026 Schedule Z (head of household), taxable income $150,000: $3,739.45 + 9.3% of the $47,644 over $102,356 = $8,170.34.",
+  "facts": {
+    "filingStatus": "hoh",
+    "stateTaxableIncome": 150000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.income_tax",
+  "expect": {
+    "valueCents": "817034"
+  }
+}

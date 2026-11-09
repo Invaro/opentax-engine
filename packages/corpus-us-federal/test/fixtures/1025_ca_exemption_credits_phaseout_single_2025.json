@@ -1,0 +1,14 @@
+{
+  "description": "2025 AGI Limitation Worksheet, single, federal AGI $300,000, one personal box: ($300,000 - $252,203) / $2,500 = 19.12 -> 20 steps x $6 = $120; $153 - $120 = $33.",
+  "facts": {
+    "filingStatus": "single",
+    "caFederalAgi": 300000,
+    "caPersonalExemptions": 1,
+    "caDependentExemptions": 0
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.exemption_credits",
+  "expect": {
+    "valueCents": "3300"
+  }
+}

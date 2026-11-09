@@ -1,0 +1,14 @@
+{
+  "description": "2026 AGI Limitation Worksheet, married filing separately, federal AGI $270,000, one personal box: ($270,000 - $260,778) / $1,250 = 7.38 -> 8 steps x $6 = $48; $158 - $48 = $110.",
+  "facts": {
+    "filingStatus": "mfs",
+    "caFederalAgi": 270000,
+    "caPersonalExemptions": 1,
+    "caDependentExemptions": 0
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.exemption_credits",
+  "expect": {
+    "valueCents": "11000"
+  }
+}

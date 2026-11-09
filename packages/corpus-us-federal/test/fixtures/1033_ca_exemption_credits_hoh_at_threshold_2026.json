@@ -1,0 +1,14 @@
+{
+  "description": "2026 head of household, federal AGI exactly $391,173 (the threshold — 'Is Form 540, line 13 more than' it? No): $158 + $491 = $649, unreduced.",
+  "facts": {
+    "filingStatus": "hoh",
+    "caFederalAgi": 391173,
+    "caPersonalExemptions": 1,
+    "caDependentExemptions": 1
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.exemption_credits",
+  "expect": {
+    "valueCents": "64900"
+  }
+}

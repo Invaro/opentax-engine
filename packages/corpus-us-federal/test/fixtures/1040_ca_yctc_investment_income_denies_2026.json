@@ -1,0 +1,15 @@
+{
+  "description": "2026 YCTC needs the California EITC allowed; investment income over FTB's 2026 $4,978 limit disqualifies the CalEITC, so a filer with wages $15,000, a child under six and $5,000 of interest gets no YCTC.",
+  "facts": {
+    "filingStatus": "single",
+    "qualifyingChildren": 1,
+    "hasChildUnderSix": true,
+    "wages": 15000,
+    "taxableInterest": 5000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.yctc",
+  "expect": {
+    "valueCents": "0"
+  }
+}

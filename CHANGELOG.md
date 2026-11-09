@@ -2,6 +2,35 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 9, 2026 · California 2026, and five 2025 California fixes
+
+`compute_state_return` now composes a 2026 California Form 540 from FTB's published 2026 amounts.
+
+- **2026 tax:**
+  - All nine tiers of the 2026 Schedules X, Y and Z (FTB, 2026 Tax Rate Schedules).
+  - Taxable income of $100,000 or less uses the Tax Table. The 2026 table prints in late December, so until then it is generated from the 2026 schedules. Each row is priced at its whole-dollar midpoint, the convention that reproduces every cell of the printed 2024 and 2025 tables.
+- **2026 amounts from FTB's September 3, 2026 indexing memo:**
+  - standard deduction $5,900 / $11,800;
+  - exemption credits $158 per personal, blind or senior box and $491 per dependent, with the AGI limitation over $260,778 / $391,173 / $521,561;
+  - renter's credit limits $55,830 / $111,660;
+  - Young Child Tax Credit $1,229, phasing out from $28,357 at $21.58 per $100;
+  - AMT exemptions $95,902 / $127,872 / $63,932 phasing out over $359,633 / $479,512 / $239,752;
+  - SDI 1.3%.
+- **The composer reads the year's rules:** the standard deduction, line 32 exemption credits and line 46 renter's credit come from the rules for the `asOf` date. Line 62 (the 1% tax over $1,000,000) is computed when not passed. Pass `caRentedPrincipalResidence` and the composer tests the renter's credit itself.
+- **Not yet for 2026: the CalEITC.** Its 2026 table prints in the 2026 FTB 3514 booklet. The memo gives the earned income amounts and limits but not the table's lower phase-out line, so a 2026 CalEITC refuses (line 75 stays an input). The 2026 YCTC is computed, with CalEITC eligibility tested directly.
+- **2025 fixes:**
+  - **Single and married-filing-separately tax between $371,479 and $505,208 was charged 9.3%;** the printed schedule switches to 10.3% at $371,479. Taxable income above the 9.3% band no longer refuses, for any status.
+  - **The 2025 CalEITC now matches FTB's printed table in every cell (2,632 of them).** The old fit missed 775, mostly by $1 or $2. It also gave $0 at exactly $32,900 instead of $1, and never applied the $4,814 investment income limit.
+  - **Exemption credits are reduced above the AGI limitation** ($6 per box for each $2,500 over $252,203 / $378,310 / $504,411). The composer used to give the full credits at any income.
+  - **The renter's credit tests California AGI** (Form 540 line 17), not federal AGI, so taxable Social Security and unemployment no longer cost a qualifying renter the credit. The joint limit is $107,988, not $107,987.
+  - **Tax Table edge rows:** exactly $100,000 uses the table, and two rows near it were a dollar or three off.
+- **Checked:**
+  - Every row of the printed 2025 Tax Table (1,001 rows, five statuses, both ends of each row) and every cell of the 2025 EITC Table now match the engine.
+  - The 2024 table confirms the midpoint convention.
+  - All 54 fixed amounts in the 2025 and 2026 schedules chain to the cent.
+  - A differential against the released engine on 39,000 random 2025 cases: every difference is one of the fixes above.
+  - An independent rebuild of 24 2026 scenarios from FTB's documents alone, without this code: tax table and all schedules, the AGI limitation, renter's credit, YCTC, AMT, the 1% tax and two full Form 540s. All 34 values match.
+
 ## Nov 9, 2026 · Business losses through AGI: § 461(l) and the § 172 NOL with the 80% limit
 
 Large business losses, K-1 losses and NOL carryovers now flow through AGI, taxable income and the AMT for 2025, 2026 and 2027.
