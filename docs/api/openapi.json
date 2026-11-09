@@ -2,10 +2,10 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OpenTax hosted API",
-    "version": "corpus 0.51.0 · engine proof schema 2",
+    "version": "corpus 0.52.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:0d395770321eb157bbeb29522bb13556cf2bca9e2956a2df38ca5d80a4786f4c",
-    "x-generated": "2026-11-09T19:05:52.613Z"
+    "x-corpus-merkle-root": "sha256:4eae27a1e3cae36b505634b4cdf717ce0fcc6a291a646caa2a12c57fe1280149",
+    "x-generated": "2026-11-09T20:59:40.886Z"
   },
   "servers": [
     {
@@ -1699,7 +1699,7 @@
                                   "section1250",
                                   "other"
                                 ],
-                                "description": "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). § 1252, § 1254 and § 1255 property, casualties and thefts (Form 4684) and installment sales (Form 6252) are not modeled."
+                                "description": "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). An installment sale goes in the installmentSale facts (Form 6252) and a like-kind exchange in the likeKindExchange facts (Form 8824), not here. § 1252, § 1254 and § 1255 property and casualties and thefts (Form 4684) are not modeled."
                               },
                               "businessProperty1HeldOverOneYear": {
                                 "type": "boolean",
@@ -1732,6 +1732,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 1 (section1250 only): additional depreciation after 1975 — depreciation (including any special allowance) in excess of straight line (Form 4797 line 26a). Zero for 27.5-year residential and 39-year nonresidential MACRS property depreciated straight line. In dollars."
+                              },
+                              "businessProperty1SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 1 was sold to a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary — and is depreciable in the buyer's hands. The whole gain is then ordinary income (§ 1239(a)), which is refused."
                               },
                               "businessProperty1Qbi": {
                                 "type": "boolean",
@@ -1782,6 +1786,10 @@
                                 ],
                                 "description": "Business property 2 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty2SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 2 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty2Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 2 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -1830,6 +1838,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 3 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty3SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 3 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
                               },
                               "businessProperty3Qbi": {
                                 "type": "boolean",
@@ -1880,6 +1892,10 @@
                                 ],
                                 "description": "Business property 4 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty4SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 4 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty4Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 4 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -1928,6 +1944,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 5 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty5SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 5 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
                               },
                               "businessProperty5Qbi": {
                                 "type": "boolean",
@@ -1978,6 +1998,10 @@
                                 ],
                                 "description": "Business property 6 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty6SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 6 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty6Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 6 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -2027,6 +2051,10 @@
                                 ],
                                 "description": "Business property 7 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty7SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 7 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty7Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 7 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -2075,6 +2103,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 8 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty8SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 8 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
                               },
                               "businessProperty8Qbi": {
                                 "type": "boolean",
@@ -2126,6 +2158,1158 @@
                             },
                             "additionalProperties": false,
                             "description": "Form 4797 sales of business property: up to eight properties (§ 1245, § 1250 or other § 1231 property; held over a year or not; price, basis, depreciation, additional depreciation), K-1 § 1231 amounts and the 5-year lookback — recapture, § 1231 netting, the ordinary amount for Schedule 1 line 4 and unrecaptured § 1250 gain taxed at up to 25%"
+                          },
+                          "installment_sales": {
+                            "type": "object",
+                            "properties": {
+                              "installmentSales": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "How many installment sales you report this year (0–4) on Form 6252 — the year of the sale and every later year until the final payment — each in installmentSale1… through installmentSale4…. The engine figures the gross profit and contract price (Part I), the installment sale income (Part II), a related party's second disposition (Part III), the § 1245 and § 1250 recapture taxed in the year of sale, where the income goes (Schedule D lines 4 and 11, Form 4797 lines 4, 10 and 13) and the unrecaptured § 1250 gain in it. Don't also enter these sales in the capital gain or Form 4797 facts; report the interest you receive as interest income."
+                              },
+                              "installmentSale1Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 1 (when installmentSales ≥ 1): capital = a capital asset never depreciated (land or a home held for investment or personal use, C corporation stock that isn't publicly traded). Not modeled, so don't enter them here: an interest in a partnership or S corporation (§§ 751, 453(i)(2), 1411(c)(4)), collectibles and § 1202 stock (28% rate gain); section1245 = depreciable personal property used in a trade or business (machinery, equipment, vehicles, amortized intangibles, real property expensed under § 179); section1250 = a depreciated building used in a trade or business or as a rental; other = never-depreciated business property such as land used in the business. Sales of publicly traded stock or securities, sales by a dealer, sales at a loss and contingent payment sales (Form 6252 line 4 \"No\") can't use the installment method — enter those as ordinary sales."
+                              },
+                              "installmentSale1HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 1: the property was held more than 1 year when it was sold. A capital asset's gain is then long-term (Schedule D line 11; short-term on line 4 otherwise); business property's gain is § 1231 gain (Form 4797 line 4; ordinary on line 10 otherwise)."
+                              },
+                              "installmentSale1YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 1: this tax year is the year of the sale. In the year of sale the § 1245 and § 1250 recapture is taxed in full (§ 453(i)) and the mortgage in excess of basis is a payment (line 20); in later years only the payments are taxed. Every year, enter the sale's Part I amounts as they were in the year of sale."
+                              },
+                              "installmentSale1SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: selling price (Form 6252 line 5) — money, the face amount of the buyer's note, the FMV of other property, and any mortgage or debt the buyer assumed or took the property subject to. Don't include stated or unstated interest or original issue discount. In dollars."
+                              },
+                              "installmentSale1MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: mortgages, debts and other liabilities the buyer assumed or took the property subject to (Form 6252 line 6) — not a new mortgage the buyer got from a bank or from you. In dollars."
+                              },
+                              "installmentSale1CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: cost or other basis of the property, plus improvements (Form 6252 line 8), before depreciation. In dollars."
+                              },
+                              "installmentSale1Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (section1245 or section1250 only): depreciation and amortization allowed or allowable, including § 179 and any special allowance (Form 6252 line 9 / Form 4797 Part III). In dollars."
+                              },
+                              "installmentSale1AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (section1250 held more than 1 year only): additional depreciation after 1975 — depreciation in excess of straight line (Form 4797 line 26a). Zero for MACRS buildings depreciated straight line. Held 1 year or less, all of a § 1250 property's depreciation is recaptured (§ 1250(b)(1)). In dollars."
+                              },
+                              "installmentSale1SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale1ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (capital only): gain excluded under § 121 because the property was your main home (Form 6252 line 15; Pub. 523). In dollars."
+                              },
+                              "installmentSale1PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: principal payments received this tax year (Form 6252 line 21) — money and the FMV of property received, including amounts withheld to pay off your debts or selling expenses, a note payable on demand or readily tradable, and the net proceeds of a debt secured by the installment obligation (the § 453A(d) pledge rule). Not interest, and not the buyer's own note. A payment already taxed as a deemed payment in an earlier year (a related party's second disposition or a pledge) goes in installmentSale1PaymentsPriorYears instead. In dollars."
+                              },
+                              "installmentSale1PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (years after the year of sale): payments received before this tax year (Form 6252 line 23), including the year of sale's line 20 (mortgage over basis) and any deemed payments (a related party's second disposition, the pledge rule). Zero in the year of sale. In dollars."
+                              },
+                              "installmentSale1GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 1: the gross profit percentage you used on line 19 in the year of sale, in hundredths of a percent (0.2500 = 2500; 100% = 10000), when you rounded it (\"rounded to at least 4 digits\") or figured it on a combined contract price for several assets sold together (Pub. 537 Sale of a Business — then also enter the whole installment payment). 0 = figure line 19 exactly as line 16 ÷ line 18."
+                              },
+                              "installmentSale1RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 1 was to a related party (Form 6252 line 3; § 453(f)(1)): your spouse, child, grandchild, parent or sibling, or a related corporation, S corporation, partnership, estate or trust."
+                              },
+                              "installmentSale1DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 1 (related party only): the property is depreciable in the buyer's hands AND the buyer is a § 453(g)(3) related person — a corporation or partnership you own more than 50% of (directly or indirectly), a trust of which you or your spouse is a beneficiary, or an estate of which you are executor or beneficiary. Family members are not § 453(g) related persons. Such a sale can't use the installment method (all payments are treated as received in the year of sale) unless the IRS agrees tax avoidance wasn't a principal purpose — refused; report it as a sale."
+                              },
+                              "installmentSale1SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 1 (related party only): the related party resold or disposed of the property this tax year (Form 6252 line 28), within 2 years of your sale (line 29a), and none of the exceptions on lines 29b–29e applies. Then Part III treats what they realized as a payment to you."
+                              },
+                              "installmentSale1RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (second disposition only): the amount the related party realized on the resale — cumulative if part was resold earlier — or the FMV if the property wasn't sold or exchanged (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale1Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 1's property was used in a qualified trade or business for § 199A: its ordinary results (recapture, a sale of property held 1 year or less, or § 1231 gain when § 1231 nets to a loss) are QBI. Asked when the sale has an ordinary result."
+                              },
+                              "installmentSale1NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 1's gain is net investment income (§ 1411(c)(1)(A)(iii)): true for property held for investment, in a passive activity or in a rental that isn't a § 162 trade or business; false for property used in a trade or business in which you materially participate (Form 8960 line 5b takes it out). Asked for business property when the net investment income tax can apply; a capital asset's gain is always included."
+                              },
+                              "installmentSale2Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 2 (when installmentSales ≥ 2): capital, section1245, section1250 or other — as for installmentSale1Kind."
+                              },
+                              "installmentSale2HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 2: the property was held more than 1 year when it was sold."
+                              },
+                              "installmentSale2YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 2: this tax year is the year of the sale."
+                              },
+                              "installmentSale2SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: selling price including mortgages assumed, without interest (Form 6252 line 5). In dollars."
+                              },
+                              "installmentSale2MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: mortgages and debts the buyer assumed or took the property subject to (Form 6252 line 6). In dollars."
+                              },
+                              "installmentSale2CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: cost or other basis (Form 6252 line 8). In dollars."
+                              },
+                              "installmentSale2Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (section1245 or section1250 only): depreciation allowed or allowable (Form 6252 line 9). In dollars."
+                              },
+                              "installmentSale2AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "installmentSale2SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale2ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (capital only): § 121 main-home exclusion (Form 6252 line 15). In dollars."
+                              },
+                              "installmentSale2PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: principal payments received this tax year, without interest (Form 6252 line 21). In dollars."
+                              },
+                              "installmentSale2PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: payments received in prior years, including deemed payments (Form 6252 line 23). In dollars."
+                              },
+                              "installmentSale2GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 2: the line 19 gross profit percentage you used, in hundredths of a percent; 0 = figure it exactly."
+                              },
+                              "installmentSale2RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 2 was to a related party (Form 6252 line 3)."
+                              },
+                              "installmentSale2DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 2 (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary)."
+                              },
+                              "installmentSale2SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 2 (related party only): the related party made a second disposition this year with no line 29 exception (Form 6252 lines 28–29)."
+                              },
+                              "installmentSale2RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (second disposition only): amount realized by the related party (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale2Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 2's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "installmentSale2NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 2's gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "installmentSale3Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 3 (when installmentSales ≥ 3): capital, section1245, section1250 or other — as for installmentSale1Kind."
+                              },
+                              "installmentSale3HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 3: the property was held more than 1 year when it was sold."
+                              },
+                              "installmentSale3YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 3: this tax year is the year of the sale."
+                              },
+                              "installmentSale3SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: selling price including mortgages assumed, without interest (Form 6252 line 5). In dollars."
+                              },
+                              "installmentSale3MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: mortgages and debts the buyer assumed or took the property subject to (Form 6252 line 6). In dollars."
+                              },
+                              "installmentSale3CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: cost or other basis (Form 6252 line 8). In dollars."
+                              },
+                              "installmentSale3Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (section1245 or section1250 only): depreciation allowed or allowable (Form 6252 line 9). In dollars."
+                              },
+                              "installmentSale3AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "installmentSale3SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale3ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (capital only): § 121 main-home exclusion (Form 6252 line 15). In dollars."
+                              },
+                              "installmentSale3PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: principal payments received this tax year, without interest (Form 6252 line 21). In dollars."
+                              },
+                              "installmentSale3PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: payments received in prior years, including deemed payments (Form 6252 line 23). In dollars."
+                              },
+                              "installmentSale3GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 3: the line 19 gross profit percentage you used, in hundredths of a percent; 0 = figure it exactly."
+                              },
+                              "installmentSale3RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 3 was to a related party (Form 6252 line 3)."
+                              },
+                              "installmentSale3DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 3 (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary)."
+                              },
+                              "installmentSale3SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 3 (related party only): the related party made a second disposition this year with no line 29 exception (Form 6252 lines 28–29)."
+                              },
+                              "installmentSale3RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (second disposition only): amount realized by the related party (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale3Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 3's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "installmentSale3NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 3's gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "installmentSale4Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 4 (when installmentSales ≥ 4): capital, section1245, section1250 or other — as for installmentSale1Kind."
+                              },
+                              "installmentSale4HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 4: the property was held more than 1 year when it was sold."
+                              },
+                              "installmentSale4YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 4: this tax year is the year of the sale."
+                              },
+                              "installmentSale4SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: selling price including mortgages assumed, without interest (Form 6252 line 5). In dollars."
+                              },
+                              "installmentSale4MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: mortgages and debts the buyer assumed or took the property subject to (Form 6252 line 6). In dollars."
+                              },
+                              "installmentSale4CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: cost or other basis (Form 6252 line 8). In dollars."
+                              },
+                              "installmentSale4Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (section1245 or section1250 only): depreciation allowed or allowable (Form 6252 line 9). In dollars."
+                              },
+                              "installmentSale4AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "installmentSale4SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale4ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (capital only): § 121 main-home exclusion (Form 6252 line 15). In dollars."
+                              },
+                              "installmentSale4PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: principal payments received this tax year, without interest (Form 6252 line 21). In dollars."
+                              },
+                              "installmentSale4PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: payments received in prior years, including deemed payments (Form 6252 line 23). In dollars."
+                              },
+                              "installmentSale4GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 4: the line 19 gross profit percentage you used, in hundredths of a percent; 0 = figure it exactly."
+                              },
+                              "installmentSale4RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 4 was to a related party (Form 6252 line 3)."
+                              },
+                              "installmentSale4DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 4 (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary)."
+                              },
+                              "installmentSale4SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 4 (related party only): the related party made a second disposition this year with no line 29 exception (Form 6252 lines 28–29)."
+                              },
+                              "installmentSale4RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (second disposition only): amount realized by the related party (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale4Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 4's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "installmentSale4NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 4's gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "installmentSaleSection453AInterest": {
+                                "type": "boolean",
+                                "description": "Interest on deferred tax is owed under § 453A: an installment obligation from a sale over $150,000 is outstanding at the end of the year, and the face amount of all your nondealer installment obligations that arose in that sale's year and were outstanding at that year's end was over $5 million. (Not for personal-use property or farm property.) The interest isn't figured on Form 6252 (it is additional tax on Schedule 2) and is refused. Asked when a sale's selling price is over $150,000."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Form 6252 installment sales: up to four sales (capital asset, § 1245, § 1250 or other business property; held over a year or not; year of sale or a later year; Part I amounts, this year's and earlier years' payments, related party and second disposition) — gross profit percentage, installment income, the year-of-sale recapture and the unrecaptured § 1250 gain, into Schedule D or Form 4797"
+                          },
+                          "like_kind_exchanges": {
+                            "type": "object",
+                            "properties": {
+                              "likeKindExchanges": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "How many like-kind exchanges of real property you made this year (0–4) on Form 8824, each in likeKindExchange1… through likeKindExchange4…. The engine figures the realized gain, the gain recognized to the extent of cash and other property received (lines 15–23), the § 1245 and § 1250 recapture in it (line 21), the deferred gain (line 24), the basis of the property received (line 25, with 25a and 25b), where the gain goes (Schedule D lines 4 and 11, Form 4797 lines 5 and 16) and its unrecaptured § 1250 gain. Don't also enter these exchanges in the capital gain or Form 4797 facts."
+                              },
+                              "likeKindExchange1Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 1 (when likeKindExchanges ≥ 1): the U.S. real property you gave up — capital = held for investment and never depreciated (investment land); section1250 = a depreciated building used in a trade or business or as a rental, with its land; other = business real property never depreciated (land used in the business). Since 2018 only real property qualifies (§ 1031(a)); real property held primarily for sale and property used as your home don't, and U.S. and foreign real property aren't like kind to each other (§ 1031(h); Form 8824 instructions)."
+                              },
+                              "likeKindExchange1HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1: the property given up was held more than 1 year when you transferred it. Its recognized gain is then long-term (capital) or § 1231 gain (business); otherwise short-term or ordinary."
+                              },
+                              "likeKindExchange1LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the like-kind real property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange1AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: adjusted basis of the like-kind real property given up (part of Form 8824 line 18), after depreciation. In dollars."
+                              },
+                              "likeKindExchange1CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: cash the other party paid you (Form 8824 line 15), including cash you could get from a qualified intermediary. In dollars."
+                              },
+                              "likeKindExchange1OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of other (not like-kind) property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange1LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: liabilities (including mortgages) the other party assumed or took your property subject to (Form 8824 line 15 instructions). In dollars."
+                              },
+                              "likeKindExchange1LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: liabilities you assumed or took the property received subject to (Form 8824 lines 15 and 18 instructions). In dollars."
+                              },
+                              "likeKindExchange1CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: cash you paid the other party (Form 8824 lines 15 and 18 instructions). In dollars."
+                              },
+                              "likeKindExchange1OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of other (not like-kind) property you gave up (Form 8824 line 12). It offsets the liabilities on lines 15 and 18; enter its own gain or loss (line 14) as a sale of that property in the Form 4797 or capital gain facts. In dollars."
+                              },
+                              "likeKindExchange1ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: exchange expenses (commissions, legal and qualified intermediary fees). They reduce line 15, and any not used there go on line 18. In dollars."
+                              },
+                              "likeKindExchange1Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1 (section1250 only): depreciation allowed or allowable on the § 1250 property given up (the building and its structural components, not land or a § 1245 component). It sets the unrecaptured § 1250 gain in the recognized gain. In dollars."
+                              },
+                              "likeKindExchange1Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1 (section1250 only): additional depreciation on the § 1250 property given up — the excess over straight line (Form 4797 line 26a). Zero for MACRS buildings depreciated straight line. Held 1 year or less, all of the depreciation is recaptured without this (§ 1250(b)(1)). In dollars."
+                              },
+                              "likeKindExchange1Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the § 1250 property given up (the building, without land). With its adjusted basis it gives the gain you'd have had on Form 4797 line 24 had you sold it. Asked when it has depreciation and the exchange recognizes gain. In dollars."
+                              },
+                              "likeKindExchange1Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: adjusted basis of the § 1250 property given up (the building, without land). Asked with likeKindExchange1Section1250Fmv. In dollars."
+                              },
+                              "likeKindExchange1Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1 (section1250 only): depreciation allowed or allowable on § 1245 property that is part of the real property given up (for example components a cost segregation study placed in a shorter MACRS class; Form 8824 instructions, line 21). In dollars."
+                              },
+                              "likeKindExchange1Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the § 1245 real property given up. Asked when it has depreciation. In dollars."
+                              },
+                              "likeKindExchange1Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: adjusted basis of the § 1245 real property given up. Asked when it has depreciation. In dollars."
+                              },
+                              "likeKindExchange1Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the like-kind § 1245 property received (part of line 16). It limits the § 1245 recapture (§ 1245(b)(4)) and sets line 25b. Asked when the property given up has § 1245 recapture. In dollars."
+                              },
+                              "likeKindExchange1Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the like-kind § 1250 property received (part of line 16, the buildings without land). It limits the § 1250 recapture (§ 1250(d)(4)) and sets line 25a. Asked when the property given up has additional depreciation. In dollars."
+                              },
+                              "likeKindExchange1RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1 was made with a related party, directly or through an intermediary (Form 8824 line 7; § 1031(f))."
+                              },
+                              "likeKindExchange1DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1 (related party only, asked when gain is recognized): the property you gave up is depreciable in the other party's hands AND the other party is a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary. Family members are not § 1239 related persons. The recognized gain is then ordinary income (§ 1239(a)) — refused."
+                              },
+                              "likeKindExchange1RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1 (related party only): you or the related party disposed of property received in the exchange this tax year, within 2 years of the last transfer, and no exception on Form 8824 line 11 applies. The exchange is then taxed as a sale — refused here."
+                              },
+                              "likeKindExchange1Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1's property was used in a qualified trade or business for § 199A: its ordinary recognized gain (line 21, or a property held 1 year or less, or § 1231 gain when § 1231 nets to a loss) is QBI. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange1NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1's recognized gain is net investment income (§ 1411(c)(1)(A)(iii)): true for a rental that isn't a § 162 trade or business or a passive activity; false for property used in a trade or business in which you materially participate (Form 8960 line 5b). Asked for business property when the NIIT can apply; investment property's gain is always included."
+                              },
+                              "likeKindExchange2Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 2 (when likeKindExchanges ≥ 2): capital, section1250 or other — as for likeKindExchange1Kind."
+                              },
+                              "likeKindExchange2HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2: the property given up was held more than 1 year."
+                              },
+                              "likeKindExchange2LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the like-kind property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange2AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: adjusted basis of the like-kind property given up (Form 8824 line 18). In dollars."
+                              },
+                              "likeKindExchange2CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: cash received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange2OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of other property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange2LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: liabilities the other party assumed (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange2LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: liabilities you assumed (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange2CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: cash you paid (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange2OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of other property given up (Form 8824 line 12); enter its gain or loss as its own sale. In dollars."
+                              },
+                              "likeKindExchange2ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: exchange expenses (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange2Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2 (section1250 only): depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2 (section1250 only): additional depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: adjusted basis of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2 (section1250 only): depreciation on § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: adjusted basis of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange2Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the like-kind § 1245 property received. In dollars."
+                              },
+                              "likeKindExchange2Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the like-kind § 1250 property received. In dollars."
+                              },
+                              "likeKindExchange2RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2 was made with a related party (Form 8824 line 7)."
+                              },
+                              "likeKindExchange2DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2 (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from)."
+                              },
+                              "likeKindExchange2RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2 (related party only): a disposition within 2 years with no line 11 exception (Form 8824 lines 9–11)."
+                              },
+                              "likeKindExchange2Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange2NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2's recognized gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "likeKindExchange3Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 3 (when likeKindExchanges ≥ 3): capital, section1250 or other — as for likeKindExchange1Kind."
+                              },
+                              "likeKindExchange3HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3: the property given up was held more than 1 year."
+                              },
+                              "likeKindExchange3LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the like-kind property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange3AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: adjusted basis of the like-kind property given up (Form 8824 line 18). In dollars."
+                              },
+                              "likeKindExchange3CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: cash received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange3OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of other property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange3LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: liabilities the other party assumed (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange3LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: liabilities you assumed (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange3CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: cash you paid (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange3OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of other property given up (Form 8824 line 12); enter its gain or loss as its own sale. In dollars."
+                              },
+                              "likeKindExchange3ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: exchange expenses (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange3Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3 (section1250 only): depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3 (section1250 only): additional depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: adjusted basis of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3 (section1250 only): depreciation on § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: adjusted basis of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange3Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the like-kind § 1245 property received. In dollars."
+                              },
+                              "likeKindExchange3Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the like-kind § 1250 property received. In dollars."
+                              },
+                              "likeKindExchange3RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3 was made with a related party (Form 8824 line 7)."
+                              },
+                              "likeKindExchange3DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3 (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from)."
+                              },
+                              "likeKindExchange3RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3 (related party only): a disposition within 2 years with no line 11 exception (Form 8824 lines 9–11)."
+                              },
+                              "likeKindExchange3Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange3NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3's recognized gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "likeKindExchange4Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 4 (when likeKindExchanges ≥ 4): capital, section1250 or other — as for likeKindExchange1Kind."
+                              },
+                              "likeKindExchange4HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4: the property given up was held more than 1 year."
+                              },
+                              "likeKindExchange4LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the like-kind property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange4AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: adjusted basis of the like-kind property given up (Form 8824 line 18). In dollars."
+                              },
+                              "likeKindExchange4CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: cash received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange4OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of other property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange4LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: liabilities the other party assumed (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange4LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: liabilities you assumed (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange4CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: cash you paid (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange4OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of other property given up (Form 8824 line 12); enter its gain or loss as its own sale. In dollars."
+                              },
+                              "likeKindExchange4ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: exchange expenses (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange4Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4 (section1250 only): depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4 (section1250 only): additional depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: adjusted basis of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4 (section1250 only): depreciation on § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: adjusted basis of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange4Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the like-kind § 1245 property received. In dollars."
+                              },
+                              "likeKindExchange4Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the like-kind § 1250 property received. In dollars."
+                              },
+                              "likeKindExchange4RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4 was made with a related party (Form 8824 line 7)."
+                              },
+                              "likeKindExchange4DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4 (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from)."
+                              },
+                              "likeKindExchange4RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4 (related party only): a disposition within 2 years with no line 11 exception (Form 8824 lines 9–11)."
+                              },
+                              "likeKindExchange4Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange4NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4's recognized gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Form 8824 like-kind exchanges of real property: up to four exchanges (investment property, depreciated § 1250 property or other business real property; cash, other property and liabilities on each side; § 1250 and § 1245 components) — the recognized gain, its § 1245/§ 1250 recapture, the deferred gain and the basis of the property received"
                           },
                           "business_credits": {
                             "type": "object",
@@ -12369,7 +13553,7 @@
       "post": {
         "operationId": "compute_return",
         "summary": "compute_return",
-        "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), with business property sales Form 4797 (forms['4797']: the net § 1231 amount, the lookback, the Schedule D line 11 and Schedule 1 line 4 amounts, unrecaptured § 1250 gain and each property's gain, recapture and § 1231 part), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+        "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), with business property sales, installment sales or like-kind exchanges Form 4797 (forms['4797']: the net § 1231 amount, the lookback, the Schedule D line 11 and Schedule 1 line 4 amounts, unrecaptured § 1250 gain and each property's gain, recapture and § 1231 part; line numbers follow the year's form, renumbered in 2026), Form 6252 (forms['6252']: each sale's recapture, gross profit, contract price, installment income and unrecaptured § 1250 gain) and Form 8824 (forms['8824']: each exchange's realized, recognized and deferred gain, recapture and basis of the property received), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
         "tags": [
           "tools"
         ],
@@ -13933,7 +15117,7 @@
                                   "section1250",
                                   "other"
                                 ],
-                                "description": "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). § 1252, § 1254 and § 1255 property, casualties and thefts (Form 4684) and installment sales (Form 6252) are not modeled."
+                                "description": "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). An installment sale goes in the installmentSale facts (Form 6252) and a like-kind exchange in the likeKindExchange facts (Form 8824), not here. § 1252, § 1254 and § 1255 property and casualties and thefts (Form 4684) are not modeled."
                               },
                               "businessProperty1HeldOverOneYear": {
                                 "type": "boolean",
@@ -13966,6 +15150,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 1 (section1250 only): additional depreciation after 1975 — depreciation (including any special allowance) in excess of straight line (Form 4797 line 26a). Zero for 27.5-year residential and 39-year nonresidential MACRS property depreciated straight line. In dollars."
+                              },
+                              "businessProperty1SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 1 was sold to a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary — and is depreciable in the buyer's hands. The whole gain is then ordinary income (§ 1239(a)), which is refused."
                               },
                               "businessProperty1Qbi": {
                                 "type": "boolean",
@@ -14016,6 +15204,10 @@
                                 ],
                                 "description": "Business property 2 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty2SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 2 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty2Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 2 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -14064,6 +15256,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 3 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty3SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 3 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
                               },
                               "businessProperty3Qbi": {
                                 "type": "boolean",
@@ -14114,6 +15310,10 @@
                                 ],
                                 "description": "Business property 4 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty4SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 4 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty4Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 4 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -14162,6 +15362,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 5 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty5SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 5 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
                               },
                               "businessProperty5Qbi": {
                                 "type": "boolean",
@@ -14212,6 +15416,10 @@
                                 ],
                                 "description": "Business property 6 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty6SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 6 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty6Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 6 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -14261,6 +15469,10 @@
                                 ],
                                 "description": "Business property 7 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
                               },
+                              "businessProperty7SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 7 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
+                              },
                               "businessProperty7Qbi": {
                                 "type": "boolean",
                                 "description": "Business property 7 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
@@ -14309,6 +15521,10 @@
                                   "string"
                                 ],
                                 "description": "Business property 8 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty8SoldToControlledEntity": {
+                                "type": "boolean",
+                                "description": "Business property 8 was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands."
                               },
                               "businessProperty8Qbi": {
                                 "type": "boolean",
@@ -14360,6 +15576,1158 @@
                             },
                             "additionalProperties": false,
                             "description": "Form 4797 sales of business property: up to eight properties (§ 1245, § 1250 or other § 1231 property; held over a year or not; price, basis, depreciation, additional depreciation), K-1 § 1231 amounts and the 5-year lookback — recapture, § 1231 netting, the ordinary amount for Schedule 1 line 4 and unrecaptured § 1250 gain taxed at up to 25%"
+                          },
+                          "installment_sales": {
+                            "type": "object",
+                            "properties": {
+                              "installmentSales": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "How many installment sales you report this year (0–4) on Form 6252 — the year of the sale and every later year until the final payment — each in installmentSale1… through installmentSale4…. The engine figures the gross profit and contract price (Part I), the installment sale income (Part II), a related party's second disposition (Part III), the § 1245 and § 1250 recapture taxed in the year of sale, where the income goes (Schedule D lines 4 and 11, Form 4797 lines 4, 10 and 13) and the unrecaptured § 1250 gain in it. Don't also enter these sales in the capital gain or Form 4797 facts; report the interest you receive as interest income."
+                              },
+                              "installmentSale1Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 1 (when installmentSales ≥ 1): capital = a capital asset never depreciated (land or a home held for investment or personal use, C corporation stock that isn't publicly traded). Not modeled, so don't enter them here: an interest in a partnership or S corporation (§§ 751, 453(i)(2), 1411(c)(4)), collectibles and § 1202 stock (28% rate gain); section1245 = depreciable personal property used in a trade or business (machinery, equipment, vehicles, amortized intangibles, real property expensed under § 179); section1250 = a depreciated building used in a trade or business or as a rental; other = never-depreciated business property such as land used in the business. Sales of publicly traded stock or securities, sales by a dealer, sales at a loss and contingent payment sales (Form 6252 line 4 \"No\") can't use the installment method — enter those as ordinary sales."
+                              },
+                              "installmentSale1HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 1: the property was held more than 1 year when it was sold. A capital asset's gain is then long-term (Schedule D line 11; short-term on line 4 otherwise); business property's gain is § 1231 gain (Form 4797 line 4; ordinary on line 10 otherwise)."
+                              },
+                              "installmentSale1YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 1: this tax year is the year of the sale. In the year of sale the § 1245 and § 1250 recapture is taxed in full (§ 453(i)) and the mortgage in excess of basis is a payment (line 20); in later years only the payments are taxed. Every year, enter the sale's Part I amounts as they were in the year of sale."
+                              },
+                              "installmentSale1SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: selling price (Form 6252 line 5) — money, the face amount of the buyer's note, the FMV of other property, and any mortgage or debt the buyer assumed or took the property subject to. Don't include stated or unstated interest or original issue discount. In dollars."
+                              },
+                              "installmentSale1MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: mortgages, debts and other liabilities the buyer assumed or took the property subject to (Form 6252 line 6) — not a new mortgage the buyer got from a bank or from you. In dollars."
+                              },
+                              "installmentSale1CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: cost or other basis of the property, plus improvements (Form 6252 line 8), before depreciation. In dollars."
+                              },
+                              "installmentSale1Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (section1245 or section1250 only): depreciation and amortization allowed or allowable, including § 179 and any special allowance (Form 6252 line 9 / Form 4797 Part III). In dollars."
+                              },
+                              "installmentSale1AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (section1250 held more than 1 year only): additional depreciation after 1975 — depreciation in excess of straight line (Form 4797 line 26a). Zero for MACRS buildings depreciated straight line. Held 1 year or less, all of a § 1250 property's depreciation is recaptured (§ 1250(b)(1)). In dollars."
+                              },
+                              "installmentSale1SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale1ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (capital only): gain excluded under § 121 because the property was your main home (Form 6252 line 15; Pub. 523). In dollars."
+                              },
+                              "installmentSale1PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1: principal payments received this tax year (Form 6252 line 21) — money and the FMV of property received, including amounts withheld to pay off your debts or selling expenses, a note payable on demand or readily tradable, and the net proceeds of a debt secured by the installment obligation (the § 453A(d) pledge rule). Not interest, and not the buyer's own note. A payment already taxed as a deemed payment in an earlier year (a related party's second disposition or a pledge) goes in installmentSale1PaymentsPriorYears instead. In dollars."
+                              },
+                              "installmentSale1PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (years after the year of sale): payments received before this tax year (Form 6252 line 23), including the year of sale's line 20 (mortgage over basis) and any deemed payments (a related party's second disposition, the pledge rule). Zero in the year of sale. In dollars."
+                              },
+                              "installmentSale1GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 1: the gross profit percentage you used on line 19 in the year of sale, in hundredths of a percent (0.2500 = 2500; 100% = 10000), when you rounded it (\"rounded to at least 4 digits\") or figured it on a combined contract price for several assets sold together (Pub. 537 Sale of a Business — then also enter the whole installment payment). 0 = figure line 19 exactly as line 16 ÷ line 18."
+                              },
+                              "installmentSale1RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 1 was to a related party (Form 6252 line 3; § 453(f)(1)): your spouse, child, grandchild, parent or sibling, or a related corporation, S corporation, partnership, estate or trust."
+                              },
+                              "installmentSale1DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 1 (related party only): the property is depreciable in the buyer's hands AND the buyer is a § 453(g)(3) related person — a corporation or partnership you own more than 50% of (directly or indirectly), a trust of which you or your spouse is a beneficiary, or an estate of which you are executor or beneficiary. Family members are not § 453(g) related persons. Such a sale can't use the installment method (all payments are treated as received in the year of sale) unless the IRS agrees tax avoidance wasn't a principal purpose — refused; report it as a sale."
+                              },
+                              "installmentSale1SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 1 (related party only): the related party resold or disposed of the property this tax year (Form 6252 line 28), within 2 years of your sale (line 29a), and none of the exceptions on lines 29b–29e applies. Then Part III treats what they realized as a payment to you."
+                              },
+                              "installmentSale1RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 1 (second disposition only): the amount the related party realized on the resale — cumulative if part was resold earlier — or the FMV if the property wasn't sold or exchanged (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale1Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 1's property was used in a qualified trade or business for § 199A: its ordinary results (recapture, a sale of property held 1 year or less, or § 1231 gain when § 1231 nets to a loss) are QBI. Asked when the sale has an ordinary result."
+                              },
+                              "installmentSale1NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 1's gain is net investment income (§ 1411(c)(1)(A)(iii)): true for property held for investment, in a passive activity or in a rental that isn't a § 162 trade or business; false for property used in a trade or business in which you materially participate (Form 8960 line 5b takes it out). Asked for business property when the net investment income tax can apply; a capital asset's gain is always included."
+                              },
+                              "installmentSale2Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 2 (when installmentSales ≥ 2): capital, section1245, section1250 or other — as for installmentSale1Kind."
+                              },
+                              "installmentSale2HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 2: the property was held more than 1 year when it was sold."
+                              },
+                              "installmentSale2YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 2: this tax year is the year of the sale."
+                              },
+                              "installmentSale2SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: selling price including mortgages assumed, without interest (Form 6252 line 5). In dollars."
+                              },
+                              "installmentSale2MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: mortgages and debts the buyer assumed or took the property subject to (Form 6252 line 6). In dollars."
+                              },
+                              "installmentSale2CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: cost or other basis (Form 6252 line 8). In dollars."
+                              },
+                              "installmentSale2Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (section1245 or section1250 only): depreciation allowed or allowable (Form 6252 line 9). In dollars."
+                              },
+                              "installmentSale2AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "installmentSale2SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale2ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (capital only): § 121 main-home exclusion (Form 6252 line 15). In dollars."
+                              },
+                              "installmentSale2PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: principal payments received this tax year, without interest (Form 6252 line 21). In dollars."
+                              },
+                              "installmentSale2PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2: payments received in prior years, including deemed payments (Form 6252 line 23). In dollars."
+                              },
+                              "installmentSale2GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 2: the line 19 gross profit percentage you used, in hundredths of a percent; 0 = figure it exactly."
+                              },
+                              "installmentSale2RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 2 was to a related party (Form 6252 line 3)."
+                              },
+                              "installmentSale2DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 2 (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary)."
+                              },
+                              "installmentSale2SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 2 (related party only): the related party made a second disposition this year with no line 29 exception (Form 6252 lines 28–29)."
+                              },
+                              "installmentSale2RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 2 (second disposition only): amount realized by the related party (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale2Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 2's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "installmentSale2NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 2's gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "installmentSale3Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 3 (when installmentSales ≥ 3): capital, section1245, section1250 or other — as for installmentSale1Kind."
+                              },
+                              "installmentSale3HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 3: the property was held more than 1 year when it was sold."
+                              },
+                              "installmentSale3YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 3: this tax year is the year of the sale."
+                              },
+                              "installmentSale3SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: selling price including mortgages assumed, without interest (Form 6252 line 5). In dollars."
+                              },
+                              "installmentSale3MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: mortgages and debts the buyer assumed or took the property subject to (Form 6252 line 6). In dollars."
+                              },
+                              "installmentSale3CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: cost or other basis (Form 6252 line 8). In dollars."
+                              },
+                              "installmentSale3Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (section1245 or section1250 only): depreciation allowed or allowable (Form 6252 line 9). In dollars."
+                              },
+                              "installmentSale3AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "installmentSale3SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale3ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (capital only): § 121 main-home exclusion (Form 6252 line 15). In dollars."
+                              },
+                              "installmentSale3PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: principal payments received this tax year, without interest (Form 6252 line 21). In dollars."
+                              },
+                              "installmentSale3PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3: payments received in prior years, including deemed payments (Form 6252 line 23). In dollars."
+                              },
+                              "installmentSale3GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 3: the line 19 gross profit percentage you used, in hundredths of a percent; 0 = figure it exactly."
+                              },
+                              "installmentSale3RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 3 was to a related party (Form 6252 line 3)."
+                              },
+                              "installmentSale3DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 3 (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary)."
+                              },
+                              "installmentSale3SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 3 (related party only): the related party made a second disposition this year with no line 29 exception (Form 6252 lines 28–29)."
+                              },
+                              "installmentSale3RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 3 (second disposition only): amount realized by the related party (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale3Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 3's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "installmentSale3NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 3's gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "installmentSale4Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Installment sale 4 (when installmentSales ≥ 4): capital, section1245, section1250 or other — as for installmentSale1Kind."
+                              },
+                              "installmentSale4HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Installment sale 4: the property was held more than 1 year when it was sold."
+                              },
+                              "installmentSale4YearOfSale": {
+                                "type": "boolean",
+                                "description": "Installment sale 4: this tax year is the year of the sale."
+                              },
+                              "installmentSale4SellingPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: selling price including mortgages assumed, without interest (Form 6252 line 5). In dollars."
+                              },
+                              "installmentSale4MortgagesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: mortgages and debts the buyer assumed or took the property subject to (Form 6252 line 6). In dollars."
+                              },
+                              "installmentSale4CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: cost or other basis (Form 6252 line 8). In dollars."
+                              },
+                              "installmentSale4Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (section1245 or section1250 only): depreciation allowed or allowable (Form 6252 line 9). In dollars."
+                              },
+                              "installmentSale4AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "installmentSale4SellingExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: commissions and other expenses of sale (Form 6252 line 11). In dollars."
+                              },
+                              "installmentSale4ExcludedGain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (capital only): § 121 main-home exclusion (Form 6252 line 15). In dollars."
+                              },
+                              "installmentSale4PaymentsThisYear": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: principal payments received this tax year, without interest (Form 6252 line 21). In dollars."
+                              },
+                              "installmentSale4PaymentsPriorYears": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4: payments received in prior years, including deemed payments (Form 6252 line 23). In dollars."
+                              },
+                              "installmentSale4GrossProfitPercentageBps": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "Installment sale 4: the line 19 gross profit percentage you used, in hundredths of a percent; 0 = figure it exactly."
+                              },
+                              "installmentSale4RelatedParty": {
+                                "type": "boolean",
+                                "description": "Installment sale 4 was to a related party (Form 6252 line 3)."
+                              },
+                              "installmentSale4DepreciableToControlledBuyer": {
+                                "type": "boolean",
+                                "description": "Installment sale 4 (related party only): property depreciable in the buyer's hands sold to a § 453(g)(3) related person (an entity you control, or a trust of which you or your spouse is a beneficiary)."
+                              },
+                              "installmentSale4SecondDisposition": {
+                                "type": "boolean",
+                                "description": "Installment sale 4 (related party only): the related party made a second disposition this year with no line 29 exception (Form 6252 lines 28–29)."
+                              },
+                              "installmentSale4RelatedPartyAmountRealized": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Installment sale 4 (second disposition only): amount realized by the related party (Form 6252 line 30). In dollars."
+                              },
+                              "installmentSale4Qbi": {
+                                "type": "boolean",
+                                "description": "Installment sale 4's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "installmentSale4NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Installment sale 4's gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "installmentSaleSection453AInterest": {
+                                "type": "boolean",
+                                "description": "Interest on deferred tax is owed under § 453A: an installment obligation from a sale over $150,000 is outstanding at the end of the year, and the face amount of all your nondealer installment obligations that arose in that sale's year and were outstanding at that year's end was over $5 million. (Not for personal-use property or farm property.) The interest isn't figured on Form 6252 (it is additional tax on Schedule 2) and is refused. Asked when a sale's selling price is over $150,000."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Form 6252 installment sales: up to four sales (capital asset, § 1245, § 1250 or other business property; held over a year or not; year of sale or a later year; Part I amounts, this year's and earlier years' payments, related party and second disposition) — gross profit percentage, installment income, the year-of-sale recapture and the unrecaptured § 1250 gain, into Schedule D or Form 4797"
+                          },
+                          "like_kind_exchanges": {
+                            "type": "object",
+                            "properties": {
+                              "likeKindExchanges": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "How many like-kind exchanges of real property you made this year (0–4) on Form 8824, each in likeKindExchange1… through likeKindExchange4…. The engine figures the realized gain, the gain recognized to the extent of cash and other property received (lines 15–23), the § 1245 and § 1250 recapture in it (line 21), the deferred gain (line 24), the basis of the property received (line 25, with 25a and 25b), where the gain goes (Schedule D lines 4 and 11, Form 4797 lines 5 and 16) and its unrecaptured § 1250 gain. Don't also enter these exchanges in the capital gain or Form 4797 facts."
+                              },
+                              "likeKindExchange1Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 1 (when likeKindExchanges ≥ 1): the U.S. real property you gave up — capital = held for investment and never depreciated (investment land); section1250 = a depreciated building used in a trade or business or as a rental, with its land; other = business real property never depreciated (land used in the business). Since 2018 only real property qualifies (§ 1031(a)); real property held primarily for sale and property used as your home don't, and U.S. and foreign real property aren't like kind to each other (§ 1031(h); Form 8824 instructions)."
+                              },
+                              "likeKindExchange1HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1: the property given up was held more than 1 year when you transferred it. Its recognized gain is then long-term (capital) or § 1231 gain (business); otherwise short-term or ordinary."
+                              },
+                              "likeKindExchange1LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the like-kind real property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange1AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: adjusted basis of the like-kind real property given up (part of Form 8824 line 18), after depreciation. In dollars."
+                              },
+                              "likeKindExchange1CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: cash the other party paid you (Form 8824 line 15), including cash you could get from a qualified intermediary. In dollars."
+                              },
+                              "likeKindExchange1OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of other (not like-kind) property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange1LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: liabilities (including mortgages) the other party assumed or took your property subject to (Form 8824 line 15 instructions). In dollars."
+                              },
+                              "likeKindExchange1LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: liabilities you assumed or took the property received subject to (Form 8824 lines 15 and 18 instructions). In dollars."
+                              },
+                              "likeKindExchange1CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: cash you paid the other party (Form 8824 lines 15 and 18 instructions). In dollars."
+                              },
+                              "likeKindExchange1OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of other (not like-kind) property you gave up (Form 8824 line 12). It offsets the liabilities on lines 15 and 18; enter its own gain or loss (line 14) as a sale of that property in the Form 4797 or capital gain facts. In dollars."
+                              },
+                              "likeKindExchange1ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: exchange expenses (commissions, legal and qualified intermediary fees). They reduce line 15, and any not used there go on line 18. In dollars."
+                              },
+                              "likeKindExchange1Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1 (section1250 only): depreciation allowed or allowable on the § 1250 property given up (the building and its structural components, not land or a § 1245 component). It sets the unrecaptured § 1250 gain in the recognized gain. In dollars."
+                              },
+                              "likeKindExchange1Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1 (section1250 only): additional depreciation on the § 1250 property given up — the excess over straight line (Form 4797 line 26a). Zero for MACRS buildings depreciated straight line. Held 1 year or less, all of the depreciation is recaptured without this (§ 1250(b)(1)). In dollars."
+                              },
+                              "likeKindExchange1Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the § 1250 property given up (the building, without land). With its adjusted basis it gives the gain you'd have had on Form 4797 line 24 had you sold it. Asked when it has depreciation and the exchange recognizes gain. In dollars."
+                              },
+                              "likeKindExchange1Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: adjusted basis of the § 1250 property given up (the building, without land). Asked with likeKindExchange1Section1250Fmv. In dollars."
+                              },
+                              "likeKindExchange1Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1 (section1250 only): depreciation allowed or allowable on § 1245 property that is part of the real property given up (for example components a cost segregation study placed in a shorter MACRS class; Form 8824 instructions, line 21). In dollars."
+                              },
+                              "likeKindExchange1Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the § 1245 real property given up. Asked when it has depreciation. In dollars."
+                              },
+                              "likeKindExchange1Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: adjusted basis of the § 1245 real property given up. Asked when it has depreciation. In dollars."
+                              },
+                              "likeKindExchange1Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the like-kind § 1245 property received (part of line 16). It limits the § 1245 recapture (§ 1245(b)(4)) and sets line 25b. Asked when the property given up has § 1245 recapture. In dollars."
+                              },
+                              "likeKindExchange1Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 1: FMV of the like-kind § 1250 property received (part of line 16, the buildings without land). It limits the § 1250 recapture (§ 1250(d)(4)) and sets line 25a. Asked when the property given up has additional depreciation. In dollars."
+                              },
+                              "likeKindExchange1RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1 was made with a related party, directly or through an intermediary (Form 8824 line 7; § 1031(f))."
+                              },
+                              "likeKindExchange1DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1 (related party only, asked when gain is recognized): the property you gave up is depreciable in the other party's hands AND the other party is a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary. Family members are not § 1239 related persons. The recognized gain is then ordinary income (§ 1239(a)) — refused."
+                              },
+                              "likeKindExchange1RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1 (related party only): you or the related party disposed of property received in the exchange this tax year, within 2 years of the last transfer, and no exception on Form 8824 line 11 applies. The exchange is then taxed as a sale — refused here."
+                              },
+                              "likeKindExchange1Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1's property was used in a qualified trade or business for § 199A: its ordinary recognized gain (line 21, or a property held 1 year or less, or § 1231 gain when § 1231 nets to a loss) is QBI. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange1NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 1's recognized gain is net investment income (§ 1411(c)(1)(A)(iii)): true for a rental that isn't a § 162 trade or business or a passive activity; false for property used in a trade or business in which you materially participate (Form 8960 line 5b). Asked for business property when the NIIT can apply; investment property's gain is always included."
+                              },
+                              "likeKindExchange2Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 2 (when likeKindExchanges ≥ 2): capital, section1250 or other — as for likeKindExchange1Kind."
+                              },
+                              "likeKindExchange2HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2: the property given up was held more than 1 year."
+                              },
+                              "likeKindExchange2LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the like-kind property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange2AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: adjusted basis of the like-kind property given up (Form 8824 line 18). In dollars."
+                              },
+                              "likeKindExchange2CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: cash received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange2OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of other property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange2LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: liabilities the other party assumed (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange2LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: liabilities you assumed (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange2CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: cash you paid (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange2OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of other property given up (Form 8824 line 12); enter its gain or loss as its own sale. In dollars."
+                              },
+                              "likeKindExchange2ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: exchange expenses (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange2Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2 (section1250 only): depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2 (section1250 only): additional depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: adjusted basis of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2 (section1250 only): depreciation on § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange2Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: adjusted basis of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange2Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the like-kind § 1245 property received. In dollars."
+                              },
+                              "likeKindExchange2Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 2: FMV of the like-kind § 1250 property received. In dollars."
+                              },
+                              "likeKindExchange2RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2 was made with a related party (Form 8824 line 7)."
+                              },
+                              "likeKindExchange2DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2 (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from)."
+                              },
+                              "likeKindExchange2RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2 (related party only): a disposition within 2 years with no line 11 exception (Form 8824 lines 9–11)."
+                              },
+                              "likeKindExchange2Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange2NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 2's recognized gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "likeKindExchange3Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 3 (when likeKindExchanges ≥ 3): capital, section1250 or other — as for likeKindExchange1Kind."
+                              },
+                              "likeKindExchange3HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3: the property given up was held more than 1 year."
+                              },
+                              "likeKindExchange3LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the like-kind property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange3AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: adjusted basis of the like-kind property given up (Form 8824 line 18). In dollars."
+                              },
+                              "likeKindExchange3CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: cash received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange3OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of other property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange3LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: liabilities the other party assumed (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange3LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: liabilities you assumed (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange3CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: cash you paid (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange3OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of other property given up (Form 8824 line 12); enter its gain or loss as its own sale. In dollars."
+                              },
+                              "likeKindExchange3ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: exchange expenses (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange3Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3 (section1250 only): depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3 (section1250 only): additional depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: adjusted basis of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3 (section1250 only): depreciation on § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange3Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: adjusted basis of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange3Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the like-kind § 1245 property received. In dollars."
+                              },
+                              "likeKindExchange3Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 3: FMV of the like-kind § 1250 property received. In dollars."
+                              },
+                              "likeKindExchange3RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3 was made with a related party (Form 8824 line 7)."
+                              },
+                              "likeKindExchange3DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3 (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from)."
+                              },
+                              "likeKindExchange3RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3 (related party only): a disposition within 2 years with no line 11 exception (Form 8824 lines 9–11)."
+                              },
+                              "likeKindExchange3Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange3NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 3's recognized gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              },
+                              "likeKindExchange4Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "capital",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Like-kind exchange 4 (when likeKindExchanges ≥ 4): capital, section1250 or other — as for likeKindExchange1Kind."
+                              },
+                              "likeKindExchange4HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4: the property given up was held more than 1 year."
+                              },
+                              "likeKindExchange4LikeKindReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the like-kind property received (Form 8824 line 16). In dollars."
+                              },
+                              "likeKindExchange4AdjustedBasisGivenUp": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: adjusted basis of the like-kind property given up (Form 8824 line 18). In dollars."
+                              },
+                              "likeKindExchange4CashReceived": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: cash received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange4OtherPropertyReceivedFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of other property received (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange4LiabilitiesRelieved": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: liabilities the other party assumed (Form 8824 line 15). In dollars."
+                              },
+                              "likeKindExchange4LiabilitiesAssumed": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: liabilities you assumed (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange4CashPaid": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: cash you paid (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange4OtherPropertyGivenUpFmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of other property given up (Form 8824 line 12); enter its gain or loss as its own sale. In dollars."
+                              },
+                              "likeKindExchange4ExchangeExpenses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: exchange expenses (Form 8824 lines 15 and 18). In dollars."
+                              },
+                              "likeKindExchange4Section1250Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4 (section1250 only): depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1250AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4 (section1250 only): additional depreciation on the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1250AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: adjusted basis of the § 1250 property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1245Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4 (section1250 only): depreciation on § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange4Section1245AdjustedBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: adjusted basis of the § 1245 real property given up. In dollars."
+                              },
+                              "likeKindExchange4Received1245Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the like-kind § 1245 property received. In dollars."
+                              },
+                              "likeKindExchange4Received1250Fmv": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Like-kind exchange 4: FMV of the like-kind § 1250 property received. In dollars."
+                              },
+                              "likeKindExchange4RelatedParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4 was made with a related party (Form 8824 line 7)."
+                              },
+                              "likeKindExchange4DepreciableToControlledParty": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4 (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from)."
+                              },
+                              "likeKindExchange4RelatedPartyDisposition": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4 (related party only): a disposition within 2 years with no line 11 exception (Form 8824 lines 9–11)."
+                              },
+                              "likeKindExchange4Qbi": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4's property was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "likeKindExchange4NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Like-kind exchange 4's recognized gain is net investment income (Form 8960 lines 5a/5b). Asked for business property when the NIIT can apply."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Form 8824 like-kind exchanges of real property: up to four exchanges (investment property, depreciated § 1250 property or other business real property; cash, other property and liabilities on each side; § 1250 and § 1245 components) — the recognized gain, its § 1245/§ 1250 recapture, the deferred gain and the basis of the property received"
                           },
                           "business_credits": {
                             "type": "object",
