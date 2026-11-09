@@ -1,0 +1,13 @@
+{
+  "description": "2026 California AMT, single, AMTI $400,000, regular tax $20,000: exemption $95,902 - 25% x ($400,000 - $359,633) = $85,810.25; TMT 7% x $314,189.75 = $21,993.28; AMT $1,993.28 (FTB 2026 indexing memo amounts).",
+  "facts": {
+    "filingStatus": "single",
+    "caAmti": 400000,
+    "caRegularTax": 20000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.amt",
+  "expect": {
+    "valueCents": "199328"
+  }
+}

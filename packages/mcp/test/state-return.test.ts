@@ -3376,3 +3376,64 @@ describe("composeND — 2025 Form ND-1 (real corpus targets)", () => {
     expect(notes.some((n) => n.includes("the excess is lost"))).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// CA Form 540 on the REAL corpus: the year's standard deduction, exemption
+// credits (AGI limitation), renter's credit and BHST come from the rules for
+// asOf, so TY2025 and TY2026 compose from the same line composer.
+// ---------------------------------------------------------------------------
+const caComposeReal = (input: Record<string, unknown>, asOf: string) =>
+  composeStateReturn(
+    input as never,
+    makeStateTaxEvaluator((facts, target) => {
+      const { value } = evaluate(paCorpus, facts as never, { asOf, target });
+      return value.type === "money" ? value.cents : 0n;
+    }, input),
+  );
+
+describe("composeCA — Form 540 on the real corpus, TY2025 and TY2026", () => {
+  it("2025 single: $5,706 standard deduction, the printed Tax Table row, one $153 credit", () => {
+    // 60,000 − 5,706 = 54,294 → printed row 54,251-54,350 → $1,793; 1,793 − 153 = 1,640
+    const { lines } = caComposeReal({ jurisdiction: "ca", filingStatus: "single", federalAGI: 60000 }, "2025-12-31");
+    expect(lines["18_ca_deduction"]).toBe("$5,706");
+    expect(lines["19_ca_taxable_income"]).toBe("$54,294");
+    expect(lines["31_tax"]).toBe("$1,793");
+    expect(lines["32_exemption_credits"]).toBe("$153");
+    expect(lines["48_tax_after_credits"]).toBe("$1,640");
+  });
+
+  it("2026 MFJ over the AGI limitation: $11,800 deduction, Schedule Y, credits cut to $550", () => {
+    // 610,000 − 11,800 = 598,200 → $6,621.76 + 9.3% × 447,806 = 48,267.72 → $48,268;
+    // (610,000 − 521,561) / 2,500 → 36 steps × $6 = $216 per box: personal 316 − 432 → 0, dependents 982 − 432 = 550
+    const { lines, notes } = caComposeReal({ jurisdiction: "ca", filingStatus: "mfj", federalAGI: 610000, dependents: 2 }, "2026-12-31");
+    expect(lines["18_ca_deduction"]).toBe("$11,800");
+    expect(lines["19_ca_taxable_income"]).toBe("$598,200");
+    expect(lines["31_tax"]).toBe("$48,268");
+    expect(lines["32_exemption_credits"]).toBe("$550");
+    expect(lines["48_tax_after_credits"]).toBe("$47,718");
+    expect(notes.join("\n")).toContain("reduced to $550 by the AGI Limitation Worksheet");
+  });
+
+  it("2026 retiree renter: the renter's credit tests California AGI after the social security subtraction", () => {
+    // federal AGI 70,000 − taxable SS 25,000 = CA AGI 45,000 (≤ $55,830 → $60); 45,000 − 5,900 = 39,100 →
+    // row 39,051-39,150 at $39,100: $428.58 + 4% × 11,943 = 906.30 → $906; two boxes (self, 65+) × $158 = 316
+    const { lines } = caComposeReal(
+      { jurisdiction: "ca", filingStatus: "single", federalAGI: 70000, taxableSocialSecurity: 25000, ageOrBlindBoxes: 1, caRentedPrincipalResidence: true },
+      "2026-12-31",
+    );
+    expect(lines["17_ca_agi"]).toBe("$45,000");
+    expect(lines["31_tax"]).toBe("$906");
+    expect(lines["32_exemption_credits"]).toBe("$316");
+    expect(lines["46_renters_credit"]).toBe("$60");
+    expect(lines["48_tax_after_credits"]).toBe("$530");
+  });
+
+  it("2026 over $1,000,000: line 62 BHST computed from line 19 without an input, credits fully phased out", () => {
+    // 1,494,100: $74,675.27 + 12.3% × 725,887 = 163,959.37 → $163,959; BHST 1% × 494,100 = $4,941
+    const { lines } = caComposeReal({ jurisdiction: "ca", filingStatus: "single", federalAGI: 1500000 }, "2026-12-31");
+    expect(lines["31_tax"]).toBe("$163,959");
+    expect(lines["32_exemption_credits"]).toBe("$0");
+    expect(lines["62_bhst"]).toBe("$4,941");
+    expect(lines["64_total_tax"]).toBe("$168,900");
+  });
+});

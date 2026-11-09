@@ -1,7 +1,12 @@
 {
-  "description": "California 2025 Schedule Y (MFJ/QSS, FTB), thresholds exactly 2x Schedule X: tax(100,000) = 22,158 x 1% + 30,370 x 2% + 30,376 x 4% + 17,096 x 6% = 221.58 + 607.40 + 1,215.04 + 1,025.76 = 3,069.78. Per-bracket encoding (not doubling Schedule X's rounded constants) to avoid penny drift.",
-  "facts": { "filingStatus": "mfj", "stateTaxableIncome": 100000 },
+  "description": "California 2025, MFJ, taxable income exactly $100,000: the Tax Table applies ('If $100,000 or less, use the Tax Table') — printed row 99,951-100,000, filing status 2 or 5: $3,068 (the schedule at the row's whole-dollar midpoint $99,975: 2,044.02 + 6% x 17,071 = 3,068.28).",
+  "facts": {
+    "filingStatus": "mfj",
+    "stateTaxableIncome": 100000
+  },
   "asOf": "2025-12-31",
   "target": "us.ca.income_tax",
-  "expect": { "valueCents": "306978" }
+  "expect": {
+    "valueCents": "306800"
+  }
 }

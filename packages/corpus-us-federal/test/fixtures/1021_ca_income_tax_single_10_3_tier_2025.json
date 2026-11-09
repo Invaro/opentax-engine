@@ -1,0 +1,12 @@
+{
+  "description": "California 2025 Schedule X, single, taxable income $400,000: the 10.3% tier starts at $371,479 — $30,986.19 + 10.3% of $28,521 = $33,923.85 (the 9.3% rate all the way up would give $33,638.64).",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 400000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.income_tax",
+  "expect": {
+    "valueCents": "3392385"
+  }
+}

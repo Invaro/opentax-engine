@@ -1,0 +1,14 @@
+{
+  "description": "2026 YCTC, earned income $15,000 (below the $28,357 threshold), child under six -> the full $1,229.",
+  "facts": {
+    "filingStatus": "single",
+    "qualifyingChildren": 1,
+    "hasChildUnderSix": true,
+    "wages": 15000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.yctc",
+  "expect": {
+    "valueCents": "122900"
+  }
+}

@@ -35,9 +35,9 @@ export const STALE_AT_HORIZON: Readonly<Record<string, StaleEntry>> = {
     unblockedBy: "2026 DFA indexed bracket and threshold sheets and the 2026 AR1000F booklet (dfa.arkansas.gov/incometax, ~November-December 2026); Acts 1-2 of the 2026 1st Ex. Sess. already cut the top rate to 3.7%",
   },
   ca: {
-    tier: "return",
-    rules: ["us.ca.income_tax", "us.ca.caleitc", "us.ca.yctc", "us.ca.renters_credit", "us.ca.cdcc", "us.ca.amt", "us.ca.bhst"],
-    unblockedBy: "FTB's 2026 indexed amounts (brackets, exemption credits, standard deduction, CalEITC tables) and the 2026 Form 540 booklet (~December 2026)",
+    tier: "lines",
+    rules: ["us.ca.caleitc"],
+    unblockedBy: "2026 FTB 3514 booklet — the 2026 EITC Table (FTB's 09.03.2026 indexing memo gives the earned income amounts, the $34,051 limit and the $4,978 investment limit, but not the gentle phase-out segment) (~December 2026)",
   },
   ga: {
     tier: "lines",

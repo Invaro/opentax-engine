@@ -1,0 +1,13 @@
+{
+  "description": "The 2025 joint/HOH/QSS renter's credit limit is $107,988 ('$107,988 or less', 2025 FTB 540 booklet) — California AGI of exactly $107,988 gets $120.",
+  "facts": {
+    "filingStatus": "hoh",
+    "caAgi": 107988,
+    "caRentedPrincipalResidence": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.renters_credit",
+  "expect": {
+    "valueCents": "12000"
+  }
+}

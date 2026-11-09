@@ -1,0 +1,14 @@
+{
+  "description": "2026 AGI Limitation Worksheet, MFJ, federal AGI $600,000, two personal boxes, two dependents: ($600,000 - $521,561) / $2,500 = 31.38 -> 32 steps x $6 = $192; personal $316 - 2 x $192 -> $0; dependents $982 - 2 x $192 = $598.",
+  "facts": {
+    "filingStatus": "mfj",
+    "caFederalAgi": 600000,
+    "caPersonalExemptions": 2,
+    "caDependentExemptions": 2
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.exemption_credits",
+  "expect": {
+    "valueCents": "59800"
+  }
+}

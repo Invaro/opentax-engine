@@ -1,0 +1,14 @@
+{
+  "description": "2026 YCTC (FTB memo: $1,229 maximum, threshold $28,357, $21.58 per $100): earned income $30,000, child under six — line 25 $1,643, line 26 16.43, line 27 16.43 x 21.58 = 354.55 (not rounded), line 28 $1,229 - $354.55 = $874.45 -> $874.",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "hasChildUnderSix": true,
+    "wages": 30000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.yctc",
+  "expect": {
+    "valueCents": "87400"
+  }
+}

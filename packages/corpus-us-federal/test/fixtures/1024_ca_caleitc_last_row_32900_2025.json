@@ -1,0 +1,12 @@
+{
+  "description": "2025 EITC Table last row '32,851 to 32,900' prints $1 in every column ('Both your earned income and federal AGI must be less than $32,901'): wages $32,900, no children -> $1.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 32900
+  },
+  "asOf": "2025-12-31",
+  "target": "us.ca.caleitc",
+  "expect": {
+    "valueCents": "100"
+  }
+}

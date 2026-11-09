@@ -1,0 +1,12 @@
+{
+  "description": "California 2026 Schedule X, single, taxable income $400,000: $32,039.70 + 10.3% of the $15,891 over $384,109 = $33,676.47.",
+  "facts": {
+    "filingStatus": "single",
+    "stateTaxableIncome": 400000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.income_tax",
+  "expect": {
+    "valueCents": "3367647"
+  }
+}

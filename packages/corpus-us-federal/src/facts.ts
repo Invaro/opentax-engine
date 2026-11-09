@@ -706,6 +706,31 @@ export const facts: FactSpec[] = [
     },
   },
   {
+    id: "caAgi",
+    type: "money",
+    description:
+      "California adjusted gross income, Form 540 line 17 (federal AGI plus the Schedule CA additions less its subtractions — e.g. taxable social security and unemployment compensation are subtracted). The renter's credit tests this, not federal AGI (us.ca.renters_credit). compute_state_return supplies it from line 17. In dollars.",
+  },
+  {
+    id: "caFederalAgi",
+    type: "money",
+    description:
+      "Federal AGI as entered on California Form 540 line 13 — the AGI the exemption-credit limitation tests (us.ca.exemption_credits). compute_state_return supplies it from federalAGI. In dollars.",
+  },
+  {
+    id: "caPersonalExemptions",
+    type: "int",
+    min: "0",
+    description:
+      "Number of boxes on California Form 540 lines 7, 8 and 9 — personal (1, or 2 on a joint or qualifying surviving spouse return; 0 if someone else can claim you), blind, and 65-or-older — each worth the personal exemption credit (us.ca.exemption_credits).",
+  },
+  {
+    id: "caDependentExemptions",
+    type: "int",
+    min: "0",
+    description: "Number of dependents on California Form 540 line 10, each worth the dependent exemption credit (us.ca.exemption_credits).",
+  },
+  {
     id: "caAmti",
     type: "money",
     min: "0",

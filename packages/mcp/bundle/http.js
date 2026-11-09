@@ -57,14 +57,14 @@ var require_content_type = __commonJS({
       }
       var string4 = type;
       if (parameters && typeof parameters === "object") {
-        var param29;
+        var param30;
         var params = Object.keys(parameters).sort();
         for (var i = 0; i < params.length; i++) {
-          param29 = params[i];
-          if (!TOKEN_REGEXP.test(param29)) {
+          param30 = params[i];
+          if (!TOKEN_REGEXP.test(param30)) {
             throw new TypeError("invalid parameter name");
           }
-          string4 += "; " + param29 + "=" + qstring(parameters[param29]);
+          string4 += "; " + param30 + "=" + qstring(parameters[param30]);
         }
       }
       return string4;
@@ -682,7 +682,7 @@ var require_codegen = __commonJS({
             return e instanceof _If ? e : e.nodes;
           if (this.nodes.length)
             return this;
-          return new _If(not8(cond), e instanceof _If ? [e] : e.nodes);
+          return new _If(not9(cond), e instanceof _If ? [e] : e.nodes);
         }
         if (cond === false || !this.nodes.length)
           return void 0;
@@ -1134,20 +1134,20 @@ var require_codegen = __commonJS({
       for (const n in from)
         names[n] = (names[n] || 0) - (from[n] || 0);
     }
-    function not8(x) {
+    function not9(x) {
       return typeof x == "boolean" || typeof x == "number" || x === null ? !x : (0, code_1._)`!${par(x)}`;
     }
-    exports.not = not8;
+    exports.not = not9;
     var andCode = mappend(exports.operators.AND);
-    function and12(...args) {
+    function and13(...args) {
       return args.reduce(andCode);
     }
-    exports.and = and12;
+    exports.and = and13;
     var orCode = mappend(exports.operators.OR);
-    function or11(...args) {
+    function or12(...args) {
       return args.reduce(orCode);
     }
-    exports.or = or11;
+    exports.or = or12;
     function mappend(op) {
       return (x, y) => x === code_1.nil ? y : y === code_1.nil ? x : (0, code_1._)`${par(x)} ${op} ${par(y)}`;
     }
@@ -10423,11 +10423,11 @@ function node(obj, key, make) {
 function flattenError(error62, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub30 of error62.issues) {
-    if (sub30.path.length > 0) {
-      node(fieldErrors, sub30.path[0], () => []).push(mapper(sub30));
+  for (const sub31 of error62.issues) {
+    if (sub31.path.length > 0) {
+      node(fieldErrors, sub31.path[0], () => []).push(mapper(sub31));
     } else {
-      formErrors.push(mapper(sub30));
+      formErrors.push(mapper(sub31));
     }
   }
   return { formErrors, fieldErrors };
@@ -27802,12 +27802,12 @@ function containsRef(value) {
     return value.some(containsRef);
   if (typeof value.$ref === "string")
     return true;
-  return Object.entries(value).some(([key, sub30]) => {
+  return Object.entries(value).some(([key, sub31]) => {
     if (SCHEMA_KEYWORDS.has(key))
-      return containsRef(sub30);
-    if (!SCHEMA_MAP_KEYWORDS.has(key) || typeof sub30 !== "object" || sub30 === null)
+      return containsRef(sub31);
+    if (!SCHEMA_MAP_KEYWORDS.has(key) || typeof sub31 !== "object" || sub31 === null)
       return false;
-    return Object.values(sub30).some(containsRef);
+    return Object.values(sub31).some(containsRef);
   });
 }
 function plural(n) {
@@ -31063,8 +31063,8 @@ var ZodError2 = class _ZodError extends Error {
   constructor(issues) {
     super();
     this.issues = [];
-    this.addIssue = (sub30) => {
-      this.issues = [...this.issues, sub30];
+    this.addIssue = (sub31) => {
+      this.issues = [...this.issues, sub31];
     };
     this.addIssues = (subs = []) => {
       this.issues = [...this.issues, ...subs];
@@ -31146,13 +31146,13 @@ var ZodError2 = class _ZodError extends Error {
   flatten(mapper = (issue2) => issue2.message) {
     const fieldErrors = /* @__PURE__ */ Object.create(null);
     const formErrors = [];
-    for (const sub30 of this.issues) {
-      if (sub30.path.length > 0) {
-        const firstEl = sub30.path[0];
+    for (const sub31 of this.issues) {
+      if (sub31.path.length > 0) {
+        const firstEl = sub31.path[0];
         fieldErrors[firstEl] = fieldErrors[firstEl] || [];
-        fieldErrors[firstEl].push(mapper(sub30));
+        fieldErrors[firstEl].push(mapper(sub31));
       } else {
-        formErrors.push(mapper(sub30));
+        formErrors.push(mapper(sub31));
       }
     }
     return { formErrors, fieldErrors };
@@ -40004,11 +40004,11 @@ function evalExpr(expr, rule2, ctx, children) {
       return value;
     }
     case "param": {
-      const param29 = rule2.parameters?.[expr.name];
-      if (!param29) {
+      const param30 = rule2.parameters?.[expr.name];
+      if (!param30) {
         throw new EngineError(`rule "${rule2.id}" has no parameter "${expr.name}"`);
       }
-      return valueFromJSON({ type: param29.type, value: param29.value });
+      return valueFromJSON({ type: param30.type, value: param30.value });
     }
     case "add": {
       const vals = evalAll(expr.args, rule2, ctx, children);
@@ -40352,7 +40352,7 @@ var IncompleteReturnError = class extends OpenTaxError {
 };
 
 // dist/version.js
-var COMPOSER_VERSION = "0.13.0";
+var COMPOSER_VERSION = "0.14.0";
 
 // ../solve/dist/sweep.js
 function evaluateAt(corpus2, baseFacts, options, atCents) {
@@ -40758,10 +40758,6 @@ var isHohOrQss = (input2) => input2.filingHohOrQss === true;
 var isMfs = (input2) => input2.filingStatus === "mfs";
 
 // ../compose/dist/ca.js
-var STD_DEDUCTION_SINGLE = 570600n;
-var STD_DEDUCTION_JOINT_HOH = 1141200n;
-var PERSONAL_EXEMPTION_CREDIT = 15300n;
-var DEPENDENT_EXEMPTION_CREDIT = 47500n;
 function scheduleCaAdjustments(input2, notes) {
   const ssSub = rd(c(input2.taxableSocialSecurity));
   const uiSub = rd(c(input2.unemploymentCompensation));
@@ -40797,16 +40793,25 @@ function composeCA(input2, evalStateTax, notes) {
   const l13 = rd(c(input2.federalAGI));
   const { adds, subs } = scheduleCaAdjustments(input2, notes);
   const l17 = rd(l13 + c(input2.additions) + adds - c(input2.subtractions) - subs);
-  const standard = joint || isHohOrQss(input2) ? STD_DEDUCTION_JOINT_HOH : STD_DEDUCTION_SINGLE;
+  const standard = rd(evalStateTax("us.ca.standard_deduction", 0n));
   const itemized = rd(c(input2.caItemizedDeductions));
   const l18 = itemized > standard ? itemized : standard;
   if (itemized > standard)
     notes.push(`CA itemized deduction ${fmtD(itemized)} exceeds the standard deduction ${fmtD(standard)} \u2014 line 18 itemizes (Schedule CA Part II, agent-computed and disclosed)`);
   const l19 = max02(l17 - l18);
   const l31 = rd(evalStateTax("us.ca.income_tax", l19));
-  const persons = joint || input2.filingStatus === "qss" ? 2n : 1n;
-  const l32 = rd(persons * PERSONAL_EXEMPTION_CREDIT + BigInt(input2.dependents ?? 0) * DEPENDENT_EXEMPTION_CREDIT + BigInt(input2.ageOrBlindBoxes ?? 0) * PERSONAL_EXEMPTION_CREDIT);
-  const renters = rd(c(input2.caRentersCredit));
+  const persons = joint || input2.filingStatus === "qss" ? 2 : 1;
+  const personalBoxes = persons + (input2.ageOrBlindBoxes ?? 0);
+  const dependents = input2.dependents ?? 0;
+  const l32 = rd(evalStateTax("us.ca.exemption_credits", 0n, { caFederalAgi: l13, caPersonalExemptions: personalBoxes, caDependentExemptions: dependents }));
+  const unlimited = rd(evalStateTax("us.ca.exemption_credits", 0n, { caFederalAgi: 0n, caPersonalExemptions: personalBoxes, caDependentExemptions: dependents }));
+  if (l32 < unlimited)
+    notes.push(`CA line 32: exemption credits ${fmtD(unlimited)} reduced to ${fmtD(l32)} by the AGI Limitation Worksheet (federal AGI ${fmtD(l13)}; $6 per box for each $2,500, or $1,250 if married filing separately, over the threshold)`);
+  let renters = rd(c(input2.caRentersCredit));
+  if (input2.caRentersCredit === void 0 && input2.caRentedPrincipalResidence === true) {
+    renters = rd(evalStateTax("us.ca.renters_credit", 0n, { caRentedPrincipalResidence: true, caAgi: l17 }));
+    notes.push(renters > 0n ? `CA line 46: renter's credit ${fmtD(renters)} (California AGI ${fmtD(l17)} is within the limit)` : `CA line 46: no renter's credit \u2014 California AGI ${fmtD(l17)} is over the limit`);
+  }
   const l48 = max02(l31 - l32 - renters);
   if (l31 < l32 + renters && l31 > 0n)
     notes.push("CA exemption credits and/or renter's credit exceed tax \u2014 line 48 floors at $0 (both are nonrefundable)");
@@ -40817,7 +40822,7 @@ function composeCA(input2, evalStateTax, notes) {
     amt = rd(evalStateTax("us.ca.amt", l19, { caAmti: amti2, caRegularTax: l31 }));
     notes.push(`Schedule P: AMTI ${fmtD(amti2)} = taxable income ${fmtD(l19)} + ${itemized > standard ? "itemized-taxes addback" : "standard-deduction addback"} ${fmtD(addback)} + ISO preference ${fmtD(rd(c(input2.caIsoPreference)))}; AMT ${fmtD(amt)}`);
   }
-  const bhst = rd(c(input2.caBhst));
+  const bhst = input2.caBhst !== void 0 ? rd(c(input2.caBhst)) : rd(evalStateTax("us.ca.bhst", l19));
   const earlyBase = rd(c(input2.caTaxableEarlyDistribution));
   const l63 = rd(earlyBase * 25n / 1000n);
   if (l63 > 0n)
@@ -42072,7 +42077,7 @@ function composeNJ(input2, evalStateTax, notes) {
 // ../compose/dist/ny.js
 var STD_DEDUCTION_JOINT = 1605000n;
 var STD_DEDUCTION_HOH = 1120000n;
-var STD_DEDUCTION_SINGLE2 = 800000n;
+var STD_DEDUCTION_SINGLE = 800000n;
 var DEPENDENT_EXEMPTION = 100000n;
 var NYAGI_WORKSHEET_THRESHOLD = 10765000n;
 function composeNY(input2, evalStateTax, notes) {
@@ -42084,7 +42089,7 @@ function composeNY(input2, evalStateTax, notes) {
     notes.push(`NY subtraction: federally taxable social security ${fmtD(ssSub)} (IT-201 line 27)`);
   const l32 = rd(c(input2.subtractions)) + ssSub;
   const l33 = l24 - l32;
-  const l34 = isJoint(input2) ? STD_DEDUCTION_JOINT : isHoh(input2) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE2;
+  const l34 = isJoint(input2) ? STD_DEDUCTION_JOINT : isHoh(input2) ? STD_DEDUCTION_HOH : STD_DEDUCTION_SINGLE;
   const l37 = max02(l33 - l34 - BigInt(input2.dependents ?? 0) * DEPENDENT_EXEMPTION);
   const overRecapture = l33 > NYAGI_WORKSHEET_THRESHOLD;
   const l39 = rd(evalStateTax("us.ny.income_tax", l37, overRecapture ? { useFormulaMethod: true } : {}));
@@ -46759,9 +46764,10 @@ var ca = {
   caCalEITC: usd.optional().describe("us.ca.caleitc result (pass the oracle target's answer)"),
   caYCTC: usd.optional().describe("us.ca.yctc result (pass the oracle target's answer)"),
   caItemizedDeductions: usd.optional().describe("CA itemized deduction total (Schedule CA Part II, line 29) \u2014 agent-computed per Schedule CA's own itemized rules WITH disclosure (differs from the federal Schedule A: no SALT cap, mortgage/medical add-backs, etc.). Form 540 line 18 takes the GREATER of this or the CA standard deduction; omit to use the standard deduction only."),
-  caRentersCredit: usd.optional().describe("us.ca.renters_credit result (pass the oracle target's answer) \u2014 nonrefundable, joins the exemption credits in the line-48 subtraction from tax."),
+  caRentedPrincipalResidence: external_exports.boolean().optional().describe("rented a California principal residence for at least half the year, not claimed as a dependent, property not exempt from property tax \u2014 the composer then evaluates the line 46 renter's credit (us.ca.renters_credit) on CALIFORNIA AGI (line 17), as the qualification record asks"),
+  caRentersCredit: usd.optional().describe("OVERRIDE for Form 540 line 46 \u2014 prefer caRentedPrincipalResidence, which lets the composer test California AGI (line 17) itself; nonrefundable, joins the exemption credits in the line-48 subtraction from tax."),
   caAmt: usd.optional().describe("OVERRIDE for Form 540 line 61 \u2014 prefer caIsoPreference + caAmtTaxesAddback so the composer builds Schedule P AMTI and evaluates us.ca.amt itself; a passed caAmt wins."),
-  caBhst: usd.optional().describe("us.ca.bhst result (pass the oracle target's answer) \u2014 Form 540 line 62 Behavioral Health Services Tax (R&TC \xA7 17043, 1% of CA taxable income over $1,000,000); added into line 64 total tax when nonzero."),
+  caBhst: usd.optional().describe("OVERRIDE for Form 540 line 62 Behavioral Health Services Tax (R&TC \xA7 17043, 1% of CA taxable income over $1,000,000) \u2014 omit it and the composer evaluates us.ca.bhst on line 19 itself; added into line 64 total tax when nonzero."),
   caEducatorExpensesDeducted: usd.optional().describe("federal educator-expense deduction claimed (\xA7 62(a)(2)(D)) \u2014 California does NOT conform: the composer ADDS it back on Schedule CA (line 11 col C). Pass the federal amount actually deducted (both spouses' combined)."),
   caHsaDeduction: usd.optional().describe("federal HSA deduction (Form 8889 line 13) \u2014 California does not conform to \xA7 223: the composer ADDS it back for CA"),
   caHsaTaxableDistribution: usd.optional().describe("HSA distribution amount taxed federally (Form 8889 line 16) \u2014 not income for California: the composer SUBTRACTS it for CA"),
@@ -48087,8 +48093,8 @@ var minC = (a, b) => a < b ? a : b;
 var fmt = (cents, withCents = false) => {
   const neg4 = cents < 0n;
   const a = neg4 ? -cents : cents;
-  const dollars7 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `${neg4 ? "-" : ""}$${dollars7}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
+  const dollars8 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${neg4 ? "-" : ""}$${dollars8}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
 };
 var D13 = (c2) => fmt(rd2(c2));
 var mulRate2 = (c2, num, den) => {
@@ -50026,6 +50032,28 @@ var facts = [
       value: "false",
       rationale: "Assumed not a qualifying California renter absent contrary input"
     }
+  },
+  {
+    id: "caAgi",
+    type: "money",
+    description: "California adjusted gross income, Form 540 line 17 (federal AGI plus the Schedule CA additions less its subtractions \u2014 e.g. taxable social security and unemployment compensation are subtracted). The renter's credit tests this, not federal AGI (us.ca.renters_credit). compute_state_return supplies it from line 17. In dollars."
+  },
+  {
+    id: "caFederalAgi",
+    type: "money",
+    description: "Federal AGI as entered on California Form 540 line 13 \u2014 the AGI the exemption-credit limitation tests (us.ca.exemption_credits). compute_state_return supplies it from federalAGI. In dollars."
+  },
+  {
+    id: "caPersonalExemptions",
+    type: "int",
+    min: "0",
+    description: "Number of boxes on California Form 540 lines 7, 8 and 9 \u2014 personal (1, or 2 on a joint or qualifying surviving spouse return; 0 if someone else can claim you), blind, and 65-or-older \u2014 each worth the personal exemption credit (us.ca.exemption_credits)."
+  },
+  {
+    id: "caDependentExemptions",
+    type: "int",
+    min: "0",
+    description: "Number of dependents on California Form 540 line 10, each worth the dependent exemption credit (us.ca.exemption_credits)."
   },
   {
     id: "caAmti",
@@ -55939,12 +55967,12 @@ var money3 = (cents) => ({ kind: "money", cents });
 var ruleRef2 = (ruleId) => ({ kind: "rule", ruleId });
 var RATES = ["10", "12", "22", "24", "32", "35", "37"];
 function table(lowerBoundsDollars) {
-  return lowerBoundsDollars.map((dollars7, i) => ({
-    threshold: String(BigInt(dollars7) * 100n),
+  return lowerBoundsDollars.map((dollars8, i) => ({
+    threshold: String(BigInt(dollars8) * 100n),
     rate: { num: RATES[i], den: "100" }
   }));
 }
-var d = (dollars7) => money3(String(BigInt(dollars7) * 100n));
+var d = (dollars8) => money3(String(BigInt(dollars8) * 100n));
 var B25 = {
   single: table([0, 11925, 48475, 103350, 197300, 250525, 626350]),
   mfj: table([0, 23850, 96950, 206700, 394600, 501050, 751600]),
@@ -56266,7 +56294,7 @@ var fact3 = (factId) => ({ kind: "fact", factId });
 var money4 = (cents) => ({ kind: "money", cents });
 var ruleRef3 = (ruleId) => ({ kind: "rule", ruleId });
 var param2 = (name) => ({ kind: "param", name });
-var d2 = (dollars7) => money4(String(BigInt(dollars7) * 100n));
+var d2 = (dollars8) => money4(String(BigInt(dollars8) * 100n));
 var add = (...args) => ({ kind: "add", args });
 var sub = (left, right) => ({ kind: "sub", left, right });
 var max05 = (arg) => ({ kind: "max0", arg });
@@ -60101,7 +60129,7 @@ function eitcRule(version2, effectiveFrom, effectiveTo, p, yearLabel, revProc, o
     kind: "add",
     args: [fact18("qualifyingChildren"), fact18("eitcAdditionalQualifyingChildren")]
   };
-  const kidsEq = (n) => ({
+  const kidsEq2 = (n) => ({
     kind: "cmp",
     op: "eq",
     left: kids,
@@ -60174,11 +60202,11 @@ function eitcRule(version2, effectiveFrom, effectiveTo, p, yearLabel, revProc, o
     cond: { kind: "and", args: [notDependent, investmentOK] },
     then: {
       kind: "if",
-      cond: kidsEq("1"),
+      cond: kidsEq2("1"),
       then: creditFormula(1, thresholdKids),
       else: {
         kind: "if",
-        cond: kidsEq("2"),
+        cond: kidsEq2("2"),
         then: creditFormula(2, thresholdKids),
         else: creditFormula(3, thresholdKids)
         // 3 or more
@@ -60212,7 +60240,7 @@ function eitcRule(version2, effectiveFrom, effectiveTo, p, yearLabel, revProc, o
       then: zero10,
       else: {
         kind: "if",
-        cond: kidsEq("0"),
+        cond: kidsEq2("0"),
         then: childlessBranch,
         else: kidsBranch
       }
@@ -65015,799 +65043,417 @@ var vaRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ca.js
-var agiWithoutFederalLossItems = {
-  kind: "if",
-  cond: { kind: "cmp", op: "ne", left: ruleRef33("us.federal.schedule1_other_income"), right: money37("0") },
-  then: {
-    kind: "unsupported",
-    reason: "a federal NOL deduction or excess business loss (Schedule 1 line 8a/8p): California AGI uses California's own NOL and excess business loss amounts, which are not modeled"
-  },
-  else: ruleRef33("us.federal.agi")
-};
-var caRules = [
+var param20 = (name) => ({ kind: "param", name });
+var rd4 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp = (op, left, right) => ({ kind: "cmp", op, left, right });
+var iff2 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add7 = (...args) => ({ kind: "add", args });
+var sub7 = (left, right) => ({ kind: "sub", left, right });
+var max011 = (arg) => ({ kind: "max0", arg });
+var or2 = (...args) => ({ kind: "or", args });
+var and2 = (...args) => ({ kind: "and", args });
+var not = (arg) => ({ kind: "not", arg });
+var mulInt = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits2 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var dollars4 = (n) => money37(String(Math.round(n * 100)));
+var isJoint3 = or2(isStatus10("mfj"), isStatus10("qss"));
+var byStatus2 = (single, joint, hoh) => iff2(isJoint3, joint, iff2(isStatus10("hoh"), hoh, single));
+var TIERS = [["1", "100"], ["2", "100"], ["4", "100"], ["6", "100"], ["8", "100"], ["93", "1000"], ["103", "1000"], ["113", "1000"], ["123", "1000"]];
+var schedule = (base, rows) => printedSchedule(base, rows.map(([over, fixed], i) => ({
+  thresholdCents: String(over * 100),
+  fixedCents: fixed.replace(".", ""),
+  rate: { num: TIERS[i][0], den: TIERS[i][1] }
+})));
+var scheduleText = (rows) => rows.map(([over, fixed], i) => `over $${over.toLocaleString("en-US")}: $${fixed} + ${(Number(TIERS[i][0]) / Number(TIERS[i][1]) * 100).toFixed(2)}%`).join("; ");
+var MEMO_2026 = "FTB memorandum 'Indexing, Personal Income Tax Law, 2026 Tax Year' (09.03.2026; CCPI June 2025 \u2192 June 2026 3.4%) and FTB Tax News, October 2026 ('2026 Indexing')";
+var YEARS2 = [
   {
+    year: 2025,
+    from: "2025-01-01",
+    to: "2026-01-01",
+    X: [[0, "0.00"], [11079, "110.79"], [26264, "414.49"], [41452, "1022.01"], [57542, "1987.41"], [72724, "3201.97"], [371479, "30986.19"], [445771, "38638.27"], [742953, "72219.84"]],
+    Y: [[0, "0.00"], [22158, "221.58"], [52528, "828.98"], [82904, "2044.02"], [115084, "3974.82"], [145448, "6403.94"], [742958, "61972.37"], [891542, "77276.52"], [1485906, "144439.65"]],
+    Z: [[0, "0.00"], [22173, "221.73"], [52530, "828.87"], [67716, "1436.31"], [83805, "2401.65"], [98990, "3616.45"], [505208, "41394.72"], [606251, "51802.15"], [1010417, "97472.91"]],
+    stdSingle: 5706,
+    stdJoint: 11412,
+    personalCredit: 153,
+    dependentCredit: 475,
+    phaseoutSingle: 252203,
+    phaseoutJoint: 504411,
+    phaseoutHoh: 378310,
+    rentersSingle: 53994,
+    rentersJoint: 107988,
+    amtExempt: [92749, 123667, 61830],
+    amtThreshold: [347808, 463745, 231868],
+    sdiRate: ["12", "1000"],
+    source: "2025 California Tax Rate Schedules (FTB); 2025 FTB 540 booklet",
+    url: "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf"
+  },
+  {
+    year: 2026,
+    from: "2026-01-01",
+    to: "2027-01-01",
+    X: [[0, "0.00"], [11456, "114.56"], [27157, "428.58"], [42861, "1056.74"], [59498, "2054.96"], [75197, "3310.88"], [384109, "32039.70"], [460927, "39951.95"], [768213, "74675.27"]],
+    Y: [[0, "0.00"], [22912, "229.12"], [54314, "857.16"], [85722, "2113.48"], [118996, "4109.92"], [150394, "6621.76"], [768218, "64079.39"], [921854, "79903.90"], [1536426, "149350.54"]],
+    Z: [[0, "0.00"], [22927, "229.27"], [54316, "857.05"], [70018, "1485.13"], [86654, "2483.29"], [102356, "3739.45"], [522385, "42802.15"], [626864, "53563.49"], [1044771, "100786.98"]],
+    stdSingle: 5900,
+    stdJoint: 11800,
+    personalCredit: 158,
+    dependentCredit: 491,
+    phaseoutSingle: 260778,
+    phaseoutJoint: 521561,
+    phaseoutHoh: 391173,
+    rentersSingle: 55830,
+    rentersJoint: 111660,
+    amtExempt: [95902, 127872, 63932],
+    amtThreshold: [359633, 479512, 239752],
+    sdiRate: ["13", "1000"],
+    source: `2026 California Tax Rate Schedules (FTB, 2026-540-tax-rate-schedules.pdf, 'Personal Income Tax Booklet 2026'); ${MEMO_2026}`,
+    url: "https://www.ftb.ca.gov/forms/2026/2026-540-tax-rate-schedules.pdf"
+  }
+];
+var TABLE_CONVENTION = "CALIFORNIA TAX TABLE (DEFAULT for taxable income of $100,000 or less \u2014 'Use only if your taxable income on Form 540, line 19 is more than $100,000. If $100,000 or less, use the Tax Table.'): rows are $1-$50, then $100 rows 51-150, 151-250, \u2026, 99,851-99,950, and a final $50 row 99,951-100,000. Each row's tax is the rate schedule at the row's WHOLE-DOLLAR midpoint, floor((at least + but not over) \xF7 2) \u2014 $25 for the first row, at least + $49 for a $100 row, $99,975 for the last \u2014 rounded to the nearest dollar. That convention reproduces every cell of the printed 2024 and 2025 FTB tables (1,001 rows \xD7 3 columns each, both years); the half-dollar midpoint (at least + $49.50) misses 33 cells of the 2024 table and the HOH 99,651-99,750 row of 2025 ($3,682 printed). Line 19 is in whole dollars ('Use whole dollars only'), so taxable income is rounded to the dollar before the row is found. Above $100,000 the rate schedule applies directly, from the printed fixed-dollar amounts with the excess \xD7 rate rounded to cents (the printed 'How to Figure Tax' steps). useFormulaMethod applies the schedule at every income.";
+var incomeTaxRule2 = (y, version2) => {
+  const base = max011(fact39("stateTaxableIncome"));
+  const scheduleFor = (b) => byStatus2(schedule(b, y.X), schedule(b, y.Y), schedule(b, y.Z));
+  const whole = rd4(base);
+  const midpoint = iff2(cmp("le", whole, dollars4(50)), dollars4(25), iff2(cmp("ge", whole, dollars4(99951)), dollars4(99975), add7(dollars4(51 + 49), mulInt(dollars4(100), stepUnits2(sub7(whole, dollars4(51)), "10000", "floor")))));
+  return {
     id: "us.ca.income_tax",
-    version: 5,
-    // v2 refused MFJ/QSS entirely; v3 encodes Schedule Y per-bracket (not by doubling Schedule X's rounded constants); v4 discloses the Schedule CA social security exclusion alongside unemployment compensation; v5 encodes the FTB Tax Table convention (midpoint of the $100-wide bracket, sub-$100,000) as the default method, per the VA/NY table pattern
+    version: version2,
     jurisdiction: "us.ca",
-    title: "California income tax \u2014 2025 rate schedules X (single/MFS), Y (MFJ/QSS), and Z (HOH), Form 540 line 31",
+    title: `California income tax \u2014 ${y.year} Tax Table (to $100,000) and rate schedules X (single/MFS), Y (MFJ/QSS), Z (HOH), all nine tiers, Form 540 line 31`,
     citation: {
-      source: "2025 California Tax Rate Schedules (FTB); 2025 California Tax Table (FTB 540 booklet); Rev. & Tax. Code \xA7 17041",
-      section: "FTB 2025 Schedule X / Schedule Y / Schedule Z; 2025 California Tax Table",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-540-tax-rate-schedules.pdf",
-      excerpt: `2025 Schedule Z (head of household), FTB: 1% to $22,173; 2% to $52,530; 4% to $67,716; 6% to $83,805; 8% to $98,990; 9.3% to $505,208 \u2014 income above $505,208 REFUSES here (higher 10.3/11.3/12.3% tiers and the 1% MHSA surcharge not yet encoded from source). Schedule X (single/MFS), 2025 FTB, web-verified July 2026: 1% to $11,079; 2% to $26,264; 4% to $41,452; 6% to $57,542; 8% to $72,724; 9.3% above (same $505,208 shared refusal boundary as this rule's HOH branch, applied before differentiating single from HOH) \u2014 corrected in v5 from stale/mistyped thresholds that broke the Schedule-Y-is-2x-Schedule-X identity below. SCHEDULE Y (married filing jointly / qualifying surviving spouse, 2025, FTB): thresholds are EXACTLY 2\xD7 Schedule X's \u2014 $0/$22,158/$52,528/$82,904/$115,084/$145,448/$742,958 at 1/2/4/6/8/9.3/10.3/11.3/12.3% \u2014 encoded PER-BRACKET (marginal accumulation over the doubled thresholds) rather than by doubling Schedule X's own printed (already-rounded) fixed-dollar constants, because independently rounding at each schedule drifts by pennies in the upper brackets; income above $742,958 REFUSES here on the same basis as X/Z (10.3%+ tiers not yet encoded). CALIFORNIA TAX TABLE CONVENTION (2025 FTB 540 booklet, 'California Tax Table', pp.68-75; DEFAULT method for CA taxable income under $100,000, per Form 540/540NR line 19 instructions: 'Read down the column labeled "If Your Taxable Income Is..." to find the range that includes your taxable income... Read across the columns labeled "The Tax For Filing Status"...'): rows are $1-$50 as a SPECIAL FIRST ROW (tax $0 for every filing status), then $100-WIDE brackets thereafter (51-150, 151-250, ..., 99,951-100,000 \u2014 the last row is only $50 wide because the table truncates exactly at $100,000). Table tax = apply the Schedule X/Y/Z marginal formula above at the bracket's MIDPOINT, rounded to the nearest dollar (the SAME midpoint-of-bracket convention already used for the VA and NY tax tables \u2014 decisively confirmed for CA too, not merely assumed). Verified 9-for-9 exact against three incomes \xD7 three filing-status columns (FTB 2025 tax table + rate schedules, web-verified July 2026): row 40,051-40,150 (mid $40,100.50) \u2192 Single $968 / MFJ $580 / HOH $580; row 70,051-70,150 (mid $70,100.50) \u2192 Single $2,992 / MFJ $1,532 / HOH $1,579; row 95,051-95,150 (mid $95,100.50) \u2192 Single $5,283 / MFJ $2,776 / HOH $3,305. The truncated last row (99,951-100,000) uses its OWN true midpoint $99,975.50 (not the phantom $100,000.50 the general $100-bracket formula would otherwise produce) \u2014 verified: Single at that row = $5,736. CA taxable income of $100,000 OR ABOVE uses the RATE SCHEDULE directly (unrounded to the cent, per the schedule's own marginal math) \u2014 the table stops at exactly $100,000. useFormulaMethod=true bypasses the table entirely and uses the raw rate schedule at every income level (matches the pre-v5 default behavior). Related 2025 parameters (FTB, web-verified July 2026): standard deduction $5,706 single/MFS, $11,412 MFJ/HOH/QSS; personal exemption CREDIT $153; dependent exemption credit $475. EXEMPTION CREDIT PHASEOUT (R&TC \xA7 17054(a), (b); 2025 FTB Schedule CA/540 instructions): credits (personal + dependent, but NOT senior) phase out $6 for each $2,500 (or fraction thereof \u2014 the quotient is ROUNDED UP) of federal AGI over $252,203 single/MFS ($1,250 divisor increments instead of $2,500 for MFS \u2014 i.e. the SAME $6 reduction per HALF the increment), $504,411 MFJ/QSS, $378,310 HOH; fully phased out credits are not reduced below $0. [Input: California taxable income (Form 540 line 19). SCHEDULE CA (2025 instructions, line 7): California EXCLUDES unemployment compensation (and CA PFL benefits) from taxable income \u2014 subtract it from federal AGI when composing CA AGI. SCHEDULE CA (2025 instructions, line 6, column B): California ALSO EXCLUDES social security benefits \u2014 the federally-taxable amount (the \xA7 86 includible amount, us.federal.taxable_social_security) is likewise subtracted from federal AGI when composing CA AGI. CalEITC \u2192 us.ca.caleitc; Young Child Tax Credit \u2192 us.ca.yctc; renter's credit \u2192 us.ca.renters_credit; CDCC \u2192 us.ca.cdcc; misc. parameters (use tax, SDI) \u2192 us.ca.parameters.]`
+      source: `${y.source}; Rev. & Tax. Code \xA7 17041`,
+      section: `FTB ${y.year} Schedule X / Schedule Y / Schedule Z; ${y.year} California Tax Table`,
+      url: y.url,
+      excerpt: `${y.year} CALIFORNIA TAX RATE SCHEDULES (verbatim amounts, 'Enter on Form 540, line 31 \u2026 of the amount over'): SCHEDULE X (single or married/RDP filing separately): ${scheduleText(y.X)}. SCHEDULE Y (married/RDP filing jointly or qualifying surviving spouse/RDP): ${scheduleText(y.Y)}. SCHEDULE Z (head of household): ${scheduleText(y.Z)}. Each fixed amount equals the previous one plus the previous rate times the band, rounded to cents (checked for all 24 links each year). ${TABLE_CONVENTION}` + (y.year === 2026 ? " The 2026 Tax Table itself prints in the 2026 Form 540 booklet (late December 2026); FTB's 09.03.2026 indexing memo says it is complete. Until then it is generated from the published 2026 schedules by the same convention, and no 2026 row depends on rounding the excess to cents first." : "") + " The 1% Behavioral Health Services Tax on taxable income over $1,000,000 is Form 540 line 62 (us.ca.bhst), not part of line 31. [Input: California taxable income, Form 540 line 19. Exemption credits \u2192 us.ca.exemption_credits; standard deduction \u2192 us.ca.standard_deduction.]"
     },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
     output: { type: "money" },
     parameters: {
-      standardDeductionSingleMfs: { value: "570600", type: "money" },
-      // $5,706
-      standardDeductionJointHohQss: { value: "1141200", type: "money" },
-      // $11,412
-      personalExemptionCredit: { value: "15300", type: "money" },
-      // $153
-      dependentExemptionCredit: { value: "47500", type: "money" },
-      // $475
-      exemptionPhaseoutStep: { value: "600", type: "money" },
-      // $6 reduction
-      exemptionPhaseoutIncrementSingleMfs: { value: "125000", type: "money" },
-      // $1,250 (MFS uses this half-increment)
-      exemptionPhaseoutIncrementOther: { value: "250000", type: "money" },
-      // $2,500
-      exemptionPhaseoutThresholdSingleMfs: { value: "25220300", type: "money" },
-      // $252,203
-      exemptionPhaseoutThresholdMfj: { value: "50441100", type: "money" },
-      // $504,411
-      exemptionPhaseoutThresholdHoh: { value: "37831000", type: "money" },
-      // $378,310
-      tableThreshold: { value: "10000000", type: "money" },
-      // $100,000 — table below, schedule at/above
-      tableFirstRowCeiling: { value: "5000", type: "money" },
-      // $50 — special first row, tax $0
-      tableLastRowFloor: { value: "9995100", type: "money" },
-      // $99,951 — start of the truncated last row
-      tableLastRowMidpoint: { value: "9997550", type: "money" }
-      // $99,975.50 — the truncated row's own true midpoint
+      tableThroughDollars: { value: "10000000", type: "money" }
+      // $100,000 — table at or below, schedule above
     },
-    formula: (() => {
-      const scheduleFor = (base2) => ({
-        kind: "if",
-        cond: { kind: "or", args: [isStatus10("mfj"), isStatus10("qss")] },
-        then: {
-          kind: "if",
-          cond: {
-            kind: "cmp",
-            op: "gt",
-            left: base2,
-            right: money37("74295800")
-            // $742,958 — Schedule Y's 9.3% band ends here
-          },
-          then: {
-            kind: "unsupported",
-            reason: "CA taxable income above $742,958 (Schedule Y) reaches the 10.3%+ tiers and the 1% MHSA surcharge, not yet encoded from the FTB schedule \u2014 compute yourself and disclose"
-          },
-          else: {
-            // Schedule Y: MFJ & QSS (2025) — thresholds exactly 2x Schedule X, encoded per-bracket
-            kind: "brackets",
-            base: { kind: "max0", arg: base2 },
-            table: [
-              { threshold: "0", rate: { num: "1", den: "100" } },
-              { threshold: "2215800", rate: { num: "2", den: "100" } },
-              { threshold: "5252800", rate: { num: "4", den: "100" } },
-              { threshold: "8290400", rate: { num: "6", den: "100" } },
-              { threshold: "11508400", rate: { num: "8", den: "100" } },
-              { threshold: "14544800", rate: { num: "93", den: "1000" } }
-            ]
-          }
-        },
-        else: {
-          kind: "if",
-          cond: {
-            kind: "cmp",
-            op: "gt",
-            left: base2,
-            right: money37("50520800")
-            // $505,208 — encoded bands end here
-          },
-          then: {
-            kind: "unsupported",
-            reason: "CA taxable income above $505,208 reaches the 10.3%+ tiers and the 1% MHSA surcharge, not yet encoded from the FTB schedule \u2014 compute yourself and disclose"
-          },
-          else: {
-            kind: "if",
-            cond: isStatus10("hoh"),
-            then: {
-              kind: "brackets",
-              base: { kind: "max0", arg: base2 },
-              table: [
-                { threshold: "0", rate: { num: "1", den: "100" } },
-                { threshold: "2217300", rate: { num: "2", den: "100" } },
-                { threshold: "5253000", rate: { num: "4", den: "100" } },
-                { threshold: "6771600", rate: { num: "6", den: "100" } },
-                { threshold: "8380500", rate: { num: "8", den: "100" } },
-                { threshold: "9899000", rate: { num: "93", den: "1000" } }
-              ]
-            },
-            else: {
-              // Schedule X: single & MFS (2025). Thresholds corrected in v5 to
-              // $11,079/$26,264/$41,452/$57,542/$72,724 (2025 FTB Schedule X,
-              // web-verified July 2026; these are EXACTLY half of Schedule
-              // Y's already-correct $22,158/$52,528/$82,904/$115,084/$145,448
-              // — the pre-v5 table used stale/mistyped thresholds that were
-              // NOT half of Y's, silently breaking the "Y = 2x X" identity
-              // this rule's own citation has always claimed).
-              kind: "brackets",
-              base: { kind: "max0", arg: base2 },
-              table: [
-                { threshold: "0", rate: { num: "1", den: "100" } },
-                { threshold: "1107900", rate: { num: "2", den: "100" } },
-                { threshold: "2626400", rate: { num: "4", den: "100" } },
-                { threshold: "4145200", rate: { num: "6", den: "100" } },
-                { threshold: "5754200", rate: { num: "8", den: "100" } },
-                { threshold: "7272400", rate: { num: "93", den: "1000" } }
-              ]
-            }
-          }
-        }
-      });
-      const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const lower = {
-        kind: "add",
-        args: [
-          money37("5100"),
-          // $51
-          {
-            kind: "mulInt",
-            base: money37("10000"),
-            // $100
-            count: {
-              kind: "stepUnits",
-              value: { kind: "sub", left: base, right: money37("5100") },
-              unitCents: "10000",
-              mode: "floor"
-            }
-          }
-        ]
-      };
-      const generalMidpoint = { kind: "add", args: [lower, money37("4950")] };
-      const midpoint = {
-        kind: "if",
-        cond: {
-          kind: "cmp",
-          op: "gt",
-          left: base,
-          right: { kind: "param", name: "tableLastRowFloor" }
-          // > $99,951
-        },
-        then: { kind: "param", name: "tableLastRowMidpoint" },
-        // $99,975.50
-        else: generalMidpoint
-      };
-      return {
-        kind: "if",
-        cond: {
-          kind: "or",
-          args: [
-            fact39("useFormulaMethod"),
-            {
-              kind: "cmp",
-              op: "ge",
-              left: base,
-              right: { kind: "param", name: "tableThreshold" }
-              // >= $100,000
-            }
-          ]
-        },
-        then: scheduleFor(base),
-        else: {
-          kind: "if",
-          cond: {
-            kind: "cmp",
-            op: "le",
-            left: base,
-            right: { kind: "param", name: "tableFirstRowCeiling" }
-            // <= $50
-          },
-          then: money37("0"),
-          else: { kind: "roundToDollar", value: scheduleFor(midpoint), mode: "half-up" }
-        }
-      };
-    })()
+    formula: iff2(or2(fact39("useFormulaMethod"), cmp("gt", whole, param20("tableThroughDollars"))), scheduleFor(base), iff2(cmp("le", whole, money37("0")), money37("0"), rd4(scheduleFor(midpoint))))
+  };
+};
+var standardDeductionRule = (y, version2) => ({
+  id: "us.ca.standard_deduction",
+  version: version2,
+  jurisdiction: "us.ca",
+  title: `California standard deduction \u2014 ${y.year} (R&TC \xA7 17073.5, Form 540 line 18)`,
+  citation: {
+    source: `R&TC \xA7 17073.5; ${y.year === 2026 ? MEMO_2026 : "2025 FTB 540 booklet, line 18"}`,
+    section: "R&TC \xA7 17073.5",
+    url: y.url,
+    excerpt: `${y.year} standard deduction: $${y.stdSingle.toLocaleString("en-US")} for single or married/RDP filing separately; $${y.stdJoint.toLocaleString("en-US")} for married/RDP filing jointly, head of household, or qualifying surviving spouse/RDP.${y.year === 2026 ? " (FTB memo: 'The standard deduction amount for single or separate taxpayers will increase from $5,706 to $5,900 for tax year 2026. For joint, surviving spouse, or head of household taxpayers, the standard deduction increases from $11,412 to $11,800.')" : ""} Line 18 is the larger of this and the California itemized deduction. Not modeled: the Standard Deduction Worksheet for Dependents (a filer someone else can claim).`
   },
-  {
-    id: "us.ca.caleitc",
-    version: 6,
-    // v5 read the EITC Table at earned income only; the FTB 3514 Step 6 worksheet (2025 booklet p. 7, lines 3-6) re-reads it at federal AGI when AGI differs from earned income and is at or above the line-5 floor ($4,661 / $6,998 / $9,823 by 0 / 1 / 2+ children) and keeps the SMALLER — v3's phase-in kept the floor-aligned midpoint, misplacing $50-multiple incomes into the next row; v4 aligns the phase-in to the table's true upper-bound rows (mid = ceil(x/50)*50 - 24.50), matching the post-peak segments; v5 recalibrates the 0-kid GENTLE phase-out anchor from an unverified construction ($216 @ mid $9,475.50, rate -43/4680, "unverified-but-consistent") to a printed-table-confirmed anchor ($183 @ mid $12,975.50 = bracket 12,951-13,000, rate -9/1000 = -0.9%/$1) — the prior anchor produced $184 for that row, one dollar off the 2025 FTB 3514 booklet's printed credit
+  effectiveFrom: y.from,
+  effectiveTo: y.to,
+  output: { type: "money" },
+  parameters: {
+    singleMfs: { value: String(y.stdSingle * 100), type: "money" },
+    jointHohQss: { value: String(y.stdJoint * 100), type: "money" }
+  },
+  formula: byStatus2(param20("singleMfs"), param20("jointHohQss"), param20("jointHohQss"))
+});
+var exemptionCreditsRule = (y, version2) => {
+  const agi2 = fact39("caFederalAgi");
+  const threshold3 = byStatus2(param20("thresholdSingleMfs"), param20("thresholdJoint"), param20("thresholdHoh"));
+  const lineC = max011(sub7(agi2, threshold3));
+  const lineD = iff2(isStatus10("mfs"), stepUnits2(lineC, "125000", "ceil"), stepUnits2(lineC, "250000", "ceil"));
+  const lineE = mulInt(param20("reductionPerStep"), lineD);
+  const personal = fact39("caPersonalExemptions");
+  const deps = fact39("caDependentExemptions");
+  const lineI = max011(sub7(mulInt(param20("personalCredit"), personal), mulInt(lineE, personal)));
+  const lineM = max011(sub7(mulInt(param20("dependentCredit"), deps), mulInt(lineE, deps)));
+  return {
+    id: "us.ca.exemption_credits",
+    version: version2,
     jurisdiction: "us.ca",
-    title: "California Earned Income Tax Credit (R&TC \xA7 17052, FTB 3514) \u2014 2025, full range",
+    title: `California exemption credits \u2014 ${y.year} personal, blind, senior and dependent credits with the AGI limitation (R&TC \xA7\xA7 17054, 17054.1; Form 540 line 32)`,
     citation: {
-      source: "R&TC \xA7 17052; 2025 FTB 3514 booklet (EITC table + General Information)",
+      source: `R&TC \xA7\xA7 17054, 17054.1; ${y.year === 2026 ? MEMO_2026 : "2025 FTB 540 booklet, line 32 and the AGI Limitation Worksheet"}`,
+      section: "R&TC \xA7 17054.1",
+      url: y.url,
+      excerpt: `${y.year}: personal, blind and senior exemption credit $${y.personalCredit} per box (lines 7, 8, 9 \u2014 two boxes on line 7 for a joint or surviving-spouse return, so $${y.personalCredit * 2}); dependent exemption credit $${y.dependentCredit} each (line 10). Line 32 is reduced when federal AGI (line 13) is more than $${y.phaseoutSingle.toLocaleString("en-US")} single or married/RDP filing separately, $${y.phaseoutJoint.toLocaleString("en-US")} married/RDP filing jointly or qualifying surviving spouse/RDP, $${y.phaseoutHoh.toLocaleString("en-US")} head of household. AGI LIMITATION WORKSHEET (2025 FTB 540 booklet, verbatim lines): 'c Subtract line b from line a. d Divide line c by $2,500 ($1,250 if married/RDP filing separately). If the result is not a whole number, round it to the next higher whole number. e Multiply line d by $6. f Add the numbers from the boxes on Form 540, lines 7, 8, and 9 (not the dollar amounts). g Multiply line e by line f. h Add the total dollar amount from Form 540, lines 7, 8, and 9. i Subtract line g from line h. If zero or less, enter -0-. j Enter the number from the box on Form 540, line 10 (not the dollar amount). k Multiply line e by line j. l Enter the dollar amount from Form 540, line 10. m Subtract line k from line l. If zero or less, enter -0-. n Add line i and line m. Enter the result here and on Form 540, line 32.' The FTB memo states the same reduction as '$6 ($12 joint)' per $2,500 ($1,250 MFS): $6 per box, and a joint return has two. [Inputs: caFederalAgi = Form 540 line 13; caPersonalExemptions = the boxes on lines 7-9; caDependentExemptions = the box on line 10.]`
+    },
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
+    output: { type: "money" },
+    parameters: {
+      personalCredit: { value: String(y.personalCredit * 100), type: "money" },
+      dependentCredit: { value: String(y.dependentCredit * 100), type: "money" },
+      reductionPerStep: { value: "600", type: "money" },
+      thresholdSingleMfs: { value: String(y.phaseoutSingle * 100), type: "money" },
+      thresholdJoint: { value: String(y.phaseoutJoint * 100), type: "money" },
+      thresholdHoh: { value: String(y.phaseoutHoh * 100), type: "money" }
+    },
+    formula: add7(lineI, lineM)
+  };
+};
+var caEarnedIncome = max011(sub7(add7(fact39("wages"), max011(sub7(ruleRef33("us.federal.se_net_profit"), ruleRef33("us.federal.se_tax_half_deduction")))), fact39("scheduleCNetLoss")));
+var caInvestmentIncome = add7(fact39("taxableInterest"), fact39("taxExemptInterest"), fact39("qualifiedDividends"), fact39("ordinaryDividends"), ruleRef33("us.federal.schedule_d.preferential_lt_gain"), ruleRef33("us.federal.schedule_d.ordinary_st_gain"));
+var eitcKids = add7(fact39("qualifyingChildren"), fact39("eitcAdditionalQualifyingChildren"));
+var kidsEq = (n) => cmp("eq", eitcKids, { kind: "int", value: n });
+var byKids = (k0, k1, k2, k3) => iff2(kidsEq("0"), k0, iff2(kidsEq("1"), k1, iff2(kidsEq("2"), k2, k3)));
+var calEitcRule = (() => {
+  const creditAt = (amount) => {
+    const x = rd4(amount);
+    const mid = sub7(mulInt(dollars4(50), stepUnits2(x, "5000", "ceil")), money37("2450"));
+    const at = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "floor" });
+    const column = (eia, rate2, zero32, gentle) => iff2(
+      cmp("le", mid, param20(eia)),
+      at(mid, ...rate2),
+      // phase-in
+      { kind: "max", args: [at(sub7(mulInt(param20(eia), { kind: "int", value: "2" }), mid), ...rate2), at(sub7(param20(zero32), mid), ...gentle)] }
+    );
+    const tableValue = byKids(column("earnedIncomeAmount0", ["2601", "40000"], "gentleZero0", ["459", "50000"]), column("earnedIncomeAmount1", ["289", "1000"], "gentleZero1", ["3009", "100000"]), column("earnedIncomeAmount2", ["17", "50"], "gentleZero2", ["4199", "100000"]), column("earnedIncomeAmount2", ["153", "400"], "gentleZero3", ["8517", "200000"]));
+    return iff2(cmp("le", x, money37("0")), money37("0"), { kind: "max", args: [money37("100"), rd4(tableValue)] });
+  };
+  const agi2 = ruleRef33("us.federal.agi");
+  const atEarned = creditAt(caEarnedIncome);
+  return {
+    id: "us.ca.caleitc",
+    version: 7,
+    // v1-v6 fit the printed table piecewise and missed it on 775 of its 2,632 cells, ran out at $32,900 instead of $32,901, and never applied the investment-income limit; v7 encodes the statute's three segments exactly (every cell reproduced) and adds the limit
+    jurisdiction: "us.ca",
+    title: "California Earned Income Tax Credit (R&TC \xA7 17052, FTB 3514) \u2014 2025 EITC Table, Step 6 worksheet and investment income limit",
+    citation: {
+      source: "R&TC \xA7 17052; 2025 FTB 3514 booklet (EITC Table, Steps 2 and 6); SB 1435 (Stats. 2026, ch. 233)",
       section: "R&TC \xA7 17052",
       url: "https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.pdf",
-      excerpt: "2025 CalEITC: income ceiling $32,900 (all family sizes, both earned income AND federal AGI must be under $32,901 or the credit is $0); Step 6 worksheet (booklet p. 7): line 2 looks the credit up at California earned income; line 4 'Are the amounts on line 1 and line 3 [federal AGI] the same?' \u2014 if not, line 5: unless AGI is below $4,661 (no children) / $6,998 (1) / $9,823 (2 or more), 'Look up the amount on line 3 in the EITC Table ... Compare the amounts on line 5 and line 2, enter the smaller amount on line 6'; maximum credit $302 (0 kids, peak bracket $4,651-$4,700) / $2,016 (1 kid, peak $6,951-$7,000) / $3,339 (2 kids, peak $9,801-$9,850) / $3,756 (3+ kids, same $9,801-$9,850 peak). DECODED STRUCTURE (July 2026 web-verification: the printed table was parsed in full, all 658 $50-wide brackets from $1-$32,900, `pdftotext -layout`, and formula-fit): no plateau \u2014 every column peaks at a single $50 bracket and immediately begins declining. The decline is NOT one straight line: it has a KINK where the phase-out slope changes from steep to gentle, at 0 kids $5,450/$5,451, 1 kid $11,800/$11,801, 2 kids $17,800/$17,801, 3+ kids $18,000/$18,001 \u2014 confirmed by row-to-row deltas dropping from roughly $17-19 per $50 bracket (steep) to roughly $2-3 per bracket (gentle) exactly at each boundary. THIS RULE NOW COMPUTES ALL THREE SEGMENTS: (1) PHASE-IN (unchanged from v1): credit = round(bracket-midpoint \xD7 combined rate), combined rate = federal \xA7 32(b) phase-in rate \xD7 the 85% \xA7 17052(c) adjustment factor (7.65/34/40/45% \xD7 85% = 6.5025/28.90/34.00/38.25%), using the floor-aligned $50-bracket midpoint \u2014 verified against the printed row 2,201-2,250 \u2192 851 for 3+ children (2,225.50 \xD7 45% \xD7 85% = 851.25 \u2192 851). (2) STEEP PHASE-OUT (peak to kink): the printed table declines at (within rounding) the SAME rate magnitude as the phase-in line (a symmetric V through the peak) \u2014 credit = round(anchor value \u2212 combined phase-in rate \xD7 (bracket-midpoint \u2212 anchor-bracket-midpoint)), using the TRUE (upper-bound-aligned) $50-bracket midpoint. For 1/2/3+ kids the line is anchored to an actual printed table row (1 kid: bracket 9,451-9,500, $1,306; 2 kids and 3+ kids: bracket 9,951-10,000, $3,288/$3,699) rather than the theoretical peak itself \u2014 the peak POINT sits fractionally off this line for 1 kid specifically (a peak-anchored construction understates by roughly $13 there), so a real table row is used everywhere data exists. Verified EXACT against every printed row in this zone for 1/2/3+ kids (e.g. 2 kids: $10,000 \u2192 3,288 exact, $16,500 \u2192 1,078 exact, $17,500 \u2192 738 exact; 3+ kids: $16,500 \u2192 1,213 exact; 1 kid: $9,500 \u2192 1,306 exact, $11,000 \u2192 873 exact). (3) GENTLE PHASE-OUT (kink to ceiling): a SEPARATE, shallower line anchored to a printed table row just past the kink, at the independently-fit rate (0 kids = \u22120.9%/$1 i.e. \u22129/1000 per $1 of midpoint, CONFIRMED against the printed 2025 FTB 3514 booklet row $12,951-$13,000 \u2192 $183 exact, web-verified July 2026 \u2014 corrects a prior unverified anchor that produced $184 for that row; 1 kid \u2248 \u22123.01%/$1 i.e. \u2212541/18000, 2 kids \u2248 \u22124.19%/$1 i.e. \u221225/596, 3+ kids \u2248 \u22124.26%/$1 i.e. \u2212613/14400) \u2014 verified within \u2264$1 across every printed row from the kink to $32,900 (e.g. 0 kids: $17,000 \u2192 147 exact; 2 kids: $18,000 \u2192 626 exact, $25,000 \u2192 333 vs. computed 332, $30,000 \u2192 123 vs. computed 123). Max residual across all 658 rows, all four columns: \u2264 $2 pre-rounding (a single pre-existing phase-in-region anomaly just below the 2/3+-kid peak, at $9,500, runs to $17-19 \u2014 inherited from the v1 floor-aligned phase-in formula, unchanged here per the phase-in region's own design, and confined to that one boundary row). The 0-kid STEEP segment (peak to $5,450) has no printed table data in the range this session could source ($9,500+) to verify against; it uses the peak-anchor construction (disclosed as unverified-but-consistent with the confirmed symmetric-V structure elsewhere) \u2014 only the GENTLE segment's 0-kid anchor is table-confirmed as of v5. Earned income here = wages (line 1z, INCLUDING any taxable dependent-care benefits on line 1e) + max(0, SE profit \u2212 \xBDSE tax) \u2212 Schedule C loss, same composition as the federal \xA7 32(c)(2) input. CAUTION: when a spouse's own Schedule C loss makes that spouse's Form 2441 earned income zero or negative, the \xA7 129 exclusion for W-2 box 10 dependent care benefits is $0 \u2014 the FULL box-10 amount becomes taxable wages (line 1e), raising both federal AGI and this credit's earned income (federal earned 10,500 + 6,000 fully-taxable DCB \u2192 CA earned 16,500 \u2192 credit 1,078 from the printed row). Kids = qualifyingChildren + eitcAdditionalQualifyingChildren."
+      excerpt: "2025 FTB 3514: 'Both your earned income and federal AGI must be less than $32,901'; Step 2: 'Is the amount on line 12 [investment income] more than $4,814? Yes Stop here, you cannot take the credit.' (SB 1435 keeps California's base disqualified-income amount at $3,400, indexed, whatever the federal \xA7 32(i) amount). Step 6 (booklet p. 7): line 2 looks the credit up at California earned income; if federal AGI differs and is not less than $4,661 (no children) / $6,998 (one) / $9,823 (two or more), line 5 looks it up at federal AGI and the SMALLER is the credit. THE 2025 EITC TABLE (658 rows of $50, '$1 to $50' through '$32,851 to $32,900', four columns) equals, at each row's true midpoint m = (row's 'but not over' amount) \u2212 $24.50: (1) up to the earned income amount E = $4,661 / $6,998 / $9,823 / $9,823 (no / one / two / three or more children \u2014 R&TC \xA7 17052(b)(2), indexed, the same figures as the Step 6 floors), the \xA7 17052(b)(1) credit percentage 7.65% / 34% / 40% / 45% \xD7 the 85% adjustment factor \xD7 m; (2) above E, the larger of the same percentage \xD7 85% \xD7 (2E \u2212 m) \u2014 the phaseout amount equals E, so the credit falls at the rate it rose \u2014 and a gentle line 85% \xD7 p \xD7 (Z \u2212 m) with p = 1.08% / 3.54% / 4.94% / 5.01% and Z = $32,958.00 / $32,894.40 / $32,894.70 / $32,886.40; each rounded half-up to the dollar, and never below $1 within the table (the three-or-more column's last row computes $0.47 and prints $1). This reproduces all 2,632 printed cells exactly; p and Z are the only values fit to the table, each the round figure inside a band the printed rows pin to under 0.0002% and $1. Earned income: wages + net earnings from self-employment (profit less \xBD SE tax) \u2212 a Schedule C loss, whole dollars. Investment income: taxable and tax-exempt interest, dividends, and capital gain net income (FTB 3514 Step 2 lines 1, 2, 3 and 7; Form 8814, passive and personal-property rental income are not modeled). Kids = qualifyingChildren + eitcAdditionalQualifyingChildren. The 2026 table prints in the 2026 FTB 3514 booklet; until then a 2026 return has no rule here (FTB's 2026 memo publishes only E = $4,819 / $7,236 / $10,157, the $34,051 limit and the $4,978 investment limit \u2014 not the gentle segment)."
     },
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: {
-      ceiling: { value: "3290000", type: "money" },
-      // $32,900
-      // Step 6 worksheet line 5 floors (2025 booklet, verbatim amounts): AGI below these skips the AGI lookup
-      agiLookupFloor0kids: { value: "466100", type: "money" },
-      // $4,661
-      agiLookupFloor1kid: { value: "699800", type: "money" },
-      // $6,998
-      agiLookupFloor2kids: { value: "982300", type: "money" },
-      // $9,823 (2 or more)
-      max0kids: { value: "30200", type: "money" },
-      // $302 (also the steep segment's peak anchor)
-      max1kid: { value: "201600", type: "money" },
-      // $2,016
-      max2kids: { value: "333900", type: "money" },
-      // $3,339
-      max3kids: { value: "375600", type: "money" },
-      // $3,756
-      adjustmentFactorPct: { value: "85", type: "int" },
-      peakUpper0kids: { value: "470000", type: "money" },
-      // $4,700 (last dollar of the peak $50-bracket)
-      peakUpper1kid: { value: "700000", type: "money" },
-      // $7,000
-      peakUpper2kids: { value: "985000", type: "money" },
-      // $9,850
-      peakUpper3kids: { value: "985000", type: "money" },
-      // $9,850 (same bracket as 2 kids)
-      peakMid0kids: { value: "467550", type: "money" },
-      // $4,675.50 true midpoint of $4,651-$4,700
-      peakMid1kid: { value: "697550", type: "money" },
-      // $6,975.50 true midpoint of $6,951-$7,000
-      peakMid2kids3kids: { value: "982550", type: "money" },
-      // $9,825.50 true midpoint of $9,801-$9,850
-      // STEEP segment anchors: a printed table row's (true bracket midpoint,
-      // credit) pair, NOT the theoretical peak — for 1/2/3+ kids the peak
-      // point itself sits fractionally off the steep line's true regression
-      // (verified: the peak-anchor construction is off by ~$13 for 1 kid),
-      // so the steep line is anchored to real table data instead. 0 kids has
-      // no printed steep-zone data in the sourced range and keeps the
-      // peak-anchor (peakMid0kids/max0kids) construction, disclosed above.
-      steepAnchorMid1kid: { value: "947550", type: "money" },
-      // bracket 9,451-9,500, mid $9,475.50
-      steepAnchorValue1kid: { value: "130600", type: "money" },
-      // $1,306 printed
-      steepAnchorMid2kids: { value: "997550", type: "money" },
-      // bracket 9,951-10,000, mid $9,975.50
-      steepAnchorValue2kids: { value: "328800", type: "money" },
-      // $3,288 printed
-      steepAnchorMid3kids: { value: "997550", type: "money" },
-      // bracket 9,951-10,000, mid $9,975.50
-      steepAnchorValue3kids: { value: "369900", type: "money" },
-      // $3,699 printed
-      kinkUpper0kids: { value: "545000", type: "money" },
-      // $5,450 (last dollar of the last steep bracket)
-      kinkUpper1kid: { value: "1180000", type: "money" },
-      // $11,800
-      kinkUpper2kids: { value: "1780000", type: "money" },
-      // $17,800
-      kinkUpper3kids: { value: "1800000", type: "money" },
-      // $18,000
-      // gentle-segment anchor: (true bracket midpoint, printed credit) of one
-      // printed row just past the kink, used to continue the gentle line
-      gentleAnchorMid0kids: { value: "1297550", type: "money" },
-      // bracket 12,951-13,000, mid $12,975.50 (2025 FTB 3514 booklet, confirmed printed row)
-      gentleAnchorValue0kids: { value: "18300", type: "money" },
-      // $183 printed (confirmed row 12,951-13,000)
-      gentleAnchorMid1kid: { value: "1197550", type: "money" },
-      // bracket 11,951-12,000, mid $11,975.50
-      gentleAnchorValue1kid: { value: "62900", type: "money" },
-      // $629 printed
-      gentleAnchorMid2kids: { value: "1797550", type: "money" },
-      // bracket 17,951-18,000, mid $17,975.50
-      gentleAnchorValue2kids: { value: "62600", type: "money" },
-      // $626 printed
-      gentleAnchorMid3kids: { value: "1847550", type: "money" },
-      // bracket 18,451-18,500, mid $18,475.50
-      gentleAnchorValue3kids: { value: "61400", type: "money" }
-      // $614 printed
+      incomeLimit: { value: "3290100", type: "money" },
+      // earned income and federal AGI must be less than $32,901
+      investmentIncomeLimit: { value: "481400", type: "money" },
+      // $4,814
+      earnedIncomeAmount0: { value: "466100", type: "money" },
+      earnedIncomeAmount1: { value: "699800", type: "money" },
+      earnedIncomeAmount2: { value: "982300", type: "money" },
+      // two or more children
+      gentleZero0: { value: "3295800", type: "money" },
+      gentleZero1: { value: "3289440", type: "money" },
+      gentleZero2: { value: "3289470", type: "money" },
+      gentleZero3: { value: "3288640", type: "money" }
     },
-    formula: (() => {
-      const kids = {
-        kind: "add",
-        args: [fact39("qualifyingChildren"), fact39("eitcAdditionalQualifyingChildren")]
-      };
-      const kidsEq = (n) => ({
-        kind: "cmp",
-        op: "eq",
-        left: kids,
-        right: { kind: "int", value: n }
-      });
-      const param29 = (name) => ({ kind: "param", name });
-      const earnedIncome2 = {
-        kind: "max0",
-        arg: {
-          kind: "sub",
-          left: {
-            kind: "add",
-            args: [
-              fact39("wages"),
-              {
-                kind: "max0",
-                arg: {
-                  kind: "sub",
-                  left: { kind: "rule", ruleId: "us.federal.se_net_profit" },
-                  right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" }
-                }
-              }
-            ]
-          },
-          right: fact39("scheduleCNetLoss")
-        }
-      };
-      const creditAt = (earned2) => {
-        const midCeil = {
-          kind: "sub",
-          left: {
-            kind: "mulInt",
-            base: money37("5000"),
-            count: { kind: "stepUnits", value: earned2, unitCents: "5000", mode: "ceil" }
-          },
-          right: money37("2450")
-          // $24.50
-        };
-        const tentative = (num, den) => ({
-          kind: "roundToDollar",
-          value: {
-            kind: "mulRate",
-            // v4: the FTB table's rows are upper-bound-aligned everywhere —
-            // "at least X, but not over Y" with Y a multiple of $50 — so the
-            // phase-in uses the same TRUE midpoint as the post-peak segments
-            // (the v2/v3 floor-aligned midpoint misplaced $50-multiple incomes
-            // into the NEXT row: earned 5,500 belongs to 5,451-5,500, mid
-            // 5,475.50, not 5,501-5,550). max0 guards the earned=0 corner.
-            base: { kind: "max0", arg: midCeil },
-            rate: { num, den },
-            round: "half-up"
-          },
-          mode: "half-up"
-        });
-        const linear = (anchorMid, anchorValue, num, den) => ({
-          kind: "roundToDollar",
-          value: {
-            kind: "add",
-            args: [
-              anchorValue,
-              {
-                kind: "mulRate",
-                base: { kind: "sub", left: midCeil, right: anchorMid },
-                rate: { num, den },
-                round: "half-up"
-              }
-            ]
-          },
-          mode: "half-up"
-        });
-        const segment = (peakUpperParam, kinkUpperParam, phaseIn, steep, gentle) => ({
-          kind: "if",
-          cond: { kind: "cmp", op: "le", left: earned2, right: param29(peakUpperParam) },
-          then: phaseIn,
-          else: {
-            kind: "if",
-            cond: { kind: "cmp", op: "le", left: earned2, right: param29(kinkUpperParam) },
-            then: steep,
-            else: gentle
-          }
-        });
-        const col0 = segment(
-          "peakUpper0kids",
-          "kinkUpper0kids",
-          tentative("65025", "1000000"),
-          // 7.65% × 85%
-          linear(param29("peakMid0kids"), param29("max0kids"), "-2601", "40000"),
-          // mirror of the phase-in rate
-          linear(param29("gentleAnchorMid0kids"), param29("gentleAnchorValue0kids"), "-9", "1000")
-        );
-        const col1 = segment(
-          "peakUpper1kid",
-          "kinkUpper1kid",
-          tentative("2890", "10000"),
-          // 34% × 85%
-          linear(param29("steepAnchorMid1kid"), param29("steepAnchorValue1kid"), "-289", "1000"),
-          linear(param29("gentleAnchorMid1kid"), param29("gentleAnchorValue1kid"), "-541", "18000")
-        );
-        const col2 = segment(
-          "peakUpper2kids",
-          "kinkUpper2kids",
-          tentative("3400", "10000"),
-          // 40% × 85%
-          linear(param29("steepAnchorMid2kids"), param29("steepAnchorValue2kids"), "-17", "50"),
-          linear(param29("gentleAnchorMid2kids"), param29("gentleAnchorValue2kids"), "-25", "596")
-        );
-        const col3 = segment(
-          "peakUpper3kids",
-          "kinkUpper3kids",
-          tentative("3825", "10000"),
-          // 45% × 85%
-          linear(param29("steepAnchorMid3kids"), param29("steepAnchorValue3kids"), "-153", "400"),
-          linear(param29("gentleAnchorMid3kids"), param29("gentleAnchorValue3kids"), "-613", "14400")
-        );
-        return {
-          kind: "if",
-          cond: kidsEq("0"),
-          then: col0,
-          else: {
-            kind: "if",
-            cond: kidsEq("1"),
-            then: col1,
-            else: { kind: "if", cond: kidsEq("2"), then: col2, else: col3 }
-          }
-        };
-      };
-      const agi2 = ruleRef33("us.federal.agi");
-      const atEarned = creditAt(earnedIncome2);
-      const agiLookupFloor = {
-        kind: "if",
-        cond: kidsEq("0"),
-        then: param29("agiLookupFloor0kids"),
-        else: { kind: "if", cond: kidsEq("1"), then: param29("agiLookupFloor1kid"), else: param29("agiLookupFloor2kids") }
-      };
-      return {
-        kind: "if",
-        // BOTH earned income AND federal AGI must be under the ceiling
-        // (R&TC § 17052 / FTB 3514: "Both your earned income and federal AGI
-        // must be less than $32,901") — either at/over the ceiling → $0
-        cond: {
-          kind: "or",
-          args: [
-            { kind: "cmp", op: "ge", left: earnedIncome2, right: param29("ceiling") },
-            { kind: "cmp", op: "ge", left: agi2, right: param29("ceiling") }
-          ]
-        },
-        then: money37("0"),
-        else: {
-          kind: "if",
-          // worksheet line 4: earned income and federal AGI the same → line 2 is the credit
-          cond: { kind: "cmp", op: "eq", left: agi2, right: earnedIncome2 },
-          then: atEarned,
-          else: {
-            kind: "if",
-            cond: { kind: "cmp", op: "lt", left: agi2, right: agiLookupFloor },
-            then: atEarned,
-            // line 5: "Look up the amount on line 3 in the EITC Table ... Compare the amounts
-            // on line 5 and line 2, enter the smaller amount on line 6"
-            else: { kind: "min", args: [atEarned, creditAt(agi2)] }
-          }
-        }
-      };
-    })()
-  },
-  {
+    formula: iff2(or2(cmp("ge", caEarnedIncome, param20("incomeLimit")), cmp("ge", agi2, param20("incomeLimit")), cmp("gt", caInvestmentIncome, param20("investmentIncomeLimit"))), money37("0"), iff2(
+      // worksheet line 4: earned income and federal AGI the same → line 2 is the credit; line 5: AGI below the floor → line 2
+      or2(cmp("eq", rd4(agi2), rd4(caEarnedIncome)), cmp("lt", agi2, byKids(param20("earnedIncomeAmount0"), param20("earnedIncomeAmount1"), param20("earnedIncomeAmount2"), param20("earnedIncomeAmount2")))),
+      atEarned,
+      { kind: "min", args: [atEarned, creditAt(agi2)] }
+    ))
+  };
+})();
+var yctcRule = (y) => {
+  const agi2 = ruleRef33("us.federal.agi");
+  const excess2 = sub7(caEarnedIncome, param20("phaseOutStart"));
+  const line26Hundredths = stepUnits2(excess2, "100", "floor");
+  const line27Cents = mulInt(money37("1"), stepUnits2(mulInt(param20("reductionPer100"), line26Hundredths), "100", "floor"));
+  const line28 = sub7(param20("maxCredit"), line27Cents);
+  const rounded = iff2(cmp("le", line28, money37("0")), money37("0"), iff2(cmp("le", line28, money37("100")), money37("100"), rd4(line28)));
+  const calEitcAllowed = y.year === 2025 ? cmp("gt", ruleRef33("us.ca.caleitc"), money37("0")) : and2(cmp("lt", caEarnedIncome, param20("calEitcIncomeLimit")), cmp("lt", agi2, param20("calEitcIncomeLimit")), cmp("le", caInvestmentIncome, param20("calEitcInvestmentLimit")));
+  return {
     id: "us.ca.yctc",
-    version: 2,
-    // v1 gated on the child and earned income only and refused the phase-out band; v2 adds the Step 8 gates (CalEITC allowed, federal AGI ≤ $32,900, wages ≤ $35,640) and computes lines 25-28 verbatim from the 2025 form
+    version: y.version,
     jurisdiction: "us.ca",
-    title: "California Young Child Tax Credit (R&TC \xA7 17052.1, FTB 3514) \u2014 2025",
+    title: `California Young Child Tax Credit (R&TC \xA7 17052.1, FTB 3514) \u2014 ${y.year}`,
     citation: {
-      source: "R&TC \xA7 17052.1; 2025 FTB 3514 booklet, General Information",
+      source: `R&TC \xA7 17052.1; ${y.year === 2026 ? MEMO_2026 : "2025 FTB 3514 booklet, General Information and Step 8"}`,
       section: "R&TC \xA7 17052.1",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.pdf",
-      excerpt: "2025 YCTC (verbatim from the FTB 3514 booklet): 'the maximum amount of credit allowable for a qualified taxpayer is $1,189 and the credit amount phases out as earned income exceeds the threshold amount of $27,425, and completely phases out at $32,901.' Requires CalEITC eligibility and a qualifying child UNDER SIX at year end (hasChildUnderSix). This rule returns the full $1,189 at or below the $27,425 threshold and $0 at or above $32,901; the phase-out band between them refuses (the per-$100 reduction schedule is table-published, not formula-published \u2014 read FTB 3514 and disclose)."
+      url: y.year === 2026 ? "https://www.caltax.org/regulatory-issues/ftb/2026-PIT-Indexing-Memo.pdf" : "https://www.ftb.ca.gov/forms/2025/2025-3514-booklet.pdf",
+      excerpt: (y.year === 2026 ? "FTB 2026 indexing memo (verbatim): 'The maximum credit for taxable year 2026 is $1,229.' \u2026 'For taxable year 2026, the cap for net losses or wages, salaries, tips, and other employee compensation is $36,852.' \u2026 'For taxable year January 1, 2026, the graduated reduction amount is $21.58 per $100 in excess of the threshold amount. The credit amount phases out as earned income exceeds the \u201Cthreshold amount\u201D of $28,357, and completely phases out at $34,051.' The qualifying child is still one 'younger than six years old on the last day of the taxable year' (AB 1690, which would have raised the age from 2026, was last acted on in Assembly Appropriations in May 2026; the September 2026 memo describes the under-six rule). CalEITC eligibility (Step 8) for 2026 is tested directly \u2014 earned income and federal AGI under $34,051 and investment income not over $4,978 (memo) \u2014 because every row of the EITC Table below the limit prints at least $1 (2025: all 658 rows), so 'allowed the California EITC' is the eligibility test; the 2026 CalEITC amount itself waits for the 2026 table." : "2025 YCTC (verbatim from the FTB 3514 booklet): 'the maximum amount of credit allowable for a qualified taxpayer is $1,189 and the credit amount phases out as earned income exceeds the threshold amount of $27,425, and completely phases out at $32,901.' Line 23a: wages over $35,640 \u2192 no credit; line 23b: federal AGI over $32,900 \u2192 no credit.") + " Requires a qualifying child under six at year end (hasChildUnderSix) and, when earned income is above zero, the California EITC allowed on the same form. Lines 25-28 are computed as printed: line 26 and line 27 to two decimals without rounding, line 28 '$1' when between $0 and $1, otherwise rounded to the dollar. Not modeled: the 'total net loss' cap on line 23b (a filer with no earned income or a net loss)."
     },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
     output: { type: "money" },
     parameters: {
-      maxCredit: { value: "118900", type: "money" },
-      // $1,189
-      phaseOutStart: { value: "2742500", type: "money" },
-      // $27,425 (line 25 threshold)
-      reductionPer100: { value: "2171", type: "money" },
-      // $21.71 per $100 of excess (line 27)
-      agiCeiling: { value: "3290000", type: "money" },
-      // line 23b: "federal AGI exceeds $32,900" → no credit
-      wageCeiling: { value: "3564000", type: "money" }
-      // line 23a: wages over $35,640 → no credit
-    },
-    formula: (() => {
-      const earned2 = {
-        kind: "max0",
-        arg: {
-          kind: "sub",
-          left: {
-            kind: "add",
-            args: [
-              fact39("wages"),
-              {
-                kind: "max0",
-                arg: {
-                  kind: "sub",
-                  left: { kind: "rule", ruleId: "us.federal.se_net_profit" },
-                  right: { kind: "rule", ruleId: "us.federal.se_tax_half_deduction" }
-                }
-              }
-            ]
-          },
-          right: fact39("scheduleCNetLoss")
-        }
-      };
-      const param29 = (name) => ({ kind: "param", name });
-      const agi2 = ruleRef33("us.federal.agi");
-      const excess2 = { kind: "sub", left: earned2, right: param29("phaseOutStart") };
-      const line26Hundredths = { kind: "stepUnits", value: excess2, unitCents: "100", mode: "floor" };
-      const line27Cents = {
-        kind: "mulInt",
-        base: money37("1"),
-        count: {
-          kind: "stepUnits",
-          value: { kind: "mulInt", base: param29("reductionPer100"), count: line26Hundredths },
-          // line 26 × 100 × 2,171 = line 27 × 100 (cents)
-          unitCents: "100",
-          mode: "floor"
-        }
-      };
-      const line28 = { kind: "sub", left: param29("maxCredit"), right: line27Cents };
-      const rounded = {
-        kind: "if",
-        cond: { kind: "cmp", op: "le", left: line28, right: money37("0") },
-        then: money37("0"),
-        else: {
-          kind: "if",
-          cond: { kind: "cmp", op: "le", left: line28, right: money37("100") },
-          then: money37("100"),
-          else: { kind: "roundToDollar", value: line28, mode: "half-up" }
-        }
-      };
-      return {
-        kind: "if",
-        cond: {
-          kind: "or",
-          args: [
-            { kind: "not", arg: fact39("hasChildUnderSix") },
-            // Step 8: "You have been allowed the California EITC on this form" (line 20 > 0) when
-            // earned income is greater than zero; line 23b: federal AGI over $32,900 → no credit
-            { kind: "and", args: [{ kind: "cmp", op: "gt", left: earned2, right: money37("0") }, { kind: "cmp", op: "le", left: ruleRef33("us.ca.caleitc"), right: money37("0") }] },
-            { kind: "cmp", op: "gt", left: agi2, right: param29("agiCeiling") },
-            { kind: "cmp", op: "gt", left: fact39("wages"), right: param29("wageCeiling") }
-            // line 23a
-          ]
-        },
-        then: money37("0"),
-        else: {
-          kind: "if",
-          cond: { kind: "cmp", op: "le", left: earned2, right: param29("phaseOutStart") },
-          then: param29("maxCredit"),
-          else: rounded
-        }
-      };
-    })()
-  },
-  {
-    id: "us.ca.renters_credit",
-    version: 2,
-    // v1 read federal AGI even with a federal NOL deduction or § 461(l) excess business loss in it; California's own NOL and excess business loss rules differ, so v2 refuses then
-    jurisdiction: "us.ca",
-    title: "California nonrefundable renter's credit (R&TC \xA7 17053.5, FTB 540)",
-    citation: {
-      source: "R&TC \xA7 17053.5; 2025 FTB 540 booklet (Nonrefundable Renter's Credit qualification record)",
-      section: "R&TC \xA7 17053.5",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf",
-      excerpt: "2025 nonrefundable renter's credit: $60 for single or married/RDP filing separately with AGI $53,994 or less; $120 for married/RDP filing jointly, head of household, or qualifying surviving spouse with AGI $107,987 or less \u2014 $0 (no credit) once AGI exceeds the applicable threshold (a CLIFF, not a phase-out). NONREFUNDABLE. Eligibility (attested by caRentedPrincipalResidence): rented property in California as a principal residence for at least half of 2025, was not claimed as a dependent by another taxpayer, and the property was not exempt from California property tax. AB 130 (2025) authorized higher $250/$500 amounts CONTINGENT on a future appropriation that has not been made as of this web-verification (July 2026) \u2014 this rule defaults to the base $60/$120 statutory amounts, not the contingent AB 130 figures."
-    },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
-    output: { type: "money" },
-    parameters: {
-      creditSingleMfs: { value: "6000", type: "money" },
-      // $60
-      creditJointHohQss: { value: "12000", type: "money" },
-      // $120
-      agiCeilingSingleMfs: { value: "5399400", type: "money" },
-      // $53,994
-      agiCeilingJointHohQss: { value: "10798700", type: "money" }
-      // $107,987
-    },
-    formula: {
-      kind: "if",
-      cond: { kind: "not", arg: fact39("caRentedPrincipalResidence") },
-      then: money37("0"),
-      else: {
-        kind: "if",
-        cond: {
-          kind: "or",
-          args: [isStatus10("mfj"), isStatus10("hoh"), isStatus10("qss")]
-        },
-        then: {
-          kind: "if",
-          cond: {
-            kind: "cmp",
-            op: "le",
-            left: agiWithoutFederalLossItems,
-            right: { kind: "param", name: "agiCeilingJointHohQss" }
-          },
-          then: { kind: "param", name: "creditJointHohQss" },
-          else: money37("0")
-        },
-        else: {
-          kind: "if",
-          cond: {
-            kind: "cmp",
-            op: "le",
-            left: agiWithoutFederalLossItems,
-            right: { kind: "param", name: "agiCeilingSingleMfs" }
-          },
-          then: { kind: "param", name: "creditSingleMfs" },
-          else: money37("0")
-        }
+      maxCredit: { value: String(y.max * 100), type: "money" },
+      phaseOutStart: { value: String(y.threshold * 100), type: "money" },
+      reductionPer100: { value: y.reductionPer100, type: "money" },
+      agiCeiling: { value: String(y.agiCeiling * 100), type: "money" },
+      wageCeiling: { value: String(y.wageCap * 100), type: "money" },
+      ...y.year === 2025 ? {} : {
+        calEitcIncomeLimit: { value: "3405100", type: "money" },
+        // CalEITC: AGI 'of less than $34,051'
+        calEitcInvestmentLimit: { value: "497800", type: "money" }
+        // $4,978
       }
-    }
+    },
+    formula: iff2(or2(not(fact39("hasChildUnderSix")), and2(cmp("gt", caEarnedIncome, money37("0")), not(calEitcAllowed)), cmp("gt", agi2, param20("agiCeiling")), cmp("gt", fact39("wages"), param20("wageCeiling"))), money37("0"), iff2(cmp("le", caEarnedIncome, param20("phaseOutStart")), param20("maxCredit"), rounded))
+  };
+};
+var rentersRule = (y, version2) => ({
+  id: "us.ca.renters_credit",
+  version: version2,
+  jurisdiction: "us.ca",
+  title: `California nonrefundable renter's credit (R&TC \xA7 17053.5, FTB 540) \u2014 ${y.year}`,
+  citation: {
+    source: `R&TC \xA7 17053.5; ${y.year === 2026 ? MEMO_2026 : "2025 FTB 540 booklet (Nonrefundable Renter's Credit Qualification Record)"}`,
+    section: "R&TC \xA7 17053.5",
+    url: y.url,
+    excerpt: `${y.year} nonrefundable renter's credit: $60 for single or married/RDP filing separately with California AGI of $${y.rentersSingle.toLocaleString("en-US")} or less; $120 for married/RDP filing jointly, head of household, or qualifying surviving spouse/RDP with California AGI of $${y.rentersJoint.toLocaleString("en-US")} or less \u2014 nothing once California AGI is over the limit (a cliff). The qualification record (2025 booklet, question 2, verbatim): 'Is your California adjusted gross income the amount on line 17: $53,994 or less if single or married/RDP filing separately; or $107,988 or less if married/RDP filing jointly, head of household, or qualifying surviving spouse/RDP?' \u2014 CALIFORNIA AGI, Form 540 line 17, not federal AGI, so the California subtractions (taxable social security, unemployment compensation) count. Eligibility (caRentedPrincipalResidence): rented a California principal residence for at least half the year, not claimed as a dependent, property not exempt from property tax. AB 130 (2025) authorized higher amounts only on a future appropriation, which has not been made; these are the base $60/$120. [Input: caAgi = Form 540 line 17.]`
   },
-  {
-    id: "us.ca.cdcc",
-    version: 1,
-    jurisdiction: "us.ca",
-    title: "California child and dependent care expenses credit (R&TC \xA7 17052.6, FTB 3506) \u2014 2025",
-    citation: {
-      source: "R&TC \xA7 17052.6; 2025 FTB 3506 (Child and Dependent Care Expenses Credit)",
-      section: "R&TC \xA7 17052.6",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-3506.pdf",
-      excerpt: "2025 CA CDCC: a PERCENTAGE of the FEDERAL child and dependent care credit (us.federal.cdcc), keyed to federal AGI: 50% if AGI \u2264 $40,000; 43% if AGI is over $40,000 but not over $70,000; 34% if AGI is over $70,000 but not over $100,000; $0 (no credit) if AGI exceeds $100,000 \u2014 a CLIFF at each breakpoint, not a smooth phase-down. NONREFUNDABLE. Requires the same earned-income-of-both-spouses gate as the federal credit (both spouses must have earned income on a joint return, per instructions). Parameters-only: the federal CDCC base (us.federal.cdcc) is the oracle target for the underlying credit; this rule documents the CA percentage table \u2014 apply the percentage to that result and disclose."
-    },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
-    output: { type: "money" },
-    parameters: {
-      pctAgiUpTo40k: { value: "50", type: "int" },
-      pctAgi40kTo70k: { value: "43", type: "int" },
-      pctAgi70kTo100k: { value: "34", type: "int" },
-      agiTier1Max: { value: "4000000", type: "money" },
-      // $40,000
-      agiTier2Max: { value: "7000000", type: "money" },
-      // $70,000
-      agiTier3Max: { value: "10000000", type: "money" }
-      // $100,000
-    },
-    formula: {
-      kind: "unsupported",
-      reason: "parameters-only rule: California's CDCC is a % of the federal CDCC (us.federal.cdcc) selected by the AGI tier documented in this rule's parameters \u2014 evaluate us.federal.cdcc, apply the tier percentage, and disclose"
-    }
+  effectiveFrom: y.from,
+  effectiveTo: y.to,
+  output: { type: "money" },
+  parameters: {
+    creditSingleMfs: { value: "6000", type: "money" },
+    creditJointHohQss: { value: "12000", type: "money" },
+    agiCeilingSingleMfs: { value: String(y.rentersSingle * 100), type: "money" },
+    agiCeilingJointHohQss: { value: String(y.rentersJoint * 100), type: "money" }
   },
-  {
-    id: "us.ca.amt",
-    version: 2,
-    // v1's construction note started AMTI from taxable income floored at zero
-    jurisdiction: "us.ca",
-    title: "California alternative minimum tax \u2014 Schedule P (540), Part II (2025)",
-    citation: {
-      source: "R&TC \xA7\xA7 17062, 17062.1; 2025 FTB Schedule P (540) instructions",
-      section: "R&TC \xA7 17062(a)-(e); \xA7 17062.1",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-540-p-instructions.html",
-      excerpt: "THIS RULE TAKES caAmti AS AN INPUT \u2014 it applies the exemption/TMT/comparison mechanics only; it does not construct AMTI itself. CONSTRUCTION OF caAmti (disclosed on the fact, repeated here): California individual AMT is FROZEN to IRC \xA7\xA7 55-59 as they read on January 1, 2015 (R&TC \xA7 17062.1, re-enacted by SB 711 (Stats. 2025, Ch. 231) WITHOUT moving the freeze forward, even though SB 711 rolled CA's general IRC conformity date to January 1, 2025 for other provisions). Starting from CA taxable income (Form 540 line 19; when line 19 is zero, line 17 less line 18 entered as a NEGATIVE amount \u2014 2025 Schedule P (540) instructions, line 15), the STANDARD DEDUCTION IS ADDED BACK (R&TC \xA7 17062(c)(1), denying \xA7 56(b)(1)(E)). The ISO exercise spread follows \xA7 56(b)(3) as modified by R&TC \xA7 17062(c)(2) (plus the California Qualified Stock Option addback, R&TC \xA7 17502). There is NO tax-exempt private-activity-bond-interest preference (R&TC \xA7 17062(d) turns off \xA7 57(a)(5)) and NO AMT foreign tax credit (R&TC \xA7 17062(e) turns off \xA7 59(a)). A taxpayer with aggregate trade/business gross receipts under $1,000,000 (a flat threshold, NOT doubled for MFJ) excludes ALL trade/business income, adjustments, and preferences from AMTI (R&TC \xA7 17062(b)(4), the CA small-business AMTI exclusion). 2025 exemption/phase-out amounts (Exemption Worksheet, 2025 FTB Schedule P (540) instructions, web-verified July 2026): exemption $92,749 single/HOH, $123,667 MFJ/QSS, $61,830 MFS; phased out 25 cents per dollar of caAmti over $347,808 single/HOH, $463,745 MFJ/QSS, $231,868 MFS, floored at $0. Rate \u2014 7% (R&TC \xA7 17062(b)(3)(A)(iv)) of caAmti minus the exemption = the tentative minimum tax. AMT (R&TC \xA7 17062(a)) = the excess, if any, of the tentative minimum tax over the regular CA tax (caRegularTax \u2014 Schedule P (540) line 25: the Form 540 LINE 31 regular tax BEFORE exemption credits; worked example: TMT 25,484 \u2212 line-31 12,038 = AMT 13,446 \u2014 passing the after-credits line 48 amount overstates AMT by exactly the exemption credits). MFS AMTI STACKING ADD-BACK: a caAmti above $479,188 for an MFS filer requires adding to AMTI, before this rule's own exemption/phase-out math, the lesser of 25% of the excess over $479,188 or $61,830 (Schedule P (540) 'Line 21' worksheet) \u2014 NOT modeled here; this rule REFUSES for MFS above that threshold rather than silently omitting the add-back. Also not modeled: the \xA7 59(j) certain-children-under-24 exemption cap, and Part III credit ordering (e.g. the PTE elective tax credit's below-TMT exception)."
-    },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
-    output: { type: "money" },
-    parameters: {
-      exemptSingleHoh: { value: "9274900", type: "money" },
-      // $92,749
-      exemptMfj: { value: "12366700", type: "money" },
-      // $123,667
-      exemptMfs: { value: "6183000", type: "money" },
-      // $61,830
-      threshSingleHoh: { value: "34780800", type: "money" },
-      // $347,808
-      threshMfj: { value: "46374500", type: "money" },
-      // $463,745
-      threshMfs: { value: "23186800", type: "money" },
-      // $231,868
-      mfsStackingThreshold: { value: "47918800", type: "money" }
-      // $479,188
-    },
-    formula: (() => {
-      const byStatus5 = (single, joint, mfs) => ({
-        kind: "match",
-        on: fact39("filingStatus"),
-        cases: [
-          { when: "single", value: { kind: "param", name: single } },
-          { when: "hoh", value: { kind: "param", name: single } },
-          { when: "mfj", value: { kind: "param", name: joint } },
-          { when: "qss", value: { kind: "param", name: joint } },
-          { when: "mfs", value: { kind: "param", name: mfs } }
-        ]
-      });
-      const exemption3 = byStatus5("exemptSingleHoh", "exemptMfj", "exemptMfs");
-      const threshold3 = byStatus5("threshSingleHoh", "threshMfj", "threshMfs");
-      const exemptionPhased = {
-        kind: "max0",
-        arg: {
-          kind: "sub",
-          left: exemption3,
-          right: {
-            kind: "mulRate",
-            base: { kind: "max0", arg: { kind: "sub", left: fact39("caAmti"), right: threshold3 } },
-            rate: { num: "25", den: "100" },
-            round: "half-up"
-          }
-        }
-      };
-      const tmt = {
-        kind: "mulRate",
-        base: { kind: "max0", arg: { kind: "sub", left: fact39("caAmti"), right: exemptionPhased } },
-        rate: { num: "7", den: "100" },
-        round: "half-up"
-      };
-      const amt = { kind: "max0", arg: { kind: "sub", left: tmt, right: fact39("caRegularTax") } };
-      return {
-        kind: "if",
-        cond: {
-          kind: "and",
-          args: [
-            isStatus10("mfs"),
-            {
-              kind: "cmp",
-              op: "gt",
-              left: fact39("caAmti"),
-              right: { kind: "param", name: "mfsStackingThreshold" }
-            }
-          ]
-        },
-        then: {
-          kind: "unsupported",
-          reason: "MFS caAmti above $479,188 requires the Schedule P (540) Line 21 stacking add-back (the lesser of 25% of the excess over $479,188 or $61,830) applied to caAmti BEFORE this rule's exemption/phase-out math \u2014 not modeled; recompute caAmti with that add-back and re-run, or work Schedule P (540) directly"
-        },
-        else: amt
-      };
-    })()
+  formula: iff2(not(fact39("caRentedPrincipalResidence")), money37("0"), iff2(or2(isStatus10("mfj"), isStatus10("hoh"), isStatus10("qss")), iff2(cmp("le", fact39("caAgi"), param20("agiCeilingJointHohQss")), param20("creditJointHohQss"), money37("0")), iff2(cmp("le", fact39("caAgi"), param20("agiCeilingSingleMfs")), param20("creditSingleMfs"), money37("0"))))
+});
+var cdccRule = (y, version2) => ({
+  id: "us.ca.cdcc",
+  version: version2,
+  jurisdiction: "us.ca",
+  title: `California child and dependent care expenses credit (R&TC \xA7 17052.6, FTB 3506) \u2014 ${y.year}`,
+  citation: {
+    source: `R&TC \xA7 17052.6; 2025 FTB 3506 (Child and Dependent Care Expenses Credit)`,
+    section: "R&TC \xA7 17052.6",
+    url: "https://www.ftb.ca.gov/forms/2025/2025-3506.pdf",
+    excerpt: `${y.year} CA CDCC: a PERCENTAGE of the FEDERAL child and dependent care credit (us.federal.cdcc), keyed to federal AGI: 50% if AGI \u2264 $40,000; 43% if AGI is over $40,000 but not over $70,000; 34% if AGI is over $70,000 but not over $100,000; $0 (no credit) if AGI exceeds $100,000 \u2014 a CLIFF at each breakpoint, not a smooth phase-down. NONREFUNDABLE. The tiers are fixed dollar amounts in the statute, not indexed (absent from FTB's 2026 indexing memo), so they carry to 2026 unchanged. Requires the same earned-income-of-both-spouses gate as the federal credit. Parameters-only: apply the tier percentage to us.federal.cdcc and disclose.`
   },
-  {
-    id: "us.ca.bhst",
-    version: 1,
-    jurisdiction: "us.ca",
-    title: "California Behavioral Health Services Tax (formerly Mental Health Services Tax) \u2014 Form 540 line 62 (2025)",
-    citation: {
-      source: 'R&TC \xA7 17043; 2025 FTB Form 540 instructions, "Line 62 \u2013 Behavioral Health Services Tax"',
-      section: "R&TC \xA7 17043",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-540-instructions.html",
-      excerpt: "Flat 1% tax on the portion of CA taxable income (Form 540 line 19) over $1,000,000 (R&TC \xA7 17043(a)) \u2014 renamed the 'Behavioral Health Services Tax' by Prop 1 (2024)'s restructuring of the Mental Health Services Act into the Behavioral Health Services Act; same statute, same $1,000,000 threshold, unchanged since operative January 1, 2005. The $1,000,000 threshold is FLAT for every filing status \u2014 R&TC \xA7 17043(c) turns off \xA7 17041 filing-status bracket recomputation and \xA7 17045 joint-return combining, but does NOT halve the threshold for MFS. The commonly-repeated '$500,000 MFS' figure belongs to a DIFFERENT rule entirely \u2014 the FTB 5805 high-income estimated-tax safe harbor \u2014 and must not be applied to this tax. No credits reduce this tax (\xA7 17043(c)(1) turns off \xA7 17039 generally). Computed directly on Form 540 line 62, not on Schedule P \u2014 independent of the AMT computation (us.ca.amt), though both feed the estimated-tax base."
-    },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
-    output: { type: "money" },
-    parameters: {
-      threshold: { value: "100000000", type: "money" }
-      // $1,000,000
-    },
-    formula: {
-      kind: "mulRate",
-      base: {
-        kind: "max0",
-        arg: { kind: "sub", left: fact39("stateTaxableIncome"), right: { kind: "param", name: "threshold" } }
-      },
-      rate: { num: "1", den: "100" },
-      round: "half-up"
-    }
+  effectiveFrom: y.from,
+  effectiveTo: y.to,
+  output: { type: "money" },
+  parameters: {
+    pctAgiUpTo40k: { value: "50", type: "int" },
+    pctAgi40kTo70k: { value: "43", type: "int" },
+    pctAgi70kTo100k: { value: "34", type: "int" },
+    agiTier1Max: { value: "4000000", type: "money" },
+    agiTier2Max: { value: "7000000", type: "money" },
+    agiTier3Max: { value: "10000000", type: "money" }
   },
-  {
-    id: "us.ca.parameters",
-    version: 1,
-    jurisdiction: "us.ca",
-    title: "California 2025 miscellaneous parameters \u2014 use tax table, SDI rate, TY2026 enacted changes",
-    citation: {
-      source: "Rev. & Tax. Code \xA7\xA7 6452, 17041; 2025 FTB 540 use tax worksheet; EDD SDI rate notice; SB 951",
-      section: "Use Tax Worksheet; SDI rate",
-      url: "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf",
-      excerpt: "USE TAX (2025 FTB 540 use tax lookup table, no-receipts estimate keyed to CA AGI, illustrative low/high rows): under $10,000 \u2192 $1 \u2026 $150,000\u2013$174,999 \u2192 $17, $175,000\u2013$199,999 \u2192 $19; above $199,999, multiply CA AGI by 0.010% and round to the nearest whole dollar. SDI (State Disability Insurance, EDD, SB 951): 2025 rate is 1.2% of ALL wages with NO taxable wage cap (SB 951 removed the cap starting 2024) \u2014 the pre-2024 'excess SDI' credit line no longer applies (no wage base is ever exceeded, so no excess withholding can occur). TY2026 ENACTED CHANGES (not encoded this pass \u2014 informational only): SDI rate rises to 1.3% for 2026; the 2026 CPI inflation adjustment factor is 2.971% (exact 2026 dollar brackets for Schedules X/Y/Z and the standard deduction/exemption credits were not yet confirmed from FTB as of this July 2026 web-verification \u2014 do not extrapolate them)."
-    },
-    effectiveFrom: "2025-01-01",
-    effectiveTo: "2026-01-01",
-    output: { type: "money" },
-    parameters: {
-      sdiRatePct: { value: "12", type: "int" },
-      // 1.2% (×10 to keep as int; see sdiRateDen)
-      sdiRateDen: { value: "1000", type: "int" }
-    },
-    formula: {
-      kind: "unsupported",
-      reason: "parameters-only rule: California use-tax lookup table and SDI rate are documented in this rule's citation for lookup_tax_parameter \u2014 no single oracle formula (use tax is agent-composed from the FTB table; SDI is withheld, not computed on the return)"
-    }
+  formula: {
+    kind: "unsupported",
+    reason: "parameters-only rule: California's CDCC is a % of the federal CDCC (us.federal.cdcc) selected by the AGI tier documented in this rule's parameters \u2014 evaluate us.federal.cdcc, apply the tier percentage, and disclose"
   }
+});
+var amtRule = (y, version2) => {
+  const [exS, exJ, exM] = y.amtExempt;
+  const [thS, thJ, thM] = y.amtThreshold;
+  const mfsStacking = thM + 4 * exM;
+  const byStatusAmt = (single, joint, mfs) => ({
+    kind: "match",
+    on: fact39("filingStatus"),
+    cases: [
+      { when: "single", value: param20(single) },
+      { when: "hoh", value: param20(single) },
+      { when: "mfj", value: param20(joint) },
+      { when: "qss", value: param20(joint) },
+      { when: "mfs", value: param20(mfs) }
+    ]
+  });
+  const exemptionPhased = max011(sub7(byStatusAmt("exemptSingleHoh", "exemptMfj", "exemptMfs"), { kind: "mulRate", base: max011(sub7(fact39("caAmti"), byStatusAmt("threshSingleHoh", "threshMfj", "threshMfs"))), rate: { num: "25", den: "100" }, round: "half-up" }));
+  const tmt = { kind: "mulRate", base: max011(sub7(fact39("caAmti"), exemptionPhased)), rate: { num: "7", den: "100" }, round: "half-up" };
+  return {
+    id: "us.ca.amt",
+    version: version2,
+    jurisdiction: "us.ca",
+    title: `California alternative minimum tax \u2014 Schedule P (540), Part II (${y.year})`,
+    citation: {
+      source: `R&TC \xA7\xA7 17062, 17062.1; ${y.year === 2026 ? MEMO_2026 : "2025 FTB Schedule P (540) instructions"}`,
+      section: "R&TC \xA7 17062(a)-(e); \xA7 17062.1",
+      url: y.year === 2026 ? "https://www.caltax.org/regulatory-issues/ftb/2026-PIT-Indexing-Memo.pdf" : "https://www.ftb.ca.gov/forms/2025/2025-540-p-instructions.html",
+      excerpt: `THIS RULE TAKES caAmti AS AN INPUT \u2014 it applies the exemption/TMT/comparison mechanics only; it does not construct AMTI itself (see the caAmti fact for the R&TC \xA7 17062(c)-(e) and \xA7 17062.1 construction: IRC \xA7\xA7 55-59 frozen as of January 1, 2015; standard deduction added back; no private-activity-bond preference; no AMT foreign tax credit; the under-$1,000,000-gross-receipts business exclusion). ${y.year} exemption: $${exS.toLocaleString("en-US")} single/HOH, $${exJ.toLocaleString("en-US")} MFJ/QSS, $${exM.toLocaleString("en-US")} MFS; phased out 25 cents per dollar of caAmti over $${thS.toLocaleString("en-US")} single/HOH, $${thJ.toLocaleString("en-US")} MFJ/QSS, $${thM.toLocaleString("en-US")} MFS, not below $0.${y.year === 2026 ? " (FTB memo: 'The exemption amounts for taxable year 2026 are: Joint, or surviving spouse -- $127,872; Single, or unmarried -- $95,902; Separate, or an estate or trust -- $63,932. Starting initial amounts for AMT exemption phase outs are: Joint, or surviving spouse -- $479,512; Single, or unmarried -- $359,633; Separate, or an estate or trust -- $239,752.')" : ""} Rate: 7% (R&TC \xA7 17062(b)(3)(A)(iv)) of caAmti less the exemption = the tentative minimum tax; AMT = the excess over the regular tax (caRegularTax \u2014 Schedule P line 25: Form 540 line 31 BEFORE exemption credits; worked example: TMT 25,484 \u2212 12,038 = 13,446). MFS: above $${mfsStacking.toLocaleString("en-US")} of caAmti (the point where the MFS exemption is fully phased out: $${thM.toLocaleString("en-US")} + 4 \xD7 $${exM.toLocaleString("en-US")}${y.year === 2025 ? " \u2014 the figure the 2025 Schedule P instructions print" : ""}) Schedule P's line 21 worksheet adds the lesser of 25% of the excess or $${exM.toLocaleString("en-US")} to AMTI \u2014 not modeled, so this rule refuses there. Not modeled: the \xA7 59(j) children-under-24 cap (earned income + $10,000 for 2026) and Part III credit ordering.`
+    },
+    effectiveFrom: y.from,
+    effectiveTo: y.to,
+    output: { type: "money" },
+    parameters: {
+      exemptSingleHoh: { value: String(exS * 100), type: "money" },
+      exemptMfj: { value: String(exJ * 100), type: "money" },
+      exemptMfs: { value: String(exM * 100), type: "money" },
+      threshSingleHoh: { value: String(thS * 100), type: "money" },
+      threshMfj: { value: String(thJ * 100), type: "money" },
+      threshMfs: { value: String(thM * 100), type: "money" },
+      mfsStackingThreshold: { value: String(mfsStacking * 100), type: "money" }
+    },
+    formula: iff2(and2(isStatus10("mfs"), cmp("gt", fact39("caAmti"), param20("mfsStackingThreshold"))), {
+      kind: "unsupported",
+      reason: `MFS caAmti above $${mfsStacking.toLocaleString("en-US")} requires the Schedule P (540) Line 21 stacking add-back (the lesser of 25% of the excess or $${exM.toLocaleString("en-US")}) applied to caAmti BEFORE this rule's exemption/phase-out math \u2014 not modeled; recompute caAmti with that add-back and re-run, or work Schedule P (540) directly`
+    }, max011(sub7(tmt, fact39("caRegularTax"))))
+  };
+};
+var bhstRule = (y, version2) => ({
+  id: "us.ca.bhst",
+  version: version2,
+  jurisdiction: "us.ca",
+  title: `California Behavioral Health Services Tax (formerly Mental Health Services Tax) \u2014 Form 540 line 62 (${y.year})`,
+  citation: {
+    source: `R&TC \xA7 17043; 2025 FTB Form 540 instructions, "Line 62 \u2013 Behavioral Health Services Tax"`,
+    section: "R&TC \xA7 17043",
+    url: "https://www.ftb.ca.gov/forms/2025/2025-540-instructions.html",
+    excerpt: "Flat 1% tax on the portion of CA taxable income (Form 540 line 19) over $1,000,000 (R&TC \xA7 17043(a)) \u2014 renamed the 'Behavioral Health Services Tax' by Prop 1 (2024); same statute, same $1,000,000 threshold, unchanged since operative January 1, 2005 and not indexed. The $1,000,000 threshold is FLAT for every filing status \u2014 R&TC \xA7 17043(c) turns off \xA7 17041 bracket recomputation and \xA7 17045 joint-return combining but does NOT halve it for MFS (the '$500,000 MFS' figure belongs to the FTB 5805 estimated-tax safe harbor, a different rule). No credits reduce this tax (\xA7 17043(c)(1))."
+  },
+  effectiveFrom: y.from,
+  effectiveTo: y.to,
+  output: { type: "money" },
+  parameters: { threshold: { value: "100000000", type: "money" } },
+  formula: { kind: "mulRate", base: max011(sub7(fact39("stateTaxableIncome"), param20("threshold"))), rate: { num: "1", den: "100" }, round: "half-up" }
+});
+var parametersRule = (y, version2) => ({
+  id: "us.ca.parameters",
+  version: version2,
+  jurisdiction: "us.ca",
+  title: `California ${y.year} miscellaneous parameters \u2014 use tax table, SDI rate`,
+  citation: {
+    source: y.year === 2026 ? "EDD contribution rates and withholding schedules, 2026 (SB 951)" : "Rev. & Tax. Code \xA7 6452; 2025 FTB 540 use tax worksheet; EDD contribution rates (SB 951)",
+    section: "Use Tax Worksheet; SDI rate",
+    url: y.year === 2026 ? "https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/" : "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.pdf",
+    excerpt: y.year === 2026 ? "SDI (State Disability Insurance and Paid Family Leave, EDD): the 2026 withholding rate is 1.3% of ALL wages \u2014 SB 951 removed the taxable wage limit from January 1, 2024, so there is no 'excess SDI' credit. The 2026 use tax lookup table prints in the 2026 Form 540 booklet; pass the worksheet amount (useTax) for a 2026 return." : "USE TAX (2025 FTB 540 use tax lookup table, no-receipts estimate keyed to CA AGI, illustrative rows): under $10,000 \u2192 $1 \u2026 $150,000\u2013$174,999 \u2192 $17, $175,000\u2013$199,999 \u2192 $19; above $199,999, multiply CA AGI by 0.010% and round to the nearest whole dollar. SDI (EDD, SB 951): 2025 rate 1.2% of ALL wages with NO taxable wage cap (removed starting 2024) \u2014 no 'excess SDI' credit applies."
+  },
+  effectiveFrom: y.from,
+  effectiveTo: y.to,
+  output: { type: "money" },
+  parameters: {
+    sdiRatePct: { value: y.sdiRate[0], type: "int" },
+    // ×10, see sdiRateDen
+    sdiRateDen: { value: y.sdiRate[1], type: "int" }
+  },
+  formula: {
+    kind: "unsupported",
+    reason: "parameters-only rule: California use-tax lookup table and SDI rate are documented in this rule's citation for lookup_tax_parameter \u2014 no single oracle formula (use tax is agent-composed from the FTB table; SDI is withheld, not computed on the return)"
+  }
+});
+var [Y20252, Y20262] = YEARS2;
+var caRules = [
+  // v2 refused MFJ/QSS entirely; v3 encoded Schedule Y per bracket; v4 disclosed the Schedule CA social security exclusion; v5 encoded the Tax Table at the half-dollar midpoint;
+  // v6 encodes all nine tiers from the printed schedules (v5 taxed single/MFS income between $371,479 and $505,208 at 9.3%, refused above), the whole-dollar midpoint, and the table through $100,000 inclusive
+  incomeTaxRule2(Y20252, 6),
+  incomeTaxRule2(Y20262, 7),
+  standardDeductionRule(Y20252, 1),
+  standardDeductionRule(Y20262, 2),
+  exemptionCreditsRule(Y20252, 1),
+  exemptionCreditsRule(Y20262, 2),
+  calEitcRule,
+  yctcRule({ year: 2025, from: "2025-01-01", to: "2026-01-01", max: 1189, threshold: 27425, reductionPer100: "2171", agiCeiling: 32900, wageCap: 35640, version: 2 }),
+  yctcRule({ year: 2026, from: "2026-01-01", to: "2027-01-01", max: 1229, threshold: 28357, reductionPer100: "2158", agiCeiling: 34050, wageCap: 36852, version: 3 }),
+  // v2 refused with a federal NOL or excess business loss in federal AGI; v3 tests California AGI (line 17) as the qualification record asks, and the joint limit is $107,988 (v1-v2: $107,987)
+  rentersRule(Y20252, 3),
+  rentersRule(Y20262, 4),
+  cdccRule(Y20252, 2),
+  // v1 carried the same 2025 tiers; v2 adds the not-indexed note
+  cdccRule(Y20262, 3),
+  amtRule(Y20252, 3),
+  // v2's construction note started AMTI from taxable income floored at zero; v3 rebuilt from the year table (same 2025 amounts)
+  amtRule(Y20262, 4),
+  bhstRule(Y20252, 2),
+  // v1: same tax, longer note
+  bhstRule(Y20262, 3),
+  parametersRule(Y20252, 2),
+  // v1 also carried a TY2026 note, now its own version
+  parametersRule(Y20262, 3)
 ];
 
 // ../corpus-us-federal/dist/rules/state-ny.js
@@ -65953,7 +65599,7 @@ var nyRules = [
       // $50 ($14,001-$18,000, uses fagiLimit as its threshold)
     },
     formula: (() => {
-      const param29 = (name) => ({ kind: "param", name });
+      const param30 = (name) => ({ kind: "param", name });
       const fagi = fact39("nyIt214Fagi");
       const adjustedRent = {
         kind: "mulDiv",
@@ -65988,32 +65634,32 @@ var nyRules = [
       const line19 = table1Rate("35", "300000", table1Rate("40", "500000", table1Rate("45", "700000", table1Rate("50", "900000", table1Rate("55", "1100000", table1Rate("60", "1400000", { kind: "mulDiv", a: fagi, b: money37("65"), c: money37("1000"), round: "half-up" }))))));
       const tableA = {
         kind: "if",
-        cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableAThreshold1") },
-        then: param29("tableAValue1"),
+        cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableAThreshold1") },
+        then: param30("tableAValue1"),
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableAThreshold2") },
-          then: param29("tableAValue2"),
+          cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableAThreshold2") },
+          then: param30("tableAValue2"),
           else: {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableAThreshold3") },
-            then: param29("tableAValue3"),
+            cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableAThreshold3") },
+            then: param30("tableAValue3"),
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableAThreshold4") },
-              then: param29("tableAValue4"),
+              cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableAThreshold4") },
+              then: param30("tableAValue4"),
               else: {
                 kind: "if",
-                cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableAThreshold5") },
-                then: param29("tableAValue5"),
+                cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableAThreshold5") },
+                then: param30("tableAValue5"),
                 else: {
                   kind: "if",
-                  cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableAThreshold6") },
-                  then: param29("tableAValue6"),
+                  cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableAThreshold6") },
+                  then: param30("tableAValue6"),
                   else: {
                     kind: "if",
-                    cond: { kind: "cmp", op: "le", left: fagi, right: param29("fagiLimit") },
-                    then: param29("tableAValue7"),
+                    cond: { kind: "cmp", op: "le", left: fagi, right: param30("fagiLimit") },
+                    then: param30("tableAValue7"),
                     else: money37("0")
                   }
                 }
@@ -66024,20 +65670,20 @@ var nyRules = [
       };
       const tableB2 = {
         kind: "if",
-        cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableBThreshold1") },
-        then: param29("tableBValue1"),
+        cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableBThreshold1") },
+        then: param30("tableBValue1"),
         else: {
           kind: "if",
-          cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableBThreshold2") },
-          then: param29("tableBValue2"),
+          cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableBThreshold2") },
+          then: param30("tableBValue2"),
           else: {
             kind: "if",
-            cond: { kind: "cmp", op: "le", left: fagi, right: param29("tableBThreshold3") },
-            then: param29("tableBValue3"),
+            cond: { kind: "cmp", op: "le", left: fagi, right: param30("tableBThreshold3") },
+            then: param30("tableBValue3"),
             else: {
               kind: "if",
-              cond: { kind: "cmp", op: "le", left: fagi, right: param29("fagiLimit") },
-              then: param29("tableBValue4"),
+              cond: { kind: "cmp", op: "le", left: fagi, right: param30("fagiLimit") },
+              then: param30("tableBValue4"),
               else: money37("0")
             }
           }
@@ -66049,9 +65695,9 @@ var nyRules = [
           kind: "or",
           args: [
             { kind: "not", arg: fact39("nyIt214Eligible") },
-            { kind: "cmp", op: "gt", left: fagi, right: param29("fagiLimit") },
+            { kind: "cmp", op: "gt", left: fagi, right: param30("fagiLimit") },
             // line 8 stop
-            { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param29("monthlyRentCap") },
+            { kind: "cmp", op: "gt", left: avgMonthlyRent, right: param30("monthlyRentCap") },
             // line 13 stop
             { kind: "cmp", op: "le", left: line18, right: money37("0") },
             // line 18 stop
@@ -66212,7 +65858,7 @@ var nyRules = [
           money37("2500")
         ]
       };
-      const byStatus5 = (b) => ({
+      const byStatus6 = (b) => ({
         kind: "if",
         cond: { kind: "or", args: [isStatus10("mfj"), isStatus10("qss")] },
         then: scheduleFor(b, "mfj"),
@@ -66248,9 +65894,9 @@ var nyRules = [
             kind: "if",
             cond: { kind: "cmp", op: "lt", left: base, right: money37("1300") },
             then: money37("0"),
-            else: { kind: "roundToDollar", value: byStatus5(mid50), mode: "half-up" }
+            else: { kind: "roundToDollar", value: byStatus6(mid50), mode: "half-up" }
           },
-          else: { kind: "roundToDollar", value: byStatus5(base), mode: "half-up" }
+          else: { kind: "roundToDollar", value: byStatus6(base), mode: "half-up" }
         }
       };
     })()
@@ -66309,7 +65955,7 @@ var nyRules = [
           money37("2500")
         ]
       };
-      const byStatus5 = (b) => ({
+      const byStatus6 = (b) => ({
         kind: "if",
         cond: { kind: "or", args: [isStatus10("mfj"), isStatus10("qss")] },
         then: bracketsFor(b, "mfj"),
@@ -66323,8 +65969,8 @@ var nyRules = [
       return {
         kind: "if",
         cond: { kind: "cmp", op: "lt", left: base, right: { kind: "param", name: "tableThreshold" } },
-        then: { kind: "roundToDollar", value: byStatus5(mid50), mode: "half-up" },
-        else: { kind: "roundToDollar", value: byStatus5(base), mode: "half-up" }
+        then: { kind: "roundToDollar", value: byStatus6(mid50), mode: "half-up" },
+        else: { kind: "roundToDollar", value: byStatus6(base), mode: "half-up" }
       };
     })()
   },
@@ -66381,10 +66027,10 @@ var nyRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-pa.js
-var max011 = (arg) => ({ kind: "max0", arg });
-var add7 = (...args) => ({ kind: "add", args });
-var sub7 = (left, right) => ({ kind: "sub", left, right });
-var rd4 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var max012 = (arg) => ({ kind: "max0", arg });
+var add8 = (...args) => ({ kind: "add", args });
+var sub8 = (left, right) => ({ kind: "sub", left, right });
+var rd5 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var isMarried = {
   kind: "or",
   args: [
@@ -66401,7 +66047,7 @@ var spForgiveness = (netTax, ei, t100) => {
         kind: "cmp",
         op: "le",
         left: ei,
-        right: k === 0 ? t100 : add7(t100, money37(String(k * 25e3)))
+        right: k === 0 ? t100 : add8(t100, money37(String(k * 25e3)))
       },
       then: {
         kind: "mulRate",
@@ -66428,24 +66074,24 @@ var taxableIncomeRule = (version2, from, to) => ({
   effectiveFrom: from,
   effectiveTo: to,
   output: { type: "money" },
-  formula: add7(
+  formula: add8(
     // line 1c: net compensation (never negative on the printed form)
-    max011(sub7(add7(fact39("wages"), fact39("paCompensationAdjustment")), fact39("paUnreimbursedBusinessExpenses"))),
+    max012(sub8(add8(fact39("wages"), fact39("paCompensationAdjustment")), fact39("paUnreimbursedBusinessExpenses"))),
     fact39("paInterestIncome"),
     // line 2 (gross class)
     fact39("paDividendIncome"),
     // line 3 (gross class)
-    max011(fact39("paBusinessNetIncome")),
+    max012(fact39("paBusinessNetIncome")),
     // line 4, taxpayer
-    max011(fact39("paSpouseBusinessNetIncome")),
+    max012(fact39("paSpouseBusinessNetIncome")),
     // line 4, spouse
-    max011(fact39("paPropertyGainNet")),
+    max012(fact39("paPropertyGainNet")),
     // line 5, taxpayer
-    max011(fact39("paSpousePropertyGainNet")),
+    max012(fact39("paSpousePropertyGainNet")),
     // line 5, spouse
-    max011(fact39("paRentRoyaltyNet")),
+    max012(fact39("paRentRoyaltyNet")),
     // line 6, taxpayer
-    max011(fact39("paSpouseRentRoyaltyNet")),
+    max012(fact39("paSpouseRentRoyaltyNet")),
     // line 6, spouse
     fact39("paEstateTrustIncome"),
     // line 7 (cannot be negative)
@@ -66477,12 +66123,12 @@ var otherDeductionsRule = (version2, from, to) => ({
   formula: {
     kind: "min",
     args: [
-      add7({ kind: "min", args: [fact39("studentLoanInterest"), { kind: "param", name: "studentLoanInterestCap" }] }, fact39("pa529Contributions"), fact39("paAbleContributions"), fact39("paMsaHsaContributions")),
+      add8({ kind: "min", args: [fact39("studentLoanInterest"), { kind: "param", name: "studentLoanInterestCap" }] }, fact39("pa529Contributions"), fact39("paAbleContributions"), fact39("paMsaHsaContributions")),
       ruleRef33("us.pa.taxable_income")
     ]
   }
 });
-var incomeTaxRule2 = (version2, from, to, yearLabel) => ({
+var incomeTaxRule3 = (version2, from, to, yearLabel) => ({
   id: "us.pa.income_tax",
   version: version2,
   jurisdiction: "us.pa",
@@ -66500,9 +66146,9 @@ var incomeTaxRule2 = (version2, from, to, yearLabel) => ({
     filingThreshold: { value: "3300", type: "money" }
     // $33 gross-income filing trigger
   },
-  formula: rd4({
+  formula: rd5({
     kind: "mulRate",
-    base: max011(sub7(ruleRef33("us.pa.taxable_income"), ruleRef33("us.pa.other_deductions"))),
+    base: max012(sub8(ruleRef33("us.pa.taxable_income"), ruleRef33("us.pa.other_deductions"))),
     rate: { num: "307", den: "10000" },
     round: "half-up"
   })
@@ -66510,8 +66156,8 @@ var incomeTaxRule2 = (version2, from, to, yearLabel) => ({
 var paRules = [
   taxableIncomeRule(1, "2025-01-01", "2027-01-01"),
   otherDeductionsRule(1, "2025-01-01", "2027-01-01"),
-  incomeTaxRule2(2, "2025-01-01", "2026-01-01", "TY2025"),
-  incomeTaxRule2(3, "2026-01-01", "2027-01-01", "TY2026 \u2014 rate unchanged"),
+  incomeTaxRule3(2, "2025-01-01", "2026-01-01", "TY2025"),
+  incomeTaxRule3(3, "2026-01-01", "2027-01-01", "TY2026 \u2014 rate unchanged"),
   {
     id: "us.pa.tax_forgiveness",
     version: 1,
@@ -66536,13 +66182,13 @@ var paRules = [
       stepWidth: { value: "25000", type: "money" }
       // $250 per 10-point drop
     },
-    formula: rd4(spForgiveness(
+    formula: rd5(spForgiveness(
       // net tax: line 12 minus resident credit, floored at zero
-      max011(sub7(ruleRef33("us.pa.income_tax"), fact39("paResidentCredit"))),
+      max012(sub8(ruleRef33("us.pa.income_tax"), fact39("paResidentCredit"))),
       // eligibility income: line 9 + add-backs
-      add7(ruleRef33("us.pa.taxable_income"), fact39("paEligibilityIncomeAddbacks")),
+      add8(ruleRef33("us.pa.taxable_income"), fact39("paEligibilityIncomeAddbacks")),
       // 100% threshold: base + $9,500 x dependent children
-      add7({ kind: "if", cond: isMarried, then: { kind: "param", name: "baseMarried" }, else: { kind: "param", name: "baseUnmarried" } }, { kind: "mulInt", base: { kind: "param", name: "perDependentChild" }, count: fact39("paSpDependentChildren") })
+      add8({ kind: "if", cond: isMarried, then: { kind: "param", name: "baseMarried" }, else: { kind: "param", name: "baseUnmarried" } }, { kind: "mulInt", base: { kind: "param", name: "perDependentChild" }, count: fact39("paSpDependentChildren") })
     ))
   },
   {
@@ -66559,7 +66205,7 @@ var paRules = [
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
     output: { type: "money" },
-    formula: rd4(ruleRef33("us.federal.cdcc.tentative"))
+    formula: rd5(ruleRef33("us.federal.cdcc.tentative"))
   },
   {
     id: "us.pa.wptc",
@@ -66580,7 +66226,7 @@ var paRules = [
       cap: { value: "80500", type: "money" }
       // $805
     },
-    formula: rd4({
+    formula: rd5({
       kind: "min",
       args: [
         { kind: "mulRate", base: ruleRef33("us.federal.eitc"), rate: { num: "10", den: "100" }, round: "half-up" },
@@ -66591,9 +66237,9 @@ var paRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-nj.js
-var max012 = (arg) => ({ kind: "max0", arg });
-var rd5 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var param20 = (name) => ({ kind: "param", name });
+var max013 = (arg) => ({ kind: "max0", arg });
+var rd6 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var param21 = (name) => ({ kind: "param", name });
 var le = (left, right) => ({ kind: "cmp", op: "le", left, right });
 var tableB = {
   kind: "or",
@@ -66623,7 +66269,7 @@ var njRules = [
       // $20,000 (line 29 gate, documented)
     },
     formula: (() => {
-      const base = max012(fact39("stateTaxableIncome"));
+      const base = max013(fact39("stateTaxableIncome"));
       const scheduleFor = (b, table2) => {
         const rows = {
           // fixed = rate × threshold − printed subtraction constant (exact)
@@ -66665,7 +66311,7 @@ var njRules = [
           money37("2500")
         ]
       };
-      const byStatus5 = (b) => ({
+      const byStatus6 = (b) => ({
         kind: "if",
         cond: tableB,
         then: scheduleFor(b, "b"),
@@ -66676,12 +66322,12 @@ var njRules = [
         cond: {
           kind: "and",
           args: [
-            { kind: "cmp", op: "lt", left: base, right: param20("tableThreshold") },
+            { kind: "cmp", op: "lt", left: base, right: param21("tableThreshold") },
             { kind: "not", arg: fact39("useFormulaMethod") }
           ]
         },
-        then: rd5(byStatus5(mid50)),
-        else: rd5(byStatus5(base))
+        then: rd6(byStatus6(mid50)),
+        else: rd6(byStatus6(base))
       };
     })()
   },
@@ -66704,7 +66350,7 @@ var njRules = [
       ageDecoupledFlat: { value: "26000", type: "money" }
       // $260 (2025)
     },
-    formula: rd5({
+    formula: rd6({
       kind: "if",
       cond: {
         kind: "and",
@@ -66713,7 +66359,7 @@ var njRules = [
           { kind: "cmp", op: "eq", left: ruleRef33("us.federal.eitc"), right: money37("0") }
         ]
       },
-      then: param20("ageDecoupledFlat"),
+      then: param21("ageDecoupledFlat"),
       else: {
         kind: "mulRate",
         base: ruleRef33("us.federal.eitc"),
@@ -66749,7 +66395,7 @@ var njRules = [
       // $150,000 → 10%; above: $0
     },
     formula: (() => {
-      const ti = max012(fact39("stateTaxableIncome"));
+      const ti = max013(fact39("stateTaxableIncome"));
       const pct16 = (num) => ({
         kind: "mulRate",
         base: fact39("njFederalCdcc"),
@@ -66758,11 +66404,11 @@ var njRules = [
       });
       const tier = (max2, num, next) => ({
         kind: "if",
-        cond: le(ti, param20(max2)),
+        cond: le(ti, param21(max2)),
         then: pct16(num),
         else: next
       });
-      return rd5(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money37("0")))))));
+      return rd6(tier("tier1Max", "50", tier("tier2Max", "40", tier("tier3Max", "30", tier("tier4Max", "20", tier("tier5Max", "10", money37("0")))))));
     })()
   },
   {
@@ -66797,11 +66443,11 @@ var njRules = [
       amount5: { value: "20000", type: "money" }
     },
     formula: (() => {
-      const ti = max012(fact39("stateTaxableIncome"));
+      const ti = max013(fact39("stateTaxableIncome"));
       const tier = (max2, amount, next) => ({
         kind: "if",
-        cond: le(ti, param20(max2)),
-        then: param20(amount),
+        cond: le(ti, param21(max2)),
+        then: param21(amount),
         else: next
       });
       const perChild = tier("tier1Max", "amount1", tier("tier2Max", "amount2", tier("tier3Max", "amount3", tier("tier4Max", "amount4", tier("tier5Max", "amount5", money37("0"))))));
@@ -66843,15 +66489,15 @@ var njRules = [
     },
     formula: (() => {
       const income = fact39("njTotalIncome");
-      const pension = max012(fact39("njPensionIncome"));
-      const pctOfPension = (num, den) => rd5({ kind: "mulRate", base: pension, rate: { num, den }, round: "half-up" });
-      const byStatus5 = (capParam, mid, low) => ({
+      const pension = max013(fact39("njPensionIncome"));
+      const pctOfPension = (num, den) => rd6({ kind: "mulRate", base: pension, rate: { num, den }, round: "half-up" });
+      const byStatus6 = (capParam, mid, low) => ({
         kind: "if",
-        cond: le(income, param20("fullTierMax")),
-        then: { kind: "min", args: [pension, param20(capParam)] },
+        cond: le(income, param21("fullTierMax")),
+        then: { kind: "min", args: [pension, param21(capParam)] },
         else: {
           kind: "if",
-          cond: le(income, param20("midTierMax")),
+          cond: le(income, param21("midTierMax")),
           then: pctOfPension(mid[0], mid[1]),
           else: pctOfPension(low[0], low[1])
         }
@@ -66862,18 +66508,18 @@ var njRules = [
           kind: "or",
           args: [
             { kind: "not", arg: fact39("njPensionEligible") },
-            { kind: "cmp", op: "gt", left: income, right: param20("incomeCliff") }
+            { kind: "cmp", op: "gt", left: income, right: param21("incomeCliff") }
           ]
         },
         then: money37("0"),
         else: {
           kind: "if",
           cond: isStatus10("mfs"),
-          then: byStatus5("capMfs", ["25", "100"], ["125", "1000"]),
+          then: byStatus6("capMfs", ["25", "100"], ["125", "1000"]),
           else: {
             kind: "if",
             cond: isStatus10("single"),
-            then: byStatus5("capSingleHohQss", ["375", "1000"], ["1875", "10000"]),
+            then: byStatus6("capSingleHohQss", ["375", "1000"], ["1875", "10000"]),
             else: {
               kind: "if",
               cond: tableB,
@@ -66881,10 +66527,10 @@ var njRules = [
               then: {
                 kind: "if",
                 cond: isStatus10("mfj"),
-                then: byStatus5("capJoint", ["50", "100"], ["25", "100"]),
-                else: byStatus5("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
+                then: byStatus6("capJoint", ["50", "100"], ["25", "100"]),
+                else: byStatus6("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
               },
-              else: byStatus5("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
+              else: byStatus6("capSingleHohQss", ["375", "1000"], ["1875", "10000"])
             }
           }
         }
@@ -66918,12 +66564,12 @@ var njRules = [
     formula: {
       kind: "min",
       args: [
-        max012(fact39("njPropertyTaxesPaid")),
+        max013(fact39("njPropertyTaxesPaid")),
         {
           kind: "if",
           cond: { kind: "and", args: [isStatus10("mfs"), fact39("njMfsSameHome")] },
-          then: param20("capMfsSameHome"),
-          else: param20("cap")
+          then: param21("capMfsSameHome"),
+          else: param21("cap")
         }
       ]
     }
@@ -66968,18 +66614,18 @@ var njRules = [
       // $494 cap above $200,000
     },
     formula: (() => {
-      const income = max012(fact39("njGrossIncome"));
+      const income = max013(fact39("njGrossIncome"));
       const tier = (max2, tax, next) => ({
         kind: "if",
-        cond: le(income, param20(max2)),
-        then: param20(tax),
+        cond: le(income, param21(max2)),
+        then: param21(tax),
         else: next
       });
       return tier("tier1Max", "tier1Tax", tier("tier2Max", "tier2Tax", tier("tier3Max", "tier3Tax", tier("tier4Max", "tier4Tax", tier("tier5Max", "tier5Tax", tier("tier6Max", "tier6Tax", tier("tier7Max", "tier7Tax", {
         kind: "min",
         args: [
-          rd5({ kind: "mulRate", base: income, rate: { num: "852", den: "1000000" }, round: "half-up" }),
-          param20("overCap")
+          rd6({ kind: "mulRate", base: income, rate: { num: "852", den: "1000000" }, round: "half-up" }),
+          param21("overCap")
         ]
       })))))));
     })()
@@ -67060,13 +66706,13 @@ var njRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-oh.js
-var max013 = (arg) => ({ kind: "max0", arg });
-var sub8 = (left, right) => ({ kind: "sub", left, right });
-var rd6 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var param21 = (name) => ({ kind: "param", name });
+var max014 = (arg) => ({ kind: "max0", arg });
+var sub9 = (left, right) => ({ kind: "sub", left, right });
+var rd7 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var param22 = (name) => ({ kind: "param", name });
 var le2 = (left, right) => ({ kind: "cmp", op: "le", left, right });
 var lt = (left, right) => ({ kind: "cmp", op: "lt", left, right });
-var magiLessExemptions = max013(sub8(fact39("ohModifiedAgi"), ruleRef33("us.oh.exemption_amount")));
+var magiLessExemptions = max014(sub9(fact39("ohModifiedAgi"), ruleRef33("us.oh.exemption_amount")));
 var ohRules = [
   {
     id: "us.oh.income_tax",
@@ -67087,12 +66733,12 @@ var ohRules = [
       // $26,050
     },
     formula: (() => {
-      const base = max013(fact39("stateTaxableIncome"));
+      const base = max014(fact39("stateTaxableIncome"));
       return {
         kind: "if",
-        cond: le2(base, param21("zeroBracketTop")),
+        cond: le2(base, param22("zeroBracketTop")),
         then: money37("0"),
-        else: rd6(printedSchedule(base, [
+        else: rd7(printedSchedule(base, [
           { thresholdCents: "2605000", fixedCents: "34200", rate: { num: "275", den: "10000" } },
           { thresholdCents: "10000000", fixedCents: "239432", rate: { num: "3125", den: "100000" } }
         ]))
@@ -67118,12 +66764,12 @@ var ohRules = [
       // $26,050 (statutory; re-verify against the 2026 instructions)
     },
     formula: (() => {
-      const base = max013(fact39("stateTaxableIncome"));
+      const base = max014(fact39("stateTaxableIncome"));
       return {
         kind: "if",
-        cond: le2(base, param21("zeroBracketTop")),
+        cond: le2(base, param22("zeroBracketTop")),
         then: money37("0"),
-        else: rd6(printedSchedule(base, [
+        else: rd7(printedSchedule(base, [
           { thresholdCents: "2605000", fixedCents: "33200", rate: { num: "275", den: "10000" } }
         ]))
       };
@@ -67151,9 +66797,9 @@ var ohRules = [
       rate: { value: "3", type: "int" }
       // 3%
     },
-    formula: rd6({
+    formula: rd7({
       kind: "mulRate",
-      base: max013(fact39("ohTaxableBusinessIncome")),
+      base: max014(fact39("ohTaxableBusinessIncome")),
       rate: { num: "3", den: "100" },
       round: "half-up"
     })
@@ -67187,16 +66833,16 @@ var ohRules = [
       const magi2 = fact39("ohModifiedAgi");
       const perExemption = {
         kind: "if",
-        cond: le2(magi2, param21("tier1Max")),
-        then: param21("amount1"),
+        cond: le2(magi2, param22("tier1Max")),
+        then: param22("amount1"),
         else: {
           kind: "if",
-          cond: le2(magi2, param21("tier2Max")),
-          then: param21("amount2"),
+          cond: le2(magi2, param22("tier2Max")),
+          then: param22("amount2"),
           else: {
             kind: "if",
-            cond: lt(magi2, param21("zeroTierFloor")),
-            then: param21("amount3"),
+            cond: lt(magi2, param22("zeroTierFloor")),
+            then: param22("amount3"),
             else: money37("0")
           }
         }
@@ -67233,21 +66879,21 @@ var ohRules = [
     formula: (() => {
       const pct16 = (num) => ({
         kind: "mulRate",
-        base: max013(fact39("ohTaxLessCredits")),
+        base: max014(fact39("ohTaxLessCredits")),
         rate: { num, den: "100" },
         round: "half-up"
       });
       const tiered = {
         kind: "if",
-        cond: le2(magiLessExemptions, param21("tier1Max")),
+        cond: le2(magiLessExemptions, param22("tier1Max")),
         then: pct16("20"),
         else: {
           kind: "if",
-          cond: le2(magiLessExemptions, param21("tier2Max")),
+          cond: le2(magiLessExemptions, param22("tier2Max")),
           then: pct16("15"),
           else: {
             kind: "if",
-            cond: le2(magiLessExemptions, param21("tier3Max")),
+            cond: le2(magiLessExemptions, param22("tier3Max")),
             then: pct16("10"),
             else: pct16("5")
           }
@@ -67260,10 +66906,10 @@ var ohRules = [
           args: [
             isStatus10("mfj"),
             fact39("ohBothSpousesHaveQualifyingIncome"),
-            lt(fact39("ohModifiedAgi"), param21("magiCap"))
+            lt(fact39("ohModifiedAgi"), param22("magiCap"))
           ]
         },
-        then: rd6({ kind: "min", args: [tiered, param21("creditCap")] }),
+        then: rd7({ kind: "min", args: [tiered, param22("creditCap")] }),
         else: money37("0")
       };
     })()
@@ -67302,17 +66948,17 @@ var ohRules = [
       creditMax: { value: "20000", type: "money" }
     },
     formula: (() => {
-      const ri = max013(fact39("ohEligibleRetirementIncome"));
+      const ri = max014(fact39("ohEligibleRetirementIncome"));
       const tier = (max2, then, next) => ({
         kind: "if",
-        cond: le2(ri, param21(max2)),
+        cond: le2(ri, param22(max2)),
         then,
         else: next
       });
       return {
         kind: "if",
-        cond: lt(magiLessExemptions, param21("magiLessExemptionsCap")),
-        then: tier("tier1Max", money37("0"), tier("tier2Max", param21("credit2"), tier("tier3Max", param21("credit3"), tier("tier4Max", param21("credit4"), tier("tier5Max", param21("credit5"), param21("creditMax")))))),
+        cond: lt(magiLessExemptions, param22("magiLessExemptionsCap")),
+        then: tier("tier1Max", money37("0"), tier("tier2Max", param22("credit2"), tier("tier3Max", param22("credit3"), tier("tier4Max", param22("credit4"), tier("tier5Max", param22("credit5"), param22("creditMax")))))),
         else: money37("0")
       };
     })()
@@ -67341,9 +66987,9 @@ var ohRules = [
       kind: "if",
       cond: {
         kind: "and",
-        args: [fact39("isAge65OrOlder"), lt(magiLessExemptions, param21("magiLessExemptionsCap"))]
+        args: [fact39("isAge65OrOlder"), lt(magiLessExemptions, param22("magiLessExemptionsCap"))]
       },
-      then: param21("credit"),
+      then: param22("credit"),
       else: money37("0")
     }
   },
@@ -67369,8 +67015,8 @@ var ohRules = [
     },
     formula: {
       kind: "if",
-      cond: lt(magiLessExemptions, param21("magiLessExemptionsCap")),
-      then: { kind: "mulInt", base: param21("perExemption"), count: fact39("ohExemptionCount") },
+      cond: lt(magiLessExemptions, param22("magiLessExemptionsCap")),
+      then: { kind: "mulInt", base: param22("perExemption"), count: fact39("ohExemptionCount") },
       else: money37("0")
     }
   },
@@ -67391,7 +67037,7 @@ var ohRules = [
     parameters: {
       pctOfFederal: { value: "30", type: "int" }
     },
-    formula: rd6({
+    formula: rd7({
       kind: "mulRate",
       base: ruleRef33("us.federal.eitc"),
       rate: { num: "30", den: "100" },
@@ -67420,14 +67066,14 @@ var ohRules = [
     },
     formula: {
       kind: "if",
-      cond: lt(fact39("ohModifiedAgi"), param21("fullPctMagiCap")),
-      then: rd6(max013(fact39("ohFederalCdccTentative"))),
+      cond: lt(fact39("ohModifiedAgi"), param22("fullPctMagiCap")),
+      then: rd7(max014(fact39("ohFederalCdccTentative"))),
       else: {
         kind: "if",
-        cond: lt(fact39("ohModifiedAgi"), param21("magiCap")),
-        then: rd6({
+        cond: lt(fact39("ohModifiedAgi"), param22("magiCap")),
+        then: rd7({
           kind: "mulRate",
-          base: max013(fact39("ohFederalCdccAllowed")),
+          base: max014(fact39("ohFederalCdccAllowed")),
           rate: { num: "25", den: "100" },
           round: "half-up"
         }),
@@ -67481,11 +67127,11 @@ var ohRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-nc.js
-var max014 = (arg) => ({ kind: "max0", arg });
-var sub9 = (left, right) => ({ kind: "sub", left, right });
-var add8 = (...args) => ({ kind: "add", args });
-var rd7 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var param22 = (name) => ({ kind: "param", name });
+var max015 = (arg) => ({ kind: "max0", arg });
+var sub10 = (left, right) => ({ kind: "sub", left, right });
+var add9 = (...args) => ({ kind: "add", args });
+var rd8 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var param23 = (name) => ({ kind: "param", name });
 var le3 = (left, right) => ({ kind: "cmp", op: "le", left, right });
 var lt2 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
 var mfjQss = { kind: "or", args: [isStatus10("mfj"), isStatus10("qss")] };
@@ -67503,9 +67149,9 @@ var rateRule = (version2, from, to, num, label, excerpt) => ({
   effectiveFrom: from,
   effectiveTo: to,
   output: { type: "money" },
-  formula: rd7({
+  formula: rd8({
     kind: "mulRate",
-    base: max014(fact39("stateTaxableIncome")),
+    base: max015(fact39("stateTaxableIncome")),
     rate: { num, den: "10000" },
     round: "half-up"
   })
@@ -67546,16 +67192,16 @@ var ncRules = [
     formula: {
       kind: "if",
       cond: mfjQss,
-      then: param22("joint"),
+      then: param23("joint"),
       else: {
         kind: "if",
         cond: isStatus10("hoh"),
-        then: param22("hoh"),
+        then: param23("hoh"),
         else: {
           kind: "if",
           cond: isStatus10("mfs"),
-          then: { kind: "if", cond: fact39("spouseItemizes"), then: money37("0"), else: param22("mfs") },
-          else: param22("single")
+          then: { kind: "if", cond: fact39("spouseItemizes"), then: money37("0"), else: param23("mfs") },
+          else: param23("single")
         }
       }
     }
@@ -67590,7 +67236,7 @@ var ncRules = [
           expr = {
             kind: "if",
             cond: le3(agi2, money37(bounds[i])),
-            then: param22(`amount${i + 1}`),
+            then: param23(`amount${i + 1}`),
             else: expr
           };
         }
@@ -67630,18 +67276,18 @@ var ncRules = [
       medicalFloorPct: { value: "75", type: "int" }
       // 7.5% of federal AGI
     },
-    formula: add8({
+    formula: add9({
       kind: "min",
       args: [
-        add8(max014(fact39("ncMortgageInterest")), max014(fact39("ncRealEstateTaxes"))),
-        param22("mortgagePropertyCap")
+        add9(max015(fact39("ncMortgageInterest")), max015(fact39("ncRealEstateTaxes"))),
+        param23("mortgagePropertyCap")
       ]
-    }, max014(fact39("ncCharitable")), max014(sub9(max014(fact39("ncMedicalExpenses")), rd7({
+    }, max015(fact39("ncCharitable")), max015(sub10(max015(fact39("ncMedicalExpenses")), rd8({
       kind: "mulRate",
-      base: max014(fact39("ncFederalAgi")),
+      base: max015(fact39("ncFederalAgi")),
       rate: { num: "75", den: "1000" },
       round: "half-up"
-    }))), max014(fact39("ncClaimOfRightRepayment")))
+    }))), max015(fact39("ncClaimOfRightRepayment")))
   },
   {
     id: "us.nc.use_tax",
@@ -67658,7 +67304,7 @@ var ncRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     formula: (() => {
-      const ti = max014(fact39("stateTaxableIncome"));
+      const ti = max015(fact39("stateTaxableIncome"));
       const rows = [
         ["220000", "100"],
         ["370000", "200"],
@@ -67691,7 +67337,7 @@ var ncRules = [
         ["4370000", "2900"],
         ["4520000", "3000"]
       ];
-      let expr = rd7({
+      let expr = rd8({
         kind: "mulRate",
         base: ti,
         rate: { num: "675", den: "1000000" },
@@ -67737,10 +67383,10 @@ var ncRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ga.js
-var max015 = (arg) => ({ kind: "max0", arg });
-var add9 = (...args) => ({ kind: "add", args });
-var rd8 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var param23 = (name) => ({ kind: "param", name });
+var max016 = (arg) => ({ kind: "max0", arg });
+var add10 = (...args) => ({ kind: "add", args });
+var rd9 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var param24 = (name) => ({ kind: "param", name });
 var lt3 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
 var gaRules = [
   {
@@ -67758,9 +67404,9 @@ var gaRules = [
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
     output: { type: "money" },
-    formula: rd8({
+    formula: rd9({
       kind: "mulRate",
-      base: max015(fact39("stateTaxableIncome")),
+      base: max016(fact39("stateTaxableIncome")),
       rate: { num: "519", den: "10000" },
       round: "half-up"
     })
@@ -67785,9 +67431,9 @@ var gaRules = [
       phaseDownFloorPctTimes100: { value: "399", type: "int" }
       // annual cuts from 2027
     },
-    formula: rd8({
+    formula: rd9({
       kind: "mulRate",
-      base: max015(fact39("stateTaxableIncome")),
+      base: max016(fact39("stateTaxableIncome")),
       rate: { num: "499", den: "10000" },
       round: "half-up"
     })
@@ -67815,8 +67461,8 @@ var gaRules = [
     formula: {
       kind: "if",
       cond: isStatus10("mfj"),
-      then: param23("joint"),
-      else: param23("other")
+      then: param24("joint"),
+      else: param24("other")
     }
   },
   {
@@ -67843,8 +67489,8 @@ var gaRules = [
     formula: {
       kind: "if",
       cond: isStatus10("mfj"),
-      then: param23("joint"),
-      else: param23("other")
+      then: param24("joint"),
+      else: param24("other")
     }
   },
   {
@@ -67865,7 +67511,7 @@ var gaRules = [
       perDependent: { value: "400000", type: "money" }
       // $4,000
     },
-    formula: { kind: "mulInt", base: param23("perDependent"), count: fact39("gaDependentCount") }
+    formula: { kind: "mulInt", base: param24("perDependent"), count: fact39("gaDependentCount") }
   },
   {
     id: "us.ga.dependent_exemption",
@@ -67886,7 +67532,7 @@ var gaRules = [
       perDependent: { value: "500000", type: "money" }
       // $5,000 (HB 463)
     },
-    formula: { kind: "mulInt", base: param23("perDependent"), count: fact39("gaDependentCount") }
+    formula: { kind: "mulInt", base: param24("perDependent"), count: fact39("gaDependentCount") }
   },
   {
     id: "us.ga.retirement_exclusion",
@@ -67917,19 +67563,19 @@ var gaRules = [
           on: fact39(tierFact),
           cases: [
             { when: "none", value: money37("0") },
-            { when: "62to64OrDisabled", value: param23("cap62to64") },
-            { when: "65plus", value: param23("cap65plus") }
+            { when: "62to64OrDisabled", value: param24("cap62to64") },
+            { when: "65plus", value: param24("cap65plus") }
           ]
         };
         return {
           kind: "min",
           args: [
-            add9(max015(fact39(retirement)), { kind: "min", args: [max015(fact39(earned2)), param23("earnedIncomeCap")] }),
+            add10(max016(fact39(retirement)), { kind: "min", args: [max016(fact39(earned2)), param24("earnedIncomeCap")] }),
             capForTier
           ]
         };
       };
-      return add9(perSpouse("gaExclusionTier", "gaRetirementIncome", "gaRetirementEarnedIncome"), perSpouse("gaSpouseExclusionTier", "gaSpouseRetirementIncome", "gaSpouseRetirementEarnedIncome"));
+      return add10(perSpouse("gaExclusionTier", "gaRetirementIncome", "gaRetirementEarnedIncome"), perSpouse("gaSpouseExclusionTier", "gaSpouseRetirementIncome", "gaSpouseRetirementEarnedIncome"));
     })()
   },
   {
@@ -67967,12 +67613,12 @@ var gaRules = [
       const agi2 = fact39("gaFederalAgi");
       const tier = (max2, credit, next) => ({
         kind: "if",
-        cond: lt3(agi2, param23(max2)),
-        then: param23(credit),
+        cond: lt3(agi2, param24(max2)),
+        then: param24(credit),
         else: next
       });
       const perExemption = tier("tier1Max", "credit1", tier("tier2Max", "credit2", tier("tier3Max", "credit3", tier("tier4Max", "credit4", tier("tier5Max", "credit5", money37("0"))))));
-      return add9({ kind: "mulInt", base: perExemption, count: fact39("gaLicExemptions") }, { kind: "mulInt", base: perExemption, count: fact39("gaLic65Count") });
+      return add10({ kind: "mulInt", base: perExemption, count: fact39("gaLicExemptions") }, { kind: "mulInt", base: perExemption, count: fact39("gaLic65Count") });
     })()
   },
   {
@@ -67992,9 +67638,9 @@ var gaRules = [
     parameters: {
       pctOfFederal: { value: "50", type: "int" }
     },
-    formula: rd8({
+    formula: rd9({
       kind: "mulRate",
-      base: max015(fact39("gaFederalCdccAllowed")),
+      base: max016(fact39("gaFederalCdccAllowed")),
       rate: { num: "50", den: "100" },
       round: "half-up"
     })
@@ -68039,12 +67685,12 @@ var gaRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-md.js
-var mulInt = (base, count) => ({ kind: "mulInt", base, count });
+var mulInt2 = (base, count) => ({ kind: "mulInt", base, count });
 var stepCeil = (value, unitCents) => ({ kind: "stepUnits", value, unitCents, mode: "ceil" });
-var rd9 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd10 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var le4 = (left, right) => ({ kind: "cmp", op: "le", left, right });
 var lt4 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
-var iff2 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var iff3 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
 var SCHEDULE_I = [
   { thresholdCents: "0", fixedCents: "0", rate: { num: "2", den: "100" } },
   { thresholdCents: "100000", fixedCents: "2000", rate: { num: "3", den: "100" } },
@@ -68072,11 +67718,11 @@ var SCHEDULE_II = [
 var rowMidpoint = (base) => ({
   kind: "add",
   args: [
-    mulInt(money37("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }),
+    mulInt2(money37("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }),
     money37("2500")
   ]
 });
-var tableAtMidpoint = (base, sched2, sub50) => iff2(lt4(base, money37("5000")), sub50, iff2(lt4(base, money37("7500")), sched2(money37("6250")), iff2(lt4(base, money37("10000")), sched2(money37("8750")), sched2(rowMidpoint(base)))));
+var tableAtMidpoint = (base, sched2, sub50) => iff3(lt4(base, money37("5000")), sub50, iff3(lt4(base, money37("7500")), sched2(money37("6250")), iff3(lt4(base, money37("10000")), sched2(money37("8750")), sched2(rowMidpoint(base)))));
 var isOneOf = (values) => ({
   kind: "or",
   args: values.map((v) => ({
@@ -68115,8 +67761,8 @@ var mdRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const sched2 = (b) => iff2(isOneOf(["mfj", "hoh", "qss"]), printedSchedule(b, SCHEDULE_II), printedSchedule(b, SCHEDULE_I));
-      return rd9(iff2({
+      const sched2 = (b) => iff3(isOneOf(["mfj", "hoh", "qss"]), printedSchedule(b, SCHEDULE_II), printedSchedule(b, SCHEDULE_I));
+      return rd10(iff3({
         kind: "and",
         args: [lt4(base, money37("10000000")), { kind: "not", arg: fact39("useFormulaMethod") }]
       }, tableAtMidpoint(base, sched2, money37("0")), sched2(base)));
@@ -68146,7 +67792,7 @@ var mdRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const flat = (num) => rd9({ kind: "mulRate", base, rate: { num, den: "10000" }, round: "half-up" });
+      const flat = (num) => rd10({ kind: "mulRate", base, rate: { num, den: "10000" }, round: "half-up" });
       const AA_SINGLE = [
         { thresholdCents: "0", fixedCents: "0", rate: { num: "27", den: "1000" } },
         { thresholdCents: "5000000", fixedCents: "135000", rate: { num: "294", den: "10000" } },
@@ -68157,8 +67803,8 @@ var mdRules = [
         { thresholdCents: "7500000", fixedCents: "202500", rate: { num: "294", den: "10000" } },
         { thresholdCents: "48000000", fixedCents: "1393200", rate: { num: "32", den: "1000" } }
       ];
-      const aaSched = (b) => iff2(isOneOf(["mfj", "hoh", "qss"]), printedSchedule(b, AA_JOINT), printedSchedule(b, AA_SINGLE));
-      const anneArundel = rd9(iff2({ kind: "cmp", op: "eq", left: base, right: money37("0") }, money37("0"), iff2(
+      const aaSched = (b) => iff3(isOneOf(["mfj", "hoh", "qss"]), printedSchedule(b, AA_JOINT), printedSchedule(b, AA_SINGLE));
+      const anneArundel = rd10(iff3({ kind: "cmp", op: "eq", left: base, right: money37("0") }, money37("0"), iff3(
         {
           kind: "and",
           args: [lt4(base, money37("10000000")), { kind: "not", arg: fact39("useFormulaMethod") }]
@@ -68170,11 +67816,11 @@ var mdRules = [
       const fredRate = (tiers2, topNum) => {
         let expr = { kind: "mulRate", base, rate: { num: topNum, den: "10000" }, round: "half-up" };
         for (let i = tiers2.length - 1; i >= 0; i--) {
-          expr = iff2(le4(base, money37(tiers2[i].upToCents)), { kind: "mulRate", base, rate: { num: tiers2[i].num, den: "10000" }, round: "half-up" }, expr);
+          expr = iff3(le4(base, money37(tiers2[i].upToCents)), { kind: "mulRate", base, rate: { num: tiers2[i].num, den: "10000" }, round: "half-up" }, expr);
         }
-        return rd9(expr);
+        return rd10(expr);
       };
-      const frederick = iff2(isOneOf(["mfj", "hoh", "qss"]), fredRate([
+      const frederick = iff3(isOneOf(["mfj", "hoh", "qss"]), fredRate([
         { upToCents: "2500000", num: "225" },
         { upToCents: "10000000", num: "275" },
         { upToCents: "25000000", num: "296" }
@@ -68238,9 +67884,9 @@ var mdRules = [
     },
     formula: (() => {
       const fagi = fact39("mdFagi");
-      const chart = (t1, t2, t3) => iff2(le4(fagi, money37(t1)), money37("320000"), iff2(le4(fagi, money37(t2)), money37("160000"), iff2(le4(fagi, money37(t3)), money37("80000"), money37("0"))));
-      const per = iff2(fact39("mdDependentTaxpayer"), money37("0"), iff2(isOneOf(["mfj", "hoh", "qss"]), chart("15000000", "17500000", "20000000"), chart("10000000", "12500000", "15000000")));
-      return mulInt(per, fact39("mdExemptionCount"));
+      const chart = (t1, t2, t3) => iff3(le4(fagi, money37(t1)), money37("320000"), iff3(le4(fagi, money37(t2)), money37("160000"), iff3(le4(fagi, money37(t3)), money37("80000"), money37("0"))));
+      const per = iff3(fact39("mdDependentTaxpayer"), money37("0"), iff3(isOneOf(["mfj", "hoh", "qss"]), chart("15000000", "17500000", "20000000"), chart("10000000", "12500000", "15000000")));
+      return mulInt2(per, fact39("mdExemptionCount"));
     })()
   },
   {
@@ -68275,10 +67921,10 @@ var mdRules = [
         arg: {
           kind: "sub",
           left: money37("50000"),
-          right: mulInt(money37("5000"), stepCeil({ kind: "sub", left: fagi, right: money37("1500000") }, "100000"))
+          right: mulInt2(money37("5000"), stepCeil({ kind: "sub", left: fagi, right: money37("1500000") }, "100000"))
         }
       };
-      return iff2({ kind: "cmp", op: "gt", left: fagi, right: money37("2400000") }, money37("0"), iff2(le4(fagi, money37("1500000")), mulInt(money37("50000"), kids), mulInt(reducedPerChild, kids)));
+      return iff3({ kind: "cmp", op: "gt", left: fagi, right: money37("2400000") }, money37("0"), iff3(le4(fagi, money37("1500000")), mulInt2(money37("50000"), kids), mulInt2(reducedPerChild, kids)));
     })()
   },
   {
@@ -68307,11 +67953,11 @@ var mdRules = [
         kind: "add",
         args: [
           money37("1565000"),
-          mulInt(money37("550000"), { kind: "sub", left: fact39("mdHouseholdSize"), right: { kind: "int", value: "1" } })
+          mulInt2(money37("550000"), { kind: "sub", left: fact39("mdHouseholdSize"), right: { kind: "int", value: "1" } })
         ]
       };
       const larger = { kind: "max", args: [fact39("mdEarnedIncome"), fact39("mdFagiPlusAdditions")] };
-      return iff2(fact39("mdDependentTaxpayer"), money37("0"), iff2({ kind: "cmp", op: "ge", left: larger, right: guideline }, money37("0"), rd9({ kind: "mulRate", base: fact39("mdEarnedIncome"), rate: { num: "5", den: "100" }, round: "half-up" })));
+      return iff3(fact39("mdDependentTaxpayer"), money37("0"), iff3({ kind: "cmp", op: "ge", left: larger, right: guideline }, money37("0"), rd10({ kind: "mulRate", base: fact39("mdEarnedIncome"), rate: { num: "5", den: "100" }, round: "half-up" })));
     })()
   },
   {
@@ -68335,7 +67981,7 @@ var mdRules = [
       primaryResidenceSaleCap: { value: "150000000", type: "money" }
       // $1,500,000
     },
-    formula: rd9({
+    formula: rd10({
       kind: "mulRate",
       base: { kind: "max0", arg: fact39("mdNetCapitalGainSubject") },
       rate: { num: "2", den: "100" },
@@ -68417,9 +68063,9 @@ var mdRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-mo.js
-var rd10 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd11 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var le5 = (left, right) => ({ kind: "cmp", op: "le", left, right });
-var iff3 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var iff4 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
 var moRules = [
   {
     id: "us.mo.income_tax",
@@ -68443,7 +68089,7 @@ var moRules = [
       topRatePctTimes10: { value: "47", type: "int" }
       // 4.7%
     },
-    formula: rd10(printedSchedule({ kind: "max0", arg: fact39("stateTaxableIncome") }, [
+    formula: rd11(printedSchedule({ kind: "max0", arg: fact39("stateTaxableIncome") }, [
       { thresholdCents: "0", fixedCents: "0", rate: { num: "0", den: "100" } },
       { thresholdCents: "131300", fixedCents: "0", rate: { num: "2", den: "100" } },
       { thresholdCents: "262600", fixedCents: "2600", rate: { num: "25", den: "1000" } },
@@ -68485,9 +68131,9 @@ var moRules = [
     formula: (() => {
       const magi2 = fact39("moMagi");
       const total = { kind: "max0", arg: fact39("moFederalTaxTotal") };
-      const pct16 = (num) => rd10({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
-      const uncapped = iff3(le5(magi2, money37("2500000")), pct16("35"), iff3(le5(magi2, money37("5000000")), pct16("25"), iff3(le5(magi2, money37("10000000")), pct16("15"), iff3(le5(magi2, money37("12500000")), pct16("5"), money37("0")))));
-      const cap = iff3({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: "mfj" } }, money37("1000000"), money37("500000"));
+      const pct16 = (num) => rd11({ kind: "mulRate", base: total, rate: { num, den: "100" }, round: "half-up" });
+      const uncapped = iff4(le5(magi2, money37("2500000")), pct16("35"), iff4(le5(magi2, money37("5000000")), pct16("25"), iff4(le5(magi2, money37("10000000")), pct16("15"), iff4(le5(magi2, money37("12500000")), pct16("5"), money37("0")))));
+      const cap = iff4({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: "mfj" } }, money37("1000000"), money37("500000"));
       return { kind: "min", args: [uncapped, cap] };
     })()
   },
@@ -68549,7 +68195,7 @@ var moRules = [
       formInvestmentGate: { value: "440000", type: "money" }
       // $4,400 (indexed pre-ARPA limit — 1/1/2021 frozen law)
     },
-    formula: rd10({
+    formula: rd11({
       kind: "mulRate",
       base: { kind: "max0", arg: fact39("moFederalEic") },
       rate: { num: "20", den: "100" },
@@ -68573,7 +68219,7 @@ var moRules = [
     parameters: {
       pctOfBusinessIncome: { value: "20", type: "int" }
     },
-    formula: rd10({
+    formula: rd11({
       kind: "mulRate",
       base: { kind: "max0", arg: fact39("moBusinessIncome") },
       rate: { num: "20", den: "100" },
@@ -68630,10 +68276,10 @@ var moRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-wi.js
-var rd11 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd12 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var lt5 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
-var iff4 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var mulInt2 = (base, count) => ({ kind: "mulInt", base, count });
+var iff5 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt3 = (base, count) => ({ kind: "mulInt", base, count });
 var isStatus11 = (v) => ({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: v } });
 var SINGLE_HOH = [
   { thresholdCents: "0", fixedCents: "0", rate: { num: "35", den: "1000" } },
@@ -68680,16 +68326,16 @@ var wiRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const sched2 = (b) => iff4(isStatus11("mfj"), printedSchedule(b, MFJ), iff4(isStatus11("mfs"), printedSchedule(b, MFS), printedSchedule(b, SINGLE_HOH)));
+      const sched2 = (b) => iff5(isStatus11("mfj"), printedSchedule(b, MFJ), iff5(isStatus11("mfs"), printedSchedule(b, MFS), printedSchedule(b, SINGLE_HOH)));
       const mid = {
         kind: "add",
         args: [
-          mulInt2(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }),
+          mulInt3(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }),
           money37("5000")
         ]
       };
-      const table2 = iff4(lt5(base, money37("2000")), sched2(money37("1000")), iff4(lt5(base, money37("4000")), sched2(money37("3000")), iff4(lt5(base, money37("10000")), sched2(money37("7000")), sched2(mid))));
-      return rd11(iff4({ kind: "and", args: [lt5(base, money37("10000000")), { kind: "not", arg: fact39("useFormulaMethod") }] }, table2, sched2(base)));
+      const table2 = iff5(lt5(base, money37("2000")), sched2(money37("1000")), iff5(lt5(base, money37("4000")), sched2(money37("3000")), iff5(lt5(base, money37("10000")), sched2(money37("7000")), sched2(mid))));
+      return rd12(iff5({ kind: "and", args: [lt5(base, money37("10000000")), { kind: "not", arg: fact39("useFormulaMethod") }] }, table2, sched2(base)));
     })()
   },
   {
@@ -68747,7 +68393,7 @@ var wiRules = [
           ]
         }
       });
-      const formulas = (x) => iff4(isStatus11("mfj"), phase("2511000", { num: "19778", den: "100000" }, "2821000", x), iff4(isStatus11("mfs"), phase("1193000", { num: "19778", den: "100000" }, "1339000", x), iff4(
+      const formulas = (x) => iff5(isStatus11("mfj"), phase("2511000", { num: "19778", den: "100000" }, "2821000", x), iff5(isStatus11("mfs"), phase("1193000", { num: "19778", den: "100000" }, "1339000", x), iff5(
         { kind: "or", args: [isStatus11("hoh"), isStatus11("qss")] },
         // HOH: greater of its own steeper phase-out or the single amount
         {
@@ -68763,7 +68409,7 @@ var wiRules = [
         kind: "add",
         args: [
           money37("1350000"),
-          mulInt2(money37("50000"), {
+          mulInt3(money37("50000"), {
             kind: "stepUnits",
             value: { kind: "sub", left: income, right: money37("1350000") },
             unitCents: "50000",
@@ -68772,14 +68418,14 @@ var wiRules = [
           money37("25000")
         ]
       };
-      const tableIncome = iff4(lt5(income, money37("1339000")), income, iff4(
+      const tableIncome = iff5(lt5(income, money37("1339000")), income, iff5(
         lt5(income, money37("1350000")),
         money37("1344500"),
         // printed special tail row 155,000-155,169 (MFJ column -> $17 at
         // mid $155,084.50; harmless for other statuses, already $0 there)
-        iff4({ kind: "and", args: [{ kind: "cmp", op: "ge", left: income, right: money37("15500000") }, lt5(income, money37("15516900"))] }, money37("15508450"), mid)
+        iff5({ kind: "and", args: [{ kind: "cmp", op: "ge", left: income, right: money37("15500000") }, lt5(income, money37("15516900"))] }, money37("15508450"), mid)
       ));
-      return rd11(formulas(iff4(fact39("useFormulaMethod"), income, tableIncome)));
+      return rd12(formulas(iff5(fact39("useFormulaMethod"), income, tableIncome)));
     })()
   },
   {
@@ -68804,8 +68450,8 @@ var wiRules = [
     formula: (() => {
       const eic = { kind: "max0", arg: fact39("wiFederalEicForWi") };
       const kids = fact39("wiQualifyingChildren");
-      const pct16 = (num) => rd11({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
-      return iff4({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct16("34"), iff4({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct16("11"), iff4({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct16("4"), money37("0"))));
+      const pct16 = (num) => rd12({ kind: "mulRate", base: eic, rate: { num, den: "100" }, round: "half-up" });
+      return iff5({ kind: "cmp", op: "ge", left: kids, right: { kind: "int", value: "3" } }, pct16("34"), iff5({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "2" } }, pct16("11"), iff5({ kind: "cmp", op: "eq", left: kids, right: { kind: "int", value: "1" } }, pct16("4"), money37("0"))));
     })()
   },
   {
@@ -68832,7 +68478,7 @@ var wiRules = [
     formula: {
       kind: "min",
       args: [
-        rd11({
+        rd12({
           kind: "mulRate",
           base: { kind: "min", args: [{ kind: "max0", arg: fact39("wiLowerQualifiedEarnedIncome") }, money37("1600000")] },
           rate: { num: "3", den: "100" },
@@ -68871,12 +68517,12 @@ var wiRules = [
       const midRow = (f, widthCents, halfCents) => ({
         kind: "add",
         args: [
-          mulInt2(money37(widthCents), { kind: "stepUnits", value: fact39(f), unitCents: widthCents, mode: "floor" }),
+          mulInt3(money37(widthCents), { kind: "stepUnits", value: fact39(f), unitCents: widthCents, mode: "floor" }),
           money37(halfCents)
         ]
       });
-      const part = (f, num, den, widthCents, halfCents) => iff4({ kind: "cmp", op: "le", left: fact39(f), right: money37("0") }, money37("0"), rd11({ kind: "mulRate", base: midRow(f, widthCents, halfCents), rate: { num, den }, round: "half-up" }));
-      const propertyPart = iff4({ kind: "cmp", op: "le", left: fact39("wiPropertyTaxesPaid"), right: money37("0") }, money37("0"), iff4({ kind: "cmp", op: "ge", left: fact39("wiPropertyTaxesPaid"), right: money37("250000") }, money37("30000"), part("wiPropertyTaxesPaid", "12", "100", "2500", "1250")));
+      const part = (f, num, den, widthCents, halfCents) => iff5({ kind: "cmp", op: "le", left: fact39(f), right: money37("0") }, money37("0"), rd12({ kind: "mulRate", base: midRow(f, widthCents, halfCents), rate: { num, den }, round: "half-up" }));
+      const propertyPart = iff5({ kind: "cmp", op: "le", left: fact39("wiPropertyTaxesPaid"), right: money37("0") }, money37("0"), iff5({ kind: "cmp", op: "ge", left: fact39("wiPropertyTaxesPaid"), right: money37("250000") }, money37("30000"), part("wiPropertyTaxesPaid", "12", "100", "2500", "1250")));
       const total = {
         kind: "add",
         args: [
@@ -68885,7 +68531,7 @@ var wiRules = [
           propertyPart
         ]
       };
-      const cap = iff4(isStatus11("mfs"), money37("15000"), money37("30000"));
+      const cap = iff5(isStatus11("mfs"), money37("15000"), money37("30000"));
       return { kind: "min", args: [total, cap] };
     })()
   },
@@ -68913,7 +68559,7 @@ var wiRules = [
       kind: "min",
       args: [
         { kind: "max0", arg: fact39("wiRetirementIncome67") },
-        iff4({ kind: "and", args: [isStatus11("mfj"), fact39("wiBothSpouses67")] }, money37("4800000"), money37("2400000"))
+        iff5({ kind: "and", args: [isStatus11("mfj"), fact39("wiBothSpouses67")] }, money37("4800000"), money37("2400000"))
       ]
     }
   },
@@ -68965,11 +68611,11 @@ var wiRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-mn.js
-var rd12 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd13 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var lt6 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
-var iff5 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var mulInt3 = (base, count) => ({ kind: "mulInt", base, count });
-var sub10 = (left, right) => ({ kind: "sub", left, right });
+var iff6 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt4 = (base, count) => ({ kind: "mulInt", base, count });
+var sub11 = (left, right) => ({ kind: "sub", left, right });
 var isStatus12 = (v) => ({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: v } });
 var SINGLE = [
   { thresholdCents: "0", fixedCents: "0", rate: { num: "535", den: "10000" } },
@@ -69025,16 +68671,16 @@ var mnRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const sched2 = (b) => iff5(isStatus12("mfs"), printedSchedule(b, MFS2), iff5(isStatus12("hoh"), printedSchedule(b, HOH), iff5({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, printedSchedule(b, MFJ2), printedSchedule(b, SINGLE))));
+      const sched2 = (b) => iff6(isStatus12("mfs"), printedSchedule(b, MFS2), iff6(isStatus12("hoh"), printedSchedule(b, HOH), iff6({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, printedSchedule(b, MFJ2), printedSchedule(b, SINGLE))));
       const mid = {
         kind: "add",
         args: [
-          mulInt3(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }),
+          mulInt4(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }),
           money37("5000")
         ]
       };
-      const table2 = iff5(lt6(base, money37("2000")), money37("0"), iff5(lt6(base, money37("10000")), sched2(money37("6000")), sched2(mid)));
-      return rd12(iff5({ kind: "and", args: [lt6(base, money37("8680000")), { kind: "not", arg: fact39("useFormulaMethod") }] }, table2, sched2(base)));
+      const table2 = iff6(lt6(base, money37("2000")), money37("0"), iff6(lt6(base, money37("10000")), sched2(money37("6000")), sched2(mid)));
+      return rd13(iff6({ kind: "and", args: [lt6(base, money37("8680000")), { kind: "not", arg: fact39("useFormulaMethod") }] }, table2, sched2(base)));
     })()
   },
   {
@@ -69077,37 +68723,37 @@ var mnRules = [
       const agi2 = fact39("mnAgi");
       const boxes = fact39("mnStdBoxes");
       const married = { kind: "or", args: [isStatus12("mfj"), isStatus12("qss"), isStatus12("mfs")] };
-      const base = iff5({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money37("2990000"), iff5(isStatus12("hoh"), money37("2250000"), money37("1495000")));
-      const addl = mulInt3(iff5(married, money37("155000"), money37("200000")), boxes);
+      const base = iff6({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money37("2990000"), iff6(isStatus12("hoh"), money37("2250000"), money37("1495000")));
+      const addl = mulInt4(iff6(married, money37("155000"), money37("200000")), boxes);
       const full = { kind: "add", args: [base, addl] };
       const depLimit = {
         kind: "max",
         args: [money37("125000"), { kind: "add", args: [fact39("mnDependentEarnedIncome"), money37("35000")] }]
       };
       const depCap = { kind: "add", args: [money37("1495000"), addl] };
-      const ded = iff5(fact39("isClaimedAsDependent"), { kind: "min", args: [depCap, depLimit] }, full);
-      const t1 = iff5(isStatus12("mfs"), money37("11947500"), money37("23895000"));
-      const band = iff5(isStatus12("mfs"), money37("4567500"), money37("9135000"));
-      const t2 = iff5(isStatus12("mfs"), money37("16515000"), money37("33030000"));
+      const ded = iff6(fact39("isClaimedAsDependent"), { kind: "min", args: [depCap, depLimit] }, full);
+      const t1 = iff6(isStatus12("mfs"), money37("11947500"), money37("23895000"));
+      const band = iff6(isStatus12("mfs"), money37("4567500"), money37("9135000"));
+      const t2 = iff6(isStatus12("mfs"), money37("16515000"), money37("33030000"));
       const reductionAB = {
         kind: "add",
         args: [
           {
             kind: "mulRate",
-            base: { kind: "min", args: [{ kind: "max0", arg: sub10(agi2, t1) }, band] },
+            base: { kind: "min", args: [{ kind: "max0", arg: sub11(agi2, t1) }, band] },
             rate: { num: "3", den: "100" },
             round: "half-up"
           },
           {
             kind: "mulRate",
-            base: { kind: "max0", arg: sub10(agi2, t2) },
+            base: { kind: "max0", arg: sub11(agi2, t2) },
             rate: { num: "10", den: "100" },
             round: "half-up"
           }
         ]
       };
       const cap80 = { kind: "mulRate", base: ded, rate: { num: "80", den: "100" }, round: "half-up" };
-      return rd12({ kind: "max0", arg: sub10(ded, { kind: "min", args: [reductionAB, cap80] }) });
+      return rd13({ kind: "max0", arg: sub11(ded, { kind: "min", args: [reductionAB, cap80] }) });
     })()
   },
   {
@@ -69141,16 +68787,16 @@ var mnRules = [
       // per $2,500 step ($1,250 MFS), ceil
     },
     formula: (() => {
-      const total = mulInt3(money37("520000"), fact39("mnDependents"));
-      const threshold3 = iff5({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money37("35855000"), iff5(isStatus12("hoh"), money37("29880000"), iff5(isStatus12("mfs"), money37("17927500"), money37("23905000"))));
-      const excess2 = { kind: "max0", arg: sub10(fact39("mnAgi"), threshold3) };
-      const cutoff = iff5(isStatus12("mfs"), money37("6125000"), money37("12250000"));
+      const total = mulInt4(money37("520000"), fact39("mnDependents"));
+      const threshold3 = iff6({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money37("35855000"), iff6(isStatus12("hoh"), money37("29880000"), iff6(isStatus12("mfs"), money37("17927500"), money37("23905000"))));
+      const excess2 = { kind: "max0", arg: sub11(fact39("mnAgi"), threshold3) };
+      const cutoff = iff6(isStatus12("mfs"), money37("6125000"), money37("12250000"));
       const stepsMfs = stepsCeil(excess2, "125000");
       const stepsOther = stepsCeil(excess2, "250000");
-      const reduction = (steps) => mulInt3({ kind: "mulRate", base: total, rate: { num: "2", den: "100" }, round: "half-up" }, steps);
-      return iff5(fact39("isClaimedAsDependent"), money37("0"), iff5({ kind: "cmp", op: "gt", left: excess2, right: cutoff }, money37("0"), rd12({
+      const reduction = (steps) => mulInt4({ kind: "mulRate", base: total, rate: { num: "2", den: "100" }, round: "half-up" }, steps);
+      return iff6(fact39("isClaimedAsDependent"), money37("0"), iff6({ kind: "cmp", op: "gt", left: excess2, right: cutoff }, money37("0"), rd13({
         kind: "max0",
-        arg: sub10(total, iff5(isStatus12("mfs"), reduction(stepsMfs), reduction(stepsOther)))
+        arg: sub11(total, iff6(isStatus12("mfs"), reduction(stepsMfs), reduction(stepsOther)))
       })));
     })()
   },
@@ -69186,12 +68832,12 @@ var mnRules = [
     },
     formula: (() => {
       const ss2 = { kind: "max0", arg: fact39("mnTaxableSs") };
-      const threshold3 = iff5({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money37("10832000"), iff5(isStatus12("mfs"), money37("5416000"), money37("8449000")));
-      const excess2 = { kind: "max0", arg: sub10(fact39("mnAgi"), threshold3) };
-      const steps = iff5(isStatus12("mfs"), stepsCeil(excess2, "200000"), stepsCeil(excess2, "400000"));
+      const threshold3 = iff6({ kind: "or", args: [isStatus12("mfj"), isStatus12("qss")] }, money37("10832000"), iff6(isStatus12("mfs"), money37("5416000"), money37("8449000")));
+      const excess2 = { kind: "max0", arg: sub11(fact39("mnAgi"), threshold3) };
+      const steps = iff6(isStatus12("mfs"), stepsCeil(excess2, "200000"), stepsCeil(excess2, "400000"));
       const cappedSteps = { kind: "min", args: [steps, { kind: "int", value: "10" }] };
-      const reduction = mulInt3({ kind: "mulRate", base: ss2, rate: { num: "10", den: "100" }, round: "half-up" }, cappedSteps);
-      return rd12({ kind: "max0", arg: sub10(ss2, reduction) });
+      const reduction = mulInt4({ kind: "mulRate", base: ss2, rate: { num: "10", den: "100" }, round: "half-up" }, cappedSteps);
+      return rd13({ kind: "max0", arg: sub11(ss2, reduction) });
     })()
   },
   {
@@ -69213,9 +68859,9 @@ var mnRules = [
       // $1,000,000
       ratePct: { value: "1", type: "int" }
     },
-    formula: rd12({
+    formula: rd13({
       kind: "mulRate",
-      base: { kind: "max0", arg: sub10(fact39("mnNetInvestmentIncome"), money37("100000000")) },
+      base: { kind: "max0", arg: sub11(fact39("mnNetInvestmentIncome"), money37("100000000")) },
       rate: { num: "1", den: "100" },
       round: "half-up"
     })
@@ -69253,11 +68899,11 @@ var mnRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-sc.js
-var rd13 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd14 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var lt7 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
-var iff6 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var mulInt4 = (base, count) => ({ kind: "mulInt", base, count });
-var sub11 = (left, right) => ({ kind: "sub", left, right });
+var iff7 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt5 = (base, count) => ({ kind: "mulInt", base, count });
+var sub12 = (left, right) => ({ kind: "sub", left, right });
 var isStatus13 = (v) => ({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: v } });
 var SCHED_2025 = [
   { thresholdCents: "0", fixedCents: "0", rate: { num: "0", den: "100" } },
@@ -69296,15 +68942,15 @@ var scRules = [
       const sched2 = (b) => printedSchedule(b, SCHED_2025);
       const mid50 = {
         kind: "add",
-        args: [mulInt4(money37("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money37("2500")]
+        args: [mulInt5(money37("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money37("2500")]
       };
       const mid100 = {
         kind: "add",
-        args: [mulInt4(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money37("5000")]
+        args: [mulInt5(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money37("5000")]
       };
-      const table2 = iff6(lt7(base, money37("700000")), sched2(mid50), sched2(mid100));
-      const over100k = sub11({ kind: "mulRate", base, rate: { num: "6", den: "100" }, round: "half-up" }, money37("64200"));
-      return rd13(iff6(lt7(base, money37("10000000")), iff6(fact39("useFormulaMethod"), sched2(base), table2), { kind: "max0", arg: over100k }));
+      const table2 = iff7(lt7(base, money37("700000")), sched2(mid50), sched2(mid100));
+      const over100k = sub12({ kind: "mulRate", base, rate: { num: "6", den: "100" }, round: "half-up" }, money37("64200"));
+      return rd14(iff7(lt7(base, money37("10000000")), iff7(fact39("useFormulaMethod"), sched2(base), table2), { kind: "max0", arg: over100k }));
     })()
   },
   {
@@ -69331,7 +68977,7 @@ var scRules = [
       printedSubtractionConstant: { value: "96600", type: "money" }
       // $966
     },
-    formula: rd13(printedSchedule({ kind: "max0", arg: fact39("stateTaxableIncome") }, [
+    formula: rd14(printedSchedule({ kind: "max0", arg: fact39("stateTaxableIncome") }, [
       { thresholdCents: "0", fixedCents: "0", rate: { num: "199", den: "10000" } },
       { thresholdCents: "3000000", fixedCents: "59700", rate: { num: "521", den: "10000" } }
     ]))
@@ -69369,12 +69015,12 @@ var scRules = [
     },
     formula: (() => {
       const phased2 = (base, start, range2) => {
-        const excess2 = { kind: "max0", arg: sub11(fact39("scAgi"), money37(start)) };
+        const excess2 = { kind: "max0", arg: sub12(fact39("scAgi"), money37(start)) };
         const reductionRaw = { kind: "mulDiv", a: money37(base), b: excess2, c: money37(range2), round: "floor" };
-        const reduction10 = mulInt4(money37("1000"), { kind: "stepUnits", value: reductionRaw, unitCents: "1000", mode: "floor" });
-        return { kind: "max0", arg: sub11(money37(base), reduction10) };
+        const reduction10 = mulInt5(money37("1000"), { kind: "stepUnits", value: reductionRaw, unitCents: "1000", mode: "floor" });
+        return { kind: "max0", arg: sub12(money37(base), reduction10) };
       };
-      return iff6({ kind: "or", args: [isStatus13("mfj"), isStatus13("qss")] }, phased2("3000000", "8000000", "11000000"), iff6(isStatus13("hoh"), phased2("2250000", "6000000", "8250000"), phased2("1500000", "4000000", "5500000")));
+      return iff7({ kind: "or", args: [isStatus13("mfj"), isStatus13("qss")] }, phased2("3000000", "8000000", "11000000"), iff7(isStatus13("hoh"), phased2("2250000", "6000000", "8250000"), phased2("1500000", "4000000", "5500000")));
     })()
   },
   {
@@ -69395,7 +69041,7 @@ var scRules = [
       perDependent: { value: "493000", type: "money" }
       // $4,930 (2025 indexed)
     },
-    formula: mulInt4(money37("493000"), fact39("scDependents"))
+    formula: mulInt5(money37("493000"), fact39("scDependents"))
   },
   {
     id: "us.sc.retirement_deduction",
@@ -69423,7 +69069,7 @@ var scRules = [
         { kind: "max0", arg: fact39("scQualifiedRetirementIncome") },
         {
           kind: "max0",
-          arg: sub11(iff6(fact39("scIs65"), money37("1000000"), money37("300000")), { kind: "max0", arg: fact39("scMilitaryRetirementDeduction") })
+          arg: sub12(iff7(fact39("scIs65"), money37("1000000"), money37("300000")), { kind: "max0", arg: fact39("scMilitaryRetirementDeduction") })
         }
       ]
     }
@@ -69448,7 +69094,7 @@ var scRules = [
     },
     formula: {
       kind: "max0",
-      arg: sub11(money37("1500000"), { kind: "max0", arg: fact39("scRetirementDeductionsClaimed") })
+      arg: sub12(money37("1500000"), { kind: "max0", arg: fact39("scRetirementDeductionsClaimed") })
     }
   },
   {
@@ -69473,7 +69119,7 @@ var scRules = [
       creditMax: { value: "35000", type: "money" }
       // $350
     },
-    formula: rd13({
+    formula: rd14({
       kind: "mulRate",
       base: { kind: "min", args: [{ kind: "max0", arg: fact39("scLowerQualifiedEarnedIncome") }, money37("5000000")] },
       rate: { num: "7", den: "1000" },
@@ -69504,13 +69150,13 @@ var scRules = [
     formula: {
       kind: "min",
       args: [
-        rd13({
+        rd14({
           kind: "mulRate",
           base: { kind: "max0", arg: fact39("scCareExpenses") },
           rate: { num: "7", den: "100" },
           round: "half-up"
         }),
-        iff6({ kind: "cmp", op: "ge", left: fact39("scCareChildren"), right: { kind: "int", value: "2" } }, money37("42000"), money37("21000"))
+        iff7({ kind: "cmp", op: "ge", left: fact39("scCareChildren"), right: { kind: "int", value: "2" } }, money37("42000"), money37("21000"))
       ]
     }
   },
@@ -69549,12 +69195,12 @@ var scRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-al.js
-var rd14 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd15 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var lt8 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
 var le6 = (left, right) => ({ kind: "cmp", op: "le", left, right });
-var iff7 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var mulInt5 = (base, count) => ({ kind: "mulInt", base, count });
-var sub12 = (left, right) => ({ kind: "sub", left, right });
+var iff8 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt6 = (base, count) => ({ kind: "mulInt", base, count });
+var sub13 = (left, right) => ({ kind: "sub", left, right });
 var isStatus14 = (v) => ({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: v } });
 var isMfjExpr = isStatus14("mfj");
 var SCHED_SINGLE = [
@@ -69604,25 +69250,25 @@ var alRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const sched2 = (b) => iff7(isMfjExpr, printedSchedule(b, SCHED_MFJ), printedSchedule(b, SCHED_SINGLE));
+      const sched2 = (b) => iff8(isMfjExpr, printedSchedule(b, SCHED_MFJ), printedSchedule(b, SCHED_SINGLE));
       const mid100 = {
         kind: "add",
-        args: [mulInt5(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money37("5000")]
+        args: [mulInt6(money37("10000"), { kind: "stepUnits", value: base, unitCents: "10000", mode: "floor" }), money37("5000")]
       };
-      const table2 = iff7(
+      const table2 = iff8(
         lt8(base, money37("5000")),
         money37("0"),
         // printed row [0, 50) -> $0
-        iff7(lt8(base, money37("10000")), money37("100"), sched2(mid100))
+        iff8(lt8(base, money37("10000")), money37("100"), sched2(mid100))
       );
       const over100k = {
         kind: "add",
         args: [
-          iff7(isMfjExpr, money37("491800"), money37("495800")),
-          { kind: "mulRate", base: sub12(base, money37("10000000")), rate: { num: "5", den: "100" }, round: "half-up" }
+          iff8(isMfjExpr, money37("491800"), money37("495800")),
+          { kind: "mulRate", base: sub13(base, money37("10000000")), rate: { num: "5", den: "100" }, round: "half-up" }
         ]
       };
-      return rd14(iff7(lt8(base, money37("10000000")), iff7(fact39("useFormulaMethod"), sched2(base), table2), over100k));
+      return rd15(iff8(lt8(base, money37("10000000")), iff8(fact39("useFormulaMethod"), sched2(base), table2), over100k));
     })()
   },
   {
@@ -69652,15 +69298,15 @@ var alRules = [
     formula: (() => {
       const agi2 = { kind: "max0", arg: fact39("alAgi") };
       const chart = (max2, step, floor, start, width) => {
-        const excess2 = sub12(agi2, money37(start));
+        const excess2 = sub13(agi2, money37(start));
         const steps = {
           kind: "add",
           args: [{ kind: "stepUnits", value: excess2, unitCents: width, mode: "floor" }, { kind: "int", value: "1" }]
         };
-        const reduced = { kind: "max", args: [sub12(money37(max2), mulInt5(money37(step), steps)), money37(floor)] };
-        return iff7(lt8(agi2, money37(start)), money37(max2), reduced);
+        const reduced = { kind: "max", args: [sub13(money37(max2), mulInt6(money37(step), steps)), money37(floor)] };
+        return iff8(lt8(agi2, money37(start)), money37(max2), reduced);
       };
-      return iff7(isMfjExpr, chart("850000", "17500", "500000", "2600000", "50000"), iff7(isStatus14("hoh"), chart("520000", "13500", "250000", "2600000", "50000"), iff7(isStatus14("mfs"), chart("425000", "8800", "250000", "1300000", "25000"), chart("300000", "2500", "250000", "2600000", "50000"))));
+      return iff8(isMfjExpr, chart("850000", "17500", "500000", "2600000", "50000"), iff8(isStatus14("hoh"), chart("520000", "13500", "250000", "2600000", "50000"), iff8(isStatus14("mfs"), chart("425000", "8800", "250000", "1300000", "25000"), chart("300000", "2500", "250000", "2600000", "50000"))));
     })()
   },
   {
@@ -69685,7 +69331,7 @@ var alRules = [
       tier3: { value: "30000", type: "money" }
       // $300
     },
-    formula: mulInt5(iff7(le6(fact39("alAgi"), money37("5000000")), money37("100000"), iff7(le6(fact39("alAgi"), money37("10000000")), money37("50000"), money37("30000"))), fact39("alDependents"))
+    formula: mulInt6(iff8(le6(fact39("alAgi"), money37("5000000")), money37("100000"), iff8(le6(fact39("alAgi"), money37("10000000")), money37("50000"), money37("30000"))), fact39("alDependents"))
   },
   {
     id: "us.al.federal_tax_deduction",
@@ -69704,7 +69350,7 @@ var alRules = [
     parameters: {},
     formula: {
       kind: "max0",
-      arg: sub12({ kind: "max0", arg: fact39("alFederalTaxPlusNiit") }, { kind: "max0", arg: fact39("alFederalRefundableCredits") })
+      arg: sub13({ kind: "max0", arg: fact39("alFederalTaxPlusNiit") }, { kind: "max0", arg: fact39("alFederalRefundableCredits") })
     }
   },
   {
@@ -69725,7 +69371,7 @@ var alRules = [
       exclusionCap: { value: "600000", type: "money" }
       // $6,000 — NOT $12,000 (HB388 died)
     },
-    formula: iff7(fact39("alIs65"), { kind: "min", args: [{ kind: "max0", arg: fact39("alTaxableRetirement") }, money37("600000")] }, money37("0"))
+    formula: iff8(fact39("alIs65"), { kind: "min", args: [{ kind: "max0", arg: fact39("alTaxableRetirement") }, money37("600000")] }, money37("0"))
   },
   {
     id: "us.al.overtime_premium_deduction",
@@ -69781,11 +69427,11 @@ var alRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-or.js
-var rd15 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var rd16 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
 var lt9 = (left, right) => ({ kind: "cmp", op: "lt", left, right });
-var iff8 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var mulInt6 = (base, count) => ({ kind: "mulInt", base, count });
-var sub13 = (left, right) => ({ kind: "sub", left, right });
+var iff9 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var mulInt7 = (base, count) => ({ kind: "mulInt", base, count });
+var sub14 = (left, right) => ({ kind: "sub", left, right });
 var isStatus15 = (v) => ({ kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: v } });
 var isColumnS = { kind: "or", args: [isStatus15("single"), isStatus15("mfs")] };
 var SCHED_S = [
@@ -69843,25 +69489,25 @@ var orRules = [
     },
     formula: (() => {
       const base = { kind: "max0", arg: fact39("stateTaxableIncome") };
-      const sched2 = (b) => iff8(isColumnS, printedSchedule(b, SCHED_S), printedSchedule(b, SCHED_J));
+      const sched2 = (b) => iff9(isColumnS, printedSchedule(b, SCHED_S), printedSchedule(b, SCHED_J));
       const mid = (width, offset) => ({
         kind: "add",
-        args: [mulInt6(money37(width), { kind: "stepUnits", value: base, unitCents: width, mode: "floor" }), money37(offset)]
+        args: [mulInt7(money37(width), { kind: "stepUnits", value: base, unitCents: width, mode: "floor" }), money37(offset)]
       });
-      const table2 = iff8(
+      const table2 = iff9(
         lt9(base, money37("2000")),
         sched2(money37("1000")),
         // [0,20) midpoint $10
-        iff8(
+        iff9(
           lt9(base, money37("5000")),
           sched2(money37("3500")),
           // [20,50) midpoint $35
-          iff8(lt9(base, money37("10000")), sched2(money37("7500")), sched2(mid("10000", "5000")))
+          iff9(lt9(base, money37("10000")), sched2(money37("7500")), sched2(mid("10000", "5000")))
         )
       );
-      const chart = (a50k, top, aTop) => iff8({ kind: "cmp", op: "le", left: base, right: money37(top) }, { kind: "add", args: [money37(a50k), { kind: "mulRate", base: sub13(base, money37("5000000")), rate: { num: "875", den: "10000" }, round: "half-up" }] }, { kind: "add", args: [money37(aTop), { kind: "mulRate", base: sub13(base, money37(top)), rate: { num: "99", den: "1000" }, round: "half-up" }] });
-      const charts = iff8(isColumnS, chart("406500", "12500000", "1062700"), chart("375600", "25000000", "2125600"));
-      return rd15(iff8(fact39("useFormulaMethod"), sched2(base), iff8(lt9(base, money37("5000000")), table2, charts)));
+      const chart = (a50k, top, aTop) => iff9({ kind: "cmp", op: "le", left: base, right: money37(top) }, { kind: "add", args: [money37(a50k), { kind: "mulRate", base: sub14(base, money37("5000000")), rate: { num: "875", den: "10000" }, round: "half-up" }] }, { kind: "add", args: [money37(aTop), { kind: "mulRate", base: sub14(base, money37(top)), rate: { num: "99", den: "1000" }, round: "half-up" }] });
+      const charts = iff9(isColumnS, chart("406500", "12500000", "1062700"), chart("375600", "25000000", "2125600"));
+      return rd16(iff9(fact39("useFormulaMethod"), sched2(base), iff9(lt9(base, money37("5000000")), table2, charts)));
     })()
   },
   {
@@ -69893,14 +69539,14 @@ var orRules = [
       const tier = (bounds, caps) => {
         let e = money37("0");
         for (let i = bounds.length - 1; i >= 0; i--) {
-          e = iff8(lt9(agi2, money37(bounds[i])), money37(caps[i]), e);
+          e = iff9(lt9(agi2, money37(bounds[i])), money37(caps[i]), e);
         }
         return e;
       };
       const capSingle = tier(["12500000", "13000000", "13500000", "14000000", "14500000"], ["850000", "680000", "510000", "340000", "170000"]);
       const capMfs = tier(["12500000", "13000000", "13500000", "14000000", "14500000"], ["425000", "340000", "255000", "170000", "85000"]);
       const capJoint = tier(["25000000", "26000000", "27000000", "28000000", "29000000"], ["850000", "680000", "510000", "340000", "170000"]);
-      const cap = iff8(isStatus15("mfs"), capMfs, iff8(isStatus15("single"), capSingle, capJoint));
+      const cap = iff9(isStatus15("mfs"), capMfs, iff9(isStatus15("single"), capSingle, capJoint));
       return { kind: "min", args: [{ kind: "max0", arg: fact39("orFederalTaxLiability") }, cap] };
     })()
   },
@@ -69932,7 +69578,7 @@ var orRules = [
       // $450
     },
     formula: (() => {
-      const basic = iff8({ kind: "or", args: [isStatus15("mfj"), isStatus15("qss")] }, money37("567000"), iff8(isStatus15("hoh"), money37("456000"), money37("283500")));
+      const basic = iff9({ kind: "or", args: [isStatus15("mfj"), isStatus15("qss")] }, money37("567000"), iff9(isStatus15("hoh"), money37("456000"), money37("283500")));
       const dependentLimited = {
         kind: "min",
         args: [
@@ -69943,10 +69589,10 @@ var orRules = [
           }
         ]
       };
-      const base = iff8(fact39("isClaimedAsDependent"), dependentLimited, basic);
-      const perBox = iff8({ kind: "or", args: [isStatus15("single"), isStatus15("hoh")] }, money37("120000"), money37("100000"));
-      const withBoxes = { kind: "add", args: [base, mulInt6(perBox, fact39("orStdBoxes"))] };
-      return iff8({ kind: "and", args: [isStatus15("mfs"), fact39("spouseItemizes")] }, money37("0"), withBoxes);
+      const base = iff9(fact39("isClaimedAsDependent"), dependentLimited, basic);
+      const perBox = iff9({ kind: "or", args: [isStatus15("single"), isStatus15("hoh")] }, money37("120000"), money37("100000"));
+      const withBoxes = { kind: "add", args: [base, mulInt7(perBox, fact39("orStdBoxes"))] };
+      return iff9({ kind: "and", args: [isStatus15("mfs"), fact39("spouseItemizes")] }, money37("0"), withBoxes);
     })()
   },
   {
@@ -69975,9 +69621,9 @@ var orRules = [
     },
     formula: (() => {
       const agi2 = fact39("orAgi");
-      const regularLimit = iff8(isColumnS, money37("10000000"), money37("20000000"));
-      const regular = iff8({ kind: "cmp", op: "le", left: agi2, right: regularLimit }, mulInt6(money37("25600"), fact39("orRegularExemptions")), money37("0"));
-      const disability = iff8({ kind: "cmp", op: "le", left: agi2, right: money37("10000000") }, mulInt6(money37("25600"), fact39("orDisabilityExemptions")), money37("0"));
+      const regularLimit = iff9(isColumnS, money37("10000000"), money37("20000000"));
+      const regular = iff9({ kind: "cmp", op: "le", left: agi2, right: regularLimit }, mulInt7(money37("25600"), fact39("orRegularExemptions")), money37("0"));
+      const disability = iff9({ kind: "cmp", op: "le", left: agi2, right: money37("10000000") }, mulInt7(money37("25600"), fact39("orDisabilityExemptions")), money37("0"));
       return { kind: "add", args: [regular, disability] };
     })()
   },
@@ -69999,7 +69645,7 @@ var orRules = [
       pctRegular: { value: "9", type: "int" },
       pctUnder3: { value: "12", type: "int" }
     },
-    formula: rd15(iff8(fact39("orYoungestUnder3"), { kind: "mulRate", base: { kind: "max0", arg: fact39("orFederalEic") }, rate: { num: "12", den: "100" }, round: "half-up" }, { kind: "mulRate", base: { kind: "max0", arg: fact39("orFederalEic") }, rate: { num: "9", den: "100" }, round: "half-up" }))
+    formula: rd16(iff9(fact39("orYoungestUnder3"), { kind: "mulRate", base: { kind: "max0", arg: fact39("orFederalEic") }, rate: { num: "12", den: "100" }, round: "half-up" }, { kind: "mulRate", base: { kind: "max0", arg: fact39("orFederalEic") }, rate: { num: "9", den: "100" }, round: "half-up" }))
   },
   {
     id: "us.or.kids_credit",
@@ -70026,12 +69672,12 @@ var orRules = [
     },
     formula: (() => {
       const qi = fact39("orKidsQualifyingIncome");
-      const base = iff8({ kind: "cmp", op: "gt", left: fact39("orKidsUnder6"), right: { kind: "int", value: "5" } }, mulInt6(money37("105000"), { kind: "int", value: "5" }), mulInt6(money37("105000"), fact39("orKidsUnder6")));
-      const excess2 = { kind: "max0", arg: sub13(qi, money37("2655000")) };
+      const base = iff9({ kind: "cmp", op: "gt", left: fact39("orKidsUnder6"), right: { kind: "int", value: "5" } }, mulInt7(money37("105000"), { kind: "int", value: "5" }), mulInt7(money37("105000"), fact39("orKidsUnder6")));
+      const excess2 = { kind: "max0", arg: sub14(qi, money37("2655000")) };
       const hundredths = { kind: "mulDiv", a: excess2, b: money37("100"), c: money37("500000"), round: "half-up" };
       const reduction = { kind: "mulDiv", a: base, b: hundredths, c: money37("100"), round: "half-up" };
-      const credit = { kind: "max0", arg: sub13(base, reduction) };
-      return iff8({ kind: "cmp", op: "ge", left: qi, right: money37("3155000") }, money37("0"), iff8(isStatus15("mfs"), money37("0"), rd15(credit)));
+      const credit = { kind: "max0", arg: sub14(base, reduction) };
+      return iff9({ kind: "cmp", op: "ge", left: qi, right: money37("3155000") }, money37("0"), iff9(isStatus15("mfs"), money37("0"), rd16(credit)));
     })()
   },
   {
@@ -70052,7 +69698,7 @@ var orRules = [
       kickerPctTimes1000: { value: "9863", type: "int" }
       // 9.863%
     },
-    formula: rd15({
+    formula: rd16({
       kind: "mulRate",
       base: { kind: "max0", arg: fact39("or2024TaxLiability") },
       rate: { num: "9863", den: "100000" },
@@ -70092,29 +69738,29 @@ var orRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ok.js
-var rd16 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt10 = (l, r) => cmp("lt", l, r);
-var le7 = (l, r) => cmp("le", l, r);
-var ge = (l, r) => cmp("ge", l, r);
-var gt = (l, r) => cmp("gt", l, r);
-var eq = (l, r) => cmp("eq", l, r);
-var iff9 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add10 = (...args) => ({ kind: "add", args });
-var sub14 = (left, right) => ({ kind: "sub", left, right });
+var rd17 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp2 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt10 = (l, r) => cmp2("lt", l, r);
+var le7 = (l, r) => cmp2("le", l, r);
+var ge = (l, r) => cmp2("ge", l, r);
+var gt = (l, r) => cmp2("gt", l, r);
+var eq = (l, r) => cmp2("eq", l, r);
+var iff10 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add11 = (...args) => ({ kind: "add", args });
+var sub15 = (left, right) => ({ kind: "sub", left, right });
 var min6 = (...args) => ({ kind: "min", args });
 var max = (...args) => ({ kind: "max", args });
-var max016 = (arg) => ({ kind: "max0", arg });
-var mulInt7 = (base, count) => ({ kind: "mulInt", base, count });
+var max017 = (arg) => ({ kind: "max0", arg });
+var mulInt8 = (base, count) => ({ kind: "mulInt", base, count });
 var int4 = (value) => ({ kind: "int", value });
 var isStatus16 = (v) => eq(fact39("filingStatus"), { kind: "enum", value: v });
 var isJointColumn = { kind: "or", args: [isStatus16("mfj"), isStatus16("hoh"), isStatus16("qss")] };
 var times = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var scaled = (cents) => times(money37(cents), "10000");
 var dollarsFromScaled = (n) => times({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
-var scaledSchedule = (base, rows) => add10(...rows.map((r, i) => {
-  const excess2 = sub14(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max016(excess2);
+var scaledSchedule = (base, rows) => add11(...rows.map((r, i) => {
+  const excess2 = sub15(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max017(excess2);
   return times(portion, r.rateNum);
 }));
 var SCHED_2025_S = [
@@ -70195,39 +69841,39 @@ var EIC_2020_MFJ = [
 var EIC_AGI_ROW_OTHER = ["880000", "1935000", "1935000", "1935000"];
 var EIC_AGI_ROW_MFJ = ["1470000", "2525000", "2525000", "2525000"];
 var eicTable = (x, p) => {
-  const lo = mulInt7(money37("5000"), { kind: "stepUnits", value: x, unitCents: "5000", mode: "floor" });
-  const mid = add10(lo, money37("2500"));
+  const lo = mulInt8(money37("5000"), { kind: "stepUnits", value: x, unitCents: "5000", mode: "floor" });
+  const mid = add11(lo, money37("2500"));
   const mxScaled = times(money37(p.eaCents), p.cpNum);
-  const phaseOut = (m) => dollarsFromScaled(max016(sub14(mxScaled, times(sub14(m, money37(p.psCents)), p.ppNum))));
-  return iff9(
+  const phaseOut = (m) => dollarsFromScaled(max017(sub15(mxScaled, times(sub15(m, money37(p.psCents)), p.ppNum))));
+  return iff10(
     lt10(x, money37("100")),
     // the table starts at "$1"
     money37("0"),
-    iff9(
+    iff10(
       ge(x, money37(p.ceCents)),
       // "$X or more ... you cannot claim the credit"
       money37("0"),
-      iff9(
+      iff10(
         eq(lo, money37(p.ceRowLo)),
         // footnoted partial band [row start, completed amount)
         phaseOut(money37(p.cePartialMidCents)),
-        iff9(
+        iff10(
           { kind: "or", args: [eq(lo, money37(p.eaRowLo)), eq(lo, money37(p.psRowLo))] },
           // kink rows print the maximum
           dollarsFromScaled(mxScaled),
-          iff9(
+          iff10(
             le7(mid, money37(p.eaCents)),
             dollarsFromScaled(times(mid, p.cpNum)),
             // phase-in
-            iff9(le7(mid, money37(p.psCents)), dollarsFromScaled(mxScaled), phaseOut(mid))
+            iff10(le7(mid, money37(p.psCents)), dollarsFromScaled(mxScaled), phaseOut(mid))
           )
         )
       )
     )
   );
 };
-var proratedChildCredit = (amount) => iff9({ kind: "or", args: [le7(fact39("okFederalAgi"), money37("0")), ge(fact39("okAgi"), fact39("okFederalAgi"))] }, amount, iff9(le7(fact39("okAgi"), money37("0")), money37("0"), { kind: "mulDiv", a: amount, b: fact39("okAgi"), c: fact39("okFederalAgi"), round: "half-up" }));
-var proratedEic = (amount) => iff9(ge(fact39("okAgi"), fact39("okFederalAgi")), amount, iff9(le7(fact39("okAgi"), money37("0")), money37("0"), { kind: "mulDiv", a: amount, b: fact39("okAgi"), c: fact39("okFederalAgi"), round: "half-up" }));
+var proratedChildCredit = (amount) => iff10({ kind: "or", args: [le7(fact39("okFederalAgi"), money37("0")), ge(fact39("okAgi"), fact39("okFederalAgi"))] }, amount, iff10(le7(fact39("okAgi"), money37("0")), money37("0"), { kind: "mulDiv", a: amount, b: fact39("okAgi"), c: fact39("okFederalAgi"), round: "half-up" }));
+var proratedEic = (amount) => iff10(ge(fact39("okAgi"), fact39("okFederalAgi")), amount, iff10(le7(fact39("okAgi"), money37("0")), money37("0"), { kind: "mulDiv", a: amount, b: fact39("okAgi"), c: fact39("okFederalAgi"), round: "half-up" }));
 var taxRuleCommon = {
   id: "us.ok.income_tax",
   jurisdiction: "us.ok",
@@ -70268,12 +69914,12 @@ var okRules = [
       topRateBps: { value: "475", type: "int" }
     },
     formula: (() => {
-      const base = max016(fact39("stateTaxableIncome"));
-      const sched2 = (b) => iff9(isJointColumn, dollarsFromScaled(scaledSchedule(b, SCHED_2025_J)), dollarsFromScaled(scaledSchedule(b, SCHED_2025_S)));
-      const mid = add10(mulInt7(money37("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money37("2500"));
-      const excess475 = times(sub14(base, money37("10000000")), "475");
-      const worksheet = iff9(isJointColumn, dollarsFromScaled(add10(scaled("437300"), excess475)), dollarsFromScaled(add10(scaled("456200"), excess475)));
-      return iff9(fact39("useFormulaMethod"), sched2(base), iff9(lt10(base, money37("10000000")), sched2(mid), worksheet));
+      const base = max017(fact39("stateTaxableIncome"));
+      const sched2 = (b) => iff10(isJointColumn, dollarsFromScaled(scaledSchedule(b, SCHED_2025_J)), dollarsFromScaled(scaledSchedule(b, SCHED_2025_S)));
+      const mid = add11(mulInt8(money37("5000"), { kind: "stepUnits", value: base, unitCents: "5000", mode: "floor" }), money37("2500"));
+      const excess475 = times(sub15(base, money37("10000000")), "475");
+      const worksheet = iff10(isJointColumn, dollarsFromScaled(add11(scaled("437300"), excess475)), dollarsFromScaled(add11(scaled("456200"), excess475)));
+      return iff10(fact39("useFormulaMethod"), sched2(base), iff10(lt10(base, money37("10000000")), sched2(mid), worksheet));
     })()
   },
   {
@@ -70306,8 +69952,8 @@ var okRules = [
       // 0.25 point per certification, earliest 1/1/2028
     },
     formula: (() => {
-      const base = max016(fact39("stateTaxableIncome"));
-      return iff9(isJointColumn, dollarsFromScaled(scaledSchedule(base, SCHED_2026_J)), dollarsFromScaled(scaledSchedule(base, SCHED_2026_S)));
+      const base = max017(fact39("stateTaxableIncome"));
+      return iff10(isJointColumn, dollarsFromScaled(scaledSchedule(base, SCHED_2026_J)), dollarsFromScaled(scaledSchedule(base, SCHED_2026_S)));
     })()
   },
   {
@@ -70329,7 +69975,7 @@ var okRules = [
       mfjQss: { value: "1270000", type: "money" },
       hoh: { value: "935000", type: "money" }
     },
-    formula: iff9({ kind: "or", args: [isStatus16("mfj"), isStatus16("qss")] }, money37("1270000"), iff9(isStatus16("hoh"), money37("935000"), money37("635000")))
+    formula: iff10({ kind: "or", args: [isStatus16("mfj"), isStatus16("qss")] }, money37("1270000"), iff10(isStatus16("hoh"), money37("935000"), money37("635000")))
   },
   {
     id: "us.ok.itemized_deductions",
@@ -70348,10 +69994,10 @@ var okRules = [
     parameters: { cap: { value: "1700000", type: "money" } },
     // $17,000
     formula: (() => {
-      const line32 = max016(sub14(fact39("okFederalItemizedTotal"), fact39("okFederalSaltDeducted")));
-      const medChar = add10(fact39("okFederalMedical"), fact39("okFederalCharity"));
-      const line6 = max016(sub14(line32, medChar));
-      return rd16(iff9(gt(line6, money37("1700000")), add10(money37("1700000"), medChar), line32));
+      const line32 = max017(sub15(fact39("okFederalItemizedTotal"), fact39("okFederalSaltDeducted")));
+      const medChar = add11(fact39("okFederalMedical"), fact39("okFederalCharity"));
+      const line6 = max017(sub15(line32, medChar));
+      return rd17(iff10(gt(line6, money37("1700000")), add11(money37("1700000"), medChar), line32));
     })()
   },
   {
@@ -70377,10 +70023,10 @@ var okRules = [
       specialLimitHoh: { value: "1900000", type: "money" }
     },
     formula: (() => {
-      const testAgi = sub14(fact39("okFederalAgi"), fact39("okRothConversionIncome"));
-      const limit = iff9(isStatus16("mfj"), money37("2500000"), iff9(isStatus16("mfs"), money37("1250000"), iff9(isStatus16("single"), money37("1500000"), money37("1900000"))));
-      const special = iff9(isStatus16("qss"), money37("0"), iff9(le7(testAgi, limit), mulInt7(money37("100000"), fact39("okSpecialExemptions65")), money37("0")));
-      return add10(mulInt7(money37("100000"), fact39("okBasicExemptions")), special);
+      const testAgi = sub15(fact39("okFederalAgi"), fact39("okRothConversionIncome"));
+      const limit = iff10(isStatus16("mfj"), money37("2500000"), iff10(isStatus16("mfs"), money37("1250000"), iff10(isStatus16("single"), money37("1500000"), money37("1900000"))));
+      const special = iff10(isStatus16("qss"), money37("0"), iff10(le7(testAgi, limit), mulInt8(money37("100000"), fact39("okSpecialExemptions65")), money37("0")));
+      return add11(mulInt8(money37("100000"), fact39("okBasicExemptions")), special);
     })()
   },
   {
@@ -70399,7 +70045,7 @@ var okRules = [
     output: { type: "money" },
     parameters: { perPersonCap: { value: "1000000", type: "money" } },
     // $10,000
-    formula: rd16(add10(min6(add10(max016(fact39("okGovRetirementYou")), max016(fact39("okOtherRetirementYou"))), money37("1000000")), min6(add10(max016(fact39("okGovRetirementSpouse")), max016(fact39("okOtherRetirementSpouse"))), money37("1000000"))))
+    formula: rd17(add11(min6(add11(max017(fact39("okGovRetirementYou")), max017(fact39("okOtherRetirementYou"))), money37("1000000")), min6(add11(max017(fact39("okGovRetirementSpouse")), max017(fact39("okOtherRetirementSpouse"))), money37("1000000"))))
   },
   {
     id: "us.ok.child_care_child_tax_credit",
@@ -70422,9 +70068,9 @@ var okRules = [
       // $100,000
     },
     formula: (() => {
-      const line2 = rd16({ kind: "mulRate", base: max016(fact39("okFederalChildCareCredit")), rate: { num: "20", den: "100" }, round: "half-up" });
-      const line4 = rd16({ kind: "mulRate", base: max016(fact39("okFederalChildTaxCredit")), rate: { num: "5", den: "100" }, round: "half-up" });
-      return iff9(gt(fact39("okFederalAgi"), money37("10000000")), money37("0"), rd16(proratedChildCredit(max(line2, line4))));
+      const line2 = rd17({ kind: "mulRate", base: max017(fact39("okFederalChildCareCredit")), rate: { num: "20", den: "100" }, round: "half-up" });
+      const line4 = rd17({ kind: "mulRate", base: max017(fact39("okFederalChildTaxCredit")), rate: { num: "5", den: "100" }, round: "half-up" });
+      return iff10(gt(fact39("okFederalAgi"), money37("10000000")), money37("0"), rd17(proratedChildCredit(max(line2, line4))));
     })()
   },
   {
@@ -70461,13 +70107,13 @@ var okRules = [
       const forKids = (k, mfj) => {
         const p = (mfj ? EIC_2020_MFJ : EIC_2020_OTHER)[k];
         const agiRow = (mfj ? EIC_AGI_ROW_MFJ : EIC_AGI_ROW_OTHER)[k];
-        return iff9(ge(agi2, money37(agiRow)), min6(eicTable(ei, p), eicTable(max016(agi2), p)), eicTable(ei, p));
+        return iff10(ge(agi2, money37(agiRow)), min6(eicTable(ei, p), eicTable(max017(agi2), p)), eicTable(ei, p));
       };
-      const byKids = (mfj) => {
+      const byKids2 = (mfj) => {
         const k = fact39("okEicQualifyingChildren");
-        return iff9(le7(k, int4("0")), forKids(0, mfj), iff9(eq(k, int4("1")), forKids(1, mfj), iff9(eq(k, int4("2")), forKids(2, mfj), forKids(3, mfj))));
+        return iff10(le7(k, int4("0")), forKids(0, mfj), iff10(eq(k, int4("1")), forKids(1, mfj), iff10(eq(k, int4("2")), forKids(2, mfj), forKids(3, mfj))));
       };
-      return iff9({ kind: "not", arg: fact39("okEicEligible") }, money37("0"), iff9(isStatus16("mfs"), money37("0"), iff9(isStatus16("mfj"), byKids(true), byKids(false))));
+      return iff10({ kind: "not", arg: fact39("okEicEligible") }, money37("0"), iff10(isStatus16("mfs"), money37("0"), iff10(isStatus16("mfj"), byKids2(true), byKids2(false))));
     })()
   },
   {
@@ -70485,7 +70131,7 @@ var okRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "5", type: "int" } },
-    formula: rd16(proratedEic(rd16({ kind: "mulRate", base: max016(fact39("okEic2020Amount")), rate: { num: "5", den: "100" }, round: "half-up" })))
+    formula: rd17(proratedEic(rd17({ kind: "mulRate", base: max017(fact39("okEic2020Amount")), rate: { num: "5", den: "100" }, round: "half-up" })))
   },
   {
     id: "us.ok.sales_tax_relief_credit",
@@ -70513,7 +70159,7 @@ var okRules = [
       const ghi = fact39("okGrossHouseholdIncome");
       const expanded = { kind: "or", args: [fact39("okStrHasDependent"), fact39("okStrIs65"), fact39("okStrDisabled")] };
       const withinLimit = { kind: "or", args: [le7(ghi, money37("2000000")), { kind: "and", args: [expanded, le7(ghi, money37("5000000"))] }] };
-      return iff9({ kind: "and", args: [fact39("okStrEligible"), withinLimit] }, mulInt7(money37("4000"), fact39("okStrExemptions")), money37("0"));
+      return iff10({ kind: "and", args: [fact39("okStrEligible"), withinLimit] }, mulInt8(money37("4000"), fact39("okStrExemptions")), money37("0"));
     })()
   },
   {
@@ -70540,9 +70186,9 @@ var okRules = [
     },
     formula: (() => {
       const ghi = fact39("okGrossHouseholdIncome");
-      const floor = rd16({ kind: "mulRate", base: max016(ghi), rate: { num: "1", den: "100" }, round: "half-up" });
-      const credit = min6(max016(sub14(rd16(fact39("okPropertyTaxPaid")), floor)), money37("20000"));
-      return iff9({ kind: "and", args: [fact39("okPtrEligible"), le7(ghi, money37("1200000"))] }, credit, money37("0"));
+      const floor = rd17({ kind: "mulRate", base: max017(ghi), rate: { num: "1", den: "100" }, round: "half-up" });
+      const credit = min6(max017(sub15(rd17(fact39("okPropertyTaxPaid")), floor)), money37("20000"));
+      return iff10({ kind: "and", args: [fact39("okPtrEligible"), le7(ghi, money37("1200000"))] }, credit, money37("0"));
     })()
   },
   {
@@ -70566,7 +70212,7 @@ var okRules = [
       // $54,670
     },
     formula: (() => {
-      const agi2 = max016(fact39("okFederalAgi"));
+      const agi2 = max017(fact39("okFederalAgi"));
       const bands2 = [
         ["209000", "100"],
         ["467000", "200"],
@@ -70599,10 +70245,10 @@ var okRules = [
         ["5279500", "2900"],
         ["5467000", "3000"]
       ];
-      let expr = rd16({ kind: "mulRate", base: agi2, rate: { num: "56", den: "100000" }, round: "half-up" });
+      let expr = rd17({ kind: "mulRate", base: agi2, rate: { num: "56", den: "100000" }, round: "half-up" });
       for (let i = bands2.length - 1; i >= 0; i--)
-        expr = iff9(lt10(agi2, money37(bands2[i][0])), money37(bands2[i][1]), expr);
-      return iff9(lt10(fact39("okFederalAgi"), money37("0")), money37("0"), expr);
+        expr = iff10(lt10(agi2, money37(bands2[i][0])), money37(bands2[i][1]), expr);
+      return iff10(lt10(fact39("okFederalAgi"), money37("0")), money37("0"), expr);
     })()
   },
   {
@@ -70648,38 +70294,38 @@ var okRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ct.js
-var rd17 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp2 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt11 = (l, r) => cmp2("lt", l, r);
-var le8 = (l, r) => cmp2("le", l, r);
-var ge2 = (l, r) => cmp2("ge", l, r);
-var gt2 = (l, r) => cmp2("gt", l, r);
-var iff10 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add11 = (...args) => ({ kind: "add", args });
-var sub15 = (left, right) => ({ kind: "sub", left, right });
+var rd18 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp3 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt11 = (l, r) => cmp3("lt", l, r);
+var le8 = (l, r) => cmp3("le", l, r);
+var ge2 = (l, r) => cmp3("ge", l, r);
+var gt2 = (l, r) => cmp3("gt", l, r);
+var iff11 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add12 = (...args) => ({ kind: "add", args });
+var sub16 = (left, right) => ({ kind: "sub", left, right });
 var min7 = (...args) => ({ kind: "min", args });
-var max017 = (arg) => ({ kind: "max0", arg });
-var mulInt8 = (base, count) => ({ kind: "mulInt", base, count });
+var max018 = (arg) => ({ kind: "max0", arg });
+var mulInt9 = (base, count) => ({ kind: "mulInt", base, count });
 var int5 = (value) => ({ kind: "int", value });
-var isStatus17 = (v) => cmp2("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isStatus17 = (v) => cmp3("eq", fact39("filingStatus"), { kind: "enum", value: v });
 var stepsOver = (agi2, startCents, unitCents, maxUnits) => {
-  const units = { kind: "stepUnits", value: max017(sub15(agi2, money37(startCents))), unitCents, mode: "ceil" };
-  return iff10(gt2(units, int5(maxUnits)), int5(maxUnits), units);
+  const units = { kind: "stepUnits", value: max018(sub16(agi2, money37(startCents))), unitCents, mode: "ceil" };
+  return iff11(gt2(units, int5(maxUnits)), int5(maxUnits), units);
 };
 var times2 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled2 = (n, denCents) => times2({ kind: "mulDiv", a: n, b: money37("1"), c: money37(denCents), round: "half-up" }, "100");
-var scaledSchedule2 = (base, rows) => add11(...rows.map((r, i) => {
-  const excess2 = sub15(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max017(excess2);
+var scaledSchedule2 = (base, rows) => add12(...rows.map((r, i) => {
+  const excess2 = sub16(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max018(excess2);
   return times2(portion, r.rateNum);
 }));
 var bands = (agi2, rows, beyond, wrap) => {
   let expr = beyond;
   for (let i = rows.length - 1; i >= 0; i--)
-    expr = iff10(le8(agi2, money37(rows[i][0])), wrap(rows[i][1]), expr);
+    expr = iff11(le8(agi2, money37(rows[i][0])), wrap(rows[i][1]), expr);
   return expr;
 };
-var statusOf = (single, mfj, mfs, hoh) => iff10({ kind: "or", args: [isStatus17("mfj"), isStatus17("qss")] }, mfj, iff10(isStatus17("mfs"), mfs, iff10(isStatus17("hoh"), hoh, single)));
+var statusOf = (single, mfj, mfs, hoh) => iff11({ kind: "or", args: [isStatus17("mfj"), isStatus17("qss")] }, mfj, iff11(isStatus17("mfs"), mfs, iff11(isStatus17("hoh"), hoh, single)));
 var EXEMPTION3 = {
   single: { amount: "1500000", phaseStart: "3000000" },
   // $15,000, reduced $1,000 per $1,000 over $30,000
@@ -70690,7 +70336,7 @@ var EXEMPTION3 = {
   hoh: { amount: "1900000", phaseStart: "3800000" }
   // $19,000 over $38,000
 };
-var exemptionFor = (agi2, s) => max017(sub15(money37(EXEMPTION3[s].amount), mulInt8(money37("100000"), stepsOver(agi2, EXEMPTION3[s].phaseStart, "100000", String(BigInt(EXEMPTION3[s].amount) / 100000n)))));
+var exemptionFor = (agi2, s) => max018(sub16(money37(EXEMPTION3[s].amount), mulInt9(money37("100000"), stepsOver(agi2, EXEMPTION3[s].phaseStart, "100000", String(BigInt(EXEMPTION3[s].amount) / 100000n)))));
 var exemption2 = (agi2) => statusOf(exemptionFor(agi2, "single"), exemptionFor(agi2, "mfj"), exemptionFor(agi2, "mfs"), exemptionFor(agi2, "hoh"));
 var SCHED = {
   single: [
@@ -70740,7 +70386,7 @@ var ADDBACK = {
   hoh: { startCents: "7850000", unitCents: "400000", perStepCents: "4000" }
   // $40 per $4,000 over $78,500, max $400
 };
-var addbackFor = (agi2, s) => mulInt8(money37(ADDBACK[s].perStepCents), stepsOver(agi2, ADDBACK[s].startCents, ADDBACK[s].unitCents, "10"));
+var addbackFor = (agi2, s) => mulInt9(money37(ADDBACK[s].perStepCents), stepsOver(agi2, ADDBACK[s].startCents, ADDBACK[s].unitCents, "10"));
 var RECAPTURE = {
   single: [
     { startCents: "10500000", unitCents: "500000", perStepCents: "2500", maxUnits: "10" },
@@ -70772,7 +70418,7 @@ var RECAPTURE = {
     // $80 per $8,000 over $800,000, max $720
   ]
 };
-var recaptureFor = (agi2, s) => add11(...RECAPTURE[s].map((p) => mulInt8(money37(p.perStepCents), stepsOver(agi2, p.startCents, p.unitCents, p.maxUnits))));
+var recaptureFor = (agi2, s) => add12(...RECAPTURE[s].map((p) => mulInt9(money37(p.perStepCents), stepsOver(agi2, p.startCents, p.unitCents, p.maxUnits))));
 var CREDIT_PCT = {
   single: [
     ["1880000", "75"],
@@ -70893,19 +70539,19 @@ var CREDIT_PCT = {
 };
 var creditPctFor = (agi2, s) => bands(agi2, CREDIT_PCT[s], int5("0"), (v) => int5(v));
 var tcsFor = (agi2, s, method) => {
-  const taxable2 = max017(sub15(agi2, exemptionFor(agi2, s)));
+  const taxable2 = max018(sub16(agi2, exemptionFor(agi2, s)));
   const scaledTax = scaledSchedule2(taxable2, SCHED[s]);
-  const cAndD = add11(addbackFor(agi2, s), recaptureFor(agi2, s));
+  const cAndD = add12(addbackFor(agi2, s), recaptureFor(agi2, s));
   const pct16 = creditPctFor(agi2, s);
   if (method === "schedule") {
     const line4 = dollarsFromScaled2(scaledTax, "1000000");
-    const line72 = add11(line4, cAndD);
-    const line92 = rd17({ kind: "mulDiv", a: line72, b: mulInt8(money37("1"), pct16), c: money37("100"), round: "half-up" });
-    return sub15(line72, line92);
+    const line72 = add12(line4, cAndD);
+    const line92 = rd18({ kind: "mulDiv", a: line72, b: mulInt9(money37("1"), pct16), c: money37("100"), round: "half-up" });
+    return sub16(line72, line92);
   }
-  const totalScaled = add11(scaledTax, times2(cAndD, "10000"));
-  const keep = sub15(int5("100"), pct16);
-  const scaledAfterCredit = mulInt8(totalScaled, keep);
+  const totalScaled = add12(scaledTax, times2(cAndD, "10000"));
+  const keep = sub16(int5("100"), pct16);
+  const scaledAfterCredit = mulInt9(totalScaled, keep);
   return dollarsFromScaled2(scaledAfterCredit, "100000000");
 };
 var tcs = (agi2, method) => statusOf(tcsFor(agi2, "single", method), tcsFor(agi2, "mfj", method), tcsFor(agi2, "mfs", method), tcsFor(agi2, "hoh", method));
@@ -70955,10 +70601,10 @@ var pensionRule = (version2, iraPct, from, to, iraText) => ({
   },
   formula: (() => {
     const fagi = fact39("ctFederalAgi");
-    const line2 = add11(max017(fact39("ctPensionAnnuityIncome")), { kind: "mulRate", base: max017(fact39("ctIraDistributions")), rate: { num: iraPct, den: "100" }, round: "half-up" });
+    const line2 = add12(max018(fact39("ctPensionAnnuityIncome")), { kind: "mulRate", base: max018(fact39("ctIraDistributions")), rate: { num: iraPct, den: "100" }, round: "half-up" });
     const perMille = (rows) => bands(fagi, rows, int5("0"), (v) => int5(v));
-    const pm = iff10({ kind: "or", args: [isStatus17("mfj"), isStatus17("qss")] }, perMille(PENSION_PHASEOUT_MFJ), perMille(PENSION_PHASEOUT_OTHER));
-    return rd17({ kind: "mulDiv", a: line2, b: mulInt8(money37("1"), pm), c: money37("1000"), round: "half-up" });
+    const pm = iff11({ kind: "or", args: [isStatus17("mfj"), isStatus17("qss")] }, perMille(PENSION_PHASEOUT_MFJ), perMille(PENSION_PHASEOUT_OTHER));
+    return rd18({ kind: "mulDiv", a: line2, b: mulInt9(money37("1"), pm), c: money37("1000"), round: "half-up" });
   })()
 });
 var ctRules = [
@@ -71021,9 +70667,9 @@ var ctRules = [
     },
     formula: (() => {
       const agi2 = fact39("ctAgi");
-      const mid = max017(sub15(mulInt8(money37("5000"), { kind: "stepUnits", value: max017(agi2), unitCents: "5000", mode: "ceil" }), money37("2500")));
-      const tableMethod = iff10(le8(agi2, money37("10200000")), tcs(mid, "table"), tcs(agi2, "schedule"));
-      return max017(iff10(fact39("ctUseTaxTable"), tableMethod, tcs(agi2, "schedule")));
+      const mid = max018(sub16(mulInt9(money37("5000"), { kind: "stepUnits", value: max018(agi2), unitCents: "5000", mode: "ceil" }), money37("2500")));
+      const tableMethod = iff11(le8(agi2, money37("10200000")), tcs(mid, "table"), tcs(agi2, "schedule"));
+      return max018(iff11(fact39("ctUseTaxTable"), tableMethod, tcs(agi2, "schedule")));
     })()
   },
   {
@@ -71053,10 +70699,10 @@ var ctRules = [
       const agi2 = fact39("ctAgi");
       const steps = (start, unit) => stepsOver(agi2, start, unit, "7");
       const stepCount = statusOf(steps("4950000", "1000000"), steps("7050000", "1000000"), steps("3525000", "500000"), steps("5450000", "1000000"));
-      const line65 = min7(rd17(max017(fact39("ctPropertyTaxPaid"))), money37("30000"));
-      const decimalPct = min7(mulInt8(money37("15"), stepCount), money37("100"));
-      const line67 = rd17({ kind: "mulDiv", a: line65, b: decimalPct, c: money37("100"), round: "half-up" });
-      return sub15(line65, line67);
+      const line65 = min7(rd18(max018(fact39("ctPropertyTaxPaid"))), money37("30000"));
+      const decimalPct = min7(mulInt9(money37("15"), stepCount), money37("100"));
+      const line67 = rd18({ kind: "mulDiv", a: line65, b: decimalPct, c: money37("100"), round: "half-up" });
+      return sub16(line65, line67);
     })()
   },
   {
@@ -71080,18 +70726,18 @@ var ctRules = [
       investmentIncomeLimit2025: { value: "1195000", type: "money" }
     },
     formula: (() => {
-      const line10 = rd17({ kind: "mulRate", base: max017(fact39("ctFederalEic")), rate: { num: "40", den: "100" }, round: "half-up" });
+      const line10 = rd18({ kind: "mulRate", base: max018(fact39("ctFederalEic")), rate: { num: "40", den: "100" }, round: "half-up" });
       const sep = fact39("ctEitcSeparateFagi");
       const joint = fact39("ctEitcJointFagi");
-      const ratio43 = iff10(ge2(sep, joint), int5("10000"), {
+      const ratio43 = iff11(ge2(sep, joint), int5("10000"), {
         kind: "stepUnits",
-        value: { kind: "mulDiv", a: max017(sep), b: money37("10000"), c: joint, round: "half-up" },
+        value: { kind: "mulDiv", a: max018(sep), b: money37("10000"), c: joint, round: "half-up" },
         unitCents: "1",
         mode: "floor"
       });
-      const line152 = rd17({ kind: "mulDiv", a: line10, b: mulInt8(money37("1"), ratio43), c: money37("10000"), round: "floor" });
-      const base = iff10(gt2(joint, money37("0")), line152, line10);
-      return add11(base, iff10(fact39("ctEitcQualifyingChild"), money37("25000"), money37("0")));
+      const line152 = rd18({ kind: "mulDiv", a: line10, b: mulInt9(money37("1"), ratio43), c: money37("10000"), round: "floor" });
+      const base = iff11(gt2(joint, money37("0")), line152, line10);
+      return add12(base, iff11(fact39("ctEitcQualifyingChild"), money37("25000"), money37("0")));
     })()
   },
   {
@@ -71115,13 +70761,13 @@ var ctRules = [
     },
     formula: (() => {
       const fagi = fact39("ctFederalAgi");
-      const taxable2 = max017(fact39("ctTaxableSs"));
-      const threshold3 = iff10({ kind: "or", args: [isStatus17("single"), isStatus17("mfs")] }, money37("7500000"), money37("10000000"));
+      const taxable2 = max018(fact39("ctTaxableSs"));
+      const threshold3 = iff11({ kind: "or", args: [isStatus17("single"), isStatus17("mfs")] }, money37("7500000"), money37("10000000"));
       const a = fact39("ctSsTotalBenefits");
       const b = fact39("ctSsProvisionalExcess");
-      const d3 = rd17({ kind: "mulRate", base: min7(a, b), rate: { num: "25", den: "100" }, round: "half-up" });
-      const worksheet = iff10({ kind: "or", args: [le8(a, money37("0")), le8(b, money37("0"))] }, money37("0"), max017(sub15(taxable2, d3)));
-      return iff10(lt11(fagi, threshold3), taxable2, worksheet);
+      const d3 = rd18({ kind: "mulRate", base: min7(a, b), rate: { num: "25", den: "100" }, round: "half-up" });
+      const worksheet = iff11({ kind: "or", args: [le8(a, money37("0")), le8(b, money37("0"))] }, money37("0"), max018(sub16(taxable2, d3)));
+      return iff11(lt11(fagi, threshold3), taxable2, worksheet);
     })()
   },
   pensionRule(1, "75", "2025-01-01", "2026-01-01", "\xA7 12-701(a)(20)(B)(xxviii) (verbatim): '(II) for the taxable year commencing January 1, 2025, seventy-five per cent of any distribution from an individual retirement account other than a Roth individual retirement account, and (III) for the taxable year commencing January 1, 2026, and each taxable year thereafter, any distribution from an individual retirement account other than a Roth individual retirement account.' Pensions and annuities: \xA7 12-701(a)(20)(B)(xxi)-(xxii) 'any pension or annuity income for the taxable year commencing on or after January 1, 2024, and each taxable year thereafter, in accordance with the following schedule' (the same phase-out schedule)."),
@@ -71166,23 +70812,23 @@ var ctRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ks.js
-var rd18 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp3 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt12 = (l, r) => cmp3("lt", l, r);
-var le9 = (l, r) => cmp3("le", l, r);
-var iff11 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add12 = (...args) => ({ kind: "add", args });
-var sub16 = (left, right) => ({ kind: "sub", left, right });
-var max018 = (arg) => ({ kind: "max0", arg });
-var mulInt9 = (base, count) => ({ kind: "mulInt", base, count });
-var isStatus18 = (v) => cmp3("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var rd19 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp4 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt12 = (l, r) => cmp4("lt", l, r);
+var le9 = (l, r) => cmp4("le", l, r);
+var iff12 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add13 = (...args) => ({ kind: "add", args });
+var sub17 = (left, right) => ({ kind: "sub", left, right });
+var max019 = (arg) => ({ kind: "max0", arg });
+var mulInt10 = (base, count) => ({ kind: "mulInt", base, count });
+var isStatus18 = (v) => cmp4("eq", fact39("filingStatus"), { kind: "enum", value: v });
 var isMfj = isStatus18("mfj");
 var isKsHoh = { kind: "or", args: [isStatus18("hoh"), isStatus18("qss")] };
 var times3 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled3 = (n, denCents) => times3({ kind: "mulDiv", a: n, b: money37("1"), c: money37(denCents), round: "half-up" }, "100");
-var scaledSchedule3 = (base, rows) => add12(...rows.map((r, i) => {
-  const excess2 = sub16(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max018(excess2);
+var scaledSchedule3 = (base, rows) => add13(...rows.map((r, i) => {
+  const excess2 = sub17(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max019(excess2);
   return times3(portion, r.rateNum);
 }));
 var SCHED_MFJ2 = [
@@ -71230,13 +70876,13 @@ var ksRules = [
       // $26
     },
     formula: (() => {
-      const base = max018(fact39("stateTaxableIncome"));
-      const sched2 = (b) => iff11(isMfj, dollarsFromScaled3(scaledSchedule3(b, SCHED_MFJ2), "1000000"), dollarsFromScaled3(scaledSchedule3(b, SCHED_OTHER), "1000000"));
-      const units = { kind: "stepUnits", value: sub16(base, money37("100")), unitCents: "5000", mode: "floor" };
-      const mid = add12(mulInt9(money37("5000"), units), money37("2550"));
-      const table2 = iff11(lt12(base, money37("2600")), sched2(base), iff11(le9(base, money37("5000")), sched2(money37("3800")), sched2(mid)));
-      const worksheet = iff11(isMfj, dollarsFromScaled3(sub16(times3(base, "558"), times3(money37("17500"), "10000")), "1000000"), dollarsFromScaled3(sub16(times3(base, "558"), times3(money37("8700"), "10000")), "1000000"));
-      return iff11(fact39("useFormulaMethod"), sched2(base), iff11(le9(base, money37("10000000")), table2, worksheet));
+      const base = max019(fact39("stateTaxableIncome"));
+      const sched2 = (b) => iff12(isMfj, dollarsFromScaled3(scaledSchedule3(b, SCHED_MFJ2), "1000000"), dollarsFromScaled3(scaledSchedule3(b, SCHED_OTHER), "1000000"));
+      const units = { kind: "stepUnits", value: sub17(base, money37("100")), unitCents: "5000", mode: "floor" };
+      const mid = add13(mulInt10(money37("5000"), units), money37("2550"));
+      const table2 = iff12(lt12(base, money37("2600")), sched2(base), iff12(le9(base, money37("5000")), sched2(money37("3800")), sched2(mid)));
+      const worksheet = iff12(isMfj, dollarsFromScaled3(sub17(times3(base, "558"), times3(money37("17500"), "10000")), "1000000"), dollarsFromScaled3(sub17(times3(base, "558"), times3(money37("8700"), "10000")), "1000000"));
+      return iff12(fact39("useFormulaMethod"), sched2(base), iff12(le9(base, money37("10000000")), table2, worksheet));
     })()
   },
   {
@@ -71262,10 +70908,10 @@ var ksRules = [
       perBoxMfjMfs: { value: "70000", type: "money" }
     },
     formula: (() => {
-      const base = iff11(isMfj, money37("824000"), iff11(isKsHoh, money37("618000"), iff11(isStatus18("mfs"), money37("412000"), money37("360500"))));
-      const perBox = iff11({ kind: "or", args: [isMfj, isStatus18("mfs")] }, money37("70000"), money37("85000"));
-      const boxes = iff11({ kind: "and", args: [{ kind: "not", arg: { kind: "or", args: [isMfj, isStatus18("mfs")] } }, cmp3("gt", fact39("ksStdBoxes"), { kind: "int", value: "2" })] }, { kind: "int", value: "2" }, fact39("ksStdBoxes"));
-      return add12(base, mulInt9(perBox, boxes));
+      const base = iff12(isMfj, money37("824000"), iff12(isKsHoh, money37("618000"), iff12(isStatus18("mfs"), money37("412000"), money37("360500"))));
+      const perBox = iff12({ kind: "or", args: [isMfj, isStatus18("mfs")] }, money37("70000"), money37("85000"));
+      const boxes = iff12({ kind: "and", args: [{ kind: "not", arg: { kind: "or", args: [isMfj, isStatus18("mfs")] } }, cmp4("gt", fact39("ksStdBoxes"), { kind: "int", value: "2" })] }, { kind: "int", value: "2" }, fact39("ksStdBoxes"));
+      return add13(base, mulInt10(perBox, boxes));
     })()
   },
   {
@@ -71289,11 +70935,11 @@ var ksRules = [
       // $2,320
     },
     formula: (() => {
-      const personal = iff11(isMfj, money37("1832000"), money37("916000"));
-      const hohExtra = iff11(isKsHoh, money37("232000"), money37("0"));
-      const dependents = iff11(fact39("isClaimedAsDependent"), money37("0"), mulInt9(money37("232000"), fact39("ksDependents")));
-      const bornThisYear = iff11(fact39("isClaimedAsDependent"), money37("0"), mulInt9(money37("232000"), fact39("ksChildrenBornThisYear")));
-      return add12(personal, hohExtra, dependents, bornThisYear, mulInt9(money37("232000"), fact39("ksStillbirths")), mulInt9(money37("232000"), fact39("ksDisabledVeterans")));
+      const personal = iff12(isMfj, money37("1832000"), money37("916000"));
+      const hohExtra = iff12(isKsHoh, money37("232000"), money37("0"));
+      const dependents = iff12(fact39("isClaimedAsDependent"), money37("0"), mulInt10(money37("232000"), fact39("ksDependents")));
+      const bornThisYear = iff12(fact39("isClaimedAsDependent"), money37("0"), mulInt10(money37("232000"), fact39("ksChildrenBornThisYear")));
+      return add13(personal, hohExtra, dependents, bornThisYear, mulInt10(money37("232000"), fact39("ksStillbirths")), mulInt10(money37("232000"), fact39("ksDisabledVeterans")));
     })()
   },
   {
@@ -71313,9 +70959,9 @@ var ksRules = [
     parameters: { medicalFloorPct: { value: "75", type: "int" } },
     // 7.5%
     formula: (() => {
-      const floor = rd18({ kind: "mulRate", base: max018(fact39("ksFederalAgi")), rate: { num: "75", den: "1000" }, round: "half-up" });
-      const medical = max018(sub16(rd18(fact39("ksMedicalExpenses")), floor));
-      return add12(medical, rd18(fact39("ksPropertyTaxes")), rd18(fact39("ksMortgageInterest")), rd18(fact39("ksCharitableContributions")));
+      const floor = rd19({ kind: "mulRate", base: max019(fact39("ksFederalAgi")), rate: { num: "75", den: "1000" }, round: "half-up" });
+      const medical = max019(sub17(rd19(fact39("ksMedicalExpenses")), floor));
+      return add13(medical, rd19(fact39("ksPropertyTaxes")), rd19(fact39("ksMortgageInterest")), rd19(fact39("ksCharitableContributions")));
     })()
   },
   {
@@ -71333,7 +70979,7 @@ var ksRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "17", type: "int" } },
-    formula: rd18({ kind: "mulRate", base: max018(fact39("ksFederalEic")), rate: { num: "17", den: "100" }, round: "half-up" })
+    formula: rd19({ kind: "mulRate", base: max019(fact39("ksFederalEic")), rate: { num: "17", den: "100" }, round: "half-up" })
   },
   {
     id: "us.ks.child_care_credit",
@@ -71350,7 +70996,7 @@ var ksRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "50", type: "int" } },
-    formula: rd18({ kind: "mulRate", base: max018(fact39("ksFederalChildCareCredit")), rate: { num: "50", den: "100" }, round: "half-up" })
+    formula: rd19({ kind: "mulRate", base: max019(fact39("ksFederalChildCareCredit")), rate: { num: "50", den: "100" }, round: "half-up" })
   },
   {
     id: "us.ks.parameters",
@@ -71628,37 +71274,37 @@ var AR_LOW_INCOME_MFJ_2_PLUS_DEP = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ar.js
-var rd19 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp4 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt13 = (l, r) => cmp4("lt", l, r);
-var le10 = (l, r) => cmp4("le", l, r);
-var gt3 = (l, r) => cmp4("gt", l, r);
-var ge3 = (l, r) => cmp4("ge", l, r);
-var iff12 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add13 = (...args) => ({ kind: "add", args });
-var sub17 = (left, right) => ({ kind: "sub", left, right });
-var max019 = (arg) => ({ kind: "max0", arg });
+var rd20 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp5 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt13 = (l, r) => cmp5("lt", l, r);
+var le10 = (l, r) => cmp5("le", l, r);
+var gt3 = (l, r) => cmp5("gt", l, r);
+var ge3 = (l, r) => cmp5("ge", l, r);
+var iff13 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add14 = (...args) => ({ kind: "add", args });
+var sub18 = (left, right) => ({ kind: "sub", left, right });
+var max020 = (arg) => ({ kind: "max0", arg });
 var minE = (...args) => ({ kind: "min", args });
 var maxE = (...args) => ({ kind: "max", args });
-var and2 = (...args) => ({ kind: "and", args });
-var or2 = (...args) => ({ kind: "or", args });
-var not = (arg) => ({ kind: "not", arg });
+var and3 = (...args) => ({ kind: "and", args });
+var or3 = (...args) => ({ kind: "or", args });
+var not2 = (arg) => ({ kind: "not", arg });
 var int6 = (value) => ({ kind: "int", value });
-var mulInt10 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits2 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus19 = (v) => cmp4("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var mulInt11 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits3 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus19 = (v) => cmp5("eq", fact39("filingStatus"), { kind: "enum", value: v });
 var isMfj2 = isStatus19("mfj");
-var isStatus22 = and2(isMfj2, not(fact39("arStatus4")));
-var isHohQss = or2(isStatus19("hoh"), isStatus19("qss"));
+var isStatus22 = and3(isMfj2, not2(fact39("arStatus4")));
+var isHohQss = or3(isStatus19("hoh"), isStatus19("qss"));
 var isMfs4 = isStatus19("mfs");
 var times4 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled4 = (n, denCents) => times4({ kind: "mulDiv", a: n, b: money37("1"), c: money37(denCents), round: "half-up" }, "100");
-var scaledSchedule4 = (base, rows) => add13(...rows.map((r, i) => {
-  const excess2 = sub17(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max019(excess2);
+var scaledSchedule4 = (base, rows) => add14(...rows.map((r, i) => {
+  const excess2 = sub18(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max020(excess2);
   return times4(portion, r.rateNum);
 }));
-var dollars4 = (d3) => money37(String(d3) + "00");
+var dollars5 = (d3) => money37(String(d3) + "00");
 var STANDARD_TABLE_2025 = [
   { thresholdCents: "0", rateNum: "0" },
   // $0 – $5,599: 0%
@@ -71678,14 +71324,14 @@ var UPPER_TABLE_2025 = [
 var BOOKLET_URL3 = "https://www.dfa.arkansas.gov/wp-content/uploads/2025_AR1000F_and_AR1000NR_Instructions.pdf";
 var BRACKETS_URL = "https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxBrackets.pdf";
 var lowIncomeLookup = (rows, label) => {
-  const agi2 = rd19(fact39("arAgi"));
+  const agi2 = rd20(fact39("arAgi"));
   let expr = {
     kind: "unsupported",
     reason: `Arkansas Low Income Tax Table (${label}) ends at $${rows[rows.length - 1][1].toLocaleString("en-US")}: "Above $${rows[rows.length - 1][1].toLocaleString("en-US")}, use Standard or Itemized Deductions and Regular Income Tax Table" (us.ar.income_tax)`
   };
   for (let i = rows.length - 1; i >= 0; i--)
-    expr = iff12(le10(agi2, dollars4(rows[i][1])), dollars4(rows[i][2]), expr);
-  return iff12(lt13(agi2, dollars4(rows[0][0])), money37("0"), expr);
+    expr = iff13(le10(agi2, dollars5(rows[i][1])), dollars5(rows[i][2]), expr);
+  return iff13(lt13(agi2, dollars5(rows[0][0])), money37("0"), expr);
 };
 var arRules = [
   {
@@ -71727,18 +71373,18 @@ var arRules = [
       // $3,809 + 3.9% of the excess over $100,000
     },
     formula: (() => {
-      const x = max019(fact39("stateTaxableIncome"));
-      const unitsHi = stepUnits2(sub17(x, money37("100")), "10000", "floor");
-      const midHi = add13(mulInt10(money37("10000"), unitsHi), money37("5100"));
-      const unitsLo = stepUnits2(minE(x, money37("7499900")), "10000", "floor");
-      const midLo = add13(mulInt10(money37("10000"), unitsLo), money37("5000"));
-      const mid = iff12(ge3(x, money37("7500100")), midHi, midLo);
-      const k = stepUnits2(sub17(mid, money37("9470100")), "10000", "floor");
-      const bracketAdjustment = max019(sub17(money37("31000"), mulInt10(money37("1000"), k)));
-      const upper = sub17(scaledSchedule4(mid, UPPER_TABLE_2025), times4(bracketAdjustment, "10000"));
-      const table2 = iff12(le10(mid, money37("9470000")), dollarsFromScaled4(scaledSchedule4(mid, STANDARD_TABLE_2025), "1000000"), dollarsFromScaled4(upper, "1000000"));
-      const overTable = dollarsFromScaled4(add13(times4(money37("380900"), "10000"), times4(sub17(x, money37("10000000")), "390")), "1000000");
-      return iff12(gt3(x, money37("10000000")), overTable, table2);
+      const x = max020(fact39("stateTaxableIncome"));
+      const unitsHi = stepUnits3(sub18(x, money37("100")), "10000", "floor");
+      const midHi = add14(mulInt11(money37("10000"), unitsHi), money37("5100"));
+      const unitsLo = stepUnits3(minE(x, money37("7499900")), "10000", "floor");
+      const midLo = add14(mulInt11(money37("10000"), unitsLo), money37("5000"));
+      const mid = iff13(ge3(x, money37("7500100")), midHi, midLo);
+      const k = stepUnits3(sub18(mid, money37("9470100")), "10000", "floor");
+      const bracketAdjustment = max020(sub18(money37("31000"), mulInt11(money37("1000"), k)));
+      const upper = sub18(scaledSchedule4(mid, UPPER_TABLE_2025), times4(bracketAdjustment, "10000"));
+      const table2 = iff13(le10(mid, money37("9470000")), dollarsFromScaled4(scaledSchedule4(mid, STANDARD_TABLE_2025), "1000000"), dollarsFromScaled4(upper, "1000000"));
+      const overTable = dollarsFromScaled4(add14(times4(money37("380900"), "10000"), times4(sub18(x, money37("10000000")), "390")), "1000000");
+      return iff13(gt3(x, money37("10000000")), overTable, table2);
     })()
   },
   {
@@ -71779,7 +71425,7 @@ var arRules = [
         kind: "unsupported",
         reason: "Arkansas Low Income Tax Tables are for Filing Status 1, 2, 3, and 6 only \u2014 'Married couples must file a joint return (Filing Status 2) to qualify'; status 4 (separately on the same return) and status 5 (separate returns) use the Regular Income Tax Table (us.ar.income_tax)"
       };
-      return iff12(isStatus19("single"), lowIncomeLookup(AR_LOW_INCOME_SINGLE, "Single"), iff12(isHohQss, iff12(twoPlus, lowIncomeLookup(AR_LOW_INCOME_HOH_QSS_2_PLUS_DEP, "HOH/Surviving Spouse, 2+ dependents"), lowIncomeLookup(AR_LOW_INCOME_HOH_QSS_0_1_DEP, "HOH/Surviving Spouse, 0-1 dependents")), iff12(isStatus22, iff12(twoPlus, lowIncomeLookup(AR_LOW_INCOME_MFJ_2_PLUS_DEP, "MFJ, 2+ dependents"), lowIncomeLookup(AR_LOW_INCOME_MFJ_0_1_DEP, "MFJ, 0-1 dependents")), refused)));
+      return iff13(isStatus19("single"), lowIncomeLookup(AR_LOW_INCOME_SINGLE, "Single"), iff13(isHohQss, iff13(twoPlus, lowIncomeLookup(AR_LOW_INCOME_HOH_QSS_2_PLUS_DEP, "HOH/Surviving Spouse, 2+ dependents"), lowIncomeLookup(AR_LOW_INCOME_HOH_QSS_0_1_DEP, "HOH/Surviving Spouse, 0-1 dependents")), iff13(isStatus22, iff13(twoPlus, lowIncomeLookup(AR_LOW_INCOME_MFJ_2_PLUS_DEP, "MFJ, 2+ dependents"), lowIncomeLookup(AR_LOW_INCOME_MFJ_0_1_DEP, "MFJ, 0-1 dependents")), refused)));
     })()
   },
   {
@@ -71800,7 +71446,7 @@ var arRules = [
       perTaxpayer: { value: "247000", type: "money" },
       jointStatus2: { value: "494000", type: "money" }
     },
-    formula: minE(iff12(isStatus22, money37("494000"), money37("247000")), max019(fact39("arAgi")))
+    formula: minE(iff13(isStatus22, money37("494000"), money37("247000")), max020(fact39("arAgi")))
   },
   {
     id: "us.ar.personal_tax_credits",
@@ -71823,8 +71469,8 @@ var arRules = [
       // $58 (self + spouse, or self + HOH/QSS)
     },
     formula: (() => {
-      const boxes = iff12(and2(not(isMfj2), gt3(fact39("arCreditBoxes"), int6("4"))), int6("4"), fact39("arCreditBoxes"));
-      return add13(money37("2900"), iff12(isMfj2, money37("2900"), money37("0")), iff12(isHohQss, money37("2900"), money37("0")), mulInt10(money37("2900"), boxes), mulInt10(money37("2900"), fact39("arDependents")));
+      const boxes = iff13(and3(not2(isMfj2), gt3(fact39("arCreditBoxes"), int6("4"))), int6("4"), fact39("arCreditBoxes"));
+      return add14(money37("2900"), iff13(isMfj2, money37("2900"), money37("0")), iff13(isHohQss, money37("2900"), money37("0")), mulInt11(money37("2900"), boxes), mulInt11(money37("2900"), fact39("arDependents")));
     })()
   },
   {
@@ -71852,10 +71498,10 @@ var arRules = [
       // $27,601
     },
     formula: (() => {
-      const x = max019(fact39("stateTaxableIncome"));
-      const steps = stepUnits2(max019(sub17(x, money37("2650000"))), "10000", "ceil");
-      const per = max019(sub17(money37("6000"), mulInt10(money37("500"), steps)));
-      return iff12(isStatus22, mulInt10(per, int6("2")), per);
+      const x = max020(fact39("stateTaxableIncome"));
+      const steps = stepUnits3(max020(sub18(x, money37("2650000"))), "10000", "ceil");
+      const per = max020(sub18(money37("6000"), mulInt11(money37("500"), steps)));
+      return iff13(isStatus22, mulInt11(per, int6("2")), per);
     })()
   },
   {
@@ -71884,14 +71530,14 @@ var arRules = [
       // 1 point per $2,000
     },
     formula: (() => {
-      const cap = iff12(ge3(fact39("arChildCareQualifyingPersons"), int6("2")), money37("600000"), money37("300000"));
-      const l3 = minE(max019(fact39("arChildCareExpenses")), cap);
-      const earned2 = max019(fact39("arEarnedIncome"));
-      const l6 = iff12(isMfj2, minE(l3, earned2, max019(fact39("arSpouseEarnedIncome"))), minE(l3, earned2));
-      const steps = stepUnits2(max019(sub17(fact39("arFederalAgi"), money37("1500000"))), "200000", "ceil");
-      const pct16 = maxE(sub17(money37("35"), mulInt10(money37("1"), steps)), money37("20"));
-      const l9 = rd19({ kind: "mulDiv", a: l6, b: pct16, c: money37("100"), round: "half-up" });
-      return rd19({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
+      const cap = iff13(ge3(fact39("arChildCareQualifyingPersons"), int6("2")), money37("600000"), money37("300000"));
+      const l3 = minE(max020(fact39("arChildCareExpenses")), cap);
+      const earned2 = max020(fact39("arEarnedIncome"));
+      const l6 = iff13(isMfj2, minE(l3, earned2, max020(fact39("arSpouseEarnedIncome"))), minE(l3, earned2));
+      const steps = stepUnits3(max020(sub18(fact39("arFederalAgi"), money37("1500000"))), "200000", "ceil");
+      const pct16 = maxE(sub18(money37("35"), mulInt11(money37("1"), steps)), money37("20"));
+      const l9 = rd20({ kind: "mulDiv", a: l6, b: pct16, c: money37("100"), round: "half-up" });
+      return rd20({ kind: "mulRate", base: l9, rate: { num: "20", den: "100" }, round: "half-up" });
     })()
   },
   {
@@ -71909,7 +71555,7 @@ var arRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { exclusion: { value: "600000", type: "money" } },
-    formula: minE(max019(fact39("arPensionTaxable")), max019(sub17(money37("600000"), max019(fact39("arMilitaryRetirement")))))
+    formula: minE(max020(fact39("arPensionTaxable")), max020(sub18(money37("600000"), max020(fact39("arMilitaryRetirement")))))
   },
   {
     id: "us.ar.capital_gains",
@@ -71936,12 +71582,12 @@ var arRules = [
       const longTerm = fact39("arLongTermGain");
       const shortTerm = fact39("arShortTermGain");
       const shortTermLoss = minE(shortTerm, money37("0"));
-      const shortTermGain = max019(shortTerm);
-      const l7a = add13(longTerm, shortTermLoss);
+      const shortTermGain = max020(shortTerm);
+      const l7a = add14(longTerm, shortTermLoss);
       const l7b = minE(l7a, money37("1000000000"));
-      const l8 = iff12(gt3(l7a, money37("0")), rd19({ kind: "mulRate", base: l7b, rate: { num: "50", den: "100" }, round: "half-up" }), l7a);
-      const l12 = add13(l8, shortTermGain);
-      const floor = iff12(or2(isMfs4, fact39("arStatus4")), money37("-150000"), money37("-300000"));
+      const l8 = iff13(gt3(l7a, money37("0")), rd20({ kind: "mulRate", base: l7b, rate: { num: "50", den: "100" }, round: "half-up" }), l7a);
+      const l12 = add14(l8, shortTermGain);
+      const floor = iff13(or3(isMfs4, fact39("arStatus4")), money37("-150000"), money37("-300000"));
       return maxE(l12, floor);
     })()
   },
@@ -71964,10 +71610,10 @@ var arRules = [
       miscFloorPct: { value: "2", type: "int" }
     },
     formula: (() => {
-      const agi2 = max019(fact39("arAgi"));
-      const medical = max019(sub17(max019(fact39("arMedicalExpenses")), rd19({ kind: "mulRate", base: agi2, rate: { num: "10", den: "100" }, round: "half-up" })));
-      const misc = max019(sub17(max019(fact39("arMiscExpenses")), rd19({ kind: "mulRate", base: agi2, rate: { num: "2", den: "100" }, round: "half-up" })));
-      return add13(medical, max019(fact39("arTaxesPaid")), max019(fact39("arInterestPaid")), max019(fact39("arContributions")), max019(fact39("arCasualtyLosses")), max019(fact39("arTuitionDeduction")), misc, max019(fact39("arOtherMiscDeductions")));
+      const agi2 = max020(fact39("arAgi"));
+      const medical = max020(sub18(max020(fact39("arMedicalExpenses")), rd20({ kind: "mulRate", base: agi2, rate: { num: "10", den: "100" }, round: "half-up" })));
+      const misc = max020(sub18(max020(fact39("arMiscExpenses")), rd20({ kind: "mulRate", base: agi2, rate: { num: "2", den: "100" }, round: "half-up" })));
+      return add14(medical, max020(fact39("arTaxesPaid")), max020(fact39("arInterestPaid")), max020(fact39("arContributions")), max020(fact39("arCasualtyLosses")), max020(fact39("arTuitionDeduction")), misc, max020(fact39("arOtherMiscDeductions")));
     })()
   },
   {
@@ -72081,34 +71727,34 @@ var NM_CHILD_CREDIT_2025 = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-nm.js
-var rd20 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp5 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var le11 = (l, r) => cmp5("le", l, r);
-var gt4 = (l, r) => cmp5("gt", l, r);
-var ge4 = (l, r) => cmp5("ge", l, r);
-var iff13 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add14 = (...args) => ({ kind: "add", args });
-var sub18 = (left, right) => ({ kind: "sub", left, right });
-var max020 = (arg) => ({ kind: "max0", arg });
+var rd21 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp6 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var le11 = (l, r) => cmp6("le", l, r);
+var gt4 = (l, r) => cmp6("gt", l, r);
+var ge4 = (l, r) => cmp6("ge", l, r);
+var iff14 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add15 = (...args) => ({ kind: "add", args });
+var sub19 = (left, right) => ({ kind: "sub", left, right });
+var max021 = (arg) => ({ kind: "max0", arg });
 var minE2 = (...args) => ({ kind: "min", args });
 var maxE2 = (...args) => ({ kind: "max", args });
-var and3 = (...args) => ({ kind: "and", args });
-var or3 = (...args) => ({ kind: "or", args });
-var not2 = (arg) => ({ kind: "not", arg });
+var and4 = (...args) => ({ kind: "and", args });
+var or4 = (...args) => ({ kind: "or", args });
+var not3 = (arg) => ({ kind: "not", arg });
 var int7 = (value) => ({ kind: "int", value });
-var mulInt11 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits3 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus20 = (v) => cmp5("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJointSchedule = or3(isStatus20("mfj"), isStatus20("hoh"), isStatus20("qss"));
+var mulInt12 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits4 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus20 = (v) => cmp6("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJointSchedule = or4(isStatus20("mfj"), isStatus20("hoh"), isStatus20("qss"));
 var isMfs5 = isStatus20("mfs");
 var times5 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled5 = (n, denCents) => times5({ kind: "mulDiv", a: n, b: money37("1"), c: money37(denCents), round: "half-up" }, "100");
-var scaledSchedule5 = (base, rows) => add14(...rows.map((r, i) => {
-  const excess2 = sub18(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max020(excess2);
+var scaledSchedule5 = (base, rows) => add15(...rows.map((r, i) => {
+  const excess2 = sub19(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max021(excess2);
   return times5(portion, r.rateNum);
 }));
-var dollars5 = (d3) => money37(String(d3) + "00");
+var dollars6 = (d3) => money37(String(d3) + "00");
 var pct6 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var SCHED_JOINT = [
   { thresholdCents: "0", rateNum: "150" },
@@ -72158,7 +71804,7 @@ var PITRC_URL = "https://klvg4oyd4j.execute-api.us-west-2.amazonaws.com/prod/Pub
 var rowLookup = (value, rows, pick2, above) => {
   let expr = above;
   for (let i = rows.length - 1; i >= 0; i--)
-    expr = iff13(le11(value, dollars5(rows[i][1])), pick2(rows[i]), expr);
+    expr = iff14(le11(value, dollars6(rows[i][1])), pick2(rows[i]), expr);
   return expr;
 };
 var nmRules = [
@@ -72214,14 +71860,14 @@ var nmRules = [
       // $7,310 over $157,500
     },
     formula: (() => {
-      const x = max020(fact39("stateTaxableIncome"));
-      const sched2 = (b) => iff13(isJointSchedule, dollarsFromScaled5(scaledSchedule5(b, SCHED_JOINT), "1000000"), iff13(isMfs5, dollarsFromScaled5(scaledSchedule5(b, SCHED_MFS), "1000000"), dollarsFromScaled5(scaledSchedule5(b, SCHED_SINGLE2), "1000000")));
-      const k = stepUnits3(x, "10000", "ceil");
-      const mid100 = sub18(mulInt11(money37("10000"), k), money37("5000"));
-      const mid = iff13(le11(x, money37("6000")), money37("3000"), iff13(le11(x, money37("10000")), money37("8000"), mid100));
-      const ws = (baseCents, topCents, topBaseCents) => iff13(le11(x, money37(topCents)), dollarsFromScaled5(add14(times5(money37(baseCents), "10000"), times5(sub18(x, money37("10000000")), "490")), "1000000"), dollarsFromScaled5(add14(times5(money37(topBaseCents), "10000"), times5(sub18(x, money37(topCents)), "590")), "1000000"));
-      const worksheet = iff13(isJointSchedule, ws("408700", "31500000", "1462200"), iff13(isMfs5, ws("449200", "15750000", "731000"), ws("435600", "21000000", "974600")));
-      return iff13(fact39("useFormulaMethod"), sched2(x), iff13(le11(x, money37("10000000")), sched2(mid), worksheet));
+      const x = max021(fact39("stateTaxableIncome"));
+      const sched2 = (b) => iff14(isJointSchedule, dollarsFromScaled5(scaledSchedule5(b, SCHED_JOINT), "1000000"), iff14(isMfs5, dollarsFromScaled5(scaledSchedule5(b, SCHED_MFS), "1000000"), dollarsFromScaled5(scaledSchedule5(b, SCHED_SINGLE2), "1000000")));
+      const k = stepUnits4(x, "10000", "ceil");
+      const mid100 = sub19(mulInt12(money37("10000"), k), money37("5000"));
+      const mid = iff14(le11(x, money37("6000")), money37("3000"), iff14(le11(x, money37("10000")), money37("8000"), mid100));
+      const ws = (baseCents, topCents, topBaseCents) => iff14(le11(x, money37(topCents)), dollarsFromScaled5(add15(times5(money37(baseCents), "10000"), times5(sub19(x, money37("10000000")), "490")), "1000000"), dollarsFromScaled5(add15(times5(money37(topBaseCents), "10000"), times5(sub19(x, money37(topCents)), "590")), "1000000"));
+      const worksheet = iff14(isJointSchedule, ws("408700", "31500000", "1462200"), iff14(isMfs5, ws("449200", "15750000", "731000"), ws("435600", "21000000", "974600")));
+      return iff14(fact39("useFormulaMethod"), sched2(x), iff14(le11(x, money37("10000000")), sched2(mid), worksheet));
     })()
   },
   {
@@ -72240,14 +71886,14 @@ var nmRules = [
     output: { type: "money" },
     parameters: { ratioDecimals: { value: "4", type: "int" } },
     formula: (() => {
-      const a = max020(fact39("nmSaltIncomeTaxes"));
-      const d3 = max020(fact39("nmSaltTotal"));
-      const e = max020(fact39("nmSaltAllowed"));
+      const a = max021(fact39("nmSaltIncomeTaxes"));
+      const d3 = max021(fact39("nmSaltTotal"));
+      const e = max021(fact39("nmSaltAllowed"));
       const ratio10000 = { kind: "mulDiv", a, b: money37("10000"), c: d3, round: "half-up" };
       const l5 = { kind: "mulDiv", a: e, b: ratio10000, c: money37("10000"), round: "half-up" };
       const l6 = minE2(e, l5);
-      const l9 = max020(sub18(max020(fact39("nmFederalItemizedDeductions")), max020(fact39("nmFederalStandardDeduction"))));
-      return iff13(and3(fact39("nmFederalItemized"), gt4(d3, money37("0"))), rd20(minE2(l6, l9)), money37("0"));
+      const l9 = max021(sub19(max021(fact39("nmFederalItemizedDeductions")), max021(fact39("nmFederalStandardDeduction"))));
+      return iff14(and4(fact39("nmFederalItemized"), gt4(d3, money37("0"))), rd21(minE2(l6, l9)), money37("0"));
     })()
   },
   {
@@ -72265,7 +71911,7 @@ var nmRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perDependent: { value: "400000", type: "money" } },
-    formula: iff13(and3(or3(isStatus20("hoh"), isStatus20("mfj")), not2(fact39("isClaimedAsDependent"))), max020(sub18(mulInt11(money37("400000"), fact39("nmDependents")), money37("400000"))), money37("0"))
+    formula: iff14(and4(or4(isStatus20("hoh"), isStatus20("mfj")), not3(fact39("isClaimedAsDependent"))), max021(sub19(mulInt12(money37("400000"), fact39("nmDependents")), money37("400000"))), money37("0"))
   },
   {
     id: "us.nm.low_middle_income_exemption",
@@ -72292,12 +71938,12 @@ var nmRules = [
     },
     formula: (() => {
       const agi2 = fact39("nmAgi");
-      const limit = iff13(isJointSchedule, money37("5500000"), iff13(isMfs5, money37("2750000"), money37("3666700")));
-      const threshold3 = iff13(isJointSchedule, money37("3000000"), iff13(isMfs5, money37("1500000"), money37("2000000")));
-      const over = max020(sub18(agi2, threshold3));
-      const phase = rd20(iff13(isJointSchedule, pct6(over, "10", "100"), iff13(isMfs5, pct6(over, "20", "100"), pct6(over, "15", "100"))));
-      const per = max020(sub18(money37("250000"), phase));
-      return iff13(gt4(agi2, limit), money37("0"), rd20(mulInt11(per, fact39("nmExemptions"))));
+      const limit = iff14(isJointSchedule, money37("5500000"), iff14(isMfs5, money37("2750000"), money37("3666700")));
+      const threshold3 = iff14(isJointSchedule, money37("3000000"), iff14(isMfs5, money37("1500000"), money37("2000000")));
+      const over = max021(sub19(agi2, threshold3));
+      const phase = rd21(iff14(isJointSchedule, pct6(over, "10", "100"), iff14(isMfs5, pct6(over, "20", "100"), pct6(over, "15", "100"))));
+      const per = max021(sub19(money37("250000"), phase));
+      return iff14(gt4(agi2, limit), money37("0"), rd21(mulInt12(per, fact39("nmExemptions"))));
     })()
   },
   {
@@ -72325,12 +71971,12 @@ var nmRules = [
     },
     formula: (() => {
       const agi2 = fact39("nmAgi");
-      const base = iff13(isJointSchedule, money37("3000000"), iff13(isMfs5, money37("1500000"), money37("1800000")));
-      const over = max020(sub18(agi2, base));
-      const steps = iff13(isJointSchedule, stepUnits3(over, "300000", "ceil"), stepUnits3(over, "150000", "ceil"));
-      const per = max020(sub18(money37("800000"), mulInt11(money37("100000"), steps)));
-      const persons = iff13(and3(not2(isStatus20("mfj")), gt4(fact39("nmAge65OrBlindPersons"), int7("1"))), int7("1"), fact39("nmAge65OrBlindPersons"));
-      return mulInt11(per, persons);
+      const base = iff14(isJointSchedule, money37("3000000"), iff14(isMfs5, money37("1500000"), money37("1800000")));
+      const over = max021(sub19(agi2, base));
+      const steps = iff14(isJointSchedule, stepUnits4(over, "300000", "ceil"), stepUnits4(over, "150000", "ceil"));
+      const per = max021(sub19(money37("800000"), mulInt12(money37("100000"), steps)));
+      const persons = iff14(and4(not3(isStatus20("mfj")), gt4(fact39("nmAge65OrBlindPersons"), int7("1"))), int7("1"), fact39("nmAge65OrBlindPersons"));
+      return mulInt12(per, persons);
     })()
   },
   {
@@ -72353,8 +71999,8 @@ var nmRules = [
       limitJoint: { value: "15000000", type: "money" }
     },
     formula: (() => {
-      const limit = iff13(isJointSchedule, money37("15000000"), iff13(isMfs5, money37("7500000"), money37("10000000")));
-      return iff13(le11(fact39("nmAgi"), limit), rd20(max020(fact39("nmTaxableSocialSecurity"))), money37("0"));
+      const limit = iff14(isJointSchedule, money37("15000000"), iff14(isMfs5, money37("7500000"), money37("10000000")));
+      return iff14(le11(fact39("nmAgi"), limit), rd21(max021(fact39("nmTaxableSocialSecurity"))), money37("0"));
     })()
   },
   {
@@ -72378,12 +72024,12 @@ var nmRules = [
       // $1,000,000
     },
     formula: (() => {
-      const ncg = max020(fact39("nmNetCapitalGain"));
-      const biz = max020(fact39("nmBusinessSaleGain"));
-      const general = iff13(isMfs5, minE2(ncg, money37("125000")), minE2(ncg, money37("250000")));
+      const ncg = max021(fact39("nmNetCapitalGain"));
+      const biz = max021(fact39("nmBusinessSaleGain"));
+      const general = iff14(isMfs5, minE2(ncg, money37("125000")), minE2(ncg, money37("250000")));
       const bizGain = minE2(biz, ncg);
-      const business = iff13(isMfs5, pct6(minE2(bizGain, money37("50000000")), "40", "100"), pct6(minE2(bizGain, money37("100000000")), "40", "100"));
-      return rd20(maxE2(general, business));
+      const business = iff14(isMfs5, pct6(minE2(bizGain, money37("50000000")), "40", "100"), pct6(minE2(bizGain, money37("100000000")), "40", "100"));
+      return rd21(maxE2(general, business));
     })()
   },
   {
@@ -72401,7 +72047,7 @@ var nmRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perRetiree: { value: "3000000", type: "money" } },
-    formula: add14(minE2(max020(fact39("nmArmedForcesRetirementPay")), money37("3000000")), iff13(isStatus20("mfj"), minE2(max020(fact39("nmArmedForcesRetirementPaySpouse")), money37("3000000")), money37("0")))
+    formula: add15(minE2(max021(fact39("nmArmedForcesRetirementPay")), money37("3000000")), iff14(isStatus20("mfj"), minE2(max021(fact39("nmArmedForcesRetirementPaySpouse")), money37("3000000")), money37("0")))
   },
   {
     id: "us.nm.medical_expense_exemption_65",
@@ -72418,7 +72064,7 @@ var nmRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { exemption: { value: "300000", type: "money" }, expenseFloor: { value: "2800000", type: "money" } },
-    formula: iff13(and3(ge4(fact39("nmAge65Count"), int7("1")), ge4(fact39("nmMedicalExpenses"), money37("2800000"))), money37("300000"), money37("0"))
+    formula: iff14(and4(ge4(fact39("nmAge65Count"), int7("1")), ge4(fact39("nmMedicalExpenses"), money37("2800000"))), money37("300000"), money37("0"))
   },
   {
     id: "us.nm.medical_care_credit_65",
@@ -72435,7 +72081,7 @@ var nmRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { credit: { value: "280000", type: "money" }, creditMfs: { value: "140000", type: "money" }, expenseFloor: { value: "2800000", type: "money" } },
-    formula: iff13(and3(ge4(fact39("nmAge65Count"), int7("1")), ge4(fact39("nmMedicalExpenses"), money37("2800000")), not2(fact39("isClaimedAsDependent"))), iff13(isMfs5, money37("140000"), money37("280000")), money37("0"))
+    formula: iff14(and4(ge4(fact39("nmAge65Count"), int7("1")), ge4(fact39("nmMedicalExpenses"), money37("2800000")), not3(fact39("isClaimedAsDependent"))), iff14(isMfs5, money37("140000"), money37("280000")), money37("0"))
   },
   {
     id: "us.nm.lictr",
@@ -72455,14 +72101,14 @@ var nmRules = [
     formula: (() => {
       const ex = fact39("nmRebateExemptions");
       const pick2 = (row2) => {
-        let e = dollars5(row2[7]);
+        let e = dollars6(row2[7]);
         for (let n = 5; n >= 1; n--)
-          e = iff13(le11(ex, int7(String(n))), dollars5(row2[n + 1]), e);
+          e = iff14(le11(ex, int7(String(n))), dollars6(row2[n + 1]), e);
         return e;
       };
       const table2 = rowLookup(fact39("nmModifiedGrossIncome"), NM_LICTR_2025, pick2, money37("0"));
-      const eligible = and3(not2(fact39("isClaimedAsDependent")), ge4(ex, int7("1")), le11(fact39("nmModifiedGrossIncome"), money37("3600000")));
-      return iff13(eligible, iff13(isMfs5, rd20(pct6(table2, "1", "2")), table2), money37("0"));
+      const eligible = and4(not3(fact39("isClaimedAsDependent")), ge4(ex, int7("1")), le11(fact39("nmModifiedGrossIncome"), money37("3600000")));
+      return iff14(eligible, iff14(isMfs5, rd21(pct6(table2, "1", "2")), table2), money37("0"));
     })()
   },
   {
@@ -72480,7 +72126,7 @@ var nmRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "25", type: "int" } },
-    formula: rd20(pct6(max020(fact39("nmFederalEic")), "25", "100"))
+    formula: rd21(pct6(max021(fact39("nmFederalEic")), "25", "100"))
   },
   {
     id: "us.nm.child_income_tax_credit",
@@ -72507,11 +72153,11 @@ var nmRules = [
     },
     formula: (() => {
       const agi2 = fact39("nmAgi");
-      let per = dollars5(NM_CHILD_CREDIT_2025[NM_CHILD_CREDIT_2025.length - 1][2]);
+      let per = dollars6(NM_CHILD_CREDIT_2025[NM_CHILD_CREDIT_2025.length - 1][2]);
       for (let i = NM_CHILD_CREDIT_2025.length - 2; i >= 0; i--)
-        per = iff13(le11(agi2, dollars5(NM_CHILD_CREDIT_2025[i][1])), dollars5(NM_CHILD_CREDIT_2025[i][2]), per);
-      const total = mulInt11(per, fact39("nmQualifyingChildren"));
-      return iff13(fact39("isClaimedAsDependent"), money37("0"), iff13(isMfs5, rd20(pct6(total, "1", "2")), total));
+        per = iff14(le11(agi2, dollars6(NM_CHILD_CREDIT_2025[i][1])), dollars6(NM_CHILD_CREDIT_2025[i][2]), per);
+      const total = mulInt12(per, fact39("nmQualifyingChildren"));
+      return iff14(fact39("isClaimedAsDependent"), money37("0"), iff14(isMfs5, rd21(pct6(total, "1", "2")), total));
     })()
   },
   {
@@ -72531,11 +72177,11 @@ var nmRules = [
     parameters: { mgiLimit: { value: "1600000", type: "money" }, rentPct: { value: "6", type: "int" }, cap: { value: "25000", type: "money" }, capMfs: { value: "12500", type: "money" } },
     formula: (() => {
       const mgi = fact39("nmModifiedGrossIncome");
-      const l17a = add14(rd20(max020(fact39("nmPropertyTaxBilled"))), dollarsFromScaled5(times5(max020(fact39("nmRentPaid")), "600"), "1000000"));
-      const liability = rowLookup(mgi, NM_PROPERTY_TAX_LIABILITY_2025, (row2) => dollars5(row2[2]), money37("0"));
-      const diff = max020(sub18(l17a, liability));
-      const eligible = and3(ge4(fact39("nmAge65Count"), int7("1")), le11(mgi, money37("1600000")), not2(fact39("isClaimedAsDependent")));
-      return iff13(eligible, iff13(isMfs5, minE2(rd20(pct6(diff, "1", "2")), money37("12500")), minE2(diff, money37("25000"))), money37("0"));
+      const l17a = add15(rd21(max021(fact39("nmPropertyTaxBilled"))), dollarsFromScaled5(times5(max021(fact39("nmRentPaid")), "600"), "1000000"));
+      const liability = rowLookup(mgi, NM_PROPERTY_TAX_LIABILITY_2025, (row2) => dollars6(row2[2]), money37("0"));
+      const diff = max021(sub19(l17a, liability));
+      const eligible = and4(ge4(fact39("nmAge65Count"), int7("1")), le11(mgi, money37("1600000")), not3(fact39("isClaimedAsDependent")));
+      return iff14(eligible, iff14(isMfs5, minE2(rd21(pct6(diff, "1", "2")), money37("12500")), minE2(diff, money37("25000"))), money37("0"));
     })()
   },
   {
@@ -72555,10 +72201,10 @@ var nmRules = [
     parameters: { mgiLimit: { value: "2400000", type: "money" }, cap: { value: "35000", type: "money" }, capMfs: { value: "17500", type: "money" } },
     formula: (() => {
       const mgi = fact39("nmModifiedGrossIncome");
-      const billed = max020(fact39("nmPropertyTaxBilled"));
+      const billed = max021(fact39("nmPropertyTaxBilled"));
       const amount = rowLookup(mgi, NM_COUNTY_PROPERTY_REBATE_PCT_2025, (row2) => pct6(billed, String(row2[2]), "100"), money37("0"));
-      const eligible = and3(fact39("nmRebateCounty"), le11(mgi, money37("2400000")), not2(fact39("isClaimedAsDependent")));
-      return iff13(eligible, iff13(isMfs5, minE2(rd20(pct6(amount, "1", "2")), money37("17500")), minE2(rd20(amount), money37("35000"))), money37("0"));
+      const eligible = and4(fact39("nmRebateCounty"), le11(mgi, money37("2400000")), not3(fact39("isClaimedAsDependent")));
+      return iff14(eligible, iff14(isMfs5, minE2(rd21(pct6(amount, "1", "2")), money37("17500")), minE2(rd21(amount), money37("35000"))), money37("0"));
     })()
   },
   {
@@ -72598,37 +72244,37 @@ var nmRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-ne.js
-var rd21 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp6 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt14 = (l, r) => cmp6("lt", l, r);
-var le12 = (l, r) => cmp6("le", l, r);
-var gt5 = (l, r) => cmp6("gt", l, r);
-var iff14 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add15 = (...args) => ({ kind: "add", args });
-var sub19 = (left, right) => ({ kind: "sub", left, right });
-var max021 = (arg) => ({ kind: "max0", arg });
+var rd22 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp7 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt14 = (l, r) => cmp7("lt", l, r);
+var le12 = (l, r) => cmp7("le", l, r);
+var gt5 = (l, r) => cmp7("gt", l, r);
+var iff15 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add16 = (...args) => ({ kind: "add", args });
+var sub20 = (left, right) => ({ kind: "sub", left, right });
+var max022 = (arg) => ({ kind: "max0", arg });
 var minE3 = (...args) => ({ kind: "min", args });
-var or4 = (...args) => ({ kind: "or", args });
+var or5 = (...args) => ({ kind: "or", args });
 var int8 = (value) => ({ kind: "int", value });
-var mulInt12 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits4 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus21 = (v) => cmp6("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJoint3 = or4(isStatus21("mfj"), isStatus21("qss"));
+var mulInt13 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits5 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus21 = (v) => cmp7("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJoint4 = or5(isStatus21("mfj"), isStatus21("qss"));
 var isHoh2 = isStatus21("hoh");
-var isSingleSched = or4(isStatus21("single"), isStatus21("mfs"));
+var isSingleSched = or5(isStatus21("single"), isStatus21("mfs"));
 var times6 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct7 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled6 = (n, denCents) => times6({ kind: "mulDiv", a: n, b: money37("1"), c: money37(denCents), round: "half-up" }, "100");
-var scaledSchedule6 = (base, rows) => add15(...rows.map((r, i) => {
-  const excess2 = sub19(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max021(excess2);
+var scaledSchedule6 = (base, rows) => add16(...rows.map((r, i) => {
+  const excess2 = sub20(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max022(excess2);
   return times6(portion, r.rateNum);
 }));
 var calcSchedule = (base, rows) => {
-  let expr = dollarsFromScaled6(add15(times6(money37(rows[0].fixedCents), "10000"), times6(sub19(base, money37(rows[0].thresholdCents)), rows[0].rateNum)), "1000000");
+  let expr = dollarsFromScaled6(add16(times6(money37(rows[0].fixedCents), "10000"), times6(sub20(base, money37(rows[0].thresholdCents)), rows[0].rateNum)), "1000000");
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
-    expr = iff14(gt5(base, money37(r.thresholdCents)), dollarsFromScaled6(add15(times6(money37(r.fixedCents), "10000"), times6(sub19(base, money37(r.thresholdCents)), r.rateNum)), "1000000"), expr);
+    expr = iff15(gt5(base, money37(r.thresholdCents)), dollarsFromScaled6(add16(times6(money37(r.fixedCents), "10000"), times6(sub20(base, money37(r.thresholdCents)), r.rateNum)), "1000000"), expr);
   }
   return expr;
 };
@@ -72700,15 +72346,15 @@ var neRules = [
       rate4Bps2026: { value: "455", type: "int" }
     },
     formula: (() => {
-      const x = max021(fact39("stateTaxableIncome"));
-      const calc = iff14(isJoint3, calcSchedule(x, CALC_JOINT), iff14(isHoh2, calcSchedule(x, CALC_HOH), calcSchedule(x, CALC_SINGLE)));
-      const k = stepUnits4(sub19(x, money37("6000")), "10000", "ceil");
-      const mid = add15(mulInt12(money37("10000"), k), money37("1000"));
-      const exactAt = (b) => iff14(isJoint3, dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_JOINT)), "1000000"), iff14(isHoh2, dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_HOH)), "1000000"), dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_SINGLE)), "1000000")));
-      const worksheetBase = iff14(isJoint3, money37("308800"), iff14(isHoh2, money37("327600"), money37("356600")));
-      const worksheet = dollarsFromScaled6(add15(times6(worksheetBase, "10000"), times6(sub19(x, money37("7776000")), "520")), "1000000");
-      const table2 = iff14(le12(x, money37("6000")), exactAt(x), iff14(le12(x, money37("7776000")), exactAt(mid), worksheet));
-      return iff14(fact39("neUseTaxTable"), table2, calc);
+      const x = max022(fact39("stateTaxableIncome"));
+      const calc = iff15(isJoint4, calcSchedule(x, CALC_JOINT), iff15(isHoh2, calcSchedule(x, CALC_HOH), calcSchedule(x, CALC_SINGLE)));
+      const k = stepUnits5(sub20(x, money37("6000")), "10000", "ceil");
+      const mid = add16(mulInt13(money37("10000"), k), money37("1000"));
+      const exactAt = (b) => iff15(isJoint4, dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_JOINT)), "1000000"), iff15(isHoh2, dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_HOH)), "1000000"), dollarsFromScaled6(scaledSchedule6(b, exactRows(CALC_SINGLE)), "1000000")));
+      const worksheetBase = iff15(isJoint4, money37("308800"), iff15(isHoh2, money37("327600"), money37("356600")));
+      const worksheet = dollarsFromScaled6(add16(times6(worksheetBase, "10000"), times6(sub20(x, money37("7776000")), "520")), "1000000");
+      const table2 = iff15(le12(x, money37("6000")), exactAt(x), iff15(le12(x, money37("7776000")), exactAt(mid), worksheet));
+      return iff15(fact39("neUseTaxTable"), table2, calc);
     })()
   },
   {
@@ -72733,12 +72379,12 @@ var neRules = [
       perBoxMarried: { value: "165000", type: "money" }
     },
     formula: (() => {
-      const base = iff14(isJoint3, money37("1720000"), iff14(isHoh2, money37("1260000"), money37("860000")));
-      const perBox = iff14(or4(isStatus21("single"), isHoh2), money37("200000"), money37("165000"));
-      const maxBoxes = iff14(or4(isStatus21("mfj"), isStatus21("mfs")), int8("4"), int8("2"));
-      const boxes = iff14(gt5(fact39("neAgeBlindBoxes"), maxBoxes), maxBoxes, fact39("neAgeBlindBoxes"));
-      const ne = add15(base, mulInt12(perBox, boxes));
-      return iff14(fact39("isClaimedAsDependent"), minE3(ne, max021(fact39("neFederalStandardDeduction"))), ne);
+      const base = iff15(isJoint4, money37("1720000"), iff15(isHoh2, money37("1260000"), money37("860000")));
+      const perBox = iff15(or5(isStatus21("single"), isHoh2), money37("200000"), money37("165000"));
+      const maxBoxes = iff15(or5(isStatus21("mfj"), isStatus21("mfs")), int8("4"), int8("2"));
+      const boxes = iff15(gt5(fact39("neAgeBlindBoxes"), maxBoxes), maxBoxes, fact39("neAgeBlindBoxes"));
+      const ne = add16(base, mulInt13(perBox, boxes));
+      return iff15(fact39("isClaimedAsDependent"), minE3(ne, max022(fact39("neFederalStandardDeduction"))), ne);
     })()
   },
   {
@@ -72756,7 +72402,7 @@ var neRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: {},
-    formula: max021(sub19(max021(fact39("neFederalItemizedDeductions")), max021(fact39("neSaltIncomeTaxes"))))
+    formula: max022(sub20(max022(fact39("neFederalItemizedDeductions")), max022(fact39("neSaltIncomeTaxes"))))
   },
   {
     id: "us.ne.personal_exemption_credit",
@@ -72773,7 +72419,7 @@ var neRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "17100", type: "money" } },
-    formula: mulInt12(money37("17100"), fact39("neExemptions"))
+    formula: mulInt13(money37("17100"), fact39("neExemptions"))
   },
   {
     id: "us.ne.other_tax",
@@ -72792,7 +72438,7 @@ var neRules = [
     parameters: { pctTimes10: { value: "296", type: "int" } },
     // Form 1040N line 16: "multiply line 16c by 29.6% (x .296)" into a whole-dollar box — ONE rounding.
     // 29.6% is not an integer-cent rate: 76 x 0.296 = 22.496 prints $22, but cents-first gives 22.50 -> $23.
-    formula: times6({ kind: "mulDiv", a: max021(fact39("neFederalOtherTax")), b: money37("296"), c: money37("100000"), round: "half-up" }, "100")
+    formula: times6({ kind: "mulDiv", a: max022(fact39("neFederalOtherTax")), b: money37("296"), c: money37("100000"), round: "half-up" }, "100")
   },
   {
     id: "us.ne.child_care_credit_nonrefundable",
@@ -72809,7 +72455,7 @@ var neRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "25", type: "int" }, agiFloor: { value: "2900000", type: "money" } },
-    formula: iff14(gt5(fact39("neAgi"), money37("2900000")), rd21(pct7(max021(fact39("neFederalChildCareCredit")), "25", "100")), money37("0"))
+    formula: iff15(gt5(fact39("neAgi"), money37("2900000")), rd22(pct7(max022(fact39("neFederalChildCareCredit")), "25", "100")), money37("0"))
   },
   {
     id: "us.ne.child_care_credit_refundable",
@@ -72833,17 +72479,17 @@ var neRules = [
     },
     formula: (() => {
       const agi2 = fact39("neAgi");
-      const cap = iff14(cmp6("ge", fact39("neChildCareQualifyingPersons"), int8("2")), money37("600000"), money37("300000"));
-      const l3 = minE3(max021(fact39("neChildCareExpenses")), cap);
-      const earned2 = max021(fact39("neEarnedIncome"));
-      const l6 = iff14(isStatus21("mfj"), minE3(l3, earned2, max021(fact39("neSpouseEarnedIncome"))), minE3(l3, earned2));
-      const fedSteps = stepUnits4(max021(sub19(agi2, money37("1500000"))), "200000", "ceil");
-      const fedPct = sub19(money37("35"), mulInt12(money37("1"), fedSteps));
-      const stateSteps = stepUnits4(max021(sub19(agi2, money37("2200000"))), "100000", "ceil");
-      const statePct = max021(sub19(money37("100"), mulInt12(money37("10"), stateSteps)));
-      const l10 = rd21({ kind: "mulDiv", a: l6, b: fedPct, c: money37("100"), round: "half-up" });
-      const l11 = rd21({ kind: "mulDiv", a: l10, b: statePct, c: money37("100"), round: "half-up" });
-      return iff14(gt5(agi2, money37("2900000")), money37("0"), l11);
+      const cap = iff15(cmp7("ge", fact39("neChildCareQualifyingPersons"), int8("2")), money37("600000"), money37("300000"));
+      const l3 = minE3(max022(fact39("neChildCareExpenses")), cap);
+      const earned2 = max022(fact39("neEarnedIncome"));
+      const l6 = iff15(isStatus21("mfj"), minE3(l3, earned2, max022(fact39("neSpouseEarnedIncome"))), minE3(l3, earned2));
+      const fedSteps = stepUnits5(max022(sub20(agi2, money37("1500000"))), "200000", "ceil");
+      const fedPct = sub20(money37("35"), mulInt13(money37("1"), fedSteps));
+      const stateSteps = stepUnits5(max022(sub20(agi2, money37("2200000"))), "100000", "ceil");
+      const statePct = max022(sub20(money37("100"), mulInt13(money37("10"), stateSteps)));
+      const l10 = rd22({ kind: "mulDiv", a: l6, b: fedPct, c: money37("100"), round: "half-up" });
+      const l11 = rd22({ kind: "mulDiv", a: l10, b: statePct, c: money37("100"), round: "half-up" });
+      return iff15(gt5(agi2, money37("2900000")), money37("0"), l11);
     })()
   },
   {
@@ -72861,7 +72507,7 @@ var neRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "10", type: "int" } },
-    formula: rd21(pct7(max021(fact39("neFederalEic")), "10", "100"))
+    formula: rd22(pct7(max022(fact39("neFederalEic")), "10", "100"))
   },
   {
     id: "us.ne.tax_after_credits",
@@ -72879,8 +72525,8 @@ var neRules = [
     output: { type: "money" },
     parameters: { adjustmentThreshold: { value: "500000", type: "money" } },
     formula: (() => {
-      const net = max021(sub19(fact39("neTaxBeforeCredits"), fact39("neNonrefundableCredits")));
-      return iff14(lt14(fact39("neNetAdjustments"), money37("500000")), minE3(net, max021(fact39("neFederalTaxBeforeCredits"))), net);
+      const net = max022(sub20(fact39("neTaxBeforeCredits"), fact39("neNonrefundableCredits")));
+      return iff15(lt14(fact39("neNetAdjustments"), money37("500000")), minE3(net, max022(fact39("neFederalTaxBeforeCredits"))), net);
     })()
   },
   {
@@ -72899,11 +72545,11 @@ var neRules = [
     output: { type: "money" },
     parameters: { ratioDecimals: { value: "5", type: "int" } },
     formula: (() => {
-      const l1 = max021(fact39("neTaxBeforeCredits"));
-      const denom = add15(fact39("neAgi"), fact39("neAdjustmentsIncreasing"), { kind: "sub", left: money37("0"), right: fact39("neAdjustmentsDecreasing") });
-      const ratio = { kind: "mulDiv", a: max021(fact39("neOtherStateAgi")), b: money37("100000"), c: denom, round: "half-up" };
+      const l1 = max022(fact39("neTaxBeforeCredits"));
+      const denom = add16(fact39("neAgi"), fact39("neAdjustmentsIncreasing"), { kind: "sub", left: money37("0"), right: fact39("neAdjustmentsDecreasing") });
+      const ratio = { kind: "mulDiv", a: max022(fact39("neOtherStateAgi")), b: money37("100000"), c: denom, round: "half-up" };
       const l4 = times6({ kind: "mulDiv", a: l1, b: ratio, c: money37("10000000"), round: "half-up" }, "100");
-      return iff14(gt5(denom, money37("0")), minE3(l1, l4, max021(fact39("neOtherStateTaxPaid"))), money37("0"));
+      return iff15(gt5(denom, money37("0")), minE3(l1, l4, max022(fact39("neOtherStateTaxPaid"))), money37("0"));
     })()
   },
   {
@@ -72922,10 +72568,10 @@ var neRules = [
     output: { type: "money" },
     parameters: { stateRateBps: { value: "550", type: "int" } },
     formula: (() => {
-      const p = max021(fact39("neUseTaxPurchases"));
+      const p = max022(fact39("neUseTaxPurchases"));
       const state = dollarsFromScaled6(times6(p, "550"), "1000000");
-      const local = dollarsFromScaled6({ kind: "mulDiv", a: p, b: mulInt12(money37("1"), fact39("neLocalUseTaxRateBps")), c: money37("1"), round: "half-up" }, "1000000");
-      return add15(state, local);
+      const local = dollarsFromScaled6({ kind: "mulDiv", a: p, b: mulInt13(money37("1"), fact39("neLocalUseTaxRateBps")), c: money37("1"), round: "half-up" }, "1000000");
+      return add16(state, local);
     })()
   },
   {
@@ -72989,7 +72635,7 @@ var neRules = [
       hohBracket3: { value: "5916000", type: "money" }
     },
     formula: (() => {
-      const x = max021(fact39("stateTaxableIncome"));
+      const x = max022(fact39("stateTaxableIncome"));
       const S26 = [
         { thresholdCents: "0", fixedCents: "0", rateNum: "246" },
         { thresholdCents: "413000", fixedCents: "10160", rateNum: "351" },
@@ -73008,7 +72654,7 @@ var neRules = [
         { thresholdCents: "3962000", fixedCents: "130981", rateNum: "455" },
         { thresholdCents: "5916000", fixedCents: "219888", rateNum: "455" }
       ];
-      return iff14(isJoint3, calcSchedule(x, J262), iff14(isHoh2, calcSchedule(x, H26), calcSchedule(x, S26)));
+      return iff15(isJoint4, calcSchedule(x, J262), iff15(isHoh2, calcSchedule(x, H26), calcSchedule(x, S26)));
     })()
   },
   {
@@ -73033,12 +72679,12 @@ var neRules = [
       perBoxMarried: { value: "170000", type: "money" }
     },
     formula: (() => {
-      const base = iff14(isJoint3, money37("1770000"), iff14(isHoh2, money37("1295000"), money37("885000")));
-      const perBox = iff14(or4(isStatus21("single"), isHoh2), money37("205000"), money37("170000"));
-      const maxBoxes = iff14(or4(isStatus21("mfj"), isStatus21("mfs")), int8("4"), int8("2"));
-      const boxes = iff14(gt5(fact39("neAgeBlindBoxes"), maxBoxes), maxBoxes, fact39("neAgeBlindBoxes"));
-      const ne = add15(base, mulInt12(perBox, boxes));
-      return iff14(fact39("isClaimedAsDependent"), minE3(ne, max021(fact39("neFederalStandardDeduction"))), ne);
+      const base = iff15(isJoint4, money37("1770000"), iff15(isHoh2, money37("1295000"), money37("885000")));
+      const perBox = iff15(or5(isStatus21("single"), isHoh2), money37("205000"), money37("170000"));
+      const maxBoxes = iff15(or5(isStatus21("mfj"), isStatus21("mfs")), int8("4"), int8("2"));
+      const boxes = iff15(gt5(fact39("neAgeBlindBoxes"), maxBoxes), maxBoxes, fact39("neAgeBlindBoxes"));
+      const ne = add16(base, mulInt13(perBox, boxes));
+      return iff15(fact39("isClaimedAsDependent"), minE3(ne, max022(fact39("neFederalStandardDeduction"))), ne);
     })()
   },
   {
@@ -73056,26 +72702,26 @@ var neRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "17600", type: "money" } },
-    formula: mulInt12(money37("17600"), fact39("neExemptions"))
+    formula: mulInt13(money37("17600"), fact39("neExemptions"))
   }
 ];
 
 // ../corpus-us-federal/dist/rules/state-id.js
-var rd22 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp7 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var le13 = (l, r) => cmp7("le", l, r);
-var gt6 = (l, r) => cmp7("gt", l, r);
-var iff15 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add16 = (...args) => ({ kind: "add", args });
-var sub20 = (left, right) => ({ kind: "sub", left, right });
-var max022 = (arg) => ({ kind: "max0", arg });
+var rd23 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp8 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var le13 = (l, r) => cmp8("le", l, r);
+var gt6 = (l, r) => cmp8("gt", l, r);
+var iff16 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add17 = (...args) => ({ kind: "add", args });
+var sub21 = (left, right) => ({ kind: "sub", left, right });
+var max023 = (arg) => ({ kind: "max0", arg });
 var minE4 = (...args) => ({ kind: "min", args });
 var maxE3 = (...args) => ({ kind: "max", args });
-var or5 = (...args) => ({ kind: "or", args });
-var not3 = (arg) => ({ kind: "not", arg });
-var mulInt13 = (base, count) => ({ kind: "mulInt", base, count });
-var isStatus23 = (v) => cmp7("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJointLike = or5(isStatus23("mfj"), isStatus23("qss"), isStatus23("hoh"));
+var or6 = (...args) => ({ kind: "or", args });
+var not4 = (arg) => ({ kind: "not", arg });
+var mulInt14 = (base, count) => ({ kind: "mulInt", base, count });
+var isStatus23 = (v) => cmp8("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJointLike = or6(isStatus23("mfj"), isStatus23("qss"), isStatus23("hoh"));
 var isMfj3 = isStatus23("mfj");
 var pct8 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var timesNum = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
@@ -73107,7 +72753,7 @@ var idRules = [
       statutoryBaseSingle: { value: "250000", type: "money" },
       statutoryBaseJoint: { value: "500000", type: "money" }
     },
-    formula: dollarsFromScaled7(timesNum(max022(sub20(max022(fact39("stateTaxableIncome")), iff15(isJointLike, money37("962200"), money37("481100")))), "530"))
+    formula: dollarsFromScaled7(timesNum(max023(sub21(max023(fact39("stateTaxableIncome")), iff16(isJointLike, money37("962200"), money37("481100")))), "530"))
   },
   {
     id: "us.id.standard_deduction",
@@ -73133,11 +72779,11 @@ var idRules = [
       dependentEarnedAddOn: { value: "45000", type: "money" }
     },
     formula: (() => {
-      const base = iff15(or5(isStatus23("mfj"), isStatus23("qss")), money37("3150000"), iff15(isStatus23("hoh"), money37("2362500"), money37("1575000")));
-      const depBase = minE4(base, maxE3(money37("135000"), add16(max022(fact39("idEarnedIncome")), money37("45000"))));
-      const l4 = iff15(fact39("isClaimedAsDependent"), depBase, base);
-      const perBox = iff15(or5(isStatus23("single"), isStatus23("hoh")), money37("200000"), money37("160000"));
-      return add16(l4, mulInt13(perBox, fact39("idAgeBlindBoxes")));
+      const base = iff16(or6(isStatus23("mfj"), isStatus23("qss")), money37("3150000"), iff16(isStatus23("hoh"), money37("2362500"), money37("1575000")));
+      const depBase = minE4(base, maxE3(money37("135000"), add17(max023(fact39("idEarnedIncome")), money37("45000"))));
+      const l4 = iff16(fact39("isClaimedAsDependent"), depBase, base);
+      const perBox = iff16(or6(isStatus23("single"), isStatus23("hoh")), money37("200000"), money37("160000"));
+      return add17(l4, mulInt14(perBox, fact39("idAgeBlindBoxes")));
     })()
   },
   {
@@ -73156,14 +72802,14 @@ var idRules = [
     output: { type: "money" },
     parameters: { saltCap: { value: "4000000", type: "money" }, saltCapMfs: { value: "2000000", type: "money" } },
     formula: (() => {
-      const a = max022(fact39("idSaltIncomeOrSalesTaxes"));
-      const b = max022(fact39("idRealEstateTaxes"));
-      const c2 = max022(fact39("idPersonalPropertyTaxes"));
-      const d3 = add16(a, b, c2);
-      const cap = iff15(isStatus23("mfs"), money37("2000000"), money37("4000000"));
-      const l14 = iff15(le13(d3, cap), a, max022(sub20(max022(fact39("idSaltAllowed")), add16(b, c2))));
-      const l13 = add16(max022(fact39("idFederalItemizedDeductions")), max022(fact39("idForeignTaxCredit")));
-      return max022(sub20(l13, l14));
+      const a = max023(fact39("idSaltIncomeOrSalesTaxes"));
+      const b = max023(fact39("idRealEstateTaxes"));
+      const c2 = max023(fact39("idPersonalPropertyTaxes"));
+      const d3 = add17(a, b, c2);
+      const cap = iff16(isStatus23("mfs"), money37("2000000"), money37("4000000"));
+      const l14 = iff16(le13(d3, cap), a, max023(sub21(max023(fact39("idSaltAllowed")), add17(b, c2))));
+      const l13 = add17(max023(fact39("idFederalItemizedDeductions")), max023(fact39("idForeignTaxCredit")));
+      return max023(sub21(l13, l14));
     })()
   },
   {
@@ -73181,7 +72827,7 @@ var idRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { perChild: { value: "20500", type: "money" } },
-    formula: minE4(mulInt13(money37("20500"), fact39("idQualifyingChildren")), max022(sub20(fact39("idTaxBeforeCredits"), add16(fact39("idOtherStateCredit"), fact39("idContributionCredits"), fact39("idBusinessCredits")))))
+    formula: minE4(mulInt14(money37("20500"), fact39("idQualifyingChildren")), max023(sub21(fact39("idTaxBeforeCredits"), add17(fact39("idOtherStateCredit"), fact39("idContributionCredits"), fact39("idBusinessCredits")))))
   },
   {
     id: "us.id.food_tax_credit",
@@ -73198,7 +72844,7 @@ var idRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perPerson: { value: "15500", type: "money" }, perMonth: { value: "1292", type: "money" }, actualCostMaxPerPerson: { value: "25000", type: "money" } },
-    formula: rd22(add16(mulInt13(money37("15500"), fact39("idFoodCreditPersons")), mulInt13(money37("1292"), fact39("idFoodCreditPartialMonths"))))
+    formula: rd23(add17(mulInt14(money37("15500"), fact39("idFoodCreditPersons")), mulInt14(money37("1292"), fact39("idFoodCreditPartialMonths"))))
   },
   {
     id: "us.id.other_state_credit",
@@ -73216,11 +72862,11 @@ var idRules = [
     output: { type: "money" },
     parameters: { ratioDecimals: { value: "4", type: "int" } },
     formula: (() => {
-      const l1 = max022(fact39("idTaxBeforeCredits"));
+      const l1 = max023(fact39("idTaxBeforeCredits"));
       const l3 = fact39("idAdjustedIncome");
-      const ratio = { kind: "mulDiv", a: max022(fact39("idOtherStateIncome")), b: money37("10000"), c: l3, round: "half-up" };
+      const ratio = { kind: "mulDiv", a: max023(fact39("idOtherStateIncome")), b: money37("10000"), c: l3, round: "half-up" };
       const l5 = timesNum({ kind: "mulDiv", a: l1, b: ratio, c: money37("1000000"), round: "half-up" }, "100");
-      return iff15(gt6(l3, money37("0")), minE4(l5, max022(fact39("idOtherStateTaxDue")), l1), money37("0"));
+      return iff16(gt6(l3, money37("0")), minE4(l5, max023(fact39("idOtherStateTaxDue")), l1), money37("0"));
     })()
   },
   {
@@ -73239,8 +72885,8 @@ var idRules = [
     output: { type: "money" },
     parameters: { pctOfDonation: { value: "50", type: "int" }, pctOfTax: { value: "50", type: "int" }, cap: { value: "50000", type: "money" }, capJoint: { value: "100000", type: "money" } },
     formula: (() => {
-      const tax = max022(fact39("idTaxBeforeCredits"));
-      return minE4(rd22(half2(max022(fact39("idEducationalContributions")))), rd22(half2(tax)), iff15(isMfj3, money37("100000"), money37("50000")), max022(sub20(tax, fact39("idOtherStateCredit"))));
+      const tax = max023(fact39("idTaxBeforeCredits"));
+      return minE4(rd23(half2(max023(fact39("idEducationalContributions")))), rd23(half2(tax)), iff16(isMfj3, money37("100000"), money37("50000")), max023(sub21(tax, fact39("idOtherStateCredit"))));
     })()
   },
   {
@@ -73259,8 +72905,8 @@ var idRules = [
     output: { type: "money" },
     parameters: { pctOfDonation: { value: "50", type: "int" }, pctOfTax: { value: "20", type: "int" }, cap: { value: "10000", type: "money" }, capJoint: { value: "20000", type: "money" } },
     formula: (() => {
-      const tax = max022(fact39("idTaxBeforeCredits"));
-      return minE4(rd22(half2(max022(fact39("idYouthContributions")))), rd22(pct8(tax, "20", "100")), iff15(isMfj3, money37("20000"), money37("10000")), max022(sub20(tax, add16(fact39("idOtherStateCredit"), fact39("idEducationalCredit"), fact39("idInvestmentTaxCredit")))));
+      const tax = max023(fact39("idTaxBeforeCredits"));
+      return minE4(rd23(half2(max023(fact39("idYouthContributions")))), rd23(pct8(tax, "20", "100")), iff16(isMfj3, money37("20000"), money37("10000")), max023(sub21(tax, add17(fact39("idOtherStateCredit"), fact39("idEducationalCredit"), fact39("idInvestmentTaxCredit")))));
     })()
   },
   {
@@ -73278,7 +72924,7 @@ var idRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { cap: { value: "500000", type: "money" } },
-    formula: minE4(max022(fact39("idOrganDonationExpenses")), money37("500000"), max022(sub20(max022(fact39("idTaxBeforeCredits")), add16(fact39("idOtherStateCredit"), fact39("idEducationalCredit"), fact39("idYouthCredit"), fact39("idBusinessCredits")))))
+    formula: minE4(max023(fact39("idOrganDonationExpenses")), money37("500000"), max023(sub21(max023(fact39("idTaxBeforeCredits")), add17(fact39("idOtherStateCredit"), fact39("idEducationalCredit"), fact39("idYouthCredit"), fact39("idBusinessCredits")))))
   },
   {
     id: "us.id.retirement_benefits_deduction",
@@ -73296,10 +72942,10 @@ var idRules = [
     output: { type: "money" },
     parameters: { maxSingle: { value: "4821600", type: "money" }, maxJoint: { value: "7232400", type: "money" } },
     formula: (() => {
-      const l8a = iff15(isMfj3, money37("7232400"), money37("4821600"));
-      const l8d = max022(sub20(l8a, add16(max022(fact39("idRailroadBenefits")), max022(fact39("idSocialSecurityBenefits")))));
-      const l8f = minE4(l8d, max022(fact39("idQualifyingRetirementBenefits")));
-      return iff15(or5(not3(fact39("idRetirementEligible")), isStatus23("mfs")), money37("0"), l8f);
+      const l8a = iff16(isMfj3, money37("7232400"), money37("4821600"));
+      const l8d = max023(sub21(l8a, add17(max023(fact39("idRailroadBenefits")), max023(fact39("idSocialSecurityBenefits")))));
+      const l8f = minE4(l8d, max023(fact39("idQualifyingRetirementBenefits")));
+      return iff16(or6(not4(fact39("idRetirementEligible")), isStatus23("mfs")), money37("0"), l8f);
     })()
   },
   {
@@ -73318,10 +72964,10 @@ var idRules = [
     output: { type: "money" },
     parameters: { cap: { value: "1200000", type: "money" } },
     formula: (() => {
-      const l4 = max022(sub20(money37("1200000"), max022(fact39("idDependentCareBenefitsExcluded"))));
-      const earned2 = max022(fact39("idEarnedIncome"));
-      const l6 = iff15(isMfj3, max022(fact39("idSpouseEarnedIncome")), earned2);
-      return minE4(max022(fact39("idChildCareExpenses")), l4, earned2, l6);
+      const l4 = max023(sub21(money37("1200000"), max023(fact39("idDependentCareBenefitsExcluded"))));
+      const earned2 = max023(fact39("idEarnedIncome"));
+      const l6 = iff16(isMfj3, max023(fact39("idSpouseEarnedIncome")), earned2);
+      return minE4(max023(fact39("idChildCareExpenses")), l4, earned2, l6);
     })()
   },
   {
@@ -73340,12 +72986,12 @@ var idRules = [
     output: { type: "money" },
     parameters: { medicalFloorBps: { value: "750", type: "int" } },
     formula: (() => {
-      const l1 = max022(fact39("idSchAHealthPremiums"));
-      const l4 = add16(l1, max022(fact39("idSchALtcPremiums")), max022(fact39("idSchAOtherMedical")));
-      const l5 = rd22(pct8(max022(fact39("idAgi")), "75", "1000"));
-      const l6 = max022(sub20(l4, l5));
-      const l8 = iff15(fact39("idItemizingForIdaho"), minE4(l1, l6), money37("0"));
-      return max022(sub20(max022(fact39("idHealthPremiumsPaid")), add16(l8, max022(fact39("idHealthPremiumsDeductedElsewhere")))));
+      const l1 = max023(fact39("idSchAHealthPremiums"));
+      const l4 = add17(l1, max023(fact39("idSchALtcPremiums")), max023(fact39("idSchAOtherMedical")));
+      const l5 = rd23(pct8(max023(fact39("idAgi")), "75", "1000"));
+      const l6 = max023(sub21(l4, l5));
+      const l8 = iff16(fact39("idItemizingForIdaho"), minE4(l1, l6), money37("0"));
+      return max023(sub21(max023(fact39("idHealthPremiumsPaid")), add17(l8, max023(fact39("idHealthPremiumsDeductedElsewhere")))));
     })()
   },
   {
@@ -73364,14 +73010,14 @@ var idRules = [
     output: { type: "money" },
     parameters: { medicalFloorBps: { value: "750", type: "int" } },
     formula: (() => {
-      const l1 = max022(fact39("idSchAHealthPremiums"));
-      const l2 = max022(fact39("idSchALtcPremiums"));
-      const l4 = add16(l1, l2, max022(fact39("idSchAOtherMedical")));
-      const l5 = rd22(pct8(max022(fact39("idAgi")), "75", "1000"));
-      const l6 = max022(sub20(l4, l5));
-      const l12 = max022(sub20(l6, l1));
-      const l13 = iff15(fact39("idItemizingForIdaho"), minE4(l2, l12), money37("0"));
-      return max022(sub20(max022(fact39("idLtcPremiumsPaid")), add16(l13, max022(fact39("idLtcDeductedElsewhere")))));
+      const l1 = max023(fact39("idSchAHealthPremiums"));
+      const l2 = max023(fact39("idSchALtcPremiums"));
+      const l4 = add17(l1, l2, max023(fact39("idSchAOtherMedical")));
+      const l5 = rd23(pct8(max023(fact39("idAgi")), "75", "1000"));
+      const l6 = max023(sub21(l4, l5));
+      const l12 = max023(sub21(l6, l1));
+      const l13 = iff16(fact39("idItemizingForIdaho"), minE4(l2, l12), money37("0"));
+      return max023(sub21(max023(fact39("idLtcPremiumsPaid")), add17(l13, max023(fact39("idLtcDeductedElsewhere")))));
     })()
   },
   {
@@ -73389,7 +73035,7 @@ var idRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { firstYearPct: { value: "40", type: "int" }, laterYearPct: { value: "20", type: "int" }, cap: { value: "500000", type: "money" } },
-    formula: minE4(money37("500000"), add16(minE4(money37("500000"), rd22(pct8(max022(fact39("idEnergyDeviceCost2025")), "40", "100"))), minE4(money37("500000"), rd22(pct8(max022(fact39("idEnergyDeviceCost2024")), "20", "100"))), minE4(money37("500000"), rd22(pct8(max022(fact39("idEnergyDeviceCost2023")), "20", "100"))), minE4(money37("500000"), rd22(pct8(max022(fact39("idEnergyDeviceCost2022")), "20", "100")))))
+    formula: minE4(money37("500000"), add17(minE4(money37("500000"), rd23(pct8(max023(fact39("idEnergyDeviceCost2025")), "40", "100"))), minE4(money37("500000"), rd23(pct8(max023(fact39("idEnergyDeviceCost2024")), "20", "100"))), minE4(money37("500000"), rd23(pct8(max023(fact39("idEnergyDeviceCost2023")), "20", "100"))), minE4(money37("500000"), rd23(pct8(max023(fact39("idEnergyDeviceCost2022")), "20", "100")))))
   },
   {
     id: "us.id.capital_gains_deduction",
@@ -73406,7 +73052,7 @@ var idRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "60", type: "int" } },
-    formula: minE4(rd22(pct8(max022(fact39("idQualifiedCapitalGain")), "60", "100")), max022(fact39("idNetCapitalGain")))
+    formula: minE4(rd23(pct8(max023(fact39("idQualifiedCapitalGain")), "60", "100")), max023(fact39("idNetCapitalGain")))
   },
   {
     id: "us.id.permanent_building_fund_tax",
@@ -73423,7 +73069,7 @@ var idRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { tax: { value: "1000", type: "money" } },
-    formula: iff15(or5(fact39("idReceivedPublicAssistance"), fact39("idBlind"), not3(fact39("idRequiredToFile"))), money37("0"), money37("1000"))
+    formula: iff16(or6(fact39("idReceivedPublicAssistance"), fact39("idBlind"), not4(fact39("idRequiredToFile"))), money37("0"), money37("1000"))
   },
   {
     id: "us.id.home_for_family_member_credit",
@@ -73440,7 +73086,7 @@ var idRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perMember: { value: "10000", type: "money" }, perMonth: { value: "833", type: "money" }, cap: { value: "30000", type: "money" }, deductionPerMember: { value: "100000", type: "money" }, deductionPerMonth: { value: "8333", type: "money" } },
-    formula: minE4(money37("30000"), rd22(add16(mulInt13(money37("10000"), fact39("idHomeFamilyMembers")), mulInt13(money37("833"), fact39("idHomeFamilyPartialMonths")))))
+    formula: minE4(money37("30000"), rd23(add17(mulInt14(money37("10000"), fact39("idHomeFamilyMembers")), mulInt14(money37("833"), fact39("idHomeFamilyPartialMonths")))))
   },
   {
     id: "us.id.use_tax",
@@ -73457,7 +73103,7 @@ var idRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { rateBps: { value: "600", type: "int" } },
-    formula: rd22(pct8(max022(fact39("idUseTaxPurchases")), "6", "100"))
+    formula: rd23(pct8(max023(fact39("idUseTaxPurchases")), "6", "100"))
   },
   {
     id: "us.id.parameters",
@@ -73498,32 +73144,32 @@ var idRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-wv.js
-var rd23 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp8 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var le14 = (l, r) => cmp8("le", l, r);
-var lt15 = (l, r) => cmp8("lt", l, r);
-var gt7 = (l, r) => cmp8("gt", l, r);
-var ge5 = (l, r) => cmp8("ge", l, r);
-var iff16 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add17 = (...args) => ({ kind: "add", args });
-var sub21 = (left, right) => ({ kind: "sub", left, right });
-var max023 = (arg) => ({ kind: "max0", arg });
+var rd24 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp9 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var le14 = (l, r) => cmp9("le", l, r);
+var lt15 = (l, r) => cmp9("lt", l, r);
+var gt7 = (l, r) => cmp9("gt", l, r);
+var ge5 = (l, r) => cmp9("ge", l, r);
+var iff17 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add18 = (...args) => ({ kind: "add", args });
+var sub22 = (left, right) => ({ kind: "sub", left, right });
+var max024 = (arg) => ({ kind: "max0", arg });
 var minE5 = (...args) => ({ kind: "min", args });
-var and4 = (...args) => ({ kind: "and", args });
-var or6 = (...args) => ({ kind: "or", args });
-var not4 = (arg) => ({ kind: "not", arg });
+var and5 = (...args) => ({ kind: "and", args });
+var or7 = (...args) => ({ kind: "or", args });
+var not5 = (arg) => ({ kind: "not", arg });
 var int9 = (value) => ({ kind: "int", value });
-var mulInt14 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits5 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus24 = (v) => cmp8("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var mulInt15 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits6 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus24 = (v) => cmp9("eq", fact39("filingStatus"), { kind: "enum", value: v });
 var isMfs6 = isStatus24("mfs");
 var isMfj4 = isStatus24("mfj");
 var times7 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct9 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled8 = (n) => times7({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
-var scaledSchedule7 = (base, rows) => add17(...rows.map((r, i) => {
-  const excess2 = sub21(base, money37(r.thresholdCents));
-  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max023(excess2);
+var scaledSchedule7 = (base, rows) => add18(...rows.map((r, i) => {
+  const excess2 = sub22(base, money37(r.thresholdCents));
+  const portion = i + 1 < rows.length ? { kind: "clamp", value: excess2, lo: money37("0"), hi: money37(String(BigInt(rows[i + 1].thresholdCents) - BigInt(r.thresholdCents))) } : max024(excess2);
   return times7(portion, r.rateNum);
 }));
 var sched = (rates, mfs) => {
@@ -73532,10 +73178,10 @@ var sched = (rates, mfs) => {
 };
 var RATES_2025 = ["222", "296", "333", "444", "482"];
 var RATES_2026 = ["211", "281", "316", "422", "458"];
-var scheduleTax = (x, rates) => iff16(isMfs6, dollarsFromScaled8(scaledSchedule7(x, sched(rates, true))), dollarsFromScaled8(scaledSchedule7(x, sched(rates, false))));
+var scheduleTax = (x, rates) => iff17(isMfs6, dollarsFromScaled8(scaledSchedule7(x, sched(rates, true))), dollarsFromScaled8(scaledSchedule7(x, sched(rates, false))));
 var tableMidpoint = (x) => {
-  const band = (unitCents, offsetCents, from) => add17(money37(from), mulInt14(money37(unitCents), stepUnits5(sub21(x, money37(from)), unitCents, "floor")), money37(offsetCents));
-  return iff16(lt15(x, money37("10000")), band("2500", "1250", "0"), iff16(lt15(x, money37("2500000")), band("10000", "5000", "0"), iff16(lt15(x, money37("4000000")), band("6000", "3000", "2500000"), band("5000", "2500", "4000000"))));
+  const band = (unitCents, offsetCents, from) => add18(money37(from), mulInt15(money37(unitCents), stepUnits6(sub22(x, money37(from)), unitCents, "floor")), money37(offsetCents));
+  return iff17(lt15(x, money37("10000")), band("2500", "1250", "0"), iff17(lt15(x, money37("2500000")), band("10000", "5000", "0"), iff17(lt15(x, money37("4000000")), band("6000", "3000", "2500000"), band("5000", "2500", "4000000"))));
 };
 var BOOKLET_URL6 = "https://tax.wv.gov/Documents/PIT/2025/it140.PersonalIncomeTaxFormsAndInstructions.2025.pdf";
 var CODE2 = (s) => `https://code.wvlegislature.gov/${s}/`;
@@ -73571,11 +73217,11 @@ var wvRules = [
       tableTop: { value: "10000000", type: "money" }
     },
     formula: (() => {
-      const x = max023(fact39("stateTaxableIncome"));
-      const schedule = scheduleTax(x, RATES_2025);
+      const x = max024(fact39("stateTaxableIncome"));
+      const schedule2 = scheduleTax(x, RATES_2025);
       const table2 = dollarsFromScaled8(scaledSchedule7(tableMidpoint(x), sched(RATES_2025, false)));
-      const useTable = and4(not4(fact39("wvUseRateSchedule")), not4(isMfs6), ge5(x, money37("2500")), lt15(x, money37("10000000")));
-      return iff16(useTable, table2, schedule);
+      const useTable = and5(not5(fact39("wvUseRateSchedule")), not5(isMfs6), ge5(x, money37("2500")), lt15(x, money37("10000000")));
+      return iff17(useTable, table2, schedule2);
     })()
   },
   {
@@ -73599,7 +73245,7 @@ var wvRules = [
       rate4Bps: { value: "422", type: "int" },
       rate5Bps: { value: "458", type: "int" }
     },
-    formula: scheduleTax(max023(fact39("stateTaxableIncome")), RATES_2026)
+    formula: scheduleTax(max024(fact39("stateTaxableIncome")), RATES_2026)
   },
   {
     id: "us.wv.exemption_deduction",
@@ -73616,7 +73262,7 @@ var wvRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "200000", type: "money" }, zeroExemptionAllowance: { value: "50000", type: "money" } },
-    formula: iff16(cmp8("eq", fact39("wvExemptions"), int9("0")), money37("50000"), mulInt14(money37("200000"), fact39("wvExemptions")))
+    formula: iff17(cmp9("eq", fact39("wvExemptions"), int9("0")), money37("50000"), mulInt15(money37("200000"), fact39("wvExemptions")))
   },
   {
     id: "us.wv.low_income_exclusion",
@@ -73634,9 +73280,9 @@ var wvRules = [
     output: { type: "money" },
     parameters: { cap: { value: "1000000", type: "money" }, capMfs: { value: "500000", type: "money" } },
     formula: (() => {
-      const cap = iff16(isMfs6, money37("500000"), money37("1000000"));
+      const cap = iff17(isMfs6, money37("500000"), money37("1000000"));
       const agi2 = fact39("wvAgi");
-      return iff16(gt7(agi2, cap), money37("0"), minE5(max023(agi2), max023(fact39("wvEarnedIncome")), cap));
+      return iff17(gt7(agi2, cap), money37("0"), minE5(max024(agi2), max024(fact39("wvEarnedIncome")), cap));
     })()
   },
   {
@@ -73655,9 +73301,9 @@ var wvRules = [
     output: { type: "money" },
     parameters: { agiLimitJoint: { value: "10000000", type: "money" }, agiLimitOther: { value: "5000000", type: "money" }, pctOverLimit: { value: "65", type: "int" } },
     formula: (() => {
-      const limit = iff16(isMfj4, money37("10000000"), money37("5000000"));
-      const ss2 = max023(fact39("wvTaxableSocialSecurity"));
-      return iff16(le14(fact39("wvAgi"), limit), ss2, rd23(pct9(ss2, "65", "100")));
+      const limit = iff17(isMfj4, money37("10000000"), money37("5000000"));
+      const ss2 = max024(fact39("wvTaxableSocialSecurity"));
+      return iff17(le14(fact39("wvAgi"), limit), ss2, rd24(pct9(ss2, "65", "100")));
     })()
   },
   {
@@ -73675,7 +73321,7 @@ var wvRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "100", type: "int" } },
-    formula: max023(fact39("wvTaxableSocialSecurity"))
+    formula: max024(fact39("wvTaxableSocialSecurity"))
   },
   {
     id: "us.wv.senior_citizen_modification",
@@ -73692,7 +73338,7 @@ var wvRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { cap: { value: "800000", type: "money" } },
-    formula: iff16(fact39("wvSeniorOrDisabled"), max023(sub21(minE5(money37("800000"), max023(fact39("wvIncomeNotOnLines35to46"))), max023(fact39("wvLines29to34")))), money37("0"))
+    formula: iff17(fact39("wvSeniorOrDisabled"), max024(sub22(minE5(money37("800000"), max024(fact39("wvIncomeNotOnLines35to46"))), max024(fact39("wvLines29to34")))), money37("0"))
   },
   {
     id: "us.wv.surviving_spouse_modification",
@@ -73709,7 +73355,7 @@ var wvRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { cap: { value: "800000", type: "money" } },
-    formula: iff16(fact39("wvSurvivingSpouseEligible"), max023(sub21(money37("800000"), max023(fact39("wvLines29to34")))), money37("0"))
+    formula: iff17(fact39("wvSurvivingSpouseEligible"), max024(sub22(money37("800000"), max024(fact39("wvLines29to34")))), money37("0"))
   },
   {
     id: "us.wv.family_tax_credit",
@@ -73733,13 +73379,13 @@ var wvRules = [
       maxFamilySize: { value: "8", type: "int" }
     },
     formula: (() => {
-      const size = iff16(gt7(fact39("wvFamilySize"), int9("8")), int9("8"), fact39("wvFamilySize"));
-      const ceilingFull = add17(money37("1565000"), mulInt14(money37("550000"), sub21(size, int9("1"))));
-      const ceiling = iff16(isMfs6, pct9(ceilingFull, "1", "2"), ceilingFull);
-      const steps = iff16(isMfs6, stepUnits5(max023(sub21(fact39("wvModifiedAgi"), ceiling)), "15000", "ceil"), stepUnits5(max023(sub21(fact39("wvModifiedAgi"), ceiling)), "30000", "ceil"));
-      const pctPoints = max023(sub21(money37("100"), mulInt14(money37("10"), steps)));
-      const credit = rd23({ kind: "mulDiv", a: max023(fact39("wvTaxBeforeCredits")), b: pctPoints, c: money37("100"), round: "half-up" });
-      return iff16(or6(cmp8("eq", fact39("wvFamilySize"), int9("0")), fact39("wvFederalAmt")), money37("0"), credit);
+      const size = iff17(gt7(fact39("wvFamilySize"), int9("8")), int9("8"), fact39("wvFamilySize"));
+      const ceilingFull = add18(money37("1565000"), mulInt15(money37("550000"), sub22(size, int9("1"))));
+      const ceiling = iff17(isMfs6, pct9(ceilingFull, "1", "2"), ceilingFull);
+      const steps = iff17(isMfs6, stepUnits6(max024(sub22(fact39("wvModifiedAgi"), ceiling)), "15000", "ceil"), stepUnits6(max024(sub22(fact39("wvModifiedAgi"), ceiling)), "30000", "ceil"));
+      const pctPoints = max024(sub22(money37("100"), mulInt15(money37("10"), steps)));
+      const credit = rd24({ kind: "mulDiv", a: max024(fact39("wvTaxBeforeCredits")), b: pctPoints, c: money37("100"), round: "half-up" });
+      return iff17(or7(cmp9("eq", fact39("wvFamilySize"), int9("0")), fact39("wvFederalAmt")), money37("0"), credit);
     })()
   },
   {
@@ -73758,14 +73404,14 @@ var wvRules = [
     output: { type: "money" },
     parameters: {},
     formula: (() => {
-      const l1 = max023(fact39("wvOtherStateTax"));
-      const l2 = max023(fact39("wvTaxBeforeCredits"));
-      const l3 = max023(fact39("wvOtherStateIncome"));
+      const l1 = max024(fact39("wvOtherStateTax"));
+      const l2 = max024(fact39("wvTaxBeforeCredits"));
+      const l3 = max024(fact39("wvOtherStateIncome"));
       const l4 = fact39("wvAdjustedGrossIncome");
       const l5 = times7({ kind: "mulDiv", a: l2, b: l3, c: times7(l4, "100"), round: "half-up" }, "100");
-      const l8 = max023(sub21(l2, max023(fact39("wvAlternativeTax"))));
-      const l9 = max023(sub21(l2, max023(fact39("wvOtherRecapCredits"))));
-      return iff16(gt7(l4, money37("0")), minE5(l1, l2, l5, l8, l9), money37("0"));
+      const l8 = max024(sub22(l2, max024(fact39("wvAlternativeTax"))));
+      const l9 = max024(sub22(l2, max024(fact39("wvOtherRecapCredits"))));
+      return iff17(gt7(l4, money37("0")), minE5(l1, l2, l5, l8, l9), money37("0"));
     })()
   },
   {
@@ -73783,7 +73429,7 @@ var wvRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "50", type: "int" } },
-    formula: rd23(pct9(max023(fact39("wvFederalChildCareCredit")), "1", "2"))
+    formula: rd24(pct9(max024(fact39("wvFederalChildCareCredit")), "1", "2"))
   },
   {
     id: "us.wv.senior_citizens_tax_credit",
@@ -73801,9 +73447,9 @@ var wvRules = [
     output: { type: "money" },
     parameters: { limitOne: { value: "2347500", type: "money" }, limitPerAdditional: { value: "825000", type: "money" }, minimumRefund: { value: "1000", type: "money" } },
     formula: (() => {
-      const size = iff16(lt15(fact39("wvHouseholdSize"), int9("1")), int9("1"), fact39("wvHouseholdSize"));
-      const limit = add17(money37("2347500"), mulInt14(money37("825000"), sub21(size, int9("1"))));
-      return iff16(and4(le14(fact39("wvHouseholdIncome"), limit), not4(fact39("wvFederalAmt")), not4(fact39("wvDisabledVeteranCreditClaimed"))), max023(fact39("wvSeniorCitizenCreditAmount")), money37("0"));
+      const size = iff17(lt15(fact39("wvHouseholdSize"), int9("1")), int9("1"), fact39("wvHouseholdSize"));
+      const limit = add18(money37("2347500"), mulInt15(money37("825000"), sub22(size, int9("1"))));
+      return iff17(and5(le14(fact39("wvHouseholdIncome"), limit), not5(fact39("wvFederalAmt")), not5(fact39("wvDisabledVeteranCreditClaimed"))), max024(fact39("wvSeniorCitizenCreditAmount")), money37("0"));
     })()
   },
   {
@@ -73822,13 +73468,13 @@ var wvRules = [
     output: { type: "money" },
     parameters: { limitOne: { value: "4695000", type: "money" }, limitPerAdditional: { value: "1650000", type: "money" }, pctOfIncome: { value: "4", type: "int" }, cap: { value: "100000", type: "money" }, minimumRefund: { value: "1000", type: "money" } },
     formula: (() => {
-      const size = iff16(lt15(fact39("wvHouseholdSize"), int9("1")), int9("1"), fact39("wvHouseholdSize"));
-      const limit = add17(money37("4695000"), mulInt14(money37("1650000"), sub21(size, int9("1"))));
-      const l3 = max023(sub21(max023(fact39("wvPropertyTaxPaid")), max023(fact39("wvSeniorCitizenCredit"))));
-      const l6 = add17(fact39("wvAgi"), max023(fact39("wvAdditions")), max023(fact39("wvTaxExemptInterest")), max023(fact39("wvWorkersCompensation")), max023(fact39("wvNontaxableSocialSecurity")), max023(fact39("wvOtherHouseholdIncome")));
-      const l7 = rd23(pct9(max023(l6), "4", "100"));
-      const eligible = and4(le14(fact39("wvHouseholdIncome"), limit), not4(fact39("wvFederalAmt")), not4(fact39("wvDisabledVeteranCreditClaimed")), gt7(l3, l7));
-      return iff16(eligible, minE5(money37("100000"), sub21(l3, l7)), money37("0"));
+      const size = iff17(lt15(fact39("wvHouseholdSize"), int9("1")), int9("1"), fact39("wvHouseholdSize"));
+      const limit = add18(money37("4695000"), mulInt15(money37("1650000"), sub22(size, int9("1"))));
+      const l3 = max024(sub22(max024(fact39("wvPropertyTaxPaid")), max024(fact39("wvSeniorCitizenCredit"))));
+      const l6 = add18(fact39("wvAgi"), max024(fact39("wvAdditions")), max024(fact39("wvTaxExemptInterest")), max024(fact39("wvWorkersCompensation")), max024(fact39("wvNontaxableSocialSecurity")), max024(fact39("wvOtherHouseholdIncome")));
+      const l7 = rd24(pct9(max024(l6), "4", "100"));
+      const eligible = and5(le14(fact39("wvHouseholdIncome"), limit), not5(fact39("wvFederalAmt")), not5(fact39("wvDisabledVeteranCreditClaimed")), gt7(l3, l7));
+      return iff17(eligible, minE5(money37("100000"), sub22(l3, l7)), money37("0"));
     })()
   },
   {
@@ -73846,7 +73492,7 @@ var wvRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { stateRateBps: { value: "600", type: "int" } },
-    formula: add17(rd23(pct9(max023(fact39("wvUseTaxPurchases")), "6", "100")), rd23({ kind: "mulDiv", a: max023(fact39("wvMunicipalUseTaxPurchases")), b: mulInt14(money37("1"), fact39("wvMunicipalUseTaxRateBps")), c: money37("10000"), round: "half-up" }))
+    formula: add18(rd24(pct9(max024(fact39("wvUseTaxPurchases")), "6", "100")), rd24({ kind: "mulDiv", a: max024(fact39("wvMunicipalUseTaxPurchases")), b: mulInt15(money37("1"), fact39("wvMunicipalUseTaxRateBps")), c: money37("10000"), round: "half-up" }))
   },
   {
     id: "us.wv.parameters",
@@ -73880,37 +73526,37 @@ var wvRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-me.js
-var rd24 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp9 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt16 = (l, r) => cmp9("lt", l, r);
-var gt8 = (l, r) => cmp9("gt", l, r);
-var ge6 = (l, r) => cmp9("ge", l, r);
-var iff17 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add18 = (...args) => ({ kind: "add", args });
-var sub22 = (left, right) => ({ kind: "sub", left, right });
-var max024 = (arg) => ({ kind: "max0", arg });
+var rd25 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp10 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt16 = (l, r) => cmp10("lt", l, r);
+var gt8 = (l, r) => cmp10("gt", l, r);
+var ge6 = (l, r) => cmp10("ge", l, r);
+var iff18 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add19 = (...args) => ({ kind: "add", args });
+var sub23 = (left, right) => ({ kind: "sub", left, right });
+var max025 = (arg) => ({ kind: "max0", arg });
 var minE6 = (...args) => ({ kind: "min", args });
 var maxE4 = (...args) => ({ kind: "max", args });
-var or7 = (...args) => ({ kind: "or", args });
+var or8 = (...args) => ({ kind: "or", args });
 var int10 = (value) => ({ kind: "int", value });
-var mulInt15 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits6 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus25 = (v) => cmp9("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJoint4 = or7(isStatus25("mfj"), isStatus25("qss"));
+var mulInt16 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits7 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus25 = (v) => cmp10("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJoint5 = or8(isStatus25("mfj"), isStatus25("qss"));
 var isHoh3 = isStatus25("hoh");
 var isMfs7 = isStatus25("mfs");
 var times8 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct10 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled9 = (n) => times8({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
 var printedSchedule2 = (base, rows) => {
-  let expr = dollarsFromScaled9(add18(times8(money37(rows[0].fixedCents), "10000"), times8(sub22(base, money37(rows[0].thresholdCents)), rows[0].rateNum)));
+  let expr = dollarsFromScaled9(add19(times8(money37(rows[0].fixedCents), "10000"), times8(sub23(base, money37(rows[0].thresholdCents)), rows[0].rateNum)));
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
-    expr = iff17(ge6(base, money37(r.thresholdCents)), dollarsFromScaled9(add18(times8(money37(r.fixedCents), "10000"), times8(sub22(base, money37(r.thresholdCents)), r.rateNum))), expr);
+    expr = iff18(ge6(base, money37(r.thresholdCents)), dollarsFromScaled9(add19(times8(money37(r.fixedCents), "10000"), times8(sub23(base, money37(r.thresholdCents)), r.rateNum))), expr);
   }
   return expr;
 };
-var ratio4 = (num, den) => minE6({ kind: "mulDiv", a: max024(num), b: money37("10000"), c: money37(den), round: "half-up" }, money37("10000"));
+var ratio4 = (num, den) => minE6({ kind: "mulDiv", a: max025(num), b: money37("10000"), c: money37(den), round: "half-up" }, money37("10000"));
 var applyRatio = (base, r) => times8({ kind: "mulDiv", a: base, b: r, c: money37("1000000"), round: "half-up" }, "100");
 var SCHED_SINGLE3 = [
   { thresholdCents: "0", fixedCents: "0", rateNum: "580" },
@@ -73933,7 +73579,7 @@ var SCHED_JOINT2 = [
   { thresholdCents: "12690000", fixedCents: "805700", rateNum: "715" }
   // $8,057 plus 7.15% over $126,900
 ];
-var scheduleTax2 = (x) => iff17(isJoint4, printedSchedule2(x, SCHED_JOINT2), iff17(isHoh3, printedSchedule2(x, SCHED_HOH), printedSchedule2(x, SCHED_SINGLE3)));
+var scheduleTax2 = (x) => iff18(isJoint5, printedSchedule2(x, SCHED_JOINT2), iff18(isHoh3, printedSchedule2(x, SCHED_HOH), printedSchedule2(x, SCHED_SINGLE3)));
 var BOOKLET_URL7 = "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/25_1040me_gen_instr_w_cover_pg.pdf";
 var RATES_URL = "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf";
 var FORMS = "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/";
@@ -73968,12 +73614,12 @@ var meRules = [
       highBracketCola: { value: "1269", type: "int" }
     },
     formula: (() => {
-      const x = max024(fact39("stateTaxableIncome"));
-      const mid = add18(mulInt15(money37("10000"), stepUnits6(x, "10000", "floor")), money37("5000"));
-      const handoff2 = (baseCents) => dollarsFromScaled9(add18(times8(money37(baseCents), "10000"), times8(sub22(x, money37("10000000")), "715")));
-      const under100 = iff17(lt16(x, money37("5000")), money37("0"), money37("300"));
-      const tableMethod = iff17(lt16(x, money37("10000")), under100, iff17(lt16(x, money37("10000000")), scheduleTax2(mid), iff17(isJoint4, scheduleTax2(x), iff17(isHoh3, handoff2("638400"), handoff2("663800")))));
-      return iff17(fact39("meUseRateSchedule"), scheduleTax2(x), tableMethod);
+      const x = max025(fact39("stateTaxableIncome"));
+      const mid = add19(mulInt16(money37("10000"), stepUnits7(x, "10000", "floor")), money37("5000"));
+      const handoff2 = (baseCents) => dollarsFromScaled9(add19(times8(money37(baseCents), "10000"), times8(sub23(x, money37("10000000")), "715")));
+      const under100 = iff18(lt16(x, money37("5000")), money37("0"), money37("300"));
+      const tableMethod = iff18(lt16(x, money37("10000")), under100, iff18(lt16(x, money37("10000000")), scheduleTax2(mid), iff18(isJoint5, scheduleTax2(x), iff18(isHoh3, handoff2("638400"), handoff2("663800")))));
+      return iff18(fact39("meUseRateSchedule"), scheduleTax2(x), tableMethod);
     })()
   },
   {
@@ -73998,9 +73644,9 @@ var meRules = [
       perBoxMarried: { value: "160000", type: "money" }
     },
     formula: (() => {
-      const base = iff17(isJoint4, money37("3000000"), iff17(isHoh3, money37("2250000"), money37("1500000")));
-      const perBox = iff17(or7(isStatus25("single"), isHoh3), money37("200000"), money37("160000"));
-      return add18(base, mulInt15(perBox, fact39("meAgeBlindBoxes")));
+      const base = iff18(isJoint5, money37("3000000"), iff18(isHoh3, money37("2250000"), money37("1500000")));
+      const perBox = iff18(or8(isStatus25("single"), isHoh3), money37("200000"), money37("160000"));
+      return add19(base, mulInt16(perBox, fact39("meAgeBlindBoxes")));
     })()
   },
   {
@@ -74019,10 +73665,10 @@ var meRules = [
     output: { type: "money" },
     parameters: { cap: { value: "3630000", type: "money" } },
     formula: (() => {
-      const l2f = add18(max024(fact39("meSaltTaxes5e")), max024(fact39("meExemptIncomeCosts")), max024(fact39("meFinancialInstitutionCosts")), max024(fact39("meMedicalDeduction")));
-      const l3e = add18(max024(fact39("meMaineTaxableIncomeCosts")), max024(fact39("meRealEstateTaxes5b")), max024(fact39("mePersonalPropertyTaxes5c")));
-      const l4 = max024(add18(sub22(max024(fact39("meFederalItemizedDeductions")), l2f), l3e));
-      return add18(max024(fact39("meMedicalDeduction")), minE6(l4, money37("3630000")));
+      const l2f = add19(max025(fact39("meSaltTaxes5e")), max025(fact39("meExemptIncomeCosts")), max025(fact39("meFinancialInstitutionCosts")), max025(fact39("meMedicalDeduction")));
+      const l3e = add19(max025(fact39("meMaineTaxableIncomeCosts")), max025(fact39("meRealEstateTaxes5b")), max025(fact39("mePersonalPropertyTaxes5c")));
+      const l4 = max025(add19(sub23(max025(fact39("meFederalItemizedDeductions")), l2f), l3e));
+      return add19(max025(fact39("meMedicalDeduction")), minE6(l4, money37("3630000")));
     })()
   },
   {
@@ -74049,9 +73695,9 @@ var meRules = [
     },
     formula: (() => {
       const agi2 = fact39("meAgi");
-      const ded = max024(fact39("meDeductionBeforePhaseout"));
-      const r = iff17(isJoint4, ratio4(sub22(agi2, money37("20005000")), "15000000"), iff17(isHoh3, ratio4(sub22(agi2, money37("15000000")), "11250000"), ratio4(sub22(agi2, money37("10000000")), "7500000")));
-      return max024(sub22(ded, applyRatio(ded, r)));
+      const ded = max025(fact39("meDeductionBeforePhaseout"));
+      const r = iff18(isJoint5, ratio4(sub23(agi2, money37("20005000")), "15000000"), iff18(isHoh3, ratio4(sub23(agi2, money37("15000000")), "11250000"), ratio4(sub23(agi2, money37("10000000")), "7500000")));
+      return max025(sub23(ded, applyRatio(ded, r)));
     })()
   },
   {
@@ -74078,10 +73724,10 @@ var meRules = [
       rangeMfs: { value: "6250000", type: "money" }
     },
     formula: (() => {
-      const ex = mulInt15(money37("515000"), fact39("meExemptions"));
+      const ex = mulInt16(money37("515000"), fact39("meExemptions"));
       const agi2 = fact39("meAgi");
-      const r = iff17(isJoint4, ratio4(sub22(agi2, money37("40010000")), "12500000"), iff17(isHoh3, ratio4(sub22(agi2, money37("36675000")), "12500000"), iff17(isMfs7, ratio4(sub22(agi2, money37("20005000")), "6250000"), ratio4(sub22(agi2, money37("33345000")), "12500000"))));
-      return max024(sub22(ex, applyRatio(ex, r)));
+      const r = iff18(isJoint5, ratio4(sub23(agi2, money37("40010000")), "12500000"), iff18(isHoh3, ratio4(sub23(agi2, money37("36675000")), "12500000"), iff18(isMfs7, ratio4(sub23(agi2, money37("20005000")), "6250000"), ratio4(sub23(agi2, money37("33345000")), "12500000"))));
+      return max025(sub23(ex, applyRatio(ex, r)));
     })()
   },
   {
@@ -74107,12 +73753,12 @@ var meRules = [
       rangeMfs: { value: "5000000", type: "money" }
     },
     formula: (() => {
-      const p4 = max024(sub22(money37("4821600"), max024(fact39("meSocialSecurityReceived"))));
-      const p5 = minE6(max024(fact39("meNonMilitaryPension")), p4);
+      const p4 = max025(sub23(money37("4821600"), max025(fact39("meSocialSecurityReceived"))));
+      const p5 = minE6(max025(fact39("meNonMilitaryPension")), p4);
       const agi2 = fact39("meFederalAgi");
-      const r = iff17(isJoint4, ratio4(sub22(agi2, money37("25000000")), "10000000"), iff17(isHoh3, ratio4(sub22(agi2, money37("18750000")), "10000000"), iff17(isMfs7, ratio4(sub22(agi2, money37("12500000")), "5000000"), ratio4(sub22(agi2, money37("12500000")), "10000000"))));
-      const p8 = max024(sub22(p5, applyRatio(p5, r)));
-      return add18(p8, max024(fact39("meMilitaryRetirement")));
+      const r = iff18(isJoint5, ratio4(sub23(agi2, money37("25000000")), "10000000"), iff18(isHoh3, ratio4(sub23(agi2, money37("18750000")), "10000000"), iff18(isMfs7, ratio4(sub23(agi2, money37("12500000")), "5000000"), ratio4(sub23(agi2, money37("12500000")), "10000000"))));
+      const p8 = max025(sub23(p5, applyRatio(p5, r)));
+      return add19(p8, max025(fact39("meMilitaryRetirement")));
     })()
   },
   {
@@ -74140,10 +73786,10 @@ var meRules = [
       step: { value: "50000", type: "money" }
     },
     formula: (() => {
-      const l5 = add18(mulInt15(money37("30500"), fact39("meDependentsSixPlus")), mulInt15(money37("61000"), fact39("meDependentsUnderSix")));
-      const thr = iff17(isJoint4, money37("15000000"), iff17(isHoh3, money37("12500000"), iff17(isMfs7, money37("7500000"), money37("10000000"))));
-      const steps = stepUnits6(max024(sub22(fact39("meAgi"), thr)), "50000", "ceil");
-      return max024(sub22(l5, mulInt15(money37("2000"), steps)));
+      const l5 = add19(mulInt16(money37("30500"), fact39("meDependentsSixPlus")), mulInt16(money37("61000"), fact39("meDependentsUnderSix")));
+      const thr = iff18(isJoint5, money37("15000000"), iff18(isHoh3, money37("12500000"), iff18(isMfs7, money37("7500000"), money37("10000000"))));
+      const steps = stepUnits7(max025(sub23(fact39("meAgi"), thr)), "50000", "ceil");
+      return max025(sub23(l5, mulInt16(money37("2000"), steps)));
     })()
   },
   {
@@ -74162,12 +73808,12 @@ var meRules = [
     output: { type: "money" },
     parameters: { pct: { value: "25", type: "int" }, pctStar5: { value: "50", type: "int" }, refundableCap: { value: "50000", type: "money" } },
     formula: (() => {
-      const fed = max024(fact39("meFederalChildCareCredit"));
-      const total = max024(fact39("meChildCareExpenses"));
-      const star5 = minE6(max024(fact39("meStar5ChildCareExpenses")), total);
-      const shareB = iff17(gt8(total, money37("0")), rd24({ kind: "mulDiv", a: fed, b: star5, c: total, round: "half-up" }), money37("0"));
-      const shareA = max024(sub22(fed, shareB));
-      return add18(rd24(pct10(shareA, "1", "4")), rd24(pct10(shareB, "1", "2")));
+      const fed = max025(fact39("meFederalChildCareCredit"));
+      const total = max025(fact39("meChildCareExpenses"));
+      const star5 = minE6(max025(fact39("meStar5ChildCareExpenses")), total);
+      const shareB = iff18(gt8(total, money37("0")), rd25({ kind: "mulDiv", a: fed, b: star5, c: total, round: "half-up" }), money37("0"));
+      const shareA = max025(sub23(fed, shareB));
+      return add19(rd25(pct10(shareA, "1", "4")), rd25(pct10(shareB, "1", "2")));
     })()
   },
   {
@@ -74186,12 +73832,12 @@ var meRules = [
     output: { type: "money" },
     parameters: { capOne: { value: "300000", type: "money" }, capTwoPlus: { value: "600000", type: "money" }, pct: { value: "25", type: "int" }, refundableCap: { value: "50000", type: "money" } },
     formula: (() => {
-      const cap = iff17(ge6(fact39("meAdultCareQualifyingIndividuals"), int10("2")), money37("600000"), money37("300000"));
-      const l2 = minE6(max024(fact39("meAdultCareExpenses")), cap);
-      const steps = stepUnits6(max024(sub22(fact39("meFederalAgi"), money37("1500000"))), "200000", "ceil");
-      const pctPoints = maxE4(money37("20"), sub22(money37("35"), mulInt15(money37("1"), steps)));
-      const l5 = rd24({ kind: "mulDiv", a: l2, b: pctPoints, c: money37("100"), round: "half-up" });
-      return rd24(pct10(l5, "1", "4"));
+      const cap = iff18(ge6(fact39("meAdultCareQualifyingIndividuals"), int10("2")), money37("600000"), money37("300000"));
+      const l2 = minE6(max025(fact39("meAdultCareExpenses")), cap);
+      const steps = stepUnits7(max025(sub23(fact39("meFederalAgi"), money37("1500000"))), "200000", "ceil");
+      const pctPoints = maxE4(money37("20"), sub23(money37("35"), mulInt16(money37("1"), steps)));
+      const l5 = rd25({ kind: "mulDiv", a: l2, b: pctPoints, c: money37("100"), round: "half-up" });
+      return rd25(pct10(l5, "1", "4"));
     })()
   },
   {
@@ -74209,7 +73855,7 @@ var meRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pctWithChild: { value: "25", type: "int" }, pctNoChild: { value: "50", type: "int" } },
-    formula: iff17(fact39("meHasQualifyingChild"), rd24(pct10(max024(fact39("meFederalEic")), "1", "4")), rd24(pct10(max024(fact39("meFederalEic")), "1", "2")))
+    formula: iff18(fact39("meHasQualifyingChild"), rd25(pct10(max025(fact39("meFederalEic")), "1", "4")), rd25(pct10(max025(fact39("meFederalEic")), "1", "2")))
   },
   {
     id: "us.me.other_jurisdiction_credit",
@@ -74228,9 +73874,9 @@ var meRules = [
     parameters: { ratioDecimals: { value: "4", type: "int" } },
     formula: (() => {
       const l1 = fact39("meAgi");
-      const ratio = minE6({ kind: "mulDiv", a: max024(fact39("meOtherJurisdictionIncome")), b: money37("10000"), c: l1, round: "half-up" }, money37("10000"));
-      const l4a = applyRatio(max024(fact39("meTaxBeforeCredits")), ratio);
-      return iff17(gt8(l1, money37("0")), minE6(l4a, max024(fact39("meOtherJurisdictionTax"))), money37("0"));
+      const ratio = minE6({ kind: "mulDiv", a: max025(fact39("meOtherJurisdictionIncome")), b: money37("10000"), c: l1, round: "half-up" }, money37("10000"));
+      const l4a = applyRatio(max025(fact39("meTaxBeforeCredits")), ratio);
+      return iff18(gt8(l1, money37("0")), minE6(l4a, max025(fact39("meOtherJurisdictionTax"))), money37("0"));
     })()
   },
   {
@@ -74258,18 +73904,18 @@ var meRules = [
       rentPct: { value: "15", type: "int" }
     },
     formula: (() => {
-      const rent = max024(fact39("meRentPaid"));
-      const l5c = iff17(fact39("meRentIncludesUtilities"), iff17(gt8(fact39("meUtilitiesAmount"), money37("0")), minE6(max024(fact39("meUtilitiesAmount")), rent), rd24(pct10(rent, "15", "100"))), money37("0"));
-      const l5e = rd24(pct10(max024(sub22(rent, l5c)), "15", "100"));
-      const l6 = add18(max024(fact39("mePropertyTaxPaid")), l5e);
+      const rent = max025(fact39("meRentPaid"));
+      const l5c = iff18(fact39("meRentIncludesUtilities"), iff18(gt8(fact39("meUtilitiesAmount"), money37("0")), minE6(max025(fact39("meUtilitiesAmount")), rent), rd25(pct10(rent, "15", "100"))), money37("0"));
+      const l5e = rd25(pct10(max025(sub23(rent, l5c)), "15", "100"));
+      const l6 = add19(max025(fact39("mePropertyTaxPaid")), l5e);
       const deps = fact39("meDependents13a");
-      const l8 = iff17(fact39("meAge65"), money37("410000"), iff17(isJoint4, iff17(ge6(deps, int10("1")), money37("405000"), money37("330000")), iff17(isHoh3, iff17(ge6(deps, int10("2")), money37("405000"), money37("330000")), money37("255000"))));
+      const l8 = iff18(fact39("meAge65"), money37("410000"), iff18(isJoint5, iff18(ge6(deps, int10("1")), money37("405000"), money37("330000")), iff18(isHoh3, iff18(ge6(deps, int10("2")), money37("405000"), money37("330000")), money37("255000"))));
       const l9 = minE6(l6, l8);
-      const l10 = rd24(pct10(max024(fact39("meTotalIncome")), "4", "100"));
-      const l11 = max024(sub22(l9, l10));
-      const l13 = minE6(l11, iff17(fact39("meAge65"), money37("200000"), money37("100000")));
-      const l15 = iff17(fact39("meDisabledVeteran"), add18(l13, l13), l13);
-      return iff17(isMfs7, money37("0"), minE6(l15, l6));
+      const l10 = rd25(pct10(max025(fact39("meTotalIncome")), "4", "100"));
+      const l11 = max025(sub23(l9, l10));
+      const l13 = minE6(l11, iff18(fact39("meAge65"), money37("200000"), money37("100000")));
+      const l15 = iff18(fact39("meDisabledVeteran"), add19(l13, l13), l13);
+      return iff18(isMfs7, money37("0"), minE6(l15, l6));
     })()
   },
   {
@@ -74298,12 +73944,12 @@ var meRules = [
     formula: (() => {
       const deps = fact39("meDependents13a");
       const income = fact39("meTotalIncome");
-      const single = max024(sub22(money37("15500"), mulInt15(money37("1000"), stepUnits6(max024(sub22(income, money37("2545000"))), "50000", "ceil"))));
-      const jointBase = iff17(ge6(deps, int10("2")), money37("28000"), iff17(ge6(deps, int10("1")), money37("25000"), money37("21500")));
-      const joint = max024(sub22(jointBase, mulInt15(money37("2000"), stepUnits6(max024(sub22(income, money37("5095000"))), "100000", "ceil"))));
-      const hohBase = iff17(ge6(deps, int10("3")), money37("28000"), iff17(ge6(deps, int10("2")), money37("25000"), money37("21500")));
-      const hoh = max024(sub22(hohBase, mulInt15(money37("1500"), stepUnits6(max024(sub22(income, money37("3820000"))), "75000", "ceil"))));
-      return iff17(or7(isMfs7, fact39("isClaimedAsDependent")), money37("0"), iff17(isJoint4, joint, iff17(isHoh3, hoh, single)));
+      const single = max025(sub23(money37("15500"), mulInt16(money37("1000"), stepUnits7(max025(sub23(income, money37("2545000"))), "50000", "ceil"))));
+      const jointBase = iff18(ge6(deps, int10("2")), money37("28000"), iff18(ge6(deps, int10("1")), money37("25000"), money37("21500")));
+      const joint = max025(sub23(jointBase, mulInt16(money37("2000"), stepUnits7(max025(sub23(income, money37("5095000"))), "100000", "ceil"))));
+      const hohBase = iff18(ge6(deps, int10("3")), money37("28000"), iff18(ge6(deps, int10("2")), money37("25000"), money37("21500")));
+      const hoh = max025(sub23(hohBase, mulInt16(money37("1500"), stepUnits7(max025(sub23(income, money37("3820000"))), "75000", "ceil"))));
+      return iff18(or8(isMfs7, fact39("isClaimedAsDependent")), money37("0"), iff18(isJoint5, joint, iff18(isHoh3, hoh, single)));
     })()
   },
   {
@@ -74321,12 +73967,12 @@ var meRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { rateBps: { value: "550", type: "int" }, estimateBps: { value: "4", type: "int" } },
-    formula: add18(
+    formula: add19(
       // whole-dollar lines: ONE half-up rounding each. Rounding to cents first and then to
       // dollars double-rounds — 5.5% of $209 is 11.495 ($11, not $12), and 0.04% of $1,238
       // is 0.4952 ($0, not $1).
-      dollarsFromScaled9(times8(max024(fact39("meUseTaxPurchases")), "550")),
-      iff17(fact39("meUseTaxEstimate"), dollarsFromScaled9(times8(max024(fact39("meAgi")), "4")), money37("0"))
+      dollarsFromScaled9(times8(max025(fact39("meUseTaxPurchases")), "550")),
+      iff18(fact39("meUseTaxEstimate"), dollarsFromScaled9(times8(max025(fact39("meAgi")), "4")), money37("0"))
     )
   },
   {
@@ -74386,7 +74032,7 @@ var meRules = [
       surchargeThresholdHohJoint: { value: "150000000", type: "money" }
     },
     formula: (() => {
-      const x = max024(fact39("stateTaxableIncome"));
+      const x = max025(fact39("stateTaxableIncome"));
       const S26 = [
         { thresholdCents: "0", fixedCents: "0", rateNum: "580" },
         { thresholdCents: "2740000", fixedCents: "158900", rateNum: "675" },
@@ -74402,10 +74048,10 @@ var meRules = [
         { thresholdCents: "5485000", fixedCents: "318100", rateNum: "675" },
         { thresholdCents: "12975000", fixedCents: "823700", rateNum: "715" }
       ];
-      const base = iff17(isJoint4, printedSchedule2(x, J262), iff17(isHoh3, printedSchedule2(x, H26), printedSchedule2(x, S26)));
-      const thr = iff17(or7(isJoint4, isHoh3), money37("150000000"), iff17(isMfs7, money37("75000000"), money37("100000000")));
-      const surcharge = rd24(pct10(max024(sub22(x, thr)), "2", "100"));
-      return add18(base, surcharge);
+      const base = iff18(isJoint5, printedSchedule2(x, J262), iff18(isHoh3, printedSchedule2(x, H26), printedSchedule2(x, S26)));
+      const thr = iff18(or8(isJoint5, isHoh3), money37("150000000"), iff18(isMfs7, money37("75000000"), money37("100000000")));
+      const surcharge = rd25(pct10(max025(sub23(x, thr)), "2", "100"));
+      return add19(base, surcharge);
     })()
   },
   {
@@ -74424,9 +74070,9 @@ var meRules = [
     output: { type: "money" },
     parameters: { single: { value: "1570000", type: "money" }, joint: { value: "3140000", type: "money" }, hoh: { value: "2355000", type: "money" }, perBoxSingleHoh: { value: "205000", type: "money" }, perBoxMarried: { value: "165000", type: "money" } },
     formula: (() => {
-      const base = iff17(isJoint4, money37("3140000"), iff17(isHoh3, money37("2355000"), money37("1570000")));
-      const perBox = iff17(or7(isStatus25("single"), isHoh3), money37("205000"), money37("165000"));
-      return add18(base, mulInt15(perBox, fact39("meAgeBlindBoxes")));
+      const base = iff18(isJoint5, money37("3140000"), iff18(isHoh3, money37("2355000"), money37("1570000")));
+      const perBox = iff18(or8(isStatus25("single"), isHoh3), money37("205000"), money37("165000"));
+      return add19(base, mulInt16(perBox, fact39("meAgeBlindBoxes")));
     })()
   },
   {
@@ -74446,9 +74092,9 @@ var meRules = [
     parameters: { thresholdSingleMfs: { value: "10225000", type: "money" }, thresholdHoh: { value: "15340000", type: "money" }, thresholdJoint: { value: "20455000", type: "money" } },
     formula: (() => {
       const agi2 = fact39("meAgi");
-      const ded = max024(fact39("meDeductionBeforePhaseout"));
-      const r = iff17(isJoint4, ratio4(sub22(agi2, money37("20455000")), "15000000"), iff17(isHoh3, ratio4(sub22(agi2, money37("15340000")), "11250000"), ratio4(sub22(agi2, money37("10225000")), "7500000")));
-      return max024(sub22(ded, applyRatio(ded, r)));
+      const ded = max025(fact39("meDeductionBeforePhaseout"));
+      const r = iff18(isJoint5, ratio4(sub23(agi2, money37("20455000")), "15000000"), iff18(isHoh3, ratio4(sub23(agi2, money37("15340000")), "11250000"), ratio4(sub23(agi2, money37("10225000")), "7500000")));
+      return max025(sub23(ded, applyRatio(ded, r)));
     })()
   },
   {
@@ -74467,10 +74113,10 @@ var meRules = [
     output: { type: "money" },
     parameters: { perExemption: { value: "530000", type: "money" }, thresholdSingle: { value: "34100000", type: "money" }, thresholdHoh: { value: "37505000", type: "money" }, thresholdJoint: { value: "40915000", type: "money" }, thresholdMfs: { value: "20457500", type: "money" } },
     formula: (() => {
-      const ex = mulInt15(money37("530000"), fact39("meExemptions"));
+      const ex = mulInt16(money37("530000"), fact39("meExemptions"));
       const agi2 = fact39("meAgi");
-      const r = iff17(isJoint4, ratio4(sub22(agi2, money37("40915000")), "12500000"), iff17(isHoh3, ratio4(sub22(agi2, money37("37505000")), "12500000"), iff17(isMfs7, ratio4(sub22(agi2, money37("20457500")), "6250000"), ratio4(sub22(agi2, money37("34100000")), "12500000"))));
-      return max024(sub22(ex, applyRatio(ex, r)));
+      const r = iff18(isJoint5, ratio4(sub23(agi2, money37("40915000")), "12500000"), iff18(isHoh3, ratio4(sub23(agi2, money37("37505000")), "12500000"), iff18(isMfs7, ratio4(sub23(agi2, money37("20457500")), "6250000"), ratio4(sub23(agi2, money37("34100000")), "12500000"))));
+      return max025(sub23(ex, applyRatio(ex, r)));
     })()
   },
   {
@@ -74489,36 +74135,36 @@ var meRules = [
     output: { type: "money" },
     parameters: { cap: { value: "3710000", type: "money" } },
     formula: (() => {
-      const l2f = add18(max024(fact39("meSaltTaxes5e")), max024(fact39("meExemptIncomeCosts")), max024(fact39("meFinancialInstitutionCosts")), max024(fact39("meMedicalDeduction")));
-      const l3e = add18(max024(fact39("meMaineTaxableIncomeCosts")), max024(fact39("meRealEstateTaxes5b")), max024(fact39("mePersonalPropertyTaxes5c")));
-      const l4 = max024(add18(sub22(max024(fact39("meFederalItemizedDeductions")), l2f), l3e));
-      return add18(max024(fact39("meMedicalDeduction")), minE6(l4, money37("3710000")));
+      const l2f = add19(max025(fact39("meSaltTaxes5e")), max025(fact39("meExemptIncomeCosts")), max025(fact39("meFinancialInstitutionCosts")), max025(fact39("meMedicalDeduction")));
+      const l3e = add19(max025(fact39("meMaineTaxableIncomeCosts")), max025(fact39("meRealEstateTaxes5b")), max025(fact39("mePersonalPropertyTaxes5c")));
+      const l4 = max025(add19(sub23(max025(fact39("meFederalItemizedDeductions")), l2f), l3e));
+      return add19(max025(fact39("meMedicalDeduction")), minE6(l4, money37("3710000")));
     })()
   }
 ];
 
 // ../corpus-us-federal/dist/rules/state-hi.js
-var rd25 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp10 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt17 = (l, r) => cmp10("lt", l, r);
-var le15 = (l, r) => cmp10("le", l, r);
-var gt9 = (l, r) => cmp10("gt", l, r);
-var ge7 = (l, r) => cmp10("ge", l, r);
-var eq2 = (l, r) => cmp10("eq", l, r);
-var iff18 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add19 = (...args) => ({ kind: "add", args });
-var sub23 = (left, right) => ({ kind: "sub", left, right });
-var max025 = (arg) => ({ kind: "max0", arg });
+var rd26 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp11 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt17 = (l, r) => cmp11("lt", l, r);
+var le15 = (l, r) => cmp11("le", l, r);
+var gt9 = (l, r) => cmp11("gt", l, r);
+var ge7 = (l, r) => cmp11("ge", l, r);
+var eq2 = (l, r) => cmp11("eq", l, r);
+var iff19 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add20 = (...args) => ({ kind: "add", args });
+var sub24 = (left, right) => ({ kind: "sub", left, right });
+var max026 = (arg) => ({ kind: "max0", arg });
 var minE7 = (...args) => ({ kind: "min", args });
 var maxE5 = (...args) => ({ kind: "max", args });
-var and5 = (...args) => ({ kind: "and", args });
-var or8 = (...args) => ({ kind: "or", args });
-var not5 = (arg) => ({ kind: "not", arg });
+var and6 = (...args) => ({ kind: "and", args });
+var or9 = (...args) => ({ kind: "or", args });
+var not6 = (arg) => ({ kind: "not", arg });
 var int11 = (value) => ({ kind: "int", value });
-var mulInt16 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits7 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus26 = (v) => cmp10("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJoint5 = or8(isStatus26("mfj"), isStatus26("qss"));
+var mulInt17 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits8 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus26 = (v) => cmp11("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJoint6 = or9(isStatus26("mfj"), isStatus26("qss"));
 var isHoh4 = isStatus26("hoh");
 var isMfs8 = isStatus26("mfs");
 var isSingle = isStatus26("single");
@@ -74527,10 +74173,10 @@ var pct11 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, ro
 var dollarsFromScaled10 = (n) => times9({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
 var pct725 = (x) => dollarsFromScaled10(times9(x, "725"));
 var printedSchedule3 = (base, rows) => {
-  let expr = dollarsFromScaled10(add19(times9(money37(rows[0].fixedCents), "10000"), times9(sub23(base, money37(rows[0].thresholdCents)), rows[0].rateBps)));
+  let expr = dollarsFromScaled10(add20(times9(money37(rows[0].fixedCents), "10000"), times9(sub24(base, money37(rows[0].thresholdCents)), rows[0].rateBps)));
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
-    expr = iff18(ge7(base, money37(r.thresholdCents)), dollarsFromScaled10(add19(times9(money37(r.fixedCents), "10000"), times9(sub23(base, money37(r.thresholdCents)), r.rateBps))), expr);
+    expr = iff19(ge7(base, money37(r.thresholdCents)), dollarsFromScaled10(add20(times9(money37(r.fixedCents), "10000"), times9(sub24(base, money37(r.thresholdCents)), r.rateBps))), expr);
   }
   return expr;
 };
@@ -74538,11 +74184,11 @@ var row = (thr, fixed, bps) => ({ thresholdCents: String(thr * 100), fixedCents:
 var SCHED_I = [row(0, 0, 140), row(9600, 134, 320), row(14400, 288, 550), row(19200, 552, 640), row(24e3, 859, 680), row(36e3, 1675, 720), row(48e3, 2539, 760), row(125e3, 8391, 790), row(175e3, 12341, 825), row(225e3, 16466, 900), row(275e3, 20966, 1e3), row(325e3, 25966, 1100)];
 var SCHED_II = [row(0, 0, 140), row(19200, 269, 320), row(28800, 576, 550), row(38400, 1104, 640), row(48e3, 1718, 680), row(72e3, 3350, 720), row(96e3, 5078, 760), row(25e4, 16782, 790), row(35e4, 24682, 825), row(45e4, 32932, 900), row(55e4, 41932, 1e3), row(65e4, 51932, 1100)];
 var SCHED_III = [row(0, 0, 140), row(14400, 202, 320), row(21600, 432, 550), row(28800, 828, 640), row(36e3, 1289, 680), row(54e3, 2513, 720), row(72e3, 3809, 760), row(187500, 12587, 790), row(262500, 18512, 825), row(337500, 24699, 900), row(412500, 31449, 1e3), row(487500, 38949, 1100)];
-var scheduleTax3 = (x) => iff18(isJoint5, printedSchedule3(x, SCHED_II), iff18(isHoh4, printedSchedule3(x, SCHED_III), printedSchedule3(x, SCHED_I)));
+var scheduleTax3 = (x) => iff19(isJoint6, printedSchedule3(x, SCHED_II), iff19(isHoh4, printedSchedule3(x, SCHED_III), printedSchedule3(x, SCHED_I)));
 var ordinaryTax = (x) => {
-  const mid = add19(mulInt16(money37("5000"), stepUnits7(x, "5000", "floor")), money37("2500"));
-  const tableMethod = iff18(lt17(x, money37("10000000")), scheduleTax3(mid), scheduleTax3(x));
-  return iff18(fact39("hiUseRateSchedule"), scheduleTax3(x), tableMethod);
+  const mid = add20(mulInt17(money37("5000"), stepUnits8(x, "5000", "floor")), money37("2500"));
+  const tableMethod = iff19(lt17(x, money37("10000000")), scheduleTax3(mid), scheduleTax3(x));
+  return iff19(fact39("hiUseRateSchedule"), scheduleTax3(x), tableMethod);
 };
 var FORMS2 = "https://files.hawaii.gov/tax/forms/2025/";
 var BOOKLET_URL8 = FORMS2 + "n11ins.pdf";
@@ -74574,7 +74220,7 @@ var hiRules = [
       tableTop: { value: "10000000", type: "money" },
       tableRowWidth: { value: "5000", type: "money" }
     },
-    formula: ordinaryTax(max025(fact39("stateTaxableIncome")))
+    formula: ordinaryTax(max026(fact39("stateTaxableIncome")))
   },
   {
     id: "us.hi.capital_gains_tax",
@@ -74600,17 +74246,17 @@ var hiRules = [
       statutoryThresholdJoint: { value: "9600000", type: "money" }
     },
     formula: (() => {
-      const l1 = max025(fact39("stateTaxableIncome"));
-      const l8 = minE7(max025(fact39("hiNetLongTermCapitalGain")), max025(fact39("hiNetCapitalGain")));
-      const l10 = max025(sub23(l8, max025(fact39("hiInvestmentInterestN158"))));
-      const printedThr = iff18(isJoint5, money37("4800000"), iff18(isHoh4, money37("3600000"), money37("2400000")));
-      const statutoryThr = iff18(isJoint5, money37("9600000"), iff18(isHoh4, money37("7200000"), money37("4800000")));
-      const thr = iff18(fact39("hiCapitalGainsStatutoryThreshold"), statutoryThr, printedThr);
-      const l13 = maxE5(sub23(l1, l10), thr);
-      const l14 = max025(sub23(l1, l13));
-      const l17 = add19(ordinaryTax(minE7(l13, l1)), pct725(l14));
+      const l1 = max026(fact39("stateTaxableIncome"));
+      const l8 = minE7(max026(fact39("hiNetLongTermCapitalGain")), max026(fact39("hiNetCapitalGain")));
+      const l10 = max026(sub24(l8, max026(fact39("hiInvestmentInterestN158"))));
+      const printedThr = iff19(isJoint6, money37("4800000"), iff19(isHoh4, money37("3600000"), money37("2400000")));
+      const statutoryThr = iff19(isJoint6, money37("9600000"), iff19(isHoh4, money37("7200000"), money37("4800000")));
+      const thr = iff19(fact39("hiCapitalGainsStatutoryThreshold"), statutoryThr, printedThr);
+      const l13 = maxE5(sub24(l1, l10), thr);
+      const l14 = max026(sub24(l1, l13));
+      const l17 = add20(ordinaryTax(minE7(l13, l1)), pct725(l14));
       const l18 = ordinaryTax(l1);
-      return iff18(or8(le15(l1, thr), le15(l10, money37("0"))), l18, minE7(l17, l18));
+      return iff19(or9(le15(l1, thr), le15(l10, money37("0"))), l18, minE7(l17, l18));
     })()
   },
   {
@@ -74629,9 +74275,9 @@ var hiRules = [
     output: { type: "money" },
     parameters: { single: { value: "440000", type: "money" }, joint: { value: "880000", type: "money" }, hoh: { value: "642400", type: "money" }, dependentMinimum: { value: "50000", type: "money" } },
     formula: (() => {
-      const base = iff18(isJoint5, money37("880000"), iff18(isHoh4, money37("642400"), money37("440000")));
-      const dep = minE7(base, maxE5(money37("50000"), max025(fact39("hiEarnedIncome"))));
-      return iff18(fact39("isClaimedAsDependent"), dep, base);
+      const base = iff19(isJoint6, money37("880000"), iff19(isHoh4, money37("642400"), money37("440000")));
+      const dep = minE7(base, maxE5(money37("50000"), max026(fact39("hiEarnedIncome"))));
+      return iff19(fact39("isClaimedAsDependent"), dep, base);
     })()
   },
   {
@@ -74663,24 +74309,24 @@ var hiRules = [
     formula: (() => {
       const agi2 = fact39("hiAgi");
       const fagi = fact39("hiFederalAgi");
-      const l21a = max025(sub23(max025(fact39("hiMedicalExpenses")), rd25(pct11(max025(agi2), "75", "1000"))));
-      const saltLimit = iff18(isJoint5, money37("20000000"), iff18(isHoh4, money37("15000000"), money37("10000000")));
-      const salt = iff18(lt17(fagi, saltLimit), max025(fact39("hiStateLocalIncomeTaxes")), money37("0"));
-      const l21b = add19(salt, max025(fact39("hiRealEstateTaxes")), max025(fact39("hiPersonalPropertyTaxes")), max025(fact39("hiOtherTaxes")));
-      const invInt = max025(fact39("hiInvestmentInterest"));
-      const l21c = add19(max025(fact39("hiHomeMortgageInterest")), invInt);
-      const l21d = max025(fact39("hiCharitableContributions"));
-      const l21e = max025(sub23(max025(fact39("hiCasualtyLosses")), rd25(pct11(max025(agi2), "10", "100"))));
-      const l29 = max025(sub23(max025(fact39("hiJobAndMiscExpenses")), rd25(pct11(max025(agi2), "2", "100"))));
-      const l30 = max025(fact39("hiOtherMiscDeductions"));
-      const l21f = add19(l29, l30);
-      const total = add19(l21a, l21b, l21c, l21d, l21e, l21f);
-      const protectedAmt = add19(l21a, invInt, l21e, minE7(max025(fact39("hiGamblingLossesInMisc")), l30));
-      const l5 = rd25(pct11(max025(sub23(total, protectedAmt)), "80", "100"));
-      const thr = iff18(isMfs8, money37("8340000"), money37("16680000"));
-      const l9 = rd25(pct11(max025(sub23(agi2, thr)), "3", "100"));
+      const l21a = max026(sub24(max026(fact39("hiMedicalExpenses")), rd26(pct11(max026(agi2), "75", "1000"))));
+      const saltLimit = iff19(isJoint6, money37("20000000"), iff19(isHoh4, money37("15000000"), money37("10000000")));
+      const salt = iff19(lt17(fagi, saltLimit), max026(fact39("hiStateLocalIncomeTaxes")), money37("0"));
+      const l21b = add20(salt, max026(fact39("hiRealEstateTaxes")), max026(fact39("hiPersonalPropertyTaxes")), max026(fact39("hiOtherTaxes")));
+      const invInt = max026(fact39("hiInvestmentInterest"));
+      const l21c = add20(max026(fact39("hiHomeMortgageInterest")), invInt);
+      const l21d = max026(fact39("hiCharitableContributions"));
+      const l21e = max026(sub24(max026(fact39("hiCasualtyLosses")), rd26(pct11(max026(agi2), "10", "100"))));
+      const l29 = max026(sub24(max026(fact39("hiJobAndMiscExpenses")), rd26(pct11(max026(agi2), "2", "100"))));
+      const l30 = max026(fact39("hiOtherMiscDeductions"));
+      const l21f = add20(l29, l30);
+      const total = add20(l21a, l21b, l21c, l21d, l21e, l21f);
+      const protectedAmt = add20(l21a, invInt, l21e, minE7(max026(fact39("hiGamblingLossesInMisc")), l30));
+      const l5 = rd26(pct11(max026(sub24(total, protectedAmt)), "80", "100"));
+      const thr = iff19(isMfs8, money37("8340000"), money37("16680000"));
+      const l9 = rd26(pct11(max026(sub24(agi2, thr)), "3", "100"));
       const l10 = minE7(l5, l9);
-      return iff18(and5(gt9(agi2, thr), lt17(protectedAmt, total)), max025(sub23(total, l10)), total);
+      return iff19(and6(gt9(agi2, thr), lt17(protectedAmt, total)), max026(sub24(total, l10)), total);
     })()
   },
   {
@@ -74700,9 +74346,9 @@ var hiRules = [
     parameters: { perExemption: { value: "114400", type: "money" }, disabilityExemption: { value: "700000", type: "money" } },
     formula: (() => {
       const disabled = fact39("hiDisabledPersons");
-      const regular = mulInt16(money37("114400"), fact39("hiExemptions"));
-      const spouseShare = iff18(and5(isStatus26("mfj"), eq2(disabled, int11("1"))), iff18(fact39("hiNonDisabledSpouseAge65"), money37("228800"), money37("114400")), money37("0"));
-      return iff18(ge7(disabled, int11("1")), add19(mulInt16(money37("700000"), disabled), spouseShare), regular);
+      const regular = mulInt17(money37("114400"), fact39("hiExemptions"));
+      const spouseShare = iff19(and6(isStatus26("mfj"), eq2(disabled, int11("1"))), iff19(fact39("hiNonDisabledSpouseAge65"), money37("228800"), money37("114400")), money37("0"));
+      return iff19(ge7(disabled, int11("1")), add20(mulInt17(money37("700000"), disabled), spouseShare), regular);
     })()
   },
   {
@@ -74720,7 +74366,7 @@ var hiRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { perMember: { value: "863600", type: "money" } },
-    formula: add19(minE7(max025(fact39("hiReservePay")), money37("863600")), iff18(isStatus26("mfj"), minE7(max025(fact39("hiSpouseReservePay")), money37("863600")), money37("0")))
+    formula: add20(minE7(max026(fact39("hiReservePay")), money37("863600")), iff19(isStatus26("mfj"), minE7(max026(fact39("hiSpouseReservePay")), money37("863600")), money37("0")))
   },
   {
     id: "us.hi.food_excise_credit",
@@ -74748,11 +74394,11 @@ var hiRules = [
       otherCutoff: { value: "6000000", type: "money" }
     },
     formula: (() => {
-      const agi2 = add19(fact39("hiFederalAgi"), iff18(isMfs8, fact39("hiSpouseFederalAgi"), money37("0")));
-      const common = iff18(lt17(agi2, money37("1500000")), money37("22000"), iff18(lt17(agi2, money37("2000000")), money37("20000"), iff18(lt17(agi2, money37("2500000")), money37("17000"), iff18(lt17(agi2, money37("3000000")), money37("14000"), iff18(lt17(agi2, money37("4000000")), money37("11000"), money37("0"))))));
-      const other = iff18(lt17(agi2, money37("4000000")), common, iff18(lt17(agi2, money37("5000000")), money37("9000"), iff18(lt17(agi2, money37("6000000")), money37("7000"), money37("0"))));
-      const per = iff18(isSingle, common, other);
-      return iff18(fact39("isClaimedAsDependent"), money37("0"), mulInt16(per, fact39("hiFoodExciseQualifiedExemptions")));
+      const agi2 = add20(fact39("hiFederalAgi"), iff19(isMfs8, fact39("hiSpouseFederalAgi"), money37("0")));
+      const common = iff19(lt17(agi2, money37("1500000")), money37("22000"), iff19(lt17(agi2, money37("2000000")), money37("20000"), iff19(lt17(agi2, money37("2500000")), money37("17000"), iff19(lt17(agi2, money37("3000000")), money37("14000"), iff19(lt17(agi2, money37("4000000")), money37("11000"), money37("0"))))));
+      const other = iff19(lt17(agi2, money37("4000000")), common, iff19(lt17(agi2, money37("5000000")), money37("9000"), iff19(lt17(agi2, money37("6000000")), money37("7000"), money37("0"))));
+      const per = iff19(isSingle, common, other);
+      return iff19(fact39("isClaimedAsDependent"), money37("0"), mulInt17(per, fact39("hiFoodExciseQualifiedExemptions")));
     })()
   },
   {
@@ -74771,9 +74417,9 @@ var hiRules = [
     output: { type: "money" },
     parameters: { perExemption: { value: "5000", type: "money" }, agiLimit: { value: "3000000", type: "money" }, minimumRent: { value: "100000", type: "money" } },
     formula: (() => {
-      const agi2 = add19(fact39("hiAgi"), iff18(isMfs8, fact39("hiSpouseAgi"), money37("0")));
-      const ok2 = and5(not5(fact39("isClaimedAsDependent")), lt17(agi2, money37("3000000")), gt9(fact39("hiRentPaid"), money37("100000")));
-      return iff18(ok2, mulInt16(money37("5000"), fact39("hiRentersExemptions")), money37("0"));
+      const agi2 = add20(fact39("hiAgi"), iff19(isMfs8, fact39("hiSpouseAgi"), money37("0")));
+      const ok2 = and6(not6(fact39("isClaimedAsDependent")), lt17(agi2, money37("3000000")), gt9(fact39("hiRentPaid"), money37("100000")));
+      return iff19(ok2, mulInt17(money37("5000"), fact39("hiRentersExemptions")), money37("0"));
     })()
   },
   {
@@ -74792,16 +74438,16 @@ var hiRules = [
     output: { type: "money" },
     parameters: { capOne: { value: "1000000", type: "money" }, capTwoPlus: { value: "2000000", type: "money" }, topPct: { value: "25", type: "int" }, bottomPct: { value: "15", type: "int" }, agiTop: { value: "5000000", type: "money" } },
     formula: (() => {
-      const cap = max025(sub23(iff18(ge7(fact39("hiChildCareQualifyingPersons"), int11("2")), money37("2000000"), money37("1000000")), max025(fact39("hiDependentCareBenefits"))));
-      const l22 = minE7(max025(fact39("hiChildCareExpenses")), cap);
-      const l23 = max025(fact39("hiEarnedIncome"));
-      const l24 = iff18(isStatus26("mfj"), max025(fact39("hiSpouseEarnedIncome")), l23);
+      const cap = max026(sub24(iff19(ge7(fact39("hiChildCareQualifyingPersons"), int11("2")), money37("2000000"), money37("1000000")), max026(fact39("hiDependentCareBenefits"))));
+      const l22 = minE7(max026(fact39("hiChildCareExpenses")), cap);
+      const l23 = max026(fact39("hiEarnedIncome"));
+      const l24 = iff19(isStatus26("mfj"), max026(fact39("hiSpouseEarnedIncome")), l23);
       const l25 = minE7(l22, l23, l24);
       const agi2 = fact39("hiAgi");
-      const pctPoints = iff18(le15(agi2, money37("2500000")), money37("25"), iff18(le15(agi2, money37("3000000")), money37("24"), iff18(le15(agi2, money37("3500000")), money37("23"), iff18(le15(agi2, money37("4000000")), money37("22"), iff18(le15(agi2, money37("4500000")), money37("21"), iff18(le15(agi2, money37("5000000")), money37("20"), money37("15")))))));
-      const credit = rd25({ kind: "mulDiv", a: l25, b: pctPoints, c: money37("100"), round: "half-up" });
-      const blocked = or8(fact39("isClaimedAsDependent"), and5(isMfs8, not5(fact39("hiMfsConsideredUnmarried"))));
-      return iff18(blocked, money37("0"), credit);
+      const pctPoints = iff19(le15(agi2, money37("2500000")), money37("25"), iff19(le15(agi2, money37("3000000")), money37("24"), iff19(le15(agi2, money37("3500000")), money37("23"), iff19(le15(agi2, money37("4000000")), money37("22"), iff19(le15(agi2, money37("4500000")), money37("21"), iff19(le15(agi2, money37("5000000")), money37("20"), money37("15")))))));
+      const credit = rd26({ kind: "mulDiv", a: l25, b: pctPoints, c: money37("100"), round: "half-up" });
+      const blocked = or9(fact39("isClaimedAsDependent"), and6(isMfs8, not6(fact39("hiMfsConsideredUnmarried"))));
+      return iff19(blocked, money37("0"), credit);
     })()
   },
   {
@@ -74819,7 +74465,7 @@ var hiRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "40", type: "int" } },
-    formula: rd25(pct11(max025(fact39("hiFederalEic")), "40", "100"))
+    formula: rd26(pct11(max026(fact39("hiFederalEic")), "40", "100"))
   },
   {
     id: "us.hi.other_state_credit",
@@ -74837,15 +74483,15 @@ var hiRules = [
     output: { type: "money" },
     parameters: { capitalGainRateBps: { value: "725", type: "int" } },
     formula: (() => {
-      const l1 = max025(fact39("stateTaxableIncome"));
-      const l2 = max025(fact39("hiNetCapitalGainLine27a"));
-      const l10 = sub23(l1, max025(fact39("hiOutOfStateIncome")));
-      const l11 = max025(sub23(l2, max025(fact39("hiOutOfStateLtcg"))));
-      const l12 = max025(sub23(l10, l11));
-      const l16 = add19(ordinaryTax(l12), pct725(l11));
-      const l17 = max025(sub23(max025(fact39("hiTaxLine13")), l16));
-      const l18 = minE7(max025(fact39("hiOtherStateTaxEligible")), l17);
-      return minE7(l18, max025(fact39("hiAdjustedTaxLiability")));
+      const l1 = max026(fact39("stateTaxableIncome"));
+      const l2 = max026(fact39("hiNetCapitalGainLine27a"));
+      const l10 = sub24(l1, max026(fact39("hiOutOfStateIncome")));
+      const l11 = max026(sub24(l2, max026(fact39("hiOutOfStateLtcg"))));
+      const l12 = max026(sub24(l10, l11));
+      const l16 = add20(ordinaryTax(l12), pct725(l11));
+      const l17 = max026(sub24(max026(fact39("hiTaxLine13")), l16));
+      const l18 = minE7(max026(fact39("hiOtherStateTaxEligible")), l17);
+      return minE7(l18, max026(fact39("hiAdjustedTaxLiability")));
     })()
   },
   {
@@ -74895,9 +74541,9 @@ var hiRules = [
     output: { type: "money" },
     parameters: { single: { value: "800000", type: "money" }, joint: { value: "1600000", type: "money" }, hoh: { value: "1200000", type: "money" }, dependentMinimum: { value: "50000", type: "money" } },
     formula: (() => {
-      const base = iff18(isJoint5, money37("1600000"), iff18(isHoh4, money37("1200000"), money37("800000")));
-      const dep = minE7(base, maxE5(money37("50000"), max025(fact39("hiEarnedIncome"))));
-      return iff18(fact39("isClaimedAsDependent"), dep, base);
+      const base = iff19(isJoint6, money37("1600000"), iff19(isHoh4, money37("1200000"), money37("800000")));
+      const dep = minE7(base, maxE5(money37("50000"), max026(fact39("hiEarnedIncome"))));
+      return iff19(fact39("isClaimedAsDependent"), dep, base);
     })()
   },
   {
@@ -74918,64 +74564,64 @@ var hiRules = [
     formula: (() => {
       const agi2 = fact39("hiAgi");
       const fagi = fact39("hiFederalAgi");
-      const l21a = max025(sub23(max025(fact39("hiMedicalExpenses")), rd25(pct11(max025(agi2), "75", "1000"))));
-      const saltLimit = iff18(isJoint5, money37("20000000"), iff18(isHoh4, money37("15000000"), money37("10000000")));
-      const salt = iff18(lt17(fagi, saltLimit), max025(fact39("hiStateLocalIncomeTaxes")), money37("0"));
-      const l21b = add19(salt, max025(fact39("hiRealEstateTaxes")), max025(fact39("hiPersonalPropertyTaxes")), max025(fact39("hiOtherTaxes")));
-      const invInt = max025(fact39("hiInvestmentInterest"));
-      const l21c = add19(max025(fact39("hiHomeMortgageInterest")), invInt);
-      const l21d = max025(fact39("hiCharitableContributions"));
-      const l21e = max025(sub23(max025(fact39("hiCasualtyLosses")), rd25(pct11(max025(agi2), "10", "100"))));
-      const l30 = max025(fact39("hiOtherMiscDeductions"));
-      const total = add19(l21a, l21b, l21c, l21d, l21e, l30);
-      const protectedAmt = add19(l21a, invInt, l21e, minE7(max025(fact39("hiGamblingLossesInMisc")), l30));
-      const l5 = rd25(pct11(max025(sub23(total, protectedAmt)), "80", "100"));
-      const thr = iff18(isMfs8, money37("8340000"), money37("16680000"));
-      const l9 = rd25(pct11(max025(sub23(agi2, thr)), "3", "100"));
+      const l21a = max026(sub24(max026(fact39("hiMedicalExpenses")), rd26(pct11(max026(agi2), "75", "1000"))));
+      const saltLimit = iff19(isJoint6, money37("20000000"), iff19(isHoh4, money37("15000000"), money37("10000000")));
+      const salt = iff19(lt17(fagi, saltLimit), max026(fact39("hiStateLocalIncomeTaxes")), money37("0"));
+      const l21b = add20(salt, max026(fact39("hiRealEstateTaxes")), max026(fact39("hiPersonalPropertyTaxes")), max026(fact39("hiOtherTaxes")));
+      const invInt = max026(fact39("hiInvestmentInterest"));
+      const l21c = add20(max026(fact39("hiHomeMortgageInterest")), invInt);
+      const l21d = max026(fact39("hiCharitableContributions"));
+      const l21e = max026(sub24(max026(fact39("hiCasualtyLosses")), rd26(pct11(max026(agi2), "10", "100"))));
+      const l30 = max026(fact39("hiOtherMiscDeductions"));
+      const total = add20(l21a, l21b, l21c, l21d, l21e, l30);
+      const protectedAmt = add20(l21a, invInt, l21e, minE7(max026(fact39("hiGamblingLossesInMisc")), l30));
+      const l5 = rd26(pct11(max026(sub24(total, protectedAmt)), "80", "100"));
+      const thr = iff19(isMfs8, money37("8340000"), money37("16680000"));
+      const l9 = rd26(pct11(max026(sub24(agi2, thr)), "3", "100"));
       const l10 = minE7(l5, l9);
-      return iff18(and5(gt9(agi2, thr), lt17(protectedAmt, total)), max025(sub23(total, l10)), total);
+      return iff19(and6(gt9(agi2, thr), lt17(protectedAmt, total)), max026(sub24(total, l10)), total);
     })()
   }
 ];
 
 // ../corpus-us-federal/dist/rules/state-ri.js
-var rd26 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp11 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt18 = (l, r) => cmp11("lt", l, r);
-var le16 = (l, r) => cmp11("le", l, r);
-var gt10 = (l, r) => cmp11("gt", l, r);
-var ge8 = (l, r) => cmp11("ge", l, r);
-var iff19 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add20 = (...args) => ({ kind: "add", args });
-var sub24 = (left, right) => ({ kind: "sub", left, right });
-var max026 = (arg) => ({ kind: "max0", arg });
+var rd27 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp12 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt18 = (l, r) => cmp12("lt", l, r);
+var le16 = (l, r) => cmp12("le", l, r);
+var gt10 = (l, r) => cmp12("gt", l, r);
+var ge8 = (l, r) => cmp12("ge", l, r);
+var iff20 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add21 = (...args) => ({ kind: "add", args });
+var sub25 = (left, right) => ({ kind: "sub", left, right });
+var max027 = (arg) => ({ kind: "max0", arg });
 var minE8 = (...args) => ({ kind: "min", args });
-var and6 = (...args) => ({ kind: "and", args });
-var or9 = (...args) => ({ kind: "or", args });
-var not6 = (arg) => ({ kind: "not", arg });
+var and7 = (...args) => ({ kind: "and", args });
+var or10 = (...args) => ({ kind: "or", args });
+var not7 = (arg) => ({ kind: "not", arg });
 var int12 = (value) => ({ kind: "int", value });
-var mulInt17 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits8 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus27 = (v) => cmp11("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJoint6 = or9(isStatus27("mfj"), isStatus27("qss"));
+var mulInt18 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits9 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus27 = (v) => cmp12("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJoint7 = or10(isStatus27("mfj"), isStatus27("qss"));
 var isMfjOnly = isStatus27("mfj");
 var isHoh5 = isStatus27("hoh");
 var times10 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct12 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled11 = (n) => times10({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
-var worksheetRow = (x, rateBps, subtractionCents) => dollarsFromScaled11(sub24(times10(x, rateBps), times10(money37(subtractionCents), "10000")));
-var ratio42 = (num, den) => minE8({ kind: "mulDiv", a: max026(num), b: money37("10000"), c: den, round: "half-up" }, money37("10000"));
+var worksheetRow = (x, rateBps, subtractionCents) => dollarsFromScaled11(sub25(times10(x, rateBps), times10(money37(subtractionCents), "10000")));
+var ratio42 = (num, den) => minE8({ kind: "mulDiv", a: max027(num), b: money37("10000"), c: den, round: "half-up" }, money37("10000"));
 var applyRatio2 = (base, r) => times10({ kind: "mulDiv", a: base, b: r, c: money37("1000000"), round: "half-up" }, "100");
 var worksheetTax = (x, rows) => {
   let expr = worksheetRow(x, rows[0].rateBps, rows[0].subtractionCents);
   for (let i = 1; i < rows.length; i++)
-    expr = iff19(gt10(x, money37(rows[i].thresholdCents)), worksheetRow(x, rows[i].rateBps, rows[i].subtractionCents), expr);
+    expr = iff20(gt10(x, money37(rows[i].thresholdCents)), worksheetRow(x, rows[i].rateBps, rows[i].subtractionCents), expr);
   return expr;
 };
 var line8Tax = (x, rows) => {
-  const mid = add20(mulInt17(money37("5000"), stepUnits8(x, "5000", "floor")), money37("2500"));
-  const table2 = iff19(lt18(x, money37("5000")), money37("0"), iff19(lt18(x, money37("10000000")), worksheetTax(mid, rows), worksheetTax(x, rows)));
-  return iff19(fact39("riUseRateSchedule"), worksheetTax(x, rows), table2);
+  const mid = add21(mulInt18(money37("5000"), stepUnits9(x, "5000", "floor")), money37("2500"));
+  const table2 = iff20(lt18(x, money37("5000")), money37("0"), iff20(lt18(x, money37("10000000")), worksheetTax(mid, rows), worksheetTax(x, rows)));
+  return iff20(fact39("riUseRateSchedule"), worksheetTax(x, rows), table2);
 };
 var ROWS_2025 = [
   { thresholdCents: "0", rateBps: "375", subtractionCents: "0" },
@@ -74992,8 +74638,8 @@ var ROWS_2026 = [
   // $3,132.48
 ];
 var phaseoutPct = (agi2, thresholdCents, stepCents) => {
-  const steps = stepUnits8(max026(sub24(agi2, money37(thresholdCents))), stepCents, "ceil");
-  return max026(sub24(money37("10000"), mulInt17(money37("2000"), steps)));
+  const steps = stepUnits9(max027(sub25(agi2, money37(thresholdCents))), stepCents, "ceil");
+  return max027(sub25(money37("10000"), mulInt18(money37("2000"), steps)));
 };
 var FORMS3 = "https://tax.ri.gov/sites/g/files/xkgbur541/files/";
 var INSTR_URL = FORMS3 + "2025-12/2025%201040R%20Instructions%20122025.pdf";
@@ -75024,7 +74670,7 @@ var riRules = [
       subtraction3: { value: "305146", type: "money" },
       tableTop: { value: "10000000", type: "money" }
     },
-    formula: line8Tax(max026(fact39("stateTaxableIncome")), ROWS_2025)
+    formula: line8Tax(max027(fact39("stateTaxableIncome")), ROWS_2025)
   },
   {
     id: "us.ri.standard_deduction",
@@ -75042,7 +74688,7 @@ var riRules = [
     output: { type: "money" },
     parameters: { single: { value: "1090000", type: "money" }, joint: { value: "2180000", type: "money" }, hoh: { value: "1635000", type: "money" }, mfs: { value: "1090000", type: "money" }, phaseoutThreshold: { value: "25425000", type: "money" }, phaseoutStep: { value: "725000", type: "money" }, phaseoutEnd: { value: "28325000", type: "money" } },
     formula: (() => {
-      const base = iff19(isJoint6, money37("2180000"), iff19(isHoh5, money37("1635000"), money37("1090000")));
+      const base = iff20(isJoint7, money37("2180000"), iff20(isHoh5, money37("1635000"), money37("1090000")));
       return applyRatio2(base, phaseoutPct(fact39("riModifiedAgi"), "25425000", "725000"));
     })()
   },
@@ -75061,7 +74707,7 @@ var riRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "510000", type: "money" }, phaseoutThreshold: { value: "25425000", type: "money" }, phaseoutStep: { value: "725000", type: "money" } },
-    formula: applyRatio2(mulInt17(money37("510000"), fact39("riExemptions")), phaseoutPct(fact39("riModifiedAgi"), "25425000", "725000"))
+    formula: applyRatio2(mulInt18(money37("510000"), fact39("riExemptions")), phaseoutPct(fact39("riModifiedAgi"), "25425000", "725000"))
   },
   {
     id: "us.ri.social_security_modification",
@@ -75079,15 +74725,15 @@ var riRules = [
     output: { type: "money" },
     parameters: { agiLimitSingleHohMfs: { value: "10700000", type: "money" }, agiLimitJoint: { value: "13375000", type: "money" }, fullRetirementAgeBornOnOrBefore: { value: "1959-03-01", type: "enum" } },
     formula: (() => {
-      const limit = iff19(isJoint6, money37("13375000"), money37("10700000"));
+      const limit = iff20(isJoint7, money37("13375000"), money37("10700000"));
       const tpFra = fact39("riTaxpayerFullRetirementAge");
-      const spFra = and6(isMfjOnly, fact39("riSpouseFullRetirementAge"));
-      const eligible = and6(or9(tpFra, spFra), lt18(fact39("riFederalAgi"), limit));
-      const taxable2 = max026(fact39("riTaxableSocialSecurity"));
-      const total = max026(fact39("riSocialSecurityBenefits"));
-      const partial2 = iff19(gt10(total, money37("0")), applyRatio2(taxable2, ratio42(fact39("riSocialSecurityBenefitsFraPerson"), total)), money37("0"));
-      const bothOrSingle = or9(not6(isMfjOnly), and6(tpFra, fact39("riSpouseFullRetirementAge")));
-      return iff19(eligible, iff19(bothOrSingle, taxable2, partial2), money37("0"));
+      const spFra = and7(isMfjOnly, fact39("riSpouseFullRetirementAge"));
+      const eligible = and7(or10(tpFra, spFra), lt18(fact39("riFederalAgi"), limit));
+      const taxable2 = max027(fact39("riTaxableSocialSecurity"));
+      const total = max027(fact39("riSocialSecurityBenefits"));
+      const partial2 = iff20(gt10(total, money37("0")), applyRatio2(taxable2, ratio42(fact39("riSocialSecurityBenefitsFraPerson"), total)), money37("0"));
+      const bothOrSingle = or10(not7(isMfjOnly), and7(tpFra, fact39("riSpouseFullRetirementAge")));
+      return iff20(eligible, iff20(bothOrSingle, taxable2, partial2), money37("0"));
     })()
   },
   {
@@ -75106,10 +74752,10 @@ var riRules = [
     output: { type: "money" },
     parameters: { cap: { value: "5000000", type: "money" }, agiLimitSingleHohMfs: { value: "10700000", type: "money" }, agiLimitJoint: { value: "13375000", type: "money" } },
     formula: (() => {
-      const limit = iff19(isJoint6, money37("13375000"), money37("10700000"));
-      const a = iff19(fact39("riTaxpayerFullRetirementAge"), minE8(max026(fact39("riTaxpayerPensionIncome")), money37("5000000")), money37("0"));
-      const b = iff19(and6(isMfjOnly, fact39("riSpouseFullRetirementAge")), minE8(max026(fact39("riSpousePensionIncome")), money37("5000000")), money37("0"));
-      return iff19(lt18(fact39("riFederalAgi"), limit), add20(a, b), money37("0"));
+      const limit = iff20(isJoint7, money37("13375000"), money37("10700000"));
+      const a = iff20(fact39("riTaxpayerFullRetirementAge"), minE8(max027(fact39("riTaxpayerPensionIncome")), money37("5000000")), money37("0"));
+      const b = iff20(and7(isMfjOnly, fact39("riSpouseFullRetirementAge")), minE8(max027(fact39("riSpousePensionIncome")), money37("5000000")), money37("0"));
+      return iff20(lt18(fact39("riFederalAgi"), limit), add21(a, b), money37("0"));
     })()
   },
   {
@@ -75127,7 +74773,7 @@ var riRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "25", type: "int" } },
-    formula: minE8(rd26(pct12(max026(fact39("riFederalChildCareCredit")), "1", "4")), max026(fact39("riIncomeTax")))
+    formula: minE8(rd27(pct12(max027(fact39("riFederalChildCareCredit")), "1", "4")), max027(fact39("riIncomeTax")))
   },
   {
     id: "us.ri.other_state_credit",
@@ -75145,10 +74791,10 @@ var riRules = [
     output: { type: "money" },
     parameters: { ratioDecimals: { value: "4", type: "int" } },
     formula: (() => {
-      const l23 = max026(fact39("riIncomeTaxAfterFederalCredit"));
+      const l23 = max027(fact39("riIncomeTaxAfterFederalCredit"));
       const l25 = fact39("riModifiedAgi");
       const l27 = applyRatio2(l23, ratio42(fact39("riOtherStateIncome"), l25));
-      return iff19(gt10(l25, money37("0")), minE8(l23, l27, max026(fact39("riOtherStateTaxPaid"))), money37("0"));
+      return iff20(gt10(l25, money37("0")), minE8(l23, l27, max027(fact39("riOtherStateTaxPaid"))), money37("0"));
     })()
   },
   {
@@ -75166,7 +74812,7 @@ var riRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "16", type: "int" } },
-    formula: rd26(pct12(max026(fact39("riFederalEic")), "16", "100"))
+    formula: rd27(pct12(max027(fact39("riFederalEic")), "16", "100"))
   },
   {
     id: "us.ri.property_tax_relief_credit",
@@ -75192,14 +74838,14 @@ var riRules = [
       rentPct: { value: "20", type: "int" }
     },
     formula: (() => {
-      const income = max026(fact39("riHouseholdIncome"));
+      const income = max027(fact39("riHouseholdIncome"));
       const two = ge8(fact39("riHouseholdMembers"), int12("2"));
-      const pctPoints = iff19(lt18(income, money37("699100")), money37("3"), iff19(le16(income, money37("1048000")), money37("4"), iff19(le16(income, money37("1397000")), money37("5"), iff19(le16(income, money37("1746000")), iff19(two, money37("5"), money37("6")), money37("6")))));
-      const floor = rd26({ kind: "mulDiv", a: income, b: pctPoints, c: money37("100"), round: "half-up" });
-      const base = add20(max026(fact39("riPropertyTaxPaid")), rd26(pct12(max026(fact39("riRentPaid")), "20", "100")));
-      const credit = minE8(max026(sub24(base, floor)), money37("70000"));
-      const ok2 = and6(fact39("riAge65OrDisabled"), le16(income, money37("4073000")), not6(fact39("isClaimedAsDependent")));
-      return iff19(ok2, credit, money37("0"));
+      const pctPoints = iff20(lt18(income, money37("699100")), money37("3"), iff20(le16(income, money37("1048000")), money37("4"), iff20(le16(income, money37("1397000")), money37("5"), iff20(le16(income, money37("1746000")), iff20(two, money37("5"), money37("6")), money37("6")))));
+      const floor = rd27({ kind: "mulDiv", a: income, b: pctPoints, c: money37("100"), round: "half-up" });
+      const base = add21(max027(fact39("riPropertyTaxPaid")), rd27(pct12(max027(fact39("riRentPaid")), "20", "100")));
+      const credit = minE8(max027(sub25(base, floor)), money37("70000"));
+      const ok2 = and7(fact39("riAge65OrDisabled"), le16(income, money37("4073000")), not7(fact39("isClaimedAsDependent")));
+      return iff20(ok2, credit, money37("0"));
     })()
   },
   {
@@ -75218,14 +74864,14 @@ var riRules = [
     output: { type: "money" },
     parameters: { rateBps: { value: "700", type: "int" }, lookupBps: { value: "8", type: "int" }, lookupTop: { value: "10030000", type: "money" }, largePurchaseThreshold: { value: "100000", type: "money" } },
     formula: (() => {
-      const agi2 = max026(fact39("riFederalAgi"));
+      const agi2 = max027(fact39("riFederalAgi"));
       const bands2 = [["835000", "500"], ["1670000", "1000"], ["2505000", "1500"], ["3340000", "2000"], ["4175000", "2500"], ["5015000", "3000"], ["5850000", "3500"], ["6685000", "4000"], ["7520000", "4500"], ["8355000", "5000"], ["9195000", "5500"], ["10030000", "6000"]];
       let table2 = dollarsFromScaled11(times10(agi2, "8"));
       for (let i = bands2.length - 1; i >= 0; i--)
-        table2 = iff19(lt18(agi2, money37(bands2[i][0])), money37(bands2[i][1]), table2);
-      const lookup = add20(table2, max026(fact39("riLargePurchasesNetUseTax")));
-      const actual = max026(sub24(rd26(pct12(max026(fact39("riUseTaxPurchases")), "7", "100")), max026(fact39("riSalesTaxPaidOtherStates"))));
-      return iff19(fact39("riUseTaxLookupTable"), lookup, actual);
+        table2 = iff20(lt18(agi2, money37(bands2[i][0])), money37(bands2[i][1]), table2);
+      const lookup = add21(table2, max027(fact39("riLargePurchasesNetUseTax")));
+      const actual = max027(sub25(rd27(pct12(max027(fact39("riUseTaxPurchases")), "7", "100")), max027(fact39("riSalesTaxPaidOtherStates"))));
+      return iff20(fact39("riUseTaxLookupTable"), lookup, actual);
     })()
   },
   {
@@ -75271,7 +74917,7 @@ var riRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { bracket1: { value: "8205000", type: "money" }, bracket2: { value: "18645000", type: "money" }, subtraction2: { value: "82050", type: "money" }, subtraction3: { value: "313248", type: "money" }, publishedAnchor2: { value: "307688", type: "money" }, publishedAnchor3: { value: "803588", type: "money" } },
-    formula: worksheetTax(max026(fact39("stateTaxableIncome")), ROWS_2026)
+    formula: worksheetTax(max027(fact39("stateTaxableIncome")), ROWS_2026)
   },
   {
     id: "us.ri.standard_deduction",
@@ -75289,7 +74935,7 @@ var riRules = [
     output: { type: "money" },
     parameters: { single: { value: "1120000", type: "money" }, joint: { value: "2240000", type: "money" }, hoh: { value: "1680000", type: "money" }, phaseoutThreshold: { value: "26100000", type: "money" }, phaseoutStep: { value: "745000", type: "money" } },
     formula: (() => {
-      const base = iff19(isJoint6, money37("2240000"), iff19(isHoh5, money37("1680000"), money37("1120000")));
+      const base = iff20(isJoint7, money37("2240000"), iff20(isHoh5, money37("1680000"), money37("1120000")));
       return applyRatio2(base, phaseoutPct(fact39("riModifiedAgi"), "26100000", "745000"));
     })()
   },
@@ -75308,48 +74954,48 @@ var riRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "525000", type: "money" }, phaseoutThreshold: { value: "26100000", type: "money" }, phaseoutStep: { value: "745000", type: "money" } },
-    formula: applyRatio2(mulInt17(money37("525000"), fact39("riExemptions")), phaseoutPct(fact39("riModifiedAgi"), "26100000", "745000"))
+    formula: applyRatio2(mulInt18(money37("525000"), fact39("riExemptions")), phaseoutPct(fact39("riModifiedAgi"), "26100000", "745000"))
   }
 ];
 
 // ../corpus-us-federal/dist/rules/state-mt.js
-var rd27 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
-var cmp12 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt19 = (l, r) => cmp12("lt", l, r);
-var le17 = (l, r) => cmp12("le", l, r);
-var gt11 = (l, r) => cmp12("gt", l, r);
-var iff20 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add21 = (...args) => ({ kind: "add", args });
-var sub25 = (left, right) => ({ kind: "sub", left, right });
-var max027 = (arg) => ({ kind: "max0", arg });
+var rd28 = (value) => ({ kind: "roundToDollar", value, mode: "half-up" });
+var cmp13 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt19 = (l, r) => cmp13("lt", l, r);
+var le17 = (l, r) => cmp13("le", l, r);
+var gt11 = (l, r) => cmp13("gt", l, r);
+var iff21 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add22 = (...args) => ({ kind: "add", args });
+var sub26 = (left, right) => ({ kind: "sub", left, right });
+var max028 = (arg) => ({ kind: "max0", arg });
 var minE9 = (...args) => ({ kind: "min", args });
-var and7 = (...args) => ({ kind: "and", args });
-var isStatus28 = (v) => cmp12("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJoint7 = { kind: "or", args: [isStatus28("mfj"), isStatus28("qss")] };
+var and8 = (...args) => ({ kind: "and", args });
+var isStatus28 = (v) => cmp13("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJoint8 = { kind: "or", args: [isStatus28("mfj"), isStatus28("qss")] };
 var isMfjOnly2 = isStatus28("mfj");
 var isHoh6 = isStatus28("hoh");
 var times11 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var pct13 = (base, num, den) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
 var dollarsFromScaled12 = (n) => times11({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
-var byStatus2 = (joint, hoh, single) => iff20(isJoint7, money37(joint), iff20(isHoh6, money37(hoh), money37(single)));
+var byStatus3 = (joint, hoh, single) => iff21(isJoint8, money37(joint), iff21(isHoh6, money37(hoh), money37(single)));
 var ordinaryTax2 = (ordinary2, b) => {
-  const threshold3 = byStatus2(b.joint, b.hoh, b.single);
+  const threshold3 = byStatus3(b.joint, b.hoh, b.single);
   const lower = dollarsFromScaled12(times11(ordinary2, b.rate1Bps));
-  const upper = b.lessSingle !== void 0 ? dollarsFromScaled12(sub25(times11(ordinary2, b.rate2Bps), times11(byStatus2(b.lessJoint, b.lessHoh, b.lessSingle), "10000"))) : dollarsFromScaled12(add21(times11(threshold3, b.rate1Bps), times11(sub25(ordinary2, threshold3), b.rate2Bps)));
-  return iff20(cmp12("ge", ordinary2, threshold3), upper, lower);
+  const upper = b.lessSingle !== void 0 ? dollarsFromScaled12(sub26(times11(ordinary2, b.rate2Bps), times11(byStatus3(b.lessJoint, b.lessHoh, b.lessSingle), "10000"))) : dollarsFromScaled12(add22(times11(threshold3, b.rate1Bps), times11(sub26(ordinary2, threshold3), b.rate2Bps)));
+  return iff21(cmp13("ge", ordinary2, threshold3), upper, lower);
 };
 var capitalGainsTax = (taxable2, gains, b) => {
-  const l1 = max027(taxable2);
-  const l2 = max027(gains);
+  const l1 = max028(taxable2);
+  const l2 = max028(gains);
   const l3 = minE9(l1, l2);
-  const l4 = max027(sub25(l1, l3));
-  const l5 = byStatus2(b.joint, b.hoh, b.single);
-  const l6 = max027(sub25(l5, l4));
+  const l4 = max028(sub26(l1, l3));
+  const l5 = byStatus3(b.joint, b.hoh, b.single);
+  const l6 = max028(sub26(l5, l4));
   const l7 = minE9(l3, l6);
   const l8 = dollarsFromScaled12(times11(l7, "300"));
-  const l9 = max027(sub25(l3, l6));
+  const l9 = max028(sub26(l3, l6));
   const l10 = dollarsFromScaled12(times11(l9, "410"));
-  return add21(l8, l10);
+  return add22(l8, l10);
 };
 var BR_2025 = { joint: "4220000", hoh: "3170000", single: "2110000", rate1Bps: "470", rate2Bps: "590", lessJoint: "50600", lessHoh: "38000", lessSingle: "25300" };
 var BR_2026 = { joint: "9500000", hoh: "7125000", single: "4750000", rate1Bps: "470", rate2Bps: "565" };
@@ -75383,7 +75029,7 @@ var mtRules = [
       lessJoint: { value: "50600", type: "money" },
       lessHoh: { value: "38000", type: "money" }
     },
-    formula: ordinaryTax2(max027(sub25(max027(fact39("stateTaxableIncome")), minE9(max027(fact39("stateTaxableIncome")), max027(fact39("mtNetLongTermCapitalGains"))))), BR_2025)
+    formula: ordinaryTax2(max028(sub26(max028(fact39("stateTaxableIncome")), minE9(max028(fact39("stateTaxableIncome")), max028(fact39("mtNetLongTermCapitalGains"))))), BR_2025)
   },
   {
     id: "us.mt.capital_gains_tax",
@@ -75417,7 +75063,7 @@ var mtRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: {},
-    formula: add21(capitalGainsTax(fact39("stateTaxableIncome"), fact39("mtNetLongTermCapitalGains"), BR_2025), ordinaryTax2(max027(sub25(max027(fact39("stateTaxableIncome")), minE9(max027(fact39("stateTaxableIncome")), max027(fact39("mtNetLongTermCapitalGains"))))), BR_2025))
+    formula: add22(capitalGainsTax(fact39("stateTaxableIncome"), fact39("mtNetLongTermCapitalGains"), BR_2025), ordinaryTax2(max028(sub26(max028(fact39("stateTaxableIncome")), minE9(max028(fact39("stateTaxableIncome")), max028(fact39("mtNetLongTermCapitalGains"))))), BR_2025))
   },
   {
     id: "us.mt.age65_subtraction",
@@ -75434,7 +75080,7 @@ var mtRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { perTaxpayer: { value: "566000", type: "money" }, bothSpouses: { value: "1132000", type: "money" } },
-    formula: add21(iff20(fact39("mtTaxpayerAge65"), money37("566000"), money37("0")), iff20(and7(isMfjOnly2, fact39("mtSpouseAge65")), money37("566000"), money37("0")))
+    formula: add22(iff21(fact39("mtTaxpayerAge65"), money37("566000"), money37("0")), iff21(and8(isMfjOnly2, fact39("mtSpouseAge65")), money37("566000"), money37("0")))
   },
   {
     id: "us.mt.eitc",
@@ -75451,7 +75097,7 @@ var mtRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "10", type: "int" } },
-    formula: rd27(pct13(max027(fact39("mtFederalEic")), "10", "100"))
+    formula: rd28(pct13(max028(fact39("mtFederalEic")), "10", "100"))
   },
   {
     id: "us.mt.elderly_homeowner_renter_credit",
@@ -75469,19 +75115,19 @@ var mtRules = [
     output: { type: "money" },
     parameters: { maximumCredit: { value: "115000", type: "money" }, incomeLimit: { value: "4500000", type: "money" }, standardExclusion: { value: "1260000", type: "money" }, rentEquivalentPct: { value: "15", type: "int" } },
     formula: (() => {
-      const l18 = max027(fact39("mtGrossHouseholdIncome"));
-      const l20 = max027(sub25(l18, money37("1260000")));
-      const mult = iff20(lt19(l20, money37("200000")), money37("0"), iff20(lt19(l20, money37("300000")), money37("60"), iff20(lt19(l20, money37("400000")), money37("160"), iff20(lt19(l20, money37("500000")), money37("240"), iff20(lt19(l20, money37("600000")), money37("280"), iff20(lt19(l20, money37("700000")), money37("320"), iff20(lt19(l20, money37("800000")), money37("350"), iff20(lt19(l20, money37("900000")), money37("390"), iff20(lt19(l20, money37("1000000")), money37("420"), iff20(lt19(l20, money37("1100000")), money37("450"), iff20(lt19(l20, money37("1200000")), money37("480"), money37("500"))))))))))));
+      const l18 = max028(fact39("mtGrossHouseholdIncome"));
+      const l20 = max028(sub26(l18, money37("1260000")));
+      const mult = iff21(lt19(l20, money37("200000")), money37("0"), iff21(lt19(l20, money37("300000")), money37("60"), iff21(lt19(l20, money37("400000")), money37("160"), iff21(lt19(l20, money37("500000")), money37("240"), iff21(lt19(l20, money37("600000")), money37("280"), iff21(lt19(l20, money37("700000")), money37("320"), iff21(lt19(l20, money37("800000")), money37("350"), iff21(lt19(l20, money37("900000")), money37("390"), iff21(lt19(l20, money37("1000000")), money37("420"), iff21(lt19(l20, money37("1100000")), money37("450"), iff21(lt19(l20, money37("1200000")), money37("480"), money37("500"))))))))))));
       const l22 = dollarsFromScaled12({ kind: "mulDiv", a: l20, b: mult, c: money37("1"), round: "half-up" });
-      const l23 = max027(fact39("mtPropertyTaxBilled"));
-      const l25 = rd27(pct13(max027(fact39("mtRentPaid")), "15", "100"));
-      const l26 = add21(l23, l25);
-      const l27 = max027(sub25(l26, l22));
+      const l23 = max028(fact39("mtPropertyTaxBilled"));
+      const l25 = rd28(pct13(max028(fact39("mtRentPaid")), "15", "100"));
+      const l26 = add22(l23, l25);
+      const l27 = max028(sub26(l26, l22));
       const l28 = minE9(l27, money37("115000"));
-      const cm = iff20(lt19(l18, money37("3500000")), money37("10000"), iff20(le17(l18, money37("3750000")), money37("4000"), iff20(le17(l18, money37("4000000")), money37("3000"), iff20(le17(l18, money37("4250000")), money37("2000"), iff20(lt19(l18, money37("4500000")), money37("1000"), money37("0"))))));
-      const l30 = rd27({ kind: "mulDiv", a: l28, b: cm, c: money37("10000"), round: "half-up" });
-      const eligible = and7(fact39("mtAge62"), fact39("mtResided9Months"), fact39("mtOccupied6Months"), fact39("mtSoleHouseholdClaimant"), lt19(l18, money37("4500000")));
-      return iff20(eligible, l30, money37("0"));
+      const cm = iff21(lt19(l18, money37("3500000")), money37("10000"), iff21(le17(l18, money37("3750000")), money37("4000"), iff21(le17(l18, money37("4000000")), money37("3000"), iff21(le17(l18, money37("4250000")), money37("2000"), iff21(lt19(l18, money37("4500000")), money37("1000"), money37("0"))))));
+      const l30 = rd28({ kind: "mulDiv", a: l28, b: cm, c: money37("10000"), round: "half-up" });
+      const eligible = and8(fact39("mtAge62"), fact39("mtResided9Months"), fact39("mtOccupied6Months"), fact39("mtSoleHouseholdClaimant"), lt19(l18, money37("4500000")));
+      return iff21(eligible, l30, money37("0"));
     })()
   },
   {
@@ -75500,25 +75146,25 @@ var mtRules = [
     output: { type: "money" },
     parameters: { ratioDecimals: { value: "6", type: "int" } },
     formula: (() => {
-      const ratio6 = (num, den) => minE9({ kind: "mulDiv", a: max027(num), b: money37("1000000"), c: den, round: "half-up" }, money37("1000000"));
+      const ratio6 = (num, den) => minE9({ kind: "mulDiv", a: max028(num), b: money37("1000000"), c: den, round: "half-up" }, money37("1000000"));
       const applyRatio6 = (base, r) => dollarsFromScaled12({ kind: "mulDiv", a: base, b: r, c: money37("100"), round: "half-up" });
-      const oSourced = max027(fact39("mtOtherStateOrdinaryIncome"));
+      const oSourced = max028(fact39("mtOtherStateOrdinaryIncome"));
       const oAll = fact39("mtOtherStateTotalIncome");
       const oMt = fact39("mtOrdinaryIncomeSourcedToMontana");
-      const oPaid = max027(fact39("mtOtherStateTaxPaid"));
-      const oTax = max027(fact39("mtOrdinaryIncomeTax"));
-      const l7 = iff20(gt11(oAll, money37("0")), applyRatio6(oPaid, ratio6(oSourced, oAll)), money37("0"));
-      const l9 = iff20(gt11(oMt, money37("0")), applyRatio6(oTax, ratio6(oSourced, oMt)), money37("0"));
-      const l10 = iff20(gt11(oSourced, money37("0")), minE9(oPaid, l7, l9), money37("0"));
-      const gSourced = max027(fact39("mtOtherStateCapitalGains"));
+      const oPaid = max028(fact39("mtOtherStateTaxPaid"));
+      const oTax = max028(fact39("mtOrdinaryIncomeTax"));
+      const l7 = iff21(gt11(oAll, money37("0")), applyRatio6(oPaid, ratio6(oSourced, oAll)), money37("0"));
+      const l9 = iff21(gt11(oMt, money37("0")), applyRatio6(oTax, ratio6(oSourced, oMt)), money37("0"));
+      const l10 = iff21(gt11(oSourced, money37("0")), minE9(oPaid, l7, l9), money37("0"));
+      const gSourced = max028(fact39("mtOtherStateCapitalGains"));
       const gAll = fact39("mtOtherStateTotalIncome");
       const gFed = fact39("mtFederalNetLongTermCapitalGains");
-      const gPaid = max027(fact39("mtOtherStateTaxPaid"));
-      const gTax = max027(fact39("mtCapitalGainsTax"));
-      const l17 = iff20(gt11(gAll, money37("0")), applyRatio6(gPaid, ratio6(gSourced, gAll)), money37("0"));
-      const l19 = iff20(gt11(gFed, money37("0")), applyRatio6(gTax, ratio6(gSourced, gFed)), money37("0"));
-      const l20 = iff20(gt11(gSourced, money37("0")), minE9(gPaid, l17, l19), money37("0"));
-      return add21(l10, l20);
+      const gPaid = max028(fact39("mtOtherStateTaxPaid"));
+      const gTax = max028(fact39("mtCapitalGainsTax"));
+      const l17 = iff21(gt11(gAll, money37("0")), applyRatio6(gPaid, ratio6(gSourced, gAll)), money37("0"));
+      const l19 = iff21(gt11(gFed, money37("0")), applyRatio6(gTax, ratio6(gSourced, gFed)), money37("0"));
+      const l20 = iff21(gt11(gSourced, money37("0")), minE9(gPaid, l17, l19), money37("0"));
+      return add22(l10, l20);
     })()
   },
   {
@@ -75536,7 +75182,7 @@ var mtRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { cap: { value: "450000", type: "money" }, capJoint: { value: "900000", type: "money" } },
-    formula: minE9(max027(fact39("mtTuitionSavingsContributions")), iff20(isMfjOnly2, money37("900000"), money37("450000")))
+    formula: minE9(max028(fact39("mtTuitionSavingsContributions")), iff21(isMfjOnly2, money37("900000"), money37("450000")))
   },
   {
     id: "us.mt.able_subtraction",
@@ -75553,7 +75199,7 @@ var mtRules = [
     effectiveTo: "2028-01-01",
     output: { type: "money" },
     parameters: { cap: { value: "300000", type: "money" }, capJoint: { value: "600000", type: "money" } },
-    formula: minE9(max027(fact39("mtAbleContributions")), iff20(isMfjOnly2, money37("600000"), money37("300000")))
+    formula: minE9(max028(fact39("mtAbleContributions")), iff21(isMfjOnly2, money37("600000"), money37("300000")))
   },
   {
     id: "us.mt.military_retirement_subtraction",
@@ -75570,7 +75216,7 @@ var mtRules = [
     effectiveTo: "2028-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "50", type: "int" } },
-    formula: iff20(and7(fact39("mtMilitaryRetireeEligible"), fact39("mtMilitaryRetireeWithinFiveYears")), minE9(max027(fact39("mtMontanaSourceWageIncome")), rd27(pct13(max027(fact39("mtMilitaryRetirementIncome")), "50", "100"))), money37("0"))
+    formula: iff21(and8(fact39("mtMilitaryRetireeEligible"), fact39("mtMilitaryRetireeWithinFiveYears")), minE9(max028(fact39("mtMontanaSourceWageIncome")), rd28(pct13(max028(fact39("mtMilitaryRetirementIncome")), "50", "100"))), money37("0"))
   },
   {
     id: "us.mt.parameters",
@@ -75614,7 +75260,7 @@ var mtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { rate1Bps: { value: "470", type: "int" }, rate2Bps: { value: "565", type: "int" }, thresholdSingle: { value: "4750000", type: "money" }, thresholdJoint: { value: "9500000", type: "money" }, thresholdHoh: { value: "7125000", type: "money" } },
-    formula: ordinaryTax2(max027(sub25(max027(fact39("stateTaxableIncome")), minE9(max027(fact39("stateTaxableIncome")), max027(fact39("mtNetLongTermCapitalGains"))))), BR_2026)
+    formula: ordinaryTax2(max028(sub26(max028(fact39("stateTaxableIncome")), minE9(max028(fact39("stateTaxableIncome")), max028(fact39("mtNetLongTermCapitalGains"))))), BR_2026)
   },
   {
     id: "us.mt.capital_gains_tax",
@@ -75648,7 +75294,7 @@ var mtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: {},
-    formula: add21(capitalGainsTax(fact39("stateTaxableIncome"), fact39("mtNetLongTermCapitalGains"), BR_2026), ordinaryTax2(max027(sub25(max027(fact39("stateTaxableIncome")), minE9(max027(fact39("stateTaxableIncome")), max027(fact39("mtNetLongTermCapitalGains"))))), BR_2026))
+    formula: add22(capitalGainsTax(fact39("stateTaxableIncome"), fact39("mtNetLongTermCapitalGains"), BR_2026), ordinaryTax2(max028(sub26(max028(fact39("stateTaxableIncome")), minE9(max028(fact39("stateTaxableIncome")), max028(fact39("mtNetLongTermCapitalGains"))))), BR_2026))
   },
   {
     id: "us.mt.eitc",
@@ -75665,7 +75311,7 @@ var mtRules = [
     effectiveTo: "2028-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "20", type: "int" } },
-    formula: rd27(pct13(max027(fact39("mtFederalEic")), "20", "100"))
+    formula: rd28(pct13(max028(fact39("mtFederalEic")), "20", "100"))
   },
   {
     id: "us.mt.ordinary_income_tax",
@@ -75682,7 +75328,7 @@ var mtRules = [
     effectiveTo: "2028-01-01",
     output: { type: "money" },
     parameters: { rate1Bps: { value: "470", type: "int" }, rate2Bps: { value: "540", type: "int" }, thresholdSingle: { value: "6500000", type: "money" }, thresholdJoint: { value: "13000000", type: "money" }, thresholdHoh: { value: "9750000", type: "money" } },
-    formula: ordinaryTax2(max027(sub25(max027(fact39("stateTaxableIncome")), minE9(max027(fact39("stateTaxableIncome")), max027(fact39("mtNetLongTermCapitalGains"))))), BR_2027)
+    formula: ordinaryTax2(max028(sub26(max028(fact39("stateTaxableIncome")), minE9(max028(fact39("stateTaxableIncome")), max028(fact39("mtNetLongTermCapitalGains"))))), BR_2027)
   },
   {
     id: "us.mt.capital_gains_tax",
@@ -75716,27 +75362,27 @@ var mtRules = [
     effectiveTo: "2028-01-01",
     output: { type: "money" },
     parameters: {},
-    formula: add21(capitalGainsTax(fact39("stateTaxableIncome"), fact39("mtNetLongTermCapitalGains"), BR_2027), ordinaryTax2(max027(sub25(max027(fact39("stateTaxableIncome")), minE9(max027(fact39("stateTaxableIncome")), max027(fact39("mtNetLongTermCapitalGains"))))), BR_2027))
+    formula: add22(capitalGainsTax(fact39("stateTaxableIncome"), fact39("mtNetLongTermCapitalGains"), BR_2027), ordinaryTax2(max028(sub26(max028(fact39("stateTaxableIncome")), minE9(max028(fact39("stateTaxableIncome")), max028(fact39("mtNetLongTermCapitalGains"))))), BR_2027))
   }
 ];
 
 // ../corpus-us-federal/dist/rules/state-de.js
-var cmp13 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt20 = (l, r) => cmp13("lt", l, r);
-var le18 = (l, r) => cmp13("le", l, r);
-var gt12 = (l, r) => cmp13("gt", l, r);
-var ge9 = (l, r) => cmp13("ge", l, r);
-var iff21 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add22 = (...args) => ({ kind: "add", args });
-var sub26 = (left, right) => ({ kind: "sub", left, right });
-var max028 = (arg) => ({ kind: "max0", arg });
+var cmp14 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt20 = (l, r) => cmp14("lt", l, r);
+var le18 = (l, r) => cmp14("le", l, r);
+var gt12 = (l, r) => cmp14("gt", l, r);
+var ge9 = (l, r) => cmp14("ge", l, r);
+var iff22 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add23 = (...args) => ({ kind: "add", args });
+var sub27 = (left, right) => ({ kind: "sub", left, right });
+var max029 = (arg) => ({ kind: "max0", arg });
 var minE10 = (...args) => ({ kind: "min", args });
-var and8 = (...args) => ({ kind: "and", args });
-var not7 = (arg) => ({ kind: "not", arg });
+var and9 = (...args) => ({ kind: "and", args });
+var not8 = (arg) => ({ kind: "not", arg });
 var int13 = (value) => ({ kind: "int", value });
-var mulInt18 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits9 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus29 = (v) => cmp13("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var mulInt19 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits10 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus29 = (v) => cmp14("eq", fact39("filingStatus"), { kind: "enum", value: v });
 var isJointReturn = isStatus29("mfj");
 var times12 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled13 = (n) => times12({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
@@ -75757,21 +75403,21 @@ var BANDS_2025 = [
 var scheduleTax4 = (x, bands2) => {
   let expr = money37("0");
   for (const b of bands2) {
-    const row2 = dollarsFromScaled13(add22(times12(money37(b.anchorCents), "10000"), times12(sub26(x, money37(b.floorCents)), b.rateBps)));
-    expr = iff21(gt12(x, money37(b.floorCents)), row2, expr);
+    const row2 = dollarsFromScaled13(add23(times12(money37(b.anchorCents), "10000"), times12(sub27(x, money37(b.floorCents)), b.rateBps)));
+    expr = iff22(gt12(x, money37(b.floorCents)), row2, expr);
   }
   return expr;
 };
 var line24Tax = (x, bands2) => {
-  const mid = add22(mulInt18(money37("5000"), stepUnits9(x, "5000", "floor")), money37("2500"));
-  const table2 = iff21(lt20(x, money37("200000")), money37("0"), scheduleTax4(mid, bands2));
-  return iff21(fact39("deUseRateSchedule"), scheduleTax4(x, bands2), iff21(lt20(x, money37("6000000")), table2, scheduleTax4(x, bands2)));
+  const mid = add23(mulInt19(money37("5000"), stepUnits10(x, "5000", "floor")), money37("2500"));
+  const table2 = iff22(lt20(x, money37("200000")), money37("0"), scheduleTax4(mid, bands2));
+  return iff22(fact39("deUseRateSchedule"), scheduleTax4(x, bands2), iff22(lt20(x, money37("6000000")), table2, scheduleTax4(x, bands2)));
 };
 var FORMS4 = "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/";
 var INSTR_URL2 = FORMS4 + "Instructions/PIT-RES_Instructions_2025-01.pdf";
 var FORM_URL2 = FORMS4 + "PIT-RES_2025-01_PaperInteractiveIPM.pdf";
 var TABLE_URL = "https://revenuefiles.delaware.gov/2025/TY25_taxtable.pdf";
-var DELC = (sub30) => `https://delcode.delaware.gov/title30/c011/${sub30}/index.html`;
+var DELC = (sub31) => `https://delcode.delaware.gov/title30/c011/${sub31}/index.html`;
 var deRules = [
   {
     id: "us.de.income_tax",
@@ -75798,7 +75444,7 @@ var deRules = [
       topRateBps: { value: "660", type: "int" },
       tableTop: { value: "6000000", type: "money" }
     },
-    formula: line24Tax(max028(fact39("stateTaxableIncome")), BANDS_2025)
+    formula: line24Tax(max029(fact39("stateTaxableIncome")), BANDS_2025)
   },
   {
     id: "us.de.standard_deduction",
@@ -75816,10 +75462,10 @@ var deRules = [
     output: { type: "money" },
     parameters: { base: { value: "325000", type: "money" }, joint: { value: "650000", type: "money" }, perBox: { value: "250000", type: "money" }, maxBoxesPerPerson: { value: "2", type: "int" } },
     formula: (() => {
-      const base = iff21(isJointReturn, money37("650000"), money37("325000"));
+      const base = iff22(isJointReturn, money37("650000"), money37("325000"));
       const hasSpouseColumn = { kind: "or", args: [isJointReturn, { kind: "cmp", op: "eq", left: fact39("filingStatus"), right: { kind: "enum", value: "mfs" } }] };
-      const boxes = iff21(hasSpouseColumn, minE10(fact39("deAdditionalDeductionBoxes"), int13("4")), minE10(fact39("deAdditionalDeductionBoxes"), int13("2")));
-      return iff21(fact39("deItemizes"), money37("0"), add22(base, mulInt18(money37("250000"), boxes)));
+      const boxes = iff22(hasSpouseColumn, minE10(fact39("deAdditionalDeductionBoxes"), int13("4")), minE10(fact39("deAdditionalDeductionBoxes"), int13("2")));
+      return iff22(fact39("deItemizes"), money37("0"), add23(base, mulInt19(money37("250000"), boxes)));
     })()
   },
   {
@@ -75837,7 +75483,7 @@ var deRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "11000", type: "money" }, perAge60: { value: "11000", type: "money" } },
-    formula: iff21(fact39("isClaimedAsDependent"), money37("0"), add22(mulInt18(money37("11000"), fact39("deExemptions")), mulInt18(money37("11000"), minE10(fact39("deAge60Persons"), int13("2")))))
+    formula: iff22(fact39("isClaimedAsDependent"), money37("0"), add23(mulInt19(money37("11000"), fact39("deExemptions")), mulInt19(money37("11000"), minE10(fact39("deAge60Persons"), int13("2")))))
   },
   {
     id: "us.de.pension_exclusion",
@@ -75855,11 +75501,11 @@ var deRules = [
     output: { type: "money" },
     parameters: { cap60: { value: "1250000", type: "money" }, capMilitaryUnder60: { value: "1250000", type: "money" }, capUnder60: { value: "200000", type: "money" } },
     formula: (() => {
-      const pension = max028(fact39("dePensionIncome"));
-      const eligible = max028(fact39("deEligibleRetirementIncome"));
-      const over60 = minE10(add22(pension, eligible), money37("1250000"));
-      const under60 = iff21(fact39("deMilitaryPension"), minE10(pension, money37("1250000")), minE10(pension, money37("200000")));
-      return iff21(fact39("deAge60OrOver"), over60, under60);
+      const pension = max029(fact39("dePensionIncome"));
+      const eligible = max029(fact39("deEligibleRetirementIncome"));
+      const over60 = minE10(add23(pension, eligible), money37("1250000"));
+      const under60 = iff22(fact39("deMilitaryPension"), minE10(pension, money37("1250000")), minE10(pension, money37("200000")));
+      return iff22(fact39("deAge60OrOver"), over60, under60);
     })()
   },
   {
@@ -75878,11 +75524,11 @@ var deRules = [
     output: { type: "money" },
     parameters: { cap60: { value: "1250000", type: "money" }, capMilitaryUnder60: { value: "1250000", type: "money" }, capUnder60: { value: "200000", type: "money" }, domicileYears: { value: "3", type: "int" } },
     formula: (() => {
-      const pension = max028(fact39("dePensionIncome"));
-      const eligible = max028(fact39("deEligibleRetirementIncome"));
-      const over60 = minE10(add22(pension, eligible), money37("1250000"));
-      const under60 = iff21(fact39("deMilitaryPension"), minE10(pension, money37("1250000")), minE10(pension, money37("200000")));
-      return iff21(fact39("deAge60OrOver"), iff21(fact39("deDomiciledForPensionExclusion"), over60, money37("0")), under60);
+      const pension = max029(fact39("dePensionIncome"));
+      const eligible = max029(fact39("deEligibleRetirementIncome"));
+      const over60 = minE10(add23(pension, eligible), money37("1250000"));
+      const under60 = iff22(fact39("deMilitaryPension"), minE10(pension, money37("1250000")), minE10(pension, money37("200000")));
+      return iff22(fact39("deAge60OrOver"), iff22(fact39("deDomiciledForPensionExclusion"), over60, money37("0")), under60);
     })()
   },
   {
@@ -75902,11 +75548,11 @@ var deRules = [
     parameters: { single: { value: "200000", type: "money" }, joint: { value: "400000", type: "money" }, earnedIncomeLimit: { value: "250000", type: "money" }, earnedIncomeLimitJoint: { value: "500000", type: "money" }, agiLimit: { value: "1000000", type: "money" }, agiLimitJoint: { value: "2000000", type: "money" } },
     formula: (() => {
       const agi2 = fact39("deAgiBeforeExclusion");
-      const earned2 = max028(fact39("deEarnedIncome"));
-      const bothQualify = and8(isJointReturn, fact39("deQualifiesElderlyDisabled"), fact39("deSpouseQualifiesElderlyDisabled"));
-      const jointOk = and8(bothQualify, lt20(earned2, money37("500000")), le18(agi2, money37("2000000")));
-      const singleOk = and8(not7(isJointReturn), fact39("deQualifiesElderlyDisabled"), lt20(earned2, money37("250000")), le18(agi2, money37("1000000")));
-      return iff21(jointOk, money37("400000"), iff21(singleOk, money37("200000"), money37("0")));
+      const earned2 = max029(fact39("deEarnedIncome"));
+      const bothQualify = and9(isJointReturn, fact39("deQualifiesElderlyDisabled"), fact39("deSpouseQualifiesElderlyDisabled"));
+      const jointOk = and9(bothQualify, lt20(earned2, money37("500000")), le18(agi2, money37("2000000")));
+      const singleOk = and9(not8(isJointReturn), fact39("deQualifiesElderlyDisabled"), lt20(earned2, money37("250000")), le18(agi2, money37("1000000")));
+      return iff22(jointOk, money37("400000"), iff22(singleOk, money37("200000"), money37("0")));
     })()
   },
   {
@@ -75925,11 +75571,11 @@ var deRules = [
     output: { type: "money" },
     parameters: { nonrefundablePct: { value: "20", type: "int" }, refundablePctBps: { value: "450", type: "int" } },
     formula: (() => {
-      const fed = max028(fact39("deFederalEic"));
-      const remaining = max028(fact39("deEitcTaxAfterCredits"));
+      const fed = max029(fact39("deFederalEic"));
+      const remaining = max029(fact39("deEitcTaxAfterCredits"));
       const refundable = dollarsFromScaled13(times12(fed, "450"));
       const nonrefundable = minE10(remaining, dollarsFromScaled13(times12(fed, "2000")));
-      return iff21(ge9(refundable, remaining), refundable, nonrefundable);
+      return iff22(ge9(refundable, remaining), refundable, nonrefundable);
     })()
   },
   {
@@ -75947,7 +75593,7 @@ var deRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "50", type: "int" }, cap: { value: "300000", type: "money" } },
-    formula: minE10(dollarsFromScaled13(times12(max028(fact39("deFederalChildCareCredit")), "5000")), money37("300000"))
+    formula: minE10(dollarsFromScaled13(times12(max029(fact39("deFederalChildCareCredit")), "5000")), money37("300000"))
   },
   {
     id: "us.de.other_state_credit",
@@ -75966,10 +75612,10 @@ var deRules = [
     parameters: { ratioCap: { value: "1", type: "int" } },
     formula: (() => {
       const deAgi = fact39("deAdjustedGrossIncome");
-      const otherAgi = max028(fact39("deOtherStateIncome"));
+      const otherAgi = max029(fact39("deOtherStateIncome"));
       const capped = minE10(otherAgi, deAgi);
-      const share2 = dollarsFromScaled13({ kind: "mulDiv", a: times12(max028(fact39("deIncomeTax")), "10000"), b: capped, c: deAgi, round: "half-up" });
-      return iff21(gt12(deAgi, money37("0")), minE10(share2, max028(fact39("deOtherStateTaxPaid"))), money37("0"));
+      const share2 = dollarsFromScaled13({ kind: "mulDiv", a: times12(max029(fact39("deIncomeTax")), "10000"), b: capped, c: deAgi, round: "half-up" });
+      return iff22(gt12(deAgi, money37("0")), minE10(share2, max029(fact39("deOtherStateTaxPaid"))), money37("0"));
     })()
   },
   {
@@ -75987,7 +75633,7 @@ var deRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perPerson: { value: "100000", type: "money" } },
-    formula: mulInt18(money37("100000"), minE10(fact39("deVolunteerFirefighters"), int13("2")))
+    formula: mulInt19(money37("100000"), minE10(fact39("deVolunteerFirefighters"), int13("2")))
   },
   {
     id: "us.de.parameters",
@@ -76022,30 +75668,30 @@ var deRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-nd.js
-var cmp14 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt21 = (l, r) => cmp14("lt", l, r);
-var gt13 = (l, r) => cmp14("gt", l, r);
-var iff22 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add23 = (...args) => ({ kind: "add", args });
-var sub27 = (left, right) => ({ kind: "sub", left, right });
-var max029 = (arg) => ({ kind: "max0", arg });
+var cmp15 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt21 = (l, r) => cmp15("lt", l, r);
+var gt13 = (l, r) => cmp15("gt", l, r);
+var iff23 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add24 = (...args) => ({ kind: "add", args });
+var sub28 = (left, right) => ({ kind: "sub", left, right });
+var max030 = (arg) => ({ kind: "max0", arg });
 var minE11 = (...args) => ({ kind: "min", args });
-var and9 = (...args) => ({ kind: "and", args });
-var mulInt19 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits10 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus30 = (v) => cmp14("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var and10 = (...args) => ({ kind: "and", args });
+var mulInt20 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits11 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus30 = (v) => cmp15("eq", fact39("filingStatus"), { kind: "enum", value: v });
 var isJointCol = { kind: "or", args: [isStatus30("mfj"), isStatus30("qss")] };
 var isMfs9 = isStatus30("mfs");
 var isHoh7 = isStatus30("hoh");
 var times13 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled14 = (n) => times13({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
 var scheduleTax5 = (x, s) => {
-  const mid = dollarsFromScaled14(times13(sub27(x, money37(s.zeroTop)), "195"));
-  const top = dollarsFromScaled14(add23(times13(money37(s.anchorCents), "10000"), times13(sub27(x, money37(s.midTop)), "250")));
-  return iff22(gt13(x, money37(s.midTop)), top, iff22(gt13(x, money37(s.zeroTop)), mid, money37("0")));
+  const mid = dollarsFromScaled14(times13(sub28(x, money37(s.zeroTop)), "195"));
+  const top = dollarsFromScaled14(add24(times13(money37(s.anchorCents), "10000"), times13(sub28(x, money37(s.midTop)), "250")));
+  return iff23(gt13(x, money37(s.midTop)), top, iff23(gt13(x, money37(s.zeroTop)), mid, money37("0")));
 };
-var byStatus3 = (x, y) => iff22(isJointCol, scheduleTax5(x, y.joint), iff22(isMfs9, scheduleTax5(x, y.mfs), iff22(isHoh7, scheduleTax5(x, y.hoh), scheduleTax5(x, y.single))));
-var Y20252 = {
+var byStatus4 = (x, y) => iff23(isJointCol, scheduleTax5(x, y.joint), iff23(isMfs9, scheduleTax5(x, y.mfs), iff23(isHoh7, scheduleTax5(x, y.hoh), scheduleTax5(x, y.single))));
+var Y20253 = {
   single: { zeroTop: "4847500", midTop: "24482500", anchorCents: "382883" },
   // $48,475 / $244,825 / $3,828.83
   joint: { zeroTop: "8097500", midTop: "29807500", anchorCents: "423345" },
@@ -76055,7 +75701,7 @@ var Y20252 = {
   hoh: { zeroTop: "6495000", midTop: "27145000", anchorCents: "402675" }
   // $64,950 / $271,450 / $4,026.75
 };
-var Y20262 = {
+var Y20263 = {
   single: { zeroTop: "4957500", midTop: "25040000", anchorCents: "391609" },
   // $49,575 / $250,400 / $3,916.09
   joint: { zeroTop: "8280000", midTop: "30485000", anchorCents: "432998" },
@@ -76066,9 +75712,9 @@ var Y20262 = {
   // $66,400 / $277,600 / $4,118.40
 };
 var line20Tax = (x, y) => {
-  const mid = add23(mulInt19(money37("5000"), stepUnits10(x, "5000", "floor")), money37("2500"));
-  const table2 = byStatus3(mid, y);
-  return iff22(fact39("ndUseRateSchedule"), byStatus3(x, y), iff22(lt21(x, money37("10000000")), table2, byStatus3(x, y)));
+  const mid = add24(mulInt20(money37("5000"), stepUnits11(x, "5000", "floor")), money37("2500"));
+  const table2 = byStatus4(mid, y);
+  return iff23(fact39("ndUseRateSchedule"), byStatus4(x, y), iff23(lt21(x, money37("10000000")), table2, byStatus4(x, y)));
 };
 var FORMS5 = "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/";
 var BOOKLET = FORMS5 + "2025-individual-income-tax-booklet.pdf";
@@ -76098,7 +75744,7 @@ var ndRules = [
       zeroTopHoh: { value: "6495000", type: "money" },
       tableTop: { value: "10000000", type: "money" }
     },
-    formula: line20Tax(max029(fact39("stateTaxableIncome")), Y20252)
+    formula: line20Tax(max030(fact39("stateTaxableIncome")), Y20253)
   },
   {
     id: "us.nd.income_tax",
@@ -76122,7 +75768,7 @@ var ndRules = [
       zeroTopMfs: { value: "4140000", type: "money" },
       zeroTopHoh: { value: "6640000", type: "money" }
     },
-    formula: byStatus3(max029(fact39("stateTaxableIncome")), Y20262)
+    formula: byStatus4(max030(fact39("stateTaxableIncome")), Y20263)
   },
   {
     id: "us.nd.capital_gain_exclusion",
@@ -76139,7 +75785,7 @@ var ndRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "40", type: "int" } },
-    formula: dollarsFromScaled14(times13(max029(sub27(max029(fact39("ndNetLongTermCapitalGain")), max029(fact39("ndCapitalGainAlreadyExcluded")))), "4000"))
+    formula: dollarsFromScaled14(times13(max030(sub28(max030(fact39("ndNetLongTermCapitalGain")), max030(fact39("ndCapitalGainAlreadyExcluded")))), "4000"))
   },
   {
     id: "us.nd.qualified_dividend_exclusion",
@@ -76156,7 +75802,7 @@ var ndRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "40", type: "int" }, ordinaryRateFallbackPct: { value: "30", type: "int" } },
-    formula: dollarsFromScaled14(times13(max029(fact39("ndQualifiedDividends")), "4000"))
+    formula: dollarsFromScaled14(times13(max030(fact39("ndQualifiedDividends")), "4000"))
   },
   {
     id: "us.nd.college_save_deduction",
@@ -76173,7 +75819,7 @@ var ndRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { cap: { value: "500000", type: "money" }, capJoint: { value: "1000000", type: "money" } },
-    formula: minE11(max029(fact39("ndCollegeSaveContributions")), iff22(isStatus30("mfj"), money37("1000000"), money37("500000")))
+    formula: minE11(max030(fact39("ndCollegeSaveContributions")), iff23(isStatus30("mfj"), money37("1000000"), money37("500000")))
   },
   {
     id: "us.nd.marriage_penalty_credit",
@@ -76191,9 +75837,9 @@ var ndRules = [
     output: { type: "money" },
     parameters: { maximumCredit: { value: "31200", type: "money" }, taxableIncomeFloor: { value: "8103600", type: "money" }, lowerIncomeFloor: { value: "4755000", type: "money" }, halfJointStandardDeduction: { value: "1575000", type: "money" } },
     formula: (() => {
-      const eligible = and9(isStatus30("mfj"), gt13(fact39("ndTaxableIncome"), money37("8103600")), gt13(fact39("ndLowerQualifiedIncome"), money37("4755000")));
-      const excess2 = max029(sub27(max029(fact39("ndJointScheduleTax")), add23(max029(fact39("ndSingleScheduleTaxA")), max029(fact39("ndSingleScheduleTaxB")))));
-      return iff22(eligible, minE11(excess2, money37("31200")), money37("0"));
+      const eligible = and10(isStatus30("mfj"), gt13(fact39("ndTaxableIncome"), money37("8103600")), gt13(fact39("ndLowerQualifiedIncome"), money37("4755000")));
+      const excess2 = max030(sub28(max030(fact39("ndJointScheduleTax")), add24(max030(fact39("ndSingleScheduleTaxA")), max030(fact39("ndSingleScheduleTaxB")))));
+      return iff23(eligible, minE11(excess2, money37("31200")), money37("0"));
     })()
   },
   {
@@ -76213,10 +75859,10 @@ var ndRules = [
     parameters: { ratioDecimals: { value: "4", type: "int" } },
     formula: (() => {
       const base = fact39("ndOtherStateIncomeBase");
-      const doubled = max029(fact39("ndDoublyTaxedIncome"));
+      const doubled = max030(fact39("ndDoublyTaxedIncome"));
       const ratio = minE11({ kind: "mulDiv", a: doubled, b: money37("10000"), c: base, round: "half-up" }, money37("10000"));
-      const share2 = dollarsFromScaled14({ kind: "mulDiv", a: times13(max029(fact39("ndIncomeTaxBeforeCredits")), "10000"), b: ratio, c: money37("10000"), round: "half-up" });
-      return iff22(gt13(base, money37("0")), minE11(share2, max029(fact39("ndOtherStateTaxPaid"))), money37("0"));
+      const share2 = dollarsFromScaled14({ kind: "mulDiv", a: times13(max030(fact39("ndIncomeTaxBeforeCredits")), "10000"), b: ratio, c: money37("10000"), round: "half-up" });
+      return iff23(gt13(base, money37("0")), minE11(share2, max030(fact39("ndOtherStateTaxPaid"))), money37("0"));
     })()
   },
   {
@@ -76248,34 +75894,34 @@ var ndRules = [
 ];
 
 // ../corpus-us-federal/dist/rules/state-vt.js
-var cmp15 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var lt22 = (l, r) => cmp15("lt", l, r);
-var le19 = (l, r) => cmp15("le", l, r);
-var gt14 = (l, r) => cmp15("gt", l, r);
-var iff23 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var add24 = (...args) => ({ kind: "add", args });
-var sub28 = (left, right) => ({ kind: "sub", left, right });
-var max030 = (arg) => ({ kind: "max0", arg });
+var cmp16 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var lt22 = (l, r) => cmp16("lt", l, r);
+var le19 = (l, r) => cmp16("le", l, r);
+var gt14 = (l, r) => cmp16("gt", l, r);
+var iff24 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var add25 = (...args) => ({ kind: "add", args });
+var sub29 = (left, right) => ({ kind: "sub", left, right });
+var max031 = (arg) => ({ kind: "max0", arg });
 var minE12 = (...args) => ({ kind: "min", args });
-var maxE6 = (a, b) => iff23(gt14(a, b), a, b);
-var and10 = (...args) => ({ kind: "and", args });
-var or10 = (...args) => ({ kind: "or", args });
+var maxE6 = (a, b) => iff24(gt14(a, b), a, b);
+var and11 = (...args) => ({ kind: "and", args });
+var or11 = (...args) => ({ kind: "or", args });
 var int14 = (value) => ({ kind: "int", value });
-var mulInt20 = (base, count) => ({ kind: "mulInt", base, count });
-var stepUnits11 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
-var isStatus31 = (v) => cmp15("eq", fact39("filingStatus"), { kind: "enum", value: v });
-var isJointCol2 = or10(isStatus31("mfj"), isStatus31("qss"));
+var mulInt21 = (base, count) => ({ kind: "mulInt", base, count });
+var stepUnits12 = (value, unitCents, mode) => ({ kind: "stepUnits", value, unitCents, mode });
+var isStatus31 = (v) => cmp16("eq", fact39("filingStatus"), { kind: "enum", value: v });
+var isJointCol2 = or11(isStatus31("mfj"), isStatus31("qss"));
 var isMfj5 = isStatus31("mfj");
 var isMfs10 = isStatus31("mfs");
 var isHoh8 = isStatus31("hoh");
 var times14 = (base, num) => ({ kind: "mulRate", base, rate: { num, den: "1" }, round: "half-up" });
 var dollarsFromScaled15 = (n) => times14({ kind: "mulDiv", a: n, b: money37("1"), c: money37("1000000"), round: "half-up" }, "100");
 var applyRatio22 = (base, r) => times14({ kind: "mulDiv", a: base, b: r, c: money37("10000"), round: "half-up" }, "100");
-var rowTax = (x, r) => dollarsFromScaled15(add24(times14(money37(r.baseCents), "10000"), times14(sub28(x, money37(r.overCents)), r.rateBps)));
+var rowTax = (x, r) => dollarsFromScaled15(add25(times14(money37(r.baseCents), "10000"), times14(sub29(x, money37(r.overCents)), r.rateBps)));
 var scheduleTax6 = (x, rows) => {
   let expr = rowTax(x, rows[0]);
   for (let i = 1; i < rows.length; i++)
-    expr = iff23(gt14(x, money37(rows[i].overCents)), rowTax(x, rows[i]), expr);
+    expr = iff24(gt14(x, money37(rows[i].overCents)), rowTax(x, rows[i]), expr);
   return expr;
 };
 var SCHED_20252 = {
@@ -76328,7 +75974,7 @@ var SCHED_20252 = {
     // 276,850 / 17,179.00
   ]
 };
-var byStatus4 = (x, y = SCHED_20252) => iff23(isJointCol2, scheduleTax6(x, y.joint), iff23(isMfs10, scheduleTax6(x, y.mfs), iff23(isHoh8, scheduleTax6(x, y.hoh), scheduleTax6(x, y.single))));
+var byStatus5 = (x, y = SCHED_20252) => iff24(isJointCol2, scheduleTax6(x, y.joint), iff24(isMfs10, scheduleTax6(x, y.mfs), iff24(isHoh8, scheduleTax6(x, y.hoh), scheduleTax6(x, y.single))));
 var SCHED_2026 = {
   single: [
     { overCents: "0", baseCents: "0", rateBps: "335" },
@@ -76368,15 +76014,15 @@ var SCHED_2026 = {
   ]
 };
 var line8Tax2 = (x) => {
-  const mid = add24(mulInt20(money37("10000"), stepUnits11(x, "10000", "floor")), money37("5000"));
-  const table2 = iff23(lt22(x, money37("10000")), money37("0"), byStatus4(mid));
-  return iff23(fact39("vtUseRateSchedule"), byStatus4(x), iff23(lt22(x, money37("7500000")), table2, byStatus4(x)));
+  const mid = add25(mulInt21(money37("10000"), stepUnits12(x, "10000", "floor")), money37("5000"));
+  const table2 = iff24(lt22(x, money37("10000")), money37("0"), byStatus5(mid));
+  return iff24(fact39("vtUseRateSchedule"), byStatus5(x), iff24(lt22(x, money37("7500000")), table2, byStatus5(x)));
 };
 var FORMS6 = "https://tax.vermont.gov/sites/tax/files/documents/";
 var BOOKLET2 = FORMS6 + "IN-111-Instr-2025.pdf";
 var VSA = (s) => `https://legislature.vermont.gov/statutes/section/32/151/${s}`;
-var retireFull = iff23(isMfj5, money37("7000000"), money37("5500000"));
-var retireNone = iff23(isMfj5, money37("8000000"), money37("6500000"));
+var retireFull = iff24(isMfj5, money37("7000000"), money37("5500000"));
+var retireNone = iff24(isMfj5, money37("8000000"), money37("6500000"));
 var vtRules = [
   {
     id: "us.vt.income_tax",
@@ -76414,10 +76060,10 @@ var vtRules = [
       minimumTaxRateBps: { value: "300", type: "int" }
     },
     formula: (() => {
-      const x = max030(fact39("stateTaxableIncome"));
+      const x = max031(fact39("stateTaxableIncome"));
       const agi2 = fact39("vtFederalAgi");
-      const floor3 = dollarsFromScaled15(times14(max030(sub28(agi2, max030(fact39("vtUsObligationInterest")))), "300"));
-      return iff23(gt14(agi2, money37("15000000")), maxE6(byStatus4(x), floor3), line8Tax2(x));
+      const floor3 = dollarsFromScaled15(times14(max031(sub29(agi2, max031(fact39("vtUsObligationInterest")))), "300"));
+      return iff24(gt14(agi2, money37("15000000")), maxE6(byStatus5(x), floor3), line8Tax2(x));
     })()
   },
   {
@@ -76455,10 +76101,10 @@ var vtRules = [
       minimumTaxRateBps: { value: "300", type: "int" }
     },
     formula: (() => {
-      const x = max030(fact39("stateTaxableIncome"));
+      const x = max031(fact39("stateTaxableIncome"));
       const agi2 = fact39("vtFederalAgi");
-      const floor3 = dollarsFromScaled15(times14(max030(sub28(agi2, max030(fact39("vtUsObligationInterest")))), "300"));
-      return iff23(gt14(agi2, money37("15000000")), maxE6(byStatus4(x, SCHED_2026), floor3), byStatus4(x, SCHED_2026));
+      const floor3 = dollarsFromScaled15(times14(max031(sub29(agi2, max031(fact39("vtUsObligationInterest")))), "300"));
+      return iff24(gt14(agi2, money37("15000000")), maxE6(byStatus5(x, SCHED_2026), floor3), byStatus5(x, SCHED_2026));
     })()
   },
   {
@@ -76477,10 +76123,10 @@ var vtRules = [
     output: { type: "money" },
     parameters: { single: { value: "765000", type: "money" }, joint: { value: "1530000", type: "money" }, hoh: { value: "1145000", type: "money" }, perBox: { value: "125000", type: "money" } },
     formula: (() => {
-      const base = iff23(isJointCol2, money37("1530000"), iff23(isHoh8, money37("1145000"), money37("765000")));
-      const cap = iff23(or10(isJointCol2, isMfs10), int14("4"), int14("2"));
+      const base = iff24(isJointCol2, money37("1530000"), iff24(isHoh8, money37("1145000"), money37("765000")));
+      const cap = iff24(or11(isJointCol2, isMfs10), int14("4"), int14("2"));
       const boxes = minE12(fact39("vtAdditionalDeductionBoxes"), cap);
-      return add24(base, mulInt20(money37("125000"), boxes));
+      return add25(base, mulInt21(money37("125000"), boxes));
     })()
   },
   {
@@ -76498,7 +76144,7 @@ var vtRules = [
     effectiveTo: "2026-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "530000", type: "money" } },
-    formula: mulInt20(money37("530000"), fact39("vtExemptions"))
+    formula: mulInt21(money37("530000"), fact39("vtExemptions"))
   },
   {
     id: "us.vt.personal_exemption",
@@ -76515,7 +76161,7 @@ var vtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { perExemption: { value: "540000", type: "money" } },
-    formula: mulInt20(money37("540000"), fact39("vtExemptions"))
+    formula: mulInt21(money37("540000"), fact39("vtExemptions"))
   },
   {
     id: "us.vt.retirement_income_exclusion",
@@ -76534,11 +76180,11 @@ var vtRules = [
     parameters: { fullSingle: { value: "5500000", type: "money" }, noneSingle: { value: "6500000", type: "money" }, fullJoint: { value: "7000000", type: "money" }, noneJoint: { value: "8000000", type: "money" }, contributoryCap: { value: "1000000", type: "money" }, ratioDecimals: { value: "2", type: "int" } },
     formula: (() => {
       const agi2 = fact39("vtFederalAgi");
-      const isSs = cmp15("eq", fact39("vtRetirementElection"), { kind: "enum", value: "social_security" });
-      const isCs = cmp15("eq", fact39("vtRetirementElection"), { kind: "enum", value: "contributory_system" });
-      const base = iff23(isSs, max030(fact39("vtTaxableSocialSecurity")), iff23(isCs, minE12(max030(fact39("vtContributorySystemIncome")), money37("1000000")), money37("0")));
-      const ratio = minE12({ kind: "mulDiv", a: max030(sub28(retireNone, agi2)), b: money37("100"), c: money37("1000000"), round: "half-up" }, money37("100"));
-      return iff23(le19(agi2, retireFull), base, iff23(lt22(agi2, retireNone), applyRatio22(base, ratio), money37("0")));
+      const isSs = cmp16("eq", fact39("vtRetirementElection"), { kind: "enum", value: "social_security" });
+      const isCs = cmp16("eq", fact39("vtRetirementElection"), { kind: "enum", value: "contributory_system" });
+      const base = iff24(isSs, max031(fact39("vtTaxableSocialSecurity")), iff24(isCs, minE12(max031(fact39("vtContributorySystemIncome")), money37("1000000")), money37("0")));
+      const ratio = minE12({ kind: "mulDiv", a: max031(sub29(retireNone, agi2)), b: money37("100"), c: money37("1000000"), round: "half-up" }, money37("100"));
+      return iff24(le19(agi2, retireFull), base, iff24(lt22(agi2, retireNone), applyRatio22(base, ratio), money37("0")));
     })()
   },
   {
@@ -76558,9 +76204,9 @@ var vtRules = [
     parameters: { fullAgi: { value: "12500000", type: "money" }, noneAgi: { value: "17500000", type: "money" }, phaseRange: { value: "5000000", type: "money" }, ratioDecimals: { value: "2", type: "int" } },
     formula: (() => {
       const agi2 = fact39("vtFederalAgi");
-      const base = max030(fact39("vtMilitaryRetirementIncome"));
-      const ratio = minE12({ kind: "mulDiv", a: max030(sub28(money37("17500000"), agi2)), b: money37("100"), c: money37("5000000"), round: "half-up" }, money37("100"));
-      return iff23(le19(agi2, money37("12500000")), base, iff23(lt22(agi2, money37("17500000")), applyRatio22(base, ratio), money37("0")));
+      const base = max031(fact39("vtMilitaryRetirementIncome"));
+      const ratio = minE12({ kind: "mulDiv", a: max031(sub29(money37("17500000"), agi2)), b: money37("100"), c: money37("5000000"), round: "half-up" }, money37("100"));
+      return iff24(le19(agi2, money37("12500000")), base, iff24(lt22(agi2, money37("17500000")), applyRatio22(base, ratio), money37("0")));
     })()
   },
   {
@@ -76579,10 +76225,10 @@ var vtRules = [
     output: { type: "money" },
     parameters: { flat: { value: "500000", type: "money" }, pct: { value: "40", type: "int" }, cap: { value: "35000000", type: "money" }, ftiPct: { value: "40", type: "int" } },
     formula: (() => {
-      const l9 = minE12(max030(fact39("vtNetAdjustedCapitalGain")), money37("500000"));
-      const l18 = minE12(dollarsFromScaled15(times14(max030(fact39("vtEligibleLongTermGain")), "4000")), money37("35000000"));
+      const l9 = minE12(max031(fact39("vtNetAdjustedCapitalGain")), money37("500000"));
+      const l18 = minE12(dollarsFromScaled15(times14(max031(fact39("vtEligibleLongTermGain")), "4000")), money37("35000000"));
       const l19 = maxE6(l9, l18);
-      const l20 = dollarsFromScaled15(times14(max030(fact39("vtFederalTaxableIncome")), "4000"));
+      const l20 = dollarsFromScaled15(times14(max031(fact39("vtFederalTaxableIncome")), "4000"));
       return minE12(l19, l20);
     })()
   },
@@ -76602,8 +76248,8 @@ var vtRules = [
     output: { type: "money" },
     parameters: { agiLimitJoint: { value: "20000000", type: "money" }, agiLimitOther: { value: "12000000", type: "money" } },
     formula: (() => {
-      const limit = iff23(isMfj5, money37("20000000"), money37("12000000"));
-      return iff23(gt14(fact39("vtFederalAgi"), limit), money37("0"), max030(sub28(max030(fact39("vtStudentLoanInterestPaid")), max030(fact39("vtStudentLoanInterestDeductedFederally")))));
+      const limit = iff24(isMfj5, money37("20000000"), money37("12000000"));
+      return iff24(gt14(fact39("vtFederalAgi"), limit), money37("0"), max031(sub29(max031(fact39("vtStudentLoanInterestPaid")), max031(fact39("vtStudentLoanInterestDeductedFederally")))));
     })()
   },
   {
@@ -76621,7 +76267,7 @@ var vtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "5", type: "int" }, maxContributions: { value: "2000000", type: "money" }, maxCredit: { value: "100000", type: "money" } },
-    formula: minE12(dollarsFromScaled15(times14(max030(fact39("vtCharitableContributions")), "500")), money37("100000"))
+    formula: minE12(dollarsFromScaled15(times14(max031(fact39("vtCharitableContributions")), "500")), money37("100000"))
   },
   {
     id: "us.vt.federal_tax_adjustment",
@@ -76638,7 +76284,7 @@ var vtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "24", type: "int" } },
-    formula: dollarsFromScaled15(times14(max030(fact39("vtFederalTaxAdjustmentBase")), "2400"))
+    formula: dollarsFromScaled15(times14(max031(fact39("vtFederalTaxAdjustmentBase")), "2400"))
   },
   {
     id: "us.vt.other_state_credit",
@@ -76656,11 +76302,11 @@ var vtRules = [
     output: { type: "money" },
     parameters: {},
     formula: (() => {
-      const l9 = max030(fact39("vtOtherStateIncome"));
+      const l9 = max031(fact39("vtOtherStateIncome"));
       const l17 = fact39("vtModifiedAgi");
-      const l18 = max030(fact39("vtIncomeTax"));
+      const l18 = max031(fact39("vtIncomeTax"));
       const l19 = minE12(times14({ kind: "mulDiv", a: l18, b: l9, c: times14(l17, "100"), round: "half-up" }, "100"), l18);
-      return iff23(gt14(l17, money37("0")), minE12(l19, max030(fact39("vtOtherStateTaxPaid"))), money37("0"));
+      return iff24(gt14(l17, money37("0")), minE12(l19, max031(fact39("vtOtherStateTaxPaid"))), money37("0"));
     })()
   },
   {
@@ -76678,7 +76324,7 @@ var vtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pctWithChildren: { value: "38", type: "int" }, pctNoChildren: { value: "100", type: "int" } },
-    formula: iff23(gt14(fact39("vtEitcQualifyingChildren"), int14("0")), dollarsFromScaled15(times14(max030(fact39("vtFederalEic")), "3800")), max030(fact39("vtFederalEic")))
+    formula: iff24(gt14(fact39("vtEitcQualifyingChildren"), int14("0")), dollarsFromScaled15(times14(max031(fact39("vtFederalEic")), "3800")), max031(fact39("vtFederalEic")))
   },
   {
     id: "us.vt.child_tax_credit",
@@ -76696,9 +76342,9 @@ var vtRules = [
     output: { type: "money" },
     parameters: { perChild: { value: "100000", type: "money" }, phaseoutStart: { value: "12500000", type: "money" }, reductionPerStep: { value: "2000", type: "money" }, stepCents: { value: "100000", type: "money" }, maxAge: { value: "6", type: "int" } },
     formula: (() => {
-      const steps = stepUnits11(max030(sub28(fact39("vtFederalAgi"), money37("12500000"))), "100000", "ceil");
-      const perChild = max030(sub28(money37("100000"), mulInt20(money37("2000"), steps)));
-      return mulInt20(perChild, fact39("vtChildrenSixOrUnder"));
+      const steps = stepUnits12(max031(sub29(fact39("vtFederalAgi"), money37("12500000"))), "100000", "ceil");
+      const perChild = max031(sub29(money37("100000"), mulInt21(money37("2000"), steps)));
+      return mulInt21(perChild, fact39("vtChildrenSixOrUnder"));
     })()
   },
   {
@@ -76716,7 +76362,7 @@ var vtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { pct: { value: "72", type: "int" } },
-    formula: dollarsFromScaled15(times14(max030(fact39("vtFederalChildCareCredit")), "7200"))
+    formula: dollarsFromScaled15(times14(max031(fact39("vtFederalChildCareCredit")), "7200"))
   },
   {
     id: "us.vt.veteran_credit",
@@ -76734,9 +76380,9 @@ var vtRules = [
     output: { type: "money" },
     parameters: { credit: { value: "25000", type: "money" }, phaseoutStart: { value: "2500000", type: "money" }, phaseoutEnd: { value: "3000000", type: "money" }, reductionPerHundred: { value: "500", type: "money" } },
     formula: (() => {
-      const steps = stepUnits11(max030(sub28(fact39("vtFederalAgi"), money37("2500000"))), "10000", "floor");
-      const amount = max030(sub28(money37("25000"), mulInt20(money37("500"), steps)));
-      return iff23(and10(fact39("vtVeteranDischargeRecord"), lt22(fact39("vtFederalAgi"), money37("3000000"))), amount, money37("0"));
+      const steps = stepUnits12(max031(sub29(fact39("vtFederalAgi"), money37("2500000"))), "10000", "floor");
+      const amount = max031(sub29(money37("25000"), mulInt21(money37("500"), steps)));
+      return iff24(and11(fact39("vtVeteranDischargeRecord"), lt22(fact39("vtFederalAgi"), money37("3000000"))), amount, money37("0"));
     })()
   },
   {
@@ -76756,13 +76402,13 @@ var vtRules = [
     parameters: { rateBps: { value: "600", type: "int" }, estimateRateBps: { value: "5", type: "int" }, estimateCap: { value: "15000", type: "money" }, largeItemThreshold: { value: "100000", type: "money" } },
     formula: (() => {
       const agi2 = fact39("vtFederalAgi");
-      const band = (hiCents, amt, els) => iff23(le19(agi2, money37(hiCents)), money37(amt), els);
-      const over100k = minE12(dollarsFromScaled15(times14(max030(agi2), "5")), money37("15000"));
+      const band = (hiCents, amt, els) => iff24(le19(agi2, money37(hiCents)), money37(amt), els);
+      const over100k = minE12(dollarsFromScaled15(times14(max031(agi2), "5")), money37("15000"));
       const table2 = band("2000000", "0", band("3000000", "1000", band("4000000", "1500", band("5000000", "2000", band("6000000", "2500", band("7000000", "3000", band("8000000", "3500", band("9000000", "4000", band("10000000", "4500", over100k)))))))));
-      const small = dollarsFromScaled15(times14(max030(fact39("vtUseTaxSmallPurchases")), "600"));
-      const large = dollarsFromScaled15(times14(max030(fact39("vtUseTaxLargePurchases")), "600"));
-      const base = iff23(fact39("vtUseTaxEstimateFromTable"), table2, small);
-      return max030(sub28(add24(base, large), max030(fact39("vtUseTaxPaidOtherState"))));
+      const small = dollarsFromScaled15(times14(max031(fact39("vtUseTaxSmallPurchases")), "600"));
+      const large = dollarsFromScaled15(times14(max031(fact39("vtUseTaxLargePurchases")), "600"));
+      const base = iff24(fact39("vtUseTaxEstimateFromTable"), table2, small);
+      return max031(sub29(add25(base, large), max031(fact39("vtUseTaxPaidOtherState"))));
     })()
   },
   {
@@ -76780,7 +76426,7 @@ var vtRules = [
     effectiveTo: "2027-01-01",
     output: { type: "money" },
     parameters: { rateBps: { value: "11", type: "int" } },
-    formula: dollarsFromScaled15(times14(max030(sub28(max030(fact39("vtSelfEmploymentIncome")), max030(fact39("vtSelfEmploymentIncomeOutsideVermont")))), "11"))
+    formula: dollarsFromScaled15(times14(max031(sub29(max031(fact39("vtSelfEmploymentIncome")), max031(fact39("vtSelfEmploymentIncomeOutsideVermont")))), "11"))
   },
   {
     id: "us.vt.vheip_credit",
@@ -76798,8 +76444,8 @@ var vtRules = [
     output: { type: "money" },
     parameters: { pct: { value: "10", type: "int" }, perBeneficiary: { value: "250000", type: "money" }, perBeneficiaryJoint: { value: "500000", type: "money" } },
     formula: (() => {
-      const cap = mulInt20(iff23(isMfj5, money37("500000"), money37("250000")), fact39("vtVheipBeneficiaries"));
-      return dollarsFromScaled15(times14(minE12(max030(fact39("vtVheipContributions")), cap), "1000"));
+      const cap = mulInt21(iff24(isMfj5, money37("500000"), money37("250000")), fact39("vtVheipBeneficiaries"));
+      return dollarsFromScaled15(times14(minE12(max031(fact39("vtVheipContributions")), cap), "1000"));
     })()
   },
   {
@@ -77321,16 +76967,16 @@ var money38 = (cents) => ({ kind: "money", cents });
 var int15 = (value) => ({ kind: "int", value });
 var ruleRef34 = (ruleId) => ({ kind: "rule", ruleId });
 var zero27 = money38("0");
-var add25 = (...args) => ({ kind: "add", args });
-var sub29 = (left, right) => ({ kind: "sub", left, right });
-var max031 = (arg) => ({ kind: "max0", arg });
+var add26 = (...args) => ({ kind: "add", args });
+var sub30 = (left, right) => ({ kind: "sub", left, right });
+var max032 = (arg) => ({ kind: "max0", arg });
 var min8 = (...args) => ({ kind: "min", args });
-var neg3 = (e) => sub29(zero27, e);
-var cmp16 = (op, left, right) => ({ kind: "cmp", op, left, right });
-var iff24 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
-var and11 = (...args) => ({ kind: "and", args });
+var neg3 = (e) => sub30(zero27, e);
+var cmp17 = (op, left, right) => ({ kind: "cmp", op, left, right });
+var iff25 = (cond, then, els) => ({ kind: "if", cond, then, else: els });
+var and12 = (...args) => ({ kind: "and", args });
 var pct14 = (num, den, base) => ({ kind: "mulRate", base, rate: { num, den }, round: "half-up" });
-var isStatus32 = (status) => cmp16("eq", fact40("filingStatus"), { kind: "enum", value: status });
+var isStatus32 = (status) => cmp17("eq", fact40("filingStatus"), { kind: "enum", value: status });
 var CORNELL = "https://www.law.cornell.edu/uscode/text/26/199A";
 var REG_1 = "https://www.law.cornell.edu/cfr/text/26/1.199A-1";
 var REG_4 = "https://www.law.cornell.edu/cfr/text/26/1.199A-4";
@@ -77369,28 +77015,28 @@ function rule(ruleId, title, section, url2, excerpt, type, formula, source = "26
     formula
   };
 }
-var scheduleCPool = add25(max031(sub29(fact40("selfEmploymentNetProfit"), add25(ruleRef34(`${J30}.se_tax_half_deduction.taxpayer`), ruleRef34(`${J30}.sep_deduction`), ruleRef34(`${J30}.sehi_deduction`)))), fact40("k1OrdinaryBusinessIncome"));
-var listedProfits = add25(...LISTED.map((u) => max031(qbiOf(u))));
-var listedLosses = add25(...LISTED.map((u) => max031(neg3(qbiOf(u)))));
+var scheduleCPool = add26(max032(sub30(fact40("selfEmploymentNetProfit"), add26(ruleRef34(`${J30}.se_tax_half_deduction.taxpayer`), ruleRef34(`${J30}.sep_deduction`), ruleRef34(`${J30}.sehi_deduction`)))), fact40("k1OrdinaryBusinessIncome"));
+var listedProfits = add26(...LISTED.map((u) => max032(qbiOf(u))));
+var listedLosses = add26(...LISTED.map((u) => max032(neg3(qbiOf(u)))));
 var rawQbiRules = [
-  rule(id(QBI_UNITS[0], "qbi"), "QBI of the main business: the return's Schedule C and K-1 QBI less qbiLossOffset, less every listed business", "\xA7 199A(c); Reg. \xA7 1.199A-3(b)(1)(vi)", "https://www.law.cornell.edu/cfr/text/26/1.199A-3", "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit \u2212 its \xBD-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome \u2212 qbiLossOffset, less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]", "money", iff24(cmp16("gt", listedProfits, scheduleCPool), {
+  rule(id(QBI_UNITS[0], "qbi"), "QBI of the main business: the return's Schedule C and K-1 QBI less qbiLossOffset, less every listed business", "\xA7 199A(c); Reg. \xA7 1.199A-3(b)(1)(vi)", "https://www.law.cornell.edu/cfr/text/26/1.199A-3", "QBI includes the deductible part of self-employment tax, the self-employed health insurance deduction and contributions to qualified retirement plans attributable to the trade or business. [Main = max(0, selfEmploymentNetProfit \u2212 its \xBD-SE, SEP and SE-health deductions) + k1OrdinaryBusinessIncome \u2212 qbiLossOffset, less each listed business: a listed profit comes out of the Schedule C / K-1 QBI and a listed loss out of qbiLossOffset; listing more than the return holds is refused.]", "money", iff25(cmp17("gt", listedProfits, scheduleCPool), {
     kind: "unsupported",
     reason: "the listed businesses' QBI (qbiBusiness2Income\u2013qbiBusiness6Income) is more than the return's Schedule C and K-1 QBI: a listed business must already be in the totals (selfEmploymentNetProfit or k1OrdinaryBusinessIncome)"
-  }, iff24(cmp16("gt", listedLosses, fact40("qbiLossOffset")), {
+  }, iff25(cmp17("gt", listedLosses, fact40("qbiLossOffset")), {
     kind: "unsupported",
     reason: "the listed businesses' QBI losses are more than qbiLossOffset: a listed loss business's QBI loss must already be in qbiLossOffset"
-  }, sub29(sub29(scheduleCPool, listedProfits), sub29(fact40("qbiLossOffset"), listedLosses))))),
-  rule(id(QBI_UNITS[1], "qbi"), "QBI of the second spouse's Schedule C business (net of their own \xBD-SE deduction)", "\xA7 199A(c); Reg. \xA7 1.199A-3(b)(1)(vi)", "https://www.law.cornell.edu/cfr/text/26/1.199A-3", "QBI includes the deductible part of self-employment tax attributable to the trade or business. [On a joint return the second spouse's Schedule C is its own trade or business: their net profit less their own \xBD-SE deduction. Their SEP, solo 401(k) and SE health insurance are not modeled (those inputs are the first spouse's).]", "money", max031(sub29(ruleRef34(`${J30}.se_net_profit.spouse`), ruleRef34(`${J30}.se_tax_half_deduction.spouse`)))),
-  ...LISTED.map((u, i) => rule(id(u, "qbi"), `QBI of ${u.label} (qbiBusiness${i + 2}Income, when qbiAdditionalBusinesses \u2265 ${i + 1})`, "\xA7 199A(c)(1)", CORNELL, "The term 'qualified business income' means, for any taxable year, the net amount of qualified items of income, gain, deduction, and loss with respect to any qualified trade or business of the taxpayer. [Entered per business, a loss as a negative number; read only when the return lists at least this many businesses.]", "money", iff24(cmp16("ge", fact40("qbiAdditionalBusinesses"), int15(String(i + 1))), fact40(`qbiBusiness${i + 2}Income`), zero27))),
-  rule(`${J30}.qbi.total`, "Total QBI of all businesses (Form 8995 line 2)", "\xA7 199A(c)", CORNELL, "Qualified business income... with respect to any qualified trade or business of the taxpayer. [The sum over every business, losses included; the prior-year carryforward is separate.]", "money", add25(...QBI_UNITS.map(qbiOf))),
+  }, sub30(sub30(scheduleCPool, listedProfits), sub30(fact40("qbiLossOffset"), listedLosses))))),
+  rule(id(QBI_UNITS[1], "qbi"), "QBI of the second spouse's Schedule C business (net of their own \xBD-SE deduction)", "\xA7 199A(c); Reg. \xA7 1.199A-3(b)(1)(vi)", "https://www.law.cornell.edu/cfr/text/26/1.199A-3", "QBI includes the deductible part of self-employment tax attributable to the trade or business. [On a joint return the second spouse's Schedule C is its own trade or business: their net profit less their own \xBD-SE deduction. Their SEP, solo 401(k) and SE health insurance are not modeled (those inputs are the first spouse's).]", "money", max032(sub30(ruleRef34(`${J30}.se_net_profit.spouse`), ruleRef34(`${J30}.se_tax_half_deduction.spouse`)))),
+  ...LISTED.map((u, i) => rule(id(u, "qbi"), `QBI of ${u.label} (qbiBusiness${i + 2}Income, when qbiAdditionalBusinesses \u2265 ${i + 1})`, "\xA7 199A(c)(1)", CORNELL, "The term 'qualified business income' means, for any taxable year, the net amount of qualified items of income, gain, deduction, and loss with respect to any qualified trade or business of the taxpayer. [Entered per business, a loss as a negative number; read only when the return lists at least this many businesses.]", "money", iff25(cmp17("ge", fact40("qbiAdditionalBusinesses"), int15(String(i + 1))), fact40(`qbiBusiness${i + 2}Income`), zero27))),
+  rule(`${J30}.qbi.total`, "Total QBI of all businesses (Form 8995 line 2)", "\xA7 199A(c)", CORNELL, "Qualified business income... with respect to any qualified trade or business of the taxpayer. [The sum over every business, losses included; the prior-year carryforward is separate.]", "money", add26(...QBI_UNITS.map(qbiOf))),
   ...QBI_UNITS.map((u, i) => rule(id(u, "present"), `Whether the return has ${u.label}`, "Reg. \xA7 1.199A-4(b)", REG_4, i === 0 ? "[The main business is present when it has QBI or a QBI loss, or above the threshold when it has W-2 wages or UBIA: a business that breaks even can still bring its W-2 wages and UBIA to an aggregation group.]" : i === 1 ? "[The second spouse's business is present when it has QBI.]" : `[A listed business is present whenever the return lists it (qbiAdditionalBusinesses \u2265 ${i - 1}), even at zero QBI: a business that breaks even can still bring its W-2 wages and UBIA to an aggregation group.]`, "bool", i === 0 ? {
     kind: "or",
     args: [
-      cmp16("ne", qbiOf(u), zero27),
-      and11(cmp16("gt", excess, zero27), { kind: "or", args: [cmp16("gt", fact40(u.w2Fact), zero27), cmp16("gt", fact40(u.ubiaFact), zero27)] })
+      cmp17("ne", qbiOf(u), zero27),
+      and12(cmp17("gt", excess, zero27), { kind: "or", args: [cmp17("gt", fact40(u.w2Fact), zero27), cmp17("gt", fact40(u.ubiaFact), zero27)] })
     ]
-  } : i === 1 ? cmp16("ne", qbiOf(u), zero27) : cmp16("ge", fact40("qbiAdditionalBusinesses"), int15(String(i - 1))))),
-  rule(`${J30}.qbi.business_count`, "Number of businesses on the return", "Reg. \xA7 1.199A-4(a)", REG_4, "[Counts the businesses present; aggregation is asked about only when there are two or more.]", "int", add25(...QBI_UNITS.map((u) => iff24(presentOf(u), int15("1"), int15("0")))))
+  } : i === 1 ? cmp17("ne", qbiOf(u), zero27) : cmp17("ge", fact40("qbiAdditionalBusinesses"), int15(String(i - 1))))),
+  rule(`${J30}.qbi.business_count`, "Number of businesses on the return", "Reg. \xA7 1.199A-4(a)", REG_4, "[Counts the businesses present; aggregation is asked about only when there are two or more.]", "int", add26(...QBI_UNITS.map((u) => iff25(presentOf(u), int15("1"), int15("0")))))
 ];
 var thresholdRules = [
   {
@@ -77407,7 +77053,7 @@ var thresholdRules = [
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
     output: { type: "money" },
-    formula: iff24(isStatus32("mfj"), money38("39460000"), money38("19730000"))
+    formula: iff25(isStatus32("mfj"), money38("39460000"), money38("19730000"))
   },
   {
     id: `${J30}.qbi.threshold`,
@@ -77475,7 +77121,7 @@ var thresholdRules = [
     effectiveFrom: "2025-01-01",
     effectiveTo: "2026-01-01",
     output: { type: "money" },
-    formula: iff24(isStatus32("mfj"), money38("10000000"), money38("5000000"))
+    formula: iff25(isStatus32("mfj"), money38("10000000"), money38("5000000"))
   },
   {
     id: `${J30}.qbi.phase_in_range`,
@@ -77491,7 +77137,7 @@ var thresholdRules = [
     effectiveFrom: "2026-01-01",
     effectiveTo: "2027-01-01",
     output: { type: "money" },
-    formula: iff24(isStatus32("mfj"), money38("15000000"), money38("7500000"))
+    formula: iff25(isStatus32("mfj"), money38("15000000"), money38("7500000"))
   },
   {
     id: `${J30}.qbi.phase_in_range`,
@@ -77507,24 +77153,24 @@ var thresholdRules = [
     effectiveFrom: "2027-01-01",
     effectiveTo: "2028-01-01",
     output: { type: "money" },
-    formula: iff24(isStatus32("mfj"), money38("15000000"), money38("7500000"))
+    formula: iff25(isStatus32("mfj"), money38("15000000"), money38("7500000"))
   },
-  rule(`${J30}.qbi.excess_over_threshold`, "Taxable income before the QBI deduction over the \xA7 199A threshold (Form 8995-A line 22)", "\xA7 199A(b)(3)(B)", CORNELL, "Form 8995-A Part III line 22: subtract line 21 (threshold) from line 20 (taxable income before qualified business income deduction). [Zero at or below the threshold.]", "money", max031(sub29(ruleRef34(`${J30}.taxable_income_before_qbi`), ruleRef34(`${J30}.qbi.threshold`))))
+  rule(`${J30}.qbi.excess_over_threshold`, "Taxable income before the QBI deduction over the \xA7 199A threshold (Form 8995-A line 22)", "\xA7 199A(b)(3)(B)", CORNELL, "Form 8995-A Part III line 22: subtract line 21 (threshold) from line 20 (taxable income before qualified business income deduction). [Zero at or below the threshold.]", "money", max032(sub30(ruleRef34(`${J30}.taxable_income_before_qbi`), ruleRef34(`${J30}.qbi.threshold`))))
 ];
 function scheduleA(u, amount) {
-  return iff24(
+  return iff25(
     { kind: "not", arg: presentOf(u) },
     zero27,
     // no business, no questions
-    iff24(
-      cmp16("eq", excess, zero27),
+    iff25(
+      cmp17("eq", excess, zero27),
       amount,
       // at or below the threshold the SSTB rules do not apply
-      iff24(
-        and11(cmp16("eq", qbiOf(u), zero27), cmp16("eq", groupOf(u), int15("0"))),
+      iff25(
+        and12(cmp17("eq", qbiOf(u), zero27), cmp17("eq", groupOf(u), int15("0"))),
         zero27,
         // breaks even and stands alone: nothing to limit, no SSTB question
-        iff24(fact40(u.sstbFact), iff24(cmp16("ge", excess, range), zero27, { kind: "mulDiv", a: amount, b: sub29(range, excess), c: range, round: "half-up" }), amount)
+        iff25(fact40(u.sstbFact), iff25(cmp17("ge", excess, range), zero27, { kind: "mulDiv", a: amount, b: sub30(range, excess), c: range, round: "half-up" }), amount)
       )
     )
   );
@@ -77535,16 +77181,16 @@ var scheduleALines = [
   { line: "sstb_ubia", title: "UBIA after the SSTB applicable percentage", amount: (u) => fact40(u.ubiaFact), formLine: "Schedule A line 13" }
 ];
 var scheduleARules = QBI_UNITS.flatMap((u) => scheduleALines.map(({ line: line2, title, amount, formLine }) => rule(id(u, line2), `${title} \u2014 ${u.label} (${formLine})`, "\xA7 199A(d)(3)", CORNELL, `\xA7 199A(d)(3): a specified service trade or business is a qualified trade or business only for the applicable percentage (100% less the excess over the threshold as a percentage of the phase-in range) of its items, and not at all past the range. [${formLine}; a business that is not an SSTB, or a return at or below the threshold, keeps the full amount. Exact ratio where the form rounds the percentage.]`, "money", scheduleA(u, amount(u)))));
-var aggregationGroupRules = QBI_UNITS.map((u) => rule(id(u, "aggregation_group"), `Aggregation group of ${u.label} (0 = not aggregated)`, "Reg. \xA7 1.199A-4(b)(1)", REG_4, "An individual may aggregate trades or businesses if... (iii) none of the aggregated trades or businesses can be a specified service trade or business. [Asked only above the threshold, for a business on the return, when the return has two or more businesses; an SSTB in a group is refused.]", "int", iff24(and11(cmp16("gt", excess, zero27), presentOf(u), cmp16("ge", ruleRef34(`${J30}.qbi.business_count`), int15("2"))), iff24(cmp16("eq", fact40(u.groupFact), int15("0")), int15("0"), iff24(fact40(u.sstbFact), {
+var aggregationGroupRules = QBI_UNITS.map((u) => rule(id(u, "aggregation_group"), `Aggregation group of ${u.label} (0 = not aggregated)`, "Reg. \xA7 1.199A-4(b)(1)", REG_4, "An individual may aggregate trades or businesses if... (iii) none of the aggregated trades or businesses can be a specified service trade or business. [Asked only above the threshold, for a business on the return, when the return has two or more businesses; an SSTB in a group is refused.]", "int", iff25(and12(cmp17("gt", excess, zero27), presentOf(u), cmp17("ge", ruleRef34(`${J30}.qbi.business_count`), int15("2"))), iff25(cmp17("eq", fact40(u.groupFact), int15("0")), int15("0"), iff25(fact40(u.sstbFact), {
   kind: "unsupported",
   reason: `${u.label} is a specified service trade or business, which may not be aggregated (Reg. \xA7 1.199A-4(b)(1)(iii)): set ${u.groupFact} to 0`
 }, fact40(u.groupFact))), int15("0"))));
 function aggregated(u, idx, line2) {
   const own2 = ruleRef34(id(u, line2));
   const g = groupOf(u);
-  const earlierInGroup = QBI_UNITS.slice(0, idx).map((v) => cmp16("eq", groupOf(v), g));
-  const members2 = add25(...QBI_UNITS.map((v) => iff24(cmp16("eq", groupOf(v), g), ruleRef34(id(v, line2)), zero27)));
-  return iff24(cmp16("eq", g, int15("0")), own2, earlierInGroup.length === 0 ? members2 : iff24({ kind: "or", args: earlierInGroup }, zero27, members2));
+  const earlierInGroup = QBI_UNITS.slice(0, idx).map((v) => cmp17("eq", groupOf(v), g));
+  const members2 = add26(...QBI_UNITS.map((v) => iff25(cmp17("eq", groupOf(v), g), ruleRef34(id(v, line2)), zero27)));
+  return iff25(cmp17("eq", g, int15("0")), own2, earlierInGroup.length === 0 ? members2 : iff25({ kind: "or", args: earlierInGroup }, zero27, members2));
 }
 var scheduleBLines = [
   { from: "sstb_qbi", line: "aggregated_qbi", what: "QBI" },
@@ -77556,10 +77202,10 @@ var aggQbi = (u) => ruleRef34(id(u, "aggregated_qbi"));
 var nettingIncome = ruleRef34(`${J30}.qbi.loss_netting.income`);
 var nettingNetted = ruleRef34(`${J30}.qbi.loss_netting.netted`);
 var scheduleCRules = [
-  rule(`${J30}.qbi.loss_netting.losses`, "Business losses with the prior-year carryforward (Schedule C line 3, as a positive amount)", "\xA7 199A(c)(2); Reg. \xA7 1.199A-1(d)(2)(iii)", REG_1, "Schedule C line 3: combine the negative amounts on line 1, column (a), and line 2 (qualified business net loss carryforward from prior years).", "money", add25(fact40("qbiLossCarryforward"), ...QBI_UNITS.map((u) => max031(neg3(aggQbi(u)))))),
-  rule(`${J30}.qbi.loss_netting.income`, "Business income (Schedule C line 4)", "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "Schedule C line 4: add the positive amounts on line 1, column (a), for all trades, businesses, or aggregations.", "money", add25(...QBI_UNITS.map((u) => max031(aggQbi(u))))),
+  rule(`${J30}.qbi.loss_netting.losses`, "Business losses with the prior-year carryforward (Schedule C line 3, as a positive amount)", "\xA7 199A(c)(2); Reg. \xA7 1.199A-1(d)(2)(iii)", REG_1, "Schedule C line 3: combine the negative amounts on line 1, column (a), and line 2 (qualified business net loss carryforward from prior years).", "money", add26(fact40("qbiLossCarryforward"), ...QBI_UNITS.map((u) => max032(neg3(aggQbi(u)))))),
+  rule(`${J30}.qbi.loss_netting.income`, "Business income (Schedule C line 4)", "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "Schedule C line 4: add the positive amounts on line 1, column (a), for all trades, businesses, or aggregations.", "money", add26(...QBI_UNITS.map((u) => max032(aggQbi(u))))),
   rule(`${J30}.qbi.loss_netting.netted`, "Losses netted against other businesses' income (Schedule C line 5)", "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "Schedule C line 5: the smaller of the absolute value of line 3 or line 4.", "money", min8(ruleRef34(`${J30}.qbi.loss_netting.losses`), nettingIncome)),
-  ...QBI_UNITS.map((u) => rule(id(u, "adjusted_qbi"), `Adjusted QBI of ${u.label} after loss netting (Schedule C line 1(c))`, "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "If the net QBI from any trade or business is negative, it is apportioned among the trades or businesses with positive QBI in proportion to their relative amounts of QBI. [Schedule C line 1(c): this business's QBI less its share of line 5; zero for a business with no QBI or a loss.]", "money", iff24(cmp16("gt", aggQbi(u), zero27), sub29(aggQbi(u), { kind: "mulDiv", a: nettingNetted, b: aggQbi(u), c: nettingIncome, round: "half-up" }), zero27)))
+  ...QBI_UNITS.map((u) => rule(id(u, "adjusted_qbi"), `Adjusted QBI of ${u.label} after loss netting (Schedule C line 1(c))`, "Reg. \xA7 1.199A-1(d)(2)(iii)(A)", REG_1, "If the net QBI from any trade or business is negative, it is apportioned among the trades or businesses with positive QBI in proportion to their relative amounts of QBI. [Schedule C line 1(c): this business's QBI less its share of line 5; zero for a business with no QBI or a loss.]", "money", iff25(cmp17("gt", aggQbi(u), zero27), sub30(aggQbi(u), { kind: "mulDiv", a: nettingNetted, b: aggQbi(u), c: nettingIncome, round: "half-up" }), zero27)))
 ];
 function component(u) {
   const adj = ruleRef34(id(u, "adjusted_qbi"));
@@ -77569,29 +77215,29 @@ function component(u) {
   const wageLimit = {
     // line 10: greater of 50% of W-2 wages, or 25% of W-2 wages + 2.5% of UBIA
     kind: "max",
-    args: [pct14("50", "100", w2), add25(pct14("25", "100", w2), pct14("25", "1000", ubia))]
+    args: [pct14("50", "100", w2), add26(pct14("25", "100", w2), pct14("25", "1000", ubia))]
   };
-  return iff24(
-    cmp16("le", adj, zero27),
+  return iff25(
+    cmp17("le", adj, zero27),
     zero27,
     // no QBI left: its W-2 wages and UBIA do not count (Schedule C instructions)
-    iff24(
-      cmp16("ge", excess, range),
+    iff25(
+      cmp17("ge", excess, range),
       min8(tentative, wageLimit),
       // line 11
-      sub29(
+      sub30(
         // Part III: line 17 − (line 17 − line 18) × line 24, never below the wage limit
         tentative,
-        { kind: "mulDiv", a: max031(sub29(tentative, wageLimit)), b: excess, c: range, round: "half-up" }
+        { kind: "mulDiv", a: max032(sub30(tentative, wageLimit)), b: excess, c: range, round: "half-up" }
       )
     )
   );
 }
 var partIIRules = QBI_UNITS.map((u) => rule(id(u, "component"), `QBI component of ${u.label} (Form 8995-A line 15)`, "\xA7 199A(b)(2), (b)(3)", CORNELL, "The combined qualified business income amount is the sum of the lesser of 20 percent of the taxpayer's QBI with respect to the qualified trade or business, or the greater of 50 percent of the W-2 wages, or 25 percent of the W-2 wages plus 2.5 percent of the UBIA of qualified property, with respect to the qualified trade or business. [Form 8995-A lines 3\u201313 for this business; within the phase-in range the excess of 20% of QBI over the wage limit is reduced by the excess-over-threshold fraction (Part III). Exact ratio where the form rounds the percentage.]", "money", component(u)));
 var totalRules = [
-  rule(`${J30}.qbi.active_total`, "QBI from qualified trades or businesses for the $1,000 test of the \xA7 199A(i) minimum deduction", "\xA7 199A(i)(2), (d)(3)", CORNELL, "\xA7 199A(i): a taxpayer whose aggregate QBI with respect to all active qualified trades or businesses is at least $1,000. Draft 2026 Form 8995 instructions, line 16: aggregate all active qualified business income taken into account for purposes of this form. [At or below the threshold, total QBI; above it, each business after Schedule A, so an SSTB past the phase-in range is not a qualified trade or business and one within it counts at its applicable percentage. The prior-year carryforward is its own line on the form and is not active QBI of this year. Material participation is assumed \u2014 disclosed.]", "money", iff24(cmp16("eq", excess, zero27), ruleRef34(`${J30}.qbi.total`), add25(...QBI_UNITS.map((u) => ruleRef34(id(u, "sstb_qbi")))))),
-  rule(`${J30}.qbi.total_component`, "Total QBI component (Form 8995 line 5 at or below the threshold; Form 8995-A line 16 above it)", "\xA7 199A(b)(1)\u2013(2)", CORNELL, "Form 8995: total QBI (line 2) combined with the prior-year carryforward (line 3), times 20% if more than zero. Form 8995-A line 16: add all amounts reported on line 15.", "money", iff24(cmp16("eq", excess, zero27), pct14("20", "100", max031(sub29(ruleRef34(`${J30}.qbi.total`), fact40("qbiLossCarryforward")))), add25(...QBI_UNITS.map((u) => ruleRef34(id(u, "component")))))),
-  rule(`${J30}.qbi.loss_carryforward`, "Qualified business net loss carried to next year, as a positive amount (Form 8995 line 16; Schedule C line 6)", "\xA7 199A(c)(2)", CORNELL, "If the net amount of qualified business income from all qualified trades or businesses during any taxable year is less than zero, such amount shall be treated as a loss from a qualified trade or business in the succeeding taxable year. [Form 8995 line 16 at or below the threshold; Schedule C (Form 8995-A) line 6 above it.]", "money", iff24(cmp16("eq", excess, zero27), max031(sub29(fact40("qbiLossCarryforward"), ruleRef34(`${J30}.qbi.total`))), sub29(ruleRef34(`${J30}.qbi.loss_netting.losses`), nettingNetted)))
+  rule(`${J30}.qbi.active_total`, "QBI from qualified trades or businesses for the $1,000 test of the \xA7 199A(i) minimum deduction", "\xA7 199A(i)(2), (d)(3)", CORNELL, "\xA7 199A(i): a taxpayer whose aggregate QBI with respect to all active qualified trades or businesses is at least $1,000. Draft 2026 Form 8995 instructions, line 16: aggregate all active qualified business income taken into account for purposes of this form. [At or below the threshold, total QBI; above it, each business after Schedule A, so an SSTB past the phase-in range is not a qualified trade or business and one within it counts at its applicable percentage. The prior-year carryforward is its own line on the form and is not active QBI of this year. Material participation is assumed \u2014 disclosed.]", "money", iff25(cmp17("eq", excess, zero27), ruleRef34(`${J30}.qbi.total`), add26(...QBI_UNITS.map((u) => ruleRef34(id(u, "sstb_qbi")))))),
+  rule(`${J30}.qbi.total_component`, "Total QBI component (Form 8995 line 5 at or below the threshold; Form 8995-A line 16 above it)", "\xA7 199A(b)(1)\u2013(2)", CORNELL, "Form 8995: total QBI (line 2) combined with the prior-year carryforward (line 3), times 20% if more than zero. Form 8995-A line 16: add all amounts reported on line 15.", "money", iff25(cmp17("eq", excess, zero27), pct14("20", "100", max032(sub30(ruleRef34(`${J30}.qbi.total`), fact40("qbiLossCarryforward")))), add26(...QBI_UNITS.map((u) => ruleRef34(id(u, "component")))))),
+  rule(`${J30}.qbi.loss_carryforward`, "Qualified business net loss carried to next year, as a positive amount (Form 8995 line 16; Schedule C line 6)", "\xA7 199A(c)(2)", CORNELL, "If the net amount of qualified business income from all qualified trades or businesses during any taxable year is less than zero, such amount shall be treated as a loss from a qualified trade or business in the succeeding taxable year. [Form 8995 line 16 at or below the threshold; Schedule C (Form 8995-A) line 6 above it.]", "money", iff25(cmp17("eq", excess, zero27), max032(sub30(fact40("qbiLossCarryforward"), ruleRef34(`${J30}.qbi.total`))), sub30(ruleRef34(`${J30}.qbi.loss_netting.losses`), nettingNetted)))
 ];
 var qbiBusinessRules = [
   ...rawQbiRules,
@@ -77608,7 +77254,7 @@ var qbiBusinessRules = [
 var fact41 = (factId) => ({ kind: "fact", factId });
 var money39 = (cents) => ({ kind: "money", cents });
 var ruleRef35 = (ruleId) => ({ kind: "rule", ruleId });
-var param24 = (name) => ({ kind: "param", name });
+var param25 = (name) => ({ kind: "param", name });
 var zero28 = money39("0");
 var pctOf3 = (num, den, base) => ({
   kind: "mulRate",
@@ -77640,8 +77286,8 @@ function qbiRule(version2, effectiveFrom, effectiveTo, yearLabel, source, minimu
   const withFloor = minimum ? {
     // OBBBA § 70105: the § 199A(i) minimum (TY2026+; indexed after 2026)
     kind: "if",
-    cond: { kind: "cmp", op: "ge", left: ruleRef35("us.federal.qbi.active_total"), right: param24("minQbiFloor") },
-    then: { kind: "max", args: [limited, param24("minDeduction")] },
+    cond: { kind: "cmp", op: "ge", left: ruleRef35("us.federal.qbi.active_total"), right: param25("minQbiFloor") },
+    then: { kind: "max", args: [limited, param25("minDeduction")] },
     else: limited
   } : limited;
   return {
@@ -77697,7 +77343,7 @@ var qbiRules = [
 var fact42 = (factId) => ({ kind: "fact", factId });
 var money40 = (cents) => ({ kind: "money", cents });
 var ruleRef36 = (ruleId) => ({ kind: "rule", ruleId });
-var param25 = (name) => ({ kind: "param", name });
+var param26 = (name) => ({ kind: "param", name });
 var zero29 = money40("0");
 var seNetEarnings = ruleRef36("us.federal.se_net_earnings");
 var spouseSeNetEarnings = ruleRef36("us.federal.se_net_earnings.spouse");
@@ -77710,7 +77356,7 @@ function seTaxRule(person, version2, effectiveFrom, effectiveTo, wageBaseCents, 
       kind: "min",
       args: [
         person.netEarnings,
-        { kind: "max0", arg: { kind: "sub", left: param25("wageBase"), right: person.wagesForBase } }
+        { kind: "max0", arg: { kind: "sub", left: param26("wageBase"), right: person.wagesForBase } }
       ]
     },
     rate: { num: "124", den: "1000" },
@@ -77743,7 +77389,7 @@ function seTaxRule(person, version2, effectiveFrom, effectiveTo, wageBaseCents, 
     },
     formula: {
       kind: "if",
-      cond: { kind: "cmp", op: "lt", left: person.netEarnings, right: param25("seFloor") },
+      cond: { kind: "cmp", op: "lt", left: person.netEarnings, right: param26("seFloor") },
       then: zero29,
       else: {
         kind: "if",
@@ -77945,7 +77591,7 @@ var selfEmploymentRules = [
 var fact43 = (factId) => ({ kind: "fact", factId });
 var money41 = (cents) => ({ kind: "money", cents });
 var ruleRef37 = (ruleId) => ({ kind: "rule", ruleId });
-var param26 = (name) => ({ kind: "param", name });
+var param27 = (name) => ({ kind: "param", name });
 var isStatus33 = (status) => ({
   kind: "cmp",
   op: "eq",
@@ -77958,7 +77604,7 @@ function perSeniorNet() {
     kind: "max0",
     arg: {
       kind: "sub",
-      left: param26("perSenior"),
+      left: param27("perSenior"),
       right: {
         kind: "mulRate",
         base: {
@@ -78081,7 +77727,7 @@ var seniorDeductionRules = [
 var fact44 = (factId) => ({ kind: "fact", factId });
 var money42 = (cents) => ({ kind: "money", cents });
 var ruleRef38 = (ruleId) => ({ kind: "rule", ruleId });
-var param27 = (name) => ({ kind: "param", name });
+var param28 = (name) => ({ kind: "param", name });
 var pct15 = (num, base) => ({
   kind: "mulRate",
   base,
@@ -78162,8 +77808,8 @@ var isMfj6 = {
 var byJoint = (joint, other) => ({
   kind: "if",
   cond: isMfj6,
-  then: param27(joint),
-  else: param27(other)
+  then: param28(joint),
+  else: param28(other)
 });
 var socialSecurityRules = [
   {
@@ -78630,7 +78276,7 @@ var tipsEligibilityRules = [
 var fact47 = (factId) => ({ kind: "fact", factId });
 var money44 = (cents) => ({ kind: "money", cents });
 var ruleRef40 = (ruleId) => ({ kind: "rule", ruleId });
-var param28 = (name) => ({ kind: "param", name });
+var param29 = (name) => ({ kind: "param", name });
 var zero31 = money44("0");
 var isStatus36 = (status) => ({
   kind: "cmp",
@@ -78670,8 +78316,8 @@ function cappedPhasedDeduction(qualifiedFactId, cap, ineligible = isStatus36("mf
                   right: {
                     kind: "if",
                     cond: isStatus36("mfj"),
-                    then: param28("magiThresholdJoint"),
-                    else: param28("magiThreshold")
+                    then: param29("magiThresholdJoint"),
+                    else: param29("magiThreshold")
                   }
                 }
               },
@@ -78714,7 +78360,7 @@ var tipsOvertimeRules = [
       // $25,000 (all eligible statuses)
       ...THRESHOLD_PARAMS
     },
-    formula: cappedPhasedDeduction("qualifiedTips", param28("cap"), {
+    formula: cappedPhasedDeduction("qualifiedTips", param29("cap"), {
       kind: "not",
       arg: { kind: "rule", ruleId: "us.federal.eligible.tips_deduction" }
     })
@@ -78742,8 +78388,8 @@ var tipsOvertimeRules = [
     formula: cappedPhasedDeduction("qualifiedOvertimePremium", {
       kind: "if",
       cond: isStatus36("mfj"),
-      then: param28("capJoint"),
-      else: param28("cap")
+      then: param29("capJoint"),
+      else: param29("cap")
     })
   }
 ];
@@ -78843,7 +78489,7 @@ var derived2 = (id2, label, statute, terms, published2027, rules, roundCents = "
   id: id2,
   label,
   statute,
-  terms: terms.map(([param29, num, den]) => ({ param: param29, num: String(num), den: String(den) })),
+  terms: terms.map(([param30, num, den]) => ({ param: param30, num: String(num), den: String(den) })),
   roundCents,
   roundMode,
   published2027,
@@ -79160,7 +78806,7 @@ function getProjectedCorpus(base, opts) {
 // ../corpus-us-federal/dist/index.js
 var corpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.47.0",
+  version: "0.48.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -79306,7 +78952,7 @@ var toCents = (v) => {
   const cents = BigInt(m[2]) * 100n + BigInt((m[3] ?? "0").padEnd(2, "0"));
   return m[1] === "-" ? -cents : cents;
 };
-var dollars6 = (c2) => `${c2 / 100n}.${(c2 % 100n < 0n ? -(c2 % 100n) : c2 % 100n).toString().padStart(2, "0")}`;
+var dollars7 = (c2) => `${c2 / 100n}.${(c2 % 100n < 0n ? -(c2 % 100n) : c2 % 100n).toString().padStart(2, "0")}`;
 function ageAtYearEnd(dobStr, taxYear) {
   const [y, m, d3] = dobStr.split("-").map(Number);
   let age = taxYear - y;
@@ -79328,7 +78974,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
   const notes = [];
   const missing = [];
   const unsupported = [];
-  const add26 = (id2, c2) => {
+  const add27 = (id2, c2) => {
     sums[id2] = (sums[id2] ?? 0n) + c2;
   };
   const born65Cutoff = (dobStr) => ageAtYearEnd(dobStr, taxYear) >= 65;
@@ -79357,9 +79003,9 @@ function compileDocuments(docs, asOf, ctx = {}) {
     if (allTagged) {
       const own2 = w2s.filter((w) => w.recipient === earner);
       const ssw = own2.reduce((t, w) => t + toCents(w.box3 ?? w.box1), 0n);
-      add26("socialSecurityWages", ssw);
+      add27("socialSecurityWages", ssw);
       bools.socialSecurityWagesProvided = true;
-      notes.push(`Schedule SE line 8a: ${own2.length} W-2(s) belong to the ${earner} (the SE earner) \u2014 social security wages $${dollars6(ssw)} coordinate the OASDI wage base${own2.some((w) => w.box3 === void 0) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`);
+      notes.push(`Schedule SE line 8a: ${own2.length} W-2(s) belong to the ${earner} (the SE earner) \u2014 social security wages $${dollars7(ssw)} coordinate the OASDI wage base${own2.some((w) => w.box3 === void 0) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`);
     } else if (joint || multiW2) {
       throw new Error("Schedule SE coordination is PER PERSON: this return has self-employment income and " + (joint ? "is a joint return" : "more than one W-2") + ", so tag every documents.w2s entry with recipient ('taxpayer' or 'spouse') and, if the spouse is the self-employed one, set documents.selfEmploymentEarner \u2014 or drop the W-2 documents and pass income.socialSecurityWages (the SE earner's OWN box 3, even 0) with income.socialSecurityWagesProvided true");
     }
@@ -79369,10 +79015,10 @@ function compileDocuments(docs, asOf, ctx = {}) {
   let w2Box1Cents = (docs.w2s ?? []).length ? 0n : void 0;
   let ssTaxWithheld = 0n;
   for (const [i, w] of (docs.w2s ?? []).entries()) {
-    add26("wages", toCents(w.box1));
+    add27("wages", toCents(w.box1));
     w2Box1Cents = (w2Box1Cents ?? 0n) + toCents(w.box1);
     if (w.box2 !== void 0)
-      add26("federalTaxWithheld", toCents(w.box2));
+      add27("federalTaxWithheld", toCents(w.box2));
     else {
       missing.push(`documents.w2s[${i}].box2`);
       notes.push(`W-2 #${i + 1}: box 2 NOT transcribed \u2014 federal income tax withheld treated as $0 for this W-2; pass box2 (0 if the box is blank) to confirm, or set strict: true to refuse instead`);
@@ -79380,24 +79026,24 @@ function compileDocuments(docs, asOf, ctx = {}) {
     if (w.box4 !== void 0)
       ssTaxWithheld += toCents(w.box4);
     if (w.box3 !== void 0 && !multiW2 && !allTagged && !joint && !ctx.socialSecurityWagesSupplied) {
-      add26("socialSecurityWages", toCents(w.box3));
+      add27("socialSecurityWages", toCents(w.box3));
       if (hasSE)
         bools.socialSecurityWagesProvided = true;
     }
     if (w.box5 !== void 0) {
       const b5 = toCents(w.box5);
-      add26("medicareWages", b5);
+      add27("medicareWages", b5);
       if (w.box6 !== void 0 && b5 > 20000000n) {
         const regular = (b5 * 145n + 5000n) / 10000n;
         const excess2 = toCents(w.box6) - regular;
         if (excess2 > 0n) {
-          add26("federalTaxWithheld", excess2);
-          notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars6(excess2)}; added to withholding`);
+          add27("federalTaxWithheld", excess2);
+          notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars7(excess2)}; added to withholding`);
         }
       }
     }
     if (w.box17 !== void 0 && toCents(w.box17) > 0n) {
-      notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars6(toCents(w.box17))} is DOCUMENTED \u2014 include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
+      notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars7(toCents(w.box17))} is DOCUMENTED \u2014 include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
     }
   }
   const SS_TAX_MAX = { 2025: 1091820n, 2026: 1143900n };
@@ -79419,7 +79065,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
         continue;
       const excess2 = p.withheld - max2;
       excessTotal += excess2;
-      notes.push(`W-2 box 4 total $${dollars6(p.withheld)} across ${p.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars6(max2)} by $${dollars6(excess2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
+      notes.push(`W-2 box 4 total $${dollars7(p.withheld)} across ${p.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars7(max2)} by $${dollars7(excess2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
     }
     if (excessTotal > 0n) {
       unsupported.push({
@@ -79427,107 +79073,107 @@ function compileDocuments(docs, asOf, ctx = {}) {
         form: "Schedule 3",
         line: "11",
         item: "credit for excess social security tax withheld (\xA7 31(b))",
-        amount: `$${dollars6(excessTotal)}`,
+        amount: `$${dollars7(excessTotal)}`,
         reason: "no corpus rule computes the \xA7 31(b) excess-withholding credit; the line set excludes it",
         action: "enter the excess on Schedule 3 line 11 (it flows to Form 1040 lines 31 and 33) unless a single employer withheld more than the maximum, in which case that employer must refund it; lines 33 and 34/37 here are understated by this amount",
         affectedLines: ["33_total_payments", "34_refund_or_37_owed"],
         rendered: "excluded from lines 33 and 34/37"
       });
     } else if (max2 === void 0 && multiW2) {
-      notes.push(`W-2 box 4 social security tax withheld $${dollars6(ssTaxWithheld)} recorded across several employers \u2014 the ${taxYear} wage-base maximum is not encoded, so the Schedule 3 line 11 excess test could not run`);
+      notes.push(`W-2 box 4 social security tax withheld $${dollars7(ssTaxWithheld)} recorded across several employers \u2014 the ${taxYear} wage-base maximum is not encoded, so the Schedule 3 line 11 excess test could not run`);
     } else {
-      notes.push(`W-2 box 4 social security tax withheld $${dollars6(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
+      notes.push(`W-2 box 4 social security tax withheld $${dollars7(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
     }
   }
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
   for (const [i, r] of (docs.f1099rs ?? []).entries()) {
     if (r.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(r.box4));
+      add27("federalTaxWithheld", toCents(r.box4));
     const taxable2 = toCents(r.box2a);
     if (r.rolledOver || r.box7.toUpperCase().includes("G") && taxable2 === 0n) {
       notes.push(`1099-R #${i + 1}: treated as ROLLOVER (${r.rolledOver ? "interview-confirmed" : "code G"}) \u2014 gross on 4a/5a only, $0 taxable`);
       continue;
     }
     if (r.box7.toUpperCase().includes("G")) {
-      notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars6(taxable2)} \u2014 a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
+      notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars7(taxable2)} \u2014 a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
     }
     if (r.disabilityBeforeRetirementAge) {
-      add26("wages", taxable2);
-      add26("scheduleRDisabilityIncome", taxable2);
-      notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars6(taxable2)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
+      add27("wages", taxable2);
+      add27("scheduleRDisabilityIncome", taxable2);
+      notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars7(taxable2)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r.iraSepSimple)
-      add26("taxableIraDistributions", taxable2);
+      add27("taxableIraDistributions", taxable2);
     else
-      add26("taxablePensionsAndAnnuities", taxable2);
+      add27("taxablePensionsAndAnnuities", taxable2);
     const dobStr = r.recipient === "spouse" ? docs.spouseDateOfBirth : docs.taxpayerDateOfBirth;
     const code = r.box7.toUpperCase();
     if ([...code].some((c2) => c2 === "1")) {
       if (dobStr && ageYearsExact(dobStr, taxYear) >= 59.5) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
-        add26("earlyDistributionSubjectToPenalty", taxable2);
-        notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars6(taxable2)} subject to the 10% \xA7 72(t) tax`);
+        add27("earlyDistributionSubjectToPenalty", taxable2);
+        notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars7(taxable2)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
   for (const s of docs.ssa1099s ?? []) {
-    add26("socialSecurityBenefits", toCents(s.box5));
+    add27("socialSecurityBenefits", toCents(s.box5));
     if (s.box6 !== void 0)
-      add26("federalTaxWithheld", toCents(s.box6));
+      add27("federalTaxWithheld", toCents(s.box6));
   }
   let seGross = 0n;
   for (const n of docs.f1099necs ?? []) {
     seGross += toCents(n.box1);
     if (n.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(n.box4));
+      add27("federalTaxWithheld", toCents(n.box4));
   }
   for (const k of docs.f1099ks ?? []) {
     seGross += toCents(k.box1a);
     if (k.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(k.box4));
+      add27("federalTaxWithheld", toCents(k.box4));
   }
   if (seGross > 0n || docs.scheduleCExpensesTotal !== void 0) {
     const expenses = docs.scheduleCExpensesTotal !== void 0 ? toCents(docs.scheduleCExpensesTotal) : 0n;
     const net = seGross - expenses;
     if (net >= 0n) {
       if (net > 0n)
-        add26("selfEmploymentNetProfit", net);
-      notes.push(`Schedule C: $${dollars6(seGross)} gross (1099-NEC/K) \u2212 $${dollars6(expenses)} expenses = $${dollars6(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
+        add27("selfEmploymentNetProfit", net);
+      notes.push(`Schedule C: $${dollars7(seGross)} gross (1099-NEC/K) \u2212 $${dollars7(expenses)} expenses = $${dollars7(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
-      add26("scheduleCNetLoss", -net);
-      notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars6(-net)} \u2014 recorded as scheduleCNetLoss`);
+      add27("scheduleCNetLoss", -net);
+      notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars7(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
     if (t.box1 !== void 0)
-      add26("taxableInterest", toCents(t.box1));
+      add27("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
-      add26("taxableInterest", toCents(t.box3));
-      notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars6(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
+      add27("taxableInterest", toCents(t.box3));
+      notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars7(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
-      add26("taxExemptInterest", toCents(t.box8));
+      add27("taxExemptInterest", toCents(t.box8));
     if (t.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(t.box4));
+      add27("federalTaxWithheld", toCents(t.box4));
   }
   for (const [i, d3] of (docs.f1099divs ?? []).entries()) {
     const total = toCents(d3.box1a);
     const qualified2 = d3.box1b !== void 0 ? toCents(d3.box1b) : 0n;
     if (qualified2 > total) {
-      throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars6(qualified2)}) exceeds box 1a (total, $${dollars6(total)}) \u2014 transcription error`);
+      throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars7(qualified2)}) exceeds box 1a (total, $${dollars7(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
-      add26("qualifiedDividends", qualified2);
+      add27("qualifiedDividends", qualified2);
     if (total - qualified2 > 0n)
-      add26("ordinaryDividends", total - qualified2);
+      add27("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
-      add26("__ltProceeds", toCents(d3.box2a));
-      notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars6(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
+      add27("__ltProceeds", toCents(d3.box2a));
+      notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars7(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(d3.box4));
+      add27("federalTaxWithheld", toCents(d3.box4));
   }
   let stNet = 0n;
   let ltNet = sums.__ltProceeds ?? 0n;
@@ -79542,26 +79188,26 @@ function compileDocuments(docs, asOf, ctx = {}) {
     else
       ltNet += lot;
     if (b.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(b.box4));
+      add27("federalTaxWithheld", toCents(b.box4));
   }
   if (sawB) {
     if (stNet > 0n)
-      add26("shortTermCapitalGains", stNet);
+      add27("shortTermCapitalGains", stNet);
     else if (stNet < 0n)
-      add26("shortTermCapitalLoss", -stNet);
+      add27("shortTermCapitalLoss", -stNet);
     if (ltNet > 0n)
-      add26("longTermCapitalGains", ltNet);
+      add27("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
-      add26("longTermCapitalLoss", -ltNet);
-    notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars6(stNet)}, long-term net $${dollars6(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
+      add27("longTermCapitalLoss", -ltNet);
+    notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars7(stNet)}, long-term net $${dollars7(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
-      add26("unemploymentCompensation", toCents(g.box1));
+      add27("unemploymentCompensation", toCents(g.box1));
     if (g.box4 !== void 0)
-      add26("federalTaxWithheld", toCents(g.box4));
+      add27("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
-      notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars6(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
+      notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars7(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
   }
   for (const dep of docs.dependents ?? []) {
@@ -79598,7 +79244,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
   }
   const facts2 = { ...bools };
   for (const [id2, c2] of Object.entries(sums))
-    facts2[id2] = dollars6(c2);
+    facts2[id2] = dollars7(c2);
   for (const [id2, n] of Object.entries(ints))
     facts2[id2] = n;
   return { facts: facts2, notes, w2Box1Cents, missing, unsupported };
@@ -79890,6 +79536,10 @@ var INDIVIDUAL_GROUPS = {
     "stateTaxableIncome",
     "hasChildUnderSix",
     "caRentedPrincipalResidence",
+    "caAgi",
+    "caFederalAgi",
+    "caPersonalExemptions",
+    "caDependentExemptions",
     "caAmti",
     "caRegularTax",
     "nyYonkersBase",
@@ -80719,10 +80369,10 @@ var fmt4 = (cents) => {
   const abs = cents < 0n ? -cents : cents;
   const digits = (abs / 100n).toString();
   const head = digits.length % 3 || 3;
-  let dollars7 = digits.slice(0, head);
+  let dollars8 = digits.slice(0, head);
   for (let i = head; i < digits.length; i += 3)
-    dollars7 += "," + digits.slice(i, i + 3);
-  return `${sign}$${dollars7}.${(abs % 100n).toString().padStart(2, "0")}`;
+    dollars8 += "," + digits.slice(i, i + 3);
+  return `${sign}$${dollars8}.${(abs % 100n).toString().padStart(2, "0")}`;
 };
 function ruleDependencies(rule2) {
   const rules = /* @__PURE__ */ new Set();
@@ -80767,13 +80417,13 @@ function composeForm5695(facts2, asOf, get) {
   });
   if (!present)
     return null;
-  const rd28 = (c2) => {
+  const rd29 = (c2) => {
     const neg4 = c2 < 0n;
     const abs = neg4 ? -c2 : c2;
     const r = (abs + 50n) / 100n * 100n;
     return neg4 ? -r : r;
   };
-  const d3 = (c2) => fmt4(rd28(c2));
+  const d3 = (c2) => fmt4(rd29(c2));
   const money46 = (id2) => {
     const f = facts2[id2];
     return f && f.type === "money" ? BigInt(String(f.value)) : 0n;
@@ -80965,7 +80615,7 @@ function createServer(options = {}) {
     }
   });
   server.registerTool("compute_state_return", {
-    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME / HI N-11, RI-1040, MT Form 2, DE PIT-RES, ND-1, VT IN-111) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. DE filing status 4 (married filing combined separate) is TWO returns on one form: pass filingStatus 'mfs' with deCombinedSeparate plus the deSpouse* column-A inputs, and each column gets its own $3,250 deduction and its own bracket climb. MT starts from FEDERAL TAXABLE INCOME and has no standard deduction, personal exemption or Social Security subtraction of its own, so mtFederalDeductions (federal Form 1040 lines 12e and 13b) is REQUIRED and the composer refuses without it; long-term capital gains are taxed separately at 3%/4.1% on the page 2 worksheet. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold. For HI, pass federalAGI (line 7) plus hiPensionExclusion (employer-funded pensions are exempt), taxableSocialSecurity (100% subtracted), hiReservePay, dependents and hiTaxpayerAge65/hiSpouseAge65 (each 65+ oval is one more $1,144 exemption; hiDisabledPersons for the $7,000 in-lieu exemption), the Worksheets A-1 to A-6 amounts for an itemizer (no SALT cap, but hiStateLocalIncomeTaxes needs federal AGI under $100,000 / $150,000 / $200,000; the \xA7 68 limitation applies over $166,800), hiNetCapitalGain + hiNetLongTermCapitalGain for the 7.25% alternative tax, hiPresentOverNineMonths (REQUIRED attestation for the food/excise and renters credits) with hiRentPaid, hiChildCareExpenses + hiEarnedIncome (+ hiSpouseEarnedIncome) for the Schedule X credit, federalEITC (40%, refundable), hiOtherStateTaxEligible + hiOutOfStateIncome for the other-state credit, and stateWithholding; the standard deduction is $4,400 / $8,800 / $6,424 for 2025 (dependent filers: greater of $500 or hiEarnedIncome); a federal QSS uses Schedule II. For ND, the base is FEDERAL TAXABLE INCOME (Form 1040 line 15) \u2014 pass ndFederalTaxableIncome, which is REQUIRED and which the composer refuses without; it may be NEGATIVE (the booklet directs the filer to enter the negative number on line 1b even though Form 1040 line 15 shows 0), and federalAGI is line 1a only, feeding NOTHING. There is no North Dakota standard deduction and no personal exemption. The first bracket is ZERO PERCENT (0.00% / 1.95% / 2.50%), so a great many returns owe nothing at all; below $100,000 the $50 Tax Table is MANDATORY under section 57-38-30.3(10) and prices the row MIDPOINT, which the composer applies for TY2025 (set ndUseRateSchedule only to see the schedule's figure). Pass taxableSocialSecurity (excluded IN FULL, no cap or age test), ndMilitaryPay and ndMilitaryRetirement (both excluded in full), ndRailroadRetirementBenefits (line 8 \u2014 a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 by gross benefits), ndNetLongTermCapitalGain with ndCapitalGainAlreadyExcluded for the 40% exclusion and ndQualifiedDividends for the parallel 40%, ndCollegeSaveContributions ($5,000, doubled ONLY on a joint return), and ndLowerQualifiedIncome for the marriage penalty credit (joint returns only; the composer runs the whole worksheet, including the preprinted $15,750). QSS uses the joint COLUMN of the table and the joint rate schedule but is NOT a joint return \u2014 its College SAVE cap stays $5,000 and it gets no marriage penalty credit. Every North Dakota credit is NONREFUNDABLE. Schedule ND-1NR (part-year and nonresident) and Schedule ND-1FA farm income averaging are not composed. For VT, pass federalAGI (line 1) and the Schedule IN-112 pieces: taxableSocialSecurity with vtRetirementElection ('social_security' OR 'contributory_system' with vtContributorySystemIncome \u2014 the filer may elect only ONE, excluded in full at federal AGI up to $55,000 / $70,000 joint and phased out to $65,000 / $80,000), vtMilitaryRetirementIncome (a SEPARATE exclusion, full to $125,000 and phased out to $175,000, claimable in addition), vtNetAdjustedCapitalGain + vtEligibleLongTermGain + vtFederalTaxableIncome for the Schedule IN-153 exclusion (the greater of $5,000 and 40% of over-three-year gain, capped at 40% of federal taxable income), vtUsObligationInterest, vtFederalMedicalExpenses (only the excess over the Vermont deduction plus exemptions is subtracted), ageOrBlindBoxes ($1,250 each on line 4), dependents (line 5c), vtCharitableContributions (5%, max $1,000, itemizing not required), vtOtherStateIncome + vtOtherStateTaxPaid (Schedule IN-117), and the refundable Schedule IN-112 Part II inputs \u2014 federalEITC with vtEitcQualifyingChildren (38% with children, 100% WITHOUT), vtChildrenSixOrUnder ($1,000 each, phased out $20 per $1,000 of AGI over $125,000), vtFederalChildCareCredit (72%), vtVeteranDischargeRecord ($250 to $30,000 of AGI). Vermont has NO itemized deduction; below $75,000 the Tax Table is mandatory and the composer applies it; above $150,000 of federal AGI the tax is at least 3% of AGI less U.S. obligation interest. A federal QSS takes the joint deduction and column but no spouse exemption. The Renter Credit (RCC-146) and Property Tax Credit (HS-122) are separate claims, not composed; TY2026 refuses at line 4 until the 2026 standard deduction publishes.",
+    description: "Compose a STATE return's printed-form line set deterministically (2025 IL-1040 / VA 760 / CA 540 / NY IT-201 / PA-40 / NJ-1040 / OH IT 1040 / NC D-400 / GA 500 / MD 502 / MO-1040 / WI Form 1 / MN M1 / SC1040 / AL Form 40 / OR-40 / OK Form 511 / CT-1040 / KS K-40 / AR AR1000F / NM PIT-1 / NE 1040N / ID Form 40 / WV IT-140 / ME 1040ME / HI N-11, RI-1040, MT Form 2, DE PIT-RES, ND-1, VT IN-111) \u2014 correct line NUMBERS from the printed forms and whole-dollar rounding, with the state tax computed by the oracle targets internally. DE filing status 4 (married filing combined separate) is TWO returns on one form: pass filingStatus 'mfs' with deCombinedSeparate plus the deSpouse* column-A inputs, and each column gets its own $3,250 deduction and its own bracket climb. MT starts from FEDERAL TAXABLE INCOME and has no standard deduction, personal exemption or Social Security subtraction of its own, so mtFederalDeductions (federal Form 1040 lines 12e and 13b) is REQUIRED and the composer refuses without it; long-term capital gains are taxed separately at 3%/4.1% on the page 2 worksheet. NC and GA start from federalAGI: NC runs the AGI-tiered child deduction, the independent itemize-vs-standard selection, and the Bailey/military/SS auto-subtractions; GA FORCES itemizing for federal itemizers (pass gaFederalItemized), runs the per-spouse retirement exclusion and Low Income Credit targets, and caps total credits at the line 16 tax. PA is CLASS-BASED and NJ is CATEGORY-BASED: transcribe the pa*/nj* class-or-category fields (PA: Box 16 compensation, per-spouse loss classes; NJ: the line 15-26 category nets \u2014 a category loss is suppressed per the printed rule, and the composer runs the pension-exclusion, Worksheet H deduction-vs-credit, EITC/CTC/CDCC targets itself) \u2014 federalAGI is NOT the PA or NJ base. OH starts from federal AGI: pass federalAGI + ohBusinessIncome and the composer runs the Business Income Deduction, MAGI-tiered exemptions, and the Schedule of Credits ordering (retirement/senior/CDCC/exemption credits before the joint filing credit's line-11 base). Workflow: run compute_return first for the federal substrate, compute any state-specific components the citations describe (additions, subtractions, credits without targets \u2014 disclose each), then call this ONCE and report its line set VERBATIM. Never hand-assemble state line numbers: transposed lines on correct dollars are the dominant state error mode. ALWAYS pass taxableSocialSecurity and unemploymentCompensation when nonzero (VA/CA/NY subtractions are applied by the composer). For CA (TY2025 and TY2026), pass dependents and ageOrBlindBoxes (line 32 exemption credits, run through the AGI Limitation Worksheet on federal AGI) and caRentedPrincipalResidence (the line 46 renter's credit, tested on California AGI line 17); line 62 BHST is computed. CalEITC and YCTC are oracle targets passed as caCalEITC/caYCTC \u2014 us.ca.caleitc refuses for TY2026 until FTB prints the 2026 EITC Table. ALWAYS transcribe the intake's state-specific block (e.g. ca_tax_return.ca_form540_schca: AB 5 employee-classification additions; va_sch_a fields; county/use-tax questions) \u2014 those fields drive composer inputs. For VA MFJ, pass vaYourVagi/vaSpouseVagi (the separate-VAGI worksheet) so the composer can run the Spouse Tax Adjustment worksheet itself. For MD, pass mdSubdivision (the mandatory county tax \u2014 line 28), mdEicQualifyingChild for the 50%/100%/45% EIC routing, and mdNetCapitalGainSubject from an agent-completed Form 502CG when FAGI exceeds $350,000; the composer runs the pension-exclusion, exemption-chart, CTC, poverty-credit, and local EIC/poverty worksheets itself. Maryland part-year returns (Form 502 line 12 proration) are not composed. For MO, split each income item per spouse (moFagiYou/moFagiSpouse etc. \u2014 Missouri combined returns compute a SEPARATE chart tax per spouse), pass the line 9/10 federal-tax amounts per the printed lists, and remember the NEW TY2025 100% capital-gains subtraction (moCapitalGainYou/Spouse); Kansas City/St. Louis 1% earnings taxes are separate city returns the composer does not produce. For WI, pass wiScheduleIAdjustments (IRC frozen at 12/31/2022 \u2014 post-2022 federal changes convert on Schedule I), wiCapitalGainSubtraction from Schedule WD (30%/60% LTCG exclusion), and note the Act 15 SB-16 retirement subtraction FORFEITS every credit \u2014 the composer enforces the forfeiture; compute both ways before electing it. For MN, remember the IRC is frozen at May 1, 2023 (2025 OBBBA items convert on Schedule M1NC \u2192 mnAdditions/mnSubtractions), pass mnSsAlternativeMethod when AGI exceeds the SS threshold (the composer takes the greater), mnAmt whenever M1MT preferences exist, and mnNetInvestmentIncome for the 1% NIIT; M1C/M1REF credit schedules are transcribed buckets. For SC, the base is FEDERAL TAXABLE INCOME \u2014 pass scFederalTaxableIncome (Form 1040 line 15 verbatim; a negative amount is preserved via subtraction line r), NOT federalAGI; pass scNetLtcgAfterLosses for the 44% LTCG deduction (net LT gains against ALL capital losses first), the per-person retirement/military/age-65 fields (military retirement is 100% deductible and REDUCES the same person's other two deductions \u2014 the composer handles the interplay), and federalEITC (the composer adds the 125% NONREFUNDABLE SC EITC into line 13 itself \u2014 never also put it in nonrefundableCredits); the 2025 state-tax addback for federal itemizers goes in scAdditions. For AL, the composer builds Alabama AGI from transcribed lines (alWages = W-2 Box 16, alOtherIncome, alTaxableRetirement* for the Schedule RS 65+ $6,000 exclusion \u2014 still $6,000 in 2026, HB388 died) \u2014 federalAGI is NOT the base; pass alFederalTaxPlusNiit (1040 line 22 + Form 8960) and alFederalRefundableCredits (EIC+ACTC+AOC+adoption+2439) for the UNLIMITED line 12 federal tax deduction, and remember overtime earned Jan-Jun 2025 is exempt and already out of Box 16. For OR, pass the federal-tax-worksheet components (orFederal1040Line22, orFederalPtc from 8962 line 24, orFederalAoc/orFederalRefundableAdoption \u2014 the EITC/ACTC are NOT subtracted) for the AGI-capped line 10 subtraction, taxableSocialSecurity (subtracted in full), or2024TaxLiability for the 9.863% kicker, and the Kids Credit inputs (orKidsUnder6 + addbacks); OBBBA tips/overtime/vehicle-interest are CLAIMED for Oregon via OR-ASC codes 390/391/392 in orSubtractions but added back for the Kids Credit test. For OK, pass federalAGI (line 1) plus the Schedule 511-A pieces (taxableSocialSecurity is subtracted in FULL automatically; okMilitaryRetirement/okCsrsRetirement/okRailroadRetirement are 100% subtractions; okGovRetirement*/okOtherRetirement* run the per-person $10,000 exclusion), okOutOfStateIncome (triggers the Schedule 511-E proration of deductions and exemptions), okFederalItemized + the Schedule 511-D inputs (federal itemizers MUST itemize for Oklahoma; $17,000 cap excludes medical/charity), exemptions + okSpecialExemptions65 (the 65+ exemption has FAGI limits), okFederalChildCareCredit/okFederalChildTaxCredit (greater of 20%/5%, $100,000 FAGI cliff), the Form 538-S inputs (okStrEligible attested, okGrossHouseholdIncome = ALL household income incl. nontaxable), and the Form 511-EIC inputs (okEicEligible attested under 2020 rules; okEicEarnedIncome2025 and, optionally, okEicEarnedIncome2024 + okEicAgi2024 \u2014 the composer computes both years from the printed 2020 table and keeps the larger, then 5%). Remember the joint 4.75% bracket starts at $14,400, not the $12,200 surveys print. For CT, the whole tax is a schedule on CONNECTICUT AGI (exemption, rates, 2% add-back, recapture, credit percentage \u2014 Tables A-E) computed by us.ct.income_tax from line 5; pass federalAGI plus the Schedule 1 pieces (taxableSocialSecurity with ctSsTotalBenefits/ctSsProvisionalExcess for the line 41 worksheet; ctPensionAnnuityIncome/ctIraDistributions for line 48b; ctMilitaryRetirement, ctTeachersRetirement, ctChetContributions), the Schedule 3 property tax inputs (ctPropertyTaxResidence/ctPropertyTaxAuto1/ctPropertyTaxAuto2 \u2014 the composer caps at $300, phases out by CT AGI, and limits to line 10), Schedule 2 other-jurisdiction inputs, and federalEITC + ctEitcQualifyingChild (40% + $250, refundable). QSS uses the MFJ column everywhere. For KS, a federal QSS files as Kansas HEAD OF HOUSEHOLD (single-column rates, $6,180 deduction, $9,160 + $2,320 exemption); pass federalAGI, taxableSocialSecurity (subtracted 100%), ksExemptRetirement (KPERS/federal/military retirement, Schedule S A14), the Schedule A components (Kansas lets the filer itemize independently of the federal election \u2014 the composer takes the larger of standard and itemized), dependents + ksChildrenBornThisYear/ksStillbirths/ksDisabledVeterans, federalEITC (17%: nonrefundable to line 16, remainder refundable on line 22), and ksFederalChildCareCredit (50%). For NM, pass nmFederalDeduction (Form 1040 line 12 \u2014 REQUIRED; New Mexico subtracts the FEDERAL standard or itemized deduction), nmFederalItemized plus the Schedule A 5a/5d/5e and nmFederalStandardDeduction inputs for the line 10 add-back, dependents (line 5 exemptions and the $4,000 HOH/MFJ dependents deduction), taxableSocialSecurity (exempt under an AGI cliff), nmAge65OrBlindPersons / nmAge65Count / nmBlindCount, and nmModifiedGrossIncome (ALL household income, taxable or not) for the PIT-RC rebates; a federal QSS uses the joint column but gets no dependents deduction. For NE, pass dependents (federal CTC/ODC dependents \u2192 $171 exemption credits), ageOrBlindBoxes (line 2a), taxableSocialSecurity and neMilitaryRetirement (both 100% excluded), neFederalItemized + neFederalItemizedDeductions + neSaltIncomeTaxes for a federal itemizer, neFederalTaxBeforeCredits (1040 line 16 + Schedule 2 lines 2 and 8 \u2014 the \xA7 77-2715(1) cap when net Schedule I adjustments are under $5,000), federalEITC (10%), and the Form 2441N inputs when AGI is $29,000 or less; a federal QSS uses the joint column. For ID, pass dependents and idQualifyingChildren (the $205 child tax credit sunsets after TY2025), ageOrBlindBoxes (line 12), idFederalItemized + idFederalItemizedDeductions + Schedule A lines 5a/5b/5c/5e for a federal itemizer (Idaho removes income OR sales taxes), taxableSocialSecurity (100% subtracted), the Form 39R retirement inputs (idRetirementEligible, gross SS and railroad benefits, qualifying benefits), idRequiredToFile=false when below the filing threshold (no $10 permanent building fund tax), and stateWithholding; the $155 Food Tax Credit per household member is automatic unless idDonateFoodCredit; a federal HOH or QSS uses the $9,622 joint threshold. For WV, pass dependents (exemptions \xD7 $2,000; no standard or itemized deduction), taxableSocialSecurity (100% exempt at federal AGI \u2264 $100,000 MFJ / $50,000 others, else 65% in 2025), wvSpouseTaxableSocialSecurity and the spouse-column retirement inputs on a joint return, wvTaxpayerAge65OrDisabled / wvSpouseAge65OrDisabled for the $8,000 modification, wvEarnedIncome when federal AGI is $10,000 or less (low-income exclusion), wvFederalChildCareCredit (50%), the Schedule E, SCTC-A, HEPTC-1, and property-tax-adjustment inputs as applicable, and stateWithholding; a federal QSS files as 'Widow(er) with dependent child' on Rate Schedule I; the Family Tax Credit is automatic from federal AGI and family size. For ME, pass dependents (line 13a) and meDependentsUnderSix (the $305 / $610 refundable dependent credit), ageOrBlindBoxes (lines 12a-12d), taxableSocialSecurity (100% subtracted) plus meSocialSecurityReceived and the pension inputs for the $48,216 pension deduction, meFederalItemized + Schedule 2 amounts for a federal itemizer, meTotalIncome + mePropertyTaxPaid / meRentPaid for the Property Tax Fairness Credit (the Sales Tax Fairness Credit is automatic from total income), federalEITC + meHasQualifyingChild, and stateWithholding; Maine conforms to the IRC as of 12/31/2024 so the 2025 standard deduction is $15,000 / $30,000 / $22,500; a federal QSS uses the joint column and threshold. For HI, pass federalAGI (line 7) plus hiPensionExclusion (employer-funded pensions are exempt), taxableSocialSecurity (100% subtracted), hiReservePay, dependents and hiTaxpayerAge65/hiSpouseAge65 (each 65+ oval is one more $1,144 exemption; hiDisabledPersons for the $7,000 in-lieu exemption), the Worksheets A-1 to A-6 amounts for an itemizer (no SALT cap, but hiStateLocalIncomeTaxes needs federal AGI under $100,000 / $150,000 / $200,000; the \xA7 68 limitation applies over $166,800), hiNetCapitalGain + hiNetLongTermCapitalGain for the 7.25% alternative tax, hiPresentOverNineMonths (REQUIRED attestation for the food/excise and renters credits) with hiRentPaid, hiChildCareExpenses + hiEarnedIncome (+ hiSpouseEarnedIncome) for the Schedule X credit, federalEITC (40%, refundable), hiOtherStateTaxEligible + hiOutOfStateIncome for the other-state credit, and stateWithholding; the standard deduction is $4,400 / $8,800 / $6,424 for 2025 (dependent filers: greater of $500 or hiEarnedIncome); a federal QSS uses Schedule II. For ND, the base is FEDERAL TAXABLE INCOME (Form 1040 line 15) \u2014 pass ndFederalTaxableIncome, which is REQUIRED and which the composer refuses without; it may be NEGATIVE (the booklet directs the filer to enter the negative number on line 1b even though Form 1040 line 15 shows 0), and federalAGI is line 1a only, feeding NOTHING. There is no North Dakota standard deduction and no personal exemption. The first bracket is ZERO PERCENT (0.00% / 1.95% / 2.50%), so a great many returns owe nothing at all; below $100,000 the $50 Tax Table is MANDATORY under section 57-38-30.3(10) and prices the row MIDPOINT, which the composer applies for TY2025 (set ndUseRateSchedule only to see the schedule's figure). Pass taxableSocialSecurity (excluded IN FULL, no cap or age test), ndMilitaryPay and ndMilitaryRetirement (both excluded in full), ndRailroadRetirementBenefits (line 8 \u2014 a filer holding both an SSA-1099 and an RRB-1099 splits federal line 6b between lines 8 and 15 by gross benefits), ndNetLongTermCapitalGain with ndCapitalGainAlreadyExcluded for the 40% exclusion and ndQualifiedDividends for the parallel 40%, ndCollegeSaveContributions ($5,000, doubled ONLY on a joint return), and ndLowerQualifiedIncome for the marriage penalty credit (joint returns only; the composer runs the whole worksheet, including the preprinted $15,750). QSS uses the joint COLUMN of the table and the joint rate schedule but is NOT a joint return \u2014 its College SAVE cap stays $5,000 and it gets no marriage penalty credit. Every North Dakota credit is NONREFUNDABLE. Schedule ND-1NR (part-year and nonresident) and Schedule ND-1FA farm income averaging are not composed. For VT, pass federalAGI (line 1) and the Schedule IN-112 pieces: taxableSocialSecurity with vtRetirementElection ('social_security' OR 'contributory_system' with vtContributorySystemIncome \u2014 the filer may elect only ONE, excluded in full at federal AGI up to $55,000 / $70,000 joint and phased out to $65,000 / $80,000), vtMilitaryRetirementIncome (a SEPARATE exclusion, full to $125,000 and phased out to $175,000, claimable in addition), vtNetAdjustedCapitalGain + vtEligibleLongTermGain + vtFederalTaxableIncome for the Schedule IN-153 exclusion (the greater of $5,000 and 40% of over-three-year gain, capped at 40% of federal taxable income), vtUsObligationInterest, vtFederalMedicalExpenses (only the excess over the Vermont deduction plus exemptions is subtracted), ageOrBlindBoxes ($1,250 each on line 4), dependents (line 5c), vtCharitableContributions (5%, max $1,000, itemizing not required), vtOtherStateIncome + vtOtherStateTaxPaid (Schedule IN-117), and the refundable Schedule IN-112 Part II inputs \u2014 federalEITC with vtEitcQualifyingChildren (38% with children, 100% WITHOUT), vtChildrenSixOrUnder ($1,000 each, phased out $20 per $1,000 of AGI over $125,000), vtFederalChildCareCredit (72%), vtVeteranDischargeRecord ($250 to $30,000 of AGI). Vermont has NO itemized deduction; below $75,000 the Tax Table is mandatory and the composer applies it; above $150,000 of federal AGI the tax is at least 3% of AGI less U.S. obligation interest. A federal QSS takes the joint deduction and column but no spouse exemption. The Renter Credit (RCC-146) and Property Tax Credit (HS-122) are separate claims, not composed; TY2026 refuses at line 4 until the 2026 standard deduction publishes.",
     inputSchema: legacyJsonSchema(external_exports.object({
       ...stateReturnShape,
       asOf: external_exports.string().max(10).describe("year-end date, e.g. 2025-12-31 \u2014 REQUIRED"),
@@ -81010,7 +80660,7 @@ function createServer(options = {}) {
       const incomplete = built.documentUnsupported;
       if (args.strict === true && incomplete.length)
         throw new IncompleteReturnError(incomplete);
-      const rd28 = (c2) => {
+      const rd29 = (c2) => {
         const neg4 = c2 < 0n;
         const abs = neg4 ? -c2 : c2;
         const r = (abs + 50n) / 100n * 100n;
@@ -81021,14 +80671,14 @@ function createServer(options = {}) {
       for (const [id2, v] of Object.entries(built.facts)) {
         if (v.type === "money") {
           const cents = BigInt(v.value);
-          const r = rd28(cents);
+          const r = rd29(cents);
           if (r !== cents)
             roundedInputs += 1;
           facts2[id2] = { type: "money", value: r.toString() };
         } else
           facts2[id2] = v;
       }
-      const w2Box1Cents = built.w2Box1Cents === void 0 ? void 0 : rd28(built.w2Box1Cents);
+      const w2Box1Cents = built.w2Box1Cents === void 0 ? void 0 : rd29(built.w2Box1Cents);
       if (roundedInputs > 0) {
         documentNotes.push(`whole-dollar rounding: ${roundedInputs} money input(s) rounded to the nearest dollar (50 cents up) after summing documents, before computation \u2014 Form 1040 instructions, Rounding Off to Whole Dollars`);
       }
@@ -81071,10 +80721,10 @@ function createServer(options = {}) {
       const extension = extFact && extFact.type === "money" ? BigInt(extFact.value) : 0n;
       const estFact = facts2.federalEstimatedPayments;
       const estimated = estFact && estFact.type === "money" ? BigInt(estFact.value) : 0n;
-      const total24 = rd28(after) + rd28(other);
-      const payments = rd28(withheld) + rd28(refundable) + rd28(extension) + rd28(estimated);
+      const total24 = rd29(after) + rd29(other);
+      const payments = rd29(withheld) + rd29(refundable) + rd29(extension) + rd29(estimated);
       const balance = payments - total24;
-      const d3 = (c2) => fmt4(rd28(c2));
+      const d3 = (c2) => fmt4(rd29(c2));
       const line8a = get("us.federal.nol_deduction");
       const line8p = get("us.federal.excess_business_loss");
       const lossYear = line8a !== 0n || line8p !== 0n || agi2 - deduction < 0n;
@@ -81129,7 +80779,7 @@ function createServer(options = {}) {
           "28_actc": d3(actc),
           "29_aotc_refundable": d3(aotcRef),
           "32_refundable_credits": d3(refundable),
-          ...extension > 0n ? { "31_other_payments_incl_extension": fmt4(rd28(extension)) } : {},
+          ...extension > 0n ? { "31_other_payments_incl_extension": fmt4(rd29(extension)) } : {},
           "33_total_payments": fmt4(payments),
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt4(balance)}` : `owed ${fmt4(-balance)}`
         },

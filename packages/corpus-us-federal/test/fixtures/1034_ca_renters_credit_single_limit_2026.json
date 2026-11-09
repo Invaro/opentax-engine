@@ -1,0 +1,13 @@
+{
+  "description": "2026 renter's credit, single, California AGI $55,830 ('$55,830 or less', FTB 2026 indexing) -> $60.",
+  "facts": {
+    "filingStatus": "single",
+    "caAgi": 55830,
+    "caRentedPrincipalResidence": true
+  },
+  "asOf": "2026-12-31",
+  "target": "us.ca.renters_credit",
+  "expect": {
+    "valueCents": "6000"
+  }
+}
