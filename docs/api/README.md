@@ -65,8 +65,8 @@ or, on refusal:
 | `calculate_fiduciary_tax` | Form 1041 § 1(e) rate schedule and § 642(b) exemption on post-distribution taxable income. Retained capital gains refuse. |
 | `determine_dependent` | § 152 qualifying child / qualifying relative determination, proof on request (multiple-support agreements, divorced-parent release). |
 | `verify_tax_claim` | Gate a claimed amount against the engine: `verified` / `refuted` with the correct value. |
-| `verify_fact` | Fact-check a claimed parameter ("CTC is $2,000/child") against the corpus. |
-| `lookup_tax_parameter` | Search the corpus's dollar amounts, rates and thresholds with citations. |
+| `verify_fact` | Fact-check a claimed dollar amount ("CTC is $2,000/child") against the corpus: federal unless the query names a state. |
+| `lookup_tax_parameter` | Search the corpus's dollar amounts and thresholds with citations: federal unless the query names a state. |
 | `search_tax_rules` | "Does the corpus encode this?" — rule discovery by keyword, with windows and citations. |
 | `explain_rule` | A rule in full under `ruleVersions`: citation and verbatim excerpt, validity window, parameters, formula and applicability (the rule IR), the rules and facts it depends on, and its hash. `asOf` narrows to the version in force. |
 | `list_input_facts` | Every input fact: id, type, default, description. |

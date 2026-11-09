@@ -2,6 +2,26 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Next release · Fact checks answer from the jurisdiction you ask about
+
+`verify_fact`, `lookup_tax_parameter` and `opentax lookup` now answer from federal law unless the query names a state, and from that state when it does. A claimed figure is never checked against another jurisdiction's rule.
+
+- **Federal by default.** "standard deduction" returns the federal amounts, and "the MFJ standard deduction is $32,200" is verified against the federal rule (Rev. Proc. 2025-32).
+- **Name a state to get the state.** "Alabama standard deduction" or "CA renter's credit" is answered from that state only, by its name or its capitalized two-letter code. A state the corpus has no figure for comes back `unknown`. Codes that are also words (`OR`, `IN`, `ME`, `OK`, `HI`, `OH`, `ID`, `SD`, `VA`, `LA`, `MA`, `MD`, `DC`) are not read as states: write the name.
+- **The year and filing status in the query count.** "standard deduction married filing jointly 2025" is checked against the 2025 joint amount when you don't pass `asOf` or `filingStatus`. The ones you pass still win.
+- **A verdict needs a rule named for the whole query.** `verify_fact` compares the claim with the rule whose id, title or parameter names carry every subject word you used, and on that rule with the amount you named: "SALT cap" with the cap and not the floor, "child tax credit per child" with the per-child amount, a joint claim with the joint amount. Ask in the law's words.
+- **Refuted means the figure is nowhere under that name.** A claim is refuted only when no rule named for the query holds it, and the answer reports the nearest amount on the matching rule.
+- **`unknown` when it can't be settled**, with the reason. No rule named for all of the query. A figure that is in the law under another name ($2,000 is the additional standard deduction, not the standard deduction; $10,000 is the SALT floor). An amount the formula adjusts by filing status. A figure the rule derives (20% of a $10,000 cap). A query that names a state and says "federal", a lowercase state code (`ca`), or a year that differs from `asOf`.
+- **Rates come back `unknown`.** The lookup holds dollar amounts. A query that asks for a rate or a percentage, a claim written as `3.8%`, or a claim under $100 that matches nothing is `unknown` with a pointer to `explain_rule`.
+- **Every answer says what it used:** `jurisdiction` and the rule's `effective` window on each verdict, `jurisdiction` on each hit, `jurisdictions` for how the query was read, and `asOf`.
+- **API changes** (`@invaro/opentax-solve` 1.1.0, provisional functions only):
+  - `lookupParameters` returns hits from the queried jurisdiction, where it used to rank every jurisdiction together. With no `asOf`, a year in the query selects that year's rules. A rule with several different filing-status tables has an empty `byFilingStatus`.
+  - `factCheck` compares only the rule named for the whole query, in the queried jurisdiction, where it used to accept the claimed value on any of the top five hits. Many claims that were `verified` or `refuted` on a loose match are now `unknown`.
+  - `lookupParameters` and `factCheck` throw `RangeError` for an `asOf` that isn't `YYYY-MM-DD`.
+  - `LookupHit` has `jurisdiction`. `FactCheckResult` has `jurisdictions` and `asOf`, and a verdict has `jurisdiction`, `effectiveFrom` and `effectiveTo`.
+  - New: `queryScope(query)` and its `QueryScope` type return how a query is read.
+- Tax answers and proofs are unchanged.
+
 ## Nov 10, 2026 · A stable library API
 
 The four library packages now have a documented, versioned API and a written compatibility policy: [docs/LIBRARY-API.md](docs/LIBRARY-API.md). Checking the document against the code found five defects in the engine, fixed here.

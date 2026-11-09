@@ -33,13 +33,13 @@
     "file": "06-lookup-tax-parameter.json",
     "tool": "lookup_tax_parameter",
     "ok": true,
-    "summary": "ok, query, asOf, hits, corpusMerkleRoot, versions"
+    "summary": "ok, query, asOf, jurisdictions, hits, corpusMerkleRoot"
   },
   {
     "file": "07-verify-fact.json",
     "tool": "verify_fact",
     "ok": true,
-    "summary": "ok, verdict, claimed, message, nearbyValues, citation"
+    "summary": "ok, verdict, claimed, message, jurisdiction, effective"
   },
   {
     "file": "08-refusal-needs-facts.json",

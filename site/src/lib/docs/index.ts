@@ -65,7 +65,7 @@ export const TOOL_ONE_LINERS: Record<string, string> = {
   find_tax_cliffs: "Sweep one input across a range; every discontinuity in the target.",
   verify_tax_claim: "Verified or refuted, with the correct value.",
   verify_fact: "Fact-check a claimed parameter against the corpus.",
-  lookup_tax_parameter: "Dollar amounts, rates and thresholds, with citations.",
+  lookup_tax_parameter: "Dollar amounts and thresholds, with citations.",
   search_tax_rules: "Does the corpus encode this? Rule discovery by keyword.",
   explain_rule: "A rule's formula, parameters, validity window and verbatim law text.",
   list_input_facts: "Every input fact: id, type, default, description.",

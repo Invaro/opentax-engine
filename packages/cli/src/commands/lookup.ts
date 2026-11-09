@@ -4,27 +4,51 @@
  */
 
 import pc from "picocolors";
-import { factCheck, lookupParameters } from "@invaro/opentax-solve";
+import { factCheck, lookupParameters, queryScope } from "@invaro/opentax-solve";
 import { parseDollars } from "@invaro/opentax-core";
 import { getCorpus } from "@invaro/opentax-corpus-us-federal";
 import { formatMoney } from "../render/format.js";
-import { EXIT, print } from "../render/output.js";
+import { emitError, EXIT, print } from "../render/output.js";
 
-export function runLookup(
-  queryWords: string[],
-  flags: { asOf?: string; json?: boolean; expect?: string; filingStatus?: string },
-): number {
+type LookupFlags = { asOf?: string; json?: boolean; expect?: string; filingStatus?: string };
+
+export function runLookup(queryWords: string[], flags: LookupFlags): number {
+  try {
+    return lookup(queryWords, flags);
+  } catch (err) {
+    // a date that is not a date, an amount that is not an amount
+    return emitError(err, flags.json);
+  }
+}
+
+function lookup(queryWords: string[], flags: LookupFlags): number {
   const corpus = getCorpus();
   const query = queryWords.join(" ");
-  const asOf = flags.asOf ?? new Date().toISOString().slice(0, 10);
+  // federal law unless the query names a state; a year in the query selects
+  // that tax year when --as-of is not given
+  const scope = queryScope(query);
+  const asOf =
+    flags.asOf ??
+    (scope.taxYear === undefined ? new Date().toISOString().slice(0, 10) : `${scope.taxYear}-12-31`);
 
   // --expect: fact-check a claimed amount (the MCP verify_fact behavior)
   if (flags.expect !== undefined) {
+    if (/%\s*$/.test(flags.expect)) {
+      const message = `${flags.expect.trim()} is a percentage — lookup checks dollar amounts only (read a rate in the rule's formula with \`opentax explain\`)`;
+      if (flags.json) {
+        print({ ok: true, query, asOf, jurisdictions: scope.jurisdictions, verdict: "unknown", message });
+      } else {
+        console.log();
+        console.log(`${pc.yellow("unknown")} — ${message}`);
+        console.log();
+      }
+      return EXIT.NOT_COVERED;
+    }
     const claimed = parseDollars(flags.expect);
     const result = factCheck(corpus, query, claimed, asOf, flags.filingStatus);
     if (result.verdict === "unknown") {
       if (flags.json) {
-        print({ ok: true, query, asOf, claimed: claimed.toString(), verdict: "unknown", message: result.message });
+        print({ ok: true, query, asOf, jurisdictions: result.jurisdictions, claimed: claimed.toString(), verdict: "unknown", message: result.message });
         return EXIT.NOT_COVERED;
       }
       console.log();
@@ -41,6 +65,8 @@ export function runLookup(
         verdict: result.verdict,
         rule: result.matchedRuleId,
         field: result.matchedField,
+        jurisdiction: result.jurisdiction,
+        effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         actual: result.actualCents,
         citation: result.citation,
         corpusMerkleRoot: corpus.merkleRoot,
@@ -71,9 +97,11 @@ export function runLookup(
       ok: true,
       query,
       asOf,
+      jurisdictions: scope.jurisdictions,
       corpusMerkleRoot: corpus.merkleRoot,
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
+        jurisdiction: h.jurisdiction,
         title: h.title,
         citation: h.citation,
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,

@@ -8,7 +8,7 @@ The engine is four packages. You install them, import functions, and call them i
 |---|---|---|---|
 | `@invaro/opentax-core` | 1.0.0 | stable | The evaluator, the proof verifier, the error classes and the types. No tax knowledge. |
 | `@invaro/opentax-corpus-us-federal` | 0.53.0 | stable API, law updated every release | Every rule and input, federal and state. `getCorpus`, `extendCorpus`, projection. |
-| `@invaro/opentax-solve` | 1.0.0 | stable; search and lookup provisional | Sweeps, marginal rates, cliffs, inversion, comparisons, rule search. |
+| `@invaro/opentax-solve` | 1.1.0 | stable; search and lookup provisional | Sweeps, marginal rates, cliffs, inversion, comparisons, rule search. |
 | `@invaro/opentax-compose` | 0.9.0 | provisional | State return lines, Form 2210 and Form 4562. Shapes follow each year's forms. |
 
 The command line and the MCP server (`@invaro/opentax` on npm) are built on these four and are documented in [AGENTS.md](../AGENTS.md) and [docs/api](api/README.md). This page is about the library.
@@ -20,7 +20,7 @@ The command line and the MCP server (`@invaro/opentax` on npm) are built on thes
 Each release has one tarball per package, with a SHA-256 checksum, the git commit and the corpus fingerprint. Download them from your account at opentax.invaro.ai/account. (To build from source instead, see [CONTRIBUTING.md](../CONTRIBUTING.md); a tarball you pack yourself won't have the published checksum.)
 
 ```bash
-npm i ./invaro-opentax-core-1.0.0.tgz ./invaro-opentax-corpus-us-federal-0.53.0.tgz ./invaro-opentax-solve-1.0.0.tgz
+npm i ./invaro-opentax-core-1.0.0.tgz ./invaro-opentax-corpus-us-federal-0.53.0.tgz ./invaro-opentax-solve-1.1.0.tgz
 ```
 
 - **ES modules only.** `import`, not `require`.
@@ -300,12 +300,23 @@ export function run() {
 | `compareAcross` | The target under each value of an enum input, such as filing status. |
 | `searchRules` (provisional) | Full-text search over the rules. No hits means the topic isn't covered. |
 | `lookupParameters`, `factCheck` (provisional) | A dollar amount in the law, and whether a claimed figure matches it. |
+| `queryScope` (provisional) | How a lookup query is read: the jurisdiction it asks about, and the tax year and filing status it names. |
 
 In `sweep`, `marginal`, `findCliffs`, `invert` and `compareAcross`, amounts are `bigint` cents.
 
 `findCliffs` scans the range in steps (`stepCents`, $1,000 unless you set it), and wherever the target moved by more than the input did across a step, it bisects down to the cent. So it finds every jump bigger than a step is wide; a smaller one, such as a $50 phase-out step, needs a smaller `stepCents`. Optional `limits` (`CliffLimits`) bound the work when the range comes from an untrusted caller.
 
-`searchRules`, `lookupParameters` and `factCheck` are provisional: their ranking and scores are tuned over time. They search rule ids, titles, parameter names and law excerpts, and look up dollar amounts (not rates); their amounts are decimal strings of cents.
+`searchRules`, `lookupParameters`, `factCheck` and `queryScope` are provisional: their ranking and scores are tuned over time. They search rule ids, titles, parameter names and law excerpts, and look up dollar amounts (not rates); their amounts are decimal strings of cents.
+
+`lookupParameters` and `factCheck` answer from the jurisdiction the query asks about. A query that names a state, by its name or its capitalized two-letter code, is answered from that state's rules; any other query is answered from federal rules. Each `LookupHit` has its `jurisdiction`, and `queryScope(query)` returns how a query was read (`QueryScope`).
+
+- `lookupParameters` returns hits from another jurisdiction only when the query names no state and no federal rule matches.
+- `factCheck` never does. Its evidence is the best-matching rule named for every subject word of the query (id, title or parameter names), and on it the amounts the query is certainly about: a parameter whose own words the query uses (`perChild` for "child tax credit per child"), of the kind it names (`cap` for "limit" or "maximum"; a floor, threshold or step only when asked for), at the claim's filing status.
+- `verified`: one of those amounts equals the claim. `refuted`: none does and the claimed figure is on no rule named for the query; the nearest amount is reported.
+- `unknown` whenever it can't settle the claim: no rule is named for all of the query, the rule has no amount the query is certainly about, the figure is in the law under another name or only inside a formula (the message says where), the query asks for a rate or a percentage, the claim is under $100 and matches nothing, the claim is a rate in the rule times one of its amounts, the query names two jurisdictions or a year that isn't `asOf`'s, or a two-letter word such as `OR` or `ca` could be a state or a word.
+- A rule is named by its id and the head of its title (up to the first dash, bracket or colon), and by its parameter names. Every word of the query counts, however short; a number ("tier 1", "line 28") must be the rule's or the parameter's own, and a numbered parameter (`max2`) is compared only when the query gives its number.
+- A filing-status amount is compared only at the claim's status: a table at that status, or a parameter labelled for it (`capJoint`). The unlabelled one beside it (`cap`) is for everyone else, and is not compared when the formula reads the status in a way the parameters don't account for.
+- Without `asOf`, a year in the query ("standard deduction 2025") selects that tax year, and with no date at all every version is compared: the verdict's `effectiveFrom` says which one matched. Without `filingStatus`, a status in the query is used. `asOf` must be a `YYYY-MM-DD` date (`RangeError` otherwise).
 
 ## Future years
 
@@ -371,7 +382,7 @@ The exact declaration of every export is in the API reports, generated from the 
 |---|---|
 | Stable functions | `sweep`, `marginal`, `findCliffs`, `invert`, `compareAcross` |
 | Stable types | `SweepOptions`, `SweepPoint`, `SweepResult`, `MarginalOptions`, `MarginalResult`, `Cliff`, `CliffLimits`, `CliffOptions`, `CliffResult`, `InvertOptions`, `InvertResult`, `CompareOptions`, `CompareResult` |
-| Provisional | `searchRules`, `lookupParameters`, `factCheck`, `RuleSearchHit`, `LookupHit`, `FactCheckResult` |
+| Provisional | `searchRules`, `lookupParameters`, `factCheck`, `queryScope`, `RuleSearchHit`, `LookupHit`, `FactCheckResult`, `QueryScope` |
 
 Anything else a package exports is internal: it is there for our own packages and can change in any release. The API reports list those names under "internal".
 

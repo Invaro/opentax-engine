@@ -34266,8 +34266,8 @@ var init_adjustments = __esm({
 
 // ../corpus-us-federal/dist/rules/income-tax.js
 function table(lowerBoundsDollars) {
-  return lowerBoundsDollars.map((dollars8, i) => ({
-    threshold: String(BigInt(dollars8) * 100n),
+  return lowerBoundsDollars.map((dollars9, i) => ({
+    threshold: String(BigInt(dollars9) * 100n),
     rate: { num: RATES[i], den: "100" }
   }));
 }
@@ -34594,7 +34594,7 @@ var init_income_tax = __esm({
     money2 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef2 = (ruleId) => ({ kind: "rule", ruleId });
     RATES = ["10", "12", "22", "24", "32", "35", "37"];
-    d = (dollars8) => money2(String(BigInt(dollars8) * 100n));
+    d = (dollars9) => money2(String(BigInt(dollars9) * 100n));
     B25 = {
       single: table([0, 11925, 48475, 103350, 197300, 250525, 626350]),
       mfj: table([0, 23850, 96950, 206700, 394600, 501050, 751600]),
@@ -34815,7 +34815,7 @@ var init_amt = __esm({
     money3 = (cents2) => ({ kind: "money", cents: cents2 });
     ruleRef3 = (ruleId) => ({ kind: "rule", ruleId });
     param2 = (name) => ({ kind: "param", name });
-    d2 = (dollars8) => money3(String(BigInt(dollars8) * 100n));
+    d2 = (dollars9) => money3(String(BigInt(dollars9) * 100n));
     add = (...args) => ({ kind: "add", args });
     sub = (left, right) => ({ kind: "sub", left, right });
     max02 = (arg2) => ({ kind: "max0", arg: arg2 });
@@ -54530,9 +54530,9 @@ var init_state_ri = __esm({
           let table2 = dollarsFromScaled11(times10(agi2, "8"));
           for (let i = bands2.length - 1; i >= 0; i--)
             table2 = iff26(lt18(agi2, money42(bands2[i][0])), money42(bands2[i][1]), table2);
-          const lookup = add27(table2, max030(fact45("riLargePurchasesNetUseTax")));
+          const lookup2 = add27(table2, max030(fact45("riLargePurchasesNetUseTax")));
           const actual = max030(sub31(rd24(pct11(max030(fact45("riUseTaxPurchases")), "7", "100")), max030(fact45("riSalesTaxPaidOtherStates"))));
-          return iff26(fact45("riUseTaxLookupTable"), lookup, actual);
+          return iff26(fact45("riUseTaxLookupTable"), lookup2, actual);
         })()
       },
       {
@@ -59063,64 +59063,229 @@ var init_compare = __esm({
 });
 
 // ../solve/dist/lookup.js
-function extractByStatus(rule8) {
-  const out = {};
+function queryScope(query) {
+  const { jurisdictions, unclearStateCodes, taxYear, filingStatus, asksForRate } = parseQuery(query);
+  return {
+    jurisdictions,
+    unclearStateCodes,
+    ...taxYear === void 0 ? {} : { taxYear },
+    ...filingStatus === void 0 ? {} : { filingStatus },
+    asksForRate
+  };
+}
+function parseQuery(query) {
+  const q = query.slice(0, 500).replace(/\bwashington,?\s+d\.?c\.?(?![a-z0-9])|\bd\.c\.(?![a-z0-9])/gi, " district of columbia ");
+  const jurisdictions = /* @__PURE__ */ new Set();
+  const unclear = /* @__PURE__ */ new Set();
+  const asksForRate = /%|\b(?:rates?|percent|percentage|pct)\b/i.test(q);
+  const noAmounts = q.replace(/\$\s?\d[\d,]*(?:\.\d+)?|(?<![\d.])\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?\s?%|(?<![\d.])\d+\.\d+(?![\d.])/g, " ");
+  const years2 = /* @__PURE__ */ new Set();
+  let rest = noAmounts.replace(/(?<![\d$,.-]|§\s?|\b(?:section|sec\.?|form|pub\.?|publication|notice)\s)(?:19|20)\d\d(?![A-Za-z\d]|[,.]\d|-\d)/gi, (y) => {
+    years2.add(Number(y));
+    return " ";
+  });
+  const readCode = (code, whole) => {
+    if (PLACE_NAMES[code.toLowerCase()] === void 0)
+      return whole;
+    if (UNCLEAR_CODES.has(code))
+      unclear.add(code);
+    else
+      jurisdictions.add(`us.${code.toLowerCase()}`);
+    return " ";
+  };
+  rest = rest.replace(/(?<![A-Za-z0-9.])([A-Z])\.([A-Z])\.(?![A-Za-z0-9])/g, (whole, a, b) => readCode(a + b, whole)).replace(/(?<![A-Za-z0-9.'’-])[A-Z]{2}(?![A-Za-z0-9.-]|['’](?!s\b))/g, (code) => readCode(code, code));
+  let text = ` ${onePhaseout(rest.toLowerCase()).replace(/(\d)\(([a-z])\)/g, "$1$2").replace(/[^a-z0-9%]+/g, " ").trim()} `;
+  for (const [name, code] of PLACE_PATTERNS) {
+    const needle = ` ${name} `;
+    while (text.includes(needle)) {
+      jurisdictions.add(`us.${code}`);
+      text = text.replace(needle, "  ");
+    }
+  }
+  const statuses = /* @__PURE__ */ new Set();
+  for (const [status, pattern] of STATUS_PATTERNS) {
+    text = text.replace(pattern, () => {
+      statuses.add(status);
+      return " ";
+    });
+  }
+  text = text.replace(/\b(?:married(?: couples?)?|couples?)\b/g, " ");
+  if (/\b(?:joint|separate)\b/.test(text))
+    statuses.add("unclear");
+  const named = [...jurisdictions].sort(compareIds);
+  const federalToo = named.length > 0 && /\b(?:federal|irs)\b/.test(text);
+  if (named.length === 0)
+    named.push(FEDERAL);
+  const all = text.split(" ").filter(Boolean).slice(0, 80);
+  const kept = [];
+  for (const w of all) {
+    if (FILLER.has(w) || /^\d{1,2}$/.test(w))
+      continue;
+    if (w.length === 2 && PLACE_NAMES[w] !== void 0)
+      unclear.add(w.toUpperCase());
+    else
+      kept.push(stem2(w));
+  }
+  const distinct = [...new Set(kept)];
+  const terms = distinct.slice(0, 12);
+  const phrases = [];
+  for (let i = 0; i + 1 < kept.length && phrases.length < 12; i++) {
+    if (kept[i] !== kept[i + 1])
+      phrases.push([kept[i], kept[i + 1]]);
+  }
+  return {
+    jurisdictions: named,
+    unclearStateCodes: [...unclear].sort(),
+    taxYear: years2.size === 1 ? [...years2][0] : void 0,
+    filingStatus: statuses.size === 1 && !statuses.has("unclear") ? [...statuses][0] : void 0,
+    asksForRate,
+    federalToo,
+    terms,
+    subject: terms.filter((t) => QUALIFIER[t] === void 0 && !LOOSE.has(t)),
+    qualifiers: new Set(terms.flatMap((t) => QUALIFIER[t] ?? [])),
+    words: new Set(all.map(stem2)),
+    numbers: new Set(all.filter((w) => /^\d{1,2}$/.test(w))),
+    phrases,
+    truncated: distinct.length > terms.length
+  };
+}
+function parameterOf(name, cents2) {
+  const words = nameWords(name);
+  const statusOf2 = (w) => STATUS_WORDS[w.replace(/\d+k?$/, "")];
+  return {
+    name,
+    cents: cents2,
+    words,
+    text: onePhaseout(words.join(" ")),
+    statuses: [...new Set(words.flatMap((w) => statusOf2(w) ?? []))],
+    base: words.filter((w) => statusOf2(w) === void 0 && w !== "other" && w !== "others").join(" "),
+    kinds: [...new Set(words.flatMap((w) => QUALIFIER[w] ?? []))],
+    conditional: words.filter((w) => CONDITIONAL.has(w)),
+    own: words.filter((w) => statusOf2(w) === void 0 && QUALIFIER[w] === void 0 && !CONDITIONAL.has(w) && !PLAIN.has(w) && !/^\d+k?$/.test(w))
+  };
+}
+function formulaUse(rule8, parameters) {
+  const tables = /* @__PURE__ */ new Map();
+  const rates = /* @__PURE__ */ new Map();
+  let reads = 0;
+  let plainTables = 0;
   walkExpr(rule8.formula, (e) => {
+    if (e.kind === "fact" && e.factId === "filingStatus")
+      reads += 1;
+    if (e.kind === "mulRate")
+      rates.set(`${e.rate.num}/${e.rate.den}`, [BigInt(e.rate.num), BigInt(e.rate.den)]);
     if (e.kind === "match" && e.on.kind === "fact" && e.on.factId === "filingStatus") {
-      for (const c2 of e.cases) {
+      const table2 = {};
+      for (const c2 of e.cases)
         if (c2.value.kind === "money")
-          out[c2.when] = c2.value.cents;
+          table2[c2.when] = c2.value.cents;
+      if (Object.keys(table2).length === e.cases.length && (e.else === void 0 || e.else.kind === "money")) {
+        plainTables += 1;
       }
+      if (Object.keys(table2).length > 0)
+        tables.set(JSON.stringify(Object.entries(table2).sort()), table2);
     }
   });
-  return out;
+  const labelledSets = new Set(parameters.filter((p2) => p2.statuses.length > 0).map((p2) => p2.base)).size;
+  return {
+    // several different tables in one rule cannot be told apart by a lookup
+    byFilingStatus: tables.size === 1 ? [...tables.values()][0] : {},
+    tables: [...tables.values()],
+    statusAdjusts: reads > plainTables + labelledSets,
+    rates: [...rates.values()]
+  };
 }
-function lookupParameters(corpus2, query, asOf) {
-  const tokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
-  if (tokens.length === 0)
-    return [];
-  const hits = [];
-  for (const rule8 of corpus2.rules) {
-    if (asOf && !(rule8.effectiveFrom <= asOf && (rule8.effectiveTo === void 0 || asOf < rule8.effectiveTo))) {
+function indexOf(corpus2) {
+  let index = INDEX.get(corpus2.rules);
+  if (index === void 0) {
+    index = corpus2.rules.map((rule8) => {
+      const parameters = Object.entries(rule8.parameters ?? {}).filter(([, p2]) => p2.type === "money").map(([name2, p2]) => parameterOf(name2, String(p2.value)));
+      const paramWords = Object.keys(rule8.parameters ?? {}).map((n) => nameWords(n).join(" ")).join(" ");
+      const idText = rule8.id.replace(/[._]/g, " ").toLowerCase();
+      const title = onePhaseout(rule8.title.toLowerCase());
+      const name = `${onePhaseout(idText)} ${title.split(/ [—–-] |[(:;]/)[0]}`;
+      const literals = /* @__PURE__ */ new Set();
+      walkExpr(rule8.formula, (e) => {
+        if (e.kind === "money" && e.cents !== "0")
+          literals.add(e.cents);
+      });
+      return {
+        rule: rule8,
+        name,
+        idText,
+        named: `${name} ${onePhaseout(paramWords)}`,
+        literals: [...literals],
+        title,
+        strong: `${onePhaseout(idText)} ${title} ${onePhaseout(paramWords)}`,
+        weak: onePhaseout(`${rule8.citation.source} ${rule8.citation.section} ${rule8.citation.excerpt ?? ""}`.toLowerCase()),
+        parameters,
+        ...formulaUse(rule8, parameters)
+      };
+    });
+    INDEX.set(corpus2.rules, index);
+  }
+  return index;
+}
+function rank2(corpus2, scope, asOf) {
+  const patterns = scope.terms.map(termPattern);
+  const phrases = scope.phrases.map(phrasePattern);
+  const asked = [];
+  const others = [];
+  const namesPlace = scope.jurisdictions.some((j) => j !== FEDERAL);
+  for (const indexed of indexOf(corpus2)) {
+    const { rule: rule8, strong, title, weak } = indexed;
+    if (!inForce(rule8, asOf))
       continue;
-    }
-    const paramWords = Object.keys(rule8.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
-    const haystackStrong = `${rule8.id} ${rule8.title} ${paramWords} ${JURISDICTION_NAMES[rule8.jurisdiction] ?? ""}`.toLowerCase();
-    const haystackWeak = `${rule8.citation.source} ${rule8.citation.section} ${rule8.citation.excerpt}`.toLowerCase();
+    const isAsked = scope.jurisdictions.includes(rule8.jurisdiction);
     let score = 0;
-    for (const t of tokens) {
-      if (haystackStrong.includes(t))
+    for (const p2 of patterns) {
+      if (p2.test(strong))
         score += 2;
-      else if (haystackWeak.includes(t))
+      else if (p2.test(weak))
         score += 1;
     }
-    if (score === 0)
+    if (score === 0 && !(patterns.length === 0 && namesPlace && isAsked))
       continue;
-    const parameters = {};
-    for (const [name, p2] of Object.entries(rule8.parameters ?? {})) {
-      if (p2.type === "money")
-        parameters[name] = String(p2.value);
+    for (const p2 of phrases)
+      if (p2.test(strong))
+        score += 1;
+    let lead = Number.MAX_SAFE_INTEGER;
+    for (const p2 of patterns) {
+      const at = title.search(p2);
+      if (at !== -1)
+        lead = Math.min(lead, title.slice(0, at).split(/[^a-z0-9]+/).filter(Boolean).length);
     }
-    const byFilingStatus = extractByStatus(rule8);
-    if (Object.keys(parameters).length === 0 && Object.keys(byFilingStatus).length === 0) {
-      score -= 1;
-      if (score <= 0)
-        continue;
-    }
-    hits.push({
+    const hit = {
       ruleId: rule8.id,
       version: rule8.version,
+      jurisdiction: rule8.jurisdiction,
       title: rule8.title,
       citation: rule8.citation,
       effectiveFrom: rule8.effectiveFrom,
       effectiveTo: rule8.effectiveTo,
-      parameters,
-      byFilingStatus,
+      parameters: Object.fromEntries(indexed.parameters.map((p2) => [p2.name, p2.cents])),
+      byFilingStatus: { ...indexed.byFilingStatus },
       score
-    });
+    };
+    (isAsked ? asked : others).push({ hit, rule: indexed, lead });
   }
-  hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
-  return hits.slice(0, 5);
+  const order = (x2, y) => y.hit.score - x2.hit.score || Number(hasValues(y.hit)) - Number(hasValues(x2.hit)) || x2.lead - y.lead || Number(Object.keys(y.hit.byFilingStatus).length > 0) - Number(Object.keys(x2.hit.byFilingStatus).length > 0) || compareIds(x2.hit.ruleId, y.hit.ruleId) || y.hit.version - x2.hit.version;
+  asked.sort(order);
+  others.sort(order);
+  return { asked, others };
+}
+function checkDate(asOf) {
+  if (asOf !== void 0 && !/^\d{4}-\d{2}-\d{2}$/.test(asOf)) {
+    throw new RangeError(`asOf must be a date like "2026-12-31", got ${JSON.stringify(String(asOf).slice(0, 40))}`);
+  }
+}
+function lookupParameters(corpus2, query, asOf) {
+  checkDate(asOf);
+  const scope = parseQuery(query);
+  const { asked, others } = rank2(corpus2, scope, yearEnd(scope, asOf));
+  const namesPlace = scope.jurisdictions.some((j) => j !== FEDERAL);
+  const ranked = asked.length > 0 || namesPlace ? asked : others;
+  return ranked.slice(0, 5).map((r3) => r3.hit);
 }
 function makeSnippet(excerpt, tokens) {
   if (excerpt.length <= SNIPPET_LEN)
@@ -59206,61 +59371,176 @@ function searchRules(corpus2, query, asOf, limit = 8) {
   hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
   return hits.slice(0, Math.max(1, Math.min(limit, 20)));
 }
+function ruleIsAskedFor(rule8, scope) {
+  const words = onePhaseout(rule8.rule.id.split(".").slice(2).join(" ").replace(/_/g, " ")).split(" ");
+  return words.every((w) => {
+    const kind = QUALIFIER[w];
+    if (kind !== void 0 && kind !== "cap")
+      return scope.qualifiers.has(kind);
+    return !CONDITIONAL.has(w) || scope.words.has(w);
+  });
+}
+function candidatesOf(rule8, scope, status) {
+  const unnamed = scope.subject.filter((t) => !termPattern(t).test(rule8.name)).map(termPattern);
+  const numbers = [...scope.numbers].filter((n) => !new RegExp(`(?<![0-9])${n}(?![0-9])`).test(rule8.idText));
+  let parameters = rule8.parameters.filter((p2) => unnamed.every((t) => t.test(p2.text)) && numbers.every((n) => p2.words.includes(n)) && // and a numbered parameter (`max2`, `tier1Max`) needs its number in the query
+  p2.words.every((w) => !/^\d+$/.test(w) || scope.numbers.has(w) || scope.words.has(w) || w === String(scope.taxYear)) && // and the parameter's own words must be the query's: `educatorCap` is
+  // not "the cap", `refundableCapPerChild` is not "per child"
+  p2.own.every((w) => [...scope.words].some((q) => sameWord(w, q))) && !p2.cents.startsWith("-"));
+  const answersKind = parameters.some((p2) => p2.kinds.some((k) => scope.qualifiers.has(k)));
+  parameters = parameters.filter((p2) => {
+    if (p2.conditional.length > 0 && !p2.conditional.some((w) => scope.words.has(w)))
+      return false;
+    if (scope.qualifiers.size === 0)
+      return p2.kinds.every((k) => k === "cap");
+    return p2.kinds.some((k) => scope.qualifiers.has(k));
+  });
+  if (status !== void 0) {
+    parameters = parameters.filter((p2) => {
+      if (p2.statuses.length > 0)
+        return p2.statuses.includes(status);
+      if (rule8.statusAdjusts)
+        return false;
+      const siblings = rule8.parameters.filter((q) => q !== p2 && q.base === p2.base && q.statuses.length > 0);
+      return !siblings.some((q) => q.statuses.includes(status)) && !(status === "qss" && siblings.length > 0);
+    });
+  }
+  const table2 = unnamed.length > 0 || numbers.length > 0 || answersKind ? [] : status === void 0 ? Object.entries(rule8.byFilingStatus).map(([k, v]) => [`byFilingStatus.${k}`, v]) : rule8.byFilingStatus[status] !== void 0 ? [[`byFilingStatus.${status}`, rule8.byFilingStatus[status]]] : [];
+  return [...table2, ...parameters.map((p2) => [p2.name, p2.cents])];
+}
+function everyAmountOf(rule8, scope, status) {
+  const parameters = rule8.parameters.filter((p2) => scope.qualifiers.size === 0 || p2.kinds.length === 0 || p2.kinds.some((k) => scope.qualifiers.has(k)) || // "MAGI limit" still points at `magiThreshold`
+  p2.own.length > 0 && p2.own.every((w) => [...scope.words].some((q) => sameWord(w, q))));
+  const tables = rule8.tables.flatMap((t) => Object.entries(t).filter(([k]) => status === void 0 || k === status).map(([k, v]) => [`byFilingStatus.${k}`, v]));
+  const inTables = new Set(rule8.tables.flatMap((t) => Object.values(t)));
+  const literals = rule8.literals.filter((v) => !inTables.has(v)).map((v) => ["an amount in the formula", v]);
+  return [...tables, ...parameters.map((p2) => [p2.name, p2.cents]), ...literals];
+}
 function factCheck(corpus2, query, claimedCents, asOf, filingStatus) {
-  const hits = lookupParameters(corpus2, query, asOf);
-  if (hits.length === 0) {
-    return {
-      verdict: "unknown",
-      message: `no corpus rule matches "${query}" \u2014 the claim cannot be checked against this corpus`,
-      alternatives: []
-    };
+  checkDate(asOf);
+  const scope = parseQuery(query);
+  const when = yearEnd(scope, asOf);
+  const status = filingStatus ?? scope.filingStatus;
+  const { asked, others } = rank2(corpus2, scope, when);
+  const hits = asked.slice(0, 5).map((r3) => r3.hit);
+  const unknown2 = (message, alternatives = hits) => ({
+    verdict: "unknown",
+    message,
+    jurisdictions: scope.jurisdictions,
+    ...when === void 0 ? {} : { asOf: when },
+    alternatives
+  });
+  const places = scope.jurisdictions.join(", ");
+  const onDate = when === void 0 ? "" : ` in force on ${when}`;
+  if (scope.unclearStateCodes.length > 0) {
+    const names = scope.unclearStateCodes.map((c2) => `"${c2}" (${placeTitle(c2)})`).join(", ");
+    return unknown2(`${names} may be a state or an ordinary word \u2014 write the state's name in full to check a state amount, or leave the word out`);
+  }
+  if (scope.jurisdictions.length > 1 || scope.federalToo) {
+    return unknown2(`"${query}" names ${scope.federalToo ? [FEDERAL, ...scope.jurisdictions].join(" and ") : scope.jurisdictions.join(" and ")} \u2014 ask about one jurisdiction at a time`);
+  }
+  if (asOf !== void 0 && scope.taxYear !== void 0 && asOf.slice(0, 4) !== String(scope.taxYear)) {
+    return unknown2(`"${query}" says ${scope.taxYear} but the date checked is ${asOf} \u2014 pass the date for the year you mean, or leave the year out`);
+  }
+  if (scope.truncated) {
+    return unknown2(`"${query.slice(0, 60)}\u2026" is too long to check \u2014 name the amount in a few words`, []);
+  }
+  if (scope.subject.length === 0) {
+    return unknown2(`"${query}" does not name an amount to check`, []);
+  }
+  if (asked.length === 0) {
+    const elsewhere2 = [...new Set(others.slice(0, 5).map((r3) => r3.hit.jurisdiction))];
+    return unknown2(`no ${places} rule${onDate} matches "${query}" \u2014 the claim cannot be checked against this corpus` + (elsewhere2.length > 0 && scope.jurisdictions.every((j) => j === FEDERAL) ? ` (name the state to check a state amount; similar rules exist in ${elsewhere2.join(", ")})` : ""), []);
+  }
+  const subject = scope.subject.map(termPattern);
+  const named = asked.filter((r3) => subject.every((t) => t.test(r3.rule.named)));
+  if (named.length === 0) {
+    const closest = asked[0];
+    const missing = scope.subject.filter((_t, i) => !subject[i].test(closest.rule.named));
+    return unknown2(`no ${places} rule${onDate} is named for all of "${query}" \u2014 the closest, "${closest.hit.ruleId}", does not name: ${missing.join(", ")}. Ask in the law's own words, or search for the rule first`);
+  }
+  const evidence = [];
+  for (const r3 of named) {
+    if (!ruleIsAskedFor(r3.rule, scope))
+      continue;
+    if (evidence.length > 0 && r3.hit.ruleId !== evidence[0].hit.ruleId)
+      continue;
+    const candidates2 = candidatesOf(r3.rule, scope, status);
+    if (candidates2.length > 0)
+      evidence.push({ hit: r3.hit, rule: r3.rule, candidates: candidates2 });
+    else if (evidence.length === 0 && (r3.rule.parameters.length > 0 || r3.rule.tables.length > 0 || r3.rule.literals.length > 0))
+      break;
   }
   const claimed = claimedCents.toString();
-  const candidatesOf = (hit) => {
-    const out = [];
-    if (filingStatus && hit.byFilingStatus[filingStatus] !== void 0) {
-      out.push([`byFilingStatus.${filingStatus}`, hit.byFilingStatus[filingStatus]]);
-    } else {
-      out.push(...Object.entries(hit.byFilingStatus).map(([k, v]) => [`byFilingStatus.${k}`, v]));
+  const elsewhere = (except) => {
+    for (const r3 of named) {
+      const at2 = everyAmountOf(r3.rule, scope, status).find(([f, v]) => v === claimed && !except(r3.hit, f));
+      if (at2)
+        return `${at2[0]} of "${r3.hit.ruleId}" (${r3.hit.title})`;
     }
-    out.push(...Object.entries(hit.parameters));
-    return out;
+    return void 0;
   };
-  for (const hit of hits) {
-    const exact = candidatesOf(hit).find(([, v]) => v === claimed);
-    if (exact) {
-      return {
-        verdict: "verified",
-        matchedRuleId: hit.ruleId,
-        matchedField: exact[0],
-        actualCents: exact[1],
-        claimedCents: claimed,
-        citation: hit.citation,
-        alternatives: hits.filter((h) => h !== hit)
-      };
-    }
+  if (evidence.length === 0) {
+    const at2 = elsewhere(() => false);
+    const holds = named[0].rule.parameters.map((p2) => p2.name).slice(0, 8);
+    return unknown2((at2 ? `${dollars6(claimedCents)} is ${at2}, which "${query}"${status === void 0 ? "" : ` at filing status ${status}`} does not certainly ask for` : `best match "${named[0].hit.ruleId}" carries no dollar amount that "${query}"${status === void 0 ? "" : ` at filing status ${status}`} is certainly about`) + (holds.length > 0 ? ` \u2014 name the amount in the rule's words (it holds: ${holds.join(", ")})` : "") + (status === void 0 ? "" : "; an amount may also depend on the filing status inside the formula, which explain_rule shows"));
   }
-  const best = hits[0];
-  const bestCandidates = candidatesOf(best);
-  if (bestCandidates.length === 0) {
-    return {
-      verdict: "unknown",
-      message: `best match "${best.ruleId}" carries no dollar parameters to compare`,
-      alternatives: hits
-    };
-  }
-  const [field, actual] = bestCandidates[0];
-  return {
-    verdict: "refuted",
-    matchedRuleId: best.ruleId,
-    matchedField: field,
-    actualCents: actual,
+  const found = (hit2, field2, actual2, verdict) => ({
+    verdict,
+    matchedRuleId: hit2.ruleId,
+    matchedField: field2,
+    jurisdiction: hit2.jurisdiction,
+    actualCents: actual2,
     claimedCents: claimed,
-    citation: best.citation,
-    alternatives: hits.slice(1)
+    citation: hit2.citation,
+    effectiveFrom: hit2.effectiveFrom,
+    ...hit2.effectiveTo === void 0 ? {} : { effectiveTo: hit2.effectiveTo },
+    jurisdictions: scope.jurisdictions,
+    ...when === void 0 ? {} : { asOf: when },
+    alternatives: hits.filter((h) => h !== hit2)
+  });
+  const first = evidence;
+  for (const { hit: hit2, candidates: candidates2 } of first) {
+    const exact = candidates2.find(([, v]) => v === claimed);
+    if (exact)
+      return found(hit2, exact[0], exact[1], "verified");
+  }
+  const at = elsewhere(() => false);
+  if (at !== void 0) {
+    const [field2, value] = first[0].candidates[0];
+    return unknown2(`${dollars6(claimedCents)} is ${at}; "${query}" is compared with ${field2} of "${first[0].hit.ruleId}" (${dollars6(value)}) \u2014 name the amount more exactly to check it`);
+  }
+  if (scope.asksForRate) {
+    return unknown2(`"${query}" asks for a rate or a percentage \u2014 this lookup holds dollar amounts only, so the claim cannot be checked (read the rate in the rule's formula with explain_rule on "${first[0].hit.ruleId}")`);
+  }
+  const magnitude = claimedCents < 0n ? -claimedCents : claimedCents;
+  if (magnitude < 10000n) {
+    return unknown2(`${dollars6(claimedCents)} matches no amount on "${first[0].hit.ruleId}", and a figure under $100 may be a rate or a percentage \u2014 this lookup holds dollar amounts only`);
+  }
+  for (const r3 of named) {
+    for (const [field2, value] of everyAmountOf(r3.rule, scope, status)) {
+      for (const [num, den] of r3.rule.rates) {
+        if (den !== 0n && BigInt(value) * num % den === 0n && BigInt(value) * num / den === claimedCents) {
+          return unknown2(`${dollars6(claimedCents)} is ${num}/${den} of ${field2} on "${r3.hit.ruleId}", an amount the rule derives \u2014 this lookup holds the rule's parameters only (run the calculation, or read the formula with explain_rule)`);
+        }
+      }
+    }
+  }
+  const distance = (v) => {
+    const d3 = BigInt(v) - claimedCents;
+    return d3 < 0n ? -d3 : d3;
   };
+  let nearest;
+  for (const { hit: hit2, candidates: candidates2 } of first) {
+    for (const [field2, value] of candidates2) {
+      if (nearest === void 0 || distance(value) < distance(nearest[2]))
+        nearest = [hit2, field2, value];
+    }
+  }
+  const [hit, field, actual] = nearest;
+  return found(hit, field, actual, "refuted");
 }
-var tokenize, JURISDICTION_NAMES, SNIPPET_LEN;
+var tokenize, JURISDICTION_NAMES, FEDERAL, PLACE_NAMES, PLACE_ALIASES, PLACE_PATTERNS, UNCLEAR_CODES, placeTitle, STATUS_PATTERNS, FILLER, LOOSE, QUALIFIER, CONDITIONAL, stem2, termSource, termPattern, phrasePattern, sameWord, onePhaseout, STATUS_WORDS, PLAIN, nameWords, INDEX, inForce, hasValues, yearEnd, SNIPPET_LEN, dollars6;
 var init_lookup = __esm({
   "../solve/dist/lookup.js"() {
     "use strict";
@@ -59294,7 +59574,270 @@ var init_lookup = __esm({
       "us.mt": "montana mt form 2 billings missoula bozeman helena elderly homeowner renter credit net long-term capital gains ordinary income",
       "us.ri": "rhode island ri ri-1040 providence warwick cranston property tax relief credit 1040h social security modification pension modification"
     };
+    FEDERAL = "us.federal";
+    PLACE_NAMES = {
+      al: "alabama",
+      ak: "alaska",
+      az: "arizona",
+      ar: "arkansas",
+      ca: "california",
+      co: "colorado",
+      ct: "connecticut",
+      de: "delaware",
+      dc: "district of columbia",
+      fl: "florida",
+      ga: "georgia",
+      hi: "hawaii",
+      id: "idaho",
+      il: "illinois",
+      in: "indiana",
+      ia: "iowa",
+      ks: "kansas",
+      ky: "kentucky",
+      la: "louisiana",
+      me: "maine",
+      md: "maryland",
+      ma: "massachusetts",
+      mi: "michigan",
+      mn: "minnesota",
+      ms: "mississippi",
+      mo: "missouri",
+      mt: "montana",
+      ne: "nebraska",
+      nv: "nevada",
+      nh: "new hampshire",
+      nj: "new jersey",
+      nm: "new mexico",
+      ny: "new york",
+      nc: "north carolina",
+      nd: "north dakota",
+      oh: "ohio",
+      ok: "oklahoma",
+      or: "oregon",
+      pa: "pennsylvania",
+      ri: "rhode island",
+      sc: "south carolina",
+      sd: "south dakota",
+      tn: "tennessee",
+      tx: "texas",
+      ut: "utah",
+      vt: "vermont",
+      va: "virginia",
+      wa: "washington",
+      wv: "west virginia",
+      wi: "wisconsin",
+      wy: "wyoming",
+      pr: "puerto rico",
+      gu: "guam",
+      vi: "virgin islands",
+      as: "american samoa",
+      mp: "northern mariana islands"
+    };
+    PLACE_ALIASES = [
+      ["new york city", "ny"],
+      ["nyc", "ny"],
+      ["kansas city", "mo"]
+    ];
+    PLACE_PATTERNS = [
+      ...PLACE_ALIASES,
+      ...Object.entries(PLACE_NAMES).map(([code, name]) => [name, code])
+    ].sort((x2, y) => y[0].length - x2[0].length);
+    UNCLEAR_CODES = /* @__PURE__ */ new Set([
+      "IN",
+      "OR",
+      "ME",
+      "OK",
+      "HI",
+      "OH",
+      "ID",
+      "SD",
+      "VA",
+      "LA",
+      "MA",
+      "MD",
+      "DC",
+      "AS",
+      "VI",
+      "MP"
+    ]);
+    placeTitle = (code) => PLACE_NAMES[code.toLowerCase()].replace(/\b(?!of\b)[a-z]/g, (l) => l.toUpperCase());
+    STATUS_PATTERNS = [
+      // a bare "joint" or "separate" is a status only at the end of the query:
+      // "Ohio joint filing credit" names a credit
+      ["mfj", /\b(?:mfj|married (?:filing )?joint(?:ly)?|filing joint(?:ly)?|jointly|joint (?:returns?|filers?)|joint(?= *$))\b/g],
+      ["mfs", /\b(?:mfs|married (?:filing )?separate(?:ly)?|filing separate(?:ly)?|separately|separate (?:returns?|filers?)|separate(?= *$))\b/g],
+      ["hoh", /\b(?:hoh|heads? of (?:a )?household)\b/g],
+      ["qss", /\b(?:qss|(?:qualifying )?surviving spouses?|qualifying widow(?:er)?s?)\b/g],
+      ["single", /\b(?:single|unmarried)(?! (?:family|member|premium|parent))(?: filers?)?\b/g]
+    ];
+    FILLER = /* @__PURE__ */ new Set([
+      "a",
+      "an",
+      "of",
+      "in",
+      "on",
+      "to",
+      "is",
+      "it",
+      "at",
+      "by",
+      "or",
+      "as",
+      "if",
+      "be",
+      "do",
+      "my",
+      "we",
+      "i",
+      "s",
+      "vs",
+      "so",
+      "am",
+      "us",
+      "the",
+      "and",
+      "for",
+      "what",
+      "whats",
+      "how",
+      "much",
+      "many",
+      "are",
+      "was",
+      "were",
+      "with",
+      "from",
+      "that",
+      "this",
+      "does",
+      "did",
+      "can",
+      "will",
+      "would",
+      "has",
+      "have",
+      "had",
+      "who",
+      "when",
+      "which",
+      "there",
+      "you",
+      "your",
+      "their",
+      "its",
+      "any",
+      "all",
+      "about",
+      "than",
+      "year",
+      "federal",
+      "irs",
+      "under",
+      "state",
+      "rate",
+      "rates",
+      "percent",
+      "percentage",
+      "pct",
+      "dollar",
+      "dollars",
+      "current",
+      "currently",
+      "now",
+      "today",
+      "filing",
+      "filer",
+      "filers",
+      "status",
+      "taxpayer",
+      "taxpayers",
+      "get",
+      "claim",
+      "equal",
+      "equals"
+    ]);
+    LOOSE = /* @__PURE__ */ new Set(["amount", "value", "figure", "total"]);
+    QUALIFIER = {
+      cap: "cap",
+      limit: "cap",
+      limitation: "cap",
+      max: "cap",
+      maximum: "cap",
+      ceiling: "cap",
+      floor: "floor",
+      min: "floor",
+      minimum: "floor",
+      threshold: "threshold",
+      thresh: "threshold",
+      phaseout: "threshold",
+      phase: "threshold",
+      start: "threshold",
+      cutoff: "threshold"
+    };
+    CONDITIONAL = /* @__PURE__ */ new Set([
+      "end",
+      "step",
+      "range",
+      "reduction",
+      "bracket",
+      "tier",
+      "row",
+      "band",
+      "break",
+      "anchor",
+      "width",
+      "gap",
+      "cliff",
+      "completed",
+      "top",
+      "zero",
+      "rate",
+      "pct",
+      "percentage",
+      "table",
+      "increment"
+    ]);
+    stem2 = (t) => t.length > 3 && t.endsWith("s") && !t.endsWith("ss") ? t.slice(0, -1) : t;
+    termSource = (t) => t.length <= 3 ? `\\b${t}(?:s|es)?\\b` : `\\b${t}[a-z]{0,3}\\b`;
+    termPattern = (t) => new RegExp(termSource(t));
+    phrasePattern = ([a, b]) => new RegExp(`${termSource(a)}[^a-z0-9]+(?:[a-z0-9]+[^a-z0-9]+)?${b}`);
+    sameWord = (a, b) => {
+      const [x2, y] = [stem2(a), stem2(b)];
+      if (x2 === y)
+        return true;
+      const [short, long] = x2.length <= y.length ? [x2, y] : [y, x2];
+      return short.length > 3 && long.startsWith(short) && long.length - short.length <= 3;
+    };
+    onePhaseout = (s2) => s2.replace(/\bphase[- ]?outs?\b/g, "phaseout");
+    STATUS_WORDS = {
+      mfj: ["mfj"],
+      joint: ["mfj"],
+      married: ["mfj", "mfs"],
+      mfs: ["mfs"],
+      separate: ["mfs"],
+      single: ["single"],
+      unmarried: ["single", "hoh"],
+      hoh: ["hoh"],
+      hof: ["hoh"],
+      head: ["hoh"],
+      qss: ["qss"],
+      qw: ["qss"],
+      surviving: ["qss"],
+      widow: ["qss"]
+    };
+    PLAIN = /* @__PURE__ */ new Set(["per", "amount", "total", "each", "other", "others", "for", "of", "the", "and", "or", "to"]);
+    nameWords = (name) => (name.match(/[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+/g) ?? []).map((w) => w.toLowerCase());
+    INDEX = /* @__PURE__ */ new WeakMap();
+    inForce = (rule8, asOf) => asOf === void 0 || rule8.effectiveFrom <= asOf && (rule8.effectiveTo === void 0 || asOf < rule8.effectiveTo);
+    hasValues = (h) => Object.keys(h.parameters).length > 0 || Object.keys(h.byFilingStatus).length > 0;
+    yearEnd = (scope, asOf) => asOf ?? (scope.taxYear === void 0 ? void 0 : `${scope.taxYear}-12-31`);
     SNIPPET_LEN = 280;
+    dollars6 = (cents2) => {
+      const c2 = BigInt(cents2);
+      const abs = c2 < 0n ? -c2 : c2;
+      const whole = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return `${c2 < 0n ? "-" : ""}$${whole}.${String(abs % 100n).padStart(2, "0")}`;
+    };
   }
 });
 
@@ -67453,8 +67996,8 @@ var init_form2210 = __esm({
     fmt2 = (cents2, withCents = false) => {
       const neg7 = cents2 < 0n;
       const a = neg7 ? -cents2 : cents2;
-      const dollars8 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      return `${neg7 ? "-" : ""}$${dollars8}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
+      const dollars9 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return `${neg7 ? "-" : ""}$${dollars9}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
     };
     D13 = (c2) => fmt2(rd27(c2));
     mulRate2 = (c2, num, den) => {
@@ -67917,7 +68460,7 @@ function form4562InputFromArgs(args) {
   const out = { ...args };
   for (const k of TOP_MONEY)
     if (args[k] !== void 0)
-      out[k] = dollars6(args[k], k);
+      out[k] = dollars7(args[k], k);
   out.assets = args.assets.map((raw, i) => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw))
       throw new Form4562Refusal(`assets[${i}]: expected an object`);
@@ -67928,7 +68471,7 @@ function form4562InputFromArgs(args) {
     const o = { ...a };
     for (const k of ASSET_MONEY)
       if (a[k] !== void 0)
-        o[k] = dollars6(a[k], `assets[${i}].${k}`);
+        o[k] = dollars7(a[k], `assets[${i}].${k}`);
     if (o.cost === void 0)
       throw new Form4562Refusal(`assets[${i}].cost is required`);
     if (o.recoveryClass !== void 0)
@@ -67937,7 +68480,7 @@ function form4562InputFromArgs(args) {
   });
   return out;
 }
-var Form4562Refusal, Form4562MissingInput, SECTION_179, AUTO_CAPS, GDS_PERIOD, ADS_FIXED, ASSET_CLASSES, NOT_SECTION_179_CLASSES, MIXED_1245_CLASSES, dayNum2, yearOf, monthOf, quarterOf, pct15, mulRatio, rd28, fmt3, D14, minC2, max038, REAL, BONUS_CLASSES, SECTION_179_CLASSES, dollars6, ASSET_MONEY, ASSET_KEYS, TOP_MONEY, TOP_KEYS;
+var Form4562Refusal, Form4562MissingInput, SECTION_179, AUTO_CAPS, GDS_PERIOD, ADS_FIXED, ASSET_CLASSES, NOT_SECTION_179_CLASSES, MIXED_1245_CLASSES, dayNum2, yearOf, monthOf, quarterOf, pct15, mulRatio, rd28, fmt3, D14, minC2, max038, REAL, BONUS_CLASSES, SECTION_179_CLASSES, dollars7, ASSET_MONEY, ASSET_KEYS, TOP_MONEY, TOP_KEYS;
 var init_form4562 = __esm({
   "../compose/dist/form4562.js"() {
     "use strict";
@@ -68033,7 +68576,7 @@ var init_form4562 = __esm({
     REAL = ["27.5", "39"];
     BONUS_CLASSES = ["3", "5", "7", "10", "15", "20", "25", "qip"];
     SECTION_179_CLASSES = ["3", "5", "7", "10", "15", "20", "25", "qip"];
-    dollars6 = (v, path) => {
+    dollars7 = (v, path) => {
       const s2 = typeof v === "number" ? Number.isFinite(v) ? String(v) : "" : typeof v === "string" ? v.replace(/[$,\s]/g, "") : "";
       const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s2);
       if (!m)
@@ -68214,7 +68757,7 @@ var COMPOSER_VERSION;
 var init_version = __esm({
   "dist/version.js"() {
     "use strict";
-    COMPOSER_VERSION = "0.19.0";
+    COMPOSER_VERSION = "0.20.0";
   }
 });
 
@@ -84509,7 +85052,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
       const ssw = own2.reduce((t, w) => t + toCents(w.box3 ?? w.box1), 0n);
       add33("socialSecurityWages", ssw);
       bools.socialSecurityWagesProvided = true;
-      notes.push(`Schedule SE line 8a: ${own2.length} W-2(s) belong to the ${earner} (the SE earner) \u2014 social security wages $${dollars7(ssw)} coordinate the OASDI wage base${own2.some((w) => w.box3 === void 0) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`);
+      notes.push(`Schedule SE line 8a: ${own2.length} W-2(s) belong to the ${earner} (the SE earner) \u2014 social security wages $${dollars8(ssw)} coordinate the OASDI wage base${own2.some((w) => w.box3 === void 0) ? " (box 1 used where box 3 was not transcribed)" : ""}; the other spouse's W-2 does not`);
     } else if (joint || multiW2) {
       throw new Error("Schedule SE coordination is PER PERSON: this return has self-employment income and " + (joint ? "is a joint return" : "more than one W-2") + ", so tag every documents.w2s entry with recipient ('taxpayer' or 'spouse') and, if the spouse is the self-employed one, set documents.selfEmploymentEarner \u2014 or drop the W-2 documents and pass income.socialSecurityWages (the SE earner's OWN box 3, even 0) with income.socialSecurityWagesProvided true");
     }
@@ -84542,12 +85085,12 @@ function compileDocuments(docs, asOf, ctx = {}) {
         const excess2 = toCents(w.box6) - regular;
         if (excess2 > 0n) {
           add33("federalTaxWithheld", excess2);
-          notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars7(excess2)}; added to withholding`);
+          notes.push(`W-2 #${i + 1}: Form 8959 Part IV \u2014 box 6 exceeds 1.45% of box 5 by $${dollars8(excess2)}; added to withholding`);
         }
       }
     }
     if (w.box17 !== void 0 && toCents(w.box17) > 0n) {
-      notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars7(toCents(w.box17))} is DOCUMENTED \u2014 include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
+      notes.push(`W-2 #${i + 1}: box 17 state income tax $${dollars8(toCents(w.box17))} is DOCUMENTED \u2014 include in itemized.stateAndLocalTaxesPaid if itemizing; do not discard it as anomalous`);
     }
   }
   const SS_TAX_MAX = { 2025: 1091820n, 2026: 1143900n };
@@ -84569,7 +85112,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
         continue;
       const excess2 = p2.withheld - max5;
       excessTotal += excess2;
-      notes.push(`W-2 box 4 total $${dollars7(p2.withheld)} across ${p2.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars7(max5)} by $${dollars7(excess2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
+      notes.push(`W-2 box 4 total $${dollars8(p2.withheld)} across ${p2.n} employers (${who}) exceeds the ${taxYear} maximum $${dollars8(max5)} by $${dollars8(excess2)} \u2014 the Schedule 3 line 11 excess social security withholding credit is NOT computed by this engine; the completed return must claim it (see \`incomplete\`)`);
     }
     if (excessTotal > 0n) {
       unsupported6.push({
@@ -84577,16 +85120,16 @@ function compileDocuments(docs, asOf, ctx = {}) {
         form: "Schedule 3",
         line: "11",
         item: "credit for excess social security tax withheld (\xA7 31(b))",
-        amount: `$${dollars7(excessTotal)}`,
+        amount: `$${dollars8(excessTotal)}`,
         reason: "no corpus rule computes the \xA7 31(b) excess-withholding credit; the line set excludes it",
         action: "enter the excess on Schedule 3 line 11 (it flows to Form 1040 lines 31 and 33) unless a single employer withheld more than the maximum, in which case that employer must refund it; lines 33 and 34/37 here are understated by this amount",
         affectedLines: ["33_total_payments", "34_refund_or_37_owed"],
         rendered: "excluded from lines 33 and 34/37"
       });
     } else if (max5 === void 0 && multiW2) {
-      notes.push(`W-2 box 4 social security tax withheld $${dollars7(ssTaxWithheld)} recorded across several employers \u2014 the ${taxYear} wage-base maximum is not encoded, so the Schedule 3 line 11 excess test could not run`);
+      notes.push(`W-2 box 4 social security tax withheld $${dollars8(ssTaxWithheld)} recorded across several employers \u2014 the ${taxYear} wage-base maximum is not encoded, so the Schedule 3 line 11 excess test could not run`);
     } else {
-      notes.push(`W-2 box 4 social security tax withheld $${dollars7(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
+      notes.push(`W-2 box 4 social security tax withheld $${dollars8(ssTaxWithheld)} recorded (no return effect: single employer or under the maximum)`);
     }
   }
   const PENALTY_EXEMPT_CODES = /* @__PURE__ */ new Set(["2", "3", "4", "7", "G", "H", "Q", "T", "C"]);
@@ -84599,12 +85142,12 @@ function compileDocuments(docs, asOf, ctx = {}) {
       continue;
     }
     if (r3.box7.toUpperCase().includes("G")) {
-      notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars7(taxable2)} \u2014 a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r3.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
+      notes.push(`1099-R #${i + 1}: code G with box 2a $${dollars8(taxable2)} \u2014 a direct rollover to a ROTH (conversion): box 2a is taxable on line ${r3.iraSepSimple ? "4b" : "5b"}, the balance is the rollover`);
     }
     if (r3.disabilityBeforeRetirementAge) {
       add33("wages", taxable2);
       add33("scheduleRDisabilityIncome", taxable2);
-      notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars7(taxable2)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
+      notes.push(`1099-R #${i + 1}: code-3 disability before minimum retirement age \u2014 $${dollars8(taxable2)} reported as WAGES (Pub. 525, Form 1040 line 1h \u2014 NOT line 1a, which is W-2 box 1 only) and counted as \xA7 22 disability income`);
       continue;
     }
     if (r3.iraSepSimple)
@@ -84618,7 +85161,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
         notes.push(`1099-R #${i + 1}: payer code 1 (early) but the ${r3.recipient ?? "taxpayer"} is over 59\xBD \u2014 no \xA7 72(t) penalty (age controls, not the box code)`);
       } else if ([...code].every((c2) => !PENALTY_EXEMPT_CODES.has(c2))) {
         add33("earlyDistributionSubjectToPenalty", taxable2);
-        notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars7(taxable2)} subject to the 10% \xA7 72(t) tax`);
+        notes.push(`1099-R #${i + 1}: code 1 and no age exception established \u2014 $${dollars8(taxable2)} subject to the 10% \xA7 72(t) tax`);
       }
     }
   }
@@ -84644,10 +85187,10 @@ function compileDocuments(docs, asOf, ctx = {}) {
     if (net >= 0n) {
       if (net > 0n)
         add33("selfEmploymentNetProfit", net);
-      notes.push(`Schedule C: $${dollars7(seGross)} gross (1099-NEC/K) \u2212 $${dollars7(expenses)} expenses = $${dollars7(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
+      notes.push(`Schedule C: $${dollars8(seGross)} gross (1099-NEC/K) \u2212 $${dollars8(expenses)} expenses = $${dollars8(net)} net profit \u2192 SE tax + QBI machinery engage on it`);
     } else {
       add33("scheduleCNetLoss", -net);
-      notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars7(-net)} \u2014 recorded as scheduleCNetLoss`);
+      notes.push(`Schedule C: expenses exceed 1099-NEC/K gross by $${dollars8(-net)} \u2014 recorded as scheduleCNetLoss`);
     }
   }
   for (const [i, t] of (docs.f1099ints ?? []).entries()) {
@@ -84655,7 +85198,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
       add33("taxableInterest", toCents(t.box1));
     if (t.box3 !== void 0 && toCents(t.box3) > 0n) {
       add33("taxableInterest", toCents(t.box3));
-      notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars7(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
+      notes.push(`1099-INT #${i + 1}: box 3 Treasury interest $${dollars8(toCents(t.box3))} is federally taxable (state returns exempt it \u2014 the state composers handle that subtraction)`);
     }
     if (t.box8 !== void 0)
       add33("taxExemptInterest", toCents(t.box8));
@@ -84666,7 +85209,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
     const total = toCents(d3.box1a);
     const qualified2 = d3.box1b !== void 0 ? toCents(d3.box1b) : 0n;
     if (qualified2 > total) {
-      throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars7(qualified2)}) exceeds box 1a (total, $${dollars7(total)}) \u2014 transcription error`);
+      throw new Error(`1099-DIV #${i + 1}: box 1b (qualified, $${dollars8(qualified2)}) exceeds box 1a (total, $${dollars8(total)}) \u2014 transcription error`);
     }
     if (qualified2 > 0n)
       add33("qualifiedDividends", qualified2);
@@ -84674,7 +85217,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
       add33("ordinaryDividends", total - qualified2);
     if (d3.box2a !== void 0 && toCents(d3.box2a) > 0n) {
       add33("__ltProceeds", toCents(d3.box2a));
-      notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars7(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
+      notes.push(`1099-DIV #${i + 1}: box 2a capital gain distributions $${dollars8(toCents(d3.box2a))} \u2014 long-term by statute (\xA7 852(b)(3)(B)), joined to the Schedule D long-term bucket`);
     }
     if (d3.box4 !== void 0)
       add33("federalTaxWithheld", toCents(d3.box4));
@@ -84703,7 +85246,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
       add33("longTermCapitalGains", ltNet);
     else if (ltNet < 0n)
       add33("longTermCapitalLoss", -ltNet);
-    notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars7(stNet)}, long-term net $${dollars7(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
+    notes.push(`Schedule D buckets from 1099-B/DIV: short-term net $${dollars8(stNet)}, long-term net $${dollars8(ltNet)} \u2014 the \xA7 1222 netting rules combine them (character preserved, \xA7 1211(b) caps any overall loss)`);
   }
   for (const [i, g] of (docs.f1099gs ?? []).entries()) {
     if (g.box1 !== void 0)
@@ -84711,7 +85254,7 @@ function compileDocuments(docs, asOf, ctx = {}) {
     if (g.box4 !== void 0)
       add33("federalTaxWithheld", toCents(g.box4));
     if (g.box2 !== void 0 && toCents(g.box2) > 0n) {
-      notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars7(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
+      notes.push(`1099-G #${i + 1}: box 2 state refund $${dollars8(toCents(g.box2))} NOT auto-included \u2014 taxable only to the extent the prior-year SALT deduction produced a benefit (\xA7 111); add it to otherOrdinaryIncome yourself if it did`);
     }
   }
   for (const dep of docs.dependents ?? []) {
@@ -84748,12 +85291,12 @@ function compileDocuments(docs, asOf, ctx = {}) {
   }
   const facts2 = { ...bools };
   for (const [id2, c2] of Object.entries(sums))
-    facts2[id2] = dollars7(c2);
+    facts2[id2] = dollars8(c2);
   for (const [id2, n] of Object.entries(ints))
     facts2[id2] = n;
   return { facts: facts2, notes, w2Box1Cents, missing, unsupported: unsupported6 };
 }
-var MAX_DOCS_PER_LIST, usd2, dob, documentsShape, toCents, dollars7;
+var MAX_DOCS_PER_LIST, usd2, dob, documentsShape, toCents, dollars8;
 var init_documents = __esm({
   "dist/documents.js"() {
     "use strict";
@@ -84839,7 +85382,7 @@ var init_documents = __esm({
       const cents2 = BigInt(m[2]) * 100n + BigInt((m[3] ?? "0").padEnd(2, "0"));
       return m[1] === "-" ? -cents2 : cents2;
     };
-    dollars7 = (c2) => `${c2 / 100n}.${(c2 % 100n < 0n ? -(c2 % 100n) : c2 % 100n).toString().padStart(2, "0")}`;
+    dollars8 = (c2) => `${c2 / 100n}.${(c2 % 100n < 0n ? -(c2 % 100n) : c2 % 100n).toString().padStart(2, "0")}`;
   }
 });
 
@@ -87141,21 +87684,28 @@ function createServer(options = {}) {
       return fail(err);
     }
   });
+  const lookupDate = (taxYear) => taxYear === void 0 ? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) : `${taxYear}-12-31`;
   server.registerTool("lookup_tax_parameter", {
-    description: "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Use this to fact-check ANY tax number before stating it \u2014 your training data likely predates the OBBBA.",
+    description: "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Federal law unless the query names a state ('California standard deduction'); every hit states its jurisdiction. A year in the query ('standard deduction 2025') selects that tax year when asOf is not given. Dollar amounts only, not rates. Use this to fact-check ANY tax number before stating it \u2014 your training data likely predates the OBBBA.",
     inputSchema: legacyJsonSchema(external_exports.object({
       query: external_exports.string().max(2e3).describe("plain-English search, e.g. 'standard deduction'"),
       asOf: external_exports.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()
     }).strict())
   }, async ({ query, asOf }) => {
-    const when = asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+    const scope = queryScope(query);
+    const when = asOf ?? lookupDate(scope.taxYear);
     const hits = lookupParameters(corpus, query, when);
+    const elsewhere = hits.some((h) => !scope.jurisdictions.includes(h.jurisdiction));
+    const note = scope.unclearStateCodes.length > 0 ? `${scope.unclearStateCodes.map((c2) => `"${c2}"`).join(", ")} was not read as a state \u2014 write the state's name in full to get its amounts` : asOf !== void 0 && scope.taxYear !== void 0 && asOf.slice(0, 4) !== String(scope.taxYear) ? `the query says ${scope.taxYear} but these are the rules in force on ${asOf}` : elsewhere ? `no ${scope.jurisdictions.join(", ")} rule matches \u2014 these hits are from other jurisdictions` : void 0;
     return ok({
       ok: true,
       query,
       asOf: when,
+      jurisdictions: scope.jurisdictions,
+      ...note ? { note } : {},
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
+        jurisdiction: h.jurisdiction,
         title: h.title,
         citation: h.citation,
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
@@ -87192,7 +87742,7 @@ function createServer(options = {}) {
     });
   });
   server.registerTool("verify_fact", {
-    description: "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Never states a verdict it cannot ground.",
+    description: "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Checked against federal law unless the query names a state ('Alabama standard deduction'), and never against another jurisdiction; the answer states the jurisdiction and the date it used. Name the amount in the law's words ('SALT cap', 'child tax credit per child', 'EITC investment income limit'): a verdict needs a rule named for every word of the query, and anything it cannot settle comes back unknown with the reason. A year or filing status in the query is used when asOf / filingStatus are not given. Dollar amounts only: a rate or a percentage comes back unknown. Never states a verdict it cannot ground.",
     inputSchema: legacyJsonSchema(external_exports.object({
       query: external_exports.string().max(2e3).describe("what the amount is, e.g. 'standard deduction'"),
       claimedAmount: money51,
@@ -87201,10 +87751,26 @@ function createServer(options = {}) {
     }).strict())
   }, async ({ query, claimedAmount, filingStatus, asOf }) => {
     try {
-      const when = asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+      const scope = queryScope(query);
+      const when = asOf ?? lookupDate(scope.taxYear);
+      if (typeof claimedAmount === "string" && /%\s*$/.test(claimedAmount)) {
+        return ok({
+          ok: true,
+          verdict: "unknown",
+          message: `${claimedAmount.trim()} is a percentage \u2014 this tool checks dollar amounts only (read a rate in the rule's formula with explain_rule)`,
+          jurisdictions: scope.jurisdictions,
+          asOf: when
+        });
+      }
       const result = factCheck(corpus, query, parseDollars(claimedAmount), when, filingStatus);
       if (result.verdict === "unknown") {
-        return ok({ ok: true, verdict: "unknown", message: result.message });
+        return ok({
+          ok: true,
+          verdict: "unknown",
+          message: result.message,
+          jurisdictions: result.jurisdictions,
+          asOf: when
+        });
       }
       if (result.verdict === "verified") {
         return ok({
@@ -87213,6 +87779,8 @@ function createServer(options = {}) {
           claimed: fmt5(BigInt(result.claimedCents)),
           rule: result.matchedRuleId,
           field: result.matchedField,
+          jurisdiction: result.jurisdiction,
+          effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
           citation: result.citation,
           asOf: when,
           corpusMerkleRoot: corpus.merkleRoot
@@ -87237,7 +87805,9 @@ function createServer(options = {}) {
         ok: true,
         verdict: "refuted",
         claimed: fmt5(BigInt(result.claimedCents)),
-        message: "no corpus value near this query equals the claim \u2014 the actual values are listed below",
+        message: "no corpus value near this query equals the claim \u2014 the first value listed is the one it was compared with",
+        jurisdiction: result.jurisdiction,
+        effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         nearbyValues: nearby,
         citation: result.citation,
         asOf: when,
@@ -87301,10 +87871,10 @@ var init_server3 = __esm({
       const abs = cents2 < 0n ? -cents2 : cents2;
       const digits = (abs / 100n).toString();
       const head = digits.length % 3 || 3;
-      let dollars8 = digits.slice(0, head);
+      let dollars9 = digits.slice(0, head);
       for (let i = head; i < digits.length; i += 3)
-        dollars8 += "," + digits.slice(i, i + 3);
-      return `${sign}$${dollars8}.${(abs % 100n).toString().padStart(2, "0")}`;
+        dollars9 += "," + digits.slice(i, i + 3);
+      return `${sign}$${dollars9}.${(abs % 100n).toString().padStart(2, "0")}`;
     };
     FORM_5695_FACTS = [
       "solarElectricCosts",
@@ -96105,9 +96675,9 @@ function formatMoney(cents2) {
   const sign = n < 0n ? "-" : "";
   if (n < 0n)
     n = -n;
-  const dollars8 = n / 100n;
+  const dollars9 = n / 100n;
   const rem = (n % 100n).toString().padStart(2, "0");
-  const grouped = dollars8.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const grouped = dollars9.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${sign}$${grouped}.${rem}`;
 }
 function formatValue(tv) {
@@ -96732,15 +97302,34 @@ init_dist3();
 init_dist();
 init_dist2();
 function runLookup(queryWords, flags) {
+  try {
+    return lookup(queryWords, flags);
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+}
+function lookup(queryWords, flags) {
   const corpus2 = getCorpus();
   const query = queryWords.join(" ");
-  const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  const scope = queryScope(query);
+  const asOf = flags.asOf ?? (scope.taxYear === void 0 ? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) : `${scope.taxYear}-12-31`);
   if (flags.expect !== void 0) {
+    if (/%\s*$/.test(flags.expect)) {
+      const message = `${flags.expect.trim()} is a percentage \u2014 lookup checks dollar amounts only (read a rate in the rule's formula with \`opentax explain\`)`;
+      if (flags.json) {
+        print({ ok: true, query, asOf, jurisdictions: scope.jurisdictions, verdict: "unknown", message });
+      } else {
+        console.log();
+        console.log(`${import_picocolors9.default.yellow("unknown")} \u2014 ${message}`);
+        console.log();
+      }
+      return EXIT.NOT_COVERED;
+    }
     const claimed = parseDollars(flags.expect);
     const result = factCheck(corpus2, query, claimed, asOf, flags.filingStatus);
     if (result.verdict === "unknown") {
       if (flags.json) {
-        print({ ok: true, query, asOf, claimed: claimed.toString(), verdict: "unknown", message: result.message });
+        print({ ok: true, query, asOf, jurisdictions: result.jurisdictions, claimed: claimed.toString(), verdict: "unknown", message: result.message });
         return EXIT.NOT_COVERED;
       }
       console.log();
@@ -96757,6 +97346,8 @@ function runLookup(queryWords, flags) {
         verdict: result.verdict,
         rule: result.matchedRuleId,
         field: result.matchedField,
+        jurisdiction: result.jurisdiction,
+        effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         actual: result.actualCents,
         citation: result.citation,
         corpusMerkleRoot: corpus2.merkleRoot
@@ -96781,9 +97372,11 @@ function runLookup(queryWords, flags) {
       ok: true,
       query,
       asOf,
+      jurisdictions: scope.jurisdictions,
       corpusMerkleRoot: corpus2.merkleRoot,
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
+        jurisdiction: h.jurisdiction,
         title: h.title,
         citation: h.citation,
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
@@ -96925,7 +97518,7 @@ function setup(flags) {
     target: flags.target ?? DEFAULT_TARGET
   };
 }
-var cents = (dollars8) => parseDollars(dollars8);
+var cents = (dollars9) => parseDollars(dollars9);
 function runSweep(flags) {
   try {
     const { corpus: corpus2, base, vary, asOf, target } = setup(flags);

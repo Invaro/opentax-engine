@@ -16,7 +16,7 @@ import { coerceFacts, ENGINE, evaluate, NeedsFactsError, OpenTaxError, parseDoll
 import type { Expr, Rule } from "@invaro/opentax-core";
 import { IncompleteReturnError } from "./completeness.js";
 import { COMPOSER_VERSION } from "./version.js";
-import { compareAcross, factCheck, findCliffs, HOSTED_CLIFF_LIMITS, lookupParameters, searchRules } from "@invaro/opentax-solve";
+import { compareAcross, factCheck, findCliffs, HOSTED_CLIFF_LIMITS, lookupParameters, queryScope, searchRules } from "@invaro/opentax-solve";
 import { composeForm2210, composeForm4562, composeStateReturn, form2210InputFromArgs, Form4562MissingInput, Form4562Refusal, form4562InputFromArgs, isIncompleteReturnRefusal, makeStateTaxEvaluator, MissingInput, stateReturnShape } from "@invaro/opentax-compose";
 import type { TargetRunner, TypedFacts } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
@@ -1119,11 +1119,15 @@ server.registerTool(
   },
 );
 
+/** The date a lookup uses when the caller gave none: the end of the tax year the query names, else today. */
+const lookupDate = (taxYear: number | undefined): string =>
+  taxYear === undefined ? new Date().toISOString().slice(0, 10) : `${taxYear}-12-31`;
+
 server.registerTool(
   "lookup_tax_parameter",
   {
     description:
-      "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Use this to fact-check ANY tax number before stating it — your training data likely predates the OBBBA.",
+      "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Federal law unless the query names a state ('California standard deduction'); every hit states its jurisdiction. A year in the query ('standard deduction 2025') selects that tax year when asOf is not given. Dollar amounts only, not rates. Use this to fact-check ANY tax number before stating it — your training data likely predates the OBBBA.",
     inputSchema: legacyJsonSchema(z
       .object({
         query: z.string().max(2000).describe("plain-English search, e.g. 'standard deduction'"),
@@ -1132,14 +1136,26 @@ server.registerTool(
       .strict()),
   },
   async ({ query, asOf }) => {
-    const when = asOf ?? new Date().toISOString().slice(0, 10);
+    const scope = queryScope(query);
+    const when = asOf ?? lookupDate(scope.taxYear);
     const hits = lookupParameters(corpus, query, when);
+    const elsewhere = hits.some((h) => !scope.jurisdictions.includes(h.jurisdiction));
+    const note = scope.unclearStateCodes.length > 0
+      ? `${scope.unclearStateCodes.map((c) => `"${c}"`).join(", ")} was not read as a state — write the state's name in full to get its amounts`
+      : asOf !== undefined && scope.taxYear !== undefined && asOf.slice(0, 4) !== String(scope.taxYear)
+        ? `the query says ${scope.taxYear} but these are the rules in force on ${asOf}`
+      : elsewhere
+        ? `no ${scope.jurisdictions.join(", ")} rule matches — these hits are from other jurisdictions`
+        : undefined;
     return ok({
       ok: true,
       query,
       asOf: when,
+      jurisdictions: scope.jurisdictions,
+      ...(note ? { note } : {}),
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
+        jurisdiction: h.jurisdiction,
         title: h.title,
         citation: h.citation,
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
@@ -1193,7 +1209,7 @@ server.registerTool(
   "verify_fact",
   {
     description:
-      "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Never states a verdict it cannot ground.",
+      "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Checked against federal law unless the query names a state ('Alabama standard deduction'), and never against another jurisdiction; the answer states the jurisdiction and the date it used. Name the amount in the law's words ('SALT cap', 'child tax credit per child', 'EITC investment income limit'): a verdict needs a rule named for every word of the query, and anything it cannot settle comes back unknown with the reason. A year or filing status in the query is used when asOf / filingStatus are not given. Dollar amounts only: a rate or a percentage comes back unknown. Never states a verdict it cannot ground.",
     inputSchema: legacyJsonSchema(z
       .object({
         query: z.string().max(2000).describe("what the amount is, e.g. 'standard deduction'"),
@@ -1205,7 +1221,17 @@ server.registerTool(
   },
   async ({ query, claimedAmount, filingStatus, asOf }) => {
     try {
-      const when = asOf ?? new Date().toISOString().slice(0, 10);
+      const scope = queryScope(query);
+      const when = asOf ?? lookupDate(scope.taxYear);
+      if (typeof claimedAmount === "string" && /%\s*$/.test(claimedAmount)) {
+        return ok({
+          ok: true,
+          verdict: "unknown",
+          message: `${claimedAmount.trim()} is a percentage — this tool checks dollar amounts only (read a rate in the rule's formula with explain_rule)`,
+          jurisdictions: scope.jurisdictions,
+          asOf: when,
+        });
+      }
       const result = factCheck(
         corpus,
         query,
@@ -1214,7 +1240,13 @@ server.registerTool(
         filingStatus,
       );
       if (result.verdict === "unknown") {
-        return ok({ ok: true, verdict: "unknown", message: result.message });
+        return ok({
+          ok: true,
+          verdict: "unknown",
+          message: result.message,
+          jurisdictions: result.jurisdictions,
+          asOf: when,
+        });
       }
       if (result.verdict === "verified") {
         return ok({
@@ -1223,13 +1255,16 @@ server.registerTool(
           claimed: fmt(BigInt(result.claimedCents)),
           rule: result.matchedRuleId,
           field: result.matchedField,
+          jurisdiction: result.jurisdiction,
+          effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
           citation: result.citation,
           asOf: when,
           corpusMerkleRoot: corpus.merkleRoot,
         });
       }
-      // refuted: no corpus value matches the claim — report the values that
-      // DO exist near this query so the agent can state the right number
+      // refuted: the claim is on no rule named for the query — report the
+      // amount it was compared with first, then the other values near this
+      // query, so the agent can state the right number
       const nearby = [
         { rule: result.matchedRuleId, field: result.matchedField, value: fmt(BigInt(result.actualCents)) },
         ...result.alternatives.flatMap((h) => [
@@ -1250,7 +1285,9 @@ server.registerTool(
         verdict: "refuted",
         claimed: fmt(BigInt(result.claimedCents)),
         message:
-          "no corpus value near this query equals the claim — the actual values are listed below",
+          "no corpus value near this query equals the claim — the first value listed is the one it was compared with",
+        jurisdiction: result.jurisdiction,
+        effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         nearbyValues: nearby,
         citation: result.citation,
         asOf: when,

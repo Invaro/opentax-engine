@@ -82,7 +82,9 @@ opentax invert --status single --goal 3875 --lo 30000 --hi 100000 --json
 opentax search kiddie tax --json
 #    -> { ok, covered, hits: [{ruleId, citation, excerpt, ...}] }  # full-text law search
 opentax lookup standard deduction --expect 32200 --filing-status mfj --json
-#    -> { ok, verdict: "verified" | "refuted" | "unknown", citation }  # exits 0 / 1 / 3
+#    -> { ok, verdict: "verified" | "refuted" | "unknown", jurisdiction, citation }  # exits 0 / 1 / 3
+#    federal unless the query names a state ("Alabama standard deduction"); name the amount in the law's words
+#    ("SALT cap", "child tax credit per child"); "unknown" says why (a rate, a figure under another name, no such rule)
 ```
 
 ## Things worth knowing

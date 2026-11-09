@@ -12198,12 +12198,12 @@ var money2 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef2 = (ruleId) => ({ kind: "rule", ruleId });
 var RATES = ["10", "12", "22", "24", "32", "35", "37"];
 function table(lowerBoundsDollars) {
-  return lowerBoundsDollars.map((dollars7, i) => ({
-    threshold: String(BigInt(dollars7) * 100n),
+  return lowerBoundsDollars.map((dollars8, i) => ({
+    threshold: String(BigInt(dollars8) * 100n),
     rate: { num: RATES[i], den: "100" }
   }));
 }
-var d = (dollars7) => money2(String(BigInt(dollars7) * 100n));
+var d = (dollars8) => money2(String(BigInt(dollars8) * 100n));
 var B25 = {
   single: table([0, 11925, 48475, 103350, 197300, 250525, 626350]),
   mfj: table([0, 23850, 96950, 206700, 394600, 501050, 751600]),
@@ -12623,7 +12623,7 @@ var fact3 = (factId) => ({ kind: "fact", factId });
 var money3 = (cents2) => ({ kind: "money", cents: cents2 });
 var ruleRef3 = (ruleId) => ({ kind: "rule", ruleId });
 var param2 = (name) => ({ kind: "param", name });
-var d2 = (dollars7) => money3(String(BigInt(dollars7) * 100n));
+var d2 = (dollars8) => money3(String(BigInt(dollars8) * 100n));
 var add = (...args) => ({ kind: "add", args });
 var sub = (left, right) => ({ kind: "sub", left, right });
 var max02 = (arg) => ({ kind: "max0", arg });
@@ -31978,9 +31978,9 @@ var riRules = [
       let table2 = dollarsFromScaled11(times10(agi2, "8"));
       for (let i = bands2.length - 1; i >= 0; i--)
         table2 = iff26(lt18(agi2, money42(bands2[i][0])), money42(bands2[i][1]), table2);
-      const lookup = add27(table2, max030(fact45("riLargePurchasesNetUseTax")));
+      const lookup2 = add27(table2, max030(fact45("riLargePurchasesNetUseTax")));
       const actual = max030(sub31(rd24(pct11(max030(fact45("riUseTaxPurchases")), "7", "100")), max030(fact45("riSalesTaxPaidOtherStates"))));
-      return iff26(fact45("riUseTaxLookupTable"), lookup, actual);
+      return iff26(fact45("riUseTaxLookupTable"), lookup2, actual);
     })()
   },
   {
@@ -42450,9 +42450,9 @@ function formatMoney(cents2) {
   const sign = n < 0n ? "-" : "";
   if (n < 0n)
     n = -n;
-  const dollars7 = n / 100n;
+  const dollars8 = n / 100n;
   const rem = (n % 100n).toString().padStart(2, "0");
-  const grouped = dollars7.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const grouped = dollars8.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${sign}$${grouped}.${rem}`;
 }
 function formatValue(tv) {
@@ -43283,18 +43283,6 @@ function compareAcross(corpus, baseFacts, options) {
 
 // ../solve/dist/lookup.js
 var tokenize = (s2) => s2.toLowerCase().replace(/[^a-z0-9]+/g, " ").split(" ").filter((t) => t.length > 2);
-function extractByStatus(rule8) {
-  const out = {};
-  walkExpr(rule8.formula, (e) => {
-    if (e.kind === "match" && e.on.kind === "fact" && e.on.factId === "filingStatus") {
-      for (const c2 of e.cases) {
-        if (c2.value.kind === "money")
-          out[c2.when] = c2.value.cents;
-      }
-    }
-  });
-  return out;
-}
 var JURISDICTION_NAMES = {
   "us.il": "illinois il il-1040",
   "us.ca": "california ca ftb form 540",
@@ -43323,52 +43311,486 @@ var JURISDICTION_NAMES = {
   "us.mt": "montana mt form 2 billings missoula bozeman helena elderly homeowner renter credit net long-term capital gains ordinary income",
   "us.ri": "rhode island ri ri-1040 providence warwick cranston property tax relief credit 1040h social security modification pension modification"
 };
-function lookupParameters(corpus, query, asOf) {
-  const tokens = [...new Set(tokenize(query.slice(0, 500)))].slice(0, 12);
-  if (tokens.length === 0)
-    return [];
-  const hits = [];
-  for (const rule8 of corpus.rules) {
-    if (asOf && !(rule8.effectiveFrom <= asOf && (rule8.effectiveTo === void 0 || asOf < rule8.effectiveTo))) {
-      continue;
+var FEDERAL = "us.federal";
+var PLACE_NAMES = {
+  al: "alabama",
+  ak: "alaska",
+  az: "arizona",
+  ar: "arkansas",
+  ca: "california",
+  co: "colorado",
+  ct: "connecticut",
+  de: "delaware",
+  dc: "district of columbia",
+  fl: "florida",
+  ga: "georgia",
+  hi: "hawaii",
+  id: "idaho",
+  il: "illinois",
+  in: "indiana",
+  ia: "iowa",
+  ks: "kansas",
+  ky: "kentucky",
+  la: "louisiana",
+  me: "maine",
+  md: "maryland",
+  ma: "massachusetts",
+  mi: "michigan",
+  mn: "minnesota",
+  ms: "mississippi",
+  mo: "missouri",
+  mt: "montana",
+  ne: "nebraska",
+  nv: "nevada",
+  nh: "new hampshire",
+  nj: "new jersey",
+  nm: "new mexico",
+  ny: "new york",
+  nc: "north carolina",
+  nd: "north dakota",
+  oh: "ohio",
+  ok: "oklahoma",
+  or: "oregon",
+  pa: "pennsylvania",
+  ri: "rhode island",
+  sc: "south carolina",
+  sd: "south dakota",
+  tn: "tennessee",
+  tx: "texas",
+  ut: "utah",
+  vt: "vermont",
+  va: "virginia",
+  wa: "washington",
+  wv: "west virginia",
+  wi: "wisconsin",
+  wy: "wyoming",
+  pr: "puerto rico",
+  gu: "guam",
+  vi: "virgin islands",
+  as: "american samoa",
+  mp: "northern mariana islands"
+};
+var PLACE_ALIASES = [
+  ["new york city", "ny"],
+  ["nyc", "ny"],
+  ["kansas city", "mo"]
+];
+var PLACE_PATTERNS = [
+  ...PLACE_ALIASES,
+  ...Object.entries(PLACE_NAMES).map(([code, name]) => [name, code])
+].sort((x2, y) => y[0].length - x2[0].length);
+var UNCLEAR_CODES = /* @__PURE__ */ new Set([
+  "IN",
+  "OR",
+  "ME",
+  "OK",
+  "HI",
+  "OH",
+  "ID",
+  "SD",
+  "VA",
+  "LA",
+  "MA",
+  "MD",
+  "DC",
+  "AS",
+  "VI",
+  "MP"
+]);
+var placeTitle = (code) => PLACE_NAMES[code.toLowerCase()].replace(/\b(?!of\b)[a-z]/g, (l) => l.toUpperCase());
+var STATUS_PATTERNS = [
+  // a bare "joint" or "separate" is a status only at the end of the query:
+  // "Ohio joint filing credit" names a credit
+  ["mfj", /\b(?:mfj|married (?:filing )?joint(?:ly)?|filing joint(?:ly)?|jointly|joint (?:returns?|filers?)|joint(?= *$))\b/g],
+  ["mfs", /\b(?:mfs|married (?:filing )?separate(?:ly)?|filing separate(?:ly)?|separately|separate (?:returns?|filers?)|separate(?= *$))\b/g],
+  ["hoh", /\b(?:hoh|heads? of (?:a )?household)\b/g],
+  ["qss", /\b(?:qss|(?:qualifying )?surviving spouses?|qualifying widow(?:er)?s?)\b/g],
+  ["single", /\b(?:single|unmarried)(?! (?:family|member|premium|parent))(?: filers?)?\b/g]
+];
+var FILLER = /* @__PURE__ */ new Set([
+  "a",
+  "an",
+  "of",
+  "in",
+  "on",
+  "to",
+  "is",
+  "it",
+  "at",
+  "by",
+  "or",
+  "as",
+  "if",
+  "be",
+  "do",
+  "my",
+  "we",
+  "i",
+  "s",
+  "vs",
+  "so",
+  "am",
+  "us",
+  "the",
+  "and",
+  "for",
+  "what",
+  "whats",
+  "how",
+  "much",
+  "many",
+  "are",
+  "was",
+  "were",
+  "with",
+  "from",
+  "that",
+  "this",
+  "does",
+  "did",
+  "can",
+  "will",
+  "would",
+  "has",
+  "have",
+  "had",
+  "who",
+  "when",
+  "which",
+  "there",
+  "you",
+  "your",
+  "their",
+  "its",
+  "any",
+  "all",
+  "about",
+  "than",
+  "year",
+  "federal",
+  "irs",
+  "under",
+  "state",
+  "rate",
+  "rates",
+  "percent",
+  "percentage",
+  "pct",
+  "dollar",
+  "dollars",
+  "current",
+  "currently",
+  "now",
+  "today",
+  "filing",
+  "filer",
+  "filers",
+  "status",
+  "taxpayer",
+  "taxpayers",
+  "get",
+  "claim",
+  "equal",
+  "equals"
+]);
+var LOOSE = /* @__PURE__ */ new Set(["amount", "value", "figure", "total"]);
+var QUALIFIER = {
+  cap: "cap",
+  limit: "cap",
+  limitation: "cap",
+  max: "cap",
+  maximum: "cap",
+  ceiling: "cap",
+  floor: "floor",
+  min: "floor",
+  minimum: "floor",
+  threshold: "threshold",
+  thresh: "threshold",
+  phaseout: "threshold",
+  phase: "threshold",
+  start: "threshold",
+  cutoff: "threshold"
+};
+var CONDITIONAL = /* @__PURE__ */ new Set([
+  "end",
+  "step",
+  "range",
+  "reduction",
+  "bracket",
+  "tier",
+  "row",
+  "band",
+  "break",
+  "anchor",
+  "width",
+  "gap",
+  "cliff",
+  "completed",
+  "top",
+  "zero",
+  "rate",
+  "pct",
+  "percentage",
+  "table",
+  "increment"
+]);
+var stem2 = (t) => t.length > 3 && t.endsWith("s") && !t.endsWith("ss") ? t.slice(0, -1) : t;
+var termSource = (t) => t.length <= 3 ? `\\b${t}(?:s|es)?\\b` : `\\b${t}[a-z]{0,3}\\b`;
+var termPattern = (t) => new RegExp(termSource(t));
+var phrasePattern = ([a, b]) => new RegExp(`${termSource(a)}[^a-z0-9]+(?:[a-z0-9]+[^a-z0-9]+)?${b}`);
+var sameWord = (a, b) => {
+  const [x2, y] = [stem2(a), stem2(b)];
+  if (x2 === y)
+    return true;
+  const [short, long] = x2.length <= y.length ? [x2, y] : [y, x2];
+  return short.length > 3 && long.startsWith(short) && long.length - short.length <= 3;
+};
+var onePhaseout = (s2) => s2.replace(/\bphase[- ]?outs?\b/g, "phaseout");
+function queryScope(query) {
+  const { jurisdictions, unclearStateCodes, taxYear, filingStatus, asksForRate } = parseQuery(query);
+  return {
+    jurisdictions,
+    unclearStateCodes,
+    ...taxYear === void 0 ? {} : { taxYear },
+    ...filingStatus === void 0 ? {} : { filingStatus },
+    asksForRate
+  };
+}
+function parseQuery(query) {
+  const q = query.slice(0, 500).replace(/\bwashington,?\s+d\.?c\.?(?![a-z0-9])|\bd\.c\.(?![a-z0-9])/gi, " district of columbia ");
+  const jurisdictions = /* @__PURE__ */ new Set();
+  const unclear = /* @__PURE__ */ new Set();
+  const asksForRate = /%|\b(?:rates?|percent|percentage|pct)\b/i.test(q);
+  const noAmounts = q.replace(/\$\s?\d[\d,]*(?:\.\d+)?|(?<![\d.])\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?\s?%|(?<![\d.])\d+\.\d+(?![\d.])/g, " ");
+  const years2 = /* @__PURE__ */ new Set();
+  let rest = noAmounts.replace(/(?<![\d$,.-]|§\s?|\b(?:section|sec\.?|form|pub\.?|publication|notice)\s)(?:19|20)\d\d(?![A-Za-z\d]|[,.]\d|-\d)/gi, (y) => {
+    years2.add(Number(y));
+    return " ";
+  });
+  const readCode = (code, whole) => {
+    if (PLACE_NAMES[code.toLowerCase()] === void 0)
+      return whole;
+    if (UNCLEAR_CODES.has(code))
+      unclear.add(code);
+    else
+      jurisdictions.add(`us.${code.toLowerCase()}`);
+    return " ";
+  };
+  rest = rest.replace(/(?<![A-Za-z0-9.])([A-Z])\.([A-Z])\.(?![A-Za-z0-9])/g, (whole, a, b) => readCode(a + b, whole)).replace(/(?<![A-Za-z0-9.'’-])[A-Z]{2}(?![A-Za-z0-9.-]|['’](?!s\b))/g, (code) => readCode(code, code));
+  let text = ` ${onePhaseout(rest.toLowerCase()).replace(/(\d)\(([a-z])\)/g, "$1$2").replace(/[^a-z0-9%]+/g, " ").trim()} `;
+  for (const [name, code] of PLACE_PATTERNS) {
+    const needle = ` ${name} `;
+    while (text.includes(needle)) {
+      jurisdictions.add(`us.${code}`);
+      text = text.replace(needle, "  ");
     }
-    const paramWords = Object.keys(rule8.parameters ?? {}).map((n) => n.replace(/([A-Z])/g, " $1").toLowerCase()).join(" ");
-    const haystackStrong = `${rule8.id} ${rule8.title} ${paramWords} ${JURISDICTION_NAMES[rule8.jurisdiction] ?? ""}`.toLowerCase();
-    const haystackWeak = `${rule8.citation.source} ${rule8.citation.section} ${rule8.citation.excerpt}`.toLowerCase();
+  }
+  const statuses = /* @__PURE__ */ new Set();
+  for (const [status, pattern] of STATUS_PATTERNS) {
+    text = text.replace(pattern, () => {
+      statuses.add(status);
+      return " ";
+    });
+  }
+  text = text.replace(/\b(?:married(?: couples?)?|couples?)\b/g, " ");
+  if (/\b(?:joint|separate)\b/.test(text))
+    statuses.add("unclear");
+  const named = [...jurisdictions].sort(compareIds);
+  const federalToo = named.length > 0 && /\b(?:federal|irs)\b/.test(text);
+  if (named.length === 0)
+    named.push(FEDERAL);
+  const all = text.split(" ").filter(Boolean).slice(0, 80);
+  const kept = [];
+  for (const w of all) {
+    if (FILLER.has(w) || /^\d{1,2}$/.test(w))
+      continue;
+    if (w.length === 2 && PLACE_NAMES[w] !== void 0)
+      unclear.add(w.toUpperCase());
+    else
+      kept.push(stem2(w));
+  }
+  const distinct = [...new Set(kept)];
+  const terms = distinct.slice(0, 12);
+  const phrases = [];
+  for (let i = 0; i + 1 < kept.length && phrases.length < 12; i++) {
+    if (kept[i] !== kept[i + 1])
+      phrases.push([kept[i], kept[i + 1]]);
+  }
+  return {
+    jurisdictions: named,
+    unclearStateCodes: [...unclear].sort(),
+    taxYear: years2.size === 1 ? [...years2][0] : void 0,
+    filingStatus: statuses.size === 1 && !statuses.has("unclear") ? [...statuses][0] : void 0,
+    asksForRate,
+    federalToo,
+    terms,
+    subject: terms.filter((t) => QUALIFIER[t] === void 0 && !LOOSE.has(t)),
+    qualifiers: new Set(terms.flatMap((t) => QUALIFIER[t] ?? [])),
+    words: new Set(all.map(stem2)),
+    numbers: new Set(all.filter((w) => /^\d{1,2}$/.test(w))),
+    phrases,
+    truncated: distinct.length > terms.length
+  };
+}
+var STATUS_WORDS = {
+  mfj: ["mfj"],
+  joint: ["mfj"],
+  married: ["mfj", "mfs"],
+  mfs: ["mfs"],
+  separate: ["mfs"],
+  single: ["single"],
+  unmarried: ["single", "hoh"],
+  hoh: ["hoh"],
+  hof: ["hoh"],
+  head: ["hoh"],
+  qss: ["qss"],
+  qw: ["qss"],
+  surviving: ["qss"],
+  widow: ["qss"]
+};
+var PLAIN = /* @__PURE__ */ new Set(["per", "amount", "total", "each", "other", "others", "for", "of", "the", "and", "or", "to"]);
+var nameWords = (name) => (name.match(/[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+/g) ?? []).map((w) => w.toLowerCase());
+function parameterOf(name, cents2) {
+  const words = nameWords(name);
+  const statusOf2 = (w) => STATUS_WORDS[w.replace(/\d+k?$/, "")];
+  return {
+    name,
+    cents: cents2,
+    words,
+    text: onePhaseout(words.join(" ")),
+    statuses: [...new Set(words.flatMap((w) => statusOf2(w) ?? []))],
+    base: words.filter((w) => statusOf2(w) === void 0 && w !== "other" && w !== "others").join(" "),
+    kinds: [...new Set(words.flatMap((w) => QUALIFIER[w] ?? []))],
+    conditional: words.filter((w) => CONDITIONAL.has(w)),
+    own: words.filter((w) => statusOf2(w) === void 0 && QUALIFIER[w] === void 0 && !CONDITIONAL.has(w) && !PLAIN.has(w) && !/^\d+k?$/.test(w))
+  };
+}
+function formulaUse(rule8, parameters) {
+  const tables = /* @__PURE__ */ new Map();
+  const rates = /* @__PURE__ */ new Map();
+  let reads = 0;
+  let plainTables = 0;
+  walkExpr(rule8.formula, (e) => {
+    if (e.kind === "fact" && e.factId === "filingStatus")
+      reads += 1;
+    if (e.kind === "mulRate")
+      rates.set(`${e.rate.num}/${e.rate.den}`, [BigInt(e.rate.num), BigInt(e.rate.den)]);
+    if (e.kind === "match" && e.on.kind === "fact" && e.on.factId === "filingStatus") {
+      const table2 = {};
+      for (const c2 of e.cases)
+        if (c2.value.kind === "money")
+          table2[c2.when] = c2.value.cents;
+      if (Object.keys(table2).length === e.cases.length && (e.else === void 0 || e.else.kind === "money")) {
+        plainTables += 1;
+      }
+      if (Object.keys(table2).length > 0)
+        tables.set(JSON.stringify(Object.entries(table2).sort()), table2);
+    }
+  });
+  const labelledSets = new Set(parameters.filter((p2) => p2.statuses.length > 0).map((p2) => p2.base)).size;
+  return {
+    // several different tables in one rule cannot be told apart by a lookup
+    byFilingStatus: tables.size === 1 ? [...tables.values()][0] : {},
+    tables: [...tables.values()],
+    statusAdjusts: reads > plainTables + labelledSets,
+    rates: [...rates.values()]
+  };
+}
+var INDEX = /* @__PURE__ */ new WeakMap();
+function indexOf(corpus) {
+  let index = INDEX.get(corpus.rules);
+  if (index === void 0) {
+    index = corpus.rules.map((rule8) => {
+      const parameters = Object.entries(rule8.parameters ?? {}).filter(([, p2]) => p2.type === "money").map(([name2, p2]) => parameterOf(name2, String(p2.value)));
+      const paramWords = Object.keys(rule8.parameters ?? {}).map((n) => nameWords(n).join(" ")).join(" ");
+      const idText = rule8.id.replace(/[._]/g, " ").toLowerCase();
+      const title = onePhaseout(rule8.title.toLowerCase());
+      const name = `${onePhaseout(idText)} ${title.split(/ [—–-] |[(:;]/)[0]}`;
+      const literals = /* @__PURE__ */ new Set();
+      walkExpr(rule8.formula, (e) => {
+        if (e.kind === "money" && e.cents !== "0")
+          literals.add(e.cents);
+      });
+      return {
+        rule: rule8,
+        name,
+        idText,
+        named: `${name} ${onePhaseout(paramWords)}`,
+        literals: [...literals],
+        title,
+        strong: `${onePhaseout(idText)} ${title} ${onePhaseout(paramWords)}`,
+        weak: onePhaseout(`${rule8.citation.source} ${rule8.citation.section} ${rule8.citation.excerpt ?? ""}`.toLowerCase()),
+        parameters,
+        ...formulaUse(rule8, parameters)
+      };
+    });
+    INDEX.set(corpus.rules, index);
+  }
+  return index;
+}
+var inForce = (rule8, asOf) => asOf === void 0 || rule8.effectiveFrom <= asOf && (rule8.effectiveTo === void 0 || asOf < rule8.effectiveTo);
+var hasValues = (h) => Object.keys(h.parameters).length > 0 || Object.keys(h.byFilingStatus).length > 0;
+function rank2(corpus, scope, asOf) {
+  const patterns = scope.terms.map(termPattern);
+  const phrases = scope.phrases.map(phrasePattern);
+  const asked = [];
+  const others = [];
+  const namesPlace = scope.jurisdictions.some((j) => j !== FEDERAL);
+  for (const indexed of indexOf(corpus)) {
+    const { rule: rule8, strong, title, weak } = indexed;
+    if (!inForce(rule8, asOf))
+      continue;
+    const isAsked = scope.jurisdictions.includes(rule8.jurisdiction);
     let score = 0;
-    for (const t of tokens) {
-      if (haystackStrong.includes(t))
+    for (const p2 of patterns) {
+      if (p2.test(strong))
         score += 2;
-      else if (haystackWeak.includes(t))
+      else if (p2.test(weak))
         score += 1;
     }
-    if (score === 0)
+    if (score === 0 && !(patterns.length === 0 && namesPlace && isAsked))
       continue;
-    const parameters = {};
-    for (const [name, p2] of Object.entries(rule8.parameters ?? {})) {
-      if (p2.type === "money")
-        parameters[name] = String(p2.value);
+    for (const p2 of phrases)
+      if (p2.test(strong))
+        score += 1;
+    let lead = Number.MAX_SAFE_INTEGER;
+    for (const p2 of patterns) {
+      const at = title.search(p2);
+      if (at !== -1)
+        lead = Math.min(lead, title.slice(0, at).split(/[^a-z0-9]+/).filter(Boolean).length);
     }
-    const byFilingStatus = extractByStatus(rule8);
-    if (Object.keys(parameters).length === 0 && Object.keys(byFilingStatus).length === 0) {
-      score -= 1;
-      if (score <= 0)
-        continue;
-    }
-    hits.push({
+    const hit = {
       ruleId: rule8.id,
       version: rule8.version,
+      jurisdiction: rule8.jurisdiction,
       title: rule8.title,
       citation: rule8.citation,
       effectiveFrom: rule8.effectiveFrom,
       effectiveTo: rule8.effectiveTo,
-      parameters,
-      byFilingStatus,
+      parameters: Object.fromEntries(indexed.parameters.map((p2) => [p2.name, p2.cents])),
+      byFilingStatus: { ...indexed.byFilingStatus },
       score
-    });
+    };
+    (isAsked ? asked : others).push({ hit, rule: indexed, lead });
   }
-  hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
-  return hits.slice(0, 5);
+  const order = (x2, y) => y.hit.score - x2.hit.score || Number(hasValues(y.hit)) - Number(hasValues(x2.hit)) || x2.lead - y.lead || Number(Object.keys(y.hit.byFilingStatus).length > 0) - Number(Object.keys(x2.hit.byFilingStatus).length > 0) || compareIds(x2.hit.ruleId, y.hit.ruleId) || y.hit.version - x2.hit.version;
+  asked.sort(order);
+  others.sort(order);
+  return { asked, others };
+}
+function checkDate(asOf) {
+  if (asOf !== void 0 && !/^\d{4}-\d{2}-\d{2}$/.test(asOf)) {
+    throw new RangeError(`asOf must be a date like "2026-12-31", got ${JSON.stringify(String(asOf).slice(0, 40))}`);
+  }
+}
+var yearEnd = (scope, asOf) => asOf ?? (scope.taxYear === void 0 ? void 0 : `${scope.taxYear}-12-31`);
+function lookupParameters(corpus, query, asOf) {
+  checkDate(asOf);
+  const scope = parseQuery(query);
+  const { asked, others } = rank2(corpus, scope, yearEnd(scope, asOf));
+  const namesPlace = scope.jurisdictions.some((j) => j !== FEDERAL);
+  const ranked = asked.length > 0 || namesPlace ? asked : others;
+  return ranked.slice(0, 5).map((r3) => r3.hit);
 }
 var SNIPPET_LEN = 280;
 function makeSnippet(excerpt, tokens) {
@@ -43455,72 +43877,212 @@ function searchRules(corpus, query, asOf, limit = 8) {
   hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
   return hits.slice(0, Math.max(1, Math.min(limit, 20)));
 }
+function ruleIsAskedFor(rule8, scope) {
+  const words = onePhaseout(rule8.rule.id.split(".").slice(2).join(" ").replace(/_/g, " ")).split(" ");
+  return words.every((w) => {
+    const kind = QUALIFIER[w];
+    if (kind !== void 0 && kind !== "cap")
+      return scope.qualifiers.has(kind);
+    return !CONDITIONAL.has(w) || scope.words.has(w);
+  });
+}
+function candidatesOf(rule8, scope, status) {
+  const unnamed = scope.subject.filter((t) => !termPattern(t).test(rule8.name)).map(termPattern);
+  const numbers = [...scope.numbers].filter((n) => !new RegExp(`(?<![0-9])${n}(?![0-9])`).test(rule8.idText));
+  let parameters = rule8.parameters.filter((p2) => unnamed.every((t) => t.test(p2.text)) && numbers.every((n) => p2.words.includes(n)) && // and a numbered parameter (`max2`, `tier1Max`) needs its number in the query
+  p2.words.every((w) => !/^\d+$/.test(w) || scope.numbers.has(w) || scope.words.has(w) || w === String(scope.taxYear)) && // and the parameter's own words must be the query's: `educatorCap` is
+  // not "the cap", `refundableCapPerChild` is not "per child"
+  p2.own.every((w) => [...scope.words].some((q) => sameWord(w, q))) && !p2.cents.startsWith("-"));
+  const answersKind = parameters.some((p2) => p2.kinds.some((k) => scope.qualifiers.has(k)));
+  parameters = parameters.filter((p2) => {
+    if (p2.conditional.length > 0 && !p2.conditional.some((w) => scope.words.has(w)))
+      return false;
+    if (scope.qualifiers.size === 0)
+      return p2.kinds.every((k) => k === "cap");
+    return p2.kinds.some((k) => scope.qualifiers.has(k));
+  });
+  if (status !== void 0) {
+    parameters = parameters.filter((p2) => {
+      if (p2.statuses.length > 0)
+        return p2.statuses.includes(status);
+      if (rule8.statusAdjusts)
+        return false;
+      const siblings = rule8.parameters.filter((q) => q !== p2 && q.base === p2.base && q.statuses.length > 0);
+      return !siblings.some((q) => q.statuses.includes(status)) && !(status === "qss" && siblings.length > 0);
+    });
+  }
+  const table2 = unnamed.length > 0 || numbers.length > 0 || answersKind ? [] : status === void 0 ? Object.entries(rule8.byFilingStatus).map(([k, v]) => [`byFilingStatus.${k}`, v]) : rule8.byFilingStatus[status] !== void 0 ? [[`byFilingStatus.${status}`, rule8.byFilingStatus[status]]] : [];
+  return [...table2, ...parameters.map((p2) => [p2.name, p2.cents])];
+}
+function everyAmountOf(rule8, scope, status) {
+  const parameters = rule8.parameters.filter((p2) => scope.qualifiers.size === 0 || p2.kinds.length === 0 || p2.kinds.some((k) => scope.qualifiers.has(k)) || // "MAGI limit" still points at `magiThreshold`
+  p2.own.length > 0 && p2.own.every((w) => [...scope.words].some((q) => sameWord(w, q))));
+  const tables = rule8.tables.flatMap((t) => Object.entries(t).filter(([k]) => status === void 0 || k === status).map(([k, v]) => [`byFilingStatus.${k}`, v]));
+  const inTables = new Set(rule8.tables.flatMap((t) => Object.values(t)));
+  const literals = rule8.literals.filter((v) => !inTables.has(v)).map((v) => ["an amount in the formula", v]);
+  return [...tables, ...parameters.map((p2) => [p2.name, p2.cents]), ...literals];
+}
+var dollars6 = (cents2) => {
+  const c2 = BigInt(cents2);
+  const abs = c2 < 0n ? -c2 : c2;
+  const whole = (abs / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${c2 < 0n ? "-" : ""}$${whole}.${String(abs % 100n).padStart(2, "0")}`;
+};
 function factCheck(corpus, query, claimedCents, asOf, filingStatus) {
-  const hits = lookupParameters(corpus, query, asOf);
-  if (hits.length === 0) {
-    return {
-      verdict: "unknown",
-      message: `no corpus rule matches "${query}" \u2014 the claim cannot be checked against this corpus`,
-      alternatives: []
-    };
+  checkDate(asOf);
+  const scope = parseQuery(query);
+  const when = yearEnd(scope, asOf);
+  const status = filingStatus ?? scope.filingStatus;
+  const { asked, others } = rank2(corpus, scope, when);
+  const hits = asked.slice(0, 5).map((r3) => r3.hit);
+  const unknown2 = (message, alternatives = hits) => ({
+    verdict: "unknown",
+    message,
+    jurisdictions: scope.jurisdictions,
+    ...when === void 0 ? {} : { asOf: when },
+    alternatives
+  });
+  const places = scope.jurisdictions.join(", ");
+  const onDate = when === void 0 ? "" : ` in force on ${when}`;
+  if (scope.unclearStateCodes.length > 0) {
+    const names = scope.unclearStateCodes.map((c2) => `"${c2}" (${placeTitle(c2)})`).join(", ");
+    return unknown2(`${names} may be a state or an ordinary word \u2014 write the state's name in full to check a state amount, or leave the word out`);
+  }
+  if (scope.jurisdictions.length > 1 || scope.federalToo) {
+    return unknown2(`"${query}" names ${scope.federalToo ? [FEDERAL, ...scope.jurisdictions].join(" and ") : scope.jurisdictions.join(" and ")} \u2014 ask about one jurisdiction at a time`);
+  }
+  if (asOf !== void 0 && scope.taxYear !== void 0 && asOf.slice(0, 4) !== String(scope.taxYear)) {
+    return unknown2(`"${query}" says ${scope.taxYear} but the date checked is ${asOf} \u2014 pass the date for the year you mean, or leave the year out`);
+  }
+  if (scope.truncated) {
+    return unknown2(`"${query.slice(0, 60)}\u2026" is too long to check \u2014 name the amount in a few words`, []);
+  }
+  if (scope.subject.length === 0) {
+    return unknown2(`"${query}" does not name an amount to check`, []);
+  }
+  if (asked.length === 0) {
+    const elsewhere2 = [...new Set(others.slice(0, 5).map((r3) => r3.hit.jurisdiction))];
+    return unknown2(`no ${places} rule${onDate} matches "${query}" \u2014 the claim cannot be checked against this corpus` + (elsewhere2.length > 0 && scope.jurisdictions.every((j) => j === FEDERAL) ? ` (name the state to check a state amount; similar rules exist in ${elsewhere2.join(", ")})` : ""), []);
+  }
+  const subject = scope.subject.map(termPattern);
+  const named = asked.filter((r3) => subject.every((t) => t.test(r3.rule.named)));
+  if (named.length === 0) {
+    const closest = asked[0];
+    const missing = scope.subject.filter((_t, i) => !subject[i].test(closest.rule.named));
+    return unknown2(`no ${places} rule${onDate} is named for all of "${query}" \u2014 the closest, "${closest.hit.ruleId}", does not name: ${missing.join(", ")}. Ask in the law's own words, or search for the rule first`);
+  }
+  const evidence = [];
+  for (const r3 of named) {
+    if (!ruleIsAskedFor(r3.rule, scope))
+      continue;
+    if (evidence.length > 0 && r3.hit.ruleId !== evidence[0].hit.ruleId)
+      continue;
+    const candidates2 = candidatesOf(r3.rule, scope, status);
+    if (candidates2.length > 0)
+      evidence.push({ hit: r3.hit, rule: r3.rule, candidates: candidates2 });
+    else if (evidence.length === 0 && (r3.rule.parameters.length > 0 || r3.rule.tables.length > 0 || r3.rule.literals.length > 0))
+      break;
   }
   const claimed = claimedCents.toString();
-  const candidatesOf = (hit) => {
-    const out = [];
-    if (filingStatus && hit.byFilingStatus[filingStatus] !== void 0) {
-      out.push([`byFilingStatus.${filingStatus}`, hit.byFilingStatus[filingStatus]]);
-    } else {
-      out.push(...Object.entries(hit.byFilingStatus).map(([k, v]) => [`byFilingStatus.${k}`, v]));
+  const elsewhere = (except) => {
+    for (const r3 of named) {
+      const at2 = everyAmountOf(r3.rule, scope, status).find(([f, v]) => v === claimed && !except(r3.hit, f));
+      if (at2)
+        return `${at2[0]} of "${r3.hit.ruleId}" (${r3.hit.title})`;
     }
-    out.push(...Object.entries(hit.parameters));
-    return out;
+    return void 0;
   };
-  for (const hit of hits) {
-    const exact = candidatesOf(hit).find(([, v]) => v === claimed);
-    if (exact) {
-      return {
-        verdict: "verified",
-        matchedRuleId: hit.ruleId,
-        matchedField: exact[0],
-        actualCents: exact[1],
-        claimedCents: claimed,
-        citation: hit.citation,
-        alternatives: hits.filter((h) => h !== hit)
-      };
-    }
+  if (evidence.length === 0) {
+    const at2 = elsewhere(() => false);
+    const holds = named[0].rule.parameters.map((p2) => p2.name).slice(0, 8);
+    return unknown2((at2 ? `${dollars6(claimedCents)} is ${at2}, which "${query}"${status === void 0 ? "" : ` at filing status ${status}`} does not certainly ask for` : `best match "${named[0].hit.ruleId}" carries no dollar amount that "${query}"${status === void 0 ? "" : ` at filing status ${status}`} is certainly about`) + (holds.length > 0 ? ` \u2014 name the amount in the rule's words (it holds: ${holds.join(", ")})` : "") + (status === void 0 ? "" : "; an amount may also depend on the filing status inside the formula, which explain_rule shows"));
   }
-  const best = hits[0];
-  const bestCandidates = candidatesOf(best);
-  if (bestCandidates.length === 0) {
-    return {
-      verdict: "unknown",
-      message: `best match "${best.ruleId}" carries no dollar parameters to compare`,
-      alternatives: hits
-    };
-  }
-  const [field, actual] = bestCandidates[0];
-  return {
-    verdict: "refuted",
-    matchedRuleId: best.ruleId,
-    matchedField: field,
-    actualCents: actual,
+  const found = (hit2, field2, actual2, verdict) => ({
+    verdict,
+    matchedRuleId: hit2.ruleId,
+    matchedField: field2,
+    jurisdiction: hit2.jurisdiction,
+    actualCents: actual2,
     claimedCents: claimed,
-    citation: best.citation,
-    alternatives: hits.slice(1)
+    citation: hit2.citation,
+    effectiveFrom: hit2.effectiveFrom,
+    ...hit2.effectiveTo === void 0 ? {} : { effectiveTo: hit2.effectiveTo },
+    jurisdictions: scope.jurisdictions,
+    ...when === void 0 ? {} : { asOf: when },
+    alternatives: hits.filter((h) => h !== hit2)
+  });
+  const first = evidence;
+  for (const { hit: hit2, candidates: candidates2 } of first) {
+    const exact = candidates2.find(([, v]) => v === claimed);
+    if (exact)
+      return found(hit2, exact[0], exact[1], "verified");
+  }
+  const at = elsewhere(() => false);
+  if (at !== void 0) {
+    const [field2, value] = first[0].candidates[0];
+    return unknown2(`${dollars6(claimedCents)} is ${at}; "${query}" is compared with ${field2} of "${first[0].hit.ruleId}" (${dollars6(value)}) \u2014 name the amount more exactly to check it`);
+  }
+  if (scope.asksForRate) {
+    return unknown2(`"${query}" asks for a rate or a percentage \u2014 this lookup holds dollar amounts only, so the claim cannot be checked (read the rate in the rule's formula with explain_rule on "${first[0].hit.ruleId}")`);
+  }
+  const magnitude = claimedCents < 0n ? -claimedCents : claimedCents;
+  if (magnitude < 10000n) {
+    return unknown2(`${dollars6(claimedCents)} matches no amount on "${first[0].hit.ruleId}", and a figure under $100 may be a rate or a percentage \u2014 this lookup holds dollar amounts only`);
+  }
+  for (const r3 of named) {
+    for (const [field2, value] of everyAmountOf(r3.rule, scope, status)) {
+      for (const [num, den] of r3.rule.rates) {
+        if (den !== 0n && BigInt(value) * num % den === 0n && BigInt(value) * num / den === claimedCents) {
+          return unknown2(`${dollars6(claimedCents)} is ${num}/${den} of ${field2} on "${r3.hit.ruleId}", an amount the rule derives \u2014 this lookup holds the rule's parameters only (run the calculation, or read the formula with explain_rule)`);
+        }
+      }
+    }
+  }
+  const distance = (v) => {
+    const d3 = BigInt(v) - claimedCents;
+    return d3 < 0n ? -d3 : d3;
   };
+  let nearest;
+  for (const { hit: hit2, candidates: candidates2 } of first) {
+    for (const [field2, value] of candidates2) {
+      if (nearest === void 0 || distance(value) < distance(nearest[2]))
+        nearest = [hit2, field2, value];
+    }
+  }
+  const [hit, field, actual] = nearest;
+  return found(hit, field, actual, "refuted");
 }
 
 // dist/commands/lookup.js
 function runLookup(queryWords, flags) {
+  try {
+    return lookup(queryWords, flags);
+  } catch (err) {
+    return emitError(err, flags.json);
+  }
+}
+function lookup(queryWords, flags) {
   const corpus = getCorpus();
   const query = queryWords.join(" ");
-  const asOf = flags.asOf ?? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+  const scope = queryScope(query);
+  const asOf = flags.asOf ?? (scope.taxYear === void 0 ? (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) : `${scope.taxYear}-12-31`);
   if (flags.expect !== void 0) {
+    if (/%\s*$/.test(flags.expect)) {
+      const message = `${flags.expect.trim()} is a percentage \u2014 lookup checks dollar amounts only (read a rate in the rule's formula with \`opentax explain\`)`;
+      if (flags.json) {
+        print({ ok: true, query, asOf, jurisdictions: scope.jurisdictions, verdict: "unknown", message });
+      } else {
+        console.log();
+        console.log(`${import_picocolors9.default.yellow("unknown")} \u2014 ${message}`);
+        console.log();
+      }
+      return EXIT.NOT_COVERED;
+    }
     const claimed = parseDollars(flags.expect);
     const result = factCheck(corpus, query, claimed, asOf, flags.filingStatus);
     if (result.verdict === "unknown") {
       if (flags.json) {
-        print({ ok: true, query, asOf, claimed: claimed.toString(), verdict: "unknown", message: result.message });
+        print({ ok: true, query, asOf, jurisdictions: result.jurisdictions, claimed: claimed.toString(), verdict: "unknown", message: result.message });
         return EXIT.NOT_COVERED;
       }
       console.log();
@@ -43537,6 +44099,8 @@ function runLookup(queryWords, flags) {
         verdict: result.verdict,
         rule: result.matchedRuleId,
         field: result.matchedField,
+        jurisdiction: result.jurisdiction,
+        effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         actual: result.actualCents,
         citation: result.citation,
         corpusMerkleRoot: corpus.merkleRoot
@@ -43561,9 +44125,11 @@ function runLookup(queryWords, flags) {
       ok: true,
       query,
       asOf,
+      jurisdictions: scope.jurisdictions,
       corpusMerkleRoot: corpus.merkleRoot,
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
+        jurisdiction: h.jurisdiction,
         title: h.title,
         citation: h.citation,
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
@@ -43699,7 +44265,7 @@ function setup(flags) {
     target: flags.target ?? DEFAULT_TARGET
   };
 }
-var cents = (dollars7) => parseDollars(dollars7);
+var cents = (dollars8) => parseDollars(dollars8);
 function runSweep(flags) {
   try {
     const { corpus, base, vary, asOf, target } = setup(flags);
@@ -71084,8 +71650,8 @@ var minC = (a, b) => a < b ? a : b;
 var fmt2 = (cents2, withCents = false) => {
   const neg7 = cents2 < 0n;
   const a = neg7 ? -cents2 : cents2;
-  const dollars7 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `${neg7 ? "-" : ""}$${dollars7}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
+  const dollars8 = (a / 100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${neg7 ? "-" : ""}$${dollars8}${withCents ? "." + (a % 100n).toString().padStart(2, "0") : ""}`;
 };
 var D13 = (c2) => fmt2(rd27(c2));
 var mulRate2 = (c2, num, den) => {
@@ -72056,7 +72622,7 @@ function composeForm4562(input2) {
     ]
   };
 }
-var dollars6 = (v, path) => {
+var dollars7 = (v, path) => {
   const s2 = typeof v === "number" ? Number.isFinite(v) ? String(v) : "" : typeof v === "string" ? v.replace(/[$,\s]/g, "") : "";
   const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s2);
   if (!m)
@@ -72103,7 +72669,7 @@ function form4562InputFromArgs(args) {
   const out = { ...args };
   for (const k of TOP_MONEY)
     if (args[k] !== void 0)
-      out[k] = dollars6(args[k], k);
+      out[k] = dollars7(args[k], k);
   out.assets = args.assets.map((raw, i) => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw))
       throw new Form4562Refusal(`assets[${i}]: expected an object`);
@@ -72114,7 +72680,7 @@ function form4562InputFromArgs(args) {
     const o = { ...a };
     for (const k of ASSET_MONEY)
       if (a[k] !== void 0)
-        o[k] = dollars6(a[k], `assets[${i}].${k}`);
+        o[k] = dollars7(a[k], `assets[${i}].${k}`);
     if (o.cost === void 0)
       throw new Form4562Refusal(`assets[${i}].cost is required`);
     if (o.recoveryClass !== void 0)
