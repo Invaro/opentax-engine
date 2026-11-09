@@ -1,0 +1,20 @@
+{
+  "description": "§ 469(i)(5)(A); Form 8582 lines 5 and 8 for a married person filing separately who lived apart all year: line 5 $75,000, line 8 'Don't enter more than $12,500'. Wages $60,000, actively managed rental loss $20,000: line 8 = 50% x (75,000 − 60,000) = $7,500 → $12,500 carried over.",
+  "facts": {
+    "filingStatus": "mfs",
+    "mfsLivedApartAllYear": true,
+    "wages": 60000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 20000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "1250000",
+    "intermediates": {
+      "us.federal.passive.form8582.line9": "750000"
+    }
+  }
+}

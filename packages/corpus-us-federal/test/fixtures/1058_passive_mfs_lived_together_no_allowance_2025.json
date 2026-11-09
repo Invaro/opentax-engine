@@ -1,0 +1,21 @@
+{
+  "description": "§ 469(i)(5)(B); Form 8582 Part I caution: a married person filing separately who lived with the spouse at any time 'do not complete Part II' and the rental goes in Part V. Wages $40,000, actively managed rental loss $10,000, no passive income: nothing is allowed, $10,000 carried over.",
+  "facts": {
+    "filingStatus": "mfs",
+    "mfsLivedApartAllYear": false,
+    "wages": 40000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 10000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "1000000",
+    "intermediates": {
+      "us.federal.passive.form8582.line2b": "1000000",
+      "us.federal.passive.form8582.line1b": "0"
+    }
+  }
+}

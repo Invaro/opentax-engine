@@ -1,0 +1,17 @@
+{
+  "description": "§ 461(l); Form 8582 instructions, Coordination With Other Limitations: business losses allowed after the passive loss limitations are subject to the excess business loss limitation. A passive business sold entirely with $400,000 of suspended losses releases them all; the 2025 single threshold is $313,000 → excess business loss $87,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1PriorUnallowed": 400000,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "8700000"
+  }
+}

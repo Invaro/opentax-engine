@@ -1,0 +1,20 @@
+{
+  "description": "§ 32(i)(2)(D); Pub. 596 (2025) Worksheet 1 lines 11–15: net income from passive activities is investment income, and over $11,950 the credit is denied. Head of household, one qualifying child, wages $20,000, passive rental income $12,000 → EITC $0.",
+  "facts": {
+    "filingStatus": "hoh",
+    "qualifyingChildren": 1,
+    "wages": 20000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental",
+    "passiveActivity1Income": 12000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.passive.eitc_income": "1200000"
+    }
+  }
+}

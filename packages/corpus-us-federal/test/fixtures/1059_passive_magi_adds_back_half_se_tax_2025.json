@@ -1,0 +1,21 @@
+{
+  "description": "Form 8582 line 6 instructions: modified AGI does not take into account 'The deduction allowed for the deductible part of self-employment taxes'. Schedule C profit $120,000 and nothing else: AGI before the rental is 120,000 less the ½-SE deduction, and modified AGI adds it back to $120,000, so line 8 = 50% x (150,000 − 120,000) = $15,000 of a $20,000 actively managed rental loss; $5,000 carried over.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 120000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 20000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "500000",
+    "intermediates": {
+      "us.federal.passive.form8582.magi": "12000000",
+      "us.federal.passive.form8582.line9": "1500000"
+    }
+  }
+}

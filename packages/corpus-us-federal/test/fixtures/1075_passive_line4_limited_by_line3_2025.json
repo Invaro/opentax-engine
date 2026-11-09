@@ -1,0 +1,22 @@
+{
+  "description": "Form 8582 instructions, line 4 example: 'Part I, line 1d, has a loss of $3,000 and line 2d has a gain of $100. The combined loss on line 3 is $2,900. You enter $2,900 ... on Part II, line 4'. With modified AGI under $100,000 the whole $2,900 is allowed: nothing carried over, AGI = 50,000 + 100 − 3,000 = $47,100.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 2,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 3000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "business",
+    "passiveActivity2Income": 100,
+    "passiveActivity2Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "4710000",
+    "intermediates": {
+      "us.federal.passive.form8582.line9": "290000"
+    }
+  }
+}

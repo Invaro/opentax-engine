@@ -1,0 +1,23 @@
+{
+  "description": "Reg. § 1.1411-4(g)(9): losses allowed by reason of § 469(g) are properly allocable deductions. Single, wages $300,000, interest $50,000; a passive rental (no active participation) sold entirely for a $10,000 gain (entered in the gain facts) with $30,000 of suspended losses: overall loss $20,000, every loss allowed. NII = 50,000 + 10,000 − 30,000 = $30,000; MAGI 330,000 → NIIT 3.8% x 30,000 = $1,140.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 300000,
+    "taxableInterest": 50000,
+    "longTermCapitalGains": 10000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental",
+    "passiveActivity1PriorUnallowed": 30000,
+    "passiveActivity1DispositionGain": 10000,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "114000",
+    "intermediates": {
+      "us.federal.passive.niit_net": "-3000000"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "§ 469(k); Form 8582 instructions, PTPs: a PTP's losses offset only its own income and its overall gain is nonpassive — 'Don't report passive income, gains, or losses from a PTP on Form 8582'. PTP net income $4,000; a passive business loss of $6,000 in Part V finds no passive income: all $6,000 carried over. AGI = 50,000 + 4,000 = $54,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 2,
+    "passiveActivity1Kind": "ptp",
+    "passiveActivity1Income": 4000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "business",
+    "passiveActivity2Loss": 6000,
+    "passiveActivity2Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "5400000",
+    "intermediates": {
+      "us.federal.passive.form8582.line3": "-600000"
+    }
+  }
+}

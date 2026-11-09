@@ -1,0 +1,21 @@
+{
+  "description": "§ 469(i)(3)(E)(i): modified AGI is figured without § 86 benefits. Single retiree, $90,000 taxable pension, $40,000 Social Security, $20,000 actively managed rental loss. Without the passive loss, taxable benefits are $34,000 (85%), but modified AGI excludes them: $90,000, under $100,000, so all $20,000 is allowed. With the loss in AGI, provisional income is 70,000 + 20,000 = 90,000 → taxable benefits min(85% x 40,000, 85% x (90,000 − 34,000) + 4,500) = $34,000; AGI = 70,000 + 34,000 = $104,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxablePensionsAndAnnuities": 90000,
+    "socialSecurityBenefits": 40000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 20000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "10400000",
+    "intermediates": {
+      "us.federal.passive.form8582.magi": "9000000"
+    }
+  }
+}

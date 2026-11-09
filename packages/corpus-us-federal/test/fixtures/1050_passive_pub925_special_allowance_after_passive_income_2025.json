@@ -1,0 +1,23 @@
+{
+  "description": "Pub. 925 (2025), Special $25,000 allowance example: single, $70,000 wages, $15,000 passive income from a limited partnership, $26,000 loss from rental real estate with active participation; modified AGI under $100,000. '$15,000 of your $26,000 loss' offsets the partnership income and 'the remaining $11,000' offsets wages: Form 8582 line 9 = $11,000, nothing carried over, AGI = 70,000 + 15,000 − 26,000 = $59,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 70000,
+    "passiveActivities": 2,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Income": 15000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "rental_active",
+    "passiveActivity2Loss": 26000,
+    "passiveActivity2Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "5900000",
+    "intermediates": {
+      "us.federal.passive.form8582.line9": "1100000",
+      "us.federal.passive.form8582.line3": "-1100000"
+    }
+  }
+}

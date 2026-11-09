@@ -59,13 +59,18 @@ const F172_URL = "https://www.irs.gov/forms-pubs/about-form-172";
 // ---------------------------------------------------------------------------
 // § 461(l): Form 461 lines 2–16
 
-// trade-or-business income and loss other than Schedule E (Form 461 lines 2, 5 (K-1), 6)
+// trade-or-business income and loss other than Schedule E (Form 461 lines 2, 5 (K-1), 6);
+// passive businesses count after § 469 (I8582: "allowable business losses after taking into
+// account first the at-risk limitations and then the passive loss limitations")
 const netLossOutsideE: Expr = sub(
   add(fact("scheduleCNetLoss"), fact("k1OrdinaryBusinessLoss")),
-  add(ruleRef("us.federal.se_net_profit"), fact("k1OrdinaryBusinessIncome")),
+  add(ruleRef("us.federal.se_net_profit"), fact("k1OrdinaryBusinessIncome"), ruleRef("us.federal.passive.business_net")),
 );
 // Schedule E rental/royalty results (Form 461 line 5), counted only when a trade or business
-const scheduleENet: Expr = sub(add(fact("scheduleENetIncome"), ruleRef("us.federal.rental.net_income")), fact("nonpassiveScheduleELoss"));
+const scheduleENet: Expr = sub(
+  add(fact("scheduleENetIncome"), ruleRef("us.federal.rental.net_income"), ruleRef("us.federal.passive.rental_net")),
+  fact("nonpassiveScheduleELoss"),
+);
 const isJoint: Expr = { kind: "cmp", op: "eq", left: fact("filingStatus"), right: { kind: "enum", value: "mfj" } };
 const threshold: Expr = iff(isJoint, param("thresholdJoint"), param("threshold"));
 const eblWithoutE = max0(sub(netLossOutsideE, threshold));
@@ -107,7 +112,7 @@ function eblRule(version: number, from: string, to: string, single: string, join
       source: `26 U.S.C. § 461(l) as amended by Pub. L. 119-21 (OBBBA) § 70601; ${source}; Form 461 and Instructions`,
       section: "§ 461(l)(1)–(3); Form 461 lines 2–16; Schedule 1 line 8p",
       url: F461_URL,
-      excerpt: `"An excess business loss is the amount by which the total deductions (computed without regard to any deduction allowed under section 172 or 199A) from your trades or businesses are more than your total gross income or gains from your trades or businesses, plus the threshold amount. Such excess losses should be determined without regard to any deductions, gross income, or gains attributable to any trade or business of performing services of an employee." (I461) Threshold for TY${year}: $${(Number(single) / 100).toLocaleString("en-US")} ($${(Number(joint) / 100).toLocaleString("en-US")} married filing jointly). "If the resulting figure on this line is a negative amount, then it's your excess business loss. [...] report the excess business loss adjustment as a positive number on the 'Other income' line [...] Schedule 1 (Form 1040), line 8p", and it "is treated as a net operating loss (NOL) carryover for subsequent years". [Counted: Schedule C/F profit and loss (both spouses), nonpassive K-1 ordinary business income and loss (after basis and at-risk), and — when they are a trade or business (scheduleEIsTradeOrBusiness, asked only when it changes the answer) — Schedule E rental and royalty results. Wages are never counted. Form 4797 is not modeled and capital gains and losses must be investment items (capitalItemsAreNonbusiness, asked when there is an excess business loss and capital items), so no capital or § 1231 amount enters (Form 461 lines 3 and 4). Schedule 1 Part II adjustments are not pulled in, as Form 461 pulls only Schedule 1 lines 3–6 and Form 1040 line 7.]`,
+      excerpt: `"An excess business loss is the amount by which the total deductions (computed without regard to any deduction allowed under section 172 or 199A) from your trades or businesses are more than your total gross income or gains from your trades or businesses, plus the threshold amount. Such excess losses should be determined without regard to any deductions, gross income, or gains attributable to any trade or business of performing services of an employee." (I461) Threshold for TY${year}: $${(Number(single) / 100).toLocaleString("en-US")} ($${(Number(joint) / 100).toLocaleString("en-US")} married filing jointly). "If the resulting figure on this line is a negative amount, then it's your excess business loss. [...] report the excess business loss adjustment as a positive number on the 'Other income' line [...] Schedule 1 (Form 1040), line 8p", and it "is treated as a net operating loss (NOL) carryover for subsequent years". [Counted: Schedule C/F profit and loss (both spouses), nonpassive K-1 ordinary business income and loss (after basis and at-risk), passive trade or business activities after the § 469 limits (us.federal.passive.business_net), and — when they are a trade or business (scheduleEIsTradeOrBusiness, asked only when it changes the answer) — Schedule E rental and royalty results, passive rentals after § 469 included. Wages are never counted. Form 4797 is not modeled and capital gains and losses must be investment items (capitalItemsAreNonbusiness, asked when there is an excess business loss and capital items), so no capital or § 1231 amount enters (Form 461 lines 3 and 4). Schedule 1 Part II adjustments are not pulled in, as Form 461 pulls only Schedule 1 lines 3–6 and Form 1040 line 7.]`,
     },
     effectiveFrom: from,
     effectiveTo: to,
@@ -264,9 +269,10 @@ export const businessLossRules: Rule[] = [
     output: { type: "money" },
     formula: zero,
   },
-  eblRule(1, "2025-01-01", "2026-01-01", "31300000", "62600000", "Rev. Proc. 2024-40 § 2.32", "2025"),
-  eblRule(2, "2026-01-01", "2027-01-01", "25600000", "51200000", "Rev. Proc. 2025-32 § 4.31 (base year moved to 2024 by OBBBA § 70601(b))", "2026"),
-  eblRule(3, "2027-01-01", "2028-01-01", "26400000", "52800000", "Rev. Proc. 2026-35 § 3.33", "2027"),
+  // v1–v3 had no passive activities (§ 469 by activity)
+  eblRule(4, "2025-01-01", "2026-01-01", "31300000", "62600000", "Rev. Proc. 2024-40 § 2.32", "2025"),
+  eblRule(5, "2026-01-01", "2027-01-01", "25600000", "51200000", "Rev. Proc. 2025-32 § 4.31 (base year moved to 2024 by OBBBA § 70601(b))", "2026"),
+  eblRule(6, "2027-01-01", "2028-01-01", "26400000", "52800000", "Rev. Proc. 2026-35 § 3.33", "2027"),
   {
     id: NOL,
     version: 1,

@@ -1,0 +1,20 @@
+{
+  "description": "Form 8582 instructions (2025), Dispositions Example 1 (fixture 1054): the activity with an overall gain stays on Form 8582 — line 3 is the $75 overall gain (15,525 − 2,800 − 12,650), so every loss is allowed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "longTermCapitalGains": 15525,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 2800,
+    "passiveActivity1PriorUnallowed": 12650,
+    "passiveActivity1DispositionGain": 15525,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.form8582.line3",
+  "expect": {
+    "valueCents": "7500"
+  }
+}

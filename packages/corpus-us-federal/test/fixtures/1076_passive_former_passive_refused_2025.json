@@ -1,0 +1,15 @@
+{
+  "description": "§ 469(f): a former passive activity's suspended losses are allowed only against its own income — not modeled, refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "former_passive",
+    "passiveActivity1PriorUnallowed": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

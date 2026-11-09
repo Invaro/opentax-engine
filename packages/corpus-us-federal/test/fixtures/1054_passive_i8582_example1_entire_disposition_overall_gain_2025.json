@@ -1,0 +1,23 @@
+{
+  "description": "Form 8582 instructions (2025), Dispositions Example 1: entire interest in an actively managed rental sold for a $15,525 gain (entered in the gain facts); $2,800 current-year loss and $12,650 prior-year unallowed loss (Schedule E line 22 total $15,450); 'You have an overall gain from the disposition ($15,525 – $15,450 = $75)', so the activity stays in Part IV and line 3 is $75: every loss is allowed. AGI = 40,000 wages + 15,525 − 15,450 = $40,075.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 40000,
+    "longTermCapitalGains": 15525,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 2800,
+    "passiveActivity1PriorUnallowed": 12650,
+    "passiveActivity1DispositionGain": 15525,
+    "passiveActivity1Disposition": "entire_taxable",
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "4007500",
+    "intermediates": {
+      "us.federal.passive.activity1.net": "-1545000"
+    }
+  }
+}

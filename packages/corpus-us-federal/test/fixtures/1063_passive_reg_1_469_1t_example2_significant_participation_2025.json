@@ -1,0 +1,30 @@
+{
+  "description": "Reg. § 1.469-1T(f)(2)(i)(D) Example 2: significant participation activities A (income 15,000 − 5,000 = 10,000) and B (5,000 − 10,000 = loss 5,000) net to $5,000 of income, which is nonpassive, so A and B are 'a single activity that does not have a loss'; C (loss 10,000) and D (income 2,000) are other passive activities. The passive activity loss is $8,000 ($43,000 − $35,000), all allocated to C: 'none of the $8,000 passive activity loss is allocated ... to activity B'.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "passiveActivities": 4,
+    "passiveActivity1Kind": "business_sp",
+    "passiveActivity1Income": 10000,
+    "passiveActivity1Qbi": false,
+    "passiveActivity2Kind": "business_sp",
+    "passiveActivity2Loss": 5000,
+    "passiveActivity2Qbi": false,
+    "passiveActivity3Kind": "business",
+    "passiveActivity3Loss": 10000,
+    "passiveActivity3Qbi": false,
+    "passiveActivity4Kind": "business",
+    "passiveActivity4Income": 2000,
+    "passiveActivity4Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "800000",
+    "intermediates": {
+      "us.federal.passive.activity3.unallowed": "800000",
+      "us.federal.passive.activity2.unallowed": "0",
+      "us.federal.passive.significant_participation_net": "500000"
+    }
+  }
+}

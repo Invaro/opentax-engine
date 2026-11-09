@@ -1,0 +1,18 @@
+{
+  "description": "Form 8582 Part IX: a loss on disposing of activity property, when part of the activity's losses is disallowed, must be split between Schedule E and Form 8949/4797 — not modeled, refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "longTermCapitalLoss": 2000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Loss": 5000,
+    "passiveActivity1DispositionLoss": 2000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

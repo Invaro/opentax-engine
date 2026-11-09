@@ -88,6 +88,18 @@ export const SCHEDULE_AI_FACTS: Record<string, "annualize" | "keep" | { refuse: 
   earlyDistributionSubjectToPenalty: "annualize",
   amtIsoExerciseSpread: "annualize",
   amtOtherPreferences: "annualize",
+  // passive activities (Form 8582): the year's income, losses and gains are period amounts;
+  // losses carried in from earlier years are not, like an NOL carryover
+  ...Object.fromEntries(
+    [1, 2, 3, 4, 5, 6, 7, 8].flatMap((i) => [
+      [`passiveActivity${i}Income`, "annualize"],
+      [`passiveActivity${i}Loss`, "annualize"],
+      [`passiveActivity${i}DispositionGain`, "annualize"],
+      [`passiveActivity${i}DispositionLoss`, "annualize"],
+      [`passiveActivity${i}PriorUnallowed`, { refuse: "a passive loss carried in from earlier years is not an amount of the period; the instructions don't say whether it is annualized" }],
+      [`passiveActivity${i}PriorUnallowedPre2018`, { refuse: "a passive loss carried in from earlier years is not an amount of the period; the instructions don't say whether it is annualized" }],
+    ]),
+  ),
   // QBI (the businesses' income and W-2 wages are the period's; UBIA is basis)
   qbiBusiness2Income: "annualize",
   qbiBusiness3Income: "annualize",

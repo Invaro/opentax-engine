@@ -108,12 +108,13 @@ function kiddieTaxRule(version: number, from: string, to: string, year: TaxYear)
             { kind: "cmp", op: "gt", left: fact("shortTermCapitalLoss"), right: zero },
             { kind: "cmp", op: "gt", left: fact("longTermCapitalLoss"), right: zero },
             { kind: "cmp", op: "gt", left: fact("netCapitalLoss"), right: zero },
+            { kind: "cmp", op: "ne", left: ruleRef("us.federal.passive.net"), right: zero },
           ],
         },
         then: {
           kind: "unsupported",
           reason:
-            "a § 1(g) child with capital gains/losses, qualified dividends, or ordinary dividends needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income ≈ taxable interest' approximation would silently drop — not modeled",
+            "a § 1(g) child with capital gains/losses, qualified dividends, ordinary dividends or passive activity income (unearned income, § 1(g)(4)) needs the Form 8615 capital-gains worksheets, and/or is unearned income this corpus's 'unearned income ≈ taxable interest' approximation would silently drop — not modeled",
         },
         else: {
           kind: "if",
@@ -203,9 +204,10 @@ export const kiddieRules: Rule[] = [
   // v5/v6: the refusal guard also catches shortTermCapitalGains/ordinaryDividends (unearned income
   // the "unearned income ≈ taxable interest" approximation in net_unearned_income would otherwise drop)
   // v5/v6: the refusal guard predated the per-bucket capital-loss facts and netCapitalLoss
-  kiddieTaxRule(7, "2025-01-01", "2026-01-01", "2025"),
-  kiddieTaxRule(8, "2026-01-01", "2027-01-01", "2026"),
-  kiddieTaxRule(9, "2027-01-01", "2028-01-01", "2027"),
+  // v7–v9 did not refuse a child with passive activity income
+  kiddieTaxRule(10, "2025-01-01", "2026-01-01", "2025"),
+  kiddieTaxRule(11, "2026-01-01", "2027-01-01", "2026"),
+  kiddieTaxRule(12, "2027-01-01", "2028-01-01", "2027"),
   {
     id: "us.federal.income_tax_before_credits.kiddie",
     version: 1,

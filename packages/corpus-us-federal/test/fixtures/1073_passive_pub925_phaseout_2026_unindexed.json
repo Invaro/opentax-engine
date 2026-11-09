@@ -1,0 +1,16 @@
+{
+  "description": "§ 469(i) amounts are statutory and unindexed: the Pub. 925 $120,000 / $31,000 example gives the same $16,000 carryforward in 2026.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 120000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Loss": 31000,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.passive.carryforward",
+  "expect": {
+    "valueCents": "1600000"
+  }
+}
