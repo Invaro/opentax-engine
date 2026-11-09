@@ -17,7 +17,7 @@ import type { Expr, Rule } from "@invaro/opentax-core";
 import { IncompleteReturnError } from "./completeness.js";
 import { COMPOSER_VERSION } from "./version.js";
 import { compareAcross, factCheck, findCliffs, HOSTED_CLIFF_LIMITS, lookupParameters, searchRules } from "@invaro/opentax-solve";
-import { composeForm2210, composeStateReturn, form2210InputFromArgs, isIncompleteReturnRefusal, makeStateTaxEvaluator, MissingInput, stateReturnShape } from "@invaro/opentax-compose";
+import { composeForm2210, composeForm4562, composeStateReturn, form2210InputFromArgs, Form4562MissingInput, Form4562Refusal, form4562InputFromArgs, isIncompleteReturnRefusal, makeStateTaxEvaluator, MissingInput, stateReturnShape } from "@invaro/opentax-compose";
 import type { TargetRunner, TypedFacts } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
 import {
@@ -653,6 +653,85 @@ server.registerTool(
             })),
           ),
         );
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "compute_form_4562",
+  {
+    description:
+      "Form 4562 — depreciation for an individual's businesses and rentals, tax years 2025-2027 (calendar year): § 179 expensing with the dollar limit, phase-out, married-filing-separately split, business income limitation and carryover; the § 168(k) special allowance (100% for property acquired after January 19, 2025; 40% in 2025 and 20% in 2026 for property acquired earlier; the TY2025 40% election; election out by class); MACRS with the printed Publication 946 tables (half-year, mid-quarter by the 40% test, mid-month for buildings; 150% DB, straight-line and ADS elections); dispositions during the year; listed property and the § 280F passenger automobile limits (2025 and 2026); and Rev. Proc. 87-56 asset classes for cost segregation (assetClass, e.g. '57.0', '00.11', '00.3'). Give EVERY asset in service: current-year assets with cost, placedInService and acquiredOn (the binding-contract date, which sets the bonus percentage); earlier assets also with convention (HY/MQ), section179Taken and specialAllowanceTaken. section179BusinessIncome is required when § 179 is elected or carried over (taxable income from actively conducted businesses including wages, without § 179, the half-SE-tax deduction or any NOL). Returns the form's lines, each asset's schedule, and the deduction by activity (Schedule C line 13, Schedule E line 18) — subtract each activity's amount from that business's income before depreciation. Situations the sources don't settle (short years, general asset accounts, 100% bonus on a passenger car, § 280F recapture, a disposition in the last recovery year) refuse with the reason. Report the lines and notes verbatim; dollars in, whole dollars out.",
+    inputSchema: legacyJsonSchema(
+      z
+        .object({
+          taxYear: z.number().int().describe("2025, 2026 or 2027"),
+          filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]),
+          assets: z.array(
+            z
+              .object({
+                id: z.string(),
+                description: z.string().optional(),
+                activity: z.string().optional().describe("which business or rental it belongs to; totals are reported per activity"),
+                cost: money.describe("cost or other basis, excluding land"),
+                placedInService: z.string().describe("YYYY-MM-DD"),
+                acquiredOn: z.string().optional().describe("YYYY-MM-DD, the binding written contract date — required for the special allowance"),
+                recoveryClass: z.enum(["3", "5", "7", "10", "15", "20", "25", "27.5", "39", "qip"]).optional(),
+                assetClass: z.string().optional().describe("Rev. Proc. 87-56 class (Pub 946 Table B-1/B-2) instead of recoveryClass"),
+                businessUsePercent: z.number().optional(),
+                section179: money.optional().describe("§ 179 expense elected for this asset (current year)"),
+                section1245Property: z.boolean().optional().describe("15/20-year property and asset class 57.1: is it § 1245 property (asked only when § 179 is used)"),
+                section179QualifiedRealProperty: z.boolean().optional(),
+                method: z.enum(["default", "150DB", "SL", "ADS"]).optional(),
+                adsRecoveryPeriod: z.number().optional(),
+                listed: z.boolean().optional(),
+                passengerAutomobile: z.boolean().optional(),
+                sportUtilityVehicle: z.boolean().optional(),
+                longProductionPeriod: z.boolean().optional(),
+                convention: z.enum(["HY", "MQ"]).optional().describe("earlier-year assets: the convention used when placed in service"),
+                section179Taken: money.optional().describe("earlier-year assets: § 179 taken (0 if none)"),
+                specialAllowanceTaken: money.optional().describe("earlier-year assets: special allowance taken (0 if none)"),
+                disposedOn: z.string().optional(),
+              })
+              .strict(),
+          ),
+          section179Carryover: money.optional().describe("line 10: last year's line 13"),
+          section179BusinessIncome: money.optional(),
+          section179FromK1: money.optional().describe("§ 179 expense allocated on Schedules K-1"),
+          spouseSection179Cost: money.optional().describe("MFS: cost of § 179 property your spouse placed in service"),
+          mfsAllocationPercent: z.number().optional(),
+          electOutOfSpecialAllowance: z.array(z.enum(["3", "5", "7", "10", "15", "20", "25", "27.5", "39", "qip"])).optional(),
+          elect40PercentFor2025: z.boolean().optional(),
+        })
+        .strict(),
+    ),
+  },
+  async (args: Record<string, unknown>) => {
+    try {
+      const form = composeForm4562(form4562InputFromArgs(args));
+      return ok({
+        ok: true,
+        form: "4562",
+        ...form,
+        assets: form.assets.map((a) => ({
+          ...a,
+          businessBasis: fmt(a.businessBasis),
+          section179Elected: fmt(a.section179Elected),
+          section179Deducted: fmt(a.section179Deducted),
+          specialAllowance: fmt(a.specialAllowance),
+          macrsBasis: fmt(a.macrsBasis),
+          depreciation: fmt(a.depreciation),
+        })),
+      });
+    } catch (err) {
+      if (err instanceof Form4562MissingInput)
+        return { content: [{ type: "text" as const, text: JSON.stringify({ ok: false, error: err.toJSON() }, null, 2) }], isError: true };
+      if (err instanceof Form4562Refusal)
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ ok: false, error: { code: "NOT_MODELED", message: err.message } }, null, 2) }],
+          isError: true,
+        };
       return fail(err);
     }
   },

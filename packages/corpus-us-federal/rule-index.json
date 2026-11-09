@@ -1,6 +1,6 @@
 {
 "name": "@invaro/opentax-corpus-us-federal",
-"version": "0.46.0",
+"version": "0.47.0",
 "merkleRoot": "sha256:6e649618b239a1ef6e7a01d6ec5746f6ba9323afbf06e12a27743721bfc2faa7",
 "rules": {
   "us.ak.income_tax@1": {"title":"Alaska — no individual income tax (TY2025)","effectiveFrom":"2025-01-01","citation":"Alaska law (no individual income tax) n/a","parts":{"formula":"8dbd9404f92b062a","applicability":null,"citation":"f127d60637d495fd","output":"de6c20e6a819c0a9","overrides":null,"parameterDetail":null}},

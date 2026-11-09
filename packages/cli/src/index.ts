@@ -26,6 +26,7 @@ import {
 import { runSignup } from "./commands/signup.js";
 import { runState } from "./commands/state.js";
 import { runForm2210 } from "./commands/form2210.js";
+import { runForm4562 } from "./commands/form4562.js";
 import { PROJECTION_HELP } from "./projection.js";
 import { runVerify } from "./commands/verify.js";
 import { FACT_FLAGS } from "./flags.js";
@@ -192,6 +193,15 @@ program
   .option("--json", "machine-readable output")
   .action((flags) => {
     process.exitCode = runForm2210({ facts: flags.facts, asOf: flags.asOf, json: flags.json });
+  });
+
+program
+  .command("form4562")
+  .description("Form 4562: depreciation — § 179, the special allowance, MACRS (Pub 946 tables), listed property — from a JSON file")
+  .requiredOption("--facts <file>", "JSON: { taxYear, filingStatus, assets: [...], section179BusinessIncome?, … } (same shape as the MCP compute_form_4562 tool)")
+  .option("--json", "machine-readable output")
+  .action((flags) => {
+    process.exitCode = runForm4562({ facts: flags.facts, json: flags.json });
   });
 
 program

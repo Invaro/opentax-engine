@@ -64,7 +64,7 @@ import { getProjectedCorpus, projectionFromVersion } from "./projection.js";
 
 export const corpusInput: CorpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.46.0",
+  version: "0.47.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,

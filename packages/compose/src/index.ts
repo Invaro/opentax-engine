@@ -153,3 +153,6 @@ function composeLines(
 
 export { composeForm2210, dollarsToCents, form2210InputFromArgs, MissingInput, SCHEDULE_AI_FACTS, UNDERPAYMENT_RATES } from "./form2210.js";
 export type { Form2210Input, Form2210Result, PartIIIResult, Payment, TargetRunner, TypedFact, TypedFacts } from "./form2210.js";
+
+export { ASSET_CLASSES, composeForm4562, Form4562MissingInput, Form4562Refusal, form4562InputFromArgs } from "./form4562.js";
+export type { DepreciationAsset, DepreciationMethod, Form4562AssetResult, Form4562Input, Form4562Result, RecoveryClass } from "./form4562.js";

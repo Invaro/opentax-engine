@@ -2,6 +2,37 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 9, 2026 · Form 4562: depreciation, § 179 and bonus, with cost-segregation classes
+
+`opentax form4562` (MCP `compute_form_4562`, library `composeForm4562`) computes Form 4562 for 2025, 2026 and 2027.
+
+- **§ 179:** $2,500,000 / $4,000,000 for 2025 (OBBBA § 70306), $2,560,000 / $4,090,000 for 2026, $2,640,000 / $4,230,000 for 2027.
+  - It covers the phase-out, the married-filing-separately split (50% unless elected), the business income limitation with carryover (current elections first, the disallowed part spread equally), § 179 from Schedules K-1, the SUV cap, and qualified real property.
+  - Basis drops by the amount elected, even the part carried over (Reg. §§ 1.179-1(f), 1.179-3(f)).
+  - Land improvements are not § 179 property. When § 179 is in play, 15- and 20-year property and asset class 57.1 need `section1245Property`.
+- **Special allowance (bonus):**
+  - 100% for property acquired after January 19, 2025 (the binding-contract date, OBBBA § 70301).
+  - 40% in 2025 and 20% in 2026 for earlier acquisitions (60% and 40% for long-production property), and none in 2027.
+  - The TY2025 election to take 40% instead, and election out by class (qualified improvement property is class 15).
+- **MACRS:**
+  - The printed Publication 946 tables, the ones filed returns use.
+  - Half-year, or mid-quarter when more than 40% of the year's basis (after § 179, before bonus) went into service in the last three months; mid-month for buildings.
+  - 150% DB, straight-line and ADS elections; earlier years' assets; dispositions during the year.
+- **Listed property:** ADS at 50% or less business use. Passenger automobile limits for cars placed in service 2020 through 2026, scaled by business use, with § 179 elected counting against the limit. A new car with 100% bonus gets the first-year limit.
+- **Cost segregation:** Rev. Proc. 87-56 asset classes (Pub 946 Table B-1/B-2) set the GDS and ADS periods.
+- **Missing facts** (acquisition date, an earlier asset's convention or bonus taken, business income) return `NEEDS_FACTS` (exit 2) with every missing item listed.
+- **Refuses, with the reason:**
+  - short or fiscal years and general asset accounts;
+  - a disposition in an asset's last recovery year;
+  - 2027 cars, whose limits aren't published;
+  - later years of a car that took 100% bonus (Rev. Proc. 2019-13);
+  - § 280F recapture;
+  - § 179 elected above the dollar limit, since which asset to cut is the taxpayer's call.
+- **Checked:**
+  - Every worked example in Pub 946 and the Form 4562 instructions that applies (23 cases, 43 values).
+  - Every table column sums to 100.00.
+  - An independent rebuild written from the sources without reading this code, on 850 random portfolios and 84 targeted probes. It found land improvements counted as § 179 property, an election out of class 15 that missed qualified improvement property, the car limit counting § 179 deducted instead of elected, and four refusals the sources answer. All are fixed. Every portfolio both sides compute now agrees to the cent, except line 2 on returns with no § 179, which this build leaves informational.
+
 ## Nov 6, 2026 · Projection: tax years 2028 to 2035 at an inflation rate you choose
 
 `--project-inflation 2.5` on `eval`, `check` and the solver commands, or `projection: { inflationPercent }` on the MCP tax tools, computes a year after 2027. Without it, 2028 and later still refuse.
