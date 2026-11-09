@@ -1,6 +1,6 @@
 {
-  "corpusVersion": "0.48.0",
-  "merkleRoot": "sha256:b38b5d721342bf41836ef90feddd3412d1526bc655bd4d6cacaf19c0c9714265",
+  "corpusVersion": "0.49.0",
+  "merkleRoot": "sha256:a897b911c9a03be60f03702824b4523d7f1746a9e73d6a1e1212a2086ab70444",
   "tools": [
     {
       "name": "calculate_tax",
@@ -588,7 +588,7 @@
                   "number",
                   "string"
                 ],
-                "description": "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in the passive facts. If QBI-flagged, also enter it in qbiLossOffset. In dollars."
+                "description": "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in passiveActivities. If QBI-flagged, also enter it in qbiLossOffset. In dollars."
               },
               "scheduleEIsTradeOrBusiness": {
                 "type": "boolean",
@@ -1457,14 +1457,14 @@
                   "number",
                   "string"
                 ],
-                "description": "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars."
+                "description": "Net NONPASSIVE Schedule E rental/royalty income that is NOT QBI-eligible (passive activities go in passiveActivities, where the engine applies § 469 and routes the result itself). NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars."
               },
               "passiveActivityIncome": {
                 "type": [
                   "number",
                   "string"
                 ],
-                "description": "Net INCOME from passive activities this year (§ 469(c): rentals without real-estate-professional status, passive royalties, passive K-1 income) — absorbs passive losses dollar-for-dollar on Form 8582. Transcribe the TOTAL including any self-rental income items, and ALSO flag the self-rental subset in selfRentalNetIncome — the rule itself excludes that subset from the absorption pool (Reg. § 1.469-2(f)(6)); do not pre-net. For the standalone target us.federal.passive_loss_allowed. In dollars."
+                "description": "Net INCOME from passive activities this year (§ 469(c): rentals without real-estate-professional status, passive royalties, passive K-1 income) — absorbs passive losses dollar-for-dollar on Form 8582. Transcribe the TOTAL including any self-rental income items, and ALSO flag the self-rental subset in selfRentalNetIncome — the rule itself excludes that subset from the absorption pool (Reg. § 1.469-2(f)(6)); do not pre-net. For the standalone target us.federal.passive_loss_allowed only — it does not flow into the return; to compute the return use passiveActivities. In dollars."
               },
               "selfRentalNetIncome": {
                 "type": [
@@ -1478,7 +1478,7 @@
                   "number",
                   "string"
                 ],
-                "description": "Total passive-activity losses claimed this year as a POSITIVE number (current-year passive losses plus prior-year suspended carryovers being applied). For the standalone target us.federal.passive_loss_allowed. In dollars."
+                "description": "Total passive-activity losses claimed this year as a POSITIVE number (current-year passive losses plus prior-year suspended carryovers being applied). For the standalone target us.federal.passive_loss_allowed only — it does not flow into the return; to compute the return use passiveActivities. In dollars."
               },
               "rentalActiveParticipationLosses": {
                 "type": [
@@ -1492,7 +1492,7 @@
                   "number",
                   "string"
                 ],
-                "description": "NONPASSIVE Schedule E losses as a positive number (§ 469(c)(7) real-estate-professional rentals with material participation, or allowed § 469 losses not netted elsewhere) — subtracts from gross income. Schedule E ONLY: never route a Schedule C amount here. A Schedule C 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading — that field is the § 199A wage-limit input (qbiW2Wages), never an expense; Schedule C profit = gross receipts minus ACTUAL Schedule C expenses. If the activity is QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
+                "description": "NONPASSIVE Schedule E losses as a positive number (§ 469(c)(7) real-estate-professional rentals with material participation) — subtracts from gross income, and is added back to the § 469(i) special allowance's modified AGI. Passive activities go in passiveActivities instead (the engine applies § 469 to them). Schedule E ONLY: never route a Schedule C amount here. A Schedule C 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading — that field is the § 199A wage-limit input (qbiW2Wages), never an expense; Schedule C profit = gross receipts minus ACTUAL Schedule C expenses. If the activity is QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
               },
               "qbiLossOffset": {
                 "type": [
@@ -1503,7 +1503,569 @@
               }
             },
             "additionalProperties": false,
-            "description": "Schedule E rentals/royalties + § 469 passive-loss netting (Form 8582 via us.federal.passive_loss_allowed)"
+            "description": "nonpassive Schedule E rentals/royalties, self-rental, and the standalone aggregate § 469 check (us.federal.passive_loss_allowed)"
+          },
+          "passive_activities": {
+            "type": "object",
+            "properties": {
+              "passiveActivities": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "description": "How many passive activities to enter (0–8), each in passiveActivity1… through passiveActivity8… (Form 8582, one activity per row; Reg. § 1.469-4 grouping as you report it). The engine applies § 469: income absorbs losses, the $25,000 special allowance for actively managed rental real estate phases out from $100,000 of modified AGI, the disallowed loss is spread over the loss activities in proportion (Parts VI–VIII) and carried forward per activity (us.federal.passive.activityN.unallowed), and an entire disposition frees the activity's losses. Each activity's result then flows into AGI (Schedule E/C/F), net investment income, QBI, the excess business loss and the EITC investment income test. Do not also net these amounts into scheduleENetIncome, k1OrdinaryBusinessIncome or the standalone passiveActivityIncome/passiveActivityLosses facts. Not computed: a general partner's self-employment tax on a passive share, and the AMT's refigured passive loss (Form 6251 line 2m — a positive difference goes in amtOtherPreferences; a negative one is not modeled)."
+              },
+              "passiveActivity1Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 1 (when passiveActivities ≥ 1): rental_active = rental real estate in which you (or your spouse) actively participated this year with at least a 10% interest (Form 8582 Part IV; § 469(i)); rental = any other rental activity — no active participation, a limited partner's rental, or equipment or other non-real-estate rental (Part V); business = a trade or business you did not materially participate in (K-1 box 1 passive, Schedule C/F) (Part V); business_sp = a trade or business you participated in for more than 100 hours without materially participating (a significant participation activity, Pub. 925 Worksheets A and B); ptp = a publicly traded partnership (§ 469(k): its losses offset only its own income, never on Form 8582); former_passive = an activity that was passive when its losses were suspended but is not now (refused). A real estate professional's rental with material participation, and a rental to your own nonpassive business, are not passive: they do not belong here."
+              },
+              "passiveActivity1Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: current-year NET INCOME from the activity's ordinary items (Schedule E line 21 or K-1 boxes 1–3 net, Schedule C/F net profit), after the basis and at-risk limits — Form 8582 Part IV/V column (a) without any gain on disposition (enter that in DispositionGain). Zero if the activity had a net loss. In dollars."
+              },
+              "passiveActivity1Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: current-year NET LOSS from the activity's ordinary items, as a positive number, after the basis (§ 704(d), § 1366(d)) and at-risk (§ 465) limits — Form 8582 Part IV/V column (b) without any loss on disposition (enter that in DispositionLoss). Zero if the activity had net income. In dollars."
+              },
+              "passiveActivity1PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: its prior years' unallowed losses carried to this year, positive (§ 469(b); last year's Form 8582 Part VII column (c) or Part VIII column (b) for this activity). For a rental_active activity, only losses from years you actively participated in: losses from other years go in a separate activity of kind rental (Form 8582 instructions, Part IV column (c)). Next year's amount is us.federal.passive.activity1.unallowed. In dollars."
+              },
+              "passiveActivity1DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949 / Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
+              },
+              "passiveActivity1DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: loss this year from disposing of property used in the activity or of an interest in it, positive, which you ALSO entered in the capital-loss facts. Counted only in Form 8582 column (b) and the overall gain or loss. If part of the activity's losses ends up disallowed, the split between Schedule E and Form 8949/4797 (Form 8582 Part IX) is refused. In dollars."
+              },
+              "passiveActivity1Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 1: none; entire_taxable = you disposed of your ENTIRE interest this year to an unrelated person in a fully taxable transaction (§ 469(g)(1)(A)) — with an overall loss every loss of the activity is allowed and nonpassive; with an overall gain it stays on Form 8582; installment = an entire disposition reported on the installment method (refused); other = a gift, a transfer at death or a sale to a related person (refused). Selling part of an interest is none (its gain or loss is ordinary activity income or loss)."
+              },
+              "passiveActivity1Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 1 is a qualified trade or business for § 199A (a passive K-1 business; a rental only if it rises to a § 162 trade or business or meets the Rev. Proc. 2019-38 safe harbor). Its ordinary result, prior-year losses allowed this year included (Reg. § 1.199A-3(b)(1)(iv)), joins the main business's QBI — above the threshold, list it as a separate business (qbiBusinessN) for its own W-2 wage and UBIA limit. It is not active QBI for the § 199A(i) minimum. Asked when the activity's result is not zero."
+              },
+              "passiveActivity1PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: the part of its prior-year unallowed losses suspended in taxable years ending before 2018 — never QBI (Reg. § 1.199A-3(b)(1)(iv)). With a QBI-flagged activity and some of its losses allowed, a nonzero amount is refused (the first-in, first-out split is not modeled). In dollars."
+              },
+              "passiveActivity2Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 2 (when passiveActivities ≥ 2): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity2Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity2Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity2PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity2.unallowed. In dollars."
+              },
+              "passiveActivity2DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity2DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity2Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 2: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity2Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 2 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity2PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity3Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 3 (when passiveActivities ≥ 3): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity3Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity3Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity3PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity3.unallowed. In dollars."
+              },
+              "passiveActivity3DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity3DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity3Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 3: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity3Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 3 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity3PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity4Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 4 (when passiveActivities ≥ 4): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity4Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity4Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity4PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity4.unallowed. In dollars."
+              },
+              "passiveActivity4DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity4DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity4Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 4: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity4Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 4 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity4PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity5Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 5 (when passiveActivities ≥ 5): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity5Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity5Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity5PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity5.unallowed. In dollars."
+              },
+              "passiveActivity5DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity5DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity5Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 5: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity5Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 5 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity5PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity6Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 6 (when passiveActivities ≥ 6): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity6Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity6Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity6PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity6.unallowed. In dollars."
+              },
+              "passiveActivity6DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity6DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity6Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 6: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity6Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 6 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity6PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity7Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 7 (when passiveActivities ≥ 7): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity7Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity7Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity7PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity7.unallowed. In dollars."
+              },
+              "passiveActivity7DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity7DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity7Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 7: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity7Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 7 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity7PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity8Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 8 (when passiveActivities ≥ 8): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity8Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity8Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity8PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity8.unallowed. In dollars."
+              },
+              "passiveActivity8DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity8DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity8Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 8: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity8Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 8 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity8PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              }
+            },
+            "additionalProperties": false,
+            "description": "§ 469 by activity (Form 8582): up to eight passive activities — kind (rental with active participation, other rental, business, significant participation, PTP), current income or loss, prior-year unallowed loss, disposition — with the special allowance, pro-rata carryforwards and released losses flowing into AGI, NIIT, QBI and § 461(l)"
           },
           "state": {
             "type": "object",
@@ -10694,7 +11256,7 @@
     },
     {
       "name": "compute_return",
-      "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), and with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -11278,7 +11840,7 @@
                   "number",
                   "string"
                 ],
-                "description": "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in the passive facts. If QBI-flagged, also enter it in qbiLossOffset. In dollars."
+                "description": "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in passiveActivities. If QBI-flagged, also enter it in qbiLossOffset. In dollars."
               },
               "scheduleEIsTradeOrBusiness": {
                 "type": "boolean",
@@ -12147,14 +12709,14 @@
                   "number",
                   "string"
                 ],
-                "description": "Net Schedule E rental/royalty income AFTER § 469 netting (compute allowed passive losses with the standalone target us.federal.passive_loss_allowed, then enter the net POSITIVE result here) that is NOT QBI-eligible. NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars."
+                "description": "Net NONPASSIVE Schedule E rental/royalty income that is NOT QBI-eligible (passive activities go in passiveActivities, where the engine applies § 469 and routes the result itself). NONPASSIVE Schedule E losses (§ 469(c)(7) real-estate professional) are not enterable here: net them against k1OrdinaryBusinessIncome when QBI-eligible (they reduce the QBI base too), else disclose a wage-substitution workaround and keep medicareWages/socialSecurityWages at their true W-2 values — QBI-eligible pass-through income belongs in k1OrdinaryBusinessIncome instead. Treated as ordinary income with no SE tax; NOT counted as § 1411 investment income by this corpus (nonpassive/self-rental character attested — passive rental income that IS investment income belongs in rentalIncomeBeforeDepreciation instead (an after-depreciation net goes there with rentalDepreciableBasis 0), which the NIIT rule counts). In dollars."
               },
               "passiveActivityIncome": {
                 "type": [
                   "number",
                   "string"
                 ],
-                "description": "Net INCOME from passive activities this year (§ 469(c): rentals without real-estate-professional status, passive royalties, passive K-1 income) — absorbs passive losses dollar-for-dollar on Form 8582. Transcribe the TOTAL including any self-rental income items, and ALSO flag the self-rental subset in selfRentalNetIncome — the rule itself excludes that subset from the absorption pool (Reg. § 1.469-2(f)(6)); do not pre-net. For the standalone target us.federal.passive_loss_allowed. In dollars."
+                "description": "Net INCOME from passive activities this year (§ 469(c): rentals without real-estate-professional status, passive royalties, passive K-1 income) — absorbs passive losses dollar-for-dollar on Form 8582. Transcribe the TOTAL including any self-rental income items, and ALSO flag the self-rental subset in selfRentalNetIncome — the rule itself excludes that subset from the absorption pool (Reg. § 1.469-2(f)(6)); do not pre-net. For the standalone target us.federal.passive_loss_allowed only — it does not flow into the return; to compute the return use passiveActivities. In dollars."
               },
               "selfRentalNetIncome": {
                 "type": [
@@ -12168,7 +12730,7 @@
                   "number",
                   "string"
                 ],
-                "description": "Total passive-activity losses claimed this year as a POSITIVE number (current-year passive losses plus prior-year suspended carryovers being applied). For the standalone target us.federal.passive_loss_allowed. In dollars."
+                "description": "Total passive-activity losses claimed this year as a POSITIVE number (current-year passive losses plus prior-year suspended carryovers being applied). For the standalone target us.federal.passive_loss_allowed only — it does not flow into the return; to compute the return use passiveActivities. In dollars."
               },
               "rentalActiveParticipationLosses": {
                 "type": [
@@ -12182,7 +12744,7 @@
                   "number",
                   "string"
                 ],
-                "description": "NONPASSIVE Schedule E losses as a positive number (§ 469(c)(7) real-estate-professional rentals with material participation, or allowed § 469 losses not netted elsewhere) — subtracts from gross income. Schedule E ONLY: never route a Schedule C amount here. A Schedule C 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading — that field is the § 199A wage-limit input (qbiW2Wages), never an expense; Schedule C profit = gross receipts minus ACTUAL Schedule C expenses. If the activity is QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
+                "description": "NONPASSIVE Schedule E losses as a positive number (§ 469(c)(7) real-estate-professional rentals with material participation) — subtracts from gross income, and is added back to the § 469(i) special allowance's modified AGI. Passive activities go in passiveActivities instead (the engine applies § 469 to them). Schedule E ONLY: never route a Schedule C amount here. A Schedule C 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading — that field is the § 199A wage-limit input (qbiW2Wages), never an expense; Schedule C profit = gross receipts minus ACTUAL Schedule C expenses. If the activity is QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
               },
               "qbiLossOffset": {
                 "type": [
@@ -12193,7 +12755,569 @@
               }
             },
             "additionalProperties": false,
-            "description": "Schedule E rentals/royalties + § 469 passive-loss netting (Form 8582 via us.federal.passive_loss_allowed)"
+            "description": "nonpassive Schedule E rentals/royalties, self-rental, and the standalone aggregate § 469 check (us.federal.passive_loss_allowed)"
+          },
+          "passive_activities": {
+            "type": "object",
+            "properties": {
+              "passiveActivities": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "description": "How many passive activities to enter (0–8), each in passiveActivity1… through passiveActivity8… (Form 8582, one activity per row; Reg. § 1.469-4 grouping as you report it). The engine applies § 469: income absorbs losses, the $25,000 special allowance for actively managed rental real estate phases out from $100,000 of modified AGI, the disallowed loss is spread over the loss activities in proportion (Parts VI–VIII) and carried forward per activity (us.federal.passive.activityN.unallowed), and an entire disposition frees the activity's losses. Each activity's result then flows into AGI (Schedule E/C/F), net investment income, QBI, the excess business loss and the EITC investment income test. Do not also net these amounts into scheduleENetIncome, k1OrdinaryBusinessIncome or the standalone passiveActivityIncome/passiveActivityLosses facts. Not computed: a general partner's self-employment tax on a passive share, and the AMT's refigured passive loss (Form 6251 line 2m — a positive difference goes in amtOtherPreferences; a negative one is not modeled)."
+              },
+              "passiveActivity1Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 1 (when passiveActivities ≥ 1): rental_active = rental real estate in which you (or your spouse) actively participated this year with at least a 10% interest (Form 8582 Part IV; § 469(i)); rental = any other rental activity — no active participation, a limited partner's rental, or equipment or other non-real-estate rental (Part V); business = a trade or business you did not materially participate in (K-1 box 1 passive, Schedule C/F) (Part V); business_sp = a trade or business you participated in for more than 100 hours without materially participating (a significant participation activity, Pub. 925 Worksheets A and B); ptp = a publicly traded partnership (§ 469(k): its losses offset only its own income, never on Form 8582); former_passive = an activity that was passive when its losses were suspended but is not now (refused). A real estate professional's rental with material participation, and a rental to your own nonpassive business, are not passive: they do not belong here."
+              },
+              "passiveActivity1Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: current-year NET INCOME from the activity's ordinary items (Schedule E line 21 or K-1 boxes 1–3 net, Schedule C/F net profit), after the basis and at-risk limits — Form 8582 Part IV/V column (a) without any gain on disposition (enter that in DispositionGain). Zero if the activity had a net loss. In dollars."
+              },
+              "passiveActivity1Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: current-year NET LOSS from the activity's ordinary items, as a positive number, after the basis (§ 704(d), § 1366(d)) and at-risk (§ 465) limits — Form 8582 Part IV/V column (b) without any loss on disposition (enter that in DispositionLoss). Zero if the activity had net income. In dollars."
+              },
+              "passiveActivity1PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: its prior years' unallowed losses carried to this year, positive (§ 469(b); last year's Form 8582 Part VII column (c) or Part VIII column (b) for this activity). For a rental_active activity, only losses from years you actively participated in: losses from other years go in a separate activity of kind rental (Form 8582 instructions, Part IV column (c)). Next year's amount is us.federal.passive.activity1.unallowed. In dollars."
+              },
+              "passiveActivity1DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949 / Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
+              },
+              "passiveActivity1DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: loss this year from disposing of property used in the activity or of an interest in it, positive, which you ALSO entered in the capital-loss facts. Counted only in Form 8582 column (b) and the overall gain or loss. If part of the activity's losses ends up disallowed, the split between Schedule E and Form 8949/4797 (Form 8582 Part IX) is refused. In dollars."
+              },
+              "passiveActivity1Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 1: none; entire_taxable = you disposed of your ENTIRE interest this year to an unrelated person in a fully taxable transaction (§ 469(g)(1)(A)) — with an overall loss every loss of the activity is allowed and nonpassive; with an overall gain it stays on Form 8582; installment = an entire disposition reported on the installment method (refused); other = a gift, a transfer at death or a sale to a related person (refused). Selling part of an interest is none (its gain or loss is ordinary activity income or loss)."
+              },
+              "passiveActivity1Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 1 is a qualified trade or business for § 199A (a passive K-1 business; a rental only if it rises to a § 162 trade or business or meets the Rev. Proc. 2019-38 safe harbor). Its ordinary result, prior-year losses allowed this year included (Reg. § 1.199A-3(b)(1)(iv)), joins the main business's QBI — above the threshold, list it as a separate business (qbiBusinessN) for its own W-2 wage and UBIA limit. It is not active QBI for the § 199A(i) minimum. Asked when the activity's result is not zero."
+              },
+              "passiveActivity1PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: the part of its prior-year unallowed losses suspended in taxable years ending before 2018 — never QBI (Reg. § 1.199A-3(b)(1)(iv)). With a QBI-flagged activity and some of its losses allowed, a nonzero amount is refused (the first-in, first-out split is not modeled). In dollars."
+              },
+              "passiveActivity2Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 2 (when passiveActivities ≥ 2): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity2Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity2Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity2PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity2.unallowed. In dollars."
+              },
+              "passiveActivity2DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity2DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity2Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 2: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity2Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 2 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity2PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity3Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 3 (when passiveActivities ≥ 3): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity3Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity3Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity3PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity3.unallowed. In dollars."
+              },
+              "passiveActivity3DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity3DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity3Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 3: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity3Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 3 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity3PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity4Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 4 (when passiveActivities ≥ 4): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity4Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity4Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity4PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity4.unallowed. In dollars."
+              },
+              "passiveActivity4DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity4DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity4Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 4: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity4Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 4 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity4PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity5Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 5 (when passiveActivities ≥ 5): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity5Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity5Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity5PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity5.unallowed. In dollars."
+              },
+              "passiveActivity5DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity5DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity5Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 5: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity5Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 5 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity5PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity6Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 6 (when passiveActivities ≥ 6): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity6Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity6Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity6PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity6.unallowed. In dollars."
+              },
+              "passiveActivity6DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity6DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity6Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 6: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity6Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 6 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity6PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity7Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 7 (when passiveActivities ≥ 7): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity7Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity7Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity7PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity7.unallowed. In dollars."
+              },
+              "passiveActivity7DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity7DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity7Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 7: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity7Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 7 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity7PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity8Kind": {
+                "type": "string",
+                "enum": [
+                  "rental_active",
+                  "rental",
+                  "business",
+                  "business_sp",
+                  "ptp",
+                  "former_passive"
+                ],
+                "description": "Passive activity 8 (when passiveActivities ≥ 8): rental_active, rental, business, business_sp, ptp or former_passive — as for passiveActivity1Kind."
+              },
+              "passiveActivity8Income": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: current-year net income from its ordinary items (Form 8582 column (a) without gains on disposition). In dollars."
+              },
+              "passiveActivity8Loss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: current-year net loss from its ordinary items, positive (Form 8582 column (b) without losses on disposition). In dollars."
+              },
+              "passiveActivity8PriorUnallowed": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: prior years' unallowed losses carried to this year, positive (last year's Form 8582 Part VII column (c)). Next year's amount is us.federal.passive.activity8.unallowed. In dollars."
+              },
+              "passiveActivity8DispositionGain": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars."
+              },
+              "passiveActivity8DispositionLoss": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: loss from disposing of its property or an interest in it, positive, also entered in the capital-loss facts (Form 8582 column (b) only). In dollars."
+              },
+              "passiveActivity8Disposition": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "entire_taxable",
+                  "installment",
+                  "other"
+                ],
+                "description": "Passive activity 8: none, entire_taxable, installment or other — as for passiveActivity1Disposition."
+              },
+              "passiveActivity8Qbi": {
+                "type": "boolean",
+                "description": "Passive activity 8 is a qualified trade or business for § 199A — as for passiveActivity1Qbi. Asked when its result is not zero."
+              },
+              "passiveActivity8PriorUnallowedPre2018": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              }
+            },
+            "additionalProperties": false,
+            "description": "§ 469 by activity (Form 8582): up to eight passive activities — kind (rental with active participation, other rental, business, significant participation, PTP), current income or loss, prior-year unallowed loss, disposition — with the special allowance, pro-rata carryforwards and released losses flowing into AGI, NIIT, QBI and § 461(l)"
           },
           "state": {
             "type": "object",
