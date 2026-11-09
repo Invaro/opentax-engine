@@ -1,0 +1,19 @@
+{
+  "description": "Form 6251 Part III with unrecaptured § 1250 gain (fixture 1114's return): line 12 = 400,000 − 88,100 = 311,900; line 13 = 150,000 − 100,000 = 50,000; line 14 = 100,000; line 15 = min(150,000, 150,000); line 17 = 161,900 → 26% = 42,094; line 30 = 50,000 → 7,500; line 36 = 311,900 − (161,900 + 50,000) = 100,000 → 25% = 25,000; line 38 = 74,594 < line 39 82,550 → TMT $74,594.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.amt.tentative_minimum_tax",
+  "expect": {
+    "valueCents": "7459400"
+  }
+}

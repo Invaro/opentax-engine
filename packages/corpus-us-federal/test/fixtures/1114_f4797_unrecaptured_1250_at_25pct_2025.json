@@ -1,0 +1,19 @@
+{
+  "description": "Schedule D Tax Worksheet line 40: the same rental with wages $250,000 (taxable income 384,250). Line 21 = 234,250, line 39 = 100,000 − 0 → 25% = $25,000; 15% of 50,000 = $7,500; tax on 234,250 = $52,023; total $84,523 — $10,000 more than the 15% rate on all $150,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "8452300"
+  }
+}

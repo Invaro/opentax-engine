@@ -57,7 +57,7 @@ const slot = (i: number): FactSpec[] => [
     min: "0",
     description:
       i === 1
-        ? "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949 / Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
+        ? "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949) or as a business property (Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
         : `Passive activity ${i}: gain from disposing of its property or an interest in it, also entered in the capital-gain facts (Form 8582 column (a) only). In dollars.`,
     default: { value: "0", rationale: `Assumed no gain on disposition in passive activity ${i}` },
   },

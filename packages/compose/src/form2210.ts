@@ -88,6 +88,20 @@ export const SCHEDULE_AI_FACTS: Record<string, "annualize" | "keep" | { refuse: 
   earlyDistributionSubjectToPenalty: "annualize",
   amtIsoExerciseSpread: "annualize",
   amtOtherPreferences: "annualize",
+  // Form 4797: a sale is an amount of the period it falls in; the lookback is a prior-year balance
+  ...Object.fromEntries(
+    [1, 2, 3, 4, 5, 6, 7, 8].flatMap((i) => [
+      [`businessProperty${i}SalesPrice`, "annualize"],
+      [`businessProperty${i}CostBasis`, "annualize"],
+      [`businessProperty${i}Depreciation`, "annualize"],
+      [`businessProperty${i}AdditionalDepreciation`, "annualize"],
+    ]),
+  ),
+  k1Section1231Gain: "annualize",
+  k1Section1231Loss: "annualize",
+  k1UnrecapturedSection1250Gain: "annualize",
+  unrecapturedSection1250GainDistributions: "annualize",
+  section1231LookbackLosses: { refuse: "the § 1231 lookback is a balance from earlier years, not an amount of the period; the instructions don't say how it applies to a period" },
   // Form 3800: business credits and their carryforwards
   generalBusinessCreditNonpassive: { refuse: "the Schedule AI instructions don't say how a general business credit is figured for a period" },
   specifiedCreditNonpassive: { refuse: "the Schedule AI instructions don't say how a general business credit is figured for a period" },

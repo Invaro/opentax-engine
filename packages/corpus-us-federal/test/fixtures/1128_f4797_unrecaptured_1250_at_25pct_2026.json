@@ -1,0 +1,19 @@
+{
+  "description": "Schedule D Tax Worksheet for 2026 (fixture 1114's sale): taxable income 400,000 − 16,100 = 383,900; line 19 is the 2026 top of the 24% bracket, $201,775; line 21 = 233,900; 15% x 50,000 = 7,500; 25% x 100,000 = 25,000; tax on 233,900 = 51,304; total $83,804.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 250000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1250",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 350000,
+    "businessProperty1CostBasis": 300000,
+    "businessProperty1Depreciation": 100000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.income_tax_before_credits",
+  "expect": {
+    "valueCents": "8380400"
+  }
+}

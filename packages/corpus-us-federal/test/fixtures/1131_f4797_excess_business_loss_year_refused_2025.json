@@ -1,0 +1,20 @@
+{
+  "description": "Form 461 lines 3–4 bring Form 4797 business gains and losses into the § 461(l) limit, which is not modeled: a year with an excess business loss and a Form 4797 sale is refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "scheduleCNetLoss": 400000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1245",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 5000,
+    "businessProperty1CostBasis": 10000,
+    "businessProperty1Depreciation": 10000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

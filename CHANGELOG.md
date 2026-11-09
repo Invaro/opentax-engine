@@ -2,6 +2,31 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 10, 2026 · Sales of business property: Form 4797 and the 25% rate
+
+Sales of business property now go through Form 4797, for 2025, 2026 and 2027, and unrecaptured § 1250 gain is taxed at up to 25%.
+
+- **Up to eight properties** (`businessProperties`, then `businessPropertyN…`): kind (`section1245`, `section1250`, `other`), held over a year or not, sales price, cost basis, depreciation and, for § 1250 property, additional depreciation. Also K-1 § 1231 gain or loss, K-1 unrecaptured § 1250 gain, the 5-year lookback (line 8) and the unrecaptured § 1250 gain in capital gain distributions.
+- **Form 4797:**
+  - Each property's gain or loss (line 24).
+  - § 1245 recapture: the smaller of the gain or the depreciation. § 1250 recapture: the smaller of the gain or the additional depreciation.
+  - § 1231 netting in Part I: a net loss is ordinary; a net gain is ordinary up to the nonrecaptured losses of the prior 5 years (§ 1231(c)) and long-term capital gain beyond.
+  - Sales within a year are Part II.
+  - Line 17 goes to Schedule 1 line 4 and line 9 to Schedule D line 11; `us.federal.form4797.lookback_remaining` is next year's line 8.
+- **Unrecaptured § 1250 gain** (Schedule D line 19, `us.federal.schedule_d.unrecaptured_1250`) comes from the Instructions for Schedule D worksheet. The regular tax uses the Schedule D Tax Worksheet whenever there is any; the 25% band starts above the top of the 24% bracket, so gain that fits below it keeps the lower ordinary rates. Form 6251 Part III carries it too: line 13 less the unrecaptured gain, line 14, line 15, and lines 35–37 at 25%.
+- **Where the results go:**
+  - **AGI and § 86 income.**
+  - **Net investment income:** Form 8960 line 5a; property held in a nonpassive trade or business comes out on line 5b. The NIIT now isn't figured, and nothing is asked for it, when modified AGI is under the threshold.
+  - **QBI:** the ordinary results of property used in a qualified trade or business.
+  - **The EITC investment-income test:** Pub. 596 line 6 takes the § 1231 gain out.
+- **`compute_return`** shows `forms['4797']`.
+- **Refused, with the reason:** §§ 1252, 1254 and 1255; casualties, installment sales and like-kind exchanges (Forms 4684, 6252 and 8824); Part IV; 28% rate gain; a loss year (§ 461(l) or NOL) with Form 4797 amounts; FEIE stacking or the kiddie tax with Form 4797 amounts; and § 1231(c) lookback income alongside QBI property.
+- **Checked:**
+  - 23 new fixtures, among them Pub. 544's § 1245 truck and § 1231 lookback examples, the Form 4797 line 8 example, and hand-worked Schedule D Tax Worksheet returns for 2025 and 2026. The others cover the AMT Part III return, NIIT in and out, the EITC and QBI.
+  - Every existing fixture, the IRS ATS scenarios and the AMT regression cases give the same answers as v0.50.0, and so does every pre-existing rule.
+  - 3,000 random returns heavy in gains, dividends and AMT preferences (21,000 evaluations) compute identically.
+  - An independent rebuild of Form 4797, the line 19 worksheet, the Schedule D Tax Worksheet and Form 6251 Part III from the IRS documents alone agrees on all 400 random returns: every property, every line, AGI, taxable income, regular tax and tentative minimum tax. 119 of them have unrecaptured § 1250 gain.
+
 ## Nov 10, 2026 · Business credits: Form 8582-CR and Form 3800
 
 General business credits now reduce the tax, for 2025, 2026 and 2027. Credits from passive activities are limited by Form 8582-CR first; the Form 3800 limit then applies to all of them.

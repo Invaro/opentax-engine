@@ -1,0 +1,19 @@
+{
+  "description": "A business property's character (§ 1245, § 1250 or other) and holding period are never guessed: its gain or loss computes without them, but the recapture and the § 1231 / Part II split ask for both.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1SalesPrice": 10000,
+    "businessProperty1CostBasis": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "businessProperty1Kind",
+      "businessProperty1HeldOverOneYear"
+    ]
+  }
+}

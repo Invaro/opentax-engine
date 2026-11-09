@@ -1,0 +1,23 @@
+{
+  "description": "Reg. § 1.199A-3(b)(2)(ii)(A) excludes only capital gain and loss from QBI, so § 1245 recapture of a qualified business's equipment is QBI. Wages $100,000, nonpassive K-1 income $50,000, equipment recapture $10,000: QBI $60,000 → 20% = $12,000, under 20% of taxable income (160,000 − 15,750 = 144,250 → 28,850).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "k1OrdinaryBusinessIncome": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1245",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 10000,
+    "businessProperty1CostBasis": 20000,
+    "businessProperty1Depreciation": 20000,
+    "businessProperty1Qbi": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "1200000",
+    "intermediates": {
+      "us.federal.form4797.qbi_net": "1000000"
+    }
+  }
+}

@@ -89,6 +89,13 @@ const rawCapitalGains: Expr = add(fact("longTermCapitalGains"), fact("shortTermC
 const capitalItemsPresent: Expr = gt0(rawCapitalGains);
 const capitalItemsNonbusiness = (e: Expr): Expr =>
   iff(
+    gt0(ruleRef("us.federal.form4797.present")),
+    {
+      kind: "unsupported",
+      reason:
+        "a loss year with business property sales (Form 4797): their § 461(l) and § 172(d)(4) treatment (Form 461 lines 3–4; Form 172 lines 2–22) is not modeled",
+    },
+    iff(
     capitalItemsPresent,
     iff(
       fact("capitalItemsAreNonbusiness"),
@@ -100,6 +107,7 @@ const capitalItemsNonbusiness = (e: Expr): Expr =>
       },
     ),
     e,
+    ),
   );
 
 function eblRule(version: number, from: string, to: string, single: string, joint: string, source: string, year: string): Rule {
@@ -112,7 +120,7 @@ function eblRule(version: number, from: string, to: string, single: string, join
       source: `26 U.S.C. § 461(l) as amended by Pub. L. 119-21 (OBBBA) § 70601; ${source}; Form 461 and Instructions`,
       section: "§ 461(l)(1)–(3); Form 461 lines 2–16; Schedule 1 line 8p",
       url: F461_URL,
-      excerpt: `"An excess business loss is the amount by which the total deductions (computed without regard to any deduction allowed under section 172 or 199A) from your trades or businesses are more than your total gross income or gains from your trades or businesses, plus the threshold amount. Such excess losses should be determined without regard to any deductions, gross income, or gains attributable to any trade or business of performing services of an employee." (I461) Threshold for TY${year}: $${(Number(single) / 100).toLocaleString("en-US")} ($${(Number(joint) / 100).toLocaleString("en-US")} married filing jointly). "If the resulting figure on this line is a negative amount, then it's your excess business loss. [...] report the excess business loss adjustment as a positive number on the 'Other income' line [...] Schedule 1 (Form 1040), line 8p", and it "is treated as a net operating loss (NOL) carryover for subsequent years". [Counted: Schedule C/F profit and loss (both spouses), nonpassive K-1 ordinary business income and loss (after basis and at-risk), passive trade or business activities after the § 469 limits (us.federal.passive.business_net), and — when they are a trade or business (scheduleEIsTradeOrBusiness, asked only when it changes the answer) — Schedule E rental and royalty results, passive rentals after § 469 included. Wages are never counted. Form 4797 is not modeled and capital gains and losses must be investment items (capitalItemsAreNonbusiness, asked when there is an excess business loss and capital items), so no capital or § 1231 amount enters (Form 461 lines 3 and 4). Schedule 1 Part II adjustments are not pulled in, as Form 461 pulls only Schedule 1 lines 3–6 and Form 1040 line 7.]`,
+      excerpt: `"An excess business loss is the amount by which the total deductions (computed without regard to any deduction allowed under section 172 or 199A) from your trades or businesses are more than your total gross income or gains from your trades or businesses, plus the threshold amount. Such excess losses should be determined without regard to any deductions, gross income, or gains attributable to any trade or business of performing services of an employee." (I461) Threshold for TY${year}: $${(Number(single) / 100).toLocaleString("en-US")} ($${(Number(joint) / 100).toLocaleString("en-US")} married filing jointly). "If the resulting figure on this line is a negative amount, then it's your excess business loss. [...] report the excess business loss adjustment as a positive number on the 'Other income' line [...] Schedule 1 (Form 1040), line 8p", and it "is treated as a net operating loss (NOL) carryover for subsequent years". [Counted: Schedule C/F profit and loss (both spouses), nonpassive K-1 ordinary business income and loss (after basis and at-risk), passive trade or business activities after the § 469 limits (us.federal.passive.business_net), and — when they are a trade or business (scheduleEIsTradeOrBusiness, asked only when it changes the answer) — Schedule E rental and royalty results, passive rentals after § 469 included. Wages are never counted. Form 4797 sales are refused in an excess-business-loss year and capital gains and losses must be investment items (capitalItemsAreNonbusiness, asked when there is an excess business loss and capital items), so no capital or § 1231 amount enters (Form 461 lines 3 and 4). Schedule 1 Part II adjustments are not pulled in, as Form 461 pulls only Schedule 1 lines 3–6 and Form 1040 line 7.]`,
     },
     effectiveFrom: from,
     effectiveTo: to,
@@ -269,10 +277,10 @@ export const businessLossRules: Rule[] = [
     output: { type: "money" },
     formula: zero,
   },
-  // v1–v3 had no passive activities (§ 469 by activity)
-  eblRule(4, "2025-01-01", "2026-01-01", "31300000", "62600000", "Rev. Proc. 2024-40 § 2.32", "2025"),
-  eblRule(5, "2026-01-01", "2027-01-01", "25600000", "51200000", "Rev. Proc. 2025-32 § 4.31 (base year moved to 2024 by OBBBA § 70601(b))", "2026"),
-  eblRule(6, "2027-01-01", "2028-01-01", "26400000", "52800000", "Rev. Proc. 2026-35 § 3.33", "2027"),
+  // v1–v3 had no passive activities (§ 469 by activity); v4–v6 didn't refuse Form 4797 sales in an excess-business-loss year
+  eblRule(7, "2025-01-01", "2026-01-01", "31300000", "62600000", "Rev. Proc. 2024-40 § 2.32", "2025"),
+  eblRule(8, "2026-01-01", "2027-01-01", "25600000", "51200000", "Rev. Proc. 2025-32 § 4.31 (base year moved to 2024 by OBBBA § 70601(b))", "2026"),
+  eblRule(9, "2027-01-01", "2028-01-01", "26400000", "52800000", "Rev. Proc. 2026-35 § 3.33", "2027"),
   {
     id: NOL,
     version: 1,
@@ -353,7 +361,7 @@ export const businessLossRules: Rule[] = [
   },
   {
     id: "us.federal.nol.generated",
-    version: 1,
+    version: 2, // v1 didn't refuse Form 4797 sales in a loss year
     jurisdiction: J,
     title: "Net operating loss this year generates — Form 172 Part I line 24 (as a positive amount; excludes the excess business loss)",
     citation: {
@@ -361,7 +369,7 @@ export const businessLossRules: Rule[] = [
       section: "§ 172(c)–(d); Form 172 lines 1–24",
       url: F172_URL,
       excerpt:
-        '"the term \'net operating loss\' means the excess of the deductions allowed by this chapter over the gross income. Such excess shall be computed with the modifications specified in subsection (d)." (§ 172(c)) Line 1: "For individuals, subtract your standard deduction or itemized deductions from your adjusted gross income (AGI)". Line 6 (nonbusiness deductions): "Health savings account deduction, [...] Deductions for payments on behalf of a self-employed individual to a SEP, SIMPLE, or qualified plan, IRA deductions, Alimony paid, Most itemized deductions (except for casualty and theft losses resulting from a federally declared disaster and state income tax on trade or business income), and Standard deduction." Line 7 (nonbusiness income): "ordinary dividends, annuities, and interest on investments [...] Your taxable IRA distributions. Pension benefits. Social security benefits." Business income includes "Salaries and wages. Self-employment income. Unemployment compensation. Rental income." Line 23: "Enter the total amount of your NOL deduction for losses from other years." Line 24: "Combine lines 1, 9, 17, and 21 through 23. If the result is less than zero, enter it here." (I172) [Form 4797 is not modeled and capital gains and losses must be investment (nonbusiness) items — attested by capitalItemsAreNonbusiness when the year has capital items and could have an NOL — so lines 2–22 reduce to adding back the § 1211(b) deduction; the senior deduction is a § 151 deduction (§ 172(d)(3)) and line 1 excludes it. The student loan interest deduction and the early withdrawal penalty are on neither printed list; both are personal or investment items, not "attributable to a taxpayer\'s trade or business" (§ 172(d)(4)), so they are nonbusiness. Educator expenses, the deductible half of self-employment tax and self-employed health insurance are business deductions (I172) and stay out of line 6. An itemizer enters the business share of itemized deductions (itemizedDeductionsBusinessPortion), asked only when the year could have an NOL. With Schedule 1-A tips, overtime or car-loan deductions, other adjustments or a § 1202 exclusion in a loss year, the business/nonbusiness split is unsettled and the rule refuses. The excess business loss (Schedule 1 line 8p) is already in AGI, so it is NOT in this amount; it carries over separately (us.federal.nol.carryover_post2017).]',
+        '"the term \'net operating loss\' means the excess of the deductions allowed by this chapter over the gross income. Such excess shall be computed with the modifications specified in subsection (d)." (§ 172(c)) Line 1: "For individuals, subtract your standard deduction or itemized deductions from your adjusted gross income (AGI)". Line 6 (nonbusiness deductions): "Health savings account deduction, [...] Deductions for payments on behalf of a self-employed individual to a SEP, SIMPLE, or qualified plan, IRA deductions, Alimony paid, Most itemized deductions (except for casualty and theft losses resulting from a federally declared disaster and state income tax on trade or business income), and Standard deduction." Line 7 (nonbusiness income): "ordinary dividends, annuities, and interest on investments [...] Your taxable IRA distributions. Pension benefits. Social security benefits." Business income includes "Salaries and wages. Self-employment income. Unemployment compensation. Rental income." Line 23: "Enter the total amount of your NOL deduction for losses from other years." Line 24: "Combine lines 1, 9, 17, and 21 through 23. If the result is less than zero, enter it here." (I172) [Form 4797 sales are refused in a loss year and capital gains and losses must be investment (nonbusiness) items — attested by capitalItemsAreNonbusiness when the year has capital items and could have an NOL — so lines 2–22 reduce to adding back the § 1211(b) deduction; the senior deduction is a § 151 deduction (§ 172(d)(3)) and line 1 excludes it. The student loan interest deduction and the early withdrawal penalty are on neither printed list; both are personal or investment items, not "attributable to a taxpayer\'s trade or business" (§ 172(d)(4)), so they are nonbusiness. Educator expenses, the deductible half of self-employment tax and self-employed health insurance are business deductions (I172) and stay out of line 6. An itemizer enters the business share of itemized deductions (itemizedDeductionsBusinessPortion), asked only when the year could have an NOL. With Schedule 1-A tips, overtime or car-loan deductions, other adjustments or a § 1202 exclusion in a loss year, the business/nonbusiness split is unsettled and the rule refuses. The excess business loss (Schedule 1 line 8p) is already in AGI, so it is NOT in this amount; it carries over separately (us.federal.nol.carryover_post2017).]',
     },
     ...FROM,
     output: { type: "money" },

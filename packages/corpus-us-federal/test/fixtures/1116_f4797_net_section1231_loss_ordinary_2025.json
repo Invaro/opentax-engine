@@ -1,0 +1,22 @@
+{
+  "description": "§ 1231(a)(2); Form 4797 line 11: equipment with a $50,000 cost and $20,000 of depreciation sold for $25,000 — a $5,000 loss, a net § 1231 loss, ordinary on Schedule 1 line 4. AGI = 50,000 − 5,000 = $45,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1245",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 25000,
+    "businessProperty1CostBasis": 50000,
+    "businessProperty1Depreciation": 20000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "valueCents": "4500000",
+    "intermediates": {
+      "us.federal.form4797.line17": "-500000"
+    }
+  }
+}

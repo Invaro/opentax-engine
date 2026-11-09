@@ -48,6 +48,8 @@ const ltL = fact("longTermCapitalLoss");
 const stCarry = fact("priorYearShortTermCapitalLossCarryover");
 const ltCarry = fact("priorYearLongTermCapitalLossCarryover");
 const legacyLoss = fact("netCapitalLoss");
+// Schedule D line 11: the net § 1231 gain from Form 4797 line 9 (or line 7)
+const form4797Gain: Expr = { kind: "rule", ruleId: "us.federal.form4797.line9" };
 const neg = (e: Expr): Expr => sub(zero, e);
 
 /**
@@ -58,12 +60,12 @@ const neg = (e: Expr): Expr => sub(zero, e);
 const CONTRADICTORY: Expr = or(
   and(gt0(stG), gt0(stL)),
   and(gt0(ltG), gt0(ltL)),
-  and(gt0(legacyLoss), or(gt0(stG), gt0(ltG), gt0(stL), gt0(ltL), gt0(stCarry), gt0(ltCarry))),
+  and(gt0(legacyLoss), or(gt0(stG), gt0(ltG), gt0(stL), gt0(ltL), gt0(stCarry), gt0(ltCarry), gt0(form4797Gain))),
 );
 
 // Schedule D line 7 and line 15, signed
 const line7 = sub(sub(stG, stL), stCarry);
-const line15 = sub(sub(ltG, ltL), ltCarry);
+const line15 = add(sub(sub(ltG, ltL), ltCarry), form4797Gain);
 
 const refuse = (computation: Expr): Expr => ({
   kind: "if",
@@ -71,7 +73,7 @@ const refuse = (computation: Expr): Expr => ({
   then: {
     kind: "unsupported",
     reason:
-      "contradictory Schedule D facts — each capital fact is a NET result: a bucket takes a gain OR a loss (never both), and the overall netCapitalLoss cannot be combined with per-bucket or carryover facts",
+      "contradictory Schedule D facts — each capital fact is a NET result: a bucket takes a gain OR a loss (never both), and the overall netCapitalLoss cannot be combined with per-bucket or carryover facts or a Form 4797 § 1231 gain",
   },
   else: computation,
 });
@@ -84,7 +86,7 @@ const CITE = {
 export const scheduleDRules: Rule[] = [
   {
     id: "us.federal.schedule_d.net_short_term",
-    version: 1,
+    version: 2, // v1's netCapitalLoss guard didn't include the Form 4797 § 1231 gain
     jurisdiction: J,
     title: "Net short-term capital gain or (loss), Schedule D line 7, including the prior-year carryover",
     citation: {
@@ -99,14 +101,14 @@ export const scheduleDRules: Rule[] = [
   },
   {
     id: "us.federal.schedule_d.net_long_term",
-    version: 1,
+    version: 2, // v1 had no Form 4797 § 1231 gain (Schedule D line 11)
     jurisdiction: J,
     title: "Net long-term capital gain or (loss), Schedule D line 15, including the prior-year carryover",
     citation: {
       ...CITE,
       section: "§ 1212(b)(1)(B); § 1222(7), (8)",
       excerpt:
-        "…the excess of the net long-term capital loss over the net short-term capital gain for such year shall be a long-term capital loss in the succeeding taxable year. [2025 Schedule D: line 14 is the long-term capital loss carryover; line 15 combines lines 8a through 14. Negative = a net long-term loss.]",
+        "…the excess of the net long-term capital loss over the net short-term capital gain for such year shall be a long-term capital loss in the succeeding taxable year. [2025 Schedule D: line 11 takes the net § 1231 gain from Form 4797 line 9 (us.federal.form4797.line9); line 14 is the long-term capital loss carryover; line 15 combines lines 8a through 14. Negative = a net long-term loss.]",
     },
     ...FROM,
     output: { type: "money" },
@@ -114,7 +116,7 @@ export const scheduleDRules: Rule[] = [
   },
   {
     id: "us.federal.schedule_d.preferential_lt_gain",
-    version: 2, // v1 had no prior-year carryovers
+    version: 3, // v2 had no Form 4797 § 1231 gain; v1 had no prior-year carryovers
     jurisdiction: J,
     title: "Net capital gain (§ 1222(11)): net LT gain reduced by any net ST loss",
     citation: {
@@ -129,7 +131,7 @@ export const scheduleDRules: Rule[] = [
   },
   {
     id: "us.federal.schedule_d.ordinary_st_gain",
-    version: 2, // v1 had no prior-year carryovers
+    version: 3, // v2 had no Form 4797 § 1231 gain; v1 had no prior-year carryovers
     jurisdiction: J,
     title: "Net short-term capital gain surviving netting (§ 1222(5), (9)): ordinary-rate",
     citation: {
@@ -144,7 +146,7 @@ export const scheduleDRules: Rule[] = [
   },
   {
     id: "us.federal.schedule_d.net_loss",
-    version: 2, // v1 had no prior-year carryovers
+    version: 3, // v2 had no Form 4797 § 1231 gain; v1 had no prior-year carryovers
     jurisdiction: J,
     title: "Net capital loss after netting (§ 1222(10)), feeding the § 1211(b) offset",
     citation: {
