@@ -1,6 +1,6 @@
 {
-  "corpusVersion": "0.49.0",
-  "merkleRoot": "sha256:a897b911c9a03be60f03702824b4523d7f1746a9e73d6a1e1212a2086ab70444",
+  "corpusVersion": "0.50.0",
+  "merkleRoot": "sha256:3fc1b2644ebd8c98d496985841b6f0223b7d6188be9d8a6aade761f82f1250fb",
   "tools": [
     {
       "name": "calculate_tax",
@@ -1505,6 +1505,45 @@
             "additionalProperties": false,
             "description": "nonpassive Schedule E rentals/royalties, self-rental, and the standalone aggregate § 469 check (us.federal.passive_loss_allowed)"
           },
+          "business_credits": {
+            "type": "object",
+            "properties": {
+              "generalBusinessCreditNonpassive": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Current-year general business credits NOT from passive activities and not specified credits — Form 3800 Part III line 2, column (e): the total of the component credit forms (e.g. Form 6765 research credit of a business that is not an eligible small business, Form 8881, Form 8994, Form 8826), each after its own limits. Passive activities' credits go on the activity (passiveActivityNCredit). In dollars."
+              },
+              "specifiedCreditNonpassive": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Current-year § 38(c)(4)(B) specified credits NOT from passive activities — Form 3800 Part III line 5, column (e): credits allowed against the tentative minimum tax (e.g. the work opportunity credit, § 45R small employer health insurance credit, an eligible small business's research credit, the § 48 energy credit, the low-income housing credit for post-2007 buildings). In dollars."
+              },
+              "generalBusinessCreditCarryforward": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Carryforwards to this year of general business credits unused in earlier years under the § 38(c) limit (§ 39) that are not specified credits — Form 3800 Part I line 4 (Part IV line 6, column (f)). Passive credits disallowed by § 469 are not this: they stay on their activity (passiveActivityNPriorUnallowedCredit). In dollars."
+              },
+              "specifiedCreditCarryforward": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Carryforwards to this year of unused specified credits (§ 39) — Form 3800 Part II line 34 (Part IV line 5, column (f)). In dollars."
+              },
+              "spouseHasBusinessCredit": {
+                "type": "boolean",
+                "description": "Married filing separately: the spouse has a general business credit for the year, or a carryforward or carryback to it (§ 38(c)(6)(A)). If so, the $25,000 in Form 3800 line 13 is $12,500. Asked of a married person filing separately with a business credit."
+              }
+            },
+            "additionalProperties": false,
+            "description": "Form 3800 general business credit: nonpassive current-year credits and § 39 carryforwards, split between § 38(c)(4)(B) specified credits (allowed against the TMT) and the rest; passive activities' credits go on the activity (passive_activities) and pass through Form 8582-CR"
+          },
           "passive_activities": {
             "type": "object",
             "properties": {
@@ -1587,6 +1626,34 @@
                 ],
                 "description": "Passive activity 1: the part of its prior-year unallowed losses suspended in taxable years ending before 2018 — never QBI (Reg. § 1.199A-3(b)(1)(iv)). With a QBI-flagged activity and some of its losses allowed, a nonzero amount is refused (the first-in, first-out split is not modeled). In dollars."
               },
+              "passiveActivity1Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: its current-year general business credit (Form 3800 Part III column (d) — e.g. a K-1 box 15 rehabilitation, low-income housing, research or energy credit, after the credit's own form), limited by Form 8582-CR. One credit type per activity: an activity with two types of credit takes a second activity row with the same kind and no income or loss. In dollars."
+              },
+              "passiveActivity1PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: its prior years' unallowed passive credits carried to this year (last year's Form 8582-CR Worksheet 9 column (b), or line 5 − line 37 with one credit). Unlike losses, they are not freed when the activity is sold (§ 469(g) covers losses only; the Part VI basis election is not modeled). Next year's amount is us.federal.passive_credit.activity1.unallowed. In dollars."
+              },
+              "passiveActivity1CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 1's credit, for Form 8582-CR: rehabilitation = the § 47 rehabilitation credit (from rental real estate it uses the special allowance phased out from $200,000 to $250,000, Worksheet 2; from a business it is Worksheet 4); lihc_pre1990 = a low-income housing credit for property placed in service before 1990 or through a pass-through interest acquired before 1990 (Worksheet 2); lihc_post1989 = any other low-income housing credit (Worksheet 3, no modified AGI limit); general = every other credit (Worksheet 1 from rental real estate with active participation, else Worksheet 4). Asked when the activity has a credit."
+              },
+              "passiveActivity1CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 1's credit is a § 38(c)(4)(B) specified credit, allowed against the tentative minimum tax (Form 3800 Part III line 4): e.g. the low-income housing credit for buildings placed in service after 2007, the rehabilitation credit for expenditures after 2007, the § 48 energy credit, the work opportunity credit, the § 45R small employer health insurance credit, an eligible small business's research credit. Otherwise Part III line 1. Asked when the activity has a credit."
+              },
               "passiveActivity2Kind": {
                 "type": "string",
                 "enum": [
@@ -1654,6 +1721,34 @@
                   "string"
                 ],
                 "description": "Passive activity 2: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity2Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity2PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity2.unallowed. In dollars."
+              },
+              "passiveActivity2CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 2's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity2CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 2's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               },
               "passiveActivity3Kind": {
                 "type": "string",
@@ -1723,6 +1818,34 @@
                 ],
                 "description": "Passive activity 3: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
               },
+              "passiveActivity3Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity3PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity3.unallowed. In dollars."
+              },
+              "passiveActivity3CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 3's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity3CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 3's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
+              },
               "passiveActivity4Kind": {
                 "type": "string",
                 "enum": [
@@ -1790,6 +1913,34 @@
                   "string"
                 ],
                 "description": "Passive activity 4: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity4Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity4PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity4.unallowed. In dollars."
+              },
+              "passiveActivity4CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 4's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity4CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 4's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               },
               "passiveActivity5Kind": {
                 "type": "string",
@@ -1859,6 +2010,34 @@
                 ],
                 "description": "Passive activity 5: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
               },
+              "passiveActivity5Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity5PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity5.unallowed. In dollars."
+              },
+              "passiveActivity5CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 5's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity5CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 5's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
+              },
               "passiveActivity6Kind": {
                 "type": "string",
                 "enum": [
@@ -1926,6 +2105,34 @@
                   "string"
                 ],
                 "description": "Passive activity 6: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity6Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity6PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity6.unallowed. In dollars."
+              },
+              "passiveActivity6CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 6's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity6CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 6's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               },
               "passiveActivity7Kind": {
                 "type": "string",
@@ -1995,6 +2202,34 @@
                 ],
                 "description": "Passive activity 7: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
               },
+              "passiveActivity7Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity7PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity7.unallowed. In dollars."
+              },
+              "passiveActivity7CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 7's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity7CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 7's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
+              },
               "passiveActivity8Kind": {
                 "type": "string",
                 "enum": [
@@ -2062,10 +2297,38 @@
                   "string"
                 ],
                 "description": "Passive activity 8: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity8Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity8PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity8.unallowed. In dollars."
+              },
+              "passiveActivity8CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 8's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity8CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 8's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               }
             },
             "additionalProperties": false,
-            "description": "§ 469 by activity (Form 8582): up to eight passive activities — kind (rental with active participation, other rental, business, significant participation, PTP), current income or loss, prior-year unallowed loss, disposition — with the special allowance, pro-rata carryforwards and released losses flowing into AGI, NIIT, QBI and § 461(l)"
+            "description": "§ 469 by activity (Form 8582): up to eight passive activities — kind (rental with active participation, other rental, business, significant participation, PTP), current income or loss, prior-year unallowed loss, disposition — with the special allowance, pro-rata carryforwards and released losses flowing into AGI, NIIT, QBI and § 461(l); each activity may also carry one general business credit, limited by Form 8582-CR (credit, prior-year unallowed credit, type, specified)"
           },
           "state": {
             "type": "object",
@@ -11256,7 +11519,7 @@
     },
     {
       "name": "compute_return",
-      "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), and with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -12757,6 +13020,45 @@
             "additionalProperties": false,
             "description": "nonpassive Schedule E rentals/royalties, self-rental, and the standalone aggregate § 469 check (us.federal.passive_loss_allowed)"
           },
+          "business_credits": {
+            "type": "object",
+            "properties": {
+              "generalBusinessCreditNonpassive": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Current-year general business credits NOT from passive activities and not specified credits — Form 3800 Part III line 2, column (e): the total of the component credit forms (e.g. Form 6765 research credit of a business that is not an eligible small business, Form 8881, Form 8994, Form 8826), each after its own limits. Passive activities' credits go on the activity (passiveActivityNCredit). In dollars."
+              },
+              "specifiedCreditNonpassive": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Current-year § 38(c)(4)(B) specified credits NOT from passive activities — Form 3800 Part III line 5, column (e): credits allowed against the tentative minimum tax (e.g. the work opportunity credit, § 45R small employer health insurance credit, an eligible small business's research credit, the § 48 energy credit, the low-income housing credit for post-2007 buildings). In dollars."
+              },
+              "generalBusinessCreditCarryforward": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Carryforwards to this year of general business credits unused in earlier years under the § 38(c) limit (§ 39) that are not specified credits — Form 3800 Part I line 4 (Part IV line 6, column (f)). Passive credits disallowed by § 469 are not this: they stay on their activity (passiveActivityNPriorUnallowedCredit). In dollars."
+              },
+              "specifiedCreditCarryforward": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Carryforwards to this year of unused specified credits (§ 39) — Form 3800 Part II line 34 (Part IV line 5, column (f)). In dollars."
+              },
+              "spouseHasBusinessCredit": {
+                "type": "boolean",
+                "description": "Married filing separately: the spouse has a general business credit for the year, or a carryforward or carryback to it (§ 38(c)(6)(A)). If so, the $25,000 in Form 3800 line 13 is $12,500. Asked of a married person filing separately with a business credit."
+              }
+            },
+            "additionalProperties": false,
+            "description": "Form 3800 general business credit: nonpassive current-year credits and § 39 carryforwards, split between § 38(c)(4)(B) specified credits (allowed against the TMT) and the rest; passive activities' credits go on the activity (passive_activities) and pass through Form 8582-CR"
+          },
           "passive_activities": {
             "type": "object",
             "properties": {
@@ -12839,6 +13141,34 @@
                 ],
                 "description": "Passive activity 1: the part of its prior-year unallowed losses suspended in taxable years ending before 2018 — never QBI (Reg. § 1.199A-3(b)(1)(iv)). With a QBI-flagged activity and some of its losses allowed, a nonzero amount is refused (the first-in, first-out split is not modeled). In dollars."
               },
+              "passiveActivity1Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: its current-year general business credit (Form 3800 Part III column (d) — e.g. a K-1 box 15 rehabilitation, low-income housing, research or energy credit, after the credit's own form), limited by Form 8582-CR. One credit type per activity: an activity with two types of credit takes a second activity row with the same kind and no income or loss. In dollars."
+              },
+              "passiveActivity1PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 1: its prior years' unallowed passive credits carried to this year (last year's Form 8582-CR Worksheet 9 column (b), or line 5 − line 37 with one credit). Unlike losses, they are not freed when the activity is sold (§ 469(g) covers losses only; the Part VI basis election is not modeled). Next year's amount is us.federal.passive_credit.activity1.unallowed. In dollars."
+              },
+              "passiveActivity1CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 1's credit, for Form 8582-CR: rehabilitation = the § 47 rehabilitation credit (from rental real estate it uses the special allowance phased out from $200,000 to $250,000, Worksheet 2; from a business it is Worksheet 4); lihc_pre1990 = a low-income housing credit for property placed in service before 1990 or through a pass-through interest acquired before 1990 (Worksheet 2); lihc_post1989 = any other low-income housing credit (Worksheet 3, no modified AGI limit); general = every other credit (Worksheet 1 from rental real estate with active participation, else Worksheet 4). Asked when the activity has a credit."
+              },
+              "passiveActivity1CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 1's credit is a § 38(c)(4)(B) specified credit, allowed against the tentative minimum tax (Form 3800 Part III line 4): e.g. the low-income housing credit for buildings placed in service after 2007, the rehabilitation credit for expenditures after 2007, the § 48 energy credit, the work opportunity credit, the § 45R small employer health insurance credit, an eligible small business's research credit. Otherwise Part III line 1. Asked when the activity has a credit."
+              },
               "passiveActivity2Kind": {
                 "type": "string",
                 "enum": [
@@ -12906,6 +13236,34 @@
                   "string"
                 ],
                 "description": "Passive activity 2: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity2Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity2PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 2: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity2.unallowed. In dollars."
+              },
+              "passiveActivity2CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 2's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity2CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 2's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               },
               "passiveActivity3Kind": {
                 "type": "string",
@@ -12975,6 +13333,34 @@
                 ],
                 "description": "Passive activity 3: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
               },
+              "passiveActivity3Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity3PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 3: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity3.unallowed. In dollars."
+              },
+              "passiveActivity3CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 3's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity3CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 3's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
+              },
               "passiveActivity4Kind": {
                 "type": "string",
                 "enum": [
@@ -13042,6 +13428,34 @@
                   "string"
                 ],
                 "description": "Passive activity 4: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity4Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity4PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 4: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity4.unallowed. In dollars."
+              },
+              "passiveActivity4CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 4's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity4CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 4's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               },
               "passiveActivity5Kind": {
                 "type": "string",
@@ -13111,6 +13525,34 @@
                 ],
                 "description": "Passive activity 5: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
               },
+              "passiveActivity5Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity5PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 5: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity5.unallowed. In dollars."
+              },
+              "passiveActivity5CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 5's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity5CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 5's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
+              },
               "passiveActivity6Kind": {
                 "type": "string",
                 "enum": [
@@ -13178,6 +13620,34 @@
                   "string"
                 ],
                 "description": "Passive activity 6: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity6Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity6PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 6: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity6.unallowed. In dollars."
+              },
+              "passiveActivity6CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 6's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity6CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 6's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               },
               "passiveActivity7Kind": {
                 "type": "string",
@@ -13247,6 +13717,34 @@
                 ],
                 "description": "Passive activity 7: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
               },
+              "passiveActivity7Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity7PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 7: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity7.unallowed. In dollars."
+              },
+              "passiveActivity7CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 7's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity7CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 7's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
+              },
               "passiveActivity8Kind": {
                 "type": "string",
                 "enum": [
@@ -13314,10 +13812,38 @@
                   "string"
                 ],
                 "description": "Passive activity 8: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars."
+              },
+              "passiveActivity8Credit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: its current-year general business credit (Form 8582-CR column (a)). In dollars."
+              },
+              "passiveActivity8PriorUnallowedCredit": {
+                "type": [
+                  "number",
+                  "string"
+                ],
+                "description": "Passive activity 8: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity8.unallowed. In dollars."
+              },
+              "passiveActivity8CreditType": {
+                "type": "string",
+                "enum": [
+                  "general",
+                  "rehabilitation",
+                  "lihc_pre1990",
+                  "lihc_post1989"
+                ],
+                "description": "Passive activity 8's credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType."
+              },
+              "passiveActivity8CreditSpecified": {
+                "type": "boolean",
+                "description": "Passive activity 8's credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit."
               }
             },
             "additionalProperties": false,
-            "description": "§ 469 by activity (Form 8582): up to eight passive activities — kind (rental with active participation, other rental, business, significant participation, PTP), current income or loss, prior-year unallowed loss, disposition — with the special allowance, pro-rata carryforwards and released losses flowing into AGI, NIIT, QBI and § 461(l)"
+            "description": "§ 469 by activity (Form 8582): up to eight passive activities — kind (rental with active participation, other rental, business, significant participation, PTP), current income or loss, prior-year unallowed loss, disposition — with the special allowance, pro-rata carryforwards and released losses flowing into AGI, NIIT, QBI and § 461(l); each activity may also carry one general business credit, limited by Form 8582-CR (credit, prior-year unallowed credit, type, specified)"
           },
           "state": {
             "type": "object",
