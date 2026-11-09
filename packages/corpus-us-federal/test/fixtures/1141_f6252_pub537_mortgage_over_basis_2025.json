@@ -1,0 +1,26 @@
+{
+  "description": "Pub. 537 (2025), Mortgage more than basis: selling price $9,000, the buyer assumes a $6,000 mortgage; adjusted basis $4,400 plus $600 selling expenses = $5,000 installment sale basis. 'The part of the mortgage that’s more than your installment sale basis is $1,000 ... treated as a payment received in the year of sale. The contract price is $4,000.' Gross profit $4,000, 100% — the $1,000 (line 20) is gain in the year of sale with no cash received.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 9000,
+    "installmentSale1MortgagesAssumed": 6000,
+    "installmentSale1CostBasis": 4400,
+    "installmentSale1SellingExpenses": 600
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.line24",
+  "expect": {
+    "valueCents": "100000",
+    "intermediates": {
+      "us.federal.form6252.sale1.line17": "100000",
+      "us.federal.form6252.sale1.line18": "400000",
+      "us.federal.form6252.sale1.line16": "400000",
+      "us.federal.form6252.sale1.line20": "100000"
+    }
+  }
+}

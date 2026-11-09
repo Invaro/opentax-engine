@@ -1,0 +1,27 @@
+{
+  "description": "Fixture 1145, what is left: of the building's $9,000 unrecaptured § 1250 gain, $4,363.05 is reported this year and $4,636.95 remains for later payments (Instructions for Schedule D, line 4, Step 3).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 48000,
+    "installmentSale1CostBasis": 45000,
+    "installmentSale1Depreciation": 9000,
+    "installmentSale1SellingExpenses": 2400,
+    "installmentSale1PaymentsThisYear": 49300,
+    "installmentSale1GrossProfitPercentageBps": 885,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.unrecaptured_1250_remaining",
+  "expect": {
+    "valueCents": "463695",
+    "intermediates": {
+      "us.federal.form6252.sale1.unrecaptured_1250": "436305",
+      "us.federal.form6252.sale1.unrecaptured_1250_start": "900000"
+    }
+  }
+}

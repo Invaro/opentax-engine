@@ -1,0 +1,36 @@
+{
+  "description": "Instructions for Form 8824 (2025), Finley: gives a building (FMV $250,000, adjusted basis $175,000, $150,000 mortgage) for Taylor's ($220,000, $80,000 mortgage) and pays $40,000. Line 15 $30,000, 17 $250,000, 18 $175,000, 19 $75,000, 20 $30,000. Qualified improvement property: additional depreciation $35,000; 'Finley enters $30,000 on line 21 as ordinary income, the lesser of the $35,000 of section 1250(a)(1)(A) recapture or the section 1250(d)(4)(A) recapture limit of $30,000 ... $0 on line 22 ... the deferred gain on the exchange, $45,000, on line 24.' Line 25 $175,000: '$131,250 ($165,000/$220,000 × $175,000)' on 25a and '$43,750' on 25b.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 220000,
+    "likeKindExchange1AdjustedBasisGivenUp": 175000,
+    "likeKindExchange1CashPaid": 40000,
+    "likeKindExchange1LiabilitiesRelieved": 150000,
+    "likeKindExchange1LiabilitiesAssumed": 80000,
+    "likeKindExchange1Section1250Depreciation": 50000,
+    "likeKindExchange1Section1250AdditionalDepreciation": 35000,
+    "likeKindExchange1Section1250Fmv": 50000,
+    "likeKindExchange1Section1250AdjustedBasis": 0,
+    "likeKindExchange1Received1250Fmv": 165000,
+    "likeKindExchange1Received1245Fmv": 55000,
+    "likeKindExchange1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line25b",
+  "expect": {
+    "valueCents": "4375000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line15": "3000000",
+      "us.federal.form8824.exchange1.line18": "17500000",
+      "us.federal.form8824.exchange1.line19": "7500000",
+      "us.federal.form8824.exchange1.line20": "3000000",
+      "us.federal.form8824.exchange1.line21": "3000000",
+      "us.federal.form8824.exchange1.line22": "0",
+      "us.federal.form8824.exchange1.line25": "17500000"
+    }
+  }
+}

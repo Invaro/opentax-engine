@@ -1,0 +1,25 @@
+{
+  "description": "Pub. 596 Worksheet 1 lines 5–7: § 1231 gain from Form 4797 isn't investment income. The same $15,000 installment gain on business land (§ 1231, Form 4797 line 4) leaves investment income at $0 — the EITC is allowed (AGI $35,000). EIC Table, one child, AGI $35,000 (row $35,000–$35,050, midpoint $35,025): $4,328 − 15.98% × ($35,025 − $23,350) = $2,462.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 20000,
+    "qualifyingChildren": 1,
+    "isAtLeastAge25": true,
+    "installmentSales": 1,
+    "installmentSale1Kind": "other",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 40000,
+    "installmentSale1CostBasis": 10000,
+    "installmentSale1PaymentsThisYear": 20000,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.eitc",
+  "expect": {
+    "valueCents": "246200",
+    "intermediates": {
+      "us.federal.form4797.line9": "1500000"
+    }
+  }
+}

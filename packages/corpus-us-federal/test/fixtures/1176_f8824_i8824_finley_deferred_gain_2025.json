@@ -1,0 +1,31 @@
+{
+  "description": "Fixture 1163: 'Finley subtracts line 23 from line 19 and enters the deferred gain on the exchange, $45,000, on line 24.'",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 220000,
+    "likeKindExchange1AdjustedBasisGivenUp": 175000,
+    "likeKindExchange1CashPaid": 40000,
+    "likeKindExchange1LiabilitiesRelieved": 150000,
+    "likeKindExchange1LiabilitiesAssumed": 80000,
+    "likeKindExchange1Section1250Depreciation": 50000,
+    "likeKindExchange1Section1250AdditionalDepreciation": 35000,
+    "likeKindExchange1Section1250Fmv": 50000,
+    "likeKindExchange1Section1250AdjustedBasis": 0,
+    "likeKindExchange1Received1250Fmv": 165000,
+    "likeKindExchange1Received1245Fmv": 55000,
+    "likeKindExchange1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "4500000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "7500000",
+      "us.federal.form8824.exchange1.line23": "3000000"
+    }
+  }
+}

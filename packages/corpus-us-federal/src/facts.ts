@@ -10,6 +10,7 @@ import type { FactSpec } from "@invaro/opentax-core";
 import { OCCUPATION_ENUM } from "./occupations.js";
 import { generalBusinessCreditFacts, passiveActivityFacts } from "./passive-facts.js";
 import { businessPropertyFacts } from "./business-property-facts.js";
+import { installmentSaleFacts, likeKindExchangeFacts } from "./installment-exchange-facts.js";
 
 export const FILING_STATUSES = [
   "single",
@@ -7039,4 +7040,6 @@ export const facts: FactSpec[] = [
   ...passiveActivityFacts,
   ...generalBusinessCreditFacts,
   ...businessPropertyFacts,
+  ...installmentSaleFacts,
+  ...likeKindExchangeFacts,
 ];

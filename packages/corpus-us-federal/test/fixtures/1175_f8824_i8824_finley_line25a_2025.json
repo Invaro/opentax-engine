@@ -1,0 +1,30 @@
+{
+  "description": "Fixture 1163, the other lines: Finley's deferred gain is $45,000 (line 24) and '$131,250 ($165,000/$220,000 × $175,000)' is the basis of the § 1250 property received (line 25a).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 220000,
+    "likeKindExchange1AdjustedBasisGivenUp": 175000,
+    "likeKindExchange1CashPaid": 40000,
+    "likeKindExchange1LiabilitiesRelieved": 150000,
+    "likeKindExchange1LiabilitiesAssumed": 80000,
+    "likeKindExchange1Section1250Depreciation": 50000,
+    "likeKindExchange1Section1250AdditionalDepreciation": 35000,
+    "likeKindExchange1Section1250Fmv": 50000,
+    "likeKindExchange1Section1250AdjustedBasis": 0,
+    "likeKindExchange1Received1250Fmv": 165000,
+    "likeKindExchange1Received1245Fmv": 55000,
+    "likeKindExchange1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line25a",
+  "expect": {
+    "valueCents": "13125000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line25": "17500000"
+    }
+  }
+}

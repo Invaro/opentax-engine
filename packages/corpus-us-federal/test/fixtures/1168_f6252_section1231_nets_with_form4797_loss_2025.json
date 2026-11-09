@@ -1,0 +1,31 @@
+{
+  "description": "Form 4797 Part I nets every § 1231 item: a $30,000 § 1231 loss on equipment (price $10,000, cost $50,000, depreciation $10,000) and $20,000 § 1231 installment gain on business land (line 4). Line 7 is a $10,000 loss — ordinary (line 11), nothing to Schedule D.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "section1245",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 10000,
+    "businessProperty1CostBasis": 50000,
+    "businessProperty1Depreciation": 10000,
+    "businessProperty1Qbi": false,
+    "installmentSales": 1,
+    "installmentSale1Kind": "other",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 100000,
+    "installmentSale1CostBasis": 50000,
+    "installmentSale1PaymentsThisYear": 40000,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "valueCents": "-1000000",
+    "intermediates": {
+      "us.federal.form4797.line7": "-1000000",
+      "us.federal.form6252.sale1.income": "2000000"
+    }
+  }
+}

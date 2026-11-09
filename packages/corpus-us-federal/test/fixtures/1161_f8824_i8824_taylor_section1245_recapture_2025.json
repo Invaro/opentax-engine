@@ -1,0 +1,36 @@
+{
+  "description": "Instructions for Form 8824 (2025), lines 15–24 examples, Taylor: an apartment building (FMV $220,000, adjusted basis $100,000, $80,000 mortgage) for Finley's (FMV $250,000, $150,000 mortgage) plus $40,000 cash. Line 15 $40,000, 16 $250,000, 17 $290,000, 18 $170,000, 19 $120,000, 20 $40,000. The § 1245 real property assets (FMV $55,000, basis $35,000, adjusted basis $0): 'Taylor enters $35,000 on line 21 ... Taylor subtracts line 21 from line 20 and enters $5,000 on line 22 ... $40,000, on line 23 ... the deferred gain on the exchange, $80,000, on line 24.' Line 25 $170,000, all on 25a.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 250000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1LiabilitiesRelieved": 80000,
+    "likeKindExchange1LiabilitiesAssumed": 150000,
+    "likeKindExchange1Section1245Fmv": 55000,
+    "likeKindExchange1Section1245AdjustedBasis": 0,
+    "likeKindExchange1Received1245Fmv": 0,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1Section1245Depreciation": 35000,
+    "likeKindExchange1Received1250Fmv": 250000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "8000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line15": "4000000",
+      "us.federal.form8824.exchange1.line17": "29000000",
+      "us.federal.form8824.exchange1.line18": "17000000",
+      "us.federal.form8824.exchange1.line19": "12000000",
+      "us.federal.form8824.exchange1.line20": "4000000",
+      "us.federal.form8824.exchange1.line21": "3500000",
+      "us.federal.form8824.exchange1.line22": "500000",
+      "us.federal.form8824.exchange1.line23": "4000000"
+    }
+  }
+}

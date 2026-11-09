@@ -1,0 +1,24 @@
+{
+  "description": "Form 6252 line 15 / Pub. 537 Sale of your home: a main home (basis $300,000) sold for $900,000 with $250,000 excluded under § 121. Gross profit $350,000 over a $900,000 contract price; $100,000 received this year: $38,888.89 long-term gain.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 900000,
+    "installmentSale1CostBasis": 300000,
+    "installmentSale1ExcludedGain": 250000,
+    "installmentSale1PaymentsThisYear": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.income",
+  "expect": {
+    "valueCents": "3888889",
+    "intermediates": {
+      "us.federal.form6252.sale1.line14": "60000000",
+      "us.federal.form6252.sale1.line16": "35000000"
+    }
+  }
+}

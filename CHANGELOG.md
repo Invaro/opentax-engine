@@ -2,6 +2,34 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 10, 2026 · Installment sales and like-kind exchanges: Form 6252 and Form 8824
+
+Installment sales (Form 6252) and like-kind exchanges of real property (Form 8824) are modeled for 2025, 2026 and 2027, with their results flowing through Form 4797, Schedule D and the 25% rate.
+
+- **Form 6252, up to four sales** (`installmentSales`, then `installmentSaleN…`), in the year of sale and every later year:
+  - Kind (`capital`, `section1245`, `section1250`, `other`), held over a year or not, and whether this is the year of sale. Part I amounts as of the year of sale, this year's payments (line 21) and earlier years' (line 23). For a main home, the § 121 exclusion (line 15).
+  - Gross profit (line 16), contract price (line 18, with the mortgage over basis as a line 20 payment) and installment income (line 24). Line 19 is exact, or the percentage you used (`GrossProfitPercentageBps`), e.g. Pub. 537's four-digit rates for a sale of a business.
+  - § 1245 and § 1250 recapture is taxed in full in the year of sale (§ 453(i), Form 4797 line 13). Held a year or less, all of a § 1250 property's depreciation is recaptured (§ 1250(b)(1)), on an exchange too.
+  - A related party's second disposition is a payment (Part III, § 453(e)).
+  - The income goes to Schedule D line 4 or 11 (capital assets), Form 4797 line 4 (§ 1231) or line 10 (held a year or less). Its unrecaptured § 1250 gain comes first (Schedule D worksheet line 4); `…unrecaptured_1250_remaining` carries what is left.
+- **Form 8824, up to four exchanges** (`likeKindExchanges`, then `likeKindExchangeN…`):
+  - Lines 15–25: cash, other property and liabilities netted on both sides with exchange expenses (Reg. § 1.1031(d)-2), realized, recognized and deferred gain, and the basis of the property received (25a and 25b by FMV).
+  - Line 21 recapture: § 1245 real property components limited by § 1245(b)(4), additional depreciation by § 1250(d)(4).
+  - The recognized gain goes to Schedule D (investment property) or Form 4797 lines 5 and 16. Recognized § 1231 gain on a building is unrecaptured § 1250 gain up to its depreciation less recapture (§ 1(h)(6)(A)).
+- **Where the results go:** AGI, § 86 income, the Schedule D Tax Worksheet and Form 6251 Part III, net investment income (business property you materially participate in comes out on Form 8960 line 5b), QBI (ordinary results of QBI property), the EITC investment-income test, and the Washington capital gains guard.
+- **Form 4797 for 2026:** the 2026 draft adds a livestock line 7, so `compute_return` labels 2026 returns with lines 8, 10, 13 and 20b where 2025 has 7, 9, 12 and 17. `compute_return` shows `forms['6252']` and `forms['8824']`.
+- **Refused, with the reason:**
+  - Form 6252: a sale at a loss; depreciable property sold to a related person (§ 453(g)); § 453A interest on deferred tax (`installmentSaleSection453AInterest`); payments over the contract price; prior-year payments in the year of sale; a depreciated capital asset (worksheet line 12).
+  - Form 8824: a related-party disposition within 2 years (§ 1031(f)); no like-kind property received.
+  - Either form: the kiddie tax, FEIE stacking or a § 461(l)/NOL loss year.
+  - Not modeled: contingent payment sales, a reduced selling price (Pub. 537 Worksheet B), § 453B dispositions of the obligation, repossessions, a like-kind exchange with an installment note (§ 453(f)(6)), § 121 with § 1031, §§ 1252/1254/1255, and Part IV of Form 8824.
+- **Checked:**
+  - 38 new fixtures from Pub. 537, among them both mortgage examples, related-party Examples 1 and 2 and the final year, and the sale-of-business building at 8.85% and land at 22.95%. The Instructions for Form 8824 examples (Taylor with § 1245 property, Taylor's alternative, Finley with § 1250 recapture and the 25a/25b split) match line by line.
+  - The other fixtures cover each flow and each refusal.
+  - Every existing fixture, the IRS ATS scenarios, the AMT regression cases and every pre-existing rule give the same answers as v0.51.0, and 21,000 random capital gain and AMT evaluations compute identically.
+  - Over 300 complete installment lifetimes, the income adds up to the gross profit and the unrecaptured § 1250 gain to its total. On 352 exchanges, basis plus deferred gain equals the FMV received.
+  - An independent rebuild of both forms and their flows from the IRS documents alone (Form 6252, the Instructions for Form 8824, Pub. 537, the Schedule D worksheet) agrees on all 400 random returns: every line of every sale and exchange, Form 4797, Schedule D, the unrecaptured § 1250 gain and AGI, and the same 5 refusals. It found one difference first, now fixed: an exchanged building held a year or less didn't treat all its depreciation as additional depreciation (§ 1250(b)(1)).
+
 ## Nov 10, 2026 · Sales of business property: Form 4797 and the 25% rate
 
 Sales of business property now go through Form 4797, for 2025, 2026 and 2027, and unrecaptured § 1250 gain is taxed at up to 25%.

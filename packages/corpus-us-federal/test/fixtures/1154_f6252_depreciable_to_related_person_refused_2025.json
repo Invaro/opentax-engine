@@ -1,0 +1,22 @@
+{
+  "description": "§ 453(g) / Pub. 537 Sale of Depreciable Property: 'If you sell depreciable property to certain related persons, you generally can’t report the sale using the installment method.' A building sold to a related party is refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 300000,
+    "installmentSale1CostBasis": 200000,
+    "installmentSale1Depreciation": 50000,
+    "installmentSale1PaymentsThisYear": 50000,
+    "installmentSale1RelatedParty": true,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

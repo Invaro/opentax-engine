@@ -1,0 +1,29 @@
+{
+  "description": "Pub. 537 (2025), Sale and Later Disposition, Example 1: farmland sold to your child for $500,000 in five annual payments, installment sale basis $250,000, gross profit percentage 50%. $100,000 received in 2024; in 2025 the child pays $100,000 and resells for $600,000. 'Lesser of ... $500,000 Subtract: Sum of payments ... − 200,000 Amount treated as received because of second disposition $300,000 Add: Payment ... + 100,000 ... × 0.50 Installment sale income for 2025 $200,000' — Part II line 24 $50,000 plus Part III line 35 $150,000, § 1231 gain on Form 4797 line 4.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "other",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": false,
+    "installmentSale1SellingPrice": 500000,
+    "installmentSale1CostBasis": 250000,
+    "installmentSale1RelatedParty": true,
+    "installmentSale1Qbi": false,
+    "installmentSale1PaymentsThisYear": 100000,
+    "installmentSale1PaymentsPriorYears": 100000,
+    "installmentSale1SecondDisposition": true,
+    "installmentSale1RelatedPartyAmountRealized": 600000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line9",
+  "expect": {
+    "valueCents": "20000000",
+    "intermediates": {
+      "us.federal.form6252.sale1.income": "20000000",
+      "us.federal.form6252.sale1.line24": "5000000",
+      "us.federal.form6252.sale1.line35": "15000000"
+    }
+  }
+}

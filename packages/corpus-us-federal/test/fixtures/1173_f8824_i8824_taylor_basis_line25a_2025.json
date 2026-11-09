@@ -1,0 +1,30 @@
+{
+  "description": "Fixture 1161, basis and Form 4797: 'Taylor subtracts line 15 from the sum of lines 18 and 23 and enters $170,000 on line 25 ... Taylor reports the $170,000 on line 25a.' The $35,000 line 21 recapture is Form 4797 Part II ordinary income.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 250000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1LiabilitiesRelieved": 80000,
+    "likeKindExchange1LiabilitiesAssumed": 150000,
+    "likeKindExchange1Section1245Fmv": 55000,
+    "likeKindExchange1Section1245AdjustedBasis": 0,
+    "likeKindExchange1Received1245Fmv": 0,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1Section1245Depreciation": 35000,
+    "likeKindExchange1Received1250Fmv": 250000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line25a",
+  "expect": {
+    "valueCents": "17000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line25": "17000000",
+      "us.federal.form8824.exchange1.line23": "4000000"
+    }
+  }
+}

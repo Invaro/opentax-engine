@@ -1,0 +1,20 @@
+{
+  "description": "§ 453A: a $6,000,000 sale with installment obligations over $5 million owes interest on the deferred tax, which Form 6252 doesn't figure (Pub. 537) — refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSaleSection453AInterest": true,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 6000000,
+    "installmentSale1CostBasis": 400000,
+    "installmentSale1PaymentsThisYear": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

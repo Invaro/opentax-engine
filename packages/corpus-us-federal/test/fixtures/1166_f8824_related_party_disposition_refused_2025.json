@@ -1,0 +1,19 @@
+{
+  "description": "§ 1031(f) / Form 8824 lines 9–11: a related party disposed of the property within 2 years with no exception — the exchange is taxed as a sale, which is refused (report it as a sale).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "other",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 300000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1RelatedParty": true,
+    "likeKindExchange1RelatedPartyDisposition": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

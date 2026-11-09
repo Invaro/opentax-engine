@@ -1,0 +1,24 @@
+{
+  "description": "§ 1231(c): $5,000 of nonrecaptured § 1231 losses from the 5 preceding years make the first $5,000 of this year's $20,000 net § 1231 gain (all from an installment sale of business land, Form 4797 line 4) ordinary (line 12); $15,000 goes to Schedule D line 11.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "section1231LookbackLosses": 5000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "other",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 100000,
+    "installmentSale1CostBasis": 50000,
+    "installmentSale1PaymentsThisYear": 40000,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line9",
+  "expect": {
+    "valueCents": "1500000",
+    "intermediates": {
+      "us.federal.form4797.line12": "500000"
+    }
+  }
+}

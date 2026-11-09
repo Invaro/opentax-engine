@@ -1,0 +1,17 @@
+{
+  "description": "Without like-kind property received (line 16) there is no exchange: refused, pointing to the sale facts.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "other",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 300000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

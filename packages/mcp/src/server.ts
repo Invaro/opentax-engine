@@ -445,7 +445,7 @@ server.registerTool(
   "compute_return",
   {
     description:
-      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), with business property sales Form 4797 (forms['4797']: the net § 1231 amount, the lookback, the Schedule D line 11 and Schedule 1 line 4 amounts, unrecaptured § 1250 gain and each property's gain, recapture and § 1231 part), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), with business property sales, installment sales or like-kind exchanges Form 4797 (forms['4797']: the net § 1231 amount, the lookback, the Schedule D line 11 and Schedule 1 line 4 amounts, unrecaptured § 1250 gain and each property's gain, recapture and § 1231 part; line numbers follow the year's form, renumbered in 2026), Form 6252 (forms['6252']: each sale's recapture, gross profit, contract price, installment income and unrecaptured § 1250 gain) and Form 8824 (forms['8824']: each exchange's realized, recognized and deferred gain, recapture and basis of the property received), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
     inputSchema: legacyJsonSchema(z.object(individualNestedShape).strict()),
   },
   async (args: Record<string, unknown>) => {
@@ -587,16 +587,22 @@ server.registerTool(
           carryforward_total: d(p("carryforward")),
         };
       }
-      // Form 4797 when business property was sold or a K-1 reports § 1231 amounts
+      // Form 4797 when business property was sold, an installment sale or like-kind exchange is
+      // reported, or a K-1 reports § 1231 amounts. Line labels follow the year's form: the 2026
+      // draft adds a livestock line 7, so lines 7–18 become 8–20b (and Part III's 31 becomes 33)
       let form4797: Record<string, unknown> | undefined;
+      let form6252: Record<string, unknown> | undefined;
+      let form8824: Record<string, unknown> | undefined;
       if (get("us.federal.form4797.present") > 0n) {
         const f = (id: string) => get(`us.federal.form4797.${id}`);
         const props = facts.businessProperties?.type === "int" ? Number(facts.businessProperties.value) : 0;
-        form4797 = {
-          "7_net_section_1231": d(f("line7")),
-          ...(f("line12") !== 0n ? { "12_lookback_ordinary": d(f("line12")) } : {}),
-          "9_to_schedule_d_line_11": d(f("line9")),
-          "17_ordinary_to_schedule_1_line_4": d(f("line17")),
+        const y26 = Number(asOf.slice(0, 4)) >= 2026;
+        // a capital asset sold on the installment method or exchanged never reaches Form 4797
+        if (props > 0 || f("line7") !== 0n || f("line17") !== 0n || f("lookback_remaining") !== 0n) form4797 = {
+          [y26 ? "8_net_section_1231" : "7_net_section_1231"]: d(f("line7")),
+          ...(f("line12") !== 0n ? { [y26 ? "13_lookback_ordinary" : "12_lookback_ordinary"]: d(f("line12")) } : {}),
+          [y26 ? "10_to_schedule_d_line_11" : "9_to_schedule_d_line_11"]: d(f("line9")),
+          [y26 ? "20b_ordinary_to_schedule_1_line_4" : "17_ordinary_to_schedule_1_line_4"]: d(f("line17")),
           unrecaptured_section_1250_schedule_d_line_19: d(get("us.federal.schedule_d.unrecaptured_1250")),
           lookback_remaining: d(f("lookback_remaining")),
           properties: Array.from({ length: props }, (_, k) => k + 1).map((n) => ({
@@ -607,6 +613,48 @@ server.registerTool(
             ...(f(`property${n}.short_term`) !== 0n ? { held_one_year_or_less: d(f(`property${n}.short_term`)) } : {}),
           })),
         };
+        // Form 6252, one entry per sale (the IRS wants a separate form for each)
+        const sales = facts.installmentSales?.type === "int" ? Number(facts.installmentSales.value) : 0;
+        if (sales > 0) {
+          const sl = (n: number, id: string) => get(`us.federal.form6252.sale${n}.${id}`);
+          form6252 = {
+            sales: Array.from({ length: sales }, (_, k) => k + 1).map((n) => ({
+              sale: n,
+              "12_recapture_income": d(sl(n, "recapture_income")),
+              "14": d(sl(n, "line14")),
+              "16_gross_profit": d(sl(n, "line16")),
+              "17": d(sl(n, "line17")),
+              "18_contract_price": d(sl(n, "line18")),
+              "20": d(sl(n, "line20")),
+              "24_installment_sale_income": d(sl(n, "line24")),
+              ...(sl(n, "line35") !== 0n ? { "35_related_party_second_disposition": d(sl(n, "line35")) } : {}),
+              ...(sl(n, "unrecaptured_1250") !== 0n || sl(n, "unrecaptured_1250_remaining") !== 0n
+                ? { unrecaptured_section_1250: d(sl(n, "unrecaptured_1250")), unrecaptured_section_1250_left: d(sl(n, "unrecaptured_1250_remaining")) }
+                : {}),
+            })),
+          };
+        }
+        // Form 8824, one entry per exchange
+        const exchanges = facts.likeKindExchanges?.type === "int" ? Number(facts.likeKindExchanges.value) : 0;
+        if (exchanges > 0) {
+          const ex = (n: number, id: string) => get(`us.federal.form8824.exchange${n}.${id}`);
+          form8824 = {
+            exchanges: Array.from({ length: exchanges }, (_, k) => k + 1).map((n) => ({
+              exchange: n,
+              "15": d(ex(n, "line15")),
+              "16": d(ex(n, "line16")),
+              "18": d(ex(n, "line18")),
+              "19_realized_gain": d(ex(n, "line19")),
+              "20": d(ex(n, "line20")),
+              "21_recapture": d(ex(n, "line21")),
+              "22": d(ex(n, "line22")),
+              "23_recognized_gain": d(ex(n, "line23")),
+              "24_deferred_gain": d(ex(n, "line24")),
+              "25_basis_received": d(ex(n, "line25")),
+              ...(ex(n, "unrecaptured_1250") !== 0n ? { unrecaptured_section_1250: d(ex(n, "unrecaptured_1250")) } : {}),
+            })),
+          };
+        }
       }
       // Form 8582-CR and Form 3800 when there are business credits
       const cr = (id: string) => get(`us.federal.passive_credit.${id}`);
@@ -680,11 +728,13 @@ server.registerTool(
         },
         schedule3: Object.fromEntries(Object.entries(sched3).map(([k, v]) => [k, d(v)])),
         ...(losses ? { losses } : {}),
-        ...(form5695 || form8582 || form8582cr || form3800 || form4797
+        ...(form5695 || form8582 || form8582cr || form3800 || form4797 || form6252 || form8824
           ? {
               forms: {
                 ...(form5695 ? { "5695": form5695 } : {}),
                 ...(form4797 ? { "4797": form4797 } : {}),
+                ...(form6252 ? { "6252": form6252 } : {}),
+                ...(form8824 ? { "8824": form8824 } : {}),
                 ...(form8582 ? { "8582": form8582 } : {}),
                 ...(form8582cr ? { "8582-CR": form8582cr } : {}),
                 ...(form3800 ? { "3800": form3800 } : {}),
