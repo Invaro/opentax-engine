@@ -207,6 +207,7 @@ const corpus = extendCorpus({
 | `opentax verify proof.json` | re-derive a proof, confirm or refute |
 | `opentax state --facts return.json` | printed-form state return lines for the 31 states with composers |
 | `opentax eval --as-of 2030-12-31 --project-inflation 2.5 …` | a tax year after 2027, PROJECTED: every indexed amount by its statutory formula at the assumed rate, labeled as a projection |
+| `opentax eval … --schedule-c-loss 400000 --nol-carryforward 50000` | business losses through AGI: the § 461(l) excess business loss (line 8p) and the NOL deduction at the 80% limit (line 8a); target `us.federal.nol.carryover_post2017` for next year's carryover |
 | `opentax form4562 --facts assets.json` | Form 4562 depreciation: § 179, the special allowance, MACRS by the Pub 946 tables, listed property, cost-segregation asset classes |
 | `opentax form2210 --facts f.json --as-of 2025-12-31` | Form 2210: required annual payment, Schedule AI, and the underpayment penalty by payment date |
 | `opentax facts` / `opentax flags` | every input, its type, its default / every CLI flag, grouped |

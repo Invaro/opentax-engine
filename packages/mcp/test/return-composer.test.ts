@@ -315,3 +315,49 @@ describe("compute_return: excess APTC repayment sits on line 17 (Schedule 2 line
     expect(lines(r)["17_excess_aptc_repayment"]).toBeUndefined();
   });
 });
+
+describe("compute_return: Schedule 1 lines 8a/8p and the NOL carryovers", () => {
+  it("a § 461(l) loss year: line 8p, the Form 172 NOL and the carryforward", async () => {
+    const r = await call(
+      "compute_return",
+      single(
+        { box1: "50000", box2: "0" },
+        {
+          filing: { filingStatus: "single", isAtLeastAge25: true }, // a negative AGI reaches the childless EITC
+          income: { taxableInterest: 5000 },
+          self_employment: { scheduleCNetLoss: 400000 },
+        },
+      ),
+    );
+    expect(lines(r)["9_total_income"]).toBe("-$258,000.00");
+    expect(lines(r)["11_agi"]).toBe("-$258,000.00");
+    expect(r.losses).toEqual({
+      schedule1_8p_excess_business_loss: "$87,000.00",
+      form172_line24_nol: "$263,000.00",
+      nol_carryover_pre2018: "$0.00",
+      nol_carryover_post2017: "$350,000.00",
+    });
+  });
+  it("a carryforward year: line 8a at the 80% limit and what is left", async () => {
+    const r = await call(
+      "compute_return",
+      single(
+        { box1: "216100", box2: "0" },
+        { asOf: "2026-12-31", self_employment: { nolCarryforwardPost2017: 350000 }, investor_amt: { alternativeTaxNolDeduction: 160000 } },
+      ),
+    );
+    expect(lines(r)["11_agi"]).toBe("$56,100.00");
+    expect(lines(r)["15_taxable_income"]).toBe("$40,000.00");
+    expect(lines(r)["17_amt"]).toBe("$0.00");
+    expect(r.losses).toEqual({
+      schedule1_8a_nol_deduction: "-$160,000.00",
+      form172_line24_nol: "$0.00",
+      nol_carryover_pre2018: "$0.00",
+      nol_carryover_post2017: "$190,000.00",
+    });
+  });
+  it("an ordinary return has no losses block", async () => {
+    const r = await call("compute_return", single({ box1: "75000", box2: "9000" }));
+    expect(r.losses).toBeUndefined();
+  });
+});

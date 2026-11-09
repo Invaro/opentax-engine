@@ -1,0 +1,14 @@
+{
+  "description": "Fixture 989's return: the $30,000 pre-2018 NOL is fully absorbed — no pre-2018 carryover.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 116100,
+    "nolCarryforwardPre2018": 30000,
+    "nolCarryforwardPost2017": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_pre2018",
+  "expect": {
+    "valueCents": "0"
+  }
+}

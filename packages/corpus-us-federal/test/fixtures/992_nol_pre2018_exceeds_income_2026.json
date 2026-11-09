@@ -1,0 +1,13 @@
+{
+  "description": "§ 172(a)(2)(A) (derived). Single 2026: wages $36,100 → taxable income without the NOL $20,000; pre-2018 NOL $50,000 is deducted in full (Schedule 1 line 8a −$50,000), taxable income floors at $0. § 172(b)(2): absorbed max(0, 20,000) − 20% × max(0, 20,000 − 50,000) = $20,000 → carryover $30,000. No new NOL: Form 172 line 23 adds the deduction back (§ 172(d)(1)).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 36100,
+    "nolCarryforwardPre2018": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_pre2018",
+  "expect": {
+    "valueCents": "3000000"
+  }
+}

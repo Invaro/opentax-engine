@@ -1,0 +1,13 @@
+{
+  "description": "§ 172(b)(2) carryover (derived). Same return as fixture 985: modified taxable income $200,000 (no § 172(d) add-backs), reduced by 20% of the § 172(a)(2)(B)(ii) excess ($40,000) → absorbed $160,000; carryover to 2027 = 350,000 − 160,000 = $190,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 216100,
+    "nolCarryforwardPost2017": 350000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_post2017",
+  "expect": {
+    "valueCents": "19000000"
+  }
+}

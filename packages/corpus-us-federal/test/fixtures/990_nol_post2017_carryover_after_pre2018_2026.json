@@ -1,0 +1,14 @@
+{
+  "description": "§ 172(b)(2) ordering (derived). Fixture 989's return: the pre-2018 loss absorbs 100,000 − 20% × 70,000 = $86,000 ≥ $30,000 (fully used); the post-2017 loss's modified taxable income counts the pre-2018 deduction: 100,000 − 30,000 = $70,000, less 20% × 70,000 = $56,000 absorbed → carryover 100,000 − 56,000 = $44,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 116100,
+    "nolCarryforwardPre2018": 30000,
+    "nolCarryforwardPost2017": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_post2017",
+  "expect": {
+    "valueCents": "4400000"
+  }
+}

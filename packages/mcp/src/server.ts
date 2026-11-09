@@ -445,7 +445,7 @@ server.registerTool(
   "compute_return",
   {
     description:
-      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
     inputSchema: legacyJsonSchema(z.object(individualNestedShape).strict()),
   },
   async (args: Record<string, unknown>) => {
@@ -530,6 +530,27 @@ server.registerTool(
       const payments = rd(withheld) + rd(refundable) + rd(extension) + rd(estimated);
       const balance = payments - total24;
       const d = (c: bigint) => fmt(rd(c));
+      // Schedule 1 line 8a (NOL deduction, negative) and 8p (§ 461(l) excess business loss), and
+      // in a loss year the NOL carryovers to next year (Form 172; § 172(b)(2)); a carryover the
+      // engine can't settle reports why instead of failing the return
+      const line8a = get("us.federal.nol_deduction");
+      const line8p = get("us.federal.excess_business_loss");
+      const lossYear = line8a !== 0n || line8p !== 0n || agi - deduction < 0n;
+      let losses: Record<string, unknown> | undefined;
+      if (lossYear) {
+        losses = {};
+        if (line8a !== 0n) losses["schedule1_8a_nol_deduction"] = d(line8a);
+        if (line8p !== 0n) losses["schedule1_8p_excess_business_loss"] = d(line8p);
+        try {
+          losses["form172_line24_nol"] = d(get("us.federal.nol.generated"));
+          losses["nol_carryover_pre2018"] = d(get("us.federal.nol.carryover_pre2018"));
+          losses["nol_carryover_post2017"] = d(get("us.federal.nol.carryover_post2017"));
+        } catch (err) {
+          if (err instanceof NeedsFactsError) losses["carryoverNeedsFacts"] = err.missing.map((m) => m.factId);
+          else if (err instanceof OpenTaxError) losses["carryoverNotComputed"] = err.message;
+          else throw err;
+        }
+      }
       return ok({
         ok: true,
         asOf,
@@ -568,6 +589,7 @@ server.registerTool(
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt(balance)}` : `owed ${fmt(-balance)}`,
         },
         schedule3: Object.fromEntries(Object.entries(sched3).map(([k, v]) => [k, d(v)])),
+        ...(losses ? { losses } : {}),
         ...(form5695 ? { forms: { "5695": form5695 } } : {}),
         note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Line 20 is the sum of the modeled Schedule 3 nonrefundable credits (schedule3); when any Form 5695 input is given, forms['5695'] carries that form's printed lines. Report these numbers as-is.",
         assumptions: proof.assumptions,

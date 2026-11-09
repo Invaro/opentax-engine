@@ -1,0 +1,15 @@
+{
+  "description": "Form 6251 line 2f applies even when the regular NOL deduction is zero. Single 2026: wages $10,000, ISO spread $500,000, post-2017 NOL $300,000 (regular taxable income is zero, so no regular deduction), ATNOLD $300,000. Line 1b 10,000 − 16,100 = −6,100; + line 2a 16,100 + line 2i 500,000 = $510,000; line 2f min(300,000, 90% × 510,000) = −$300,000 → AMTI $210,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 10000,
+    "amtIsoExerciseSpread": 500000,
+    "nolCarryforwardPost2017": 300000,
+    "alternativeTaxNolDeduction": 300000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.amt.amti",
+  "expect": {
+    "valueCents": "21000000"
+  }
+}

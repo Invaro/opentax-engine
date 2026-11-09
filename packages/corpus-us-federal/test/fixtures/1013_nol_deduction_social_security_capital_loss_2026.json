@@ -1,0 +1,16 @@
+{
+  "description": "Fixture 1012's return: deduction 80% × $17,950 = $14,360.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxablePensionsAndAnnuities": 30000,
+    "socialSecurityBenefits": 20000,
+    "netCapitalLoss": 3000,
+    "nolCarryforwardPost2017": 30000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "-1436000"
+  }
+}

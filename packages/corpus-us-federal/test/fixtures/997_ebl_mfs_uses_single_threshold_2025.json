@@ -1,0 +1,13 @@
+{
+  "description": "§ 461(l)(3)(A)(ii)(II) doubles the threshold only for a joint return: married filing separately uses $313,000 (2025). $400,000 Schedule C loss → $87,000.",
+  "facts": {
+    "filingStatus": "mfs",
+    "wages": 0,
+    "scheduleCNetLoss": 400000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "8700000"
+  }
+}

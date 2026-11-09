@@ -1,0 +1,16 @@
+{
+  "description": "With AMTI before line 2f at or below the exemption the AMT is zero whatever the ATNOLD, so it isn't asked. Single 2026: wages $50,000, post-2017 NOL $10,000 → AMTI before line 2f $50,000 < $90,100.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "nolCarryforwardPost2017": 10000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.amt",
+  "expect": {
+    "valueCents": "0",
+    "notAssumedFacts": [
+      "alternativeTaxNolDeduction"
+    ]
+  }
+}

@@ -16,6 +16,7 @@ import { facts } from "./facts.js";
 import { adjustmentRules } from "./rules/adjustments.js";
 import { amtRules } from "./rules/amt.js";
 import { annualizedInstallmentRules } from "./rules/annualized-installments.js";
+import { businessLossRules } from "./rules/business-losses.js";
 import { capitalLossRules } from "./rules/capital-losses.js";
 import { carLoanRules } from "./rules/car-loan.js";
 import { charityRules } from "./rules/charity.js";
@@ -84,6 +85,7 @@ export const corpusInput: CorpusInput = {
     ...capitalLossRules,
     ...kiddieRules,
     ...incomeRules,
+    ...businessLossRules,
     ...incomeTaxRules,
     ...ctcRules,
     ...creditBlockRules,

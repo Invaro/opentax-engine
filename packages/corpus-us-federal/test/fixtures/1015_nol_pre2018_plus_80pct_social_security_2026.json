@@ -1,0 +1,16 @@
+{
+  "description": "Fixture 1014's return: $30,000 + min($50,000, 80% × $39,400) = $61,520.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxablePensionsAndAnnuities": 60000,
+    "socialSecurityBenefits": 30000,
+    "nolCarryforwardPre2018": 30000,
+    "nolCarryforwardPost2017": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "-6152000"
+  }
+}

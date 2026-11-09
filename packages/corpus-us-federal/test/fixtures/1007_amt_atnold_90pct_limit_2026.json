@@ -1,0 +1,14 @@
+{
+  "description": "Form 6251 line 2f is limited to 90% of AMTI figured without it: single 2026, wages $116,100, pre-2018 NOL $100,000 (deducted in full), ATNOLD entered $100,000. Line 1b = 16,100 − 16,100 = $0; + line 2a 16,100 + line 2e 100,000 = $116,100; 90% = $104,490 ≥ 100,000 → line 2f −$100,000 → AMTI $16,100. With ATNOLD $110,000 the limit binds: AMTI 116,100 − 104,490 = $11,610.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 116100,
+    "nolCarryforwardPre2018": 100000,
+    "alternativeTaxNolDeduction": 110000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.amt.amti",
+  "expect": {
+    "valueCents": "1161000"
+  }
+}

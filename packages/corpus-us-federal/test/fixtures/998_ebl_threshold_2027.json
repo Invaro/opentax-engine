@@ -1,0 +1,13 @@
+{
+  "description": "Rev. Proc. 2026-35 § 3.33: $264,000 for 2027. $1,000,000 single Schedule C loss → $736,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "scheduleCNetLoss": 1000000
+  },
+  "asOf": "2027-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "73600000"
+  }
+}

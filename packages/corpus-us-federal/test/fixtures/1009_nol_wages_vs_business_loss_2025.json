@@ -1,0 +1,16 @@
+{
+  "description": "Form 172 sanity (derived): single 2025, wages $50,000, Schedule C loss $100,000, under the § 461(l) threshold. AGI −$50,000; line 1 −65,750; line 9 adds back the $15,750 standard deduction (no nonbusiness income) → NOL $50,000 = business loss less wages.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "scheduleCNetLoss": 100000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol.generated",
+  "expect": {
+    "valueCents": "5000000",
+    "intermediates": {
+      "us.federal.excess_business_loss": "0"
+    }
+  }
+}

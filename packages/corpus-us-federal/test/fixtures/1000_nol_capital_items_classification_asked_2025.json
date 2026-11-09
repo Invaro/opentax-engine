@@ -1,0 +1,19 @@
+{
+  "description": "Fixture 999's return without the attestation: in a year that could have an NOL, capital items must be attested as nonbusiness (business capital gains and losses are not modeled).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 1225,
+    "taxableInterest": 425,
+    "longTermCapitalGains": 2000,
+    "shortTermCapitalLoss": 1000,
+    "scheduleCNetLoss": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol.generated",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "capitalItemsAreNonbusiness"
+    ]
+  }
+}

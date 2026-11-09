@@ -1,0 +1,14 @@
+{
+  "description": "With capital losses and no capital gains the business/nonbusiness split can't change Form 172 (lines 2–4 and 11–15 give the same line 22), so it isn't asked. Single 2025: interest $3,000, $3,000 capital loss deducted, no wages: line 1 −15,750; line 9 15,750 − 3,000 = 12,750; line 22 $3,000 → line 24 $0, no NOL.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxableInterest": 3000,
+    "netCapitalLoss": 3000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol.generated",
+  "expect": {
+    "valueCents": "0"
+  }
+}

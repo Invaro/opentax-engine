@@ -1,0 +1,14 @@
+{
+  "description": "Fixture 987's return: NOL deduction = 80% × $100,000 = $80,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 119100,
+    "netCapitalLoss": 3000,
+    "nolCarryforwardPost2017": 500000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "-8000000"
+  }
+}
