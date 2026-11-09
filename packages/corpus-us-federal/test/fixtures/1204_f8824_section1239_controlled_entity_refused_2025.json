@@ -1,0 +1,25 @@
+{
+  "description": "§ 1239(a): 'In the case of a sale or exchange of property, directly or indirectly, between related persons, any gain recognized to the transferor shall be treated as ordinary income if such property is, in the hands of the transferee, of a character which is subject to the allowance for depreciation'. A building exchanged with a corporation you control, with $40,000 of boot: the recognized gain is ordinary, not § 1231 gain — refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 180000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1Section1250Depreciation": 10000,
+    "likeKindExchange1Section1250Fmv": 150000,
+    "likeKindExchange1Section1250AdjustedBasis": 140000,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1RelatedParty": true,
+    "likeKindExchange1RelatedPartyDisposition": false,
+    "likeKindExchange1DepreciableToControlledParty": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line7",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

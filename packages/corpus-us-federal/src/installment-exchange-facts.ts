@@ -27,7 +27,7 @@ const sale = (i: number): FactSpec[] => {
       type: "enum",
       enumValues: [...INSTALLMENT_SALE_KINDS],
       description: first
-        ? "Installment sale 1 (when installmentSales ≥ 1): capital = a capital asset never depreciated (land or a home held for investment or personal use, stock that isn't publicly traded, a partnership interest is not modeled); section1245 = depreciable personal property used in a trade or business (machinery, equipment, vehicles, amortized intangibles, real property expensed under § 179); section1250 = a depreciated building used in a trade or business or as a rental; other = never-depreciated business property such as land used in the business. Sales of publicly traded stock or securities, sales by a dealer, sales at a loss and contingent payment sales (Form 6252 line 4 \"No\") can't use the installment method — enter those as ordinary sales."
+        ? "Installment sale 1 (when installmentSales ≥ 1): capital = a capital asset never depreciated (land or a home held for investment or personal use, C corporation stock that isn't publicly traded). Not modeled, so don't enter them here: an interest in a partnership or S corporation (§§ 751, 453(i)(2), 1411(c)(4)), collectibles and § 1202 stock (28% rate gain); section1245 = depreciable personal property used in a trade or business (machinery, equipment, vehicles, amortized intangibles, real property expensed under § 179); section1250 = a depreciated building used in a trade or business or as a rental; other = never-depreciated business property such as land used in the business. Sales of publicly traded stock or securities, sales by a dealer, sales at a loss and contingent payment sales (Form 6252 line 4 \"No\") can't use the installment method — enter those as ordinary sales."
         : `Installment sale ${i} (when installmentSales ≥ ${i}): capital, section1245, section1250 or other — as for installmentSale1Kind.`,
       // no default — a property's character is never guessed
     },
@@ -181,7 +181,7 @@ const exchange = (i: number): FactSpec[] => {
       type: "enum",
       enumValues: [...LIKE_KIND_EXCHANGE_KINDS],
       description: first
-        ? "Like-kind exchange 1 (when likeKindExchanges ≥ 1): the U.S. real property you gave up — capital = held for investment and never depreciated (investment land); section1250 = a depreciated building used in a trade or business or as a rental, with its land; other = business real property never depreciated (land used in the business). Since 2018 only real property qualifies (§ 1031(a)); real property held primarily for sale, foreign real property, and property used as your home don't (Form 8824 instructions)."
+        ? "Like-kind exchange 1 (when likeKindExchanges ≥ 1): the U.S. real property you gave up — capital = held for investment and never depreciated (investment land); section1250 = a depreciated building used in a trade or business or as a rental, with its land; other = business real property never depreciated (land used in the business). Since 2018 only real property qualifies (§ 1031(a)); real property held primarily for sale and property used as your home don't, and U.S. and foreign real property aren't like kind to each other (§ 1031(h); Form 8824 instructions)."
         : `Like-kind exchange ${i} (when likeKindExchanges ≥ ${i}): capital, section1250 or other — as for likeKindExchange1Kind.`,
       // no default — never guessed
     },
@@ -340,6 +340,14 @@ const exchange = (i: number): FactSpec[] => {
       default: { value: false, rationale: `Assumed like-kind exchange ${i} was not with a related party` },
     },
     {
+      id: x("DepreciableToControlledParty"),
+      type: "bool",
+      description: first
+        ? "Like-kind exchange 1 (related party only, asked when gain is recognized): the property you gave up is depreciable in the other party's hands AND the other party is a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary. Family members are not § 1239 related persons. The recognized gain is then ordinary income (§ 1239(a)) — refused."
+        : `Like-kind exchange ${i} (related party only): property depreciable in the other party's hands exchanged with a § 1239 related person (an entity you control, or a trust you benefit from).`,
+      // no default — asked when a related-party exchange recognizes gain
+    },
+    {
       id: x("RelatedPartyDisposition"),
       type: "bool",
       description: first
@@ -381,8 +389,8 @@ export const installmentSaleFacts: FactSpec[] = [
     id: "installmentSaleSection453AInterest",
     type: "bool",
     description:
-      "Interest on deferred tax is owed under § 453A: an installment obligation from a sale over $150,000 is outstanding at the end of the year, and the face amount of your nondealer installment obligations that arose in its year and were outstanding at that year's end was over $5 million. The interest isn't figured on Form 6252 and is refused. Asked when a sale's selling price is over $150,000.",
-    default: { value: false, rationale: "Assumed no § 453A interest on deferred tax (installment obligations of $5 million or less)" },
+      "Interest on deferred tax is owed under § 453A: an installment obligation from a sale over $150,000 is outstanding at the end of the year, and the face amount of all your nondealer installment obligations that arose in that sale's year and were outstanding at that year's end was over $5 million. (Not for personal-use property or farm property.) The interest isn't figured on Form 6252 (it is additional tax on Schedule 2) and is refused. Asked when a sale's selling price is over $150,000.",
+    // no default — asked when a sale's selling price is over $150,000
   },
 ];
 

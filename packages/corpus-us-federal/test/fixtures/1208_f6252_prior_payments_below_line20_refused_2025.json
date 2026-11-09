@@ -1,0 +1,22 @@
+{
+  "description": "Form 6252 line 23 instructions: deemed payments include 'Liabilities assumed by the buyer in excess of the seller’s basis. This amount is line 20 from the year of sale'. A later year whose line 23 ($500) is less than the year of sale's $1,000 line 20 is refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": false,
+    "installmentSale1SellingPrice": 9000,
+    "installmentSale1MortgagesAssumed": 6000,
+    "installmentSale1CostBasis": 4400,
+    "installmentSale1SellingExpenses": 600,
+    "installmentSale1PaymentsThisYear": 1000,
+    "installmentSale1PaymentsPriorYears": 500
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

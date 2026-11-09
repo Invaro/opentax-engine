@@ -70,6 +70,15 @@ const property = (i: number): FactSpec[] => [
     default: { value: "0", rationale: `Assumed straight-line depreciation on business property ${i} (no additional depreciation)` },
   },
   {
+    id: `businessProperty${i}SoldToControlledEntity`,
+    type: "bool",
+    description:
+      i === 1
+        ? "Business property 1 was sold to a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary — and is depreciable in the buyer's hands. The whole gain is then ordinary income (§ 1239(a)), which is refused."
+        : `Business property ${i} was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands.`,
+    default: { value: false, rationale: `Assumed business property ${i} was not sold to a controlled entity or trust (§ 1239)` },
+  },
+  {
     id: `businessProperty${i}Qbi`,
     type: "bool",
     description:

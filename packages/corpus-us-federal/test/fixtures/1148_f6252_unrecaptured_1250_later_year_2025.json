@@ -12,7 +12,8 @@
     "installmentSale1Depreciation": 150000,
     "installmentSale1PaymentsThisYear": 300000,
     "installmentSale1PaymentsPriorYears": 100000,
-    "installmentSale1Qbi": false
+    "installmentSale1Qbi": false,
+    "installmentSaleSection453AInterest": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.schedule_d.unrecaptured_1250",

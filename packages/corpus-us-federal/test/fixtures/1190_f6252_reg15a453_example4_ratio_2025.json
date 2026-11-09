@@ -9,7 +9,8 @@
     "installmentSale1YearOfSale": true,
     "installmentSale1SellingPrice": 806955,
     "installmentSale1CostBasis": 200000,
-    "installmentSale1PaymentsThisYear": 500000
+    "installmentSale1PaymentsThisYear": 500000,
+    "installmentSaleSection453AInterest": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.form6252.sale1.line24",

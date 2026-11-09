@@ -15,7 +15,8 @@
     "installmentSale1PaymentsPriorYears": 100000,
     "installmentSale1SecondDisposition": true,
     "installmentSale1RelatedPartyAmountRealized": 600000,
-    "installmentSale1DepreciableToControlledBuyer": false
+    "installmentSale1DepreciableToControlledBuyer": false,
+    "installmentSaleSection453AInterest": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.form4797.line9",

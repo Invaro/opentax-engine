@@ -1,0 +1,22 @@
+{
+  "description": "§ 453A(b): interest on deferred tax can apply once 'the sales price of such property exceeds $150,000' and the year's obligations outstanding exceed $5,000,000. An $8,000,000 sale with $7,000,000 outstanding: whether § 453A applies is asked, never assumed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 8000000,
+    "installmentSale1CostBasis": 2000000,
+    "installmentSale1PaymentsThisYear": 1000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "installmentSaleSection453AInterest"
+    ]
+  }
+}

@@ -95,6 +95,13 @@ const GAIN_EXCERPT =
 
 const scopeChecks = (i: number, value: Expr): Expr =>
   iff(
+    onSlot(i, pf(i, "SoldToControlledEntity")),
+    unsupported(`business property ${i} was sold to a § 1239 related person (a controlled entity or trust) and is depreciable in the buyer's hands: the gain is ordinary income under § 1239(a) — not modeled`),
+    propertyChecks(i, value),
+  );
+
+const propertyChecks = (i: number, value: Expr): Expr =>
+  iff(
     and(kindIs(i, "other"), gt0(amt(i, "Depreciation"))),
     unsupported(`business property ${i} is kind other but has depreciation: depreciable property is § 1245 or § 1250 property`),
     iff(
@@ -114,6 +121,7 @@ const propertyRules = (i: number): Rule[] => [
     "Lines 20–24; line 2 (d)–(g)",
     GAIN_EXCERPT,
     scopeChecks(i, sub(amt(i, "SalesPrice"), sub(amt(i, "CostBasis"), amt(i, "Depreciation")))),
+    { version: 2 }, // v1 didn't refuse a sale to a § 1239 controlled entity
   ),
   rule(
     p(i, "recapture"),

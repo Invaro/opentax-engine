@@ -123,13 +123,17 @@ const saleChecks = (i: number, value: Expr): Expr =>
       unsupported(`installment sale ${i}: additional depreciation applies only to § 1250 property and cannot exceed the depreciation`),
       iff(
         and(gt0(amt(i, "ExcludedGain")), not(kindIs(i, "capital"))),
-        unsupported(`installment sale ${i}: a § 121 main-home exclusion (line 15) applies only to a capital asset — a home used partly for business is two sales`),
+        unsupported(`installment sale ${i}: a § 121 main-home exclusion (line 15) applies only to kind capital (a main home)`),
         iff(
           iff(sf(i, "RelatedParty"), sf(i, "DepreciableToControlledBuyer"), FALSE),
           unsupported(`installment sale ${i} is property depreciable in the buyer's hands sold to a § 453(g)(3) related person (a controlled entity or trust): § 453(g) denies the installment method (all payments are treated as received in the year of sale) unless the IRS agrees there was no tax-avoidance purpose — report it as a sale`),
           iff(
             cmp("le", S(i, "line14"), zero),
-            unsupported(`installment sale ${i} is not at a gain (Form 6252 line 14 is zero or less): a loss can't use the installment method — report the sale in the Form 4797 or capital loss facts`),
+            iff(
+              gt0(totalGain(i)),
+              unsupported(`installment sale ${i}: all of the gain is depreciation recapture, taxed in the year of sale (Form 6252 line 14 is zero): nothing is left for the installment method — for the year of sale enter it in the Form 4797 facts; in a later year there is nothing more to report`),
+              unsupported(`installment sale ${i} is not at a gain (Form 6252 line 14 is zero or less): a loss can't use the installment method — report the sale in the Form 4797 or capital loss facts for the year of sale`),
+            ),
             iff(
               cmp("gt", amt(i, "ExcludedGain"), S(i, "line14")),
               unsupported(`installment sale ${i}: the § 121 exclusion is more than the gain on line 14`),
@@ -140,9 +144,13 @@ const saleChecks = (i: number, value: Expr): Expr =>
                   and(yearOfSale(i), gt0(amt(i, "PaymentsPriorYears"))),
                   unsupported(`installment sale ${i}: payments received in prior years (line 23) can't be entered in the year of sale`),
                   iff(
+                    and(not(yearOfSale(i)), cmp("lt", amt(i, "PaymentsPriorYears"), S(i, "line17"))),
+                    unsupported(`installment sale ${i}: payments received in prior years (line 23) are less than the year of sale's line 20 (the mortgage in excess of basis, line 17), which line 23 includes`),
+                  iff(
                     and(not(bpsGiven(i)), cmp("gt", add(S(i, "line20"), amt(i, "PaymentsThisYear"), amt(i, "PaymentsPriorYears")), S(i, "line18"))),
                     unsupported(`installment sale ${i}: the payments (lines 20, 21 and 23) are more than the contract price on line 18 — check the amounts, or a reduced selling price (Pub. 537 Worksheet B), which is not modeled`),
                     value,
+                  ),
                   ),
                 ),
               ),
@@ -216,12 +224,16 @@ const saleRules = (i: number): Rule[] => [
     s(i, "line35"),
     `Installment sale ${i}: Form 6252 line 35 — related party second disposition treated as a payment (Part III)`,
     "§ 453(e); Form 6252 Part III lines 28–37",
-    'Form 6252 Part III: "28 Did the related party resell or dispose of the property (“second disposition”) during this tax year?"; "30 Selling price of property sold by related party"; "31 Enter contract price from line 18 for year of first sale"; "32 Enter the smaller of line 30 or line 31"; "33 Total payments received by the end of this tax year"; "34 Subtract line 33 from line 32. If zero or less, enter -0-"; "35 Multiply line 34 by the gross profit percentage on line 19 for year of first sale". Line 33: "Enter the sum of lines 22 and 23 from Part II." § 453(e)(1): "the amount realized with respect to such second disposition shall be treated as received at the time of the second disposition by the person making the first disposition." Pub. 537 Example 1: "Lesser of: 1) Amount realized on second disposition, or 2) Contract price on first disposition ... $500,000 Subtract: Sum of payments from Adrian in 2024 and 2025 ... − 200,000 Amount treated as received because of second disposition ... $300,000". [Asked only when the sale was to a related party; installmentSaleNSecondDisposition already excludes the line 29 exceptions. Line 36 is not modeled, so line 37 is line 35.]',
+    'Form 6252 Part III: "28 Did the related party resell or dispose of the property (“second disposition”) during this tax year?"; "30 Selling price of property sold by related party"; "31 Enter contract price from line 18 for year of first sale"; "32 Enter the smaller of line 30 or line 31"; "33 Total payments received by the end of this tax year"; "34 Subtract line 33 from line 32. If zero or less, enter -0-"; "35 Multiply line 34 by the gross profit percentage on line 19 for year of first sale". Line 33: "Enter the sum of lines 22 and 23 from Part II." § 453(e)(1): "the amount realized with respect to such second disposition shall be treated as received at the time of the second disposition by the person making the first disposition." Pub. 537 Example 1: "Lesser of: 1) Amount realized on second disposition, or 2) Contract price on first disposition ... $500,000 Subtract: Sum of payments from Adrian in 2024 and 2025 ... − 200,000 Amount treated as received because of second disposition ... $300,000". [Asked only when the sale was to a related party; installmentSaleNSecondDisposition already excludes the line 29 exceptions. Line 36 is not modeled, so line 37 is line 35. With an entered gross profit percentage (figured on a combined contract price) Part III is refused: line 31 would need that contract price.]',
     iff(
       onSlot(i, iff(sf(i, "RelatedParty"), sf(i, "SecondDisposition"), FALSE)),
-      scopeChecks(
-        i,
-        max0(gpApply(i, max0(sub(min(sf(i, "RelatedPartyAmountRealized"), S(i, "line18")), add(S(i, "line20"), amt(i, "PaymentsThisYear"), amt(i, "PaymentsPriorYears")))))),
+      iff(
+        bpsGiven(i),
+        unsupported(`installment sale ${i}: a related party's second disposition (Part III) with an entered gross profit percentage is not modeled — line 31 needs the contract price that percentage was figured on`),
+        scopeChecks(
+          i,
+          max0(gpApply(i, max0(sub(min(sf(i, "RelatedPartyAmountRealized"), S(i, "line18")), add(S(i, "line20"), amt(i, "PaymentsThisYear"), amt(i, "PaymentsPriorYears")))))),
+        ),
       ),
       zero,
     ),

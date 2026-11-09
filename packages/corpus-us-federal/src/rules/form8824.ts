@@ -17,7 +17,8 @@
  * property's depreciation less its recapture (§ 1(h)(6)(A)).
  *
  * Not modeled (refused or out of the inputs): a related-party disposition
- * within 2 years (Part II), exchanges of property used as a home (§ 121 with
+ * within 2 years (Part II), gain recognized on property depreciable to a
+ * § 1239 related person (ordinary under § 1239(a)), exchanges of property used as a home (§ 121 with
  * § 1031), an installment obligation received (§ 453(f)(6)), multi-asset
  * exchanges with other like-kind groups, §§ 1252, 1254 and 1255 property,
  * depreciated investment property, Part IV (§ 1043 conflict-of-interest
@@ -107,6 +108,18 @@ const scopeChecks = (i: number, value: Expr): Expr =>
         ),
       ),
     ),
+  );
+
+/** § 1239: gain recognized on property depreciable to a controlled transferee is ordinary — refused */
+const s1239 = (i: number, value: Expr): Expr =>
+  iff(
+    gt0(X(i, "line23")),
+    iff(
+      iff(xf(i, "RelatedParty"), xf(i, "DepreciableToControlledParty"), FALSE),
+      unsupported(`like-kind exchange ${i}: gain recognized on property depreciable in the hands of a § 1239 related person (a controlled entity or trust) is ordinary income (§ 1239(a)) — not modeled`),
+      value,
+    ),
+    value,
   );
 
 // --- per exchange: Part III ---------------------------------------------------------
@@ -226,14 +239,14 @@ const exchangeRules = (i: number): Rule[] => [
     `Like-kind exchange ${i}: ordinary recognized gain on business property — Form 4797 line 16`,
     "Form 4797 line 16",
     'I8824 line 22: "Report a gain from the exchange of property used in a trade or business (and other noncapital assets) on Form 4797, line 5 or line 16." Form 8824 line 21: "Ordinary income under recapture rules. Enter here and on Form 4797". [Held 1 year or less, all of it is ordinary.]',
-    iff(business(i), iff(longTerm(i), X(i, "line21"), X(i, "line23")), zero),
+    iff(business(i), s1239(i, iff(longTerm(i), X(i, "line21"), X(i, "line23"))), zero),
   ),
   rule(
     x(i, "section1231"),
     `Like-kind exchange ${i}: § 1231 recognized gain on business property held more than 1 year — Form 4797 line 5`,
     "§ 1231; Form 4797 line 5",
     'Form 4797 (2025): "5 Section 1231 gain or (loss) from like-kind exchanges from Form 8824".',
-    iff(and(business(i), longTerm(i)), X(i, "line22"), zero),
+    iff(and(business(i), longTerm(i)), s1239(i, X(i, "line22")), zero),
   ),
   rule(
     x(i, "unrecaptured_1250"),
@@ -257,8 +270,8 @@ const ROUTING =
   'I8824 line 22: "Report a gain from the exchange of property used in a trade or business (and other noncapital assets) on Form 4797, line 5 or line 16. Report a gain from the exchange of capital assets according to the Schedule D (Form 1040) instructions for your tax return. Be sure to use the date of the exchange as the date for reporting the gain." Form 8824 line 21: "Ordinary income under recapture rules. Enter here and on Form 4797". Schedule D (2025): "4 Short-term gain from Form 6252 and short-term gain or (loss) from Forms 4684, 6781, and 8824"; "11 ... long-term gain or (loss) from Forms 4684, 6781, and 8824". Form 4797 (2025): "5 Section 1231 gain or (loss) from like-kind exchanges from Form 8824"; "16 Ordinary gain or (loss) from like-kind exchanges from Form 8824". [Form 4797 (2026 draft): lines 5 and 17. Property held 1 year or less is not § 1231 property, so all its recognized gain is ordinary.]';
 
 const routeRules: Rule[] = [
-  rule(form8824RuleId.capitalShortTerm, "Form 8824 short-term recognized gain on investment property → Schedule D line 4", "Schedule D line 4", ROUTING, sumWhere((i) => and(kindIs(i, "capital"), not(longTerm(i))), (i) => X(i, "line23"))),
-  rule(form8824RuleId.capitalLongTerm, "Form 8824 long-term recognized gain on investment property → Schedule D line 11", "Schedule D line 11", ROUTING, sumWhere((i) => and(kindIs(i, "capital"), longTerm(i)), (i) => X(i, "line23"))),
+  rule(form8824RuleId.capitalShortTerm, "Form 8824 short-term recognized gain on investment property → Schedule D line 4", "Schedule D line 4", ROUTING, sumWhere((i) => and(kindIs(i, "capital"), not(longTerm(i))), (i) => s1239(i, X(i, "line23")))),
+  rule(form8824RuleId.capitalLongTerm, "Form 8824 long-term recognized gain on investment property → Schedule D line 11", "Schedule D line 11", ROUTING, sumWhere((i) => and(kindIs(i, "capital"), longTerm(i)), (i) => s1239(i, X(i, "line23")))),
   rule(form8824RuleId.section1231, "Form 8824 § 1231 gain on business property held more than 1 year → Form 4797 line 5", "Form 4797 line 5", ROUTING, add(...SLOTS.map((i) => X(i, "section1231")))),
   rule(
     form8824RuleId.ordinary,

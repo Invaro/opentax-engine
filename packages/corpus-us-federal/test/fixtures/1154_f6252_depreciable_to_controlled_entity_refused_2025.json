@@ -13,7 +13,8 @@
     "installmentSale1PaymentsThisYear": 50000,
     "installmentSale1RelatedParty": true,
     "installmentSale1Qbi": false,
-    "installmentSale1DepreciableToControlledBuyer": true
+    "installmentSale1DepreciableToControlledBuyer": true,
+    "installmentSaleSection453AInterest": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.net_tax",

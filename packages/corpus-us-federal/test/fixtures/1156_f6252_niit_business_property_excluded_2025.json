@@ -13,7 +13,8 @@
     "installmentSale1Depreciation": 50000,
     "installmentSale1PaymentsThisYear": 100000,
     "installmentSale1Qbi": false,
-    "installmentSale1NetInvestmentIncome": false
+    "installmentSale1NetInvestmentIncome": false,
+    "installmentSaleSection453AInterest": false
   },
   "asOf": "2025-12-31",
   "target": "us.federal.niit",

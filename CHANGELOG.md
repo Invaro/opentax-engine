@@ -20,12 +20,14 @@ Installment sales (Form 6252) and like-kind exchanges of real property (Form 882
 - **Where the results go:** AGI, § 86 income, the Schedule D Tax Worksheet and Form 6251 Part III, net investment income (business property you materially participate in comes out on Form 8960 line 5b), QBI (ordinary results of QBI property), the EITC investment-income test, and the Washington capital gains guard.
 - **Form 4797 for 2026:** the 2026 draft adds a livestock line 7, so `compute_return` labels 2026 returns with lines 8, 10, 13 and 20b where 2025 has 7, 9, 12 and 17. `compute_return` shows `forms['6252']` and `forms['8824']`.
 - **Refused, with the reason:**
-  - Form 6252: a sale at a loss; a § 453(g) sale to a controlled entity or trust; § 453A interest on deferred tax (`installmentSaleSection453AInterest`); payments over the contract price; prior-year payments in the year of sale; a depreciated capital asset (worksheet line 12).
-  - Form 8824: a related-party disposition within 2 years (§ 1031(f)); no like-kind property received.
+  - Form 6252: a sale at a loss, or one whose whole gain is recapture; a § 453(g) sale to a controlled entity or trust; § 453A interest on deferred tax (`installmentSaleSection453AInterest`, asked for every sale over $150,000, never assumed); payments over the contract price; prior-year payments in the year of sale, or a later year's line 23 below the year of sale's line 20; a second disposition together with an entered gross profit percentage; a depreciated capital asset (worksheet line 12).
+  - Form 8824: a related-party disposition within 2 years (§ 1031(f)); gain recognized on property depreciable to an entity you control (ordinary under § 1239, asked on related-party exchanges with boot); no like-kind property received.
+  - Form 4797: a sale of property depreciable in the buyer's hands to an entity you control (`businessPropertyNSoldToControlledEntity`, § 1239; assumed not unless you say so).
+  - The corpus's wage-and-SE annualized-installment rules (`us.federal.estimated.annualized_installment_qN`) with any Form 4797, 6252 or 8824 amount; the Form 2210 composer's Schedule AI handles those.
   - Either form: the kiddie tax, FEIE stacking or a § 461(l)/NOL loss year.
   - Not modeled: contingent payment sales, a reduced selling price (Pub. 537 Worksheet B), § 453B dispositions of the obligation, repossessions, a like-kind exchange with an installment note (§ 453(f)(6)), § 121 with § 1031, §§ 1252/1254/1255, and Part IV of Form 8824.
 - **Checked:**
-  - 61 new fixtures. From Pub. 537: both mortgage examples, related-party Examples 1 and 2 and the final year, and the sale-of-business building at 8.85% and land at 22.95%. From the Instructions for Form 8824: Taylor with § 1245 property, Taylor's alternative, and Finley with § 1250 recapture and the 25a/25b split, line by line.
+  - 69 new fixtures. From Pub. 537: both mortgage examples, related-party Examples 1 and 2 and the final year, and the sale-of-business building at 8.85% and land at 22.95%. From the Instructions for Form 8824: Taylor with § 1245 property, Taylor's alternative, and Finley with § 1250 recapture and the 25a/25b split, line by line.
   - From Pub. 544: the mortgage-netting pair, non-like-kind property received and given up, the § 1245(b)(4) example and both § 1250(d)(4) examples.
   - From the regulations: Temp. Reg. § 15a.453-1(b)(5) Examples (1)–(4), and Reg. § 1.453-12(d) Examples 1, 3 and 4 year by year (25%-rate gain first, with the § 1231(c) lookback and a net § 1231 loss).
   - The other fixtures cover each flow and each refusal.
@@ -33,6 +35,7 @@ Installment sales (Form 6252) and like-kind exchanges of real property (Form 882
   - Every existing fixture, the IRS ATS scenarios, the AMT regression cases and every pre-existing rule give the same answers as v0.51.0, and 21,000 random capital gain and AMT evaluations compute identically.
   - Over 300 complete installment lifetimes, the income adds up to the gross profit and the unrecaptured § 1250 gain to its total. On 352 exchanges, basis plus deferred gain equals the FMV received.
   - An independent rebuild of both forms and their flows from the IRS documents alone (Form 6252, the Instructions for Form 8824, Pub. 537, the Schedule D worksheet) agrees on all 400 random returns: every line of every sale and exchange, Form 4797, Schedule D, the unrecaptured § 1250 gain and AGI, and the same 5 refusals. It found one difference first, now fixed: an exchanged building held a year or less didn't treat all its depreciation as additional depreciation (§ 1250(b)(1)).
+  - An adversarial review ran the engine against the sources looking for wrong numbers. The core arithmetic held on every IRS example; it found the narrow cases refused above (§ 453A assumed away, § 1239, Part III with an entered percentage, the annualized-installment rules), all fixed before release.
 
 ## Nov 10, 2026 · Sales of business property: Form 4797 and the 25% rate
 
