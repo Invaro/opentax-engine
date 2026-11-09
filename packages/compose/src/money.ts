@@ -20,5 +20,5 @@ export const min2 = (a: Cents, b: Cents): Cents => (a < b ? a : b);
 export const fmtD = (x: Cents): string => {
   const neg = x < 0n;
   const a = neg ? -x : x;
-  return `${neg ? "-" : ""}$${(a / 100n).toLocaleString()}`;
+  return `${neg ? "-" : ""}$${(a / 100n).toLocaleString("en-US")}`;
 };

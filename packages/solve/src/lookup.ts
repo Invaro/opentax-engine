@@ -9,7 +9,7 @@
  * like the standard deduction actually live).
  */
 
-import { walkExpr } from "@invaro/opentax-core";
+import { compareIds, walkExpr } from "@invaro/opentax-core";
 import type { Citation, LoadedCorpus, Rule } from "@invaro/opentax-core";
 
 export interface LookupHit {
@@ -135,7 +135,7 @@ export function lookupParameters(
     });
   }
 
-  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
   return hits.slice(0, 5);
 }
 
@@ -270,7 +270,7 @@ export function searchRules(
     });
   }
 
-  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
   return hits.slice(0, Math.max(1, Math.min(limit, 20)));
 }
 

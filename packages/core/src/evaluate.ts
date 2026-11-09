@@ -41,7 +41,7 @@ import type {
 } from "./proof.js";
 import type { FactSpec, Rule } from "./rule.js";
 
-export const ENGINE = { name: "@invaro/opentax-core", version: "0.1.0" } as const;
+export const ENGINE = { name: "@invaro/opentax-core", version: "1.0.0" } as const;
 
 export interface EvaluateOptions {
   /** ISO date the rules are evaluated as of (temporal rule selection). */
@@ -99,18 +99,25 @@ export function evaluate(
   }
   for (const factId of options.allowDefaults ?? []) {
     if (!corpus.factById.has(factId)) {
-      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`);
+      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`, factId);
     }
   }
 
   const resolved = new Map<string, Value>();
   for (const [factId, tv] of Object.entries(facts)) {
     const spec = corpus.factById.get(factId);
-    if (!spec) throw new FactValidationError(`unknown fact "${factId}"`);
-    const value = valueFromJSON(tv);
+    if (!spec) throw new FactValidationError(`unknown fact "${factId}"`, factId);
+    let value: Value;
+    try {
+      value = valueFromJSON(tv);
+    } catch (err) {
+      // a fact that isn't a typed value ({ type, value }): coerceFacts makes them from plain input
+      throw new FactValidationError(`fact "${factId}": ${(err as Error).message}`, factId);
+    }
     if (value.type !== spec.type) {
       throw new FactValidationError(
         `fact "${factId}" must be ${spec.type}, got ${value.type}`,
+        factId,
       );
     }
     if (
@@ -120,6 +127,7 @@ export function evaluate(
     ) {
       throw new FactValidationError(
         `fact "${factId}": "${value.value}" is not one of ${spec.enumValues.join("|")}`,
+        factId,
       );
     }
     if (value.type === "money" || value.type === "int") {
@@ -127,12 +135,14 @@ export function evaluate(
       if (spec.min !== undefined && n < BigInt(spec.min)) {
         throw new FactValidationError(
           `fact "${factId}": ${n} is below the minimum ${spec.min}`,
-        );
+        factId,
+      );
       }
       if (spec.max !== undefined && n > BigInt(spec.max)) {
         throw new FactValidationError(
           `fact "${factId}": ${n} is above the maximum ${spec.max}`,
-        );
+        factId,
+      );
       }
     }
     resolved.set(factId, value);
@@ -761,6 +771,7 @@ export function coerceFacts(
       const known = [...corpus.factById.keys()].join(", ");
       throw new FactValidationError(
         `unknown fact "${factId}" (known facts: ${known})`,
+        factId,
       );
     }
     switch (spec.type) {
@@ -768,14 +779,16 @@ export function coerceFacts(
         if (typeof raw !== "string" && typeof raw !== "number") {
           throw new FactValidationError(
             `fact "${factId}" must be a dollar amount like 50000 or "1234.56"`,
-          );
+        factId,
+      );
         }
         try {
           out[factId] = { type: "money", value: parseDollars(raw).toString() };
         } catch (err) {
           throw new FactValidationError(
             `fact "${factId}": ${(err as Error).message}`,
-          );
+        factId,
+      );
         }
         break;
       }
@@ -787,14 +800,15 @@ export function coerceFacts(
         } else {
           throw new FactValidationError(
             `fact "${factId}" must be a whole number`,
-          );
+        factId,
+      );
         }
         out[factId] = { type: "int", value: s };
         break;
       }
       case "bool":
         if (typeof raw !== "boolean") {
-          throw new FactValidationError(`fact "${factId}" must be true or false`);
+          throw new FactValidationError(`fact "${factId}" must be true or false`, factId);
         }
         out[factId] = { type: "bool", value: raw };
         break;
@@ -802,7 +816,8 @@ export function coerceFacts(
         if (typeof raw !== "string") {
           throw new FactValidationError(
             `fact "${factId}" must be one of ${spec.enumValues?.join("|")}`,
-          );
+        factId,
+      );
         }
         out[factId] = { type: "enum", value: raw };
         break;

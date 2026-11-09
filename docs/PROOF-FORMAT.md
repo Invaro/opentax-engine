@@ -77,8 +77,26 @@ the fact catalog (fact *defaults* affect answers, so they are pinned too).
 
 Construction:
 
-1. Sort all rules by `id` ascending, ties by `version` ascending
-   (plain code-point string comparison).
+1. Sort all rules by `id` ascending, ties by `version` ascending. Ids are
+   compared with the fixed order below (the engine's `compareIds`); it uses
+   no locale data, so every implementation and every machine gets the same
+   order. Two ids compare, in turn, by:
+   1. their characters left to right, each by its position in
+
+      ```
+       _-,;:!?.'"()[]{}@*/\&#%`^+<=>|~$0123456789abcdefghijklmnopqrstuvwxyz
+      ```
+
+      (the string starts with a space), with an uppercase ASCII letter taking
+      the position of its lowercase; any other character sorts after all of
+      these, by UTF-16 code unit;
+   2. length: an id that is a prefix of another sorts first;
+   3. case, at the first position where the two differ: lowercase first.
+
+   So `demo.a` < `Demo.a` < `demo.a_b` < `demo.A-b` < `demo.a.b` <
+   `demo.a1` < `demo.ab` < `demo.aB`. (This is the order an English-locale
+   `localeCompare` gives ASCII ids, which earlier engine versions used; it is
+   not code-point order. Roots published before core 1.0.0 are unchanged.)
 2. Leaves: `sha256hex(canonical(rule))` for each rule **in that order** —
    note: leaf = bare lowercase hex, *no* `"sha256:"` prefix.
 3. If the fact catalog is non-empty: append one extra leaf
@@ -112,7 +130,7 @@ plus the root — and CI fails if the source drifts from the lock.
 ```jsonc
 {
   "schemaVersion": "2",
-  "engine":  { "name": "opentax-core", "version": "…" },   // informational
+  "engine":  { "name": "@invaro/opentax-core", "version": "…" }, // informational
   "corpus":  { "name": "…", "version": "…", "merkleRoot": "sha256:…" },
   "asOf":    "2026-07-07",          // the law-in-force date used
   "target":  "us.federal.net_tax",  // the rule the root node answers

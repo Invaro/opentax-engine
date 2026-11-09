@@ -125,8 +125,10 @@ Examples: `feat(corpus): encode § 25B saver's credit` · `fix(compose): VA line
 
 ## What CI checks on every PR
 
-- **build & test** on Node 22 and 24 — `pnpm build && pnpm test`: the full suite, golden fixtures, and the corpus-lock drift test
+- **build & test** on Node 20, 22 and 24 — `pnpm build && pnpm test`: the full suite, golden fixtures, and the corpus-lock drift test
 - **generated artifacts in sync** — CI regenerates `corpus.lock.json`, `rule-index.json` and the distributed bundles and fails if the committed copies differ (run `pnpm -F @invaro/opentax-corpus-us-federal gen:lock` and `pnpm -F @invaro/opentax build:hosted` after source changes)
+- **library API contract** (part of the test suite, `packages/library-api`) — every export of core, corpus-us-federal, solve and compose has a tier in `surface.json`; the committed API report matches the build (`pnpm -F @invaro/opentax-library-api api:report`); nothing in the last release's baseline (fact ids, types, enum values, defaults, rule ids, the hash of every rule version, extension points, error codes, stable exports) was removed or edited; and the examples in [docs/LIBRARY-API.md](docs/LIBRARY-API.md) run. A change to a released rule is a new version, never an edit. A deliberate break follows the compatibility policy in that document and is listed in `packages/library-api/deprecations.json`
+- **library packages as a licensee installs them** — `node packages/library-api/scripts/consumer-check.mjs` packs the four tarballs, installs them into an empty project, runs the documented examples against them, bundles them for the browser and type-checks a strict TypeScript consumer
 - **site build** — the Next.js site compiles
 - **pr title** — matches the `type(scope): description` format above
 
@@ -137,8 +139,10 @@ All checks must pass before merge.
 1. Bump the corpus `version` in `packages/corpus-us-federal/src/index.ts`, run `gen:lock`, and commit.
 2. In `CHANGELOG.md`, replace "Next release" in each post heading with the release date, e.g. `## Nov 6, 2026 · Turn off defaults`. Run `node site/scripts/gen-docs-data.mjs` so opentax.invaro.ai/changelog shows it.
 3. `pnpm -F @invaro/opentax-corpus-us-federal changes --tag` writes the rule-by-rule notes since the last tag into an annotated tag `v<version>`; `--write` also saves them under `packages/corpus-us-federal/changes/`.
-4. Push the tag: `git push origin v<version>`.
-5. If the release touches the site, walk [docs/USER-JOURNEYS.md](docs/USER-JOURNEYS.md) on its preview deployment first.
+4. If the release changes the library surface (anything in `packages/library-api/report`), add an "API changes" list to the top of the notes: what changed, in which package and tier, and what a caller does about it.
+5. Roll the contract baseline forward in the release commit: `pnpm -F @invaro/opentax-library-api api:baseline`, and remove from `deprecations.json` the entries that have now taken effect. The next change is then compared with this release.
+6. Push the tag: `git push origin v<version>`.
+7. If the release touches the site, walk [docs/USER-JOURNEYS.md](docs/USER-JOURNEYS.md) on its preview deployment first.
 
 ## Engine contributions
 

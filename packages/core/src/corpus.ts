@@ -105,8 +105,9 @@ export function loadCorpus(input: CorpusInput): LoadedCorpus {
   // Overlapping validity windows for the same rule id are rejected —
   // "which version applies today" must never be ambiguous.
   for (const [id, versions] of byId) {
+    // ISO dates: plain string order is date order, in every locale
     const sorted = [...versions].sort((a, b) =>
-      a.effectiveFrom.localeCompare(b.effectiveFrom),
+      a.effectiveFrom < b.effectiveFrom ? -1 : a.effectiveFrom > b.effectiveFrom ? 1 : 0,
     );
     for (let i = 0; i + 1 < sorted.length; i++) {
       const cur = sorted[i];
@@ -171,6 +172,128 @@ function byIdRefChecker(input: CorpusInput): Set<string> {
   return new Set(input.rules.map((r) => r.id));
 }
 
+const LITERAL = /^-?\d{1,18}$/;
+const ROUNDINGS = new Set(["half-up", "half-even", "floor", "ceil"]);
+const CMP_OPS = new Set(["lt", "le", "gt", "ge", "eq", "ne"]);
+
+/** Structural check of one expression tree: every node a known kind, every literal well-formed. */
+function checkShape(expr: unknown, key: string, issues: string[], path = "formula"): void {
+  const bad = (what: string): void => {
+    issues.push(`rule "${key}": ${what} at ${path}`);
+  };
+  if (typeof expr !== "object" || expr === null || typeof (expr as { kind?: unknown }).kind !== "string") {
+    bad("an expression must be an object with a kind");
+    return;
+  }
+  const e = expr as Record<string, unknown> & { kind: string };
+  const child = (name: string) => checkShape(e[name], key, issues, `${path}.${name}`);
+  const list = (name: string) => {
+    if (!Array.isArray(e[name])) return bad(`${e.kind}.${name} must be an array`);
+    (e[name] as unknown[]).forEach((x, i) => checkShape(x, key, issues, `${path}.${name}[${i}]`));
+  };
+  const literal = (value: unknown, what: string) => {
+    if (typeof value !== "string" || !LITERAL.test(value)) bad(`${what} must be a whole-number string like "12500", got ${JSON.stringify(value)}`);
+  };
+  const rate = (value: unknown, what: string) => {
+    const r = value as { num?: unknown; den?: unknown } | undefined;
+    literal(r?.num, `${what}.num`);
+    literal(r?.den, `${what}.den`);
+    if (typeof r?.den === "string" && LITERAL.test(r.den) && BigInt(r.den) === 0n) bad(`${what} has a zero denominator`);
+  };
+  const rounding = (value: unknown) => {
+    if (typeof value !== "string" || !ROUNDINGS.has(value)) bad(`${e.kind} needs a rounding mode (half-up, half-even, floor, ceil), got ${JSON.stringify(value)}`);
+  };
+  switch (e.kind) {
+    case "money":
+      return literal(e.cents, "money.cents");
+    case "int":
+      return literal(e.value, "int.value");
+    case "bool":
+      if (typeof e.value !== "boolean") bad("bool.value must be true or false");
+      return;
+    case "enum":
+      if (typeof e.value !== "string") bad("enum.value must be a string");
+      return;
+    case "fact":
+      if (typeof e.factId !== "string") bad("fact.factId must be a string");
+      return;
+    case "rule":
+      if (typeof e.ruleId !== "string") bad("rule.ruleId must be a string");
+      if (e.excluding !== undefined && !(Array.isArray(e.excluding) && e.excluding.every((x) => typeof x === "string"))) bad("rule.excluding must be an array of rule ids");
+      return;
+    case "param":
+      if (typeof e.name !== "string") bad("param.name must be a string");
+      return;
+    case "unsupported":
+      if (typeof e.reason !== "string") bad("unsupported.reason must be a string");
+      return;
+    case "add":
+    case "min":
+    case "max":
+    case "and":
+    case "or":
+      return list("args");
+    case "sub":
+      child("left");
+      return child("right");
+    case "mulRate":
+      child("base");
+      rate(e.rate, "mulRate.rate");
+      return rounding(e.round);
+    case "mulInt":
+      child("base");
+      return child("count");
+    case "max0":
+    case "not":
+      return child("arg");
+    case "clamp":
+      child("value");
+      child("lo");
+      return child("hi");
+    case "roundToDollar":
+      child("value");
+      return rounding(e.mode);
+    case "mulDiv":
+      child("a");
+      child("b");
+      child("c");
+      return rounding(e.round);
+    case "stepUnits":
+      child("value");
+      literal(e.unitCents, "stepUnits.unitCents");
+      if (typeof e.unitCents === "string" && LITERAL.test(e.unitCents) && BigInt(e.unitCents) <= 0n) bad("stepUnits.unitCents must be positive");
+      if (e.mode !== "ceil" && e.mode !== "floor") bad(`stepUnits.mode must be ceil or floor, got ${JSON.stringify(e.mode)}`);
+      return;
+    case "cmp":
+      if (typeof e.op !== "string" || !CMP_OPS.has(e.op)) bad(`cmp.op must be one of lt, le, gt, ge, eq, ne, got ${JSON.stringify(e.op)}`);
+      child("left");
+      return child("right");
+    case "if":
+      child("cond");
+      child("then");
+      return child("else");
+    case "brackets":
+      child("base");
+      if (!Array.isArray(e.table)) return bad("brackets.table must be an array");
+      (e.table as { threshold?: unknown; rate?: unknown }[]).forEach((row, i) => {
+        literal(row?.threshold, `brackets.table[${i}].threshold`);
+        rate(row?.rate, `brackets.table[${i}].rate`);
+      });
+      return;
+    case "match":
+      child("on");
+      if (!Array.isArray(e.cases)) return bad("match.cases must be an array");
+      (e.cases as { when?: unknown; value?: unknown }[]).forEach((c, i) => {
+        if (typeof c?.when !== "string") bad(`match.cases[${i}].when must be a string`);
+        checkShape(c?.value, key, issues, `${path}.cases[${i}].value`);
+      });
+      if (e.else !== undefined) child("else");
+      return;
+    default:
+      bad(`unknown expression kind ${JSON.stringify(e.kind)}`);
+  }
+}
+
 function validateExpressions(
   rule: Rule,
   knownRuleIds: Set<string>,
@@ -182,6 +305,11 @@ function validateExpressions(
   const exprs: Expr[] = [rule.formula];
   if (rule.applicability) exprs.push(rule.applicability);
   for (const root of exprs) {
+    // a malformed tree (unknown kind, bad literal) is reported here, not as a
+    // TypeError or RangeError in the middle of an evaluation
+    const before = issues.length;
+    checkShape(root, key, issues);
+    if (issues.length > before) continue;
     walkExpr(root, (e) => {
       switch (e.kind) {
         case "add":

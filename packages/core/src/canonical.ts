@@ -10,15 +10,16 @@
 
 // Proof trees share subtree OBJECTS (the evaluator memoizes rule nodes), so
 // the same object can appear at many tree positions. Its canonical form is
-// position-independent — cache it per object. Output is byte-identical;
-// serialization drops from O(expanded tree) to O(unique nodes).
-const objectCache = new WeakMap<object, string>();
-
+// position-independent — cache it per object WITHIN ONE CALL. Output is
+// byte-identical; serialization drops from O(expanded tree) to O(unique
+// nodes). The cache must not outlive the call: an object edited afterwards
+// has a different canonical form, and a stale one would let an edited proof
+// or rule keep its old hash.
 export function canonical(value: unknown): string {
-  return serialize(value, "$");
+  return serialize(value, "$", new Map());
 }
 
-function serialize(value: unknown, path: string): string {
+function serialize(value: unknown, path: string, objectCache: Map<object, string>): string {
   if (value === null) return "null";
   switch (typeof value) {
     case "boolean":
@@ -43,14 +44,14 @@ function serialize(value: unknown, path: string): string {
       if (cached !== undefined) return cached;
       let out: string;
       if (Array.isArray(value)) {
-        out = `[${value.map((v, i) => serialize(v, `${path}[${i}]`)).join(",")}]`;
+        out = `[${value.map((v, i) => serialize(v, `${path}[${i}]`, objectCache)).join(",")}]`;
       } else {
         const obj = value as Record<string, unknown>;
         const keys = Object.keys(obj)
           .filter((k) => obj[k] !== undefined)
           .sort();
         const parts = keys.map(
-          (k) => `${JSON.stringify(k)}:${serialize(obj[k], `${path}.${k}`)}`,
+          (k) => `${JSON.stringify(k)}:${serialize(obj[k], `${path}.${k}`, objectCache)}`,
         );
         out = `{${parts.join(",")}}`;
       }

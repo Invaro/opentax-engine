@@ -41,6 +41,17 @@ describe("marginal", () => {
 });
 
 describe("findCliffs", () => {
+  it("scans the last, shorter interval when the range is not a whole number of steps", () => {
+    const hoh = coerceFacts(corpus, { filingStatus: "hoh", wages: 30000, qualifyingChildren: 2, isAtLeastAge25: true });
+    const at = { asOf: "2026-12-31", target: "us.federal.net_tax", vary: "taxableInterest" };
+    // the § 32(i) investment-income cliff at $12,200 sits in the tail of [10,000, 12,500] at a $1,000 step
+    const tail = findCliffs(corpus, hoh, { ...at, fromCents: 1_000_000n, toCents: 1_250_000n }).cliffs;
+    expect(tail).toContainEqual({ atCents: 1_220_000n, jumpCents: 345_500n });
+    // and a range shorter than one step is scanned at all
+    expect(findCliffs(corpus, hoh, { ...at, fromCents: 1_210_000n, toCents: 1_230_000n }).cliffs).toContainEqual({ atCents: 1_220_000n, jumpCents: 345_500n });
+    expect(tail).toEqual(findCliffs(corpus, hoh, { ...at, fromCents: 1_000_000n, toCents: 1_400_000n }).cliffs);
+  });
+
   it("refuses scans too large to finish, before evaluating anything", () => {
     const base = coerceFacts(corpus, { filingStatus: "single" });
     const huge = { ...opts, vary: "wages", fromCents: 0n, toCents: 100_000_000_000_000n, stepCents: 1n };

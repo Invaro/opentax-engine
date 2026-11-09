@@ -1,4 +1,5 @@
 import pc from "picocolors";
+import { compareIds } from "@invaro/opentax-core";
 import { corpusInput, getCorpus } from "@invaro/opentax-corpus-us-federal";
 import { EXIT, print } from "../render/output.js";
 
@@ -48,7 +49,7 @@ export function runCorpusList(flags: { asOf?: string; json?: boolean }): number 
     : corpus.rules;
 
   const sorted = [...rules].sort(
-    (a, b) => a.id.localeCompare(b.id) || a.version - b.version,
+    (a, b) => compareIds(a.id, b.id) || a.version - b.version,
   );
 
   if (flags.json) {

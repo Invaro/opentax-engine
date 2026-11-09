@@ -167,6 +167,8 @@ All tax knowledge is **data** — you add coverage by writing a rule object with
 
 Full walkthrough: **[CONTRIBUTING.md](CONTRIBUTING.md)**. What changed in each release: **[CHANGELOG.md](CHANGELOG.md)**.
 
+**As a library.** The engine runs in your own process, in Node or the browser, with no network: [docs/LIBRARY-API.md](docs/LIBRARY-API.md) documents the stable API of the four packages, with runnable examples, and the compatibility policy (what a release can and cannot change).
+
 **Your own rules.** `extendCorpus` adds your facts and rules alongside the federal corpus:
 
 ```ts
@@ -183,13 +185,13 @@ const corpus = extendCorpus({
     // replaces a federal rule whenever its guard holds; pinned to the version you built against
     { id: "firm.passive_losses", overrides: { ruleId: "us.federal.passive_loss_allowed", priority: 10 }, /* … */ },
   ],
-  pins: { "us.federal.passive_loss_allowed@2": "sha256:…" }, // from corpus.lock.json
+  pins: { "us.federal.passive_loss_allowed@2": "sha256:…" }, // from getCorpus().ruleHashes
 });
 ```
 
 - **Extension points** (`EXTENSION_POINTS`) are totals whose ids and meaning stay stable across releases. A contribution's value is added to the total, and the proof shows it as its own node.
 - **"Computed without regard to"**: a rule can read a total without named contributions, `{ kind: "rule", ruleId: "us.federal.taxable_income", excluding: ["firm.nol_deduction"] }`, which is how the § 172 80% limit is written.
-- **Overrides must be pinned.** If a release changes a rule you override, `extendCorpus` refuses to load and names it; the release's change notes say what changed.
+- **Overrides must be pinned.** Pin every version of the rule that applies during your rule's dates. If a release changes one, retires one or adds one for a new year, `extendCorpus` refuses to load and names it; the release's change notes say what changed.
 - The combined corpus has its own Merkle root, so `evaluate` and `verifyProof` work unchanged.
 
 **Currency policy:** the corpus tracks current law — when the IRS or Congress changes the numbers, the change lands as a new rule *version* with its own validity window and citation, never an in-place edit. Old proofs stay verifiable against the corpus root they were computed under.

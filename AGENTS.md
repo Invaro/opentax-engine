@@ -26,8 +26,8 @@ opentax facts --json
 #    --as-of defaults to TODAY (current law); pass a date to compute under another year's rules
 #    answer = NET tax after refundable credits; negative = refund owed to the taxpayer
 opentax eval --status mfj --wages 120000 --kids 2 --json --proof proof.json
-#    -> { ok: true, value: {type:"money", value:"564000"},   # integer CENTS as a string
-#         formatted: "$5,640.00",                            # TY2026 rules (as of today)
+#    -> { ok: true, value: {type:"money", value:"564300"},   # integer CENTS as a string
+#         formatted: "$5,643.00",                            # TY2026 rules (as of today)
 #         assumptions: [...],          # defaults the engine relied on — surface these to the user
 #         corpusMerkleRoot, artifactHash,
 #         proof: { ...full derivation tree, every node cites its statute... } }
@@ -39,7 +39,7 @@ opentax verify proof.json --json
 #    -> { ok: true, verified: true, ... } or { ok: false, error: { code: "VERIFY_...", ... } }
 
 # 5. GATE a claimed number (self-check before you present it, or check another source)
-opentax check --status mfj --wages 120000 --kids 2 --expect 5640 --json
+opentax check --status mfj --wages 120000 --kids 2 --expect 5643 --json
 #    -> { ok: true, verdict: "verified"|"refuted", formattedActual, differenceCents, ... }
 #    exit 0 verified · 1 refuted · 2 needs facts. NEVER present a tax number that failed this.
 ```
@@ -62,6 +62,10 @@ Hosted: `https://opentax.invaro.ai/mcp` (open, no account) or
 `https://opentax.invaro.ai/mcp/account` (OAuth sign-in; adds `my_account`, which
 reports the signed-in email and plan).
 
+## In-process library
+
+To call the engine from JavaScript instead of the CLI or MCP (`evaluate`, `getCorpus`, `extendCorpus`, `verifyProof`, the solver functions), read [docs/LIBRARY-API.md](docs/LIBRARY-API.md): stable exports, error classes and codes, runnable examples, and the compatibility policy.
+
 ## Solver commands (same envelope, same exit codes)
 
 ```bash
@@ -83,7 +87,7 @@ opentax lookup standard deduction --expect 32200 --filing-status mfj --json
 
 ## Things worth knowing
 
-- **`value.value` is integer cents as a string** (`"564000"` = $5,640.00). Use `formatted` for display. Never do float math on it.
+- **`value.value` is integer cents as a string** (`"564300"` = $5,643.00). Use `formatted` for display. Never do float math on it.
 - **Negative money = a refund.** The default target (`us.federal.net_tax`) subtracts refundable credits (EITC, ACTC) and is NOT clamped at zero — `"-977700"` means the taxpayer is owed $9,777.00.
 - **`--withheld <dollars>` (or estimated or extension payments) switches the target to `us.federal.balance_due`**: liability minus the payments on Form 1040 lines 25d (withholding), 26 (`federalEstimatedPayments`) and 31 (`federalExtensionPayment`). The mid-year checkup. Negative = refund expected at filing; positive = they will owe.
 - **Estimated tax penalty: `opentax form2210 --facts f.json --as-of 2025-12-31` (MCP `compute_form_2210`).** The file is `{ facts, payments: [{date, amount}], periods?, withholdingByDate?, noPriorYearReturn?, filedAndPaidInFullOn? }`. It returns Part I, Part III and the penalty worksheet at each quarter's § 6621 rate, by days; withholding counts one-fourth per due date and pays the earliest underpayment like any payment, and `withholdingByDate` (box D) is used when it lowers the penalty. Add `periods` (`mar31`/`may31`/`aug31`: cumulative amounts from January 1, same fact ids) for Schedule AI: each column is the whole return on the period × 4 / 2.4 / 1.5 / 1, so every modeled income, deduction and credit is annualized, and the lower penalty wins (box C). A penalty that would need an unannounced quarter's rate is refused, with Section A still shown.

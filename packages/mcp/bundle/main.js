@@ -25559,9 +25559,9 @@ var init_money = __esm({
 
 // ../core/dist/canonical.js
 function canonical(value) {
-  return serialize(value, "$");
+  return serialize(value, "$", /* @__PURE__ */ new Map());
 }
-function serialize(value, path) {
+function serialize(value, path, objectCache) {
   if (value === null)
     return "null";
   switch (typeof value) {
@@ -25584,11 +25584,11 @@ function serialize(value, path) {
         return cached3;
       let out;
       if (Array.isArray(value)) {
-        out = `[${value.map((v, i) => serialize(v, `${path}[${i}]`)).join(",")}]`;
+        out = `[${value.map((v, i) => serialize(v, `${path}[${i}]`, objectCache)).join(",")}]`;
       } else {
         const obj = value;
         const keys = Object.keys(obj).filter((k) => obj[k] !== void 0).sort();
-        const parts = keys.map((k) => `${JSON.stringify(k)}:${serialize(obj[k], `${path}.${k}`)}`);
+        const parts = keys.map((k) => `${JSON.stringify(k)}:${serialize(obj[k], `${path}.${k}`, objectCache)}`);
         out = `{${parts.join(",")}}`;
       }
       objectCache.set(value, out);
@@ -25598,11 +25598,41 @@ function serialize(value, path) {
       throw new TypeError(`canonical: unsupported ${typeof value} at ${path}`);
   }
 }
-var objectCache;
 var init_canonical = __esm({
   "../core/dist/canonical.js"() {
     "use strict";
-    objectCache = /* @__PURE__ */ new WeakMap();
+  }
+});
+
+// ../core/dist/order.js
+function compareIds(a, b) {
+  const n = Math.min(a.length, b.length);
+  for (let i = 0; i < n; i++) {
+    const d3 = rank(a.charCodeAt(i)) - rank(b.charCodeAt(i));
+    if (d3 !== 0)
+      return d3;
+  }
+  if (a.length !== b.length)
+    return a.length - b.length;
+  for (let i = 0; i < n; i++) {
+    const x2 = a.charCodeAt(i);
+    if (x2 !== b.charCodeAt(i))
+      return x2 >= 65 && x2 <= 90 ? 1 : -1;
+  }
+  return 0;
+}
+var PRIMARY, RANK, rank;
+var init_order = __esm({
+  "../core/dist/order.js"() {
+    "use strict";
+    PRIMARY = " _-,;:!?.'\"()[]{}@*/\\&#%`^+<=>|~$0123456789abcdefghijklmnopqrstuvwxyz";
+    RANK = [];
+    for (let code = 0; code < 128; code++) {
+      const lower = code >= 65 && code <= 90 ? code + 32 : code;
+      const at = PRIMARY.indexOf(String.fromCharCode(lower));
+      RANK[code] = at >= 0 ? at : 1e3 + code;
+    }
+    rank = (code) => code < 128 ? RANK[code] : 1e3 + code;
   }
 });
 
@@ -25749,10 +25779,10 @@ function ruleHash(rule8) {
   return hashOf(rule8);
 }
 function merkleRoot(rules2, facts2 = []) {
-  const ordered = [...rules2].sort((a, b) => a.id.localeCompare(b.id) || a.version - b.version);
+  const ordered = [...rules2].sort((a, b) => compareIds(a.id, b.id) || a.version - b.version);
   let level = ordered.map((r3) => sha256Hex(canonical(r3)));
   if (facts2.length > 0) {
-    const orderedFacts = [...facts2].sort((a, b) => a.id.localeCompare(b.id));
+    const orderedFacts = [...facts2].sort((a, b) => compareIds(a.id, b.id));
     level.push(sha256Hex(canonical({ facts: orderedFacts })));
   }
   if (level.length === 0)
@@ -25772,6 +25802,7 @@ var init_hash = __esm({
   "../core/dist/hash.js"() {
     "use strict";
     init_canonical();
+    init_order();
     init_sha256();
   }
 });
@@ -25871,8 +25902,15 @@ ${issues.map((i) => `  - ${i}`).join("\n")}`);
       }
     };
     FactValidationError = class extends OpenTaxError {
-      constructor(message) {
+      /** The fact the problem is with, when it is about one fact. */
+      factId;
+      constructor(message, factId) {
         super("FACT_INVALID", message);
+        if (factId !== void 0)
+          this.factId = factId;
+      }
+      data() {
+        return this.factId === void 0 ? {} : { factId: this.factId };
       }
     };
     EngineError = class extends OpenTaxError {
@@ -25953,7 +25991,7 @@ function loadCorpus(input2) {
       issues.push(`contribution target "${targetId}" is not a money rule`);
   }
   for (const [id2, versions2] of byId) {
-    const sorted = [...versions2].sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
+    const sorted = [...versions2].sort((a, b) => a.effectiveFrom < b.effectiveFrom ? -1 : a.effectiveFrom > b.effectiveFrom ? 1 : 0);
     for (let i = 0; i + 1 < sorted.length; i++) {
       const cur = sorted[i];
       const next = sorted[i + 1];
@@ -26004,12 +26042,150 @@ function loadCorpus(input2) {
 function byIdRefChecker(input2) {
   return new Set(input2.rules.map((r3) => r3.id));
 }
+function checkShape(expr, key, issues, path = "formula") {
+  const bad = (what) => {
+    issues.push(`rule "${key}": ${what} at ${path}`);
+  };
+  if (typeof expr !== "object" || expr === null || typeof expr.kind !== "string") {
+    bad("an expression must be an object with a kind");
+    return;
+  }
+  const e = expr;
+  const child = (name) => checkShape(e[name], key, issues, `${path}.${name}`);
+  const list = (name) => {
+    if (!Array.isArray(e[name]))
+      return bad(`${e.kind}.${name} must be an array`);
+    e[name].forEach((x2, i) => checkShape(x2, key, issues, `${path}.${name}[${i}]`));
+  };
+  const literal2 = (value, what) => {
+    if (typeof value !== "string" || !LITERAL.test(value))
+      bad(`${what} must be a whole-number string like "12500", got ${JSON.stringify(value)}`);
+  };
+  const rate2 = (value, what) => {
+    const r3 = value;
+    literal2(r3?.num, `${what}.num`);
+    literal2(r3?.den, `${what}.den`);
+    if (typeof r3?.den === "string" && LITERAL.test(r3.den) && BigInt(r3.den) === 0n)
+      bad(`${what} has a zero denominator`);
+  };
+  const rounding = (value) => {
+    if (typeof value !== "string" || !ROUNDINGS.has(value))
+      bad(`${e.kind} needs a rounding mode (half-up, half-even, floor, ceil), got ${JSON.stringify(value)}`);
+  };
+  switch (e.kind) {
+    case "money":
+      return literal2(e.cents, "money.cents");
+    case "int":
+      return literal2(e.value, "int.value");
+    case "bool":
+      if (typeof e.value !== "boolean")
+        bad("bool.value must be true or false");
+      return;
+    case "enum":
+      if (typeof e.value !== "string")
+        bad("enum.value must be a string");
+      return;
+    case "fact":
+      if (typeof e.factId !== "string")
+        bad("fact.factId must be a string");
+      return;
+    case "rule":
+      if (typeof e.ruleId !== "string")
+        bad("rule.ruleId must be a string");
+      if (e.excluding !== void 0 && !(Array.isArray(e.excluding) && e.excluding.every((x2) => typeof x2 === "string")))
+        bad("rule.excluding must be an array of rule ids");
+      return;
+    case "param":
+      if (typeof e.name !== "string")
+        bad("param.name must be a string");
+      return;
+    case "unsupported":
+      if (typeof e.reason !== "string")
+        bad("unsupported.reason must be a string");
+      return;
+    case "add":
+    case "min":
+    case "max":
+    case "and":
+    case "or":
+      return list("args");
+    case "sub":
+      child("left");
+      return child("right");
+    case "mulRate":
+      child("base");
+      rate2(e.rate, "mulRate.rate");
+      return rounding(e.round);
+    case "mulInt":
+      child("base");
+      return child("count");
+    case "max0":
+    case "not":
+      return child("arg");
+    case "clamp":
+      child("value");
+      child("lo");
+      return child("hi");
+    case "roundToDollar":
+      child("value");
+      return rounding(e.mode);
+    case "mulDiv":
+      child("a");
+      child("b");
+      child("c");
+      return rounding(e.round);
+    case "stepUnits":
+      child("value");
+      literal2(e.unitCents, "stepUnits.unitCents");
+      if (typeof e.unitCents === "string" && LITERAL.test(e.unitCents) && BigInt(e.unitCents) <= 0n)
+        bad("stepUnits.unitCents must be positive");
+      if (e.mode !== "ceil" && e.mode !== "floor")
+        bad(`stepUnits.mode must be ceil or floor, got ${JSON.stringify(e.mode)}`);
+      return;
+    case "cmp":
+      if (typeof e.op !== "string" || !CMP_OPS.has(e.op))
+        bad(`cmp.op must be one of lt, le, gt, ge, eq, ne, got ${JSON.stringify(e.op)}`);
+      child("left");
+      return child("right");
+    case "if":
+      child("cond");
+      child("then");
+      return child("else");
+    case "brackets":
+      child("base");
+      if (!Array.isArray(e.table))
+        return bad("brackets.table must be an array");
+      e.table.forEach((row2, i) => {
+        literal2(row2?.threshold, `brackets.table[${i}].threshold`);
+        rate2(row2?.rate, `brackets.table[${i}].rate`);
+      });
+      return;
+    case "match":
+      child("on");
+      if (!Array.isArray(e.cases))
+        return bad("match.cases must be an array");
+      e.cases.forEach((c2, i) => {
+        if (typeof c2?.when !== "string")
+          bad(`match.cases[${i}].when must be a string`);
+        checkShape(c2?.value, key, issues, `${path}.cases[${i}].value`);
+      });
+      if (e.else !== void 0)
+        child("else");
+      return;
+    default:
+      bad(`unknown expression kind ${JSON.stringify(e.kind)}`);
+  }
+}
 function validateExpressions(rule8, knownRuleIds, contributorIds, factById2, issues) {
   const key = `${rule8.id}@${rule8.version}`;
   const exprs = [rule8.formula];
   if (rule8.applicability)
     exprs.push(rule8.applicability);
   for (const root of exprs) {
+    const before = issues.length;
+    checkShape(root, key, issues);
+    if (issues.length > before)
+      continue;
     walkExpr(root, (e) => {
       switch (e.kind) {
         case "add":
@@ -26089,7 +26265,7 @@ function selectOverriders(corpus2, ruleId, asOf) {
   const list = corpus2.overriders.get(ruleId) ?? [];
   return list.filter((r3) => r3.effectiveFrom <= asOf && (r3.effectiveTo === void 0 || asOf < r3.effectiveTo)).sort((a, b) => b.overrides.priority - a.overrides.priority);
 }
-var ISO_DATE;
+var ISO_DATE, LITERAL, ROUNDINGS, CMP_OPS;
 var init_corpus = __esm({
   "../core/dist/corpus.js"() {
     "use strict";
@@ -26097,6 +26273,9 @@ var init_corpus = __esm({
     init_errors3();
     init_hash();
     ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+    LITERAL = /^-?\d{1,18}$/;
+    ROUNDINGS = /* @__PURE__ */ new Set(["half-up", "half-even", "floor", "ceil"]);
+    CMP_OPS = /* @__PURE__ */ new Set(["lt", "le", "gt", "ge", "eq", "ne"]);
   }
 });
 
@@ -26122,28 +26301,33 @@ function evaluate(corpus2, facts2, options) {
   }
   for (const factId of options.allowDefaults ?? []) {
     if (!corpus2.factById.has(factId)) {
-      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`);
+      throw new FactValidationError(`allowDefaults: unknown fact "${factId}"`, factId);
     }
   }
   const resolved = /* @__PURE__ */ new Map();
   for (const [factId, tv] of Object.entries(facts2)) {
     const spec = corpus2.factById.get(factId);
     if (!spec)
-      throw new FactValidationError(`unknown fact "${factId}"`);
-    const value2 = valueFromJSON(tv);
+      throw new FactValidationError(`unknown fact "${factId}"`, factId);
+    let value2;
+    try {
+      value2 = valueFromJSON(tv);
+    } catch (err) {
+      throw new FactValidationError(`fact "${factId}": ${err.message}`, factId);
+    }
     if (value2.type !== spec.type) {
-      throw new FactValidationError(`fact "${factId}" must be ${spec.type}, got ${value2.type}`);
+      throw new FactValidationError(`fact "${factId}" must be ${spec.type}, got ${value2.type}`, factId);
     }
     if (value2.type === "enum" && spec.enumValues && !spec.enumValues.includes(value2.value)) {
-      throw new FactValidationError(`fact "${factId}": "${value2.value}" is not one of ${spec.enumValues.join("|")}`);
+      throw new FactValidationError(`fact "${factId}": "${value2.value}" is not one of ${spec.enumValues.join("|")}`, factId);
     }
     if (value2.type === "money" || value2.type === "int") {
       const n = value2.type === "money" ? value2.cents : value2.value;
       if (spec.min !== void 0 && n < BigInt(spec.min)) {
-        throw new FactValidationError(`fact "${factId}": ${n} is below the minimum ${spec.min}`);
+        throw new FactValidationError(`fact "${factId}": ${n} is below the minimum ${spec.min}`, factId);
       }
       if (spec.max !== void 0 && n > BigInt(spec.max)) {
-        throw new FactValidationError(`fact "${factId}": ${n} is above the maximum ${spec.max}`);
+        throw new FactValidationError(`fact "${factId}": ${n} is above the maximum ${spec.max}`, factId);
       }
     }
     resolved.set(factId, value2);
@@ -26645,17 +26829,17 @@ function coerceFacts(corpus2, plain) {
     const spec = corpus2.factById.get(factId);
     if (!spec) {
       const known = [...corpus2.factById.keys()].join(", ");
-      throw new FactValidationError(`unknown fact "${factId}" (known facts: ${known})`);
+      throw new FactValidationError(`unknown fact "${factId}" (known facts: ${known})`, factId);
     }
     switch (spec.type) {
       case "money": {
         if (typeof raw !== "string" && typeof raw !== "number") {
-          throw new FactValidationError(`fact "${factId}" must be a dollar amount like 50000 or "1234.56"`);
+          throw new FactValidationError(`fact "${factId}" must be a dollar amount like 50000 or "1234.56"`, factId);
         }
         try {
           out[factId] = { type: "money", value: parseDollars(raw).toString() };
         } catch (err) {
-          throw new FactValidationError(`fact "${factId}": ${err.message}`);
+          throw new FactValidationError(`fact "${factId}": ${err.message}`, factId);
         }
         break;
       }
@@ -26666,20 +26850,20 @@ function coerceFacts(corpus2, plain) {
         else if (typeof raw === "number" && Number.isSafeInteger(raw)) {
           s2 = String(raw);
         } else {
-          throw new FactValidationError(`fact "${factId}" must be a whole number`);
+          throw new FactValidationError(`fact "${factId}" must be a whole number`, factId);
         }
         out[factId] = { type: "int", value: s2 };
         break;
       }
       case "bool":
         if (typeof raw !== "boolean") {
-          throw new FactValidationError(`fact "${factId}" must be true or false`);
+          throw new FactValidationError(`fact "${factId}" must be true or false`, factId);
         }
         out[factId] = { type: "bool", value: raw };
         break;
       case "enum":
         if (typeof raw !== "string") {
-          throw new FactValidationError(`fact "${factId}" must be one of ${spec.enumValues?.join("|")}`);
+          throw new FactValidationError(`fact "${factId}" must be one of ${spec.enumValues?.join("|")}`, factId);
         }
         out[factId] = { type: "enum", value: raw };
         break;
@@ -26696,7 +26880,7 @@ var init_evaluate = __esm({
     init_errors3();
     init_money();
     init_proof();
-    ENGINE = { name: "@invaro/opentax-core", version: "0.1.0" };
+    ENGINE = { name: "@invaro/opentax-core", version: "1.0.0" };
     POISON = /* @__PURE__ */ Symbol("missing-facts");
     passKey = (excluded) => [...excluded].sort().join(",");
   }
@@ -26811,6 +26995,7 @@ var init_dist = __esm({
     init_ast();
     init_money();
     init_canonical();
+    init_order();
     init_hash();
     init_corpus();
     init_proof();
@@ -58566,7 +58751,7 @@ var init_dist2 = __esm({
     init_projection();
     corpusInput = {
       name: "@invaro/opentax-corpus-us-federal",
-      version: "0.52.0",
+      version: "0.53.0",
       rules: [
         ...corporateRules,
         ...corporate1120Rules,
@@ -58730,6 +58915,13 @@ function findCliffs(corpus2, baseFacts, options) {
       }
       prevX = x2;
       prevV = v;
+    }
+    if (prevX < options.toCents) {
+      const v = at(options.toCents);
+      const dv = v - prevV;
+      if ((dv < 0n ? -dv : dv) > options.toCents - prevX) {
+        collectCliffs(at, prevX, prevV, options.toCents, v, cliffs, limits?.maxCliffs ?? Infinity);
+      }
     }
   } catch (err) {
     if (!(err instanceof BudgetExhausted))
@@ -58927,7 +59119,7 @@ function lookupParameters(corpus2, query, asOf) {
       score
     });
   }
-  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
   return hits.slice(0, 5);
 }
 function makeSnippet(excerpt, tokens) {
@@ -59011,7 +59203,7 @@ function searchRules(corpus2, query, asOf, limit = 8) {
       score
     });
   }
-  hits.sort((a, b) => b.score - a.score || a.ruleId.localeCompare(b.ruleId));
+  hits.sort((a, b) => b.score - a.score || compareIds(a.ruleId, b.ruleId));
   return hits.slice(0, Math.max(1, Math.min(limit, 20)));
 }
 function factCheck(corpus2, query, claimedCents, asOf, filingStatus) {
@@ -59185,7 +59377,7 @@ var init_money2 = __esm({
     fmtD = (x2) => {
       const neg7 = x2 < 0n;
       const a = neg7 ? -x2 : x2;
-      return `${neg7 ? "-" : ""}$${(a / 100n).toLocaleString()}`;
+      return `${neg7 ? "-" : ""}$${(a / 100n).toLocaleString("en-US")}`;
     };
   }
 });
@@ -68022,7 +68214,7 @@ var COMPOSER_VERSION;
 var init_version = __esm({
   "dist/version.js"() {
     "use strict";
-    COMPOSER_VERSION = "0.18.0";
+    COMPOSER_VERSION = "0.19.0";
   }
 });
 
@@ -96097,6 +96289,7 @@ function runCheck(flags) {
 
 // ../cli/dist/commands/corpus.js
 var import_picocolors3 = __toESM(require_picocolors(), 1);
+init_dist();
 init_dist2();
 function runCorpusExport() {
   const corpus2 = getCorpus();
@@ -96130,7 +96323,7 @@ function runCorpusHash(flags = {}) {
 function runCorpusList(flags) {
   const corpus2 = getCorpus();
   const rules2 = flags.asOf ? corpus2.rules.filter((r3) => r3.effectiveFrom <= flags.asOf && (r3.effectiveTo === void 0 || flags.asOf < r3.effectiveTo)) : corpus2.rules;
-  const sorted = [...rules2].sort((a, b) => a.id.localeCompare(b.id) || a.version - b.version);
+  const sorted = [...rules2].sort((a, b) => compareIds(a.id, b.id) || a.version - b.version);
   if (flags.json) {
     print({
       ok: true,

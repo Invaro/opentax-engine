@@ -1,0 +1,19 @@
+{
+  "name": "@invaro/opentax-library-api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The library API contract: tier of every export, the API report, the ID baseline, runnable examples and the tests that hold them. Not shipped.",
+  "type": "module",
+  "license": "BUSL-1.1",
+  "scripts": {
+    "build": "node -e \"\"",
+    "api:report": "node scripts/api-report.mjs --write",
+    "api:baseline": "node scripts/api-report.mjs --write-baseline"
+  },
+  "dependencies": {
+    "@invaro/opentax-compose": "workspace:*",
+    "@invaro/opentax-core": "workspace:*",
+    "@invaro/opentax-corpus-us-federal": "workspace:*",
+    "@invaro/opentax-solve": "workspace:*"
+  }
+}

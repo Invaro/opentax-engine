@@ -84,12 +84,27 @@ importers:
   packages/corpus-us-federal:
     dependencies:
       '@invaro/opentax-core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+
+  packages/library-api:
+    dependencies:
+      '@invaro/opentax-compose':
+        specifier: workspace:*
+        version: link:../compose
+      '@invaro/opentax-core':
+        specifier: workspace:*
+        version: link:../core
+      '@invaro/opentax-corpus-us-federal':
+        specifier: workspace:*
+        version: link:../corpus-us-federal
+      '@invaro/opentax-solve':
+        specifier: workspace:*
+        version: link:../solve
 
   packages/mcp:
     dependencies:
@@ -138,7 +153,7 @@ importers:
   packages/solve:
     dependencies:
       '@invaro/opentax-core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../core
     devDependencies:
       '@invaro/opentax-corpus-us-federal':

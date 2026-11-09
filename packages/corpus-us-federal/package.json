@@ -1,7 +1,7 @@
 {
   "name": "@invaro/opentax-corpus-us-federal",
-  "version": "0.52.0",
-  "description": "US federal individual income tax rules as cited, content-addressed data (TY2025)",
+  "version": "0.53.0",
+  "description": "The OpenTax rule corpus: every federal and state rule and input, each with its citation. getCorpus(), extendCorpus() and projection.",
   "license": "BUSL-1.1",
   "type": "module",
   "main": "./dist/index.js",
@@ -22,7 +22,7 @@
     "changes": "node scripts/change-notes.mjs"
   },
   "dependencies": {
-    "@invaro/opentax-core": "workspace:*"
+    "@invaro/opentax-core": "workspace:^"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

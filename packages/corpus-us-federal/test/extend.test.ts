@@ -152,7 +152,36 @@ describe("extendCorpus overrides", () => {
   });
 
   it("refuses an unpinned override", () => {
-    expect(() => extendCorpus({ name: "firm", version: "1", rules: [replacement] })).toThrow(/pin the version/);
+    expect(() => extendCorpus({ name: "firm", version: "1", rules: [replacement] })).toThrow(/review and pin each in pins/);
+  });
+
+  it("an override must pin every version it replaces, so a version added for a new year is never replaced unreviewed", () => {
+    // a federal rule with one version per tax year
+    const id = [...base.byId.entries()].find(([, versions]) => versions.length >= 3 && versions.every((v) => v.output.type === "money"))![0];
+    const versions = base.byId.get(id)!;
+    const allYears: Rule = {
+      id: "firm.all_years",
+      version: 1,
+      jurisdiction: "us.federal",
+      title: "Replaces a federal rule in every year",
+      citation: { source: "firm", section: "firm", url: "https://example.com", excerpt: "firm" },
+      effectiveFrom: "2025-01-01",
+      output: { type: "money" },
+      formula: { kind: "money", cents: "0" },
+      overrides: { ruleId: id, priority: 90 },
+      applicability: { kind: "bool", value: true },
+    };
+    const pinOf = (v: Rule) => [`${id}@${v.version}`, base.ruleHashes.get(`${id}@${v.version}`)!] as const;
+    // pinning one version is not enough: the others would be replaced unreviewed
+    const first = versions[0];
+    expect(() => extendCorpus({ name: "firm", version: "1", rules: [allYears], pins: Object.fromEntries([pinOf(first)]) })).toThrow(
+      new RegExp(`replaces ${versions.filter((v) => v !== first).map((v) => `${id}@${v.version}`).join(", ").replaceAll(".", "\\.")}`),
+    );
+    // every version pinned: loads
+    expect(extendCorpus({ name: "firm", version: "1", rules: [allYears], pins: Object.fromEntries(versions.map(pinOf)) }).merkleRoot).toMatch(/^sha256:/);
+    // or the rule's dates end before the versions it has not reviewed: only the first needs a pin
+    const firstOnly = { ...allYears, id: "firm.first_year", effectiveFrom: first.effectiveFrom, effectiveTo: first.effectiveTo };
+    expect(extendCorpus({ name: "firm", version: "1", rules: [firstOnly], pins: Object.fromEntries([pinOf(first)]) }).merkleRoot).toMatch(/^sha256:/);
   });
 
   it("refuses when the pinned federal rule has changed", () => {
