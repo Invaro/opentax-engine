@@ -48,6 +48,8 @@ import { kiddieRules } from "./rules/kiddie.js";
 import { netTaxRules } from "./rules/net-tax.js";
 import { passiveLossRules, mileageRules } from "./rules/passive-losses.js";
 import { passiveActivityRules } from "./rules/passive-activities.js";
+import { passiveCreditRules } from "./rules/passive-credits.js";
+import { generalBusinessCreditRules } from "./rules/general-business-credit.js";
 import { pensionRules } from "./rules/pension.js";
 import { rentalRules } from "./rules/rental.js";
 import { residentialEnergyRules } from "./rules/residential-energy.js";
@@ -66,7 +68,7 @@ import { getProjectedCorpus, projectionFromVersion } from "./projection.js";
 
 export const corpusInput: CorpusInput = {
   name: "@invaro/opentax-corpus-us-federal",
-  version: "0.49.0",
+  version: "0.50.0",
   rules: [
     ...corporateRules,
     ...corporate1120Rules,
@@ -106,6 +108,8 @@ export const corpusInput: CorpusInput = {
     ...selfEmploymentRules,
     ...passiveLossRules,
     ...passiveActivityRules,
+    ...passiveCreditRules,
+    ...generalBusinessCreditRules,
     ...scheduleRRules,
     ...stateParameterRules,
     ...mileageRules,

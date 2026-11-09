@@ -8,6 +8,7 @@ import type { FactSpec } from "@invaro/opentax-core";
 export const PASSIVE_ACTIVITY_SLOTS = 8;
 export const PASSIVE_ACTIVITY_KINDS = ["rental_active", "rental", "business", "business_sp", "ptp", "former_passive"] as const;
 export const PASSIVE_DISPOSITIONS = ["none", "entire_taxable", "installment", "other"] as const;
+export const PASSIVE_CREDIT_TYPES = ["general", "rehabilitation", "lihc_pre1990", "lihc_post1989"] as const;
 
 const slot = (i: number): FactSpec[] => [
   {
@@ -90,6 +91,45 @@ const slot = (i: number): FactSpec[] => [
     // no default — whether an activity is a qualified trade or business is never guessed
   },
   {
+    id: `passiveActivity${i}Credit`,
+    type: "money",
+    min: "0",
+    description:
+      i === 1
+        ? "Passive activity 1: its current-year general business credit (Form 3800 Part III column (d) — e.g. a K-1 box 15 rehabilitation, low-income housing, research or energy credit, after the credit's own form), limited by Form 8582-CR. One credit type per activity: an activity with two types of credit takes a second activity row with the same kind and no income or loss. In dollars."
+        : `Passive activity ${i}: its current-year general business credit (Form 8582-CR column (a)). In dollars.`,
+    default: { value: "0", rationale: `Assumed no current-year credit from passive activity ${i}` },
+  },
+  {
+    id: `passiveActivity${i}PriorUnallowedCredit`,
+    type: "money",
+    min: "0",
+    description:
+      i === 1
+        ? "Passive activity 1: its prior years' unallowed passive credits carried to this year (last year's Form 8582-CR Worksheet 9 column (b), or line 5 − line 37 with one credit). Unlike losses, they are not freed when the activity is sold (§ 469(g) covers losses only; the Part VI basis election is not modeled). Next year's amount is us.federal.passive_credit.activity1.unallowed. In dollars."
+        : `Passive activity ${i}: prior years' unallowed passive credits carried to this year (Form 8582-CR column (b)). Next year's amount is us.federal.passive_credit.activity${i}.unallowed. In dollars.`,
+    default: { value: "0", rationale: `Assumed no prior-year unallowed credits from passive activity ${i}` },
+  },
+  {
+    id: `passiveActivity${i}CreditType`,
+    type: "enum",
+    enumValues: [...PASSIVE_CREDIT_TYPES],
+    description:
+      i === 1
+        ? "Passive activity 1's credit, for Form 8582-CR: rehabilitation = the § 47 rehabilitation credit (from rental real estate it uses the special allowance phased out from $200,000 to $250,000, Worksheet 2; from a business it is Worksheet 4); lihc_pre1990 = a low-income housing credit for property placed in service before 1990 or through a pass-through interest acquired before 1990 (Worksheet 2); lihc_post1989 = any other low-income housing credit (Worksheet 3, no modified AGI limit); general = every other credit (Worksheet 1 from rental real estate with active participation, else Worksheet 4). Asked when the activity has a credit."
+        : `Passive activity ${i}'s credit type: general, rehabilitation, lihc_pre1990 or lihc_post1989 — as for passiveActivity1CreditType.`,
+    // no default — asked when the activity has a credit
+  },
+  {
+    id: `passiveActivity${i}CreditSpecified`,
+    type: "bool",
+    description:
+      i === 1
+        ? "Passive activity 1's credit is a § 38(c)(4)(B) specified credit, allowed against the tentative minimum tax (Form 3800 Part III line 4): e.g. the low-income housing credit for buildings placed in service after 2007, the rehabilitation credit for expenditures after 2007, the § 48 energy credit, the work opportunity credit, the § 45R small employer health insurance credit, an eligible small business's research credit. Otherwise Part III line 1. Asked when the activity has a credit."
+        : `Passive activity ${i}'s credit is a § 38(c)(4)(B) specified credit (Form 3800 Part III line 4). Asked when the activity has a credit.`,
+    // no default — asked when the activity has a credit
+  },
+  {
     id: `passiveActivity${i}PriorUnallowedPre2018`,
     type: "money",
     min: "0",
@@ -98,6 +138,48 @@ const slot = (i: number): FactSpec[] => [
         ? "Passive activity 1: the part of its prior-year unallowed losses suspended in taxable years ending before 2018 — never QBI (Reg. § 1.199A-3(b)(1)(iv)). With a QBI-flagged activity and some of its losses allowed, a nonzero amount is refused (the first-in, first-out split is not modeled). In dollars."
         : `Passive activity ${i}: the part of its prior-year unallowed losses suspended before 2018 (QBI). In dollars.`,
     default: { value: "0", rationale: `Assumed passive activity ${i} has no losses suspended before 2018` },
+  },
+];
+
+export const generalBusinessCreditFacts: FactSpec[] = [
+  {
+    id: "generalBusinessCreditNonpassive",
+    type: "money",
+    min: "0",
+    description:
+      "Current-year general business credits NOT from passive activities and not specified credits — Form 3800 Part III line 2, column (e): the total of the component credit forms (e.g. Form 6765 research credit of a business that is not an eligible small business, Form 8881, Form 8994, Form 8826), each after its own limits. Passive activities' credits go on the activity (passiveActivityNCredit). In dollars.",
+    default: { value: "0", rationale: "Assumed no nonpassive general business credit" },
+  },
+  {
+    id: "specifiedCreditNonpassive",
+    type: "money",
+    min: "0",
+    description:
+      "Current-year § 38(c)(4)(B) specified credits NOT from passive activities — Form 3800 Part III line 5, column (e): credits allowed against the tentative minimum tax (e.g. the work opportunity credit, § 45R small employer health insurance credit, an eligible small business's research credit, the § 48 energy credit, the low-income housing credit for post-2007 buildings). In dollars.",
+    default: { value: "0", rationale: "Assumed no nonpassive specified credit" },
+  },
+  {
+    id: "generalBusinessCreditCarryforward",
+    type: "money",
+    min: "0",
+    description:
+      "Carryforwards to this year of general business credits unused in earlier years under the § 38(c) limit (§ 39) that are not specified credits — Form 3800 Part I line 4 (Part IV line 6, column (f)). Passive credits disallowed by § 469 are not this: they stay on their activity (passiveActivityNPriorUnallowedCredit). In dollars.",
+    default: { value: "0", rationale: "Assumed no general business credit carryforward" },
+  },
+  {
+    id: "specifiedCreditCarryforward",
+    type: "money",
+    min: "0",
+    description:
+      "Carryforwards to this year of unused specified credits (§ 39) — Form 3800 Part II line 34 (Part IV line 5, column (f)). In dollars.",
+    default: { value: "0", rationale: "Assumed no specified credit carryforward" },
+  },
+  {
+    id: "spouseHasBusinessCredit",
+    type: "bool",
+    description:
+      "Married filing separately: the spouse has a general business credit for the year, or a carryforward or carryback to it (§ 38(c)(6)(A)). If so, the $25,000 in Form 3800 line 13 is $12,500. Asked of a married person filing separately with a business credit.",
+    // no default — asked only when it matters
   },
 ];
 

@@ -1,0 +1,21 @@
+{
+  "description": "Form 8582-CR Part IV: 'No modified adjusted gross income limitation applies' to low-income housing credits for property placed in service after 1989. Wages $300,000, an $8,000 specified low-income housing credit from a rental. Line 35 = tax on 284,250 ($69,034.75) less tax on 259,250 ($60,284.75) = 8,750 ≥ 8,000: all allowed. Form 3800 line 29 = (69,034.75 − 11,008.69) − 0 = 58,026.06, so the $8,000 specified credit is allowed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 300000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental",
+    "passiveActivity1Credit": 8000,
+    "passiveActivity1CreditType": "lihc_post1989",
+    "passiveActivity1CreditSpecified": true,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "valueCents": "800000",
+    "intermediates": {
+      "us.federal.passive_credit.form8582cr.line35": "875000"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "Form 8582-CR Part II: a $3,000 credit from rental real estate with active participation, no passive income, wages $80,000. Line 7 = 3,000; line 10 modified AGI 80,000; line 12 = min(25,000, 50% x 70,000) = 25,000; line 14 = 25,000 (Form 8582 line 9 is zero); line 15 = tax on 64,250 (row midpoint 64,275: $9,055) less tax on 39,250 (row midpoint 39,275: $4,475) = $4,580; line 16 = min(3,000, 4,580) = $3,000 allowed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 80000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental_active",
+    "passiveActivity1Credit": 3000,
+    "passiveActivity1CreditType": "general",
+    "passiveActivity1CreditSpecified": false,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "valueCents": "300000",
+    "intermediates": {
+      "us.federal.passive_credit.form8582cr.line15": "458000",
+      "us.federal.passive_credit.form8582cr.line16": "300000"
+    }
+  }
+}

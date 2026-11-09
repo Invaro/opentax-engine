@@ -1,0 +1,19 @@
+{
+  "description": "Form 8582-CR line 6 for 2026: single, wages $100,000, passive business income $20,000, a $1,000 credit. Taxable income 120,000 − 16,100 = 103,900: tax 1,240 + 4,560 + 22% x 53,500 = $17,570. Without the $20,000: 83,900, Tax Table midpoint 83,925 → $13,176. Line 6 = $4,394.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Income": 20000,
+    "passiveActivity1Credit": 1000,
+    "passiveActivity1CreditType": "general",
+    "passiveActivity1CreditSpecified": false,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.passive_credit.form8582cr.line6",
+  "expect": {
+    "valueCents": "439400"
+  }
+}

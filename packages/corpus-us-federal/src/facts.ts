@@ -8,7 +8,7 @@
 
 import type { FactSpec } from "@invaro/opentax-core";
 import { OCCUPATION_ENUM } from "./occupations.js";
-import { passiveActivityFacts } from "./passive-facts.js";
+import { generalBusinessCreditFacts, passiveActivityFacts } from "./passive-facts.js";
 
 export const FILING_STATUSES = [
   "single",
@@ -7036,4 +7036,5 @@ export const facts: FactSpec[] = [
     default: { value: "0", rationale: "Assumed 0 absent contrary input" },
   },
   ...passiveActivityFacts,
+  ...generalBusinessCreditFacts,
 ];

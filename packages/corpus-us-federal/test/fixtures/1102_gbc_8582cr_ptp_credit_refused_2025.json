@@ -1,0 +1,17 @@
+{
+  "description": "I8582-CR: 'Don't enter credits from PTPs on the worksheets or on Form 8582-CR' — the PTP computation (Steps 1–10) is not modeled, refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "ptp",
+    "passiveActivity1Income": 1000,
+    "passiveActivity1Credit": 500,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

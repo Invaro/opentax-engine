@@ -95,11 +95,13 @@ export const TY2027: YearTables = {
 export const TABLES_BY_YEAR = { "2025": TY2025, "2026": TY2026, "2027": TY2027 } as const;
 export type TaxYear = keyof typeof TABLES_BY_YEAR;
 
-const taxable = ruleRef("us.federal.taxable_income");
-const ordinary = ruleRef("us.federal.ordinary_taxable_income");
+const taxableRef = ruleRef("us.federal.taxable_income");
+const ordinaryRef = ruleRef("us.federal.ordinary_taxable_income");
+const taxable = taxableRef;
+const ordinary = ordinaryRef;
 
 /** brackets(ordinary) + 15%/20% stack for one status-year. */
-function statusTax(sy: StatusYear): Expr {
+function statusTax(sy: StatusYear, taxable: Expr = taxableRef, ordinary: Expr = ordinaryRef): Expr {
   // preferential amount actually inside taxable income
   const pref: Expr = { kind: "sub", left: taxable, right: ordinary };
   const gain0: Expr = {
@@ -133,7 +135,7 @@ function statusTax(sy: StatusYear): Expr {
   return {
     kind: "add",
     args: [
-      ordinaryPartTax(sy),
+      ordinaryPartTax(sy, ordinary),
       { kind: "mulRate", base: gain15, rate: { num: "15", den: "100" }, round: "half-up" },
       { kind: "mulRate", base: gain20, rate: { num: "20", den: "100" }, round: "half-up" },
     ],
@@ -145,7 +147,7 @@ function statusTax(sy: StatusYear): Expr {
  * ordinary part is under $100,000, even when taxable income is $100,000 or
  * more; the exact § 1 formula at or above, or under useFormulaMethod.
  */
-function ordinaryPartTax(sy: StatusYear): Expr {
+function ordinaryPartTax(sy: StatusYear, ordinary: Expr = ordinaryRef): Expr {
   return {
     kind: "if",
     cond: {
@@ -356,6 +358,30 @@ export function ordinaryRateTaxExpr(
     cases: (["single", "mfj", "hoh", "mfs", "qss"] as const).map((s) => ({
       when: s,
       value: perStatus(tables[s]),
+    })),
+  };
+}
+
+/**
+ * The regular tax (Form 1040 line 16 by the Tax Table / Qualified Dividends and Capital Gain
+ * Tax Worksheet method) on an arbitrary taxable income, with the return's preferential income
+ * (net capital gain and qualified dividends) capped at that amount — the "tax on line A / line C"
+ * computations Form 8582-CR prescribes. Equals us.federal.income_tax_before_credits at the
+ * return's taxable income unless another method (e.g. § 911(f) stacking) overrides it.
+ */
+export function regularTaxOnExpr(ti: Expr, year: TaxYear): Expr {
+  const tables = TABLES_BY_YEAR[year];
+  const pref: Expr = {
+    kind: "add",
+    args: [ruleRef("us.federal.schedule_d.preferential_lt_gain"), fact("qualifiedDividends")],
+  };
+  const ord: Expr = { kind: "max0", arg: { kind: "sub", left: ti, right: pref } };
+  return {
+    kind: "match",
+    on: fact("filingStatus"),
+    cases: (["single", "mfj", "hoh", "mfs", "qss"] as const).map((s) => ({
+      when: s,
+      value: statusTax(tables[s], ti, ord),
     })),
   };
 }

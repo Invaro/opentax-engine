@@ -88,6 +88,11 @@ export const SCHEDULE_AI_FACTS: Record<string, "annualize" | "keep" | { refuse: 
   earlyDistributionSubjectToPenalty: "annualize",
   amtIsoExerciseSpread: "annualize",
   amtOtherPreferences: "annualize",
+  // Form 3800: business credits and their carryforwards
+  generalBusinessCreditNonpassive: { refuse: "the Schedule AI instructions don't say how a general business credit is figured for a period" },
+  specifiedCreditNonpassive: { refuse: "the Schedule AI instructions don't say how a general business credit is figured for a period" },
+  generalBusinessCreditCarryforward: { refuse: "a business credit carried in from earlier years is not an amount of the period; the instructions don't say how it is treated" },
+  specifiedCreditCarryforward: { refuse: "a business credit carried in from earlier years is not an amount of the period; the instructions don't say how it is treated" },
   // passive activities (Form 8582): the year's income, losses and gains are period amounts;
   // losses carried in from earlier years are not, like an NOL carryover
   ...Object.fromEntries(
@@ -98,6 +103,8 @@ export const SCHEDULE_AI_FACTS: Record<string, "annualize" | "keep" | { refuse: 
       [`passiveActivity${i}DispositionLoss`, "annualize"],
       [`passiveActivity${i}PriorUnallowed`, { refuse: "a passive loss carried in from earlier years is not an amount of the period; the instructions don't say whether it is annualized" }],
       [`passiveActivity${i}PriorUnallowedPre2018`, { refuse: "a passive loss carried in from earlier years is not an amount of the period; the instructions don't say whether it is annualized" }],
+      [`passiveActivity${i}Credit`, { refuse: "the Schedule AI instructions don't say how a general business credit is figured for a period" }],
+      [`passiveActivity${i}PriorUnallowedCredit`, { refuse: "a passive credit carried in from earlier years is not an amount of the period; the instructions don't say how it is treated" }],
     ]),
   ),
   // QBI (the businesses' income and W-2 wages are the period's; UBIA is basis)

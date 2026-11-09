@@ -1,0 +1,22 @@
+{
+  "description": "Form 8582-CR Part III: a $5,000 rehabilitation credit from a rental (no active participation needed), wages $210,000, no passive income. Line 24 = min(25,000, 50% x (250,000 − 210,000)) = 20,000 = line 26; line 27 = tax on 194,250 ($39,467) less tax on 174,250 ($34,667) = 4,800; line 30 = min(5,000, 4,800) = $4,800 allowed, $200 carried. Form 3800 allows the $4,800 (line 16 = 39,467 − 31,694 = 7,773).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 210000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "rental",
+    "passiveActivity1Credit": 5000,
+    "passiveActivity1CreditType": "rehabilitation",
+    "passiveActivity1CreditSpecified": false,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "valueCents": "480000",
+    "intermediates": {
+      "us.federal.passive_credit.form8582cr.line27": "480000",
+      "us.federal.passive_credit.activity1.unallowed": "20000"
+    }
+  }
+}

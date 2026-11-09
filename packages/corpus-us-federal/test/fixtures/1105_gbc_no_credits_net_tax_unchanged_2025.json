@@ -1,0 +1,15 @@
+{
+  "description": "With no business credit Form 3800 allows nothing and nothing is asked: single, wages $60,000 → tax after credits $5,075.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_after_credits",
+  "expect": {
+    "valueCents": "507500",
+    "notAssumedFacts": [
+      "spouseHasBusinessCredit"
+    ]
+  }
+}

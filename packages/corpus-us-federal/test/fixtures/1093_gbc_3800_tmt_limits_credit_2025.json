@@ -1,0 +1,16 @@
+{
+  "description": "§ 38(c)(1): the credit cannot exceed net income tax over the greater of the tentative minimum tax or 25% of net regular tax over $25,000. Single, wages $200,000, a $50,000 nonpassive credit (not specified). Taxable income 184,250: tax 1,192.50 + 4,386 + 12,072.50 + 19,416 = $37,067. Line 13 = 25% x 12,067 = 3,016.75; tentative minimum tax 26% x (200,000 − 88,100) = 29,094; line 16 = 37,067 − 29,094 = $7,973 allowed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 200000,
+    "generalBusinessCreditNonpassive": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "valueCents": "797300",
+    "intermediates": {
+      "us.federal.gbc.form3800.line13": "301675"
+    }
+  }
+}

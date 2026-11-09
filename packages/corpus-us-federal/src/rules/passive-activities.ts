@@ -66,20 +66,20 @@ const ratio = (a: Expr, b: Expr, c: Expr): Expr => iff(cmp("eq", c, zero), zero,
 
 export const slotFact = (i: number, name: string): string => `passiveActivity${i}${name}`;
 const sf = (i: number, name: string): Expr => fact(slotFact(i, name));
-const active = (i: number): Expr => cmp("ge", fact("passiveActivities"), int(String(i)));
+export const active = (i: number): Expr => cmp("ge", fact("passiveActivities"), int(String(i)));
 /** a money fact of activity i, $0 (and never read) when the slot is unused */
-const amt = (i: number, name: string): Expr => iff(active(i), sf(i, name), zero);
+export const amt = (i: number, name: string): Expr => iff(active(i), sf(i, name), zero);
 const FALSE: Expr = { kind: "bool", value: false };
 /** a condition on activity i, false (and nothing read) when the slot is unused — an `if`, so an
  *  unknown passiveActivities asks for that alone, not for every slot's facts */
-const onSlot = (i: number, cond: Expr): Expr => iff(active(i), cond, FALSE);
-const kindIs = (i: number, ...kinds: string[]): Expr => onSlot(i, or(...kinds.map((k) => cmp("eq", sf(i, "Kind"), enumV(k)))));
-const disposedTaxable = (i: number): Expr => onSlot(i, cmp("eq", sf(i, "Disposition"), enumV("entire_taxable")));
+export const onSlot = (i: number, cond: Expr): Expr => iff(active(i), cond, FALSE);
+export const kindIs = (i: number, ...kinds: string[]): Expr => onSlot(i, or(...kinds.map((k) => cmp("eq", sf(i, "Kind"), enumV(k)))));
+export const disposedTaxable = (i: number): Expr => onSlot(i, cmp("eq", sf(i, "Disposition"), enumV("entire_taxable")));
 
 const income = (i: number): Expr => amt(i, "Income");
 const loss = (i: number): Expr => amt(i, "Loss");
 const prior = (i: number): Expr => amt(i, "PriorUnallowed");
-const dispGain = (i: number): Expr => amt(i, "DispositionGain");
+export const dispGain = (i: number): Expr => amt(i, "DispositionGain");
 const dispLoss = (i: number): Expr => amt(i, "DispositionLoss");
 /** Form 8582 column (a): current-year net income, with gain on disposition */
 const colA = (i: number): Expr => add(income(i), dispGain(i));
@@ -90,7 +90,7 @@ const losses = (i: number): Expr => add(colB(i), prior(i));
 
 const r = (i: number, name: string): string => `${P}.activity${i}.${name}`;
 const overall = (i: number): Expr => ruleRef(r(i, "overall"));
-const mfsTogether: Expr = and(
+export const mfsTogether: Expr = and(
   cmp("eq", fact("filingStatus"), enumV("mfs")),
   not(fact("mfsLivedApartAllYear")),
 );
@@ -265,7 +265,7 @@ const partVIIcolA = (j: number): Expr =>
   );
 
 /** activity i's share of `total`, by column (a) amounts: round(total × Σ≤i / Σ) − round(total × Σ<i / Σ) */
-function cumulative(i: number, col: (j: number) => Expr, total: Expr): Expr {
+export function cumulative(i: number, col: (j: number) => Expr, total: Expr): Expr {
   const all = add(...SLOTS.map(col));
   const upTo = (k: number): Expr => add(...SLOTS.filter((j) => j <= k).map(col));
   return sub(ratio(total, upTo(i), all), ratio(total, upTo(i - 1), all));
