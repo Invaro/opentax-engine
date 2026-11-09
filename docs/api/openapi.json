@@ -2,10 +2,10 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OpenTax hosted API",
-    "version": "corpus 0.45.0 · engine proof schema 2",
+    "version": "corpus 0.46.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
     "x-corpus-merkle-root": "sha256:6e649618b239a1ef6e7a01d6ec5746f6ba9323afbf06e12a27743721bfc2faa7",
-    "x-generated": "2026-11-05T23:17:36.728Z"
+    "x-generated": "2026-11-09T07:33:17.840Z"
   },
   "servers": [
     {
@@ -6023,6 +6023,30 @@
                             },
                             "maxItems": 300,
                             "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
+                          },
+                          "projection": {
+                            "type": "object",
+                            "properties": {
+                              "inflationPercent": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "assumed annual C-CPI-U growth after the index the IRS used for 2027, in percent (e.g. 2.5)"
+                              },
+                              "wageGrowthPercent": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "assumed annual growth of the national average wage index (social security wage base), in percent; defaults to inflationPercent"
+                              }
+                            },
+                            "required": [
+                              "inflationPercent"
+                            ],
+                            "additionalProperties": false,
+                            "description": "PROJECTION for tax years 2028-2035 (asOf in that year): every inflation-indexed amount is projected from 2027 by its own statutory indexing formula at these ASSUMED rates; known law (the SALT limit's 101% steps and 2030 return to $10,000, the end of the tips/overtime/car-loan/senior deductions after 2028) is applied as law. The result is labeled projected and its proof cites the assumption. Omit for 2025-2027 (published law)."
                           }
                         },
                         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -16869,8 +16893,202 @@
                             },
                             "maxItems": 300,
                             "description": "with refuseDefaults: fact ids whose documented defaults you accept (they still appear under assumptions)"
+                          },
+                          "projection": {
+                            "type": "object",
+                            "properties": {
+                              "inflationPercent": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "assumed annual C-CPI-U growth after the index the IRS used for 2027, in percent (e.g. 2.5)"
+                              },
+                              "wageGrowthPercent": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "assumed annual growth of the national average wage index (social security wage base), in percent; defaults to inflationPercent"
+                              }
+                            },
+                            "required": [
+                              "inflationPercent"
+                            ],
+                            "additionalProperties": false,
+                            "description": "PROJECTION for tax years 2028-2035 (asOf in that year): every inflation-indexed amount is projected from 2027 by its own statutory indexing formula at these ASSUMED rates; known law (the SALT limit's 101% steps and 2030 return to $10,000, the end of the tips/overtime/car-loan/senior deductions after 2028) is applied as law. The result is labeled projected and its proof cites the assumption. Omit for 2025-2027 (published law)."
                           }
                         },
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ToolResult"
+          }
+        }
+      }
+    },
+    "/mcp#tools/call:compute_form_2210": {
+      "post": {
+        "operationId": "compute_form_2210",
+        "summary": "compute_form_2210",
+        "description": "Form 2210 — the estimated tax underpayment penalty (26 U.S.C. § 6654) for tax years 2025-2027, composed from the printed form: Part I (the required annual payment: 90% of this year's tax, or 100% / 110% of last year's — pass priorYearTax and priorYearAGI in facts, or noPriorYearReturn), Part III Section A (underpayment per installment) and the Section B penalty worksheet (payments applied to the earliest underpayment first; each quarter's § 6621 underpayment rate, by days). Pass `payments`: EVERY estimated tax payment with its date (include last year's overpayment applied to this year, dated April 15, and any payment with the return, dated the earlier of filing and April 15); withholding (facts.federalTaxWithheld) is treated as paid one-fourth on each due date unless you pass `withholdingByDate` (box D). Pass `periods` to also run Schedule AI, the annualized income installment method (box C): the CUMULATIVE amounts from January 1 through March 31, May 31 and August 31 for every income, deduction and credit amount that is nonzero for the year (same fact ids as facts; the tool lists any it needs). Each Schedule AI column is the whole return computed on the period's amounts × 4, 2.4, 1.5 and 1, with the standard deduction in full, so every income type, deduction and credit the engine models is annualized; the columns refuse, with the reason, where the form doesn't settle the period treatment (foreign earned income exclusion, prior-year carryovers, premium tax credit, kiddie tax, household employment taxes, a dependent filer, the SALT cap binding in a period). The tool reports both methods and the lower penalty. A penalty that would run into a quarter whose rate the IRS hasn't announced is refused, with Section A still shown. Report the lines and notes verbatim.",
+        "tags": [
+          "tools"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "const": "2.0"
+                  },
+                  "id": {
+                    "oneOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "const": "tools/call"
+                  },
+                  "params": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "arguments"
+                    ],
+                    "properties": {
+                      "name": {
+                        "const": "compute_form_2210"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "facts": {
+                            "type": "object",
+                            "additionalProperties": {},
+                            "description": "facts for the computation: either flat corpus fact ids (see list_input_facts) or the same group objects calculate_tax accepts (filing, income, retirement, …), plus optional target and asOf. Business/fiduciary/dependent facts are accepted flat. Unknown keys are rejected by name — nothing is ever silently dropped."
+                          },
+                          "payments": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "type": "string"
+                                },
+                                "amount": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "date",
+                                "amount"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "every estimated tax payment for the year: { date: 'YYYY-MM-DD', amount: dollars } (an empty array if none)"
+                          },
+                          "periods": {
+                            "type": "object",
+                            "properties": {
+                              "mar31": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                }
+                              },
+                              "may31": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                }
+                              },
+                              "aug31": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "mar31",
+                              "may31",
+                              "aug31"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Schedule AI: cumulative amounts from January 1 through each date, keyed by fact id, in dollars"
+                          },
+                          "withholdingByDate": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "type": "string"
+                                },
+                                "amount": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "date",
+                                "amount"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "description": "box D: withholding by the date actually withheld; must total facts.federalTaxWithheld"
+                          },
+                          "noPriorYearReturn": {
+                            "type": "boolean",
+                            "description": "no return for the prior year, or it covered under 12 months: line 9 is line 5"
+                          },
+                          "filedAndPaidInFullOn": {
+                            "type": "string",
+                            "description": "§ 6654(h): the date the return was filed and the tax paid in full, when by January 31"
+                          }
+                        },
+                        "required": [
+                          "facts",
+                          "payments"
+                        ],
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": false
                       }
