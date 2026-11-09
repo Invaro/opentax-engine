@@ -383,16 +383,16 @@ export const ctcRules: Rule[] = [
   },
   {
     id: "us.federal.income_tax_after_credits",
-    version: 6, // v5 predated the Form 5695 residential energy credits
+    version: 7, // v6 had no general business credit (Form 3800). v5 predated the Form 5695 residential energy credits
     jurisdiction: J,
     title:
-      "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + Form 5695 + CTC/ODC)",
+      "Income tax after nonrefundable credits (CDCC + education + saver's + adoption + Schedule R + Form 5695 + CTC/ODC + general business credit)",
     citation: {
       source: "26 U.S.C. § 26(a)",
       section: "§ 26(a)",
       url: "https://www.law.cornell.edu/uscode/text/26/26",
       excerpt:
-        "The aggregate amount of credits allowed by this subpart… shall not exceed the taxpayer's regular tax liability for the taxable year… [modeled nonrefundable credits, in the 2025 forms' worksheet order: § 21 dependent care, § 25A education, § 25B saver's, § 22 Schedule R, § 25C energy efficient home improvement (Schedule 3 line 5b), § 24 child tax credit + credit for other dependents, § 23 adoption (nonrefundable portion), § 25D residential clean energy (Schedule 3 line 5a)].",
+        "The aggregate amount of credits allowed by this subpart… shall not exceed the taxpayer's regular tax liability for the taxable year… [modeled nonrefundable credits, in the 2025 forms' worksheet order: § 21 dependent care, § 25A education, § 25B saver's, § 22 Schedule R, § 25C energy efficient home improvement (Schedule 3 line 5b), § 24 child tax credit + credit for other dependents, § 23 adoption (nonrefundable portion), § 25D residential clean energy (Schedule 3 line 5a), then the § 38 general business credit (Schedule 3 line 6a, Form 3800 line 38), whose own limit is the tax left after all the others].",
     },
     ...FROM,
     output: { type: "money" },
@@ -412,6 +412,7 @@ export const ctcRules: Rule[] = [
             ruleRef("us.federal.energy.home_improvement_credit"),
             ruleRef("us.federal.ctc"),
             ruleRef("us.federal.energy.clean_energy_credit"),
+            ruleRef("us.federal.gbc.allowed"),
           ],
         },
       },

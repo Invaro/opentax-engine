@@ -394,3 +394,30 @@ describe("compute_return: Form 8582 by activity", () => {
     expect(r.forms).toBeUndefined();
   });
 });
+
+describe("compute_return: Form 8582-CR and Form 3800", () => {
+  it("a passive credit against the tax on net passive income: Schedule 3 line 6a $1,000, line 22 $16,867", async () => {
+    const r = await call("compute_return", single({ box1: "100000", box2: "15000" }, {
+      passive_activities: {
+        passiveActivities: 1, passiveActivity1Kind: "business", passiveActivity1Income: 20000, passiveActivity1Qbi: false,
+        passiveActivity1Credit: 1000, passiveActivity1CreditType: "general", passiveActivity1CreditSpecified: false,
+      },
+    }));
+    expect(r.ok).toBe(true);
+    expect((r.schedule3 as Record<string, string>)["6a_general_business"]).toBe("$1,000.00");
+    expect(lines(r)["20_other_nonrefundable_credits"]).toBe("$1,000.00");
+    expect(lines(r)["22_tax_after_credits"]).toBe("$16,867.00");
+    const forms = r.forms as Record<string, Record<string, unknown>>;
+    expect(forms["8582-CR"]["6_tax_on_net_passive_income"]).toBe("$4,412.00");
+    expect(forms["8582-CR"]["37_allowed"]).toBe("$1,000.00");
+    expect(forms["3800"]["38_allowed"]).toBe("$1,000.00");
+  });
+  it("the § 38(c) limit: $50,000 credit at $200,000 of wages allows $7,973 and reports $42,027 unused", async () => {
+    const r = await call("compute_return", single({ box1: "200000", box2: "40000" }, { business_credits: { generalBusinessCreditNonpassive: 50000 } }));
+    const f = (r.forms as Record<string, Record<string, unknown>>)["3800"];
+    expect(f["13"]).toBe("$3,017.00");
+    expect(f["38_allowed"]).toBe("$7,973.00");
+    expect(f["unused_carryback_carryforward"]).toBe("$42,027.00");
+    expect(r.forms && (r.forms as Record<string, unknown>)["8582-CR"]).toBeUndefined();
+  });
+});

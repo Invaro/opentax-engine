@@ -1,0 +1,19 @@
+{
+  "description": "§ 469(a)(1)(B), (d)(2): a passive activity credit is allowed only against the tax on net passive income. A passive business with a $5,000 loss and a $2,000 credit (Worksheet 4, no special allowance): Form 8582 line 3 is a loss, line 6 is zero, nothing is allowed — the $2,000 carries forward with the activity.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 80000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Loss": 5000,
+    "passiveActivity1Credit": 2000,
+    "passiveActivity1CreditType": "general",
+    "passiveActivity1CreditSpecified": false,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.passive_credit.activity1.unallowed",
+  "expect": {
+    "valueCents": "200000"
+  }
+}

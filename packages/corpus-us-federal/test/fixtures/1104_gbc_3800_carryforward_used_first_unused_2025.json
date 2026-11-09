@@ -1,0 +1,14 @@
+{
+  "description": "Form 3800 Part I: line 6 = current credit $3,000 + carryforward $5,000; single, wages $60,000: tax on 44,250 is $5,075 and the tentative minimum tax is zero (AMTI 60,000 under the 88,100 exemption), so $5,075 is allowed and $2,925 is unused (§ 39).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 60000,
+    "generalBusinessCreditNonpassive": 3000,
+    "generalBusinessCreditCarryforward": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.unused",
+  "expect": {
+    "valueCents": "292500"
+  }
+}

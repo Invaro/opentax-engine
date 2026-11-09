@@ -1,0 +1,18 @@
+{
+  "description": "§ 38(c)(6)(A): $12,500 replaces $25,000 for a married person filing separately whose spouse has a business credit. Wages $200,000, $10,000 nonpassive credit, the spouse has a credit: tax $37,067 (MFS brackets match single here); line 13 = 25% x (37,067 − 12,500) = 6,141.75, but the tentative minimum tax 26% x 119,550 + 28% x (131,500 − 119,550) = 34,429 is larger: 37,067 − 34,429 = $2,638 allowed.",
+  "facts": {
+    "filingStatus": "mfs",
+    "spouseItemizes": false,
+    "wages": 200000,
+    "generalBusinessCreditNonpassive": 10000,
+    "spouseHasBusinessCredit": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "valueCents": "263800",
+    "intermediates": {
+      "us.federal.gbc.form3800.line13": "614175"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "§ 38(c)(4)(A): for specified credits the tentative minimum tax is treated as zero — Form 3800 line 27 = line 11 − line 13. Same return as fixture 1093 with a $50,000 specified credit: 37,067 − 3,016.75 = $34,050.25 allowed.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 200000,
+    "specifiedCreditNonpassive": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.allowed",
+  "expect": {
+    "valueCents": "3405025"
+  }
+}

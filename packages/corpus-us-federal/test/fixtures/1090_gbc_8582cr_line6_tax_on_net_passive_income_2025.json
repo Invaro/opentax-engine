@@ -1,0 +1,23 @@
+{
+  "description": "Form 8582-CR line 6 (I8582-CR: 'A. Taxable income including net passive income ... B. Tax on line A ... C. Taxable income without net passive income ... D. Tax on line C'). Single, wages $100,000, a passive business with $20,000 of income and a $1,000 credit. Taxable income 120,000 − 15,750 = 104,250: tax 1,192.50 + 4,386 + 12,072.50 + 216 = $17,867. Without the $20,000: 84,250, Tax Table row 84,250–84,300 = $13,455. Line 6 = $4,412 ≥ $1,000, so the credit is allowed; Form 3800 allows it (tentative minimum tax 26% x (120,000 − 88,100) = 8,294 < 17,867), and tax after credits is $16,867.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "passiveActivities": 1,
+    "passiveActivity1Kind": "business",
+    "passiveActivity1Income": 20000,
+    "passiveActivity1Credit": 1000,
+    "passiveActivity1CreditType": "general",
+    "passiveActivity1CreditSpecified": false,
+    "passiveActivity1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.income_tax_after_credits",
+  "expect": {
+    "valueCents": "1686700",
+    "intermediates": {
+      "us.federal.passive_credit.form8582cr.line6": "441200",
+      "us.federal.gbc.allowed": "100000"
+    }
+  }
+}

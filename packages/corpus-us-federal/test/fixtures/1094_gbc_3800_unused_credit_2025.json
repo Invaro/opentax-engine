@@ -1,0 +1,13 @@
+{
+  "description": "§ 39(a): the $50,000 credit of fixture 1093 less the $7,973 allowed leaves $42,027 to carry back one year and forward 20.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 200000,
+    "generalBusinessCreditNonpassive": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.gbc.unused",
+  "expect": {
+    "valueCents": "4202700"
+  }
+}

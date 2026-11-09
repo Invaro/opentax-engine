@@ -2,6 +2,36 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 10, 2026 · Business credits: Form 8582-CR and Form 3800
+
+General business credits now reduce the tax, for 2025, 2026 and 2027. Credits from passive activities are limited by Form 8582-CR first; the Form 3800 limit then applies to all of them.
+
+- **Nonpassive credits and carryforwards:**
+  - `generalBusinessCreditNonpassive` (Part III line 2) and `specifiedCreditNonpassive` (§ 38(c)(4)(B) specified credits, allowed against the tentative minimum tax).
+  - § 39 carryforwards in `generalBusinessCreditCarryforward` and `specifiedCreditCarryforward`.
+  - Each is entered after its own credit form.
+- **Passive credits, by activity:** `passiveActivityNCredit`, `…PriorUnallowedCredit`, `…CreditType` (`general`, `rehabilitation`, `lihc_pre1990`, `lihc_post1989`) and `…CreditSpecified`.
+- **Form 8582-CR (Rev. December 2024):**
+  - Credits are allowed against the tax on net passive income (line 6), then under the special allowances' tax equivalents.
+  - The $25,000 phases out from $100,000 of modified AGI, from $200,000 for rehabilitation and pre-1990 low-income housing credits, and doesn't phase out for post-1989 low-income housing credits.
+  - None of it is available to a married person filing separately who lived with the spouse.
+  - Allowed and unallowed credits are split across activities (Worksheets 5–9), and the unallowed ones carry forward per activity (`us.federal.passive_credit.activityN.unallowed`).
+  - "Tax on" each amount uses the return's own Tax Table / capital gain worksheet method.
+- **Form 3800 (2025):**
+  - The § 38(c)(1) limit is net income tax over the greater of the tentative minimum tax or 25% of net regular tax above $25,000 ($12,500 married filing separately when the spouse has a credit, `spouseHasBusinessCredit`).
+  - Specified credits are measured without the TMT.
+  - The result is Schedule 3 line 6a (`us.federal.gbc.allowed`), taken after every other nonrefundable credit. The § 39 carryback / carryforward is `us.federal.gbc.unused`.
+- **`compute_return`** shows Schedule 3 line 6a, `forms['8582-CR']` and `forms['3800']`.
+- **Refused, with the reason:**
+  - credits from PTPs;
+  - the empowerment zone credit;
+  - net passive income that includes a gain on disposing of activity property, when there are passive credits;
+  - a return whose regular tax isn't the Tax Table or capital gain worksheet amount, e.g. § 911(f) stacking.
+- **Checked:**
+  - 18 new fixtures, every one worked by hand from the form arithmetic. They cover line 6 in 2025 and 2026, each worksheet's allowance, the Worksheet 8 split, the TMT and 25% limits, specified credits, carryforwards, the married-filing-separately rules and the refusals.
+  - Every existing fixture, the IRS ATS scenarios and the AMT regression cases give the same answers as v0.49.0, and so does every pre-existing rule.
+  - An independent rebuild of Form 8582-CR and Form 3800 from the IRS documents alone agrees on 400 random returns with credits. All amounts that feed the credit match; each allocation is within a cent of the exact fraction. That rebuild found one error, fixed before release: line 13 printed $25,000 for a married person filing separately whose spouse has a credit, when the answer didn't change the credit.
+
 ## Nov 10, 2026 · Passive activities by activity: Form 8582 through AGI and NIIT
 
 Passive K-1s, rentals and other passive activities now go through § 469 inside the return, one activity at a time, for 2025, 2026 and 2027. Before, the § 469 rule was a standalone check whose result you netted into Schedule E yourself.
