@@ -12,23 +12,37 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { legacyJsonSchema } from "./json-schema.js";
-import { ENGINE, evaluate, OpenTaxError, parseDollars, walkExpr } from "@invaro/opentax-core";
+import { coerceFacts, ENGINE, evaluate, NeedsFactsError, OpenTaxError, parseDollars, walkExpr } from "@invaro/opentax-core";
 import type { Expr, Rule } from "@invaro/opentax-core";
 import { IncompleteReturnError } from "./completeness.js";
 import { COMPOSER_VERSION } from "./version.js";
 import { compareAcross, factCheck, findCliffs, HOSTED_CLIFF_LIMITS, lookupParameters, searchRules } from "@invaro/opentax-solve";
-import { composeStateReturn, isIncompleteReturnRefusal, makeStateTaxEvaluator, stateReturnShape } from "@invaro/opentax-compose";
+import { composeForm2210, composeStateReturn, form2210InputFromArgs, isIncompleteReturnRefusal, makeStateTaxEvaluator, MissingInput, stateReturnShape } from "@invaro/opentax-compose";
+import type { TargetRunner, TypedFacts } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
 import {
   buildFactsValidated,
   businessShape,
   corpus,
+  corpusFor,
   dependentShape,
   factsObjectParam,
   fiduciaryShape,
   individualNestedShape,
   money,
 } from "./schema.js";
+
+/** What a projected answer must say about itself. */
+function projectedLabel(asOf: string, projection: { inflationPercent: string; wageGrowthPercent?: string }, corpusVersion: string) {
+  return {
+    taxYear: Number(asOf.slice(0, 4)),
+    inflationPercent: projection.inflationPercent,
+    wageGrowthPercent: projection.wageGrowthPercent ?? projection.inflationPercent,
+    corpusVersion,
+    warning:
+      "PROJECTED, NOT PUBLISHED LAW: every inflation-indexed amount is the 2027 amount carried forward by its statutory indexing formula at the assumed rates; tell the user these are assumptions. Known law after 2027 (the SALT limit's steps, the end of the tips/overtime/car-loan/senior deductions after 2028) is applied as law.",
+  };
+}
 
 /** Build identity on every successful response: pin these, not just the corpus hash. */
 function versions() {
@@ -251,8 +265,8 @@ server.registerTool(
   },
   async (args: Record<string, unknown>) => {
     try {
-      const { facts, asOf, target, documentNotes, defaults } = buildFactsValidated(args);
-      const { value, proof } = evaluate(corpus, facts, { asOf, target, ...defaults });
+      const { facts, asOf, target, documentNotes, defaults, projection } = buildFactsValidated(args);
+      const { value, proof } = evaluate(corpusFor(asOf, projection), facts, { asOf, target, ...defaults });
       const cents = value.type === "money" ? value.cents : 0n;
       return ok({
         ok: true,
@@ -270,6 +284,7 @@ server.registerTool(
               ? "net refund (refundable credits exceed tax)"
               : "net federal income tax",
         assumptions: proof.assumptions,
+        ...(projection ? { projected: projectedLabel(asOf, projection, proof.corpus.version) } : {}),
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
         ...(args.includeProof === true ? { proof } : {}),
@@ -470,9 +485,10 @@ server.registerTool(
       }
       // net tax first: it reaches every line below, so with refuseDefaults the
       // NEEDS_FACTS it throws lists the whole return's missing facts, not one line's
-      const { proof } = evaluate(corpus, facts, { asOf, target: "us.federal.net_tax", ...built.defaults });
+      const returnCorpus = corpusFor(asOf, built.projection);
+      const { proof } = evaluate(returnCorpus, facts, { asOf, target: "us.federal.net_tax", ...built.defaults });
       const get = (target: string): bigint => {
-        const { value } = evaluate(corpus, facts, { asOf, target, ...built.defaults });
+        const { value } = evaluate(returnCorpus, facts, { asOf, target, ...built.defaults });
         return value.type === "money" ? value.cents : 0n;
       };
       const gross = get("us.federal.gross_income");
@@ -555,6 +571,7 @@ server.registerTool(
         ...(form5695 ? { forms: { "5695": form5695 } } : {}),
         note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Line 20 is the sum of the modeled Schedule 3 nonrefundable credits (schedule3); when any Form 5695 input is given, forms['5695'] carries that form's printed lines. Report these numbers as-is.",
         assumptions: proof.assumptions,
+        ...(built.projection ? { projected: projectedLabel(asOf, built.projection, proof.corpus.version) } : {}),
         corpusMerkleRoot: proof.corpus.merkleRoot,
         artifactHash: proof.artifactHash,
         proofScope:
@@ -562,6 +579,80 @@ server.registerTool(
         ...(args.includeProof === true ? { proof, proofTarget: "us.federal.net_tax" } : {}),
       });
     } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "compute_form_2210",
+  {
+    description:
+      "Form 2210 — the estimated tax underpayment penalty (26 U.S.C. § 6654) for tax years 2025-2027, composed from the printed form: Part I (the required annual payment: 90% of this year's tax, or 100% / 110% of last year's — pass priorYearTax and priorYearAGI in facts, or noPriorYearReturn), Part III Section A (underpayment per installment) and the Section B penalty worksheet (payments applied to the earliest underpayment first; each quarter's § 6621 underpayment rate, by days). Pass `payments`: EVERY estimated tax payment with its date (include last year's overpayment applied to this year, dated April 15, and any payment with the return, dated the earlier of filing and April 15); withholding (facts.federalTaxWithheld) is treated as paid one-fourth on each due date unless you pass `withholdingByDate` (box D). Pass `periods` to also run Schedule AI, the annualized income installment method (box C): the CUMULATIVE amounts from January 1 through March 31, May 31 and August 31 for every income, deduction and credit amount that is nonzero for the year (same fact ids as facts; the tool lists any it needs). Each Schedule AI column is the whole return computed on the period's amounts × 4, 2.4, 1.5 and 1, with the standard deduction in full, so every income type, deduction and credit the engine models is annualized; the columns refuse, with the reason, where the form doesn't settle the period treatment (foreign earned income exclusion, prior-year carryovers, premium tax credit, kiddie tax, household employment taxes, a dependent filer, the SALT cap binding in a period). The tool reports both methods and the lower penalty. A penalty that would run into a quarter whose rate the IRS hasn't announced is refused, with Section A still shown. Report the lines and notes verbatim.",
+    inputSchema: legacyJsonSchema(
+      z
+        .object({
+          facts: factsObjectParam,
+          payments: z
+            .array(z.object({ date: z.string(), amount: z.union([z.number(), z.string()]) }).strict())
+            .describe("every estimated tax payment for the year: { date: 'YYYY-MM-DD', amount: dollars } (an empty array if none)"),
+          periods: z
+            .object({
+              mar31: z.record(z.string(), z.union([z.number(), z.string()])),
+              may31: z.record(z.string(), z.union([z.number(), z.string()])),
+              aug31: z.record(z.string(), z.union([z.number(), z.string()])),
+            })
+            .strict()
+            .optional()
+            .describe("Schedule AI: cumulative amounts from January 1 through each date, keyed by fact id, in dollars"),
+          withholdingByDate: z
+            .array(z.object({ date: z.string(), amount: z.union([z.number(), z.string()]) }).strict())
+            .optional()
+            .describe("box D: withholding by the date actually withheld; must total facts.federalTaxWithheld"),
+          noPriorYearReturn: z.boolean().optional().describe("no return for the prior year, or it covered under 12 months: line 9 is line 5"),
+          filedAndPaidInFullOn: z.string().optional().describe("§ 6654(h): the date the return was filed and the tax paid in full, when by January 31"),
+        })
+        .strict(),
+    ),
+  },
+  async (args: Record<string, unknown>) => {
+    try {
+      const { facts: factArgs, ...options } = args;
+      const built = buildFactsValidated(factArgs);
+      const { asOf, defaults } = built;
+      if (built.projection) throw new Error("Form 2210 is composed for the published tax years 2025-2027; drop projection");
+      const run = (f: Record<string, unknown>, target: string): bigint => {
+        const { value } = evaluate(corpus, f as typeof built.facts, { asOf, target, ...defaults });
+        return value.type === "money" ? value.cents : 0n;
+      };
+      const input = form2210InputFromArgs(
+        options,
+        Number(asOf.slice(0, 4)),
+        built.facts as TypedFacts,
+        (plain) => coerceFacts(corpus, plain) as TypedFacts,
+      );
+      const form = composeForm2210(input, run as TargetRunner);
+      if (form.penalty && "refused" in form.penalty) {
+        // not covered: exit-3 semantics, with the lines that ARE final kept for the caller
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ ok: false, error: { code: "NOT_MODELED", message: `Form 2210 penalty refused: ${form.penalty.refused}`, data: { form: { asOf, ...form } } } }, null, 2) }],
+          isError: true,
+        };
+      }
+      return ok({ ok: true, asOf, form: "2210", ...form, corpusMerkleRoot: corpus.merkleRoot });
+    } catch (err) {
+      if (err instanceof MissingInput)
+        return fail(
+          new NeedsFactsError(
+            err.missing.map((id) => ({
+              factId: id,
+              type: "money" as const,
+              description: id.startsWith("periods.")
+                ? "Schedule AI: the cumulative amount from January 1 through the period end (0 if none)"
+                : "Form 2210 Part I line 8 needs it (or pass noPriorYearReturn)",
+            })),
+          ),
+        );
       return fail(err);
     }
   },
@@ -582,8 +673,8 @@ server.registerTool(
   },
   async (args: Record<string, unknown>) => {
     try {
-      const { facts, asOf, target } = buildFactsValidated(args.facts);
-      const { value, proof } = evaluate(corpus, facts, { asOf, target });
+      const { facts, asOf, target, projection } = buildFactsValidated(args.facts);
+      const { value, proof } = evaluate(corpusFor(asOf, projection), facts, { asOf, target });
       const actual = value.type === "money" ? value.cents : 0n;
       const claimed = parseDollars(args.claimedAmount as string | number);
       const tolerance = BigInt(
@@ -592,6 +683,7 @@ server.registerTool(
       const diff = actual - claimed;
       const abs = diff < 0n ? -diff : diff;
       return ok({
+        ...(projection ? { projected: projectedLabel(asOf, projection, corpusFor(asOf, projection).version) } : {}),
         ok: true,
         verdict: abs <= tolerance ? "verified" : "refuted",
         claimed: fmt(claimed),
@@ -715,8 +807,8 @@ server.registerTool(
   },
   async (args: Record<string, unknown>) => {
     try {
-      const { facts, asOf, target } = buildFactsValidated(args.facts);
-      const result = findCliffs(corpus, facts, {
+      const { facts, asOf, target, projection } = buildFactsValidated(args.facts);
+      const result = findCliffs(corpusFor(asOf, projection), facts, {
         vary: args.vary as string,
         fromCents: BigInt(Math.round((args.fromDollars as number) * 100)),
         toCents: BigInt(Math.round((args.toDollars as number) * 100)),
@@ -728,6 +820,7 @@ server.registerTool(
         ...(options.hosted ? { limits: HOSTED_CLIFF_LIMITS } : {}),
       });
       return ok({
+        ...(projection ? { projected: projectedLabel(asOf, projection, corpusFor(asOf, projection).version) } : {}),
         ok: true,
         cliffs: result.cliffs.map((c) => ({
           at: fmt(c.atCents),
@@ -753,13 +846,14 @@ server.registerTool(
   },
   async (args: Record<string, unknown>) => {
     try {
-      const { facts, asOf, target } = buildFactsValidated(args.facts);
-      const result = compareAcross(corpus, facts, {
+      const { facts, asOf, target, projection } = buildFactsValidated(args.facts);
+      const result = compareAcross(corpusFor(asOf, projection), facts, {
         vary: "filingStatus",
         asOf,
         target,
       });
       return ok({
+        ...(projection ? { projected: projectedLabel(asOf, projection, corpusFor(asOf, projection).version) } : {}),
         ok: true,
         scenarios: result.scenarios.map((s) =>
           s.ok

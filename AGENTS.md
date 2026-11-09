@@ -49,7 +49,7 @@ opentax check --status mfj --wages 120000 --kids 2 --expect 5640 --json
 `@invaro/opentax` exposes the engine as MCP tools over stdio: `calculate_tax`,
 `verify_tax_claim`, `search_tax_rules`, `lookup_tax_parameter`, `verify_fact`,
 `list_input_facts`, `explain_rule`, `find_tax_cliffs`, `compare_filing_statuses`,
-and the domain tools (`compute_return`, `compute_state_return`,
+and the domain tools (`compute_return`, `compute_state_return`, `compute_form_2210`,
 `calculate_business_tax`, `calculate_fiduciary_tax`, `determine_dependent`,
 `is_tipped_occupation`). Filing statuses: single | mfj | mfs | hoh | qss.
 Research flow: `search_tax_rules` for coverage ("does the corpus encode
@@ -86,6 +86,7 @@ opentax lookup standard deduction --expect 32200 --filing-status mfj --json
 - **`value.value` is integer cents as a string** (`"564000"` = $5,640.00). Use `formatted` for display. Never do float math on it.
 - **Negative money = a refund.** The default target (`us.federal.net_tax`) subtracts refundable credits (EITC, ACTC) and is NOT clamped at zero — `"-977700"` means the taxpayer is owed $9,777.00.
 - **`--withheld <dollars>` (or estimated or extension payments) switches the target to `us.federal.balance_due`**: liability minus the payments on Form 1040 lines 25d (withholding), 26 (`federalEstimatedPayments`) and 31 (`federalExtensionPayment`). The mid-year checkup. Negative = refund expected at filing; positive = they will owe.
+- **Estimated tax penalty: `opentax form2210 --facts f.json --as-of 2025-12-31` (MCP `compute_form_2210`).** The file is `{ facts, payments: [{date, amount}], periods?, withholdingByDate?, noPriorYearReturn?, filedAndPaidInFullOn? }`. It returns Part I, Part III and the penalty worksheet at each quarter's § 6621 rate, by days; withholding counts one-fourth per due date and pays the earliest underpayment like any payment, and `withholdingByDate` (box D) is used when it lowers the penalty. Add `periods` (`mar31`/`may31`/`aug31`: cumulative amounts from January 1, same fact ids) for Schedule AI: each column is the whole return on the period × 4 / 2.4 / 1.5 / 1, so every modeled income, deduction and credit is annualized, and the lower penalty wins (box C). A penalty that would need an unannounced quarter's rate is refused, with Section A still shown.
 - All four OBBBA Schedule 1-A deductions are inputs: `--tips`, `--overtime`, `--car-loan`, plus `--charity` (§ 170(p), 2026+; correctly $0 if asked about 2025).
 - Schedule A is modeled and the standard-vs-itemized election is automatic (a `max` — no flag needed): `--salt`, `--mortgage-interest` + `--mortgage-balance`, `--medical`, and `--charity` doubles as the itemizer's cash charitable input. The SALT cap is year-aware ($40,000 TY2025 / $40,400 TY2026, 30% phase-down over $500k/$505k MAGI, $10,000 floor, MFS halves).
 - **`assumptions` matter.** They are documented defaults the engine used (e.g. `taxableInterest = 0`). If your user's situation differs, pass the real fact and re-run.
@@ -93,5 +94,6 @@ opentax lookup standard deduction --expect 32200 --filing-status mfj --json
 - **The engine never guesses.** A refusal (exit 2/3) is a correct answer, not an error to work around. Do not fabricate a number when you get one.
 - **Citations are in the proof.** Every node of `proof.root` has `citation.source/section/url` and a content `ruleHash` — quote them when explaining an answer.
 - `opentax corpus list --json` → every rule (id, title, citation, validity window, hash). `opentax explain <ruleId> --json` → one rule in full, including its formula and dependencies.
+- **Projection (2028–2035): `--project-inflation <percent>` (MCP: `projection: { inflationPercent, wageGrowthPercent? }`).** Every indexed amount is carried forward from 2027 by its statutory indexing formula at the ASSUMED rate; known law after 2027 is applied as law (SALT 101% steps then $10,000 in 2030; tips/overtime/car-loan/senior deductions end after 2028). The answer has a `projected` block — tell the user it is a projection. The premium tax credit refuses in a projected year. Without the flag, 2028+ still exits 3.
 - `--as-of YYYY-MM-DD` selects rule versions by date. Federal rules cover tax years 2025, 2026 and 2027 (2027 from Rev. Proc. 2026-35 and the other published 2027 amounts; a 2027 IRA, SEP/solo-401(k) or saver's contribution, the 2027 retirement-plan maximums and the 2027 mileage rate refuse until the IRS publishes them). State rules cover 2025 and 2026. Other dates refuse with exit 3.
 - Facts files are plain JSON: `{ "filingStatus": "mfj", "wages": 120000, "qualifyingChildren": 2 }`.

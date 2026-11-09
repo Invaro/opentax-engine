@@ -2,6 +2,55 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 6, 2026 · Projection: tax years 2028 to 2035 at an inflation rate you choose
+
+`--project-inflation 2.5` on `eval`, `check` and the solver commands, or `projection: { inflationPercent }` on the MCP tax tools, computes a year after 2027. Without it, 2028 and later still refuse.
+
+- **Method:** every inflation-adjusted amount is carried forward by its own statutory formula. That is the base amount × the index ratio, rounded the way its section says: down to $25 or $50, to the nearest $10 or $100, rounding the increase or the whole amount.
+  - The 2027 index is the one the IRS used: the C-CPI-U for September 2025 to August 2026 as first published, an 11-month average because October 2025 was never published, over each base year's index under § 1(f)(3).
+  - For 2028 on, that index grows by your rate each year.
+  - The wage base and the household employee threshold follow the wage index instead, at `--project-wage-growth` (default: the inflation rate). The wage base never falls.
+- **Checked:** the formula and data reproduce all 76 indexed amounts in the 2027 rules exactly, along with the published 2025 and 2026 amounts. The one exception is the IRS's 2026 head-of-household standard deduction ($24,150), which departs from § 63(c)(7)(B)(ii)'s rounding; 2027 follows the statute, and projections start from the statutory base.
+  - Every amount in the 49 rules that change each year is classified as indexed, derived from an indexed amount (joint = 200%, MFS = 50%, the EITC maximums and phase-out ends, the Schedule AI wage-base fractions), set by law, or a fixed constant. A test fails if one isn't.
+- **Law, not projection:**
+  - The SALT limit and threshold rise 101% a year through 2029 (to the cent; the statute gives no rounding), and the limit is $10,000 from 2030.
+  - The tips, overtime, car-loan and senior deductions end after 2028.
+- **Refuses rather than guesses:**
+  - The premium tax credit, whose percentages follow premium growth, not prices.
+  - Whatever 2027 itself refuses (IRA, SEP and saver's contributions, mileage).
+  - States.
+- **Labeled:** every projected rule cites "PROJECTION, NOT PUBLISHED LAW" and the assumed rates. Answers carry a `projected` block. The corpus version names the year and rates (for example `0.46.0+projected.2030.cpi-2.5.awi-2.5`), so `opentax verify` rebuilds the same corpus and checks the proof.
+- **Library:** `getProjectedFederalCorpus({ year, inflationPercent, wageGrowthPercent })` returns a corpus to evaluate against, and the published corpus is untouched.
+
+## Nov 6, 2026 · Form 2210: the estimated tax penalty, with Schedule AI for every income type
+
+`opentax form2210` (MCP `compute_form_2210`, library `composeForm2210`) computes Form 2210 for 2025, 2026 and 2027.
+
+- **Part I:** the required annual payment, from the engine's own line 22, other taxes and refundable credits.
+  - It is the smaller of 90% of this year's tax and 100% of last year's. Last year's counts at 110% when last year's AGI was over $150,000, or $75,000 married filing separately.
+  - The $1,000 tests apply.
+  - With no prior-year return, line 9 is line 5.
+- **Part III:** Section A per installment, then the penalty worksheet.
+  - Payments go first to the earliest underpayment. A payment can pay a column's underpayment only if it was made after that column's due date.
+  - Withholding counts as paid one-fourth on each due date (§ 6654(g)), and like any payment it pays the earliest underpayment still open. The printed worksheet keeps withholding off line 1b, which charges the same dollars twice when withholding covers an earlier quarter; the penalty here follows the statute.
+  - Box D (actual withholding dates) is used only when it lowers the penalty.
+  - A payment on the next business day after a weekend due date counts as made on the due date (§ 7503).
+  - § 6654(h) applies: no penalty on the January installment when the return is filed and the tax paid in full by January 31. The payment with the return counts in column (d), and the tool checks that the payments really cover the year's tax.
+  - The penalty is the sum of the worksheet lines shown, each to the cent. A refused penalty (an unannounced quarter) comes back as `NOT_MODELED`, exit 3, with the final lines in `error.data`.
+- **Rates:** each quarter's § 6621 underpayment rate, by days over 365 (366 in a leap year). The rates come from the IRS quarterly-rates page and the Revenue Rulings it cites.
+  - 2025 Q2 through 2026 Q1: 7%. 2026 Q2: 6% (Rev. Rul. 2026-5). 2026 Q3 and Q4: 7%.
+  - The printed 2025 worksheet uses 7% through April 15, 2026, but April 1–15 is 6%. The instructions allow any method that reaches the correct penalty, and the output says so.
+  - A penalty that would run into a quarter whose rate isn't announced yet (2027 Q1 on) is refused. Section A is still shown.
+- **Schedule AI (box C):** pass the cumulative amounts through March 31, May 31 and August 31.
+  - Each column is the whole return computed on those amounts × 4, 2.4, 1.5 and 1, with the standard deduction in full. So every income type, deduction and credit the engine models is annualized: interest, dividends, capital gains, pensions, Social Security, itemized deductions, QBI, AMT, NIIT, Additional Medicare Tax and the credits.
+  - The tool reports both methods and takes the lower penalty.
+  - It refuses, with the reason, where the form doesn't settle the period treatment: the foreign earned income exclusion, prior-year carryovers, the premium tax credit, Form 8615, Schedule H, a dependent filer, and a period whose annualized state and local taxes exceed the SALT limit.
+  - It matches the corpus's existing wage and self-employment installment rules column by column for 2025, 2026 and 2027.
+- **Checked:**
+  - The instructions' Examples 3 and 4 ($202.82 with the 6% April) and hand-worked 2025 and 2026 penalties.
+  - An independent build of the form, written from the instructions without reading this code: 576 random returns (2025 and 2026, 204 with Schedule AI) and 20 hand-built ones.
+  - After the fixes above, every priced penalty matches it to the cent.
+
 ## Nov 6, 2026 · Tax year 2027
 
 Federal returns now compute for tax year 2027 (`--as-of 2027-12-31`) on the published 2027 law, so a planning scenario can be carried from 2025 through 2027.

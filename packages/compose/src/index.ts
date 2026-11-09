@@ -150,3 +150,6 @@ function composeLines(
   if (j === "vt") return composeVT(input, evalStateTax, notes);
   return composeNY(input, evalStateTax, notes);
 }
+
+export { composeForm2210, dollarsToCents, form2210InputFromArgs, MissingInput, SCHEDULE_AI_FACTS, UNDERPAYMENT_RATES } from "./form2210.js";
+export type { Form2210Input, Form2210Result, PartIIIResult, Payment, TargetRunner, TypedFact, TypedFacts } from "./form2210.js";

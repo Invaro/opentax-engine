@@ -28,7 +28,8 @@ import { z } from "zod";
 import type { IncompleteItem } from "@invaro/opentax-compose";
 import { coerceFacts, NeedsFactsError } from "@invaro/opentax-core";
 import type { TypedValueJSON } from "@invaro/opentax-core";
-import { DEFAULT_TARGET, getCorpus, matchOccupation } from "@invaro/opentax-corpus-us-federal";
+import { DEFAULT_TARGET, getCorpus, getProjectedFederalCorpus, LAST_PUBLISHED_YEAR, matchOccupation } from "@invaro/opentax-corpus-us-federal";
+import type { LoadedCorpus } from "@invaro/opentax-core";
 import { compileDocuments, documentsShape } from "./documents.js";
 
 export const corpus = getCorpus();
@@ -984,6 +985,28 @@ const includeProofParam = z
     "include the full proof artifact in the response as `proof` (PROOF-FORMAT v2: every applied rule, input, assumption and rounding, verifiable offline against corpusMerkleRoot; ~200 KB). Default false — the hashes alone are returned.",
   );
 
+export type ProjectionArg = { inflationPercent: string; wageGrowthPercent?: string };
+const projectionParam = z
+  .object({
+    inflationPercent: z.union([z.number(), z.string()]).describe("assumed annual C-CPI-U growth after the index the IRS used for 2027, in percent (e.g. 2.5)"),
+    wageGrowthPercent: z.union([z.number(), z.string()]).optional().describe("assumed annual growth of the national average wage index (social security wage base), in percent; defaults to inflationPercent"),
+  })
+  .strict()
+  .optional()
+  .describe(
+    "PROJECTION for tax years 2028-2035 (asOf in that year): every inflation-indexed amount is projected from 2027 by its own statutory indexing formula at these ASSUMED rates; known law (the SALT limit's 101% steps and 2030 return to $10,000, the end of the tips/overtime/car-loan/senior deductions after 2028) is applied as law. The result is labeled projected and its proof cites the assumption. Omit for 2025-2027 (published law).",
+  );
+
+/** The corpus for a computation: the published one, or a projection for 2028+. */
+export function corpusFor(asOf: string, projection: ProjectionArg | undefined): LoadedCorpus {
+  const year = Number(asOf.slice(0, 4));
+  // without a projection a 2028+ date keeps refusing with NO_APPLICABLE_RULE, as before
+  if (year > LAST_PUBLISHED_YEAR && projection)
+    return getProjectedFederalCorpus({ year, inflationPercent: projection.inflationPercent, wageGrowthPercent: projection.wageGrowthPercent });
+  if (projection) throw new Error(`projection is for tax years after ${LAST_PUBLISHED_YEAR}; ${year} is published law — drop projection`);
+  return corpus;
+}
+
 export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
   const shape: Record<string, z.ZodTypeAny> = {};
   for (const [group, ids] of Object.entries(INDIVIDUAL_GROUPS)) {
@@ -1003,6 +1026,7 @@ export const individualNestedShape: Record<string, z.ZodTypeAny> = (() => {
   shape.includeProof = includeProofParam;
   shape.refuseDefaults = refuseDefaultsParam;
   shape.allowDefaults = allowDefaultsParam;
+  shape.projection = projectionParam;
   return shape;
 })();
 
@@ -1142,6 +1166,7 @@ export function buildFactsValidated(
   documentUnsupported: IncompleteItem[];
   w2Box1Cents?: bigint;
   defaults: { refuseDefaults?: boolean; allowDefaults?: string[] };
+  projection?: ProjectionArg;
 } {
   const input =
     factsArg && typeof factsArg === "object" && !Array.isArray(factsArg)
@@ -1163,6 +1188,16 @@ export function buildFactsValidated(
   };
   delete input.refuseDefaults;
   delete input.allowDefaults;
+  let projection: ProjectionArg | undefined;
+  if (input.projection !== undefined) {
+    const parsedProjection = projectionParam.safeParse(input.projection);
+    if (!parsedProjection.success || !parsedProjection.data) throw new Error("projection: expected { inflationPercent, wageGrowthPercent? }");
+    projection = {
+      inflationPercent: String(parsedProjection.data.inflationPercent),
+      ...(parsedProjection.data.wageGrowthPercent !== undefined ? { wageGrowthPercent: String(parsedProjection.data.wageGrowthPercent) } : {}),
+    };
+  }
+  delete input.projection;
   const flat = flattenFactsArg(input);
   if (docsRaw !== undefined) {
     const parsedDocs = documentsShape.safeParse(docsRaw);
@@ -1236,5 +1271,6 @@ export function buildFactsValidated(
     documentNotes, documentMissing, documentUnsupported,
     ...(w2Box1Cents !== undefined ? { w2Box1Cents } : {}),
     defaults,
+    ...(projection ? { projection } : {}),
   };
 }
