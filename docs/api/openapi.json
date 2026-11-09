@@ -2,10 +2,10 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OpenTax hosted API",
-    "version": "corpus 0.46.0 · engine proof schema 2",
+    "version": "corpus 0.47.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:6e649618b239a1ef6e7a01d6ec5746f6ba9323afbf06e12a27743721bfc2faa7",
-    "x-generated": "2026-11-09T07:33:17.840Z"
+    "x-corpus-merkle-root": "sha256:91597665495dfc016024dc519a27b2f1e6f81670e8d79f82619ae822a23dc3ce",
+    "x-generated": "2026-11-09T11:23:26.777Z"
   },
   "servers": [
     {
@@ -628,7 +628,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "Schedule C/F net LOSS for the year as a POSITIVE number (gross receipts minus ACTUAL expenses is negative; § 165(c)(1) trade-or-business loss). Reduces gross income AND § 32(c)(2) earned income (EITC/ACTC); no SE tax attaches to a loss year. Schedule C ONLY — Schedule E losses belong in nonpassiveScheduleELoss or the passive facts. A 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading (that field is qbiW2Wages, never an expense). Gross-receipts composition follows selfEmploymentNetProfit's convention (intake receipts + nested 1099-NEC/K + 1099-MISC box 3 issued to the proprietor; MISC box 1 rents → Schedule E; TIN-mismatched 1099s excluded with disclosure). If QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
+                                "description": "Schedule C/F net LOSS for the year as a POSITIVE number (gross receipts minus ACTUAL expenses is negative; § 165(c)(1) trade-or-business loss). Reduces gross income AND § 32(c)(2) earned income (EITC/ACTC); no SE tax attaches to a loss year. Schedule C ONLY — Schedule E losses belong in nonpassiveScheduleELoss or the passive facts. On a joint return, both spouses' Schedule C/F losses together (a loss never reduces the other spouse's self-employment tax). A 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading (that field is qbiW2Wages, never an expense). Gross-receipts composition follows selfEmploymentNetProfit's convention (intake receipts + nested 1099-NEC/K + 1099-MISC box 3 issued to the proprietor; MISC box 1 rents → Schedule E; TIN-mismatched 1099s excluded with disclosure). If QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
                               },
                               "k1OrdinaryBusinessIncome": {
                                 "type": [
@@ -755,6 +755,49 @@
                                   "string"
                                 ],
                                 "description": "The noncorporate taxpayer's net aggregate business LOSS for the year, entered as a positive number (§ 461(l): the excess over $313k/$626k in 2025, $256k/$512k in 2026, is disallowed and becomes an NOL). In dollars."
+                              },
+                              "k1OrdinaryBusinessLoss": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in the passive facts. If QBI-flagged, also enter it in qbiLossOffset. In dollars."
+                              },
+                              "scheduleEIsTradeOrBusiness": {
+                                "type": "boolean",
+                                "description": "The Schedule E rental/royalty activities (scheduleENetIncome, the rentalIncomeBeforeDepreciation path, nonpassiveScheduleELoss) are a trade or business — e.g. real estate professional rentals (§ 469(c)(7)) or rentals rising to a § 162 business — so they count in the § 461(l) excess business loss (Form 461 line 5; Part II removes non-business amounts). Asked only when the answer changes the excess business loss."
+                              },
+                              "nolCarryforwardPre2018": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net operating loss carryovers to this year from losses arising in taxable years beginning BEFORE 2018 that are still within their 20-year carryforward (§ 172(b)(1)(A)(ii)(I)): fully deductible, not subject to the 80% limit (§ 172(a)(2)(A)). In dollars."
+                              },
+                              "nolCarryforwardPost2017": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net operating loss carryovers to this year from losses arising in taxable years beginning AFTER 2017, including last years' disallowed § 461(l) excess business losses (§ 461(l)(2)): deductible up to 80% of taxable income figured without the NOL deduction and § 199A (§ 172(a)(2)(B)). In dollars."
+                              },
+                              "nolCarryforwardFromExcessBusinessLoss": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "The part of nolCarryforwardPost2017 that came from a § 461(l) excess business loss. When deducted it reduces qualified business income (Reg. § 1.199A-3(b)(1)(v)). In dollars."
+                              },
+                              "itemizedDeductionsBusinessPortion": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "For figuring a net operating loss (Form 172 line 6): the part of itemized deductions that is attributable to a trade or business — state income tax on business income or wages, and casualty and theft losses from a federally declared disaster (Instructions for Form 172; § 172(d)(4)(C)). In dollars."
+                              },
+                              "capitalItemsAreNonbusiness": {
+                                "type": "boolean",
+                                "description": "True when every capital gain and loss on this return is from investments (stock, funds, crypto held as an investment), not from property used in a trade or business. Asked only in a year with an excess business loss or a net operating loss: business capital gains count toward § 461(l) business income (Form 461 line 3) and are business income for the NOL (Form 172 lines 11–14), and neither is modeled — false is refused."
                               }
                             },
                             "additionalProperties": false,
@@ -1336,6 +1379,13 @@
                                   "string"
                                 ],
                                 "description": "Other Form 6251 Part I adjustments and preferences: tax-exempt private-activity-bond interest, depreciation adjustments, depletion, intangible drilling costs, etc. In dollars."
+                              },
+                              "alternativeTaxNolDeduction": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Alternative tax net operating loss deduction (Form 6251 line 2f) as a POSITIVE number, before the 90%-of-AMTI limit, which the engine applies: the § 172 deduction refigured with the alternative tax NOL carryovers, each figured for its loss year with the AMT adjustments and preferences and the § 172(d) modifications on AMT items (§ 56(d)(1)–(2); Instructions for Form 6251). § 56(d)(1) starts from the deduction 'allowable … under section 172', so include § 172(a)(2)(B)'s 80% limit on post-2017 losses figured on AMTI without the ATNOLD; the 2025 Form 6251 instructions state only the 90% limit. With no AMT adjustments or preferences in any loss year, it is usually the same as the regular NOL deduction. Asked only with NOL carryovers when AMTI before it exceeds the exemption. In dollars."
                               },
                               "niitInvestmentExpenses": {
                                 "type": [
@@ -11005,7 +11055,7 @@
       "post": {
         "operationId": "compute_return",
         "summary": "compute_return",
-        "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+        "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
         "tags": [
           "tools"
         ],
@@ -11498,7 +11548,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "Schedule C/F net LOSS for the year as a POSITIVE number (gross receipts minus ACTUAL expenses is negative; § 165(c)(1) trade-or-business loss). Reduces gross income AND § 32(c)(2) earned income (EITC/ACTC); no SE tax attaches to a loss year. Schedule C ONLY — Schedule E losses belong in nonpassiveScheduleELoss or the passive facts. A 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading (that field is qbiW2Wages, never an expense). Gross-receipts composition follows selfEmploymentNetProfit's convention (intake receipts + nested 1099-NEC/K + 1099-MISC box 3 issued to the proprietor; MISC box 1 rents → Schedule E; TIN-mismatched 1099s excluded with disclosure). If QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
+                                "description": "Schedule C/F net LOSS for the year as a POSITIVE number (gross receipts minus ACTUAL expenses is negative; § 165(c)(1) trade-or-business loss). Reduces gross income AND § 32(c)(2) earned income (EITC/ACTC); no SE tax attaches to a loss year. Schedule C ONLY — Schedule E losses belong in nonpassiveScheduleELoss or the passive facts. On a joint return, both spouses' Schedule C/F losses together (a loss never reduces the other spouse's self-employment tax). A 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading (that field is qbiW2Wages, never an expense). Gross-receipts composition follows selfEmploymentNetProfit's convention (intake receipts + nested 1099-NEC/K + 1099-MISC box 3 issued to the proprietor; MISC box 1 rents → Schedule E; TIN-mismatched 1099s excluded with disclosure). If QBI-flagged, also enter the same amount in qbiLossOffset. In dollars."
                               },
                               "k1OrdinaryBusinessIncome": {
                                 "type": [
@@ -11625,6 +11675,49 @@
                                   "string"
                                 ],
                                 "description": "The noncorporate taxpayer's net aggregate business LOSS for the year, entered as a positive number (§ 461(l): the excess over $313k/$626k in 2025, $256k/$512k in 2026, is disallowed and becomes an NOL). In dollars."
+                              },
+                              "k1OrdinaryBusinessLoss": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in the passive facts. If QBI-flagged, also enter it in qbiLossOffset. In dollars."
+                              },
+                              "scheduleEIsTradeOrBusiness": {
+                                "type": "boolean",
+                                "description": "The Schedule E rental/royalty activities (scheduleENetIncome, the rentalIncomeBeforeDepreciation path, nonpassiveScheduleELoss) are a trade or business — e.g. real estate professional rentals (§ 469(c)(7)) or rentals rising to a § 162 business — so they count in the § 461(l) excess business loss (Form 461 line 5; Part II removes non-business amounts). Asked only when the answer changes the excess business loss."
+                              },
+                              "nolCarryforwardPre2018": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net operating loss carryovers to this year from losses arising in taxable years beginning BEFORE 2018 that are still within their 20-year carryforward (§ 172(b)(1)(A)(ii)(I)): fully deductible, not subject to the 80% limit (§ 172(a)(2)(A)). In dollars."
+                              },
+                              "nolCarryforwardPost2017": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net operating loss carryovers to this year from losses arising in taxable years beginning AFTER 2017, including last years' disallowed § 461(l) excess business losses (§ 461(l)(2)): deductible up to 80% of taxable income figured without the NOL deduction and § 199A (§ 172(a)(2)(B)). In dollars."
+                              },
+                              "nolCarryforwardFromExcessBusinessLoss": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "The part of nolCarryforwardPost2017 that came from a § 461(l) excess business loss. When deducted it reduces qualified business income (Reg. § 1.199A-3(b)(1)(v)). In dollars."
+                              },
+                              "itemizedDeductionsBusinessPortion": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "For figuring a net operating loss (Form 172 line 6): the part of itemized deductions that is attributable to a trade or business — state income tax on business income or wages, and casualty and theft losses from a federally declared disaster (Instructions for Form 172; § 172(d)(4)(C)). In dollars."
+                              },
+                              "capitalItemsAreNonbusiness": {
+                                "type": "boolean",
+                                "description": "True when every capital gain and loss on this return is from investments (stock, funds, crypto held as an investment), not from property used in a trade or business. Asked only in a year with an excess business loss or a net operating loss: business capital gains count toward § 461(l) business income (Form 461 line 3) and are business income for the NOL (Form 172 lines 11–14), and neither is modeled — false is refused."
                               }
                             },
                             "additionalProperties": false,
@@ -12206,6 +12299,13 @@
                                   "string"
                                 ],
                                 "description": "Other Form 6251 Part I adjustments and preferences: tax-exempt private-activity-bond interest, depreciation adjustments, depletion, intangible drilling costs, etc. In dollars."
+                              },
+                              "alternativeTaxNolDeduction": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Alternative tax net operating loss deduction (Form 6251 line 2f) as a POSITIVE number, before the 90%-of-AMTI limit, which the engine applies: the § 172 deduction refigured with the alternative tax NOL carryovers, each figured for its loss year with the AMT adjustments and preferences and the § 172(d) modifications on AMT items (§ 56(d)(1)–(2); Instructions for Form 6251). § 56(d)(1) starts from the deduction 'allowable … under section 172', so include § 172(a)(2)(B)'s 80% limit on post-2017 losses figured on AMTI without the ATNOLD; the 2025 Form 6251 instructions state only the 90% limit. With no AMT adjustments or preferences in any loss year, it is usually the same as the regular NOL deduction. Asked only with NOL carryovers when AMTI before it exceeds the exemption. In dollars."
                               },
                               "niitInvestmentExpenses": {
                                 "type": [
@@ -17088,6 +17188,251 @@
                         "required": [
                           "facts",
                           "payments"
+                        ],
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ToolResult"
+          }
+        }
+      }
+    },
+    "/mcp#tools/call:compute_form_4562": {
+      "post": {
+        "operationId": "compute_form_4562",
+        "summary": "compute_form_4562",
+        "description": "Form 4562 — depreciation for an individual's businesses and rentals, tax years 2025-2027 (calendar year): § 179 expensing with the dollar limit, phase-out, married-filing-separately split, business income limitation and carryover; the § 168(k) special allowance (100% for property acquired after January 19, 2025; 40% in 2025 and 20% in 2026 for property acquired earlier; the TY2025 40% election; election out by class); MACRS with the printed Publication 946 tables (half-year, mid-quarter by the 40% test, mid-month for buildings; 150% DB, straight-line and ADS elections); dispositions during the year; listed property and the § 280F passenger automobile limits (2025 and 2026); and Rev. Proc. 87-56 asset classes for cost segregation (assetClass, e.g. '57.0', '00.11', '00.3'). Give EVERY asset in service: current-year assets with cost, placedInService and acquiredOn (the binding-contract date, which sets the bonus percentage); earlier assets also with convention (HY/MQ), section179Taken and specialAllowanceTaken. section179BusinessIncome is required when § 179 is elected or carried over (taxable income from actively conducted businesses including wages, without § 179, the half-SE-tax deduction or any NOL). Returns the form's lines, each asset's schedule, and the deduction by activity (Schedule C line 13, Schedule E line 18) — subtract each activity's amount from that business's income before depreciation. Situations the sources don't settle (short years, general asset accounts, 100% bonus on a passenger car, § 280F recapture, a disposition in the last recovery year) refuse with the reason. Report the lines and notes verbatim; dollars in, whole dollars out.",
+        "tags": [
+          "tools"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "jsonrpc",
+                  "id",
+                  "method",
+                  "params"
+                ],
+                "properties": {
+                  "jsonrpc": {
+                    "const": "2.0"
+                  },
+                  "id": {
+                    "oneOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "const": "tools/call"
+                  },
+                  "params": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "arguments"
+                    ],
+                    "properties": {
+                      "name": {
+                        "const": "compute_form_4562"
+                      },
+                      "arguments": {
+                        "type": "object",
+                        "properties": {
+                          "taxYear": {
+                            "type": "integer",
+                            "description": "2025, 2026 or 2027"
+                          },
+                          "filingStatus": {
+                            "type": "string",
+                            "enum": [
+                              "single",
+                              "mfj",
+                              "mfs",
+                              "hoh",
+                              "qss"
+                            ]
+                          },
+                          "assets": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "activity": {
+                                  "type": "string",
+                                  "description": "which business or rental it belongs to; totals are reported per activity"
+                                },
+                                "cost": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ],
+                                  "description": "cost or other basis, excluding land"
+                                },
+                                "placedInService": {
+                                  "type": "string",
+                                  "description": "YYYY-MM-DD"
+                                },
+                                "acquiredOn": {
+                                  "type": "string",
+                                  "description": "YYYY-MM-DD, the binding written contract date — required for the special allowance"
+                                },
+                                "recoveryClass": {
+                                  "type": "string",
+                                  "enum": [
+                                    "3",
+                                    "5",
+                                    "7",
+                                    "10",
+                                    "15",
+                                    "20",
+                                    "25",
+                                    "39",
+                                    "27.5",
+                                    "qip"
+                                  ]
+                                },
+                                "assetClass": {
+                                  "type": "string",
+                                  "description": "Rev. Proc. 87-56 class (Pub 946 Table B-1/B-2) instead of recoveryClass"
+                                },
+                                "businessUsePercent": {
+                                  "type": "number"
+                                },
+                                "section179": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ],
+                                  "description": "§ 179 expense elected for this asset (current year)"
+                                },
+                                "section1245Property": {
+                                  "type": "boolean",
+                                  "description": "15/20-year property and asset class 57.1: is it § 1245 property (asked only when § 179 is used)"
+                                },
+                                "section179QualifiedRealProperty": {
+                                  "type": "boolean"
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "enum": [
+                                    "default",
+                                    "150DB",
+                                    "SL",
+                                    "ADS"
+                                  ]
+                                },
+                                "adsRecoveryPeriod": {
+                                  "type": "number"
+                                },
+                                "listed": {
+                                  "type": "boolean"
+                                },
+                                "passengerAutomobile": {
+                                  "type": "boolean"
+                                },
+                                "sportUtilityVehicle": {
+                                  "type": "boolean"
+                                },
+                                "longProductionPeriod": {
+                                  "type": "boolean"
+                                },
+                                "convention": {
+                                  "type": "string",
+                                  "enum": [
+                                    "HY",
+                                    "MQ"
+                                  ],
+                                  "description": "earlier-year assets: the convention used when placed in service"
+                                },
+                                "section179Taken": {
+                                  "$ref": "#/properties/assets/items/properties/section179",
+                                  "description": "earlier-year assets: § 179 taken (0 if none)"
+                                },
+                                "specialAllowanceTaken": {
+                                  "$ref": "#/properties/assets/items/properties/section179",
+                                  "description": "earlier-year assets: special allowance taken (0 if none)"
+                                },
+                                "disposedOn": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "cost",
+                                "placedInService"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "section179Carryover": {
+                            "$ref": "#/properties/assets/items/properties/section179",
+                            "description": "line 10: last year's line 13"
+                          },
+                          "section179BusinessIncome": {
+                            "$ref": "#/properties/assets/items/properties/section179",
+                            "description": "dollars, e.g. 50000 or \"1234.56\""
+                          },
+                          "section179FromK1": {
+                            "$ref": "#/properties/assets/items/properties/section179",
+                            "description": "§ 179 expense allocated on Schedules K-1"
+                          },
+                          "spouseSection179Cost": {
+                            "$ref": "#/properties/assets/items/properties/section179",
+                            "description": "MFS: cost of § 179 property your spouse placed in service"
+                          },
+                          "mfsAllocationPercent": {
+                            "type": "number"
+                          },
+                          "electOutOfSpecialAllowance": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "3",
+                                "5",
+                                "7",
+                                "10",
+                                "15",
+                                "20",
+                                "25",
+                                "39",
+                                "27.5",
+                                "qip"
+                              ]
+                            }
+                          },
+                          "elect40PercentFor2025": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "taxYear",
+                          "filingStatus",
+                          "assets"
                         ],
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": false
