@@ -1,0 +1,19 @@
+{
+  "description": "§ 86 provisional income uses AGI after the NOL deduction (Schedule 1 line 8a). Single 2025: pension $40,000, benefits $30,000, NOL $20,000. Without the NOL: provisional 55,000 → taxable benefits $22,350, taxable income without the NOL 40,000 + 22,350 − 15,750 = $46,600 → deduction min(20,000, 80% × 46,600) = $20,000. With it: MAGI 20,000, provisional 35,000 → 85% × 1,000 + 4,500 = $5,350 taxable; AGI 25,350; taxable income $9,600.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "socialSecurityBenefits": 30000,
+    "taxablePensionsAndAnnuities": 40000,
+    "nolCarryforwardPost2017": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.taxable_income",
+  "expect": {
+    "valueCents": "960000",
+    "intermediates": {
+      "us.federal.taxable_social_security": "535000",
+      "us.federal.agi": "2535000"
+    }
+  }
+}

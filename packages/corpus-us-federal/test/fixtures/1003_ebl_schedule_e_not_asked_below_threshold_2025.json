@@ -1,0 +1,14 @@
+{
+  "description": "K-1 loss $200,000 with $60,000 of Schedule E income: under the $313,000 threshold either way, so nothing is asked.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "k1OrdinaryBusinessLoss": 200000,
+    "scheduleENetIncome": 60000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "0"
+  }
+}

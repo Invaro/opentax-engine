@@ -1,0 +1,16 @@
+{
+  "description": "Form 6251 line 2f: with a regular NOL deduction the alternative tax NOL deduction is asked.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 100000,
+    "nolCarryforwardPost2017": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "alternativeTaxNolDeduction"
+    ]
+  }
+}

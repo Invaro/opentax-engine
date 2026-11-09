@@ -208,8 +208,11 @@ const line1b: Expr = sub(
     ruleRef("us.federal.qbi_deduction"),
   ),
 );
-const line4BeforeMfs: Expr = add(
+// line 2e: the Schedule 1 line 8a NOL deduction, as a positive amount
+const line2e: Expr = sub(money("0"), ruleRef("us.federal.nol_deduction"));
+const line4BeforeMfsAndAtnold: Expr = add(
   line1b,
+  line2e,
   {
     kind: "if",
     cond: itemizing,
@@ -230,6 +233,24 @@ const line4BeforeMfs: Expr = add(
   fact("amtIsoExerciseSpread"), // line 2i
   fact("amtOtherPreferences"), // lines 2b–3, attested
 );
+// line 2f: the ATNOLD, "limited to 90% of" lines 1 through 3 figured with line 2f
+// treated as zero. The deduction itself is attested, and asked only when there are NOL
+// carryovers and those lines exceed the full exemption: at or below it the AMT is zero
+// whatever the ATNOLD, and line 2f is left at zero
+const nolCarryovers: Expr = add(fact("nolCarryforwardPre2018"), fact("nolCarryforwardPost2017"));
+const line2f: Expr = {
+  kind: "if",
+  cond: {
+    kind: "and",
+    args: [
+      { kind: "cmp", op: "gt", left: nolCarryovers, right: money("0") },
+      { kind: "cmp", op: "gt", left: line4BeforeMfsAndAtnold, right: byStatus("exemptSingle", "exemptJoint", "exemptMfs") },
+    ],
+  },
+  then: min(max0(fact("alternativeTaxNolDeduction")), max0(pct(line4BeforeMfsAndAtnold, "90"))),
+  else: money("0"),
+};
+const line4BeforeMfs: Expr = sub(line4BeforeMfsAndAtnold, line2f);
 
 function amtiRule(version: number, y: AmtYear): Rule {
   return {
@@ -241,12 +262,14 @@ function amtiRule(version: number, y: AmtYear): Rule {
       source: `26 U.S.C. §§ 55(b)(2), (d)(2), 56; ${y.source}`,
       section: "Form 6251 lines 1a–4; § 55(d)(2) last sentence",
       url: F6251_URL,
-      excerpt: `Line 1b: "Subtract line 1a from Form 1040, 1040-SR, or 1040-NR, line 11b (if less than zero, enter as a negative amount)", where line 1a is Form 1040 line 14 less the Schedule 1-A enhanced deduction for seniors. Line 2a: "If filing Schedule A (Form 1040), enter the taxes from Schedule A, line 7; otherwise, enter the amount from Form 1040 or 1040-SR, line 12e." An itemizer also subtracts the § 68 reduction, since "Section 68 shall not apply" (§ 56(b)(1)(E)); a filer who used Schedule A only for the net qualified disaster loss increase enters zero on line 2a and adds back the standard deduction before the increase on line 3 (2025 instructions). Line 2i adds the incentive stock option spread; other adjustments and preferences come in as one entered amount. Married filing separately: AMTI "shall be increased by the lesser of" ${y.phaseRate}% of the excess over $${(Number(y.mfsZeroAt) / 100).toLocaleString("en-US")} or the exemption amount (§ 55(d)(2)).`,
+      excerpt: `Line 1b: "Subtract line 1a from Form 1040, 1040-SR, or 1040-NR, line 11b (if less than zero, enter as a negative amount)", where line 1a is Form 1040 line 14 less the Schedule 1-A enhanced deduction for seniors. Line 2a: "If filing Schedule A (Form 1040), enter the taxes from Schedule A, line 7; otherwise, enter the amount from Form 1040 or 1040-SR, line 12e." An itemizer also subtracts the § 68 reduction, since "Section 68 shall not apply" (§ 56(b)(1)(E)); a filer who used Schedule A only for the net qualified disaster loss increase enters zero on line 2a and adds back the standard deduction before the increase on line 3 (2025 instructions). Line 2e: "Net operating loss deduction from Schedule 1 (Form 1040), line 8a. Enter as a positive amount". Line 2f, the alternative tax net operating loss deduction: "first figure a tentative amount for line 2d by treating line 2f as if it were zero. Next, figure a tentative total of lines 1 through 3 using the tentative line 2d amount and treating line 2f as if it were zero. This is your AMTI figured without regard to the ATNOLD. Your ATNOLD is limited to 90% of the result." [The ATNOLD before that limit is entered (alternativeTaxNolDeduction) and asked only with NOL carryovers when lines 1–3 exceed the full exemption — at or below it the AMT is zero whatever the ATNOLD, so line 2f is left at zero and AMTI is shown without it; an alternative tax NOL with no regular NOL carryover is not modeled; the exceptions to the 90% limit (pre-2005 qualified disaster, Gulf Opportunity Zone, Kansas and Midwestern disaster losses, § 172(b)(1)(H) elections) are not modeled.] Line 2i adds the incentive stock option spread; other adjustments and preferences come in as one entered amount. Married filing separately: AMTI "shall be increased by the lesser of" ${y.phaseRate}% of the excess over $${(Number(y.mfsZeroAt) / 100).toLocaleString("en-US")} or the exemption amount (§ 55(d)(2)).`,
     },
     effectiveFrom: y.from,
     effectiveTo: y.to,
     output: { type: "money" },
     parameters: {
+      exemptSingle: { value: y.exemptSingle, type: "money" },
+      exemptJoint: { value: y.exemptJoint, type: "money" },
       exemptMfs: { value: y.exemptMfs, type: "money" },
       mfsZeroAt: { value: y.mfsZeroAt, type: "money" },
     },
@@ -342,9 +365,10 @@ function tmtRule(version: number, y: AmtYear): Rule {
 }
 
 export const amtRules: Rule[] = [
-  amtiRule(1, Y2025),
-  amtiRule(2, Y2026),
-  amtiRule(3, Y2027),
+  // v1–v3 had no line 2e/2f (the NOL deduction did not exist)
+  amtiRule(4, Y2025),
+  amtiRule(5, Y2026),
+  amtiRule(6, Y2027),
   exemptionRule(1, Y2025),
   exemptionRule(2, Y2026),
   exemptionRule(3, Y2027),

@@ -1,0 +1,13 @@
+{
+  "description": "Fixture 992's return generates no NOL: Form 172 line 1 −30,000 + line 9 16,100 + line 23 50,000 = $36,100 ≥ 0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 36100,
+    "nolCarryforwardPre2018": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.generated",
+  "expect": {
+    "valueCents": "0"
+  }
+}

@@ -20,16 +20,16 @@ const FROM = { effectiveFrom: "2025-01-01" }; // structural rules: open-ended
 export const incomeRules: Rule[] = [
   {
     id: "us.federal.gross_income",
-    version: 16, // v15 had one self-employed person; v16 adds the second self-employed spouse's profit (us.federal.se_net_profit). v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
+    version: 17, // v16 had no Schedule 1 line 8a/8p (NOL deduction, § 461(l) excess business loss) and no K-1 ordinary business loss. v15 had one self-employed person; v16 adds the second self-employed spouse's profit (us.federal.se_net_profit). v14 read the raw gain facts; capital gains now enter via schedule_d netting (mixed gain/loss years compute instead of refusing), and rental income can enter pre-depreciation via us.federal.rental.net_income
     jurisdiction: J,
     title:
-      "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income − allowed capital loss − § 911 exclusion)",
+      "Gross income (simplified: wages + interest + capital gains (long/short-term) + qualified/ordinary dividends + SE net profit + K-1 pass-through income − K-1 and Schedule C/E business losses + § 461(l) excess business loss − NOL deduction − allowed capital loss − § 911 exclusion)",
     citation: {
       source: "26 U.S.C. § 61(a); §§ 701, 1366(a); § 1211(b); § 1222(5)",
       section: "§ 61(a)(1)–(4); § 1366(a); § 1211(b); § 1222(5)",
       url: "https://www.law.cornell.edu/uscode/text/26/61",
       excerpt:
-        "gross income means all income from whatever source derived, including… compensation for services… gains derived from dealings in property… interest… dividends… annuities… pensions [and] distributions (§§ 61(a), 72, 85, 408(d)); net short-term capital gain (§ 1222(5)) and ordinary (non-qualified) dividends are taxed at ordinary rates, unlike net long-term capital gain/qualified dividends; other fully-includible ordinary income — gambling winnings, prizes, Alaska Permanent Fund dividends, jury duty pay (Schedule 1 line 8) — enters through the otherOrdinaryIncome fact; a partner's or S-corporation shareholder's share passes through under §§ 701–702 and 1366(a); social security benefits are included per the § 86 formula — reduced by the capital loss allowed against ordinary income under § 1211(b) (up to $3,000/$1,500 MFS) and by the \u00a7 911(a) foreign earned income exclusion (foreign earnings stay IN the wages/SE inputs; the exclusion subtracts here \u2014 the \u00a7 911(f) stacking override taxes the remainder at the right rates). [IRA/pension inputs are the TAXABLE amounts — Form 8606 basis and § 72 exclusion-ratio machinery attested.]",
+        "gross income means all income from whatever source derived, including… compensation for services… gains derived from dealings in property… interest… dividends… annuities… pensions [and] distributions (§§ 61(a), 72, 85, 408(d)); net short-term capital gain (§ 1222(5)) and ordinary (non-qualified) dividends are taxed at ordinary rates, unlike net long-term capital gain/qualified dividends; other fully-includible ordinary income — gambling winnings, prizes, Alaska Permanent Fund dividends, jury duty pay (Schedule 1 line 8) — enters through the otherOrdinaryIncome fact; a partner's or S-corporation shareholder's share passes through under §§ 701–702 and 1366(a); social security benefits are included per the § 86 formula — reduced by the capital loss allowed against ordinary income under § 1211(b) (up to $3,000/$1,500 MFS) and by the \u00a7 911(a) foreign earned income exclusion (foreign earnings stay IN the wages/SE inputs; the exclusion subtracts here \u2014 the \u00a7 911(f) stacking override taxes the remainder at the right rates). [IRA/pension inputs are the TAXABLE amounts — Form 8606 basis and § 72 exclusion-ratio machinery attested.] Schedule 1 line 8 also carries the net operating loss deduction (line 8a, negative) and the § 461(l) excess business loss adjustment (line 8p), through us.federal.schedule1_other_income; nonpassive K-1 ordinary business losses reduce income on Schedule E (Schedule 1 line 5).",
     },
     ...FROM,
     output: { type: "money" },
@@ -64,15 +64,18 @@ export const incomeRules: Rule[] = [
           fact("scheduleENetIncome"),
           ruleRef("us.federal.rental.net_income"),
           ruleRef("us.federal.taxable_social_security"),
+          // Schedule 1 line 8a (negative) and line 8p
+          ruleRef("us.federal.schedule1_other_income"),
         ],
       },
       right: {
         kind: "add",
         args: [
-          ruleRef("us.federal.capital_loss_ordinary_offset"),
+          ruleRef("us.federal.capital_loss_against_ordinary_income"), // the § 1211(b) deduction
           ruleRef("us.federal.feie.exclusion"),
           fact("nonpassiveScheduleELoss"),
           fact("scheduleCNetLoss"),
+          fact("k1OrdinaryBusinessLoss"),
         ],
       },
     },

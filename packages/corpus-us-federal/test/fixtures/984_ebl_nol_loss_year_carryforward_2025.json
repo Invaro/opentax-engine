@@ -1,0 +1,23 @@
+{
+  "description": "§ 461(l) + § 172 loss year (derived; Form 461 and Form 172 Part I by hand). Single 2025: wages $50,000, interest $5,000, Schedule C loss $400,000. Form 461: line 2 −$400,000, line 15 $313,000 (Rev. Proc. 2024-40 § 2.32), line 16 −$87,000 → excess business loss $87,000 (Schedule 1 line 8p). AGI 50,000 + 5,000 − 400,000 + 87,000 = −$258,000. Form 172: line 1 −258,000 − 15,750 = −273,750; line 6 $15,750 (standard deduction, nonbusiness); line 7 $5,000 (interest); line 9 $10,750; line 24 −$263,000 → NOL $263,000. Carryforward to 2026 = NOL + excess business loss = $350,000 = the business loss less the wages (wages are business income for § 172(d)(4)).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "taxableInterest": 5000,
+    "scheduleCNetLoss": 400000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol.carryover_post2017",
+  "expect": {
+    "valueCents": "35000000",
+    "intermediates": {
+      "us.federal.excess_business_loss": "8700000",
+      "us.federal.agi": "-25800000",
+      "us.federal.nol.generated": "26300000"
+    },
+    "notAssumedFacts": [
+      "capitalItemsAreNonbusiness",
+      "scheduleEIsTradeOrBusiness"
+    ]
+  }
+}

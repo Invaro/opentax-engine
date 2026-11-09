@@ -1,0 +1,15 @@
+{
+  "description": "The excess-business-loss NOL refusal (Reg. § 1.199A-3(b)(1)(v)) applies only when some of it is deducted: Schedule C profit $10,000 leaves taxable income without the NOL at $0, so the deduction is $0 and nothing reduces QBI.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 10000,
+    "nolCarryforwardPost2017": 20000,
+    "nolCarryforwardFromExcessBusinessLoss": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "0"
+  }
+}

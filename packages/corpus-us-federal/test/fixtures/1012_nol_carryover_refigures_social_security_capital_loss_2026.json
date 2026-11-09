@@ -1,0 +1,16 @@
+{
+  "description": "§ 172(b)(2)(A): modified taxable income is figured without the § 1211(b) deduction, with AGI-dependent items refigured (I172, Modified taxable income: \"You must figure any item affected by the amount of your AGI after making the changes\"). Single 2026: pension $30,000, Social Security $20,000, $3,000 capital loss deducted, post-2017 NOL $30,000. Without the NOL: provisional income 27,000 + 10,000 = 37,000 → taxable benefits 2,550 + 4,500 = $7,050; AGI $34,050; taxable income $17,950; deduction 80% = $14,360. Modified: provisional 30,000 + 10,000 = 40,000 → taxable benefits 5,100 + 4,500 = $9,600; AGI $39,600; modified taxable income $23,500, less 20% × 17,950 = $3,590 → absorbed $19,910 → carryover $10,090 (adding back only the $3,000 gives $11,140).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxablePensionsAndAnnuities": 30000,
+    "socialSecurityBenefits": 20000,
+    "netCapitalLoss": 3000,
+    "nolCarryforwardPost2017": 30000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_post2017",
+  "expect": {
+    "valueCents": "1009000"
+  }
+}

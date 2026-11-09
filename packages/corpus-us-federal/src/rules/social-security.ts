@@ -67,14 +67,17 @@ const magiBase: Expr = {
         },
         fact("scheduleENetIncome"),
         ruleRef("us.federal.rental.net_income"),
+        // Schedule 1 line 8a NOL deduction (negative) and line 8p excess business loss: both in AGI
+        ruleRef("us.federal.schedule1_other_income"),
       ],
     },
     right: {
       kind: "add",
       args: [
-        ruleRef("us.federal.capital_loss_ordinary_offset"),
+        ruleRef("us.federal.capital_loss_against_ordinary_income"), // the § 1211(b) deduction
         fact("nonpassiveScheduleELoss"),
         fact("scheduleCNetLoss"),
+        fact("k1OrdinaryBusinessLoss"),
       ],
     },
   },
@@ -112,7 +115,7 @@ const byJoint = (joint: string, other: string): Expr => ({
 export const socialSecurityRules: Rule[] = [
   {
     id: "us.federal.taxable_social_security",
-    version: 11, // v10 left a Schedule C loss, pre-2019 alimony and taxable HSA distributions out of the § 86 income. v9 counted one self-employed person's profit; v10 counts both spouses' (us.federal.se_net_profit). v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
+    version: 12, // v11 left the Schedule 1 line 8a NOL deduction, the line 8p excess business loss and K-1 ordinary business losses out of the § 86 income. v10 left a Schedule C loss, pre-2019 alimony and taxable HSA distributions out of the § 86 income. v9 counted one self-employed person's profit; v10 counts both spouses' (us.federal.se_net_profit). v8 zeroed the base amount for EVERY MFS filer; § 86(c)(1)(C)(ii) zeroes it only for one who did not live apart from the spouse all year (mfsLivedApartAllYear — Form 1040 line 6d context) — v7 read the raw gain facts; the § 86 income measure now takes the schedule_d netted results, the simplified-method pension taxable amount, and computed net rental income
     jurisdiction: "us.federal",
     title: "Taxable Social Security benefits (§ 86: the 0/50/85% worksheet)",
     citation: {

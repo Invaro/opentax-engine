@@ -1,0 +1,20 @@
+{
+  "description": "Pub 536 (2023) Worksheet 1 example structure (record business: wages $1,225, interest $425, Schedule C loss $5,000, $2,000 long-term gain, $1,000 short-term stock loss; AGI −$2,350 as printed) with the $2,000 gain attested as an INVESTMENT gain. Form 172 Part I: line 1 −2,350 − 15,750 = −18,100; line 5 net nonbusiness capital gain $1,000; line 6 $15,750; line 7 $425; line 9 15,750 − 1,425 = $14,325; line 24 −$3,775 → NOL $3,775. (Pub 536 prints $1,775 because there the gain is from business real estate, which can't absorb nonbusiness deductions — that case is refused, fixture 1000.)",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 1225,
+    "taxableInterest": 425,
+    "longTermCapitalGains": 2000,
+    "shortTermCapitalLoss": 1000,
+    "scheduleCNetLoss": 5000,
+    "capitalItemsAreNonbusiness": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol.generated",
+  "expect": {
+    "valueCents": "377500",
+    "intermediates": {
+      "us.federal.agi": "-235000"
+    }
+  }
+}

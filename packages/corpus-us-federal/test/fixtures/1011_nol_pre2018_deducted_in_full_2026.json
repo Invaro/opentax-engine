@@ -1,0 +1,13 @@
+{
+  "description": "Fixture 992's return: the pre-2018 NOL is deducted in full even though it exceeds taxable income (§ 172(a)(2)(A) has no limit) — Schedule 1 line 8a −$50,000; taxable income $0.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 36100,
+    "nolCarryforwardPre2018": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "-5000000"
+  }
+}

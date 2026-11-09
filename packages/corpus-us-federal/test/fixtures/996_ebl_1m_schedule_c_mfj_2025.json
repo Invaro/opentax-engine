@@ -1,0 +1,13 @@
+{
+  "description": "§ 461(l)(3)(A)(ii)(II): 200% of the threshold on a joint return — $626,000 for 2025. $1,000,000 joint Schedule C loss → $374,000.",
+  "facts": {
+    "filingStatus": "mfj",
+    "wages": 0,
+    "scheduleCNetLoss": 1000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "37400000"
+  }
+}

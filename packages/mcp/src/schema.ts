@@ -209,6 +209,13 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
     "businessMilesDriven",
     "businessMilesDrivenFromJuly",
     "aggregateBusinessLoss",
+    "k1OrdinaryBusinessLoss",
+    "scheduleEIsTradeOrBusiness",
+    "nolCarryforwardPre2018",
+    "nolCarryforwardPost2017",
+    "nolCarryforwardFromExcessBusinessLoss",
+    "itemizedDeductionsBusinessPortion",
+    "capitalItemsAreNonbusiness",
   ],
   adjustments: [
     "alimonyPaidPre2019",
@@ -300,6 +307,7 @@ export const INDIVIDUAL_GROUPS: Record<string, readonly string[]> = {
   investor_amt: [
     "amtIsoExerciseSpread",
     "amtOtherPreferences",
+    "alternativeTaxNolDeduction",
     "niitInvestmentExpenses",
     "qsbsGain",
     "qsbsAcquiredAfterJuly2025",

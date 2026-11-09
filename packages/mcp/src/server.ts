@@ -17,7 +17,7 @@ import type { Expr, Rule } from "@invaro/opentax-core";
 import { IncompleteReturnError } from "./completeness.js";
 import { COMPOSER_VERSION } from "./version.js";
 import { compareAcross, factCheck, findCliffs, HOSTED_CLIFF_LIMITS, lookupParameters, searchRules } from "@invaro/opentax-solve";
-import { composeForm2210, composeStateReturn, form2210InputFromArgs, isIncompleteReturnRefusal, makeStateTaxEvaluator, MissingInput, stateReturnShape } from "@invaro/opentax-compose";
+import { composeForm2210, composeForm4562, composeStateReturn, form2210InputFromArgs, Form4562MissingInput, Form4562Refusal, form4562InputFromArgs, isIncompleteReturnRefusal, makeStateTaxEvaluator, MissingInput, stateReturnShape } from "@invaro/opentax-compose";
 import type { TargetRunner, TypedFacts } from "@invaro/opentax-compose";
 import { matchOccupation, TIPPED_OCCUPATIONS } from "@invaro/opentax-corpus-us-federal";
 import {
@@ -445,7 +445,7 @@ server.registerTool(
   "compute_return",
   {
     description:
-      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+      "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers) and, when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
     inputSchema: legacyJsonSchema(z.object(individualNestedShape).strict()),
   },
   async (args: Record<string, unknown>) => {
@@ -530,6 +530,27 @@ server.registerTool(
       const payments = rd(withheld) + rd(refundable) + rd(extension) + rd(estimated);
       const balance = payments - total24;
       const d = (c: bigint) => fmt(rd(c));
+      // Schedule 1 line 8a (NOL deduction, negative) and 8p (§ 461(l) excess business loss), and
+      // in a loss year the NOL carryovers to next year (Form 172; § 172(b)(2)); a carryover the
+      // engine can't settle reports why instead of failing the return
+      const line8a = get("us.federal.nol_deduction");
+      const line8p = get("us.federal.excess_business_loss");
+      const lossYear = line8a !== 0n || line8p !== 0n || agi - deduction < 0n;
+      let losses: Record<string, unknown> | undefined;
+      if (lossYear) {
+        losses = {};
+        if (line8a !== 0n) losses["schedule1_8a_nol_deduction"] = d(line8a);
+        if (line8p !== 0n) losses["schedule1_8p_excess_business_loss"] = d(line8p);
+        try {
+          losses["form172_line24_nol"] = d(get("us.federal.nol.generated"));
+          losses["nol_carryover_pre2018"] = d(get("us.federal.nol.carryover_pre2018"));
+          losses["nol_carryover_post2017"] = d(get("us.federal.nol.carryover_post2017"));
+        } catch (err) {
+          if (err instanceof NeedsFactsError) losses["carryoverNeedsFacts"] = err.missing.map((m) => m.factId);
+          else if (err instanceof OpenTaxError) losses["carryoverNotComputed"] = err.message;
+          else throw err;
+        }
+      }
       return ok({
         ok: true,
         asOf,
@@ -568,6 +589,7 @@ server.registerTool(
           "34_refund_or_37_owed": balance >= 0n ? `refund ${fmt(balance)}` : `owed ${fmt(-balance)}`,
         },
         schedule3: Object.fromEntries(Object.entries(sched3).map(([k, v]) => [k, d(v)])),
+        ...(losses ? { losses } : {}),
         ...(form5695 ? { forms: { "5695": form5695 } } : {}),
         note: "Lines 9-37 are engine-computed and whole-dollar rounded; senior/tips/overtime/QBI deductions sit between 12e and 15 (lines 13-14). Line 1a is W-2 box 1 ONLY (Form 1040); non-W-2 earned income (e.g. pre-retirement disability) is line 1h. Gross document lines (4a/5a/6a) come from your transcription. Line 20 is the sum of the modeled Schedule 3 nonrefundable credits (schedule3); when any Form 5695 input is given, forms['5695'] carries that form's printed lines. Report these numbers as-is.",
         assumptions: proof.assumptions,
@@ -653,6 +675,85 @@ server.registerTool(
             })),
           ),
         );
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "compute_form_4562",
+  {
+    description:
+      "Form 4562 — depreciation for an individual's businesses and rentals, tax years 2025-2027 (calendar year): § 179 expensing with the dollar limit, phase-out, married-filing-separately split, business income limitation and carryover; the § 168(k) special allowance (100% for property acquired after January 19, 2025; 40% in 2025 and 20% in 2026 for property acquired earlier; the TY2025 40% election; election out by class); MACRS with the printed Publication 946 tables (half-year, mid-quarter by the 40% test, mid-month for buildings; 150% DB, straight-line and ADS elections); dispositions during the year; listed property and the § 280F passenger automobile limits (2025 and 2026); and Rev. Proc. 87-56 asset classes for cost segregation (assetClass, e.g. '57.0', '00.11', '00.3'). Give EVERY asset in service: current-year assets with cost, placedInService and acquiredOn (the binding-contract date, which sets the bonus percentage); earlier assets also with convention (HY/MQ), section179Taken and specialAllowanceTaken. section179BusinessIncome is required when § 179 is elected or carried over (taxable income from actively conducted businesses including wages, without § 179, the half-SE-tax deduction or any NOL). Returns the form's lines, each asset's schedule, and the deduction by activity (Schedule C line 13, Schedule E line 18) — subtract each activity's amount from that business's income before depreciation. Situations the sources don't settle (short years, general asset accounts, 100% bonus on a passenger car, § 280F recapture, a disposition in the last recovery year) refuse with the reason. Report the lines and notes verbatim; dollars in, whole dollars out.",
+    inputSchema: legacyJsonSchema(
+      z
+        .object({
+          taxYear: z.number().int().describe("2025, 2026 or 2027"),
+          filingStatus: z.enum(["single", "mfj", "mfs", "hoh", "qss"]),
+          assets: z.array(
+            z
+              .object({
+                id: z.string(),
+                description: z.string().optional(),
+                activity: z.string().optional().describe("which business or rental it belongs to; totals are reported per activity"),
+                cost: money.describe("cost or other basis, excluding land"),
+                placedInService: z.string().describe("YYYY-MM-DD"),
+                acquiredOn: z.string().optional().describe("YYYY-MM-DD, the binding written contract date — required for the special allowance"),
+                recoveryClass: z.enum(["3", "5", "7", "10", "15", "20", "25", "27.5", "39", "qip"]).optional(),
+                assetClass: z.string().optional().describe("Rev. Proc. 87-56 class (Pub 946 Table B-1/B-2) instead of recoveryClass"),
+                businessUsePercent: z.number().optional(),
+                section179: money.optional().describe("§ 179 expense elected for this asset (current year)"),
+                section1245Property: z.boolean().optional().describe("15/20-year property and asset class 57.1: is it § 1245 property (asked only when § 179 is used)"),
+                section179QualifiedRealProperty: z.boolean().optional(),
+                method: z.enum(["default", "150DB", "SL", "ADS"]).optional(),
+                adsRecoveryPeriod: z.number().optional(),
+                listed: z.boolean().optional(),
+                passengerAutomobile: z.boolean().optional(),
+                sportUtilityVehicle: z.boolean().optional(),
+                longProductionPeriod: z.boolean().optional(),
+                convention: z.enum(["HY", "MQ"]).optional().describe("earlier-year assets: the convention used when placed in service"),
+                section179Taken: money.optional().describe("earlier-year assets: § 179 taken (0 if none)"),
+                specialAllowanceTaken: money.optional().describe("earlier-year assets: special allowance taken (0 if none)"),
+                disposedOn: z.string().optional(),
+              })
+              .strict(),
+          ),
+          section179Carryover: money.optional().describe("line 10: last year's line 13"),
+          section179BusinessIncome: money.optional(),
+          section179FromK1: money.optional().describe("§ 179 expense allocated on Schedules K-1"),
+          spouseSection179Cost: money.optional().describe("MFS: cost of § 179 property your spouse placed in service"),
+          mfsAllocationPercent: z.number().optional(),
+          electOutOfSpecialAllowance: z.array(z.enum(["3", "5", "7", "10", "15", "20", "25", "27.5", "39", "qip"])).optional(),
+          elect40PercentFor2025: z.boolean().optional(),
+        })
+        .strict(),
+    ),
+  },
+  async (args: Record<string, unknown>) => {
+    try {
+      const form = composeForm4562(form4562InputFromArgs(args));
+      return ok({
+        ok: true,
+        form: "4562",
+        ...form,
+        assets: form.assets.map((a) => ({
+          ...a,
+          businessBasis: fmt(a.businessBasis),
+          section179Elected: fmt(a.section179Elected),
+          section179Deducted: fmt(a.section179Deducted),
+          specialAllowance: fmt(a.specialAllowance),
+          macrsBasis: fmt(a.macrsBasis),
+          depreciation: fmt(a.depreciation),
+        })),
+      });
+    } catch (err) {
+      if (err instanceof Form4562MissingInput)
+        return { content: [{ type: "text" as const, text: JSON.stringify({ ok: false, error: err.toJSON() }, null, 2) }], isError: true };
+      if (err instanceof Form4562Refusal)
+        return {
+          content: [{ type: "text" as const, text: JSON.stringify({ ok: false, error: { code: "NOT_MODELED", message: err.message } }, null, 2) }],
+          isError: true,
+        };
       return fail(err);
     }
   },

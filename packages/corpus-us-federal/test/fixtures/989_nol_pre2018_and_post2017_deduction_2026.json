@@ -1,0 +1,14 @@
+{
+  "description": "§ 172(a)(2) (derived). Single 2026: wages $116,100 → taxable income without the NOL $100,000. Pre-2018 NOL $30,000 (no limit) + min(post-2017 $100,000, 80% × (100,000 − 30,000)) = 30,000 + 56,000 = $86,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 116100,
+    "nolCarryforwardPre2018": 30000,
+    "nolCarryforwardPost2017": 100000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "-8600000"
+  }
+}

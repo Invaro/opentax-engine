@@ -1,0 +1,14 @@
+{
+  "description": "Form 6251 (fixture 985's return, ATNOLD $160,000): line 1b 56,100 − 16,100 = $40,000; line 2a standard deduction $16,100; line 2e NOL deduction $160,000; tentative lines 1–3 $216,100; line 2f min(160,000, 90% × 216,100) = −$160,000 → AMTI $56,100.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 216100,
+    "nolCarryforwardPost2017": 350000,
+    "alternativeTaxNolDeduction": 160000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.amt.amti",
+  "expect": {
+    "valueCents": "5610000"
+  }
+}

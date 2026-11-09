@@ -1,0 +1,14 @@
+{
+  "description": "Instructions for Form 461 (2026, draft Sep 28, 2026), verbatim: 'A single filer with $400,000 of business losses and $50,000 of business income in 2026 would be: $400,000 − ($50,000 + $256,000) = $94,000 of excess business loss (disallowed).' Here: Schedule C loss $400,000, K-1 ordinary business income $50,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "scheduleCNetLoss": 400000,
+    "k1OrdinaryBusinessIncome": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "9400000"
+  }
+}

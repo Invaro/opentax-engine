@@ -1,0 +1,15 @@
+{
+  "description": "Reg. § 1.199A-3(b)(1)(v): a deducted NOL that came from an excess business loss reduces QBI. With Schedule C QBI present the interaction is not modeled → refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "selfEmploymentNetProfit": 100000,
+    "nolCarryforwardPost2017": 20000,
+    "nolCarryforwardFromExcessBusinessLoss": 20000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

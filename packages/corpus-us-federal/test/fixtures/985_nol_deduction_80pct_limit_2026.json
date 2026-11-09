@@ -1,0 +1,16 @@
+{
+  "description": "§ 172(a)(2)(B) 80% limit (derived). Single 2026, wages $216,100, post-2017 NOL carryover $350,000. Taxable income without the NOL deduction: 216,100 − 16,100 standard deduction = $200,000; deduction = min(350,000, 80% × 200,000) = $160,000 (Schedule 1 line 8a, negative). Taxable income $40,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 216100,
+    "nolCarryforwardPost2017": 350000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol_deduction",
+  "expect": {
+    "valueCents": "-16000000",
+    "intermediates": {
+      "us.federal.nol_deduction": "-16000000"
+    }
+  }
+}

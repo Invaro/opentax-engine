@@ -1,0 +1,14 @@
+{
+  "description": "§ 172(b)(2)(A) and (d)(2)(A) (derived). Single 2026: wages $119,100, § 1211(b) capital loss deduction $3,000, post-2017 NOL $500,000. Taxable income without the NOL: 119,100 − 3,000 − 16,100 = $100,000 → deduction 80% = $80,000. Modified taxable income adds back the $3,000 capital loss: $103,000, less 20% × 100,000 = $83,000 absorbed → carryover $417,000, NOT 500,000 − 80,000 = $420,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 119100,
+    "netCapitalLoss": 3000,
+    "nolCarryforwardPost2017": 500000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_post2017",
+  "expect": {
+    "valueCents": "41700000"
+  }
+}

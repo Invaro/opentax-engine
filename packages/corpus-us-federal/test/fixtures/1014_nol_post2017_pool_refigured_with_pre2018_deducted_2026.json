@@ -1,0 +1,17 @@
+{
+  "description": "§ 172(b)(2)(A): the post-2017 pool's modified taxable income takes the pre-2018 NOL deduction (an earlier loss) with AGI-dependent items refigured. Single 2026: pension $60,000, Social Security $30,000, pre-2018 NOL $30,000, post-2017 $50,000. Without any NOL: taxable benefits $25,500 (85% cap), AGI $85,500, taxable income $69,400; deduction 30,000 + min(50,000, 80% × 39,400) = $61,520. Post-2017 pool: AGI before benefits 60,000 − 30,000 = 30,000, provisional 45,000 → taxable benefits 9,350 + 4,500 = $13,850; AGI $43,850; modified taxable income $27,750, less 20% × 39,400 = $7,880 → absorbed $19,870 → carryover $30,130 (without refiguring: 69,400 − 30,000 − 7,880 = 31,520 absorbed, carryover $18,480).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "taxablePensionsAndAnnuities": 60000,
+    "socialSecurityBenefits": 30000,
+    "nolCarryforwardPre2018": 30000,
+    "nolCarryforwardPost2017": 50000
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.nol.carryover_post2017",
+  "expect": {
+    "valueCents": "3013000",
+    "intermediates": {}
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "description": "Instructions for Form 172 (Rev. December 2024) example: an unmarried taxpayer with a $1 million Schedule C loss. The printed $738,000 uses the 2021 $262,000 threshold (a printed error); at the 2025 $313,000 threshold (Rev. Proc. 2024-40 § 2.32) the excess business loss is $687,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 0,
+    "scheduleCNetLoss": 1000000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.excess_business_loss",
+  "expect": {
+    "valueCents": "68700000"
+  }
+}

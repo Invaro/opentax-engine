@@ -2,6 +2,67 @@
 
 New in OpenTax, newest first. Each release's git tag also lists every rule that changed, with old and new amounts.
 
+## Nov 9, 2026 · Business losses through AGI: § 461(l) and the § 172 NOL with the 80% limit
+
+Large business losses, K-1 losses and NOL carryovers now flow through AGI, taxable income and the AMT for 2025, 2026 and 2027.
+
+- **Excess business loss (§ 461(l), Form 461 → Schedule 1 line 8p):**
+  - Counts Schedule C/F results (both spouses), nonpassive K-1 ordinary business income and loss (new `k1OrdinaryBusinessLoss`), and Schedule E rentals when they are a trade or business. Wages never count.
+  - Thresholds: $313,000 / $626,000 joint for 2025, $256,000 / $512,000 for 2026, $264,000 / $528,000 for 2027. Only a joint return doubles.
+  - The disallowed amount is added back as other income and carried forward as an NOL.
+- **NOL deduction (§ 172, Schedule 1 line 8a):**
+  - Pre-2018 carryovers are deducted in full.
+  - Post-2017 carryovers are limited to 80% of taxable income figured without the NOL deduction and § 199A.
+  - That base is the return evaluated without the deduction, so Social Security, phase-outs and the medical floor are figured on AGI before it.
+- **NOL generated this year (Form 172 Part I, line 24),** with the nonbusiness-deduction limit, the capital loss add-back and the senior deduction left out (§ 172(d)(3)).
+- **Carryovers to next year (§ 172(b)(2)),** pre-2018 and post-2017 separately, oldest losses first, with the 20% reduction. Each pool's modified taxable income is the return re-run without the § 1211(b) deduction and without its own and later NOLs, so Social Security and the other AGI-dependent items are refigured as the Form 172 instructions direct. Post-2017 includes this year's NOL and excess business loss.
+- **AMT:** Form 6251 line 2e adds the NOL deduction back. Line 2f takes the alternative tax NOL deduction (new `alternativeTaxNolDeduction`), limited to 90% of AMTI. It is asked only with NOL carryovers when AMTI before it is above the exemption; at or below it the AMT is zero either way.
+- **`compute_return`** shows a `losses` block in a loss year: lines 8a and 8p, the Form 172 NOL and both carryovers.
+- **Asked only when it changes the answer:**
+  - whether a Schedule E activity is a trade or business;
+  - whether the capital items are investments (only with capital gains);
+  - an itemizer's business share of itemized deductions in a possible NOL year.
+- **Refuses, with the reason:**
+  - business capital gains or losses (Form 4797 is not modeled);
+  - an NOL from an excess business loss, when some is deducted alongside QBI (Reg. § 1.199A-3(b)(1)(v));
+  - a loss year with Schedule 1-A tips, overtime or car-loan deductions, other adjustments or a § 1202 gain;
+  - the California renter's credit when federal AGI carries an NOL or excess business loss (it uses California AGI, which follows California's own NOL rules; CalEITC and the YCTC use federal AGI and are unaffected).
+- **Checked:**
+  - The derived cases and every applicable IRS example: Form 461 (2026 draft) $94,000; the Form 172 instructions' $1 million example ($687,000 at the 2025 threshold, since the printed $738,000 uses 2021's); the Pub 536 Worksheet 1 structure.
+  - An independent rebuild from the sources without reading this code, on 22 scenarios plus probes. It found the carryover not refiguring Social Security, line 2f skipped when the regular deduction was zero, and three questions asked when they couldn't change the answer. All are fixed and now match.
+  - A differential against the released engine on 1,600 random returns (17,600 values). Every difference is a return with an excess business loss or one of its new questions.
+
+## Nov 9, 2026 · Form 4562: depreciation, § 179 and bonus, with cost-segregation classes
+
+`opentax form4562` (MCP `compute_form_4562`, library `composeForm4562`) computes Form 4562 for 2025, 2026 and 2027.
+
+- **§ 179:** $2,500,000 / $4,000,000 for 2025 (OBBBA § 70306), $2,560,000 / $4,090,000 for 2026, $2,640,000 / $4,230,000 for 2027.
+  - It covers the phase-out, the married-filing-separately split (50% unless elected), the business income limitation with carryover (current elections first, the disallowed part spread equally), § 179 from Schedules K-1, the SUV cap, and qualified real property.
+  - Basis drops by the amount elected, even the part carried over (Reg. §§ 1.179-1(f), 1.179-3(f)).
+  - Land improvements are not § 179 property. When § 179 is in play, 15- and 20-year property and asset class 57.1 need `section1245Property`.
+- **Special allowance (bonus):**
+  - 100% for property acquired after January 19, 2025 (the binding-contract date, OBBBA § 70301).
+  - 40% in 2025 and 20% in 2026 for earlier acquisitions (60% and 40% for long-production property), and none in 2027.
+  - The TY2025 election to take 40% instead, and election out by class (qualified improvement property is class 15).
+- **MACRS:**
+  - The printed Publication 946 tables, the ones filed returns use.
+  - Half-year, or mid-quarter when more than 40% of the year's basis (after § 179, before bonus) went into service in the last three months; mid-month for buildings.
+  - 150% DB, straight-line and ADS elections; earlier years' assets; dispositions during the year.
+- **Listed property:** ADS at 50% or less business use. Passenger automobile limits for cars placed in service 2020 through 2026, scaled by business use, with § 179 elected counting against the limit. A new car with 100% bonus gets the first-year limit.
+- **Cost segregation:** Rev. Proc. 87-56 asset classes (Pub 946 Table B-1/B-2) set the GDS and ADS periods.
+- **Missing facts** (acquisition date, an earlier asset's convention or bonus taken, business income) return `NEEDS_FACTS` (exit 2) with every missing item listed.
+- **Refuses, with the reason:**
+  - short or fiscal years and general asset accounts;
+  - a disposition in an asset's last recovery year;
+  - 2027 cars, whose limits aren't published;
+  - later years of a car that took 100% bonus (Rev. Proc. 2019-13);
+  - § 280F recapture;
+  - § 179 elected above the dollar limit, since which asset to cut is the taxpayer's call.
+- **Checked:**
+  - Every worked example in Pub 946 and the Form 4562 instructions that applies (23 cases, 43 values).
+  - Every table column sums to 100.00.
+  - An independent rebuild written from the sources without reading this code, on 850 random portfolios and 84 targeted probes. It found land improvements counted as § 179 property, an election out of class 15 that missed qualified improvement property, the car limit counting § 179 deducted instead of elected, and four refusals the sources answer. All are fixed. Every portfolio both sides compute now agrees to the cent, except line 2 on returns with no § 179, which this build leaves informational.
+
 ## Nov 6, 2026 · Projection: tax years 2028 to 2035 at an inflation rate you choose
 
 `--project-inflation 2.5` on `eval`, `check` and the solver commands, or `projection: { inflationPercent }` on the MCP tax tools, computes a year after 2027. Without it, 2028 and later still refuse.

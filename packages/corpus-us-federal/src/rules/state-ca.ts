@@ -1,6 +1,22 @@
 import type { Expr, Rule } from "@invaro/opentax-core";
 import { fact, isStatus, money, ruleRef } from "./state-helpers.js";
 
+/**
+ * Federal AGI for a California AGI test, refusing when it carries a federal NOL deduction
+ * or § 461(l) excess business loss (Schedule 1 lines 8a/8p): California figures both under
+ * its own rules (FTB 3805V; the 2024–2026 NOL suspension), not modeled here.
+ */
+const agiWithoutFederalLossItems: Expr = {
+  kind: "if",
+  cond: { kind: "cmp", op: "ne", left: ruleRef("us.federal.schedule1_other_income"), right: money("0") },
+  then: {
+    kind: "unsupported",
+    reason:
+      "a federal NOL deduction or excess business loss (Schedule 1 line 8a/8p): California AGI uses California's own NOL and excess business loss amounts, which are not modeled",
+  },
+  else: ruleRef("us.federal.agi"),
+};
+
 export const caRules: Rule[] = [
   {
     id: "us.ca.income_tax",
@@ -529,7 +545,7 @@ export const caRules: Rule[] = [
   },
   {
     id: "us.ca.renters_credit",
-    version: 1,
+    version: 2, // v1 read federal AGI even with a federal NOL deduction or § 461(l) excess business loss in it; California's own NOL and excess business loss rules differ, so v2 refuses then
     jurisdiction: "us.ca",
     title: "California nonrefundable renter's credit (R&TC § 17053.5, FTB 540)",
     citation: {
@@ -563,7 +579,7 @@ export const caRules: Rule[] = [
           cond: {
             kind: "cmp",
             op: "le",
-            left: ruleRef("us.federal.agi"),
+            left: agiWithoutFederalLossItems,
             right: { kind: "param", name: "agiCeilingJointHohQss" },
           },
           then: { kind: "param", name: "creditJointHohQss" },
@@ -574,7 +590,7 @@ export const caRules: Rule[] = [
           cond: {
             kind: "cmp",
             op: "le",
-            left: ruleRef("us.federal.agi"),
+            left: agiWithoutFederalLossItems,
             right: { kind: "param", name: "agiCeilingSingleMfs" },
           },
           then: { kind: "param", name: "creditSingleMfs" },

@@ -733,7 +733,7 @@ export const facts: FactSpec[] = [
     type: "money",
     min: "0",
     description:
-      "Schedule C/F net LOSS for the year as a POSITIVE number (gross receipts minus ACTUAL expenses is negative; § 165(c)(1) trade-or-business loss). Reduces gross income AND § 32(c)(2) earned income (EITC/ACTC); no SE tax attaches to a loss year. Schedule C ONLY — Schedule E losses belong in nonpassiveScheduleELoss or the passive facts. A 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading (that field is qbiW2Wages, never an expense). Gross-receipts composition follows selfEmploymentNetProfit's convention (intake receipts + nested 1099-NEC/K + 1099-MISC box 3 issued to the proprietor; MISC box 1 rents → Schedule E; TIN-mismatched 1099s excluded with disclosure). If QBI-flagged, also enter the same amount in qbiLossOffset. In dollars.",
+      "Schedule C/F net LOSS for the year as a POSITIVE number (gross receipts minus ACTUAL expenses is negative; § 165(c)(1) trade-or-business loss). Reduces gross income AND § 32(c)(2) earned income (EITC/ACTC); no SE tax attaches to a loss year. Schedule C ONLY — Schedule E losses belong in nonpassiveScheduleELoss or the passive facts. On a joint return, both spouses' Schedule C/F losses together (a loss never reduces the other spouse's self-employment tax). A 'loss' that exists only because the intake's 'W-2 Wages Paid' field was subtracted is a misreading (that field is qbiW2Wages, never an expense). Gross-receipts composition follows selfEmploymentNetProfit's convention (intake receipts + nested 1099-NEC/K + 1099-MISC box 3 issued to the proprietor; MISC box 1 rents → Schedule E; TIN-mismatched 1099s excluded with disclosure). If QBI-flagged, also enter the same amount in qbiLossOffset. In dollars.",
     default: {
       value: "0",
       rationale: "Assumed no self-employment loss absent contrary input",
@@ -2383,6 +2383,80 @@ export const facts: FactSpec[] = [
     description:
       "The noncorporate taxpayer's net aggregate business LOSS for the year, entered as a positive number (§ 461(l): the excess over $313k/$626k in 2025, $256k/$512k in 2026, is disallowed and becomes an NOL). In dollars.",
     // no default — only demanded by the excess-business-loss target
+  },
+  {
+    id: "k1OrdinaryBusinessLoss",
+    type: "money",
+    min: "0",
+    description:
+      "Ordinary business LOSS from a partnership or S corporation Schedule K-1 (box 1) as a POSITIVE number, from a trade or business in which the taxpayer MATERIALLY participates, after the basis (§ 704(d) / § 1366(d)) and at-risk (§ 465) limits — the amount allowed before § 461(l). Reduces gross income (Schedule E → Schedule 1 line 5) and counts as a business loss for the § 461(l) excess business loss limitation; not earned income. A passive K-1 loss belongs in the passive facts. If QBI-flagged, also enter it in qbiLossOffset. In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no K-1 business loss absent contrary input",
+    },
+  },
+  {
+    id: "scheduleEIsTradeOrBusiness",
+    type: "bool",
+    description:
+      "The Schedule E rental/royalty activities (scheduleENetIncome, the rentalIncomeBeforeDepreciation path, nonpassiveScheduleELoss) are a trade or business — e.g. real estate professional rentals (§ 469(c)(7)) or rentals rising to a § 162 business — so they count in the § 461(l) excess business loss (Form 461 line 5; Part II removes non-business amounts). Asked only when the answer changes the excess business loss.",
+    // no default — whether a rental is a trade or business is a facts-and-circumstances call
+  },
+  {
+    id: "nolCarryforwardPre2018",
+    type: "money",
+    min: "0",
+    description:
+      "Net operating loss carryovers to this year from losses arising in taxable years beginning BEFORE 2018 that are still within their 20-year carryforward (§ 172(b)(1)(A)(ii)(I)): fully deductible, not subject to the 80% limit (§ 172(a)(2)(A)). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no pre-2018 NOL carryover absent contrary input",
+    },
+  },
+  {
+    id: "nolCarryforwardPost2017",
+    type: "money",
+    min: "0",
+    description:
+      "Net operating loss carryovers to this year from losses arising in taxable years beginning AFTER 2017, including last years' disallowed § 461(l) excess business losses (§ 461(l)(2)): deductible up to 80% of taxable income figured without the NOL deduction and § 199A (§ 172(a)(2)(B)). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed no post-2017 NOL carryover absent contrary input",
+    },
+  },
+  {
+    id: "nolCarryforwardFromExcessBusinessLoss",
+    type: "money",
+    min: "0",
+    description:
+      "The part of nolCarryforwardPost2017 that came from a § 461(l) excess business loss. When deducted it reduces qualified business income (Reg. § 1.199A-3(b)(1)(v)). In dollars.",
+    default: {
+      value: "0",
+      rationale: "Assumed none of the NOL carryover came from an excess business loss absent contrary input",
+    },
+  },
+  {
+    id: "itemizedDeductionsBusinessPortion",
+    type: "money",
+    min: "0",
+    description:
+      "For figuring a net operating loss (Form 172 line 6): the part of itemized deductions that is attributable to a trade or business — state income tax on business income or wages, and casualty and theft losses from a federally declared disaster (Instructions for Form 172; § 172(d)(4)(C)). In dollars.",
+    // no default — demanded only for an itemizer's NOL computation
+  },
+  {
+    id: "capitalItemsAreNonbusiness",
+    type: "bool",
+    description:
+      "True when every capital gain and loss on this return is from investments (stock, funds, crypto held as an investment), not from property used in a trade or business. Asked only in a year with an excess business loss or a net operating loss: business capital gains count toward § 461(l) business income (Form 461 line 3) and are business income for the NOL (Form 172 lines 11–14), and neither is modeled — false is refused.",
+    // no default — asked only when the business/nonbusiness split changes the answer
+  },
+  {
+    id: "alternativeTaxNolDeduction",
+    type: "money",
+    min: "0",
+    description:
+      "Alternative tax net operating loss deduction (Form 6251 line 2f) as a POSITIVE number, before the 90%-of-AMTI limit, which the engine applies: the § 172 deduction refigured with the alternative tax NOL carryovers, each figured for its loss year with the AMT adjustments and preferences and the § 172(d) modifications on AMT items (§ 56(d)(1)–(2); Instructions for Form 6251). § 56(d)(1) starts from the deduction 'allowable … under section 172', so include § 172(a)(2)(B)'s 80% limit on post-2017 losses figured on AMTI without the ATNOLD; the 2025 Form 6251 instructions state only the 90% limit. With no AMT adjustments or preferences in any loss year, it is usually the same as the regular NOL deduction. Asked only with NOL carryovers when AMTI before it exceeds the exemption. In dollars.",
+    // no default — demanded only when there is a regular NOL deduction
   },
   {
     id: "corpForeignTaxesGeneral",
