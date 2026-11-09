@@ -2,10 +2,10 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OpenTax hosted API",
-    "version": "corpus 0.50.0 · engine proof schema 2",
+    "version": "corpus 0.51.0 · engine proof schema 2",
     "description": "The OpenTax engine as a remote MCP server (Model Context Protocol, Streamable HTTP transport, JSON-RPC 2.0). One endpoint, POST https://opentax.invaro.ai/mcp. Every tool below is invoked with method `tools/call`; discover them at runtime with `tools/list`. Responses carry the corpus Merkle root so any answer can be re-derived offline. This document is GENERATED from the live server by packages/mcp/scripts/gen-openapi.mjs — the tool input schemas are the server's own zod schemas rendered as JSON Schema.",
-    "x-corpus-merkle-root": "sha256:3fc1b2644ebd8c98d496985841b6f0223b7d6188be9d8a6aade761f82f1250fb",
-    "x-generated": "2026-11-09T18:20:53.588Z"
+    "x-corpus-merkle-root": "sha256:0d395770321eb157bbeb29522bb13556cf2bca9e2956a2df38ca5d80a4786f4c",
+    "x-generated": "2026-11-09T19:05:52.613Z"
   },
   "servers": [
     {
@@ -1678,6 +1678,455 @@
                             "additionalProperties": false,
                             "description": "nonpassive Schedule E rentals/royalties, self-rental, and the standalone aggregate § 469 check (us.federal.passive_loss_allowed)"
                           },
+                          "business_property": {
+                            "type": "object",
+                            "properties": {
+                              "businessProperties": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "How many business properties were sold or exchanged this year (0–8), each in businessProperty1… through businessProperty8… (Form 4797). The engine figures each gain or loss, the § 1245 and § 1250 recapture (Part III), the § 1231 netting with the five-year lookback (Part I), the ordinary total for Schedule 1 line 4 (Part II) and the unrecaptured § 1250 gain taxed at up to 25% (Schedule D line 19). Don't also enter these sales in the capital gain facts."
+                              },
+                              "businessProperty1Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). § 1252, § 1254 and § 1255 property, casualties and thefts (Form 4684) and installment sales (Form 6252) are not modeled."
+                              },
+                              "businessProperty1HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 1 was held more than 1 year (count from the day after acquisition through the day of sale). Held 1 year or less, its gain or loss is ordinary (Form 4797 Part II line 10); held longer, Parts I and III apply."
+                              },
+                              "businessProperty1SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1: gross sales price — money, the fair market value of other property received, and any debt the buyer assumed or took the property subject to (Form 4797 line 20 / line 2 column (d)). In dollars."
+                              },
+                              "businessProperty1CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1: cost or other basis plus improvements and the expense of sale, before depreciation (Form 4797 line 21 / column (f)). In dollars."
+                              },
+                              "businessProperty1Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1: depreciation and amortization allowed or allowable since acquisition, including the § 179 deduction and any special depreciation allowance, and the year of sale (Form 4797 line 22 / column (e)). In dollars."
+                              },
+                              "businessProperty1AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1 (section1250 only): additional depreciation after 1975 — depreciation (including any special allowance) in excess of straight line (Form 4797 line 26a). Zero for 27.5-year residential and 39-year nonresidential MACRS property depreciated straight line. In dollars."
+                              },
+                              "businessProperty1Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 1 was used in a qualified trade or business for § 199A: its ordinary gain or loss (recapture, a sale within a year, or a § 1231 loss when § 1231 nets to a loss) is QBI (Reg. § 1.199A-3(b)(2)(ii)(A) excludes only capital gain and loss). Asked when the property has an ordinary result."
+                              },
+                              "businessProperty1NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 1's gain or loss is net investment income (§ 1411(c)(1)(A)(iii)): true for property held in a passive activity or a rental that isn't a § 162 trade or business; false for property used in a trade or business in which you materially participate (Form 8960 line 5b takes it out). Asked when the net investment income tax can apply."
+                              },
+                              "businessProperty2Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 2 (when businessProperties ≥ 2): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty2HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 2 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty2SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty2CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty2Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty2AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty2Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 2 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty2NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 2's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty3Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 3 (when businessProperties ≥ 3): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty3HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 3 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty3SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty3CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty3Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty3AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty3Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 3 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty3NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 3's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty4Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 4 (when businessProperties ≥ 4): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty4HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 4 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty4SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty4CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty4Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty4AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty4Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 4 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty4NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 4's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty5Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 5 (when businessProperties ≥ 5): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty5HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 5 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty5SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty5CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty5Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty5AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty5Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 5 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty5NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 5's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty6Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 6 (when businessProperties ≥ 6): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty6HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 6 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty6SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty6CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty6Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty6AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty6Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 6 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty6NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 6's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty7Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 7 (when businessProperties ≥ 7): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty7HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 7 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty7SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty7CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty7Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty7AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty7Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 7 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty7NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 7's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty8Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 8 (when businessProperties ≥ 8): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty8HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 8 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty8SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty8CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty8Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty8AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty8Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 8 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty8NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 8's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "section1231LookbackLosses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Nonrecaptured net § 1231 losses from the 5 preceding years (Form 4797 line 8): net § 1231 losses deducted in those years not yet applied against a net § 1231 gain. This year's net § 1231 gain is ordinary income up to this amount (§ 1231(c)). Next year's amount is us.federal.form4797.lookback_remaining (drop losses more than 5 years old yourself). In dollars."
+                              },
+                              "k1Section1231Gain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net § 1231 gain reported on Schedule K-1 (Form 1065 box 10 / Form 1120-S box 9), entered in Form 4797 Part I. Enter a loss in k1Section1231Loss. In dollars."
+                              },
+                              "k1Section1231Loss": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net § 1231 loss reported on Schedule K-1 (Form 1065 box 10 / Form 1120-S box 9), as a positive number, after the basis, at-risk and passive limits. In dollars."
+                              },
+                              "k1Section1231NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "The K-1 § 1231 gain or loss is net investment income (the partnership's or S corporation's activity is passive to you, or isn't a § 162 trade or business). Asked when the net investment income tax can apply."
+                              },
+                              "k1UnrecapturedSection1250Gain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Unrecaptured § 1250 gain reported on Schedule K-1 from a partnership or S corporation (Unrecaptured Section 1250 Gain Worksheet line 5) — part of the K-1's § 1231 gain. In dollars."
+                              },
+                              "unrecapturedSection1250GainDistributions": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Unrecaptured § 1250 gain reported on Form 1099-DIV box 2b or Form 2439, or on a K-1 from an estate or trust (worksheet line 11). It is part of the capital gain distributions already in longTermCapitalGains — this only marks how much is taxed at up to 25%. In dollars."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Form 4797 sales of business property: up to eight properties (§ 1245, § 1250 or other § 1231 property; held over a year or not; price, basis, depreciation, additional depreciation), K-1 § 1231 amounts and the 5-year lookback — recapture, § 1231 netting, the ordinary amount for Schedule 1 line 4 and unrecaptured § 1250 gain taxed at up to 25%"
+                          },
                           "business_credits": {
                             "type": "object",
                             "properties": {
@@ -1769,7 +2218,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949 / Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
+                                "description": "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949) or as a business property (Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
                               },
                               "passiveActivity1DispositionLoss": {
                                 "type": [
@@ -11920,7 +12369,7 @@
       "post": {
         "operationId": "compute_return",
         "summary": "compute_return",
-        "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
+        "description": "Compute the COMPLETE Form 1040 bottom-line set in one call — the lines that determine the return (1a, 9, 10, 11, 12e, 15, 16, 17 AMT, 19, 20, 22, 23, 24, 25d, 27a, 28, 32, 33, 34/37), each whole-dollar rounded by the engine, plus the modeled Schedule 3 credits (schedule3), in a loss year a losses block (Schedule 1 line 8a NOL deduction and 8p § 461(l) excess business loss, the Form 172 NOL and next year's pre-2018 and post-2017 NOL carryovers), when energy_credits inputs are given, the printed Form 5695 line set (forms['5695']), with passive_activities the Form 8582 lines (forms['8582']: Part I, the special allowance, line 11, and each activity's Schedule E/C/F result and unallowed loss to carry forward), with business property sales Form 4797 (forms['4797']: the net § 1231 amount, the lookback, the Schedule D line 11 and Schedule 1 line 4 amounts, unrecaptured § 1250 gain and each property's gain, recapture and § 1231 part), and with business credits Form 8582-CR (forms['8582-CR']: the tax on net passive income, the special allowances, each activity's allowed and carried credit) and Form 3800 (forms['3800']: the § 38(c) limit, the credit allowed on Schedule 3 line 6a and the unused credit). Takes the SAME input as calculate_tax (prefer the documents block: transcribe W-2/1099-R/SSA-1099 boxes and dependent birth dates — SSA-1099s are first-class, box 5 and box 6 are summed for you; the tool derives ages, classifications, Part IV withholding, and penalties deterministically). Never assemble return lines by hand — this tool is the return. TRANSCRIPTION CONVENTIONS: (1) a PRIOR-YEAR Form 1040 in the file supplies CONTINUING conditions the current-year interview omits — the 'Someone can claim: You as a dependent' checkbox and the blindness boxes carry forward unless the current-year data contradicts them; (2) COMMUNITY PROPERTY: do NOT split income 50/50 between MFS spouses when they lived apart all year with no transfers (§ 66(a) allocates earned income to the earner) or when a written separation agreement ended the community — transcribe each document to its named earner; never invent a Form 8958 split the intake does not request; (3) bonus depreciation for assets placed in service 1/1-1/19/2025 is 40% (§ 168(k) pre-OBBBA phase-down; 100% only for property ACQUIRED after 1/19/2025).",
         "tags": [
           "tools"
         ],
@@ -13463,6 +13912,455 @@
                             "additionalProperties": false,
                             "description": "nonpassive Schedule E rentals/royalties, self-rental, and the standalone aggregate § 469 check (us.federal.passive_loss_allowed)"
                           },
+                          "business_property": {
+                            "type": "object",
+                            "properties": {
+                              "businessProperties": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "How many business properties were sold or exchanged this year (0–8), each in businessProperty1… through businessProperty8… (Form 4797). The engine figures each gain or loss, the § 1245 and § 1250 recapture (Part III), the § 1231 netting with the five-year lookback (Part I), the ordinary total for Schedule 1 line 4 (Part II) and the unrecaptured § 1250 gain taxed at up to 25% (Schedule D line 19). Don't also enter these sales in the capital gain facts."
+                              },
+                              "businessProperty1Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). § 1252, § 1254 and § 1255 property, casualties and thefts (Form 4684) and installment sales (Form 6252) are not modeled."
+                              },
+                              "businessProperty1HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 1 was held more than 1 year (count from the day after acquisition through the day of sale). Held 1 year or less, its gain or loss is ordinary (Form 4797 Part II line 10); held longer, Parts I and III apply."
+                              },
+                              "businessProperty1SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1: gross sales price — money, the fair market value of other property received, and any debt the buyer assumed or took the property subject to (Form 4797 line 20 / line 2 column (d)). In dollars."
+                              },
+                              "businessProperty1CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1: cost or other basis plus improvements and the expense of sale, before depreciation (Form 4797 line 21 / column (f)). In dollars."
+                              },
+                              "businessProperty1Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1: depreciation and amortization allowed or allowable since acquisition, including the § 179 deduction and any special depreciation allowance, and the year of sale (Form 4797 line 22 / column (e)). In dollars."
+                              },
+                              "businessProperty1AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 1 (section1250 only): additional depreciation after 1975 — depreciation (including any special allowance) in excess of straight line (Form 4797 line 26a). Zero for 27.5-year residential and 39-year nonresidential MACRS property depreciated straight line. In dollars."
+                              },
+                              "businessProperty1Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 1 was used in a qualified trade or business for § 199A: its ordinary gain or loss (recapture, a sale within a year, or a § 1231 loss when § 1231 nets to a loss) is QBI (Reg. § 1.199A-3(b)(2)(ii)(A) excludes only capital gain and loss). Asked when the property has an ordinary result."
+                              },
+                              "businessProperty1NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 1's gain or loss is net investment income (§ 1411(c)(1)(A)(iii)): true for property held in a passive activity or a rental that isn't a § 162 trade or business; false for property used in a trade or business in which you materially participate (Form 8960 line 5b takes it out). Asked when the net investment income tax can apply."
+                              },
+                              "businessProperty2Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 2 (when businessProperties ≥ 2): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty2HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 2 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty2SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty2CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty2Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty2AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 2 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty2Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 2 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty2NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 2's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty3Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 3 (when businessProperties ≥ 3): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty3HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 3 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty3SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty3CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty3Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty3AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 3 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty3Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 3 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty3NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 3's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty4Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 4 (when businessProperties ≥ 4): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty4HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 4 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty4SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty4CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty4Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty4AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 4 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty4Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 4 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty4NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 4's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty5Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 5 (when businessProperties ≥ 5): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty5HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 5 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty5SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty5CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty5Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty5AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 5 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty5Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 5 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty5NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 5's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty6Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 6 (when businessProperties ≥ 6): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty6HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 6 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty6SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty6CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty6Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty6AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 6 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty6Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 6 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty6NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 6's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty7Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 7 (when businessProperties ≥ 7): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty7HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 7 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty7SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty7CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty7Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty7AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 7 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty7Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 7 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty7NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 7's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "businessProperty8Kind": {
+                                "type": "string",
+                                "enum": [
+                                  "section1245",
+                                  "section1250",
+                                  "other"
+                                ],
+                                "description": "Business property 8 (when businessProperties ≥ 8): section1245, section1250 or other — as for businessProperty1Kind."
+                              },
+                              "businessProperty8HeldOverOneYear": {
+                                "type": "boolean",
+                                "description": "Business property 8 was held more than 1 year (Form 4797 Part I/III vs Part II)."
+                              },
+                              "businessProperty8SalesPrice": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8: gross sales price (Form 4797 line 20 / column (d)). In dollars."
+                              },
+                              "businessProperty8CostBasis": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8: cost or other basis plus improvements and expense of sale (Form 4797 line 21). In dollars."
+                              },
+                              "businessProperty8Depreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8: depreciation allowed or allowable, including § 179 and special allowances (Form 4797 line 22). In dollars."
+                              },
+                              "businessProperty8AdditionalDepreciation": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Business property 8 (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars."
+                              },
+                              "businessProperty8Qbi": {
+                                "type": "boolean",
+                                "description": "Business property 8 was used in a qualified trade or business for § 199A. Asked when it has an ordinary result."
+                              },
+                              "businessProperty8NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "Business property 8's gain or loss is net investment income (Form 8960 lines 5a/5b). Asked when the NIIT can apply."
+                              },
+                              "section1231LookbackLosses": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Nonrecaptured net § 1231 losses from the 5 preceding years (Form 4797 line 8): net § 1231 losses deducted in those years not yet applied against a net § 1231 gain. This year's net § 1231 gain is ordinary income up to this amount (§ 1231(c)). Next year's amount is us.federal.form4797.lookback_remaining (drop losses more than 5 years old yourself). In dollars."
+                              },
+                              "k1Section1231Gain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net § 1231 gain reported on Schedule K-1 (Form 1065 box 10 / Form 1120-S box 9), entered in Form 4797 Part I. Enter a loss in k1Section1231Loss. In dollars."
+                              },
+                              "k1Section1231Loss": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Net § 1231 loss reported on Schedule K-1 (Form 1065 box 10 / Form 1120-S box 9), as a positive number, after the basis, at-risk and passive limits. In dollars."
+                              },
+                              "k1Section1231NetInvestmentIncome": {
+                                "type": "boolean",
+                                "description": "The K-1 § 1231 gain or loss is net investment income (the partnership's or S corporation's activity is passive to you, or isn't a § 162 trade or business). Asked when the net investment income tax can apply."
+                              },
+                              "k1UnrecapturedSection1250Gain": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Unrecaptured § 1250 gain reported on Schedule K-1 from a partnership or S corporation (Unrecaptured Section 1250 Gain Worksheet line 5) — part of the K-1's § 1231 gain. In dollars."
+                              },
+                              "unrecapturedSection1250GainDistributions": {
+                                "type": [
+                                  "number",
+                                  "string"
+                                ],
+                                "description": "Unrecaptured § 1250 gain reported on Form 1099-DIV box 2b or Form 2439, or on a K-1 from an estate or trust (worksheet line 11). It is part of the capital gain distributions already in longTermCapitalGains — this only marks how much is taxed at up to 25%. In dollars."
+                              }
+                            },
+                            "additionalProperties": false,
+                            "description": "Form 4797 sales of business property: up to eight properties (§ 1245, § 1250 or other § 1231 property; held over a year or not; price, basis, depreciation, additional depreciation), K-1 § 1231 amounts and the 5-year lookback — recapture, § 1231 netting, the ordinary amount for Schedule 1 line 4 and unrecaptured § 1250 gain taxed at up to 25%"
+                          },
                           "business_credits": {
                             "type": "object",
                             "properties": {
@@ -13554,7 +14452,7 @@
                                   "number",
                                   "string"
                                 ],
-                                "description": "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949 / Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
+                                "description": "Passive activity 1: gain this year from disposing of property used in the activity or of an interest in it, which you ALSO entered in the capital-gain facts (Form 8949) or as a business property (Form 4797). Counted only as passive income on Form 8582 (column (a)) and in the overall gain or loss; it is not added to income again. In dollars."
                               },
                               "passiveActivity1DispositionLoss": {
                                 "type": [
