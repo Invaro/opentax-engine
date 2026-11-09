@@ -1,0 +1,30 @@
+{
+  "description": "Instructions for Form 8824 (2025): 'Alternatively, assume that Taylor's section 1245 assets had a basis and allowed or allowable depreciation of $50,000 ... Taylor enters the lesser of the $50,000 ... or $290,000 ... on line 21, as ordinary income of $50,000. Taylor subtracts line 21 from line 20 and enters $0 on line 22 ... $50,000, on line 23 ... the deferred gain on the exchange, $70,000, on line 24.'",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 250000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1LiabilitiesRelieved": 80000,
+    "likeKindExchange1LiabilitiesAssumed": 150000,
+    "likeKindExchange1Section1245Fmv": 55000,
+    "likeKindExchange1Section1245AdjustedBasis": 0,
+    "likeKindExchange1Received1245Fmv": 0,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1Section1245Depreciation": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "7000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line21": "5000000",
+      "us.federal.form8824.exchange1.line22": "0",
+      "us.federal.form8824.exchange1.line23": "5000000"
+    }
+  }
+}

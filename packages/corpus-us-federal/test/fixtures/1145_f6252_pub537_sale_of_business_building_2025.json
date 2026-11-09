@@ -1,0 +1,28 @@
+{
+  "description": "Pub. 537 (2025), Example—Sale of a Business: the machine shop's building (selling price $48,000, selling expense $2,400, adjusted basis $36,000 after $9,000 straight-line depreciation, gain $9,600, no recapture). The installment part of the $100,000 down payment is $49,300 and 'Building—$9,600 ÷ $108,500 ... 8.85'; 'Building—8.85% of $49,300 ... 4,363'. With the printed 0.0885 (885) and the whole $49,300 the line 24 amount is $4,363.05, all of it unrecaptured § 1250 gain (total $9,000 = the depreciation).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 48000,
+    "installmentSale1CostBasis": 45000,
+    "installmentSale1Depreciation": 9000,
+    "installmentSale1SellingExpenses": 2400,
+    "installmentSale1PaymentsThisYear": 49300,
+    "installmentSale1GrossProfitPercentageBps": 885,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "436305",
+    "intermediates": {
+      "us.federal.form6252.sale1.income": "436305",
+      "us.federal.form6252.sale1.unrecaptured_1250": "436305",
+      "us.federal.form6252.sale1.unrecaptured_1250_start": "900000"
+    }
+  }
+}

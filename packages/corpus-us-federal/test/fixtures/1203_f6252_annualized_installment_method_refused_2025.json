@@ -1,0 +1,24 @@
+{
+  "description": "The corpus's annualized-income installment rules (§ 6654(d)(2)) model wages and self-employment income only: with an installment sale (or a Form 4797 sale or like-kind exchange) they refuse instead of annualizing wages alone. The Form 2210 composer's Schedule AI handles these amounts.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 80000,
+    "wagesThroughMar31": 20000,
+    "wagesThroughMay31": 33000,
+    "wagesThroughAug31": 53000,
+    "priorYearAGI": 80000,
+    "priorYearTax": 9000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 100000,
+    "installmentSale1CostBasis": 40000,
+    "installmentSale1PaymentsThisYear": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.estimated.annualized_installment_q1",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

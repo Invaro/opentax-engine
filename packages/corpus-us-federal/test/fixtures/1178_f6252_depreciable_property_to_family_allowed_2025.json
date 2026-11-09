@@ -1,0 +1,29 @@
+{
+  "description": "§ 453(g)(3) reaches controlled entities and trusts (§ 1239(b)), not family: a rental building sold to your child on the installment method is allowed (Form 6252 line 3 'Yes', Part III applies). Price $300,000, cost $200,000, straight-line depreciation $50,000: gross profit $150,000 on a $300,000 contract price; $60,000 received — $30,000 of § 1231 gain, all unrecaptured § 1250 gain (total $50,000). No second disposition this year.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 300000,
+    "installmentSale1CostBasis": 200000,
+    "installmentSale1Depreciation": 50000,
+    "installmentSale1PaymentsThisYear": 60000,
+    "installmentSale1RelatedParty": true,
+    "installmentSale1DepreciableToControlledBuyer": false,
+    "installmentSale1SecondDisposition": false,
+    "installmentSale1Qbi": false,
+    "installmentSaleSection453AInterest": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "3000000",
+    "intermediates": {
+      "us.federal.form6252.sale1.income": "3000000",
+      "us.federal.form6252.sale1.line35": "0"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "description": "Temp. Reg. § 15a.453-1(b)(5) Example (1): Blackacre sold for $100,000, $10,000 down; basis $38,000, selling expenses $2,000. 'the gross profit is $60,000 ... The gross profit ratio is 3/5 ... $6,000 (3/5 of $10,000) of each $10,000 payment received is gain'.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 100000,
+    "installmentSale1CostBasis": 38000,
+    "installmentSale1SellingExpenses": 2000,
+    "installmentSale1PaymentsThisYear": 10000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.line24",
+  "expect": {
+    "valueCents": "600000",
+    "intermediates": {
+      "us.federal.form6252.sale1.line16": "6000000",
+      "us.federal.form6252.sale1.line18": "10000000"
+    }
+  }
+}

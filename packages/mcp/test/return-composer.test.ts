@@ -439,3 +439,73 @@ describe("compute_return: Form 4797", () => {
     expect(f.properties).toEqual([{ property: 1, gain_or_loss: "$150,000.00", recapture: "$0.00", section_1231: "$150,000.00" }]);
   });
 });
+
+describe("compute_return: Form 6252 and Form 8824", () => {
+  it("an installment sale of a building (Pub. 537 Sale of a Business): line 24 at 8.85% is Pub. 537's $4,363, all unrecaptured § 1250 gain", async () => {
+    const r = await call("compute_return", single({ box1: "50000", box2: "5000" }, {
+      installment_sales: {
+        installmentSales: 1, installmentSale1Kind: "section1250", installmentSale1HeldOverOneYear: true, installmentSale1YearOfSale: true,
+        installmentSale1SellingPrice: 48000, installmentSale1CostBasis: 45000, installmentSale1Depreciation: 9000,
+        installmentSale1SellingExpenses: 2400, installmentSale1PaymentsThisYear: 49300, installmentSale1GrossProfitPercentageBps: 885,
+        installmentSale1Qbi: false,
+      },
+    }));
+    expect(r.ok).toBe(true);
+    const forms = r.forms as Record<string, Record<string, unknown>>;
+    expect((forms["6252"].sales as Record<string, string>[])[0]).toMatchObject({
+      sale: 1, "16_gross_profit": "$9,600.00", "18_contract_price": "$48,000.00", "24_installment_sale_income": "$4,363.00",
+      unrecaptured_section_1250: "$4,363.00", unrecaptured_section_1250_left: "$4,637.00",
+    });
+    expect(forms["4797"]["7_net_section_1231"]).toBe("$4,363.00");
+  });
+
+  it("2026 returns use the 2026 draft Form 4797 line numbers (a livestock line 7 shifts lines 7–18)", async () => {
+    const r = await call("compute_return", { ...single({ box1: "50000", box2: "5000" }, {
+      installment_sales: {
+        installmentSales: 1, installmentSale1Kind: "other", installmentSale1HeldOverOneYear: true, installmentSale1YearOfSale: true,
+        installmentSale1SellingPrice: 100000, installmentSale1CostBasis: 50000, installmentSale1PaymentsThisYear: 40000, installmentSale1Qbi: false,
+      },
+    }), asOf: "2026-12-31" });
+    expect(r.ok).toBe(true);
+    const f = (r.forms as Record<string, Record<string, unknown>>)["4797"];
+    expect(f["8_net_section_1231"]).toBe("$20,000.00");
+    expect(f["10_to_schedule_d_line_11"]).toBe("$20,000.00");
+    expect(f["20b_ordinary_to_schedule_1_line_4"]).toBe("$0.00");
+    expect(f["7_net_section_1231"]).toBeUndefined();
+  });
+
+  it("a like-kind exchange (Instructions for Form 8824, Taylor): $40,000 recognized, $80,000 deferred, basis $170,000", async () => {
+    const r = await call("compute_return", single({ box1: "50000", box2: "5000" }, {
+      like_kind_exchanges: {
+        likeKindExchanges: 1, likeKindExchange1Kind: "section1250", likeKindExchange1HeldOverOneYear: true,
+        likeKindExchange1LikeKindReceivedFmv: 250000, likeKindExchange1AdjustedBasisGivenUp: 100000, likeKindExchange1CashReceived: 40000,
+        likeKindExchange1LiabilitiesRelieved: 80000, likeKindExchange1LiabilitiesAssumed: 150000,
+        likeKindExchange1Section1245Depreciation: 35000, likeKindExchange1Section1245Fmv: 55000, likeKindExchange1Section1245AdjustedBasis: 0,
+        likeKindExchange1Received1245Fmv: 0, likeKindExchange1Qbi: false,
+      },
+    }));
+    expect(r.ok).toBe(true);
+    const forms = r.forms as Record<string, Record<string, unknown>>;
+    expect((forms["8824"].exchanges as Record<string, string>[])[0]).toMatchObject({
+      exchange: 1, "15": "$40,000.00", "18": "$170,000.00", "19_realized_gain": "$120,000.00", "21_recapture": "$35,000.00",
+      "22": "$5,000.00", "23_recognized_gain": "$40,000.00", "24_deferred_gain": "$80,000.00", "25_basis_received": "$170,000.00",
+    });
+    expect(forms["4797"]["17_ordinary_to_schedule_1_line_4"]).toBe("$35,000.00");
+  });
+});
+
+describe("compute_return: a capital asset sold on the installment method", () => {
+  it("shows Form 6252 and no empty Form 4797", async () => {
+    const r = await call("compute_return", single({ box1: "50000", box2: "5000" }, {
+      installment_sales: {
+        installmentSales: 1, installmentSale1Kind: "capital", installmentSale1HeldOverOneYear: true, installmentSale1YearOfSale: true,
+        installmentSale1SellingPrice: 25000, installmentSale1MortgagesAssumed: 15000, installmentSale1CostBasis: 19000,
+        installmentSale1SellingExpenses: 1000, installmentSale1PaymentsThisYear: 2000,
+      },
+    }));
+    expect(r.ok).toBe(true);
+    const forms = r.forms as Record<string, Record<string, unknown>>;
+    expect(forms["4797"]).toBeUndefined();
+    expect((forms["6252"].sales as Record<string, string>[])[0]["24_installment_sale_income"]).toBe("$1,000.00");
+  });
+});

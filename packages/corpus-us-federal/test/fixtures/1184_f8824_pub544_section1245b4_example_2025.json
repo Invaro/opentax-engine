@@ -1,0 +1,31 @@
+{
+  "description": "Pub. 544 (2025), Ordinary Income Recapture in Like-Kind Exchanges, § 1245: real property (FMV $100,000, basis $50,000) for real property worth $60,000 and $40,000 cash; the § 1245 property given up has a basis of $10,000 and an adjusted basis of $0; received $45,000 of § 1250 and $15,000 of § 1245 property. 'Ordinary income recapture under section 1245(a)(1) 10,000 Gain recognized on like-kind exchange 40,000 Plus: FMV of section 1250 property received 45,000 Section 1245(b)(4) limit $85,000 The lesser of the two amounts ($10,000) recaptured as ordinary income.'",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1LikeKindReceivedFmv": 60000,
+    "likeKindExchange1AdjustedBasisGivenUp": 50000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1Section1245Depreciation": 10000,
+    "likeKindExchange1Section1245Fmv": 10000,
+    "likeKindExchange1Section1245AdjustedBasis": 0,
+    "likeKindExchange1Received1245Fmv": 15000,
+    "likeKindExchange1Received1250Fmv": 45000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "1000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "5000000",
+      "us.federal.form8824.exchange1.line20": "4000000",
+      "us.federal.form8824.exchange1.line21": "1000000",
+      "us.federal.form8824.exchange1.line22": "3000000",
+      "us.federal.form8824.exchange1.recapture_1245": "1000000"
+    }
+  }
+}

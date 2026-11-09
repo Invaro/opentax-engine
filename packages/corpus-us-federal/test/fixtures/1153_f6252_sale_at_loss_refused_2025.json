@@ -1,0 +1,19 @@
+{
+  "description": "Pub. 537: 'If you sell property at a loss, you can’t use the installment method.' Form 6252 line 14: 'If zero or less, don’t complete the rest of this form.' Refused, pointing to the Form 4797 / capital loss facts.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 30000,
+    "installmentSale1CostBasis": 40000,
+    "installmentSale1PaymentsThisYear": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "description": "A sale slot past installmentSales has no sale: its Form 6252 lines are $0 (line 19 is never figured on a $0 contract price).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 25000,
+    "installmentSale1CostBasis": 20000,
+    "installmentSale1PaymentsThisYear": 2000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale2.income",
+  "expect": {
+    "valueCents": "0",
+    "intermediates": {
+      "us.federal.form6252.sale2.line24": "0"
+    }
+  }
+}

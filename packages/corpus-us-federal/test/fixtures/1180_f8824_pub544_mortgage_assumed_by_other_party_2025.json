@@ -1,0 +1,25 @@
+{
+  "description": "Pub. 544 (2025), Partially Nontaxable Exchanges: like-kind property worth $100,000 plus $10,000 cash, the other party assumes your $30,000 mortgage, exchange expenses $5,000, adjusted basis $80,000. 'Total received $140,000 Minus: Exchange expenses (5,000) Amount realized $135,000 Minus: Adjusted basis ... (80,000) Realized gain $55,000 ... recognized (taxable) gain only up to $35,000'.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "capital",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 100000,
+    "likeKindExchange1AdjustedBasisGivenUp": 80000,
+    "likeKindExchange1CashReceived": 10000,
+    "likeKindExchange1LiabilitiesRelieved": 30000,
+    "likeKindExchange1ExchangeExpenses": 5000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line23",
+  "expect": {
+    "valueCents": "3500000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line15": "3500000",
+      "us.federal.form8824.exchange1.line19": "5500000",
+      "us.federal.form8824.exchange1.line20": "3500000"
+    }
+  }
+}

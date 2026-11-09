@@ -103,7 +103,7 @@ export const otherStateRules: Rule[] = [
   },
   {
     id: "us.wa.income_tax",
-    version: 1,
+    version: 2, // v1 didn't see long-term gain on capital assets reported on the installment method (Form 6252)
     jurisdiction: "us.wa",
     title: "Washington — no individual income tax on wages; 7% capital gains excise NOT MODELED (refuses)",
     citation: {
@@ -117,7 +117,13 @@ export const otherStateRules: Rule[] = [
     output: { type: "money" },
     formula: {
       kind: "if",
-      cond: { kind: "cmp", op: "gt", left: fact("longTermCapitalGains"), right: { kind: "money", cents: "0" } },
+      cond: {
+        kind: "or",
+        args: [
+          { kind: "cmp", op: "gt", left: fact("longTermCapitalGains"), right: { kind: "money", cents: "0" } },
+          { kind: "cmp", op: "gt", left: { kind: "rule", ruleId: "us.federal.form6252.capital_long_term" }, right: { kind: "money", cents: "0" } },
+        ],
+      },
       then: {
         kind: "unsupported",
         reason:

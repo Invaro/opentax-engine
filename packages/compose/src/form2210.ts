@@ -101,6 +101,15 @@ export const SCHEDULE_AI_FACTS: Record<string, "annualize" | "keep" | { refuse: 
   k1Section1231Loss: "annualize",
   k1UnrecapturedSection1250Gain: "annualize",
   unrecapturedSection1250GainDistributions: "annualize",
+  // Form 6252 and Form 8824: every amount of a sale or exchange scales together, so the
+  // period's installment income (payments × gross profit percentage), recapture and
+  // recognized gain are the period's amounts annualized
+  ...Object.fromEntries(
+    [1, 2, 3, 4].flatMap((i) => [
+      ...["SellingPrice", "MortgagesAssumed", "CostBasis", "Depreciation", "AdditionalDepreciation", "SellingExpenses", "ExcludedGain", "PaymentsThisYear", "PaymentsPriorYears", "RelatedPartyAmountRealized"].map((n) => [`installmentSale${i}${n}`, "annualize"]),
+      ...["LikeKindReceivedFmv", "AdjustedBasisGivenUp", "CashReceived", "OtherPropertyReceivedFmv", "LiabilitiesRelieved", "LiabilitiesAssumed", "CashPaid", "OtherPropertyGivenUpFmv", "ExchangeExpenses", "Section1250Depreciation", "Section1250AdditionalDepreciation", "Section1250Fmv", "Section1250AdjustedBasis", "Section1245Depreciation", "Section1245Fmv", "Section1245AdjustedBasis", "Received1245Fmv", "Received1250Fmv"].map((n) => [`likeKindExchange${i}${n}`, "annualize"]),
+    ]),
+  ),
   section1231LookbackLosses: { refuse: "the § 1231 lookback is a balance from earlier years, not an amount of the period; the instructions don't say how it applies to a period" },
   // Form 3800: business credits and their carryforwards
   generalBusinessCreditNonpassive: { refuse: "the Schedule AI instructions don't say how a general business credit is figured for a period" },

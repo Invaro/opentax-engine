@@ -1,0 +1,27 @@
+{
+  "description": "A related-party like-kind exchange that recognizes gain asks whether § 1239 applies (property depreciable to an entity you control or a trust you benefit from).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 180000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 40000,
+    "likeKindExchange1Section1250Depreciation": 10000,
+    "likeKindExchange1Section1250Fmv": 150000,
+    "likeKindExchange1Section1250AdjustedBasis": 140000,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1RelatedParty": true,
+    "likeKindExchange1RelatedPartyDisposition": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line7",
+  "expect": {
+    "error": "NEEDS_FACTS",
+    "missingFacts": [
+      "likeKindExchange1DepreciableToControlledParty"
+    ]
+  }
+}

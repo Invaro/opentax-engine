@@ -1,0 +1,27 @@
+{
+  "description": "Form 8960 line 5b: a building used in a trade or business in which you materially participate, sold on the installment method — this year's $50,000 gain (gross profit $150,000 over a $300,000 contract price, $100,000 received) is not net investment income. NIIT = 3.8% × $10,000 interest = $380.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 400000,
+    "taxableInterest": 10000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 300000,
+    "installmentSale1CostBasis": 200000,
+    "installmentSale1Depreciation": 50000,
+    "installmentSale1PaymentsThisYear": 100000,
+    "installmentSale1Qbi": false,
+    "installmentSale1NetInvestmentIncome": false,
+    "installmentSaleSection453AInterest": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "38000",
+    "intermediates": {
+      "us.federal.form6252.sale1.income": "5000000"
+    }
+  }
+}

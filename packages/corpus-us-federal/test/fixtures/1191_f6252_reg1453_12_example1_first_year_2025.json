@@ -1,0 +1,26 @@
+{
+  "description": "Reg. § 1.453-12(d) Example 1: § 1250 property sold for $10,000 in ten equal annual installments; cost $5,000, straight-line depreciation $3,000; '$8000 of section 1231 gain ... $3000 is ... unrecaptured section 1250 gain. The gain on each installment payment is $800.' Table — Taxed at 25%: 800, 800, 800, 600; Remaining to be taxed at 25%: 2200, 1400, 600. First year: $800 at 25%, $2,200 remaining.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1SellingPrice": 10000,
+    "installmentSale1CostBasis": 5000,
+    "installmentSale1Depreciation": 3000,
+    "installmentSale1PaymentsThisYear": 1000,
+    "installmentSale1Qbi": false,
+    "installmentSale1YearOfSale": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "80000",
+    "intermediates": {
+      "us.federal.form6252.sale1.income": "80000",
+      "us.federal.form6252.sale1.unrecaptured_1250": "80000",
+      "us.federal.form6252.sale1.unrecaptured_1250_start": "300000"
+    }
+  }
+}

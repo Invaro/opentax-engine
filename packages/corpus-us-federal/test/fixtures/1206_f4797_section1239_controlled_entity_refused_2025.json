@@ -1,0 +1,19 @@
+{
+  "description": "§ 1239(a): business equipment sold to a corporation you own more than 50% of, depreciable in its hands — all the gain is ordinary income, not § 1231 gain. Refused.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "businessProperties": 1,
+    "businessProperty1Kind": "other",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 90000,
+    "businessProperty1CostBasis": 50000,
+    "businessProperty1SoldToControlledEntity": true,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.agi",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

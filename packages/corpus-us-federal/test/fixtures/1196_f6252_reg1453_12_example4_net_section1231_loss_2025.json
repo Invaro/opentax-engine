@@ -1,0 +1,31 @@
+{
+  "description": "Reg. § 1.453-12(d) Example 4 (net § 1231 loss): Example 1's sale in a year with $1,000 of other § 1231 losses. 'A has a net section 1231 loss of $200 ... A's entire $800 of installment gain is ordinary gain ... treated as reducing unrecaptured section 1250 gain. Therefore, A has $2200 of unrecaptured section 1250 gain remaining'. Form 4797 line 17 is the $200 ordinary loss; nothing reaches Schedule D.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1SellingPrice": 10000,
+    "installmentSale1CostBasis": 5000,
+    "installmentSale1Depreciation": 3000,
+    "installmentSale1PaymentsThisYear": 1000,
+    "installmentSale1Qbi": false,
+    "installmentSale1YearOfSale": true,
+    "businessProperties": 1,
+    "businessProperty1Kind": "other",
+    "businessProperty1HeldOverOneYear": true,
+    "businessProperty1SalesPrice": 1000,
+    "businessProperty1CostBasis": 2000,
+    "businessProperty1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "valueCents": "-20000",
+    "intermediates": {
+      "us.federal.form4797.line7": "-20000",
+      "us.federal.form6252.sale1.income": "80000"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "description": "Form 6252 Part III: 'Enter contract price from line 18 for year of first sale'. With an entered gross profit percentage figured on a combined contract price (Pub. 537 Sale of a Business: land at 22.95% of $108,500), the per-asset line 18 isn't that contract price, so a related party's second disposition is refused rather than figured on the wrong line 31.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "other",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 42000,
+    "installmentSale1CostBasis": 15000,
+    "installmentSale1SellingExpenses": 2100,
+    "installmentSale1GrossProfitPercentageBps": 2295,
+    "installmentSale1PaymentsThisYear": 49300,
+    "installmentSale1Qbi": false,
+    "installmentSale1RelatedParty": true,
+    "installmentSale1DepreciableToControlledBuyer": false,
+    "installmentSale1SecondDisposition": true,
+    "installmentSale1RelatedPartyAmountRealized": 220000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.income",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "Fixture 1141 under 2026 law: the Form 6252 computation doesn't change ($1,000 deemed payment, 100%).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "capital",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 9000,
+    "installmentSale1MortgagesAssumed": 6000,
+    "installmentSale1CostBasis": 4400,
+    "installmentSale1SellingExpenses": 600
+  },
+  "asOf": "2026-12-31",
+  "target": "us.federal.form6252.sale1.line24",
+  "expect": {
+    "valueCents": "100000"
+  }
+}

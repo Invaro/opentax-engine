@@ -49,6 +49,7 @@ const OUT_OF_SCOPE: Expr = {
     gt0(fact("taxableInterest")),
     gt0(fact("spouseSelfEmploymentNetProfit")), // a second Schedule SE: Part II is figured per spouse
     gt0(fact("longTermCapitalGains")),
+    gt0(ruleRef("us.federal.form4797.present")), // Form 4797, 6252 or 8824 amounts
     gt0(fact("netCapitalLoss")),
     gt0(fact("shortTermCapitalLoss")),
     gt0(fact("longTermCapitalLoss")),
@@ -233,7 +234,7 @@ function quarterRule(
 
   return {
     id: `us.federal.estimated.annualized_installment_q${q.n}`,
-    version: { "2025": 3, "2026": 4, "2027": 5 }[year], // v1/v2 predated the per-bucket capital-loss facts in the scope guard
+    version: { "2025": 6, "2026": 7, "2027": 8 }[year], // v3–v5 didn't refuse Form 4797 / 6252 / 8824 amounts; v1/v2 predated the per-bucket capital-loss facts in the scope guard
     jurisdiction: J,
     title: `Annualized-income required installment #${q.n} (§ 6654(d)(2), TY${year})`,
     citation: {

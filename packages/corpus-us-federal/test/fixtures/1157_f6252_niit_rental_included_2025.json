@@ -1,0 +1,24 @@
+{
+  "description": "The same sale of a rental that is a passive activity: the $50,000 installment gain is net investment income (§ 1411(c)(1)(A)(iii)). NIIT = 3.8% × $60,000 = $2,280.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 400000,
+    "taxableInterest": 10000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 300000,
+    "installmentSale1CostBasis": 200000,
+    "installmentSale1Depreciation": 50000,
+    "installmentSale1PaymentsThisYear": 100000,
+    "installmentSale1Qbi": false,
+    "installmentSale1NetInvestmentIncome": true,
+    "installmentSaleSection453AInterest": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.niit",
+  "expect": {
+    "valueCents": "228000"
+  }
+}

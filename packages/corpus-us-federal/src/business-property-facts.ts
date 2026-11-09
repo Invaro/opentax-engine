@@ -16,7 +16,7 @@ const property = (i: number): FactSpec[] => [
     enumValues: [...BUSINESS_PROPERTY_KINDS],
     description:
       i === 1
-        ? "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). § 1252, § 1254 and § 1255 property, casualties and thefts (Form 4684) and installment sales (Form 6252) are not modeled."
+        ? "Business property 1 (when businessProperties ≥ 1): section1245 = depreciable personal property (machinery, equipment, vehicles, furniture, amortized intangibles, and real property such as qualified improvement property expensed under § 179); section1250 = depreciable real property (buildings and their structural components); other = business property that was never depreciated (land, or § 1231 property such as timber or livestock entered without depreciation). Land and a building sold together are two properties, with the price and basis split by fair market value (Form 4797 instructions). An installment sale goes in the installmentSale facts (Form 6252) and a like-kind exchange in the likeKindExchange facts (Form 8824), not here. § 1252, § 1254 and § 1255 property and casualties and thefts (Form 4684) are not modeled."
         : `Business property ${i} (when businessProperties ≥ ${i}): section1245, section1250 or other — as for businessProperty1Kind.`,
     // no default — a property's character is never guessed
   },
@@ -68,6 +68,15 @@ const property = (i: number): FactSpec[] => [
         ? "Business property 1 (section1250 only): additional depreciation after 1975 — depreciation (including any special allowance) in excess of straight line (Form 4797 line 26a). Zero for 27.5-year residential and 39-year nonresidential MACRS property depreciated straight line. In dollars."
         : `Business property ${i} (section1250 only): additional depreciation after 1975 (Form 4797 line 26a). In dollars.`,
     default: { value: "0", rationale: `Assumed straight-line depreciation on business property ${i} (no additional depreciation)` },
+  },
+  {
+    id: `businessProperty${i}SoldToControlledEntity`,
+    type: "bool",
+    description:
+      i === 1
+        ? "Business property 1 was sold to a § 1239 related person — a corporation or partnership you own more than 50% of (directly or indirectly), or a trust of which you or your spouse is a beneficiary — and is depreciable in the buyer's hands. The whole gain is then ordinary income (§ 1239(a)), which is refused."
+        : `Business property ${i} was sold to a § 1239 related person (an entity you control, or a trust you benefit from) and is depreciable in the buyer's hands.`,
+    default: { value: false, rationale: `Assumed business property ${i} was not sold to a controlled entity or trust (§ 1239)` },
   },
   {
     id: `businessProperty${i}Qbi`,

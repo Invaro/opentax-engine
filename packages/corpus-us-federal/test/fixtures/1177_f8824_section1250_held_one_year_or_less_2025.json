@@ -1,0 +1,33 @@
+{
+  "description": "§ 1250(b)(1) in an exchange: a building held 1 year or less (straight-line depreciation $244,100; the building's FMV $517,500, adjusted basis $63,900) with $125,800 cash received, $16,900 exchange expenses, $214,500 of liabilities assumed, $583,700 of property received of which $125,200 is § 1250 property. Line 20 is $108,900; all $244,100 of depreciation is additional depreciation, and the § 1250(d)(4) limit is the larger of $108,900 and $244,100 − $125,200 = $118,900 — line 21 $118,900, more than the boot (I8824 line 21). Deferred gain $325,300 − $118,900 = $206,400.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": false,
+    "likeKindExchange1LikeKindReceivedFmv": 583700,
+    "likeKindExchange1AdjustedBasisGivenUp": 152800,
+    "likeKindExchange1CashReceived": 125800,
+    "likeKindExchange1LiabilitiesAssumed": 214500,
+    "likeKindExchange1ExchangeExpenses": 16900,
+    "likeKindExchange1Section1250Depreciation": 244100,
+    "likeKindExchange1Section1250Fmv": 517500,
+    "likeKindExchange1Section1250AdjustedBasis": 63900,
+    "likeKindExchange1Received1250Fmv": 125200,
+    "likeKindExchange1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "20640000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line15": "10890000",
+      "us.federal.form8824.exchange1.line18": "36730000",
+      "us.federal.form8824.exchange1.line19": "32530000",
+      "us.federal.form8824.exchange1.line20": "10890000",
+      "us.federal.form8824.exchange1.line21": "11890000",
+      "us.federal.form8824.exchange1.line23": "11890000"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "description": "Pub. 544 (2025), next example: 'you receive only real property with an FMV of $200,000 in the exchange and no cash. The gain realized on the exchange is $80,000 ... and the gain recognized is $0 ... Section 1250(a)(1)(A) recapture $10,000 Less: FMV section 1250 property received 200,000 Section 1250(d)(4)(A) limit $0 Because the section 1250(d)(4)(A) recapture is limited to $0, the $10,000 of ordinary income recapture attaches to the property acquired'.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1Qbi": false,
+    "likeKindExchange1LikeKindReceivedFmv": 200000,
+    "likeKindExchange1AdjustedBasisGivenUp": 120000,
+    "likeKindExchange1Section1250Depreciation": 15000,
+    "likeKindExchange1Section1250AdditionalDepreciation": 10000,
+    "likeKindExchange1Section1250Fmv": 15000,
+    "likeKindExchange1Section1250AdjustedBasis": 0,
+    "likeKindExchange1Received1250Fmv": 200000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form8824.exchange1.line24",
+  "expect": {
+    "valueCents": "8000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "8000000",
+      "us.federal.form8824.exchange1.line21": "0",
+      "us.federal.form8824.exchange1.line23": "0"
+    }
+  }
+}

@@ -16,8 +16,12 @@
  * nonrecaptured losses of the 5 preceding years and long-term capital gain
  * beyond (Schedule D line 11). Part II's total is Schedule 1 line 4.
  *
- * Not modeled: §§ 1252, 1254, 1255, casualties and thefts (Form 4684),
- * installment sales (Form 6252), like-kind exchanges (Form 8824), Part IV
+ * Installment sales (Form 6252, rules/form6252.ts) enter on lines 4, 10 and 13,
+ * like-kind exchanges (Form 8824, rules/form8824.ts) on lines 5 and 16, and
+ * their unrecaptured § 1250 gain on worksheet lines 3–4. Form 4797 (2026
+ * draft) renumbers: a livestock line 7 is added, so lines 7–18 are 8–20b.
+ *
+ * Not modeled: §§ 1252, 1254, 1255, casualties and thefts (Form 4684), Part IV
  * (§ 179 / § 280F recapture), the § 291 corporate amount, pre-1976 additional
  * depreciation (line 26d), low-income housing applicable percentages, § 1250
  * gain from partnership interests and non-Form-4797 dispositions (worksheet
@@ -25,11 +29,15 @@
  */
 
 import type { Expr, Rule } from "@invaro/opentax-core";
+import { form6252RuleId } from "./form6252.js";
+import { form8824RuleId } from "./form8824.js";
 
 const J = "us.federal";
 const F = `${J}.form4797`;
 const N = 8;
 const SLOTS = Array.from({ length: N }, (_, k) => k + 1);
+const SALE_SLOTS = [1, 2, 3, 4];
+const EXCHANGE_SLOTS = [1, 2, 3, 4];
 
 const fact = (factId: string): Expr => ({ kind: "fact", factId });
 const money = (cents: string): Expr => ({ kind: "money", cents });
@@ -87,6 +95,13 @@ const GAIN_EXCERPT =
 
 const scopeChecks = (i: number, value: Expr): Expr =>
   iff(
+    onSlot(i, pf(i, "SoldToControlledEntity")),
+    unsupported(`business property ${i} was sold to a § 1239 related person (a controlled entity or trust) and is depreciable in the buyer's hands: the gain is ordinary income under § 1239(a) — not modeled`),
+    propertyChecks(i, value),
+  );
+
+const propertyChecks = (i: number, value: Expr): Expr =>
+  iff(
     and(kindIs(i, "other"), gt0(amt(i, "Depreciation"))),
     unsupported(`business property ${i} is kind other but has depreciation: depreciable property is § 1245 or § 1250 property`),
     iff(
@@ -106,6 +121,7 @@ const propertyRules = (i: number): Rule[] => [
     "Lines 20–24; line 2 (d)–(g)",
     GAIN_EXCERPT,
     scopeChecks(i, sub(amt(i, "SalesPrice"), sub(amt(i, "CostBasis"), amt(i, "Depreciation")))),
+    { version: 2 }, // v1 didn't refuse a sale to a § 1239 controlled entity
   ),
   rule(
     p(i, "recapture"),
@@ -158,15 +174,23 @@ const LINE7_8_9 =
   'Form 4797: "7 Combine lines 2 through 6. ... If line 7 is zero or a loss, enter the amount from line 7 on line 11 below and skip lines 8 and 9. If line 7 is a gain and you didn’t have any prior year section 1231 losses, or they were recaptured in an earlier year, enter the gain from line 7 as a long-term capital gain on the Schedule D". "8 Nonrecaptured net section 1231 losses from prior years." "9 Subtract line 8 from line 7. If zero or less, enter -0-. If line 9 is zero, enter the gain from line 7 on line 12 below. If line 9 is more than zero, enter the amount from line 8 on line 12 below and enter the gain from line 9 as a long-term capital gain on the Schedule D". I4797 line 7: "enter any amounts from your Schedule K-1 (Form 1120-S), box 9, or Schedule K-1 (Form 1065), box 10, in Part I". § 1231(a)(1)–(2), (c)(1): a net § 1231 gain is long-term capital gain, a net § 1231 loss is ordinary, and "the net section 1231 gain for any taxable year shall be treated as ordinary income to the extent such gain does not exceed the non-recaptured net section 1231 losses."';
 
 const formRules: Rule[] = [
-  rule(line("7"), "Form 4797 line 7 — net § 1231 gain or (loss) (Part I, K-1 amounts included)", "Part I lines 2–7", LINE7_8_9, add(sum("section1231"), k1Net)),
+  rule(
+    line("7"),
+    "Form 4797 line 7 (2026: line 8) — net § 1231 gain or (loss) (Part I: properties, Form 6252 line 4, Form 8824 line 5, K-1 amounts)",
+    "Part I lines 2–7",
+    `${LINE7_8_9} Form 4797 (2025): "4 Section 1231 gain from installment sales from Form 6252, line 26 or 37"; "5 Section 1231 gain or (loss) from like-kind exchanges from Form 8824".`,
+    add(sum("section1231"), ruleRef(form6252RuleId.section1231), ruleRef(form8824RuleId.section1231), k1Net),
+    { version: 2 }, // v1 had no Form 6252 or Form 8824 amounts
+  ),
   rule(line("12"), "Form 4797 line 12 — net § 1231 gain treated as ordinary under the 5-year lookback (§ 1231(c))", "Lines 8, 9, 12", LINE7_8_9, iff(gt0(L("7")), min(L("7"), fact("section1231LookbackLosses")), zero)),
   rule(line("9"), "Form 4797 line 9 — net § 1231 gain to Schedule D line 11 as long-term capital gain", "Line 9; Schedule D line 11", LINE7_8_9, max0(sub(L("7"), L("12")))),
   rule(
     line("17"),
-    "Form 4797 line 17 — ordinary gain or (loss), Part II (lines 10–13) → Schedule 1 line 4",
+    "Form 4797 line 17 (2026: line 20b) — ordinary gain or (loss), Part II → Schedule 1 line 4",
     "Part II lines 10–18b; Schedule 1 line 4",
-    `Form 4797: "11 Loss, if any, from line 7"; "12 Gain, if any, from line 7 or amount from line 8, if applicable"; "13 Gain, if any, from line 31"; "17 Combine lines 10 through 16"; "18 ... b Redetermine the gain or (loss) on line 17 excluding the loss, if any, on line 18a. Enter here and on Schedule 1 (Form 1040), Part I, line 4". ${LINE7_8_9} [Lines 14–16 and 18a (Forms 4684, 6252, 8824) are not modeled.]`,
-    add(sum("short_term"), iff(gt0(L("7")), zero, L("7")), L("12"), sum("recapture")),
+    `Form 4797: "10 Ordinary gains and losses not included on lines 11 through 16 (include property held 1 year or less)"; "11 Loss, if any, from line 7"; "12 Gain, if any, from line 7 or amount from line 8, if applicable"; "13 Gain, if any, from line 31"; "15 Ordinary gain from installment sales from Form 6252, line 25 or 36"; "16 Ordinary gain or (loss) from like-kind exchanges from Form 8824"; "17 Combine lines 10 through 16"; "18 ... b Redetermine the gain or (loss) on line 17 excluding the loss, if any, on line 18a. Enter here and on Schedule 1 (Form 1040), Part I, line 4". Form 6252 line 26 instructions: an installment sale of property "held 1 year or less ... enter this amount on Form 4797, line 10, and enter “From Form 6252.”" ${LINE7_8_9} [Line 14 and 18a (Form 4684) are not modeled; line 15 (§§ 1252/1254/1255 installment recapture) is zero. Form 4797 (2026 draft): lines 11–20b.]`,
+    add(sum("short_term"), iff(gt0(L("7")), zero, L("7")), L("12"), sum("recapture"), ruleRef(form6252RuleId.ordinary), ruleRef(form6252RuleId.recapture), ruleRef(form8824RuleId.ordinary)),
+    { version: 2 }, // v1 had no Form 6252 or Form 8824 amounts
   ),
   rule(
     `${F}.lookback_remaining`,
@@ -179,23 +203,29 @@ const formRules: Rule[] = [
     `${J}.schedule_d.unrecaptured_1250`,
     "Unrecaptured § 1250 gain — Schedule D line 19 (Unrecaptured Section 1250 Gain Worksheet line 18)",
     "§ 1(h)(1)(E), (h)(6); Schedule D line 19",
-    'Unrecaptured Section 1250 Gain Worksheet: "5. Enter the total of any amounts reported to you on a Schedule K-1 from a partnership or an S corporation as “unrecaptured section 1250 gain”"; "6. Add lines 3 through 5"; "7. Enter the smaller of line 6 or the gain from Form 4797, line 7"; "8. Enter the amount, if any, from Form 4797, line 8"; "9. Subtract line 8 from line 7"; "11. Enter the total of any amounts reported to you as “unrecaptured section 1250 gain” on a Schedule K-1, Form 1099-DIV, or Form 2439 from an estate, a trust, a real estate investment trust, or a mutual fund"; "13. Add lines 9 through 12"; "15. Enter the (loss), if any, from Schedule D, line 7"; "16. Enter your long-term capital loss carryovers from Schedule D, line 14"; "17. Combine lines 14 through 16. If the result is a (loss), enter it as a positive amount"; "18. Unrecaptured section 1250 gain. Subtract line 17 from line 13. If zero or less, enter -0-." [Lines 4, 10, 12 and 14 (installment sales, partnership interests, other dispositions, 28% rate gain) are not modeled.]',
+    'Unrecaptured Section 1250 Gain Worksheet: "5. Enter the total of any amounts reported to you on a Schedule K-1 from a partnership or an S corporation as “unrecaptured section 1250 gain”"; "6. Add lines 3 through 5"; "7. Enter the smaller of line 6 or the gain from Form 4797, line 7"; "8. Enter the amount, if any, from Form 4797, line 8"; "9. Subtract line 8 from line 7"; "11. Enter the total of any amounts reported to you as “unrecaptured section 1250 gain” on a Schedule K-1, Form 1099-DIV, or Form 2439 from an estate, a trust, a real estate investment trust, or a mutual fund"; "13. Add lines 9 through 12"; "15. Enter the (loss), if any, from Schedule D, line 7"; "16. Enter your long-term capital loss carryovers from Schedule D, line 14"; "17. Combine lines 14 through 16. If the result is a (loss), enter it as a positive amount"; "18. Unrecaptured section 1250 gain. Subtract line 17 from line 13. If zero or less, enter -0-." Line 4: "Enter the total unrecaptured section 1250 gain included on line 26 or line 37 of Form(s) 6252 from installment sales of trade or business property held more than 1 year." [Line 3 also takes the unrecaptured § 1250 gain in a like-kind exchange’s recognized § 1231 gain (Form 8824, § 1(h)(6)(A)). Lines 10, 12 and 14 (partnership interests, other dispositions, 28% rate gain) are not modeled.]',
     (() => {
-      const line7ws = min(add(sum("unrecaptured_1250"), fact("k1UnrecapturedSection1250Gain")), max0(L("7")));
+      const line6 = add(sum("unrecaptured_1250"), ruleRef(form8824RuleId.unrecaptured1250), ruleRef(form6252RuleId.unrecaptured1250), fact("k1UnrecapturedSection1250Gain"));
+      const line7ws = min(line6, max0(L("7")));
       const line9ws = iff(gt0(L("7")), max0(sub(line7ws, fact("section1231LookbackLosses"))), zero);
       const line13 = add(line9ws, fact("unrecapturedSection1250GainDistributions"));
       const line17 = max0(neg(add(min(ruleRef(`${J}.schedule_d.net_short_term`), zero), neg(fact("priorYearLongTermCapitalLossCarryover")))));
       return max0(sub(line13, line17));
     })(),
-    {},
+    { version: 2 }, // v1 had no worksheet line 4 (Form 6252) or Form 8824 gain
     "26 U.S.C. § 1(h)(1)(E), (h)(6); Instructions for Schedule D (2025)",
   ),
   rule(
     `${F}.present`,
-    "Form 4797 has any amount (a property, a K-1 § 1231 item or a lookback loss in use)",
+    "Form 4797, 6252 or 8824 has any amount (a property, an installment sale, a like-kind exchange or a K-1 § 1231 item)",
     "Form 4797",
-    "[A flag for the rules that refuse a Form 4797 item they don’t model: $1 when any property is entered or a K-1 § 1231 amount is given, $0 otherwise.]",
-    iff(or(cmp("gt", fact("businessProperties"), int("0")), gt0(fact("k1Section1231Gain")), gt0(fact("k1Section1231Loss"))), money("100"), zero),
+    "[A flag for the rules that refuse a Form 4797, 6252 or 8824 item they don’t model: $1 when any property, installment sale or like-kind exchange is entered or a K-1 § 1231 amount is given, $0 otherwise.]",
+    iff(
+      or(cmp("gt", fact("businessProperties"), int("0")), gt0(ruleRef(form6252RuleId.present)), gt0(ruleRef(form8824RuleId.present)), gt0(fact("k1Section1231Gain")), gt0(fact("k1Section1231Loss"))),
+      money("100"),
+      zero,
+    ),
+    { version: 2 }, // v1 didn't count installment sales or like-kind exchanges
   ),
 ];
 
@@ -203,12 +233,33 @@ const formRules: Rule[] = [
 
 const ordinaryOf = (i: number): Expr => add(P(i, "short_term"), P(i, "recapture"), iff(gt0(L("7")), zero, P(i, "section1231")));
 
+// installment sales and like-kind exchanges, the same way
+const saleOrdinary = (i: number): Expr =>
+  add(ruleRef(form6252RuleId.sale(i, "ordinary")), iff(gt0(L("7")), zero, ruleRef(form6252RuleId.sale(i, "section1231"))));
+const exchangeOrdinary = (i: number): Expr =>
+  add(ruleRef(form8824RuleId.exchange(i, "ordinary")), iff(gt0(L("7")), zero, ruleRef(form8824RuleId.exchange(i, "section1231"))));
+const qbiItem = (label: string, ordinary: Expr, section1231: Expr, qbiFact: Expr): Expr =>
+  iff(
+    cmp("ne", ordinary, zero),
+    iff(
+      qbiFact,
+      iff(
+        and(gt0(L("12")), cmp("ne", section1231, zero)),
+        unsupported(`${label} is QBI property and part of the net § 1231 gain is ordinary under the § 1231(c) lookback: attributing that income among properties is not modeled`),
+        ordinary,
+      ),
+      zero,
+    ),
+    zero,
+  );
+const niitItem = (total: Expr, niiFact: Expr): Expr => iff(cmp("ne", total, zero), iff(niiFact, zero, total), zero);
+
 const flowRules: Rule[] = [
   rule(
     `${F}.qbi_net`,
     "Form 4797 ordinary gains and losses of properties used in qualified trades or businesses (§ 199A)",
     "§ 199A(c)(3)(B)(i); Reg. § 1.199A-3(b)(2)(ii)(A)",
-    'Reg. § 1.199A-3(b)(2)(ii)(A): QBI excludes "Any item of short-term capital gain, short-term capital loss, long-term capital gain, or long-term capital loss, including any item treated as one of such items under any other provision of the Code". [A property’s ordinary result — sold within a year, recapture, or its § 1231 amount when § 1231 nets to a loss — is QBI when the property was used in a qualified trade or business (businessPropertyNQbi). § 1231(c) lookback income alongside such a property is refused: how it is attributed among properties is not settled. K-1 § 1231 items are not added: Statement A reports the K-1’s QBI.]',
+    'Reg. § 1.199A-3(b)(2)(ii)(A): QBI excludes "Any item of short-term capital gain, short-term capital loss, long-term capital gain, or long-term capital loss, including any item treated as one of such items under any other provision of the Code". [A property’s ordinary result — sold within a year, recapture, or its § 1231 amount when § 1231 nets to a loss — is QBI when the property was used in a qualified trade or business (businessPropertyNQbi, installmentSaleNQbi, likeKindExchangeNQbi). § 1231(c) lookback income alongside such a property is refused: how it is attributed among properties is not settled. K-1 § 1231 items are not added: Statement A reports the K-1’s QBI.]',
     add(
       ...SLOTS.map((i) =>
         iff(
@@ -225,25 +276,41 @@ const flowRules: Rule[] = [
           zero,
         ),
       ),
+      ...SALE_SLOTS.map((i) =>
+        qbiItem(`installment sale ${i}`, saleOrdinary(i), ruleRef(form6252RuleId.sale(i, "section1231")), fact(`installmentSale${i}Qbi`)),
+      ),
+      ...EXCHANGE_SLOTS.map((i) =>
+        qbiItem(`like-kind exchange ${i}`, exchangeOrdinary(i), ruleRef(form8824RuleId.exchange(i, "section1231")), fact(`likeKindExchange${i}Qbi`)),
+      ),
     ),
-    {},
+    { version: 2 }, // v1 had no installment sales or like-kind exchanges
     "26 U.S.C. § 199A; Reg. § 1.199A-3(b)(2)(ii)(A)",
   ),
   rule(
     `${F}.niit_excluded`,
     "Form 4797 gains and losses that aren't net investment income — Form 8960 line 5b",
     "§ 1411(c)(1)(A)(iii); Form 8960 line 5b",
-    'I8960 line 5b: "Net Gain or Loss From Disposition of Property That Isn’t Subject to Net Investment Income Tax". § 1411(c)(1)(A)(iii): net investment income includes "net gain (to the extent taken into account in computing taxable income) attributable to the disposition of property other than property held in a trade or business not described in paragraph (2)". [Each property marked not net investment income (businessPropertyNNetInvestmentIncome false) leaves out its whole gain or loss, and the K-1 § 1231 amount when k1Section1231NetInvestmentIncome is false. A § 1231 gain partly absorbed by Schedule D losses is refused: how much of it is in taxable income is not split by property.]',
+    'I8960 line 5b: "Net Gain or Loss From Disposition of Property That Isn’t Subject to Net Investment Income Tax". § 1411(c)(1)(A)(iii): net investment income includes "net gain (to the extent taken into account in computing taxable income) attributable to the disposition of property other than property held in a trade or business not described in paragraph (2)". [Each property marked not net investment income (businessPropertyNNetInvestmentIncome false) leaves out its whole gain or loss, an installment sale or like-kind exchange of business property marked so (installmentSaleNNetInvestmentIncome, likeKindExchangeNNetInvestmentIncome false) its income this year, and the K-1 § 1231 amount when k1Section1231NetInvestmentIncome is false. A § 1231 gain partly absorbed by Schedule D losses is refused: how much of it is in taxable income is not split by property.]',
     (() => {
       const props = add(...SLOTS.map((i) => iff(onSlot(i, cmp("ne", P(i, "gain"), zero)), iff(pf(i, "NetInvestmentIncome"), zero, P(i, "gain")), zero)));
       const k1 = iff(cmp("ne", k1Net, zero), iff(fact("k1Section1231NetInvestmentIncome"), zero, k1Net), zero);
+      const sales = add(
+        ...SALE_SLOTS.map((i) =>
+          niitItem(add(ruleRef(form6252RuleId.sale(i, "ordinary")), ruleRef(form6252RuleId.sale(i, "section1231"))), fact(`installmentSale${i}NetInvestmentIncome`)),
+        ),
+      );
+      const exchanges = add(
+        ...EXCHANGE_SLOTS.map((i) =>
+          niitItem(add(ruleRef(form8824RuleId.exchange(i, "ordinary")), ruleRef(form8824RuleId.exchange(i, "section1231"))), fact(`likeKindExchange${i}NetInvestmentIncome`)),
+        ),
+      );
       return iff(
         and(gt0(L("9")), cmp("lt", ruleRef(`${J}.schedule_d.preferential_lt_gain`), L("9"))),
         unsupported("the net § 1231 gain is partly absorbed by capital losses on Schedule D: which property's gain is left in taxable income for Form 8960 line 5b is not modeled"),
-        add(props, k1),
+        add(props, k1, sales, exchanges),
       );
     })(),
-    {},
+    { version: 2 }, // v1 had no installment sales or like-kind exchanges
     "26 U.S.C. § 1411(c)(1)(A)(iii); Instructions for Form 8960 (2025)",
   ),
 ];

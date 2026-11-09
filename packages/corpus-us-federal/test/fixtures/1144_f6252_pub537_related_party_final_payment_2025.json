@@ -1,0 +1,28 @@
+{
+  "description": "Pub. 537 (2025), Example 2 continued: the 2026 and 2027 payments aren't taxed (already treated as received) and in the final year 'Total payments ... $500,000 Minus ... − 400,000 Payment on which gain is recognized ... $100,000 × 0.50 Installment sale income ... $50,000'. Line 21 is the $100,000 final payment, line 23 the $400,000 already taxed (line 21 instructions: an amount taxed on line 34 earlier goes on line 23). No second disposition this year.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "other",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": false,
+    "installmentSale1SellingPrice": 500000,
+    "installmentSale1CostBasis": 250000,
+    "installmentSale1RelatedParty": true,
+    "installmentSale1Qbi": false,
+    "installmentSale1PaymentsThisYear": 100000,
+    "installmentSale1PaymentsPriorYears": 400000,
+    "installmentSale1SecondDisposition": false,
+    "installmentSale1DepreciableToControlledBuyer": false,
+    "installmentSaleSection453AInterest": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form6252.sale1.income",
+  "expect": {
+    "valueCents": "5000000",
+    "intermediates": {
+      "us.federal.form6252.sale1.line35": "0"
+    }
+  }
+}

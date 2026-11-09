@@ -1,0 +1,28 @@
+{
+  "description": "Instructions for Schedule D, worksheet line 4, Steps 1–3: a rental building (selling price $500,000, cost $400,000, straight-line depreciation $150,000) sold on the installment method; gain $250,000, no recapture, unrecaptured § 1250 gain $150,000 (the depreciation), gross profit percentage 50%. $100,000 was received in the year of sale ($50,000 gain, all unrecaptured). This year $300,000 is received: $150,000 gain, of which the $100,000 remaining is unrecaptured § 1250 gain; nothing is left.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": false,
+    "installmentSale1SellingPrice": 500000,
+    "installmentSale1CostBasis": 400000,
+    "installmentSale1Depreciation": 150000,
+    "installmentSale1PaymentsThisYear": 300000,
+    "installmentSale1PaymentsPriorYears": 100000,
+    "installmentSale1Qbi": false,
+    "installmentSaleSection453AInterest": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "10000000",
+    "intermediates": {
+      "us.federal.form6252.sale1.income": "15000000",
+      "us.federal.form6252.sale1.unrecaptured_1250_start": "10000000",
+      "us.federal.form6252.sale1.unrecaptured_1250": "10000000"
+    }
+  }
+}

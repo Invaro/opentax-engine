@@ -1,0 +1,25 @@
+{
+  "description": "Reg. § 1.453-12(d) Example 3, 1999: with all $800 recaptured under § 1231(c), Schedule D line 19 (worksheet line 9: line 7 less Form 4797 line 8) is $0 and the lookback left for 2000 is $200 ('Remaining non-recaptured net section 1231 losses 200').",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1250",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1SellingPrice": 10000,
+    "installmentSale1CostBasis": 5000,
+    "installmentSale1Depreciation": 3000,
+    "installmentSale1PaymentsThisYear": 1000,
+    "installmentSale1Qbi": false,
+    "installmentSale1YearOfSale": true,
+    "section1231LookbackLosses": 1000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.lookback_remaining",
+  "expect": {
+    "valueCents": "20000",
+    "intermediates": {
+      "us.federal.form4797.line12": "80000"
+    }
+  }
+}

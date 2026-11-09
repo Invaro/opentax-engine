@@ -1,0 +1,26 @@
+{
+  "description": "Form 6252 line 26: property held 1 year or less goes to Form 4797 line 10. Equipment held under a year (cost $25,000, depreciation $5,000, price $30,000, $10,000 received): gain $10,000, § 1245 recapture $5,000 taxed now (line 12); line 14 $5,000 over a $30,000 contract price — $1,666.67 of the $10,000 payment. Form 4797 line 17 = $1,666.67 + $5,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1245",
+    "installmentSale1HeldOverOneYear": false,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 30000,
+    "installmentSale1CostBasis": 25000,
+    "installmentSale1Depreciation": 5000,
+    "installmentSale1PaymentsThisYear": 10000,
+    "installmentSale1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.form4797.line17",
+  "expect": {
+    "valueCents": "666667",
+    "intermediates": {
+      "us.federal.form6252.sale1.recapture_income": "500000",
+      "us.federal.form6252.sale1.income": "166667",
+      "us.federal.form6252.ordinary": "166667"
+    }
+  }
+}

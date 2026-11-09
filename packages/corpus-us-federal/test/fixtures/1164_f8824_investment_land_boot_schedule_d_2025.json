@@ -1,0 +1,23 @@
+{
+  "description": "§ 1031(b): investment land (adjusted basis $100,000) for land worth $300,000 plus $50,000 cash. Realized gain $250,000, recognized $50,000 (long-term, Schedule D line 11), deferred $200,000; basis of the land received $100,000 + $50,000 − $50,000 = $100,000.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "capital",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 300000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.preferential_lt_gain",
+  "expect": {
+    "valueCents": "5000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "25000000",
+      "us.federal.form8824.exchange1.line23": "5000000",
+      "us.federal.form8824.capital_long_term": "5000000"
+    }
+  }
+}

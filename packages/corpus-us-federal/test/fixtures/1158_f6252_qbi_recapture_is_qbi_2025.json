@@ -1,0 +1,21 @@
+{
+  "description": "Reg. § 1.199A-3(b)(2)(ii)(A) excludes only capital gain: the $20,000 § 1245 recapture of QBI equipment sold on the installment method (as fixture 1147) is QBI. Deduction 20% × $20,000 = $4,000 (taxable income $56,250 less $2,000 net capital gain, × 20% = $10,850, doesn't bind).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "installmentSales": 1,
+    "installmentSale1Kind": "section1245",
+    "installmentSale1HeldOverOneYear": true,
+    "installmentSale1YearOfSale": true,
+    "installmentSale1SellingPrice": 50000,
+    "installmentSale1CostBasis": 40000,
+    "installmentSale1Depreciation": 20000,
+    "installmentSale1PaymentsThisYear": 10000,
+    "installmentSale1Qbi": true
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.qbi_deduction",
+  "expect": {
+    "valueCents": "400000"
+  }
+}

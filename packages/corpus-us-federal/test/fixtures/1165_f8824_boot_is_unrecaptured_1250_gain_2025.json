@@ -1,0 +1,28 @@
+{
+  "description": "§ 1(h)(6)(A): a rental building given up (straight-line depreciation $120,000; the building's FMV $300,000, adjusted basis $100,000) with its land for $400,000 of real property plus $60,000 cash; total adjusted basis $150,000. Recognized gain $60,000, no recapture, all § 1231 gain — and all of it unrecaptured § 1250 gain (smaller of the $120,000 depreciation and the building's $200,000 gain).",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "section1250",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 400000,
+    "likeKindExchange1AdjustedBasisGivenUp": 150000,
+    "likeKindExchange1CashReceived": 60000,
+    "likeKindExchange1Section1250Depreciation": 120000,
+    "likeKindExchange1Section1250Fmv": 300000,
+    "likeKindExchange1Section1250AdjustedBasis": 100000,
+    "likeKindExchange1Qbi": false
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.schedule_d.unrecaptured_1250",
+  "expect": {
+    "valueCents": "6000000",
+    "intermediates": {
+      "us.federal.form8824.exchange1.line19": "31000000",
+      "us.federal.form8824.exchange1.line22": "6000000",
+      "us.federal.form8824.exchange1.unrecaptured_1250": "6000000",
+      "us.federal.form4797.line7": "6000000"
+    }
+  }
+}

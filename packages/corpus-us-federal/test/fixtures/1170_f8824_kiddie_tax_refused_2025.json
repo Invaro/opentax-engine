@@ -1,0 +1,19 @@
+{
+  "description": "A § 1(g) child with a like-kind exchange recognizing gain needs the Form 8615 capital gain worksheets — refused, as for Form 4797 amounts.",
+  "facts": {
+    "filingStatus": "single",
+    "wages": 50000,
+    "isSubjectToKiddieTax": true,
+    "likeKindExchanges": 1,
+    "likeKindExchange1Kind": "capital",
+    "likeKindExchange1HeldOverOneYear": true,
+    "likeKindExchange1LikeKindReceivedFmv": 300000,
+    "likeKindExchange1AdjustedBasisGivenUp": 100000,
+    "likeKindExchange1CashReceived": 50000
+  },
+  "asOf": "2025-12-31",
+  "target": "us.federal.net_tax",
+  "expect": {
+    "error": "NOT_MODELED"
+  }
+}
