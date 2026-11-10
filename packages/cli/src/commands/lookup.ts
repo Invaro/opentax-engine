@@ -53,6 +53,7 @@ function lookup(queryWords: string[], flags: LookupFlags): number {
       }
       console.log();
       console.log(`${pc.yellow("unknown")} — ${result.message}`);
+      console.log(pc.dim(`  checked: ${result.jurisdictions.join(", ")} as of ${asOf}`));
       console.log();
       return EXIT.NOT_COVERED;
     }
@@ -66,6 +67,7 @@ function lookup(queryWords: string[], flags: LookupFlags): number {
         rule: result.matchedRuleId,
         field: result.matchedField,
         jurisdiction: result.jurisdiction,
+        jurisdictions: result.jurisdictions,
         effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         actual: result.actualCents,
         citation: result.citation,
@@ -79,6 +81,7 @@ function lookup(queryWords: string[], flags: LookupFlags): number {
         `${pc.green("✓ VERIFIED")} — ${formatMoney(result.actualCents)} is ${pc.bold(result.matchedField)} of ${result.matchedRuleId}`,
       );
       console.log(pc.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+      console.log(pc.dim(`  checked: ${result.jurisdictions.join(", ")} as of ${asOf}`));
       console.log();
       return EXIT.OK;
     }
@@ -86,11 +89,25 @@ function lookup(queryWords: string[], flags: LookupFlags): number {
       `${pc.red("✗ REFUTED")} — claimed ${formatMoney(claimed.toString())}, but ${result.matchedRuleId}.${result.matchedField} is ${pc.bold(formatMoney(result.actualCents))}`,
     );
     console.log(pc.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+    console.log(pc.dim(`  checked: ${result.jurisdictions.join(", ")} as of ${asOf}`));
     console.log();
     return EXIT.ERROR;
   }
 
   const hits = lookupParameters(corpus, query, asOf);
+  // nothing in the asked jurisdiction matched, so the hits are from the others
+  const elsewhere = hits.some((h) => !scope.jurisdictions.includes(h.jurisdiction));
+  const note = [
+    scope.unclearStateCodes.length > 0
+      ? `${scope.unclearStateCodes.map((c) => `"${c}"`).join(", ")} was not read as a state — write the state's name in full to get its amounts`
+      : "",
+    flags.asOf !== undefined && scope.taxYear !== undefined && flags.asOf.slice(0, 4) !== String(scope.taxYear)
+      ? `the query says ${scope.taxYear} but these are the rules in force on ${asOf}`
+      : "",
+    elsewhere ? `no ${scope.jurisdictions.join(", ")} rule matches — these hits are from other jurisdictions` : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
 
   if (flags.json) {
     print({
@@ -98,6 +115,7 @@ function lookup(queryWords: string[], flags: LookupFlags): number {
       query,
       asOf,
       jurisdictions: scope.jurisdictions,
+      ...(note ? { note } : {}),
       corpusMerkleRoot: corpus.merkleRoot,
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
@@ -121,6 +139,7 @@ function lookup(queryWords: string[], flags: LookupFlags): number {
     return EXIT.ERROR;
   }
   console.log(pc.bold(`"${query}" — as of ${asOf}:`));
+  if (note) console.log(pc.yellow(`  ${note}`));
   for (const h of hits) {
     console.log();
     console.log(`  ${pc.bold(h.title)}`);

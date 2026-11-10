@@ -609,7 +609,8 @@ describe("factCheck", () => {
   it("compares the numbered parameter the query names", () => {
     expect(check("New Jersey child tax credit tier 1 max", 30000)).toBe("verified us.nj.ctc.tier1Max=3000000");
     expect(check("New Jersey child tax credit tier 1 max", 80000)).toBe("unknown");
-    expect(check("Delaware income tax bracket 2", 5000)).toBe("verified us.de.income_tax.bracket2=500000");
+    // Delaware's formula holds its own copy of the brackets, so the parameter's role is not known
+    expect(check("Delaware income tax bracket 2", 5000)).toBe("unknown");
     // no number named: which maximum is not said
     expect(check("earned income credit", 8046)).toBe("unknown");
     expect(check("EITC max 3", 8046)).toBe("verified us.federal.eitc.max3=804600");
@@ -626,7 +627,176 @@ describe("factCheck", () => {
     expect(check("lifetime learning credit maximum", 2000)).toBe("unknown");
   });
 
+  it("does not take the base of a percentage, one of two fitting amounts, or a gated amount as the answer", () => {
+    // 26 U.S.C. § 25A(c)(1): 20 percent of expenses up to $10,000, so the credit's maximum is $2,000
+    expect(check("lifetime learning credit maximum", 10000)).toBe("unknown");
+    expect(check("lifetime learning credit cap", 10000)).toBe("unknown");
+    expect(check("lifetime learning credit", 10000)).toBe("unknown");
+    // Rev. Proc. 2025-32 § 2.12: a $400 minimum deduction, for at least $1,000 of qualified business income
+    expect(check("QBI deduction minimum", 1000, undefined, "2026-06-30")).toBe("unknown");
+    expect(check("QBI deduction minimum", 400, undefined, "2026-06-30")).toBe("unknown");
+    // a married taxpayer must file jointly to claim the tips deduction
+    expect(check("tips deduction cap", 25000, "mfs")).toBe("unknown");
+    expect(check("tips deduction cap", 25000, "mfj")).toBe("unknown");
+    expect(check("tips deduction cap", 25000)).toBe("verified us.federal.tips_deduction.cap=2500000");
+    expect(check("tips deduction cap", 20000)).toBe("refuted us.federal.tips_deduction.cap=2500000");
+    // the wage base is a base too, and is compared when named
+    // (the taxpayer's and the spouse's Schedule SE rules hold the same base)
+    expect(check("SE tax wage base", 176100)).toMatch(/^verified us\.federal\.se_tax\.(taxpayer|spouse)\.wageBase=17610000$/);
+  });
+
+  it("never settles a query that asks for a rate, whatever the figure", () => {
+    expect(check("standard deduction rate", 32200, "mfj", "2026-06-30")).toBe("unknown");
+    expect(check("SALT cap rate", 40400, undefined, "2026-06-30")).toBe("unknown");
+    expect(check("top marginal rate", 37)).toBe("unknown");
+    const r = factCheck(corpus, "standard deduction", 5000n, "2026-06-30", "mfj");
+    expect(r.verdict).toBe("unknown");
+    if (r.verdict === "unknown") expect(r.message).toMatch(/under \$100.*explain_rule/);
+  });
+
+  it("does not answer a question about an unnamed state from federal law", () => {
+    expect(check("state standard deduction", 32200, "mfj", "2026-06-30")).toBe("unknown");
+    expect(check("my state's standard deduction", 32200, "mfj", "2026-06-30")).toBe("unknown");
+    // beside a named state the word adds nothing; in "state and local tax" it is the rule's name
+    expect(check("California state standard deduction", 5706, "single")).toBe("verified us.ca.standard_deduction.singleMfs=570600");
+    expect(check("state and local tax deduction cap", 40000)).toBe("verified us.federal.salt_deduction.cap=4000000");
+    // "IRS" and "federal" are federal
+    expect(check("IRS standard deduction", 32200, "mfj", "2026-06-30")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+  });
+
+  it("reads a bare joint or separate as the status unless a rule is named with it", () => {
+    expect(check("joint standard deduction", 32200, undefined, "2026-06-30")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+    expect(check("joint standard deduction", 16100, undefined, "2026-06-30")).toBe("refuted us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+    expect(check("separate standard deduction", 16100, undefined, "2026-06-30")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfs=1610000");
+    expect(check("Ohio joint filing credit", 650)).toBe("verified us.oh.joint_filing_credit.creditCap=65000");
+    expect(check("standard deduction TY2025", 31500, "mfj", null)).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3150000");
+    // "married" is joint or separate, never single
+    expect(check("standard deduction for married couples", 16100, undefined, "2026-06-30")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfs=1610000");
+    expect(check("standard deduction for married couples", 24150, undefined, "2026-06-30")).toBe("unknown");
+    // "me" is a pronoun
+    expect(queryScope("what standard deduction applies to me").unclearStateCodes).toEqual([]);
+  });
+
+  it("holds the examples the changelog gives", () => {
+    const Y26 = "2026-06-30";
+    expect(check("standard deduction", 32200, "mfj", Y26)).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+    // Rev. Proc. 2025-32 § 4.14(3): $2,050 is the additional amount for an unmarried filer
+    const extra = factCheck(corpus, "standard deduction", 205000n, Y26);
+    expect(extra.verdict).toBe("unknown");
+    if (extra.verdict === "unknown") expect(extra.message).toContain("us.federal.standard_deduction.additional");
+    // nothing federal is named for a renter's credit
+    expect(check("renters credit", 60, undefined, Y26)).toBe("unknown");
+    // a filing status passed that differs from the query's is not settled either way
+    expect(check("standard deduction married filing jointly", 32200, "single", Y26)).toBe("unknown");
+    expect(check("standard deduction head of household", 16100, "single", Y26)).toBe("unknown");
+    expect(check("standard deduction married filing jointly", 32200, "mfj", Y26)).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+    // the floor does not stand in the way of refuting a claim about the cap, nor a table's other statuses
+    expect(check("SALT cap", 10000, undefined, Y26)).toBe("refuted us.federal.salt_deduction.cap=4040000");
+    expect(check("standard deduction", 16100, "mfj", Y26)).toBe("refuted us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+  });
+
+  it("does not answer for a year from a rule that has run out", () => {
+    // Vermont's 2025 standard deduction rule ends with 2025; another rule still lists the 2025 amount
+    expect(check("Vermont standard deduction", 7650, "single", "2025-12-31")).toBe("verified us.vt.standard_deduction.single=765000");
+    const r = factCheck(corpus, "Vermont standard deduction", 765000n, "2026-12-31", "single");
+    expect(r.verdict).toBe("unknown");
+    if (r.verdict === "unknown") expect(r.message).toMatch(/us\.vt\.standard_deduction.*no version in force on 2026-12-31/);
+    expect(check("Vermont standard deduction", 7850, "single", "2026-12-31")).toBe("unknown");
+  });
+
+  it("answers from the rule whose own id is the query, not one that mentions it", () => {
+    // each figure belongs to a credit or deduction whose title has the words "income" and "tax"
+    expect(check("New Mexico income tax maximum", 350, undefined, "2026-06-30")).toBe("unknown");
+    expect(check("Rhode Island income tax limit", 40730)).toBe("unknown");
+    expect(check("California income tax limit", 32901)).toBe("unknown");
+    expect(check("Missouri income tax cap", 5000)).toBe("unknown");
+  });
+
+  it("compares only the statuses a query lists", () => {
+    const Y26 = "2026-06-30";
+    expect(check("standard deduction single vs head of household", 32200, undefined, Y26)).toBe("unknown");
+    expect(check("standard deduction single vs head of household", 24150, undefined, Y26)).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.hoh=2415000");
+  });
+
+  it("compares an amount at a filing status only where the rule states it for that status", () => {
+    // $312 is North Dakota's marriage penalty credit maximum: a joint-return credit
+    expect(check("North Dakota marriage penalty credit maximum", 312, "single")).toBe("unknown");
+    // New Jersey's $15,000 property tax deduction cap is $7,500 for separate filers in one home
+    expect(check("New Jersey property tax deduction cap", 15000, "mfs")).toBe("unknown");
+    expect(check("child tax credit per child", 2200, "mfj")).toBe("unknown");
+    expect(check("child tax credit per child", 2200)).toBe("verified us.federal.ctc.tentative.perChild=220000");
+    // labelled for the status
+    expect(check("EITC threshold kids", 30470, "mfj")).toBe("verified us.federal.eitc.thresholdMFJKids=3047000");
+    // "other" is everyone else, which a formula can still shut out (Oklahoma's credit is $0 for separate filers)
+    expect(check("EITC threshold kids", 23350, "single")).toBe("unknown");
+    expect(check("Oklahoma earned income credit threshold 0", 8790, "mfs")).toBe("unknown");
+    expect(check("EITC threshold kids", 23350)).toBe("verified us.federal.eitc.thresholdOtherKids=2335000");
+    // a status passed that is not one the query lists
+    expect(check("standard deduction single or head of household", 32200, "mfj", "2026-06-30")).toBe("unknown");
+    expect(check("standard deduction married", 24150, "hoh", "2026-06-30")).toBe("unknown");
+  });
+
+  it("does not take a rule titled for one year as another year's figure", () => {
+    // North Dakota's and Vermont's 2025 parameter sets stay in force into 2026
+    expect(check("North Dakota stillborn child deduction", 5241, undefined, "2026-12-31")).toBe("unknown");
+    expect(check("vermont parameters personal exemption", 5300, undefined, "2026-12-31")).toBe("unknown");
+    expect(check("Delaware standard deduction", 3250, undefined, "2026-12-31")).toBe("unknown");
+    expect(check("Delaware standard deduction", 3250, undefined, "2025-12-31")).not.toBe("refuted");
+    // rules titled for the year asked still answer
+    expect(check("standard deduction", 32200, "mfj", "2026-06-30")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3220000");
+    expect(check("California standard deduction", 5900, "single", "2026-06-30")).toBe("verified us.ca.standard_deduction.singleMfs=590000");
+  });
+
+  it("does not take a base or a threshold for the amount", () => {
+    // Vermont: 10% of the first $2,500 contributed per beneficiary, so the credit is $250
+    expect(check("Vermont Higher Education Investment Plan credit per beneficiary", 2500)).toBe("unknown");
+    expect(check("Vermont Higher Education Investment Plan credit per beneficiary", 250)).toBe("unknown");
+    // Minnesota's `limitThreshold` is where the reduction starts, not a cap
+    expect(check("Minnesota standard deduction cap", 238950)).toBe("unknown");
+  });
+
+  it("holds statuses named in the query to the same rule as one passed", () => {
+    const Y26 = "2026-06-30";
+    // the $12,500 cap is not the married amount: joint filers get $25,000 and separate filers nothing
+    expect(check("overtime deduction cap married", 12500, undefined, Y26)).toBe("unknown");
+    expect(check("tips deduction magi threshold married", 150000, undefined, Y26)).toBe("unknown");
+    expect(check("North Dakota marriage penalty credit maximum single or head of household", 312)).toBe("unknown");
+    expect(check("Georgia standard deduction married filing jointly or surviving spouse", 15000, undefined, "2026-12-31")).toBe("unknown");
+    // a status beside a rule whose name has "joint" in it still counts
+    expect(check("Ohio joint filing credit single", 650)).toBe("unknown");
+    expect(check("Ohio joint filing credit", 650)).toBe("verified us.oh.joint_filing_credit.creditCap=65000");
+  });
+
+  it("keeps answering where the checks have nothing to object to", () => {
+    // 2027: a lapsed mileage rule has "standard" and "deduction" in its title too
+    expect(check("standard deduction", 16600, "single", "2027-12-31")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.single=1660000");
+    expect(check("standard deduction", 33200, "mfj", "2027-12-31")).toBe("verified us.federal.standard_deduction.base_amount.byFilingStatus.mfj=3320000");
+  });
+
+  it("flags a query it did not read whole", () => {
+    expect(check(`standard deduction${" ".repeat(520)}California`, 5706, "single")).toBe("verified us.ca.standard_deduction.singleMfs=570600");
+    expect(check(`standard deduction ${"x ".repeat(300)}California`, 15750, "single")).toBe("unknown");
+    expect(check(`${"what is the ".repeat(40)}additional standard deduction`, 200000)).toBe("unknown");
+    // full-width digits are a year
+    expect(queryScope("standard deduction ２０２５").taxYear).toBe(2025);
+  });
+
+  it("does not pick one of two years the query names", () => {
+    expect(check("standard deduction 2025 vs 2026", 31500, "mfj", null)).toBe("unknown");
+    expect(check("2025 and 2026 standard deduction", 31500, "mfj", "2026-06-30")).toBe("unknown");
+    expect(queryScope("standard deduction 2025 vs 2026").taxYear).toBeUndefined();
+  });
+
+  it("does not list a rate as a dollar amount", () => {
+    for (const when of ["2025-12-31", "2026-06-30"]) {
+      for (const h of lookupParameters(corpus, "residential clean energy credit", when)) {
+        for (const name of Object.keys(h.parameters)) expect(name, h.ruleId).not.toMatch(/(Percentage|Percent|Pct|Rate)$/);
+      }
+    }
+  });
+
   it("rejects a date that is not a date", () => {
+    expect(() => factCheck(corpus, "standard deduction", 1610000n, "2026-13-45")).toThrow(RangeError);
     expect(() => factCheck(corpus, "standard deduction", 1610000n, "2026")).toThrow(RangeError);
     expect(() => lookupParameters(corpus, "standard deduction", "next year")).toThrow(RangeError);
     // with no date, every version is compared and the result says which matched

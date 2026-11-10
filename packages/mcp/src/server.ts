@@ -1127,7 +1127,7 @@ server.registerTool(
   "lookup_tax_parameter",
   {
     description:
-      "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Federal law unless the query names a state ('California standard deduction'); every hit states its jurisdiction. A year in the query ('standard deduction 2025') selects that tax year when asOf is not given. Dollar amounts only, not rates. Use this to fact-check ANY tax number before stating it — your training data likely predates the OBBBA.",
+      "Look up the current-law dollar amounts behind a question ('standard deduction', 'CTC phase-out threshold', 'tips deduction cap') with their statutory citations and validity windows. Federal law unless the query names a state ('California standard deduction'); every hit states its jurisdiction, and when nothing federal matches a query that names no state, the hits come from the states with a note saying so. A year in the query ('standard deduction 2025') selects that tax year when asOf is not given. Dollar amounts only, not rates. Use this to fact-check ANY tax number before stating it — your training data likely predates the OBBBA.",
     inputSchema: legacyJsonSchema(z
       .object({
         query: z.string().max(2000).describe("plain-English search, e.g. 'standard deduction'"),
@@ -1140,13 +1140,17 @@ server.registerTool(
     const when = asOf ?? lookupDate(scope.taxYear);
     const hits = lookupParameters(corpus, query, when);
     const elsewhere = hits.some((h) => !scope.jurisdictions.includes(h.jurisdiction));
-    const note = scope.unclearStateCodes.length > 0
-      ? `${scope.unclearStateCodes.map((c) => `"${c}"`).join(", ")} was not read as a state — write the state's name in full to get its amounts`
-      : asOf !== undefined && scope.taxYear !== undefined && asOf.slice(0, 4) !== String(scope.taxYear)
+    const note = [
+      scope.unclearStateCodes.length > 0
+        ? `${scope.unclearStateCodes.map((c) => `"${c}"`).join(", ")} was not read as a state — write the state's name in full to get its amounts`
+        : "",
+      asOf !== undefined && scope.taxYear !== undefined && asOf.slice(0, 4) !== String(scope.taxYear)
         ? `the query says ${scope.taxYear} but these are the rules in force on ${asOf}`
-      : elsewhere
-        ? `no ${scope.jurisdictions.join(", ")} rule matches — these hits are from other jurisdictions`
-        : undefined;
+        : "",
+      elsewhere ? `no ${scope.jurisdictions.join(", ")} rule matches — these hits are from other jurisdictions` : "",
+    ]
+      .filter(Boolean)
+      .join("; ");
     return ok({
       ok: true,
       query,
@@ -1209,7 +1213,7 @@ server.registerTool(
   "verify_fact",
   {
     description:
-      "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the correct value and citation) / unknown. Checked against federal law unless the query names a state ('Alabama standard deduction'), and never against another jurisdiction; the answer states the jurisdiction and the date it used. Name the amount in the law's words ('SALT cap', 'child tax credit per child', 'EITC investment income limit'): a verdict needs a rule named for every word of the query, and anything it cannot settle comes back unknown with the reason. A year or filing status in the query is used when asOf / filingStatus are not given. Dollar amounts only: a rate or a percentage comes back unknown. Never states a verdict it cannot ground.",
+      "Fact-check a claimed dollar amount about tax law ('the 2026 MFJ standard deduction is $32,200', 'CTC is $2,000 per child') against the corpus. Returns verified / refuted (with the amount the claim was compared with and its citation) / unknown. Checked against federal law unless the query names a state ('Alabama standard deduction'), and never against another jurisdiction; the answer states the jurisdiction and the date it used. Name the amount in the law's words ('SALT cap', 'child tax credit per child', 'EITC investment income limit'): a verdict needs a rule named for every subject word of the query (words such as cap, limit or threshold select the kind of amount), and anything it cannot settle comes back unknown with the reason. A year or filing status in the query is used when asOf / filingStatus are not given; one that differs from the asOf or filingStatus passed comes back unknown. Pass filingStatus only for amounts that differ by filing status (standard deduction, thresholds): with it, an amount the rule does not state per status ('child tax credit per child', a single cap) comes back unknown. Dollar amounts only: a query that asks for a rate or a percentage comes back unknown. Never states a verdict it cannot ground.",
     inputSchema: legacyJsonSchema(z
       .object({
         query: z.string().max(2000).describe("what the amount is, e.g. 'standard deduction'"),
@@ -1223,6 +1227,16 @@ server.registerTool(
     try {
       const scope = queryScope(query);
       const when = asOf ?? lookupDate(scope.taxYear);
+      // a rate is unknown whatever form the figure takes (3.8 as a number is not a dollar amount)
+      if (scope.asksForRate && typeof claimedAmount === "number" && !Number.isSafeInteger(claimedAmount)) {
+        return ok({
+          ok: true,
+          verdict: "unknown",
+          message: `"${query}" asks for a rate or a percentage — this tool checks dollar amounts only (search_tax_rules finds the rule, and explain_rule shows the rate in its formula)`,
+          jurisdictions: scope.jurisdictions,
+          asOf: when,
+        });
+      }
       if (typeof claimedAmount === "string" && /%\s*$/.test(claimedAmount)) {
         return ok({
           ok: true,
@@ -1256,6 +1270,7 @@ server.registerTool(
           rule: result.matchedRuleId,
           field: result.matchedField,
           jurisdiction: result.jurisdiction,
+          jurisdictions: result.jurisdictions,
           effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
           citation: result.citation,
           asOf: when,
@@ -1285,8 +1300,9 @@ server.registerTool(
         verdict: "refuted",
         claimed: fmt(BigInt(result.claimedCents)),
         message:
-          "no corpus value near this query equals the claim — the first value listed is the one it was compared with",
+          "the claim is not the amount this query names — the first value listed is the one it was compared with",
         jurisdiction: result.jurisdiction,
+        jurisdictions: result.jurisdictions,
         effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         nearbyValues: nearby,
         citation: result.citation,

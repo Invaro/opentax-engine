@@ -27,8 +27,11 @@
     "ok": true,
     "verdict": "refuted",
     "claimed": "$30,000.00",
-    "message": "no corpus value near this query equals the claim — the first value listed is the one it was compared with",
+    "message": "the claim is not the amount this query names — the first value listed is the one it was compared with",
     "jurisdiction": "us.federal",
+    "jurisdictions": [
+      "us.federal"
+    ],
     "effective": "[2025-01-01, 2026-01-01)",
     "nearbyValues": [
       {
