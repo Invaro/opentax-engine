@@ -4,31 +4,56 @@
  */
 
 import pc from "picocolors";
-import { factCheck, lookupParameters } from "@invaro/opentax-solve";
+import { factCheck, lookupParameters, queryScope } from "@invaro/opentax-solve";
 import { parseDollars } from "@invaro/opentax-core";
 import { getCorpus } from "@invaro/opentax-corpus-us-federal";
 import { formatMoney } from "../render/format.js";
-import { EXIT, print } from "../render/output.js";
+import { emitError, EXIT, print } from "../render/output.js";
 
-export function runLookup(
-  queryWords: string[],
-  flags: { asOf?: string; json?: boolean; expect?: string; filingStatus?: string },
-): number {
+type LookupFlags = { asOf?: string; json?: boolean; expect?: string; filingStatus?: string };
+
+export function runLookup(queryWords: string[], flags: LookupFlags): number {
+  try {
+    return lookup(queryWords, flags);
+  } catch (err) {
+    // a date that is not a date, an amount that is not an amount
+    return emitError(err, flags.json);
+  }
+}
+
+function lookup(queryWords: string[], flags: LookupFlags): number {
   const corpus = getCorpus();
   const query = queryWords.join(" ");
-  const asOf = flags.asOf ?? new Date().toISOString().slice(0, 10);
+  // federal law unless the query names a state; a year in the query selects
+  // that tax year when --as-of is not given
+  const scope = queryScope(query);
+  const asOf =
+    flags.asOf ??
+    (scope.taxYear === undefined ? new Date().toISOString().slice(0, 10) : `${scope.taxYear}-12-31`);
 
   // --expect: fact-check a claimed amount (the MCP verify_fact behavior)
   if (flags.expect !== undefined) {
+    if (/%\s*$/.test(flags.expect)) {
+      const message = `${flags.expect.trim()} is a percentage — lookup checks dollar amounts only (read a rate in the rule's formula with \`opentax explain\`)`;
+      if (flags.json) {
+        print({ ok: true, query, asOf, jurisdictions: scope.jurisdictions, verdict: "unknown", message });
+      } else {
+        console.log();
+        console.log(`${pc.yellow("unknown")} — ${message}`);
+        console.log();
+      }
+      return EXIT.NOT_COVERED;
+    }
     const claimed = parseDollars(flags.expect);
     const result = factCheck(corpus, query, claimed, asOf, flags.filingStatus);
     if (result.verdict === "unknown") {
       if (flags.json) {
-        print({ ok: true, query, asOf, claimed: claimed.toString(), verdict: "unknown", message: result.message });
+        print({ ok: true, query, asOf, jurisdictions: result.jurisdictions, claimed: claimed.toString(), verdict: "unknown", message: result.message });
         return EXIT.NOT_COVERED;
       }
       console.log();
       console.log(`${pc.yellow("unknown")} — ${result.message}`);
+      console.log(pc.dim(`  checked: ${result.jurisdictions.join(", ")} as of ${asOf}`));
       console.log();
       return EXIT.NOT_COVERED;
     }
@@ -41,6 +66,9 @@ export function runLookup(
         verdict: result.verdict,
         rule: result.matchedRuleId,
         field: result.matchedField,
+        jurisdiction: result.jurisdiction,
+        jurisdictions: result.jurisdictions,
+        effective: `[${result.effectiveFrom}, ${result.effectiveTo ?? "open"})`,
         actual: result.actualCents,
         citation: result.citation,
         corpusMerkleRoot: corpus.merkleRoot,
@@ -53,6 +81,7 @@ export function runLookup(
         `${pc.green("✓ VERIFIED")} — ${formatMoney(result.actualCents)} is ${pc.bold(result.matchedField)} of ${result.matchedRuleId}`,
       );
       console.log(pc.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+      console.log(pc.dim(`  checked: ${result.jurisdictions.join(", ")} as of ${asOf}`));
       console.log();
       return EXIT.OK;
     }
@@ -60,20 +89,37 @@ export function runLookup(
       `${pc.red("✗ REFUTED")} — claimed ${formatMoney(claimed.toString())}, but ${result.matchedRuleId}.${result.matchedField} is ${pc.bold(formatMoney(result.actualCents))}`,
     );
     console.log(pc.dim(`  ${result.citation.source} ${result.citation.section ?? ""}`));
+    console.log(pc.dim(`  checked: ${result.jurisdictions.join(", ")} as of ${asOf}`));
     console.log();
     return EXIT.ERROR;
   }
 
   const hits = lookupParameters(corpus, query, asOf);
+  // nothing in the asked jurisdiction matched, so the hits are from the others
+  const elsewhere = hits.some((h) => !scope.jurisdictions.includes(h.jurisdiction));
+  const note = [
+    scope.unclearStateCodes.length > 0
+      ? `${scope.unclearStateCodes.map((c) => `"${c}"`).join(", ")} was not read as a state — write the state's name in full to get its amounts`
+      : "",
+    flags.asOf !== undefined && scope.taxYear !== undefined && flags.asOf.slice(0, 4) !== String(scope.taxYear)
+      ? `the query says ${scope.taxYear} but these are the rules in force on ${asOf}`
+      : "",
+    elsewhere ? `no ${scope.jurisdictions.join(", ")} rule matches — these hits are from other jurisdictions` : "",
+  ]
+    .filter(Boolean)
+    .join("; ");
 
   if (flags.json) {
     print({
       ok: true,
       query,
       asOf,
+      jurisdictions: scope.jurisdictions,
+      ...(note ? { note } : {}),
       corpusMerkleRoot: corpus.merkleRoot,
       hits: hits.map((h) => ({
         ruleId: h.ruleId,
+        jurisdiction: h.jurisdiction,
         title: h.title,
         citation: h.citation,
         effective: `[${h.effectiveFrom}, ${h.effectiveTo ?? "open"})`,
@@ -93,6 +139,7 @@ export function runLookup(
     return EXIT.ERROR;
   }
   console.log(pc.bold(`"${query}" — as of ${asOf}:`));
+  if (note) console.log(pc.yellow(`  ${note}`));
   for (const h of hits) {
     console.log();
     console.log(`  ${pc.bold(h.title)}`);

@@ -126,8 +126,10 @@
       "searchRules",
       "lookupParameters",
       "factCheck",
+      "queryScope",
       "FactCheckResult",
       "LookupHit",
+      "QueryScope",
       "RuleSearchHit"
     ],
     "internal": [

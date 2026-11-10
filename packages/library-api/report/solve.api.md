@@ -213,13 +213,20 @@ type FactCheckResult = {
     verdict: "verified" | "refuted";
     matchedRuleId: string;
     matchedField: string;
+    jurisdiction: string;
     actualCents: string;
     claimedCents: string;
     citation: Citation;
+    effectiveFrom: string;
+    effectiveTo?: string;
+    jurisdictions: string[];
+    asOf?: string;
     alternatives: LookupHit[];
 } | {
     verdict: "unknown";
     message: string;
+    jurisdictions: string[];
+    asOf?: string;
     alternatives: LookupHit[];
 };
 ```
@@ -230,6 +237,7 @@ type FactCheckResult = {
 interface LookupHit {
     ruleId: string;
     version: number;
+    jurisdiction: string;
     title: string;
     citation: Citation;
     effectiveFrom: string;
@@ -244,6 +252,24 @@ interface LookupHit {
 
 ```ts
 declare function lookupParameters(corpus: LoadedCorpus, query: string, asOf?: string): LookupHit[];
+```
+
+### queryScope (function)
+
+```ts
+declare function queryScope(query: string): QueryScope;
+```
+
+### QueryScope (interface)
+
+```ts
+interface QueryScope {
+    jurisdictions: string[];
+    unclearStateCodes: string[];
+    taxYear?: number;
+    filingStatus?: string;
+    asksForRate: boolean;
+}
 ```
 
 ### RuleSearchHit (interface)

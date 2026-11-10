@@ -1,6 +1,6 @@
 {
   "name": "@invaro/opentax-solve",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Reasoning layer over the opentax engine: what-if sweeps, marginal rates, cliff detection, inverse queries \u2014 every point proof-backed",
   "license": "BUSL-1.1",
   "type": "module",
